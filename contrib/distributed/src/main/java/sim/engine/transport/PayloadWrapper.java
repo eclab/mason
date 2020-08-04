@@ -10,7 +10,7 @@ import sim.field.partitioning.NdPoint;
  * Used Internally
  *
  */
-public class PayloadWrapper  extends MigratableObject {
+public class PayloadWrapper extends MigratableObject {
 	private static final long serialVersionUID = 1L;
 
 	/**

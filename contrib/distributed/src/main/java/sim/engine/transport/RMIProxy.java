@@ -12,9 +12,15 @@ import java.util.UUID;
 
 import mpi.MPI;
 import sim.field.partitioning.PartitionInterface;
-import sim.field.partitioning.NdPoint;
 import sim.util.MPIUtil;
 
+/**
+ * RMIProxy for using Java RMI. RMI is used for point to point communication
+ * between nodes that are not neighbors.
+ *
+ * @param <P> The Type of NdPoint to use
+ * @param <T> The Type of Object in the field
+ */
 public class RMIProxy<T extends Serializable, P> {
 
 	ArrayList<TransportRMIInterface<T, P>> remoteFields;
@@ -24,7 +30,6 @@ public class RMIProxy<T extends Serializable, P> {
 	private static String hostAddr = null;
 	private static Registry registry = null;
 	private static ArrayList<Remote> exported = null;
-
 
 	private static int getFreePort() {
 		try (ServerSocket socket = new ServerSocket(0)) {
@@ -63,7 +68,7 @@ public class RMIProxy<T extends Serializable, P> {
 		RMIProxy.isReady = false;
 
 		try {
-			for (final Remote  f : RMIProxy.exported)
+			for (final Remote f : RMIProxy.exported)
 				UnicastRemoteObject.unexportObject(f, true);
 			if (RMIProxy.registry != null)
 				UnicastRemoteObject.unexportObject(RMIProxy.registry, true);
@@ -97,12 +102,12 @@ public class RMIProxy<T extends Serializable, P> {
 			remoteFields = new ArrayList<>(ps.numProcessors);
 
 			for (final String host : hosts) {
-				
+
 				final String[] name_host_Port = host.split(":");
-				
+
 				final Registry remoteReg = LocateRegistry.getRegistry(name_host_Port[1],
 						Integer.parseInt(name_host_Port[2]));
-				
+
 				remoteFields.add((TransportRMIInterface<T, P>) remoteReg.lookup(name_host_Port[0]));
 			}
 		} catch (final Exception e) {

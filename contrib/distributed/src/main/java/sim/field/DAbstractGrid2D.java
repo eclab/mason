@@ -3,22 +3,28 @@ package sim.field;
 import sim.field.partitioning.PartitionInterface;
 
 /**
- * A abstract distributed grid 2d. It wraps all methods of distributed grid. 
+ * A abstract distributed grid 2d. It wraps all methods of distributed grid.
+ * 
  * @author Carmine Spagnuolo
- *
  */
 
-public abstract class DAbstractGrid2D{
-	
+public abstract class DAbstractGrid2D {
+
 	protected int[] fieldSize;
-	
-	public DAbstractGrid2D(final PartitionInterface ps)
-	{
+
+	public DAbstractGrid2D(final PartitionInterface ps) {
 		fieldSize = ps.getFieldSize();
 	}
-	
-	/*UTILS METHODS*/
 
+	/* UTILS METHODS */
+
+	/**
+	 * Wraps around a toroidal field
+	 * 
+	 * @param x
+	 * @param dim
+	 * @return wrapped around value for value x in this field for dimention dim.
+	 */
 	public int toToroidal(final int x, final int dim) {
 		final int s = fieldSize[dim];
 		if (x >= s)
@@ -28,6 +34,13 @@ public abstract class DAbstractGrid2D{
 		return x;
 	}
 
+	/**
+	 * Wraps around a toroidal field
+	 * 
+	 * @param x
+	 * @param dim
+	 * @return wrapped around value for value x in this field for dimention dim.
+	 */
 	public double toToroidal(final double x, final int dim) {
 		final int s = fieldSize[dim];
 		if (x >= s)
@@ -37,6 +50,15 @@ public abstract class DAbstractGrid2D{
 		return x;
 	}
 
+	/**
+	 * Difference in a toroidal field
+	 * 
+	 * @param x1
+	 * @param x2
+	 * @param dim
+	 * @return difference between two value x1 and x2 in this field for dimention
+	 *         dim.
+	 */
 	public double toToroidalDiff(final double x1, final double x2, final int dim) {
 		final int s = fieldSize[dim];
 		if (Math.abs(x1 - x2) <= s / 2)

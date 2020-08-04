@@ -16,7 +16,13 @@ import sim.util.GroupComm;
 import sim.util.MPITest;
 import sim.util.MPIUtil;
 
-public class QuadTreePartition extends PartitionInterface {
+/**
+ * Quad tree partition divides the world into partitions and arranging them as a
+ * quad tree.
+ *
+ * @param <P> Type of point
+ */
+public class QuadTreePartition extends PartitionInterface<NdPoint> {
 	QuadTree qt;
 	QuadTreeNode myLeafNode; // the leaf node that this pid is mapped to
 	Map<Integer, GroupComm> groups; // Map the level to its corresponding comm group
@@ -32,12 +38,12 @@ public class QuadTreePartition extends PartitionInterface {
 
 	public IntHyperRect getPartition(final int pid) {
 		for (final QuadTreeNode node : qt.getAllLeaves())
-			if (node.getProc() == pid)
+			if (node.getProcessor() == pid)
 				return node.getShape();
 
 		throw new IllegalArgumentException("The partition for " + pid + " does not exist");
 	}
-	
+
 	public QuadTree getQt() {
 		return qt;
 	}
@@ -51,7 +57,7 @@ public class QuadTreePartition extends PartitionInterface {
 	}
 
 	public int toPartitionId(final NdPoint p) {
-		return qt.getLeafNode(p).getProc();
+		return qt.getLeafNode(p).getProcessor();
 	}
 
 	public int toPartitionId(final int[] c) {
@@ -62,6 +68,9 @@ public class QuadTreePartition extends PartitionInterface {
 		return toPartitionId(new DoublePoint(c));
 	}
 
+	/**
+	 * Creates the MPI comm world by defining the MPI topology as this quad tree.
+	 */
 	protected void createMPITopo() {
 		final int[] ns = getNeighborIds();
 
@@ -123,6 +132,10 @@ public class QuadTreePartition extends PartitionInterface {
 		createMPITopo();
 	}
 
+	/**
+	 * Maps node to a processor
+	 * 
+	 */
 	protected void mapNodeToProc() {
 		final List<QuadTreeNode> leaves = qt.getAllLeaves();
 
@@ -132,7 +145,7 @@ public class QuadTreePartition extends PartitionInterface {
 
 		// Map the leaf nodes first
 		for (int i = 0; i < numProcessors; i++)
-			leaves.get(i).setProc(i);
+			leaves.get(i).setProcessor(i);
 
 		// if pid == 0 then myLeafNode is root node
 		myLeafNode = leaves.get(pid);
@@ -143,16 +156,21 @@ public class QuadTreePartition extends PartitionInterface {
 			final QuadTreeNode parent = curr.getParent();
 			if (parent == null || parent.getChild(0) != curr)
 				continue;
-			parent.setProc(curr.getProc());
+			parent.setProcessor(curr.getProcessor());
 			leaves.add(parent);
 		}
 
 		// Set the proc id to the IntHyperRect so it can be printed out when debugging
 		// it is not used by the program itself (TODO double-check)
 		for (final QuadTreeNode leaf : qt.getAllLeaves())
-			leaf.getShape().setId(leaf.getProc());
+			leaf.getShape().setId(leaf.getProcessor());
 	}
 
+	/**
+	 * Create groups for MPI communication
+	 * 
+	 * @throws MPIException
+	 */
 	protected void createGroups() throws MPIException {
 		int currDepth = 0;
 		groups = new HashMap<Integer, GroupComm>();
@@ -187,12 +205,17 @@ public class QuadTreePartition extends PartitionInterface {
 
 	/**
 	 * @param gc
-	 * @return whether the calling pid is the master node of the given GroupComm
+	 * @return true if the calling pid is the master node of the given GroupComm
 	 */
 	public boolean isGroupMaster(final GroupComm gc) {
-		return gc != null && gc.master.getProc() == pid;
+		return gc != null && gc.master.getProcessor() == pid;
 	}
 
+	/**
+	 * @param level
+	 * @return true if the calling pid is the master node of the GroupComm at the
+	 *         given level
+	 */
 	public boolean isGroupMaster(final int level) {
 		return isGroupMaster(getGroupComm(level));
 	}
@@ -256,8 +279,16 @@ public class QuadTreePartition extends PartitionInterface {
 		MPI.COMM_WORLD.barrier();
 	}
 
+	/**
+	 * Balance the partitions by moving the centroids for the given level.
+	 * 
+	 * @param myRuntime
+	 * @param level
+	 * 
+	 * @throws MPIException
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void balance(final double myRt, final int level) throws MPIException {
+	public void balance(final double myRuntime, final int level) throws MPIException {
 		final GroupComm gc = groups.get(level);
 
 		Object[] sendCentroids = new Object[] { null };
@@ -265,9 +296,9 @@ public class QuadTreePartition extends PartitionInterface {
 		if (gc != null) {
 			final IntPoint ctr = myLeafNode.getShape().getCenter();
 			final double[] sendData = new double[ctr.getNd() + 1], recvData = new double[ctr.getNd() + 1];
-			sendData[0] = myRt;
+			sendData[0] = myRuntime;
 			for (int i = 1; i < sendData.length; i++)
-				sendData[i] = ctr.c[i - 1] * myRt;
+				sendData[i] = ctr.c[i - 1] * myRuntime;
 
 			gc.comm.reduce(sendData, recvData, recvData.length, MPI.DOUBLE, MPI.SUM, gc.groupRoot);
 
@@ -281,7 +312,7 @@ public class QuadTreePartition extends PartitionInterface {
 		final ArrayList<Object[]> newCentroids = MPIUtil.<Object[]>allGather(MPI.COMM_WORLD, sendCentroids);
 
 		// call precommit
-		for (final Consumer r : (ArrayList<Consumer>)preCallbacks)
+		for (final Consumer r : (ArrayList<Consumer>) preCallbacks)
 			r.accept(level);
 
 		// apply changes
@@ -294,7 +325,7 @@ public class QuadTreePartition extends PartitionInterface {
 		createMPITopo();
 
 		// call postcommit
-		for (final Consumer r : (ArrayList<Consumer>)postCallbacks)
+		for (final Consumer r : (ArrayList<Consumer>) postCallbacks)
 			r.accept(level);
 	}
 

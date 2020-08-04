@@ -3,6 +3,9 @@ package sim.field.partitioning;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
+/**
+ * Class for n-dimensional points with continues coordinates
+ */
 public class DoublePoint extends NdPoint {
 	private static final long serialVersionUID = 1L;
 

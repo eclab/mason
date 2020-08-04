@@ -14,6 +14,12 @@ import sim.field.partitioning.NdPoint;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.storage.ObjectGridStorage;
 
+/**
+ * A grid that contains lists of objects of type T. Analogous to Mason's
+ * DenseGrid2D
+ *
+ * @param <T> Type of object stored in the grid
+ */
 public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implements DGrid<T, NdPoint> {
 
 	private HaloGrid2D<T, NdPoint, ObjectGridStorage<ArrayList<T>>> halo;
@@ -159,9 +165,5 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implem
 	public void removeAndStopRepeatingAgent(NdPoint p, DistributedIterativeRepeat iterativeRepeat) {
 		halo.removeAndStopRepeatingAgent(p, iterativeRepeat);
 	}
-
-//	public void moveRepeatingAgent(NdPoint fromP, NdPoint toP, DistributedIterativeRepeat iterativeRepeat) {
-//		halo.moveRepeatingAgent(fromP, toP, iterativeRepeat);
-//	}
 
 }

@@ -9,7 +9,7 @@ import sim.engine.Stopping;
  * Used internally
  *
  */
-public class AgentWrapper extends MigratableObject implements Serializable  {
+public class AgentWrapper extends MigratableObject implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

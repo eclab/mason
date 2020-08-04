@@ -20,8 +20,11 @@ import sim.field.partitioning.NdPoint;
 import sim.field.partitioning.PartitionInterface;
 
 /**
- * Transports/migrates objects and agents
- *
+ * This class contains the methods for moving objects and agents between
+ * processors.
+ * 
+ * In Distributed Mason moving objects from one processor to another is called
+ * transportation and transporting agents is called migration.
  */
 public class TransporterMPI {
 
@@ -94,6 +97,14 @@ public class TransporterMPI {
 		objectQueue.clear();
 	}
 
+	/**
+	 * Send/receive all objects and agents. All objects are added to their
+	 * respective fields and agents are also scheduled on top of that.
+	 * 
+	 * @throws MPIException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	public void sync() throws MPIException, IOException, ClassNotFoundException {
 		// Prepare data
 		for (int i = 0, total = 0; i < numNeighbors; i++) {
@@ -162,7 +173,8 @@ public class TransporterMPI {
 //				}
 		}
 
-		//System.out.println("PID "+MPI.COMM_WORLD.getRank()+" objectQueue "+objectQueue);
+		// System.out.println("PID "+MPI.COMM_WORLD.getRank()+" objectQueue
+		// "+objectQueue);
 
 		// Clear previous queues
 		for (int i : neighbors)

@@ -3,6 +3,9 @@ package sim.field.partitioning;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
+/**
+ * Class for n-dimensional points with discrete coordinates
+ */
 public class IntPoint extends NdPoint {
 	private static final long serialVersionUID = 1L;
 
