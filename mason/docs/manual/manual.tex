@@ -13160,7 +13160,7 @@ The report would be located in a file called \texttt{/tmp/out.csv} (or \texttt{/
 
 \section{Model Optimization}
 
-MASON has a massively distributed model optimization and calibration facility in combination with ECJ.\footnote{http:/\!/cs.gmu.edu/\(\sim\)eclab/projects/ecj/}  The facility Is designed to provide both very flexible model optimization and calibration, and also easy calibration of basic model parameters.
+MASON has a massively distributed model optimization and calibration facility in combination with ECJ.\footnote{http:/\!/cs.gmu.edu/\(\sim\)eclab/projects/ecj/}  The facility is designed to provide both very flexible model optimization and calibration, and also easy calibration of basic model parameters.
 
 \begin{wrapfigure}{r}[0in]{3.5in}
 \vspace{-1em}
@@ -13171,7 +13171,7 @@ As shown in the Figure at right, the general setup is as follows.  You will crea
 
 When the workers are fired up, they are told the IP address and the socket number of the master process.  The default socket port is {\bf 15000}.  If you are running all this on your own machine (perhaps for testing, otherwise, that'd be kind of silly) the IP address would be {\bf 127.0.0.1} (or {\bf localhost}).    Each worker looks for a Master process waiting at that port and IP address, and when one appears, they register themselves with it.
 
-When all the processes are up and running and registered, optimization begins.  ECJ's optimization techniques are evolutionary computation methods, which we do not discuss here (you can read more about them in ECJ's manual, or in the free book {\it Essentials of Metaheuristics}\footnote{https:/\!/cs.gmu.edu/\(\sim\)sean/book/metaheuristics/}.  In general, you will specify which model parameters, agent behaviors, or whatnot, should be optimized.  ECJ will then create multiple random assortments of these (in evolutionary computation parlance, ECJ will create a {\it population} of {\it individuals}), then plug them each assortment into the worker processes to be {\it assessed}.  Assessment consists of using these parameters and behaviors in a MASON model, running it, and seeing how it performs.  After a model has been run some \(T\) times, the worker returns to the master a {\it fitness} describing the performance of that given group of model parameter settings.  The ECJ master uses these fitness assessments to resample a next {\it generation} of parameter settings etc., then tries them again, with the goal of finding the fittest possible settings.  
+When all the processes are up and running and registered, optimization begins.  ECJ's optimization techniques are evolutionary computation methods, which we do not discuss here (you can read more about them in ECJ's manual, or in the free book {\it Essentials of Metaheuristics}.\footnote{https:/\!/cs.gmu.edu/\(\sim\)sean/book/metaheuristics/}  In general, you will specify which model parameters, agent behaviors, or whatnot, should be optimized.  ECJ will then create multiple random assortments of these (in evolutionary computation parlance, ECJ will create a {\it population} of {\it individuals}), then plug them each assortment into the worker processes to be {\it assessed}.  Assessment consists of using these parameters and behaviors in a MASON model, running it, and seeing how it performs.  After a model has been run some \(T\) times, the worker returns to the master a {\it fitness} describing the performance of that given group of model parameter settings.  The ECJ master uses these fitness assessments to resample a next {\it generation} of parameter settings etc., then tries them again, with the goal of finding the fittest possible settings.  
 
 You will have only one Master but can have a great number of workers: we've tested with hundreds. These workers can be, and typically are, on separate CPUs or even on separate machines.  Distributed model optimization requires transferring information over a network, and the network cost can be high.  It's worthwhile if the amount of time necessary to run a model is relatively long (at least many seconds) so the network transfer cost is minimal in comparison.    Fortunately, that's the typical situation for ABM models.
 
@@ -13185,6 +13185,9 @@ We provide two ways you can do optimization:
 Let's start with the first one.
 
 \subsection{Simple Optimization}
+\label{simpleoptimization}
+
+Even though this is the ``simple'' approach, there's a lot of stuff to cover, though it's not too bad.  
 
 We begin by creating a parameters file\,---\,a text file\,---\,called, say, \file{mymodel.params}.   On the first line of this file, we write:
  
@@ -13304,6 +13307,10 @@ Finally, I have also changed the number of generations: how many iterations of n
 Both the number of generations and the population size increase the total number of possible settings (``individuals'') that ECJ will consider during optimization.  But they have different effects.  A larger population size causes ECJ to tend to try more diverse options, while a larger number of generations will cause ECJ to try to finesse more.  This trade-off is known as {\it exploration vs. exploitation}.  It shows up in other places as well: for example, a larger standard deviation is more explorative in a somewhat different way.  ECJ has a great many options and algorithms.
 
 These three parameters are the most common parameters you'd tweak in simple optimization if you were using just a Genetic Algorithm: but there are other parameters appropriate for other optimization techniques.
+
+\paragraph{Random Number Seeds}
+
+Normally ECJ would allow you to fix the random number seed so as to guarantee a replicable optimization run.  You can indeed set up a deterministic random number seed here, but if your agent-based model is at all stochastic, then when the individual models are run on the remote machines, they will use their own seeds.  So I recommend not using a deterministic seed at all.  Instead, rely on ECJ's internal seeding mechanism to seed runs independently. 
 
 \paragraph{Running the Optimization Procedure}
 We run the optimization procedure by submitting the parameter file to \class{sim.util.opt.Optimize}, like this:
@@ -13427,7 +13434,6 @@ FATAL ERROR:
 Unable to read type of evaluation from master.  Maybe the master closed its socket and exited?:
 ec.util.Output$OutputExitException: SHUTDOWN
 
-
 Resetting Slave
 Connecting to master at 127.0.0.1:15000
 \end{verbatim}
@@ -13464,7 +13470,7 @@ Fitness: 163.92
 0.013470884065035008 0.9051401800179395 0.1091083567970517 0.678665177564443 0.17749789755554085
 \end{verbatim}
 
-The critical item is the last line.  This tells us that our best settings were:
+What you're seeing here is the best individual (variable settings) in each generation.  The critical item is the last line.  This tells us that the best settings ever discovered were:
 
 \begin{center}
 \begin{tabular}{ll}
@@ -13486,6 +13492,35 @@ stat.file = /tmp/out.stat
 \end{verbatim}
 
 This would write the file in the \file{/tmp/} directory.
+
+We're also writing statistics out in a different way.  The accompanying file \file{short.stat} writes out tabular statistics which you might find more useful. This file will look something like this:
+
+\begin{verbatim}
+generation meanFitness bestOfGenFitness bestSoFarFitness
+0 1.0249999999999997 1.025 1.025
+1 1.838125 2.04 2.04
+2 2.049583333333334 2.53 2.53
+3 2.327708333333333 3.05 3.05
+4 2.5499999999999994 3.425 3.425
+5 2.9358333333333335 4.565 4.565
+6 3.4575 8.275 8.275
+7 4.5704166666666675 27.53 27.53
+8 4.138541666666668 9.89 27.53
+9 5.163958333333334 22.85 27.53
+10 10.125416666666666 90.82 90.82
+11 17.383541666666666 81.145 90.82
+12 35.57520833333333 157.51 157.51
+\end{verbatim}
+
+... and so on.  As you can tell from the header, the first column is the {\bf generation number} (0 being the first generation), the second column is the {\bf mean fitness of the population that generation}, the third column is the {\bf fitness of the best individual that generation}, and the fourth column is the {\bf best fitness discovered so far in the run}.  Usually this fourth column is the most useful piece of information.
+
+If you'd like to change this file (to \file{/tmp/out2.stat}, say), it's a slightly different parameter due to ECJ idiosyncrasies.
+
+\begin{verbatim}
+stat.child.0.file = /tmp/out2.stat
+\end{verbatim}
+
+If you were paying attention, you'd note that the fitness values are very different from the ones in \file{out.stat}: I had run again using the upcoming example...
 
 \paragraph{A More Illustrative Example}
 Now note that this is in fact a {\it terrible} example of optimization, because in the first generation of 24 individuals, there's a good chance that we {\it already} will have one with a low avoidance and high cohesion, so as of the very first generation we're already basically done!  To make this more interesting, here's a little hack.  Rather than create random individuals initially, we could read them from a file where they're forced to all be terrible at the beginning, and then watch them optimize to a better solution.  For example, imagine if I made a file called \file{in.stat} which looked like this:
@@ -13509,6 +13544,185 @@ pop.subpop.0.extra-behavior = wrap
 
 This tells the MASON Master to create the initial population of individuals by repeatedly loading in the \file{in.stat} file.  Now all the individuals start as this horrible individual.  Typically the first generation will now have a fitness of something like {\bf 1.025} (!!!), and after about 15 generations will work its way up to 15 or so, before suddenly getting a clue and rapidly climbing into the 160s.
 
+\subsection{More Optimization Methods}
+
+ECJ offers a great many optimization methods.  Here we'll touch on a few more which can be directly used with the \class{sim.util.opt.Optimize} class.  These methods all can operate with individuals in the form of vectors of doubles.  Since Optimize converts its numerical and boolean variables into doubles, that will work fine.
+
+\paragraph{Evolution Strategies}
+
+Evolution Strategies (or ES) was long  the ``black horse'' competitor to the genetic algorithm.   The two algorithms are very similar in many respects, except for how they select individuals for resampling to the next generation.  Here we'll modify the Flockers parameter file to use an ES rather than a GA.
+
+Let's build off of our previous file \file{mymodel.params}, developed in the Section~\ref{simpleoptimization}, without modifying it.  We'll make a new file called \file{mymodel.es.params} and have it refer to the previous file.  It'll also have a new parent file which tells ECJ to first load various ES parameter defaults:
+
+\begin{verbatim}
+parent.0 = @ec.es.ESSelection es.params
+parent.1 = mymodel.params
+\end{verbatim}
+
+(This assumes that \file{mymodel.params} is located right next to our new file \file{mymodel.es.params}).
+
+The ES we'll use is a so-called \((\mu, \lambda)\) ES, so-named because it maintains a population of size \(\lambda\) and from it selects the \(\mu\) best individuals to produce the next-generation population.   \((\mu, \lambda)\) is the default method used in ECJ's ES system.  But we need to change the selection method.  This will do the job:
+
+\begin{verbatim}
+# Unlike a GA, ES normally doesn't have crossover by default.  But since we're
+# sharing the ECJ genetic pipeline parameters used by our GA, we'll just change
+# the selection methods and be done with it.  Thus this ES will perform 
+# crossover followed by mutation.  The inputs to the crossover
+# operator are ESSelection and a standard tournament selector
+
+pop.subpop.0.species.pipe.source.0.source.0 = ec.es.ESSelection
+pop.subpop.0.species.pipe.source.0.source.1 = ec.select.TournamentSelection
+\end{verbatim}
+
+Now we set up the population size (\(\lambda\)) and also \(\mu\) (which must divide evenly into \(\lambda\)):
+
+\begin{verbatim}
+es.mu.0 = 6
+es.lambda.0 = 24
+\end{verbatim}
+
+A larger \(\mu\) relative to \(\lambda\) allows more lower-quality individuals a seat at the table in deciding the nature of the next generation, and so is more explorative.
+
+And that should do the job.  You'll find this ES to perform somewhat better than a simple GA in optimization:
+
+\begin{verbatim}
+java sim.util.opt.Optimize mymodel.es.params
+\end{verbatim}
+
+\paragraph{CMA-ES}
+
+Now let's go for the gold.  The {\bf Covariance Matrix Adaptation Evolution Strategy}, or {\it CMA-ES}, is a so-called {\it estimation of distribution} algorithm.  It's known for having impressive performance and requiring very few parameter settings.  We can set it up using a file called \file{mymodel.cmaes.params}, in which we put:
+
+\begin{verbatim}
+parent.0 = @ec.eda.cmaes.CMAESBreeder cmaes.params
+parent.1 = mymodel.params
+\end{verbatim}
+
+... and that's it!  Run it as:
+
+\begin{verbatim}
+java sim.util.opt.Optimize mymodel.cmaes.params
+\end{verbatim}
+
+\paragraph{Multiobjective Optimization}
+
+So far we've avoided discussing the possibility of {\it multiple objective functions} to optimize.  For example, we might wish our model to produce as much agriculture as possible while simultaneously causing as little disease as possible.  These objectives are often at odds with another, and so instead of hunting for the (likely impossible) model settings which are optimal for {\it both of them}, we instead might wish to know what the {\it Pareto Non-Dominated Front} (or just {\it Pareto Front}) is between them.  
+
+Solution A {\it Pareto-dominates} Solution B if A is at least as good as B in all objective measures, and better than B in at least one objective measure.  In this case, there's no reason to keep B: A is clearly superior.  However if A is better in one objective but worse in some other; or if A and B are identical in all objectives, then both are interesting options.  We are looking for the set of solutions which are Pareto dominated by no other solutions.  These are the solutions worth considering: this is the Pareto Front.   Thus at the end of the day, instead of returning a single best-discovered solution, a typical multiobjective optimization algorithm will return the Pareto Front among all the solutions that it ever examined. 
+
+Not surprisingly, multiobjective optimization requires its own special algorithms to maintain this front, as well as different fitness objects to hold onto the multi-objective assessments of candidate solutions.  So we've got a bit more writing to do.  Let's start with a file called \file{mymodel.multi.params}, in which we put:
+
+\begin{verbatim}
+parent.0 = @ec.multiobjective.nsga2.NSGA2Breeder nsga2.params
+parent.1 = mymodel.params
+\end{verbatim}
+
+This sets ECJ up with most of the defaults for a popular if venerable multiobjective optimization algorithm, the {\it Nondominated Sorting Genetic Algorithm II}, or NSGA-II.  NSGA-II historically uses its own funky crossover and mutation mechanisms.  So we'll use those by default:
+
+\begin{verbatim}
+pop.subpop.0.species.crossover-type = sbx
+pop.subpop.0.species.crossover-distribution-index = 20
+pop.subpop.0.species.mutation-prob = 1.0
+pop.subpop.0.species.mutation-type = polynomial
+pop.subpop.0.species.alternative-polynomial-version = true
+pop.subpop.0.species.mutation-distribution-index = 20
+pop.subpop.0.species.mutation-bounded = true
+\end{verbatim}
+
+ECJ is capable of producing a variety of statistics for multiobjective optimization.  One that we'll turn {\it off} (because it requires us to specify a reference point in multiobjective space, which is too much of a hassle here), is hypervolume computation:
+
+\begin{verbatim}
+stat.do-hypervolume =  false
+\end{verbatim}
+
+Next, we need to specify the population size and number of generations again, because the NSGA-II defaults are specifying the wrong values:
+
+\begin{verbatim}
+pop.subpop.0.size = 24
+generations = 30
+\end{verbatim}
+
+Now we can run things:
+
+\begin{verbatim}
+java sim.util.opt.Optimize mymodel.multi.params
+\end{verbatim}
+
+Note that when the Workers fire up, they'll complain:
+
+\begin{verbatim}
+ONCE-ONLY WARNING:
+NSGA2MultiObjectiveFitness: The value of objective #0 is outside the expected bounds
+[0.000000, 1.000000].  Did you configure the 'min' and 'max' parameters correctly?
+\end{verbatim}
+
+This is because we didn't tell the workers what the minimum and maximum bounds were: the workers don't need this information (only the master does), but they don't realize that.  So it's just a spurious complaint.
+
+After we have done the run, we have {\bf three statistics files} written out:  \file{out.stat}, \file{out2.stat}, and a newcomer, \file{front.stat}.  The file \file{out.stat} is by far the most important.  Instead of holding the best-discovered individual, the very end of the file \file{out.stat} contains the Pareto Front of individuals.  The file \file{out2.stat} is nonsensical now, as it is designed to provide statistics on single individuals: you can ignore it.  The file \file{front.stat} contains the multiobjective fitness assessment points of the final Pareto Front, in case you wanted to chart it and didn't want to parse that information out of \file{out.stat}.
+
+
+\paragraph{Steady-State or ``Asynchronous'' Evolution}
+
+It's very common that an agent-based model may take a wildly variable amount of time to complete.  This can cause problems for evolutionary optimization methods. The issue is this: the methods we've discussed so far are {\it generational} methods, meaning that they evaluate {\it all} of the models in a given generation (we've used 24), then synchronize with the master before it sends out the next generation of 24 models, the synchronize again, and so on.  But what if 23 of your models ran in 30 seconds each, but one took five minutes?  The master, and all of the workers, would have to sit and wait for that model to complete before sending out the next batch.  This is extremely inefficient.
+
+An alternative is to use {\it Asynchronous Evolution} (a parallel variation of a well known technique known as {\it Steady-State Evolution}) to send out individuals {\it asynchronously}.  The process involves two stages.  The first stage is the {\it initialization stage}:
+
+\begin{enumerate}
+\item We begin with a master and some \(M\) workers.
+\item The master creates an initial, but empty population of size \(N\).
+\item The master then creates \(M\) initial individuals and hands one to each worker.
+\item When a worker has completed assessment of its individual, it returns the fitness to the master, who places the individual, with its fitness, in the initial population, then creates a new initial individual and gives it to the worker.
+\end{enumerate}
+
+When \(M\) individuals have been returned, and the population is now filled, we proceed to the {\it steady-state stage}.  At this point all workers are assessing new individuals, and all individuals in the population have already been assessed and have valid fitnesses.  So now:
+
+\begin{enumerate}
+\item When a worker has completed assessment of its individual, it returns the fitness to the master, who decides to {\it kill} an existing individual in the population and replace it the newly-returned one.  Then it {\it breeds} a new individual from the existing population and gives that individual to the worker to assess.
+\item When \(M\) individuals have been returned and new ones bred, the master declares that the ``generation'' (so to speak) has concluded an writes out useful statistics about it.
+\item When some \(E\) total individuals have been assessed and returned, the process terminates.  Typically \(E\) is a multiple of \(M\) to make it end on a nice pseudo-generational boundary, but this is hardly requirement.  However it must be the case that \(E \geq M\), so that at least one ``generation'' can be completed.
+\end{enumerate}
+
+If a worker's individual is causing its model to take an inordinate amount of time, no one has to wait for it\,---\,optimization continues apace and when the model is finally completed, that individual can now compete in the population.  One particularly nice feature of asynchronous evolution is that new workers can be fired up and added to the system at any time: the master will simply hand them individuals to work on.  Additionally, if a worker dies and disappears, that's no big loss: its individual wasn't critical to the generation anyway.
+
+The steady-state algorithm we use here is simply a steady-state version of the Genetic Algorithm.  Let's create a file called \file{mymodel.steady.params}, and put in it:
+
+\begin{verbatim}
+parent.0 = @ec.steadystate.SteadyStateEvolutionState steadystate.params
+parent.1 = mymodel.params
+\end{verbatim}
+
+Now all we have to do is specify the population size and the number of evaluations:
+
+\begin{verbatim}
+pop.subpop.0.size = 24
+evaluations = 720
+\end{verbatim}
+
+Evaluations indicates the total number of individuals to be assessed.  Notice that \(720 = 24 \times 30\). We were using 30 generations of 24 individual each in the previous examples, so we might as well keep to that tradition here.  One little gotcha here: because \file{steadystate.params} in turn uses the standard GA's \file{simple.params}, a generations value has already been set.  ECJ will terminate the optimization process whenever the generations has been exceeded, or the evaluations has been exceeded, whichever is first.  We want to make sure evaluations wins, so let's reset the number of generations to something insanely huge:
+
+\begin{verbatim}
+# Make something big here so we stop first on evaluations
+generations = 100000000
+\end{verbatim}
+
+And we're done!  We run it as:
+
+\begin{verbatim}
+java sim.util.opt.Optimize mymodel.steady.params
+\end{verbatim}
+
+... and things should work just fine.  Note that you'll see one spurious warning in the master:
+
+\begin{verbatim}
+WARNING:
+You've chosen to use Steady-State Evolution, but your statistics does not implement the 
+SteadyStateStatisticsForm.
+PARAMETER: stat.child.0
+\end{verbatim}
+
+This is because \parameter{stat.child.0} is our tabular statistics, and the object which produces that doesn't implement extended steady-state-specific statistics options.  That's not a big deal.
+
+Also note that ECJ at present does not implement an evolutionary algorithm which is {\it both} multiobjective {\it and} steady-state.  You'll have to pick.
 
 \cleardoublepage
 \footnotesize
