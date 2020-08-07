@@ -300,7 +300,7 @@ public class QuadTree {
 	}
 
 	public int[] getNeighborPids(final QuadTreeNode node, final int[] aoi,final boolean isToroidal) {
-		return getNeighbors(node, aoi,isToroidal).stream().mapToInt(x -> x.getProc()).sorted().toArray();
+		return getNeighbors(node, aoi,isToroidal).stream().mapToInt(x -> x.getProcessor()).sorted().toArray();
 	}
 
 	private static void testFindNeighbor() {

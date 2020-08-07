@@ -33,8 +33,8 @@ import sim.util.MPIParam;
 import sim.util.MPIUtil;
 
 /**
- * All fields in distributed MASON must contain this class. 
- * Stores objects/agents and implements methods to add, move and remove them.
+ * All fields in distributed MASON must contain this class. Stores
+ * objects/agents and implements methods to add, move and remove them.
  *
  * @param <T> The Class of Object to store in the field
  * @param <P> The Type of P to use
@@ -43,7 +43,9 @@ import sim.util.MPIUtil;
 public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends GridStorage>
 		implements TransportRMIInterface<Serializable, P>, Synchronizable, DGrid<T, P> {
 
-	// Helper class to organize neighbor-related data structures and methods
+	/**
+	 * Helper class to organize neighbor-related data structures and methods
+	 */
 	class Neighbor {
 		int pid;
 		MPIParam sendParam, recvParam;
@@ -102,7 +104,7 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 		this.state = state;
 		// init variables that don't change with the partition scheme
 		numDimensions = ps.getNumDim();
-		world = ps.getField();
+		world = ps.createField();
 		fieldSize = ps.getFieldSize();
 		MPIBaseType = localStorage.getMPIBaseType();
 		registerCallbacks();
@@ -147,6 +149,9 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 
 	}
 
+	/**
+	 * Resizes partition and halo. Also sets up the neighbors
+	 */
 	public void reload() {
 		origPart = partition.getPartition();
 		// Get the partition representing halo and local area by expanding the original
@@ -163,10 +168,22 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 		numNeighbors = neighbors.size();
 	}
 
+	/**
+	 * Shifts point p to give location on the local partition
+	 * 
+	 * @param p
+	 * @return location on the local partition
+	 */
 	public IntPoint toLocalPoint(final IntPoint p) {
 		return p.rshift(haloPart.ul().getArray());
 	}
 
+	/**
+	 * Wraps point around to give location on the local partition
+	 * 
+	 * @param p
+	 * @return location in a toroidal plane
+	 */
 	public IntPoint toToroidal(final IntPoint p) {
 		return p.toToroidal(world);
 	}
@@ -387,10 +404,16 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 //		}
 //	}
 
+	/**
+	 * Move for when both the from and to are local
+	 * 
+	 * @param fromP
+	 * @param toP
+	 * @param t     object to move
+	 */
 	public void moveLocal(final P fromP, final P toP, final T t) {
 		localStorage.removeObject(t);
 		localStorage.setLocation(t, toP);
-
 	}
 
 	// TODO make a copy of the storage which will be used by the remote field access
@@ -399,6 +422,11 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 	// If the getField method returns the current field then
 	// this cast should work
 
+	/**
+	 * Get using RMI the object (or objects) contained at a point p
+	 * 
+	 * @param p point to get from
+	 */
 	public Serializable getFromRemote(final P p) {
 		try {
 			return proxy.getField(partition.toPartitionId(p)).getRMI(p);
@@ -409,6 +437,12 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 		}
 	}
 
+	/**
+	 * Add using RMI an object t contained at a point p
+	 * 
+	 * @param p point to add at
+	 * @param t object to add
+	 */
 	public void addToRemote(final P p, final T t) {
 		try {
 			proxy.getField(partition.toPartitionId(p)).addRMI(p, t);
@@ -419,6 +453,12 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 		}
 	}
 
+	/**
+	 * Remove using RMI an object t contained at a point p
+	 * 
+	 * @param p point to remove from
+	 * @param t object to remove
+	 */
 	public void removeFromRemote(final P p, final T t) {
 		try {
 			proxy.getField(partition.toPartitionId(p)).removeRMI(p, t);
@@ -429,6 +469,11 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 		}
 	}
 
+	/**
+	 * Remove using RMI all objects contained at a point p
+	 * 
+	 * @param p point to remove from
+	 */
 	public void removeFromRemote(final P p) {
 		try {
 			proxy.getField(partition.toPartitionId(p)).removeRMI(p);
@@ -439,36 +484,72 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 		}
 	}
 
+	/**
+	 * @return local storage (for this partition)
+	 */
 	public GridStorage getStorage() {
 		return localStorage;
 	}
 
 	// Various stabbing queries
-	public boolean inGlobal(final IntPoint p) {
-		return IntStream.range(0, numDimensions).allMatch(i -> p.c[i] >= 0
-				&& p.c[i] < fieldSize[i]);
+	/**
+	 * @param point
+	 * @return true if point is within the global grid
+	 */
+	public boolean inGlobal(final IntPoint point) {
+		return IntStream.range(0, numDimensions).allMatch(i -> point.c[i] >= 0
+				&& point.c[i] < fieldSize[i]);
 	}
 
-	public boolean inLocal(final P p) {
-		return origPart.contains(p);
+	/**
+	 * @param point
+	 * @return true if point is local
+	 */
+	public boolean inLocal(final P point) {
+		return origPart.contains(point);
 	}
 
-	public boolean inPrivate(final P p) {
-		return privatePart.contains(p);
+	/**
+	 * @param point
+	 * @return true if point is local and not in the halo
+	 */
+	public boolean inPrivate(final P point) {
+		return privatePart.contains(point);
 	}
 
-	public boolean inLocalAndHalo(final P p) {
-		return haloPart.contains(p);
+	/**
+	 * @param point
+	 * @return true if point is local or in the halo
+	 */
+	public boolean inLocalAndHalo(final P point) {
+		return haloPart.contains(point);
 	}
 
-	public boolean inShared(final P p) {
-		return inLocal(p) && !inPrivate(p);
+	/**
+	 * @param point
+	 * @return true if point p is local and in the halo
+	 */
+	public boolean inShared(final P point) {
+		return inLocal(point) && !inPrivate(point);
 	}
 
-	public boolean inHalo(final P p) {
-		return inLocalAndHalo(p) && !inLocal(p);
+	/**
+	 * @param point
+	 * @return true if point p is in the halo (and not local)
+	 */
+	public boolean inHalo(final P point) {
+		return inLocalAndHalo(point) && !inLocal(point);
 	}
 
+	/**
+	 * Sends the local storage to the destination dst. All nodes will call this
+	 * together.
+	 * 
+	 * @param dst
+	 * @param fullField
+	 * 
+	 * @throws MPIException
+	 */
 	public void collect(final int dst, final GridStorage fullField) throws MPIException {
 		final Serializable sendObj = localStorage.pack(new MPIParam(origPart, haloPart, MPIBaseType));
 
@@ -479,6 +560,14 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 				fullField.unpack(new MPIParam(partition.getPartition(i), world, MPIBaseType), recvObjs.get(i));
 	}
 
+	/**
+	 * Sends the local storage to the group root. All nodes from group with
+	 * DQuadTreePartition will call this together.
+	 * 
+	 * @param level
+	 * @param groupField
+	 * @throws MPIException
+	 */
 	public void collectGroup(final int level, final GridStorage groupField) throws MPIException {
 		if (!(partition instanceof QuadTreePartition))
 			throw new UnsupportedOperationException(
@@ -497,10 +586,17 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 					groupField.unpack(new MPIParam(gc.leaves.get(i).getShape(), gc.master.getShape(), MPIBaseType),
 							recvObjs.get(i));
 		}
-
 		MPI.COMM_WORLD.barrier();
 	}
 
+	/**
+	 * The group root sends local storage for each node within a group. All nodes
+	 * from group with DQuadTreePartition will call this together.
+	 * 
+	 * @param level
+	 * @param groupField
+	 * @throws MPIException
+	 */
 	public void distributeGroup(final int level, final GridStorage groupField) throws MPIException {
 		if (!(partition instanceof QuadTreePartition))
 			throw new UnsupportedOperationException(
@@ -525,18 +621,12 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 		syncHalo();
 	}
 
-	public String toString() {
-		return String.format("PID %d Storage %s", partition.getPid(), localStorage);
-	}
-
 	/* METHODS SYNCHO */
 
-	@Override
 	public void initRemote() {
 		proxy = new RMIProxy(partition, this);
 	}
 
-	@Override
 	public void syncHalo() throws MPIException {
 		final Serializable[] sendObjs = new Serializable[numNeighbors];
 		for (int i = 0; i < numNeighbors; i++)
@@ -548,9 +638,7 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 			localStorage.unpack(neighbors.get(i).recvParam, recvObjs.get(i));
 	}
 
-	@Override
 	public void syncObject(PayloadWrapper payloadWrapper) {
-		// TODO Auto-generated method stub
 		if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
 			final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
 
@@ -590,8 +678,15 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 		return localStorage.getObjects(p);
 	}
 
+	/**
+	 * @return DSimState for the current sim
+	 */
 	public DSimState getState() {
 		return state;
+	}
+
+	public String toString() {
+		return String.format("PID %d Storage %s", partition.getPid(), localStorage);
 	}
 
 }

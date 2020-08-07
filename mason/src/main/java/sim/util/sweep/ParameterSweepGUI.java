@@ -162,6 +162,9 @@ public class ParameterSweepGUI extends JPanel
             };
         
         initialSeed = state.state.seed();
+        if (initialSeed == 0) initialSeed = 423151237;
+        if (initialSeed < 0) initialSeed = 0 - initialSeed;
+        
         PropertyField seedField = new PropertyField("" + initialSeed )
             {
             public String newValue(String value)
@@ -169,7 +172,7 @@ public class ParameterSweepGUI extends JPanel
                 try
                     {
                     long s = Long.parseLong(value);
-                    if (s != 0)
+                    if (s > 0)
                         initialSeed = s; 
                     }
                 catch (NumberFormatException ex) { }

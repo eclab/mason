@@ -3,16 +3,21 @@ package sim.field.grid;
 import java.rmi.RemoteException;
 
 import sim.engine.DSimState;
+import sim.engine.DistributedIterativeRepeat;
 import sim.field.DAbstractGrid2D;
+import sim.field.DGrid;
 import sim.field.HaloGrid2D;
 import sim.field.partitioning.IntPoint;
-import sim.field.partitioning.NdPoint;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.storage.IntGridStorage;
 
-public class DIntGrid2D extends DAbstractGrid2D {
+/**
+ * A grid that contains integers. Analogous to Mason's IntGrid2D
+ * 
+ */
+public class DIntGrid2D extends DAbstractGrid2D implements DGrid<Integer, IntPoint> {
 
-	private HaloGrid2D<Integer, NdPoint, IntGridStorage<Integer>> halo;
+	private HaloGrid2D<Integer, IntPoint, IntGridStorage<Integer>> halo;
 	public final int initVal;
 
 	public DIntGrid2D(final PartitionInterface ps, final int[] aoi, final int initVal, final DSimState state) {
@@ -20,7 +25,7 @@ public class DIntGrid2D extends DAbstractGrid2D {
 		if (ps.getNumDim() != 2)
 			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + ps.getNumDim());
 
-		halo = new HaloGrid2D<Integer, NdPoint, IntGridStorage<Integer>>(ps, aoi,
+		halo = new HaloGrid2D<Integer, IntPoint, IntGridStorage<Integer>>(ps, aoi,
 				new IntGridStorage(ps.getPartition(), initVal), state);
 		fieldSize = ps.getFieldSize();
 
@@ -66,7 +71,7 @@ public class DIntGrid2D extends DAbstractGrid2D {
 	}
 
 	// Overloading to prevent AutoBoxing-UnBoxing
-	public void add(final IntPoint p, final Integer val) {
+	public void add(final IntPoint p, final int val) {
 		if (!halo.inLocal(p))
 			halo.addToRemote(p, val);
 		else
@@ -74,12 +79,12 @@ public class DIntGrid2D extends DAbstractGrid2D {
 	}
 
 	// Overloading to prevent AutoBoxing-UnBoxing
-	public void remove(final IntPoint p, final Integer t) {
+	public void remove(final IntPoint p, final int t) {
 		halo.remove(p);
 	}
 
 	// Overloading to prevent AutoBoxing-UnBoxing
-	public void move(final IntPoint fromP, final IntPoint toP, final Integer t) {
+	public void move(final IntPoint fromP, final IntPoint toP, final int t) {
 		final int fromPid = halo.partition.toPartitionId(fromP);
 		final int toPid = halo.partition.toPartitionId(fromP);
 
@@ -94,6 +99,58 @@ public class DIntGrid2D extends DAbstractGrid2D {
 			remove(fromP, t);
 			add(toP, t);
 		}
+	}
+
+	public void add(IntPoint p, Integer t) {
+		halo.add(p, t);
+	}
+
+	public void remove(IntPoint p, Integer t) {
+		halo.remove(p, t);
+	}
+
+	public void remove(IntPoint p) {
+		halo.remove(p);
+	}
+
+	public void move(IntPoint fromP, IntPoint toP, Integer t) {
+		halo.move(fromP, toP, t);
+	}
+
+	public void addAgent(IntPoint p, Integer t) {
+		halo.addAgent(p, t);
+	}
+
+	public void addAgent(IntPoint p, Integer t, int ordering, double time) {
+		halo.addAgent(p, t, ordering, time);
+	}
+
+	public void moveAgent(IntPoint fromP, IntPoint toP, Integer t) {
+		halo.moveAgent(fromP, toP, t);
+	}
+
+	public void moveAgent(IntPoint fromP, IntPoint toP, Integer t, int ordering, double time) {
+		halo.moveAgent(fromP, toP, t, ordering, time);
+	}
+
+	public void addRepeatingAgent(IntPoint p, Integer t, double time, int ordering, double interval) {
+		halo.addRepeatingAgent(p, t, time, ordering, interval);
+	}
+
+	public void addRepeatingAgent(IntPoint p, Integer t, int ordering, double interval) {
+		halo.addRepeatingAgent(p, t, ordering, interval);
+	}
+
+	public void removeAndStopRepeatingAgent(IntPoint p, Integer t) {
+		halo.removeAndStopRepeatingAgent(p, t);
+	}
+
+	public void removeAndStopRepeatingAgent(IntPoint p, DistributedIterativeRepeat iterativeRepeat) {
+		halo.removeAndStopRepeatingAgent(p, iterativeRepeat);
+	}
+
+	public void moveRepeatingAgent(IntPoint fromP, IntPoint toP, Integer t) {
+		halo.moveRepeatingAgent(fromP, toP, t);
 	}
 
 }

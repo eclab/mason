@@ -7,9 +7,8 @@
 package sim.engine;
 
 /**
- * Changes constructor to set Stoppable. 
- * Overrides stop() to set Stoppable as null
- * 
+ * Changes constructor to set Stoppable. Overrides stop() to set Stoppable as
+ * null
  */
 public class DistributedTentativeStep extends TentativeStep {
 	private static final long serialVersionUID = 1;

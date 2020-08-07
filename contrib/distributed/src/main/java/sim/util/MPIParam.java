@@ -14,12 +14,18 @@ import sim.field.storage.GridStorage;
  *
  */
 public class MPIParam {
+	/**
+	 * Nd subarray MPI datatype
+	 * 
+	 */
 	public Datatype type;
 	public int idx, size;
 
-	// Will be used by ObjectGridStorage to collect all the objects from rects
-	// this is due to the limitations of openmpi java bindings
-	// coordinates of the rects stored here are local
+	/**
+	 * Will be used by ObjectGridStorage to collect all the objects from rects. This
+	 * is due to the limitations of openmpi java bindings coordinates of the rects
+	 * stored here are local
+	 */
 	public List<IntHyperRect> rects;
 
 	// TODO need to track all previously allocated datatypes and implement free() to
@@ -73,8 +79,16 @@ public class MPIParam {
 		}
 	}
 
-	// Create Nd subarray MPI datatype
-	private Datatype getNdArrayDatatype(int[] size, Datatype base, int[] strideSize) {
+	/**
+	 * Create Nd subarray MPI datatype
+	 * 
+	 * @param size
+	 * @param base
+	 * @param strideSize
+	 * 
+	 * @return MPI Datatype
+	 */
+	Datatype getNdArrayDatatype(int[] size, Datatype base, int[] strideSize) {
 		Datatype type = null;
 		int typeSize = getTypePackSize(base);
 
@@ -93,7 +107,7 @@ public class MPIParam {
 		return type;
 	}
 
-	private int getTypePackSize(Datatype type) {
+	int getTypePackSize(Datatype type) {
 		int size = 0;
 
 		try {

@@ -115,7 +115,7 @@ public class DFlockersWithDRegistry extends DSimState {
 
 	public static void main(final String[] args) throws MPIException {
 		Timing.setWindow(20);
-		doLoopMPI(DFlockersWithDRegistry.class, args);
+		doLoopDistributed(DFlockersWithDRegistry.class, args);
 		System.exit(0);
 	}
 }
