@@ -10881,7 +10881,7 @@ There are several kinds of Simple Portrayals in 3D, many of which are similar to
 \item {\bf Value Simple Portrayals} portray numbers as if they were simple shapes (typically cubes) of various colors, using a \class{sim.util.gui.ColorMap} to translate between numerical values and colors.  These are designed primarily to work with \class{sim.portrayal3d.grid.ValueGridPortrayal3D}.
 \item {\bf Quad Portrayals} portray numbers as if they were squares or points in a mesh, of various colors, using a \class{sim.util.gui.ColorMap} to translate between numerical values and colors.  These are designed primarily to work with \class{sim.portrayal3d.grid.Value2DGridPortrayal3D}.  Quad Portrayals were discussed in Section \ref{sim.portrayal3d.grid.quad.QuadPortrayal}.
 \item {\bf Edge Simple Portrayals} draw edges in networks.  These are designed to work with \method{sim.portrayal3d.network.NetworkPortrayal3D}.
-\item {\bf Wrapper Simple Portrayals}  ``wrap'' around subsidiary Simple Portrayals to add additional gizmos  to them. For example. to add a label, or to circle an object when it’s selected, simply create a wrapper portrayal around your basic portrayal and submit the wrapper portrayal as the Simple Portrayal to the Field Portrayal. Wrapper portrayals can wrap other wrapper portrayals, creating a sequence of ``wraps'' around a basic portrayal. 
+\item {\bf Wrapper Simple Portrayals}  ``wrap'' around subsidiary Simple Portrayals to add additional gizmos  to them. For example. to add a label, or to circle an object when it√ïs selected, simply create a wrapper portrayal around your basic portrayal and submit the wrapper portrayal as the Simple Portrayal to the Field Portrayal. Wrapper portrayals can wrap other wrapper portrayals, creating a sequence of ``wraps'' around a basic portrayal. 
 \end{itemize}
 
 
@@ -13723,6 +13723,27 @@ PARAMETER: stat.child.0
 This is because \parameter{stat.child.0} is our tabular statistics, and the object which produces that doesn't implement extended steady-state-specific statistics options.  That's not a big deal.
 
 Also note that ECJ at present does not implement an evolutionary algorithm which is {\it both} multiobjective {\it and} steady-state.  You'll have to pick.
+
+\subsection{Model Optimization through Graphical Interface}
+
+The model optimization process can also be accessed using the graphical interface.  In order to use it, choose the model you wish to optimize from the console. Then go to the  {\it File} menu and select  {\it Optimize Model}.  A new  {\it Optimize} window should open, as shown below.
+
+
+
+
+\begin{wrapfigure}{r}[0in]{2.8in}
+\vspace{-1em}
+\includegraphics[width=2.8in]{OptGUIWindow.png}
+\vspace{-6em}
+\end{wrapfigure}
+
+The top section of the window contains a list of the variables available to optimize.  The variables here are model specific.  In order to optimize variables, the user should select which variables they want to optimize.  Note that multiple variables can be selected.  The selected variables will be highlighted in blue (in the example, CutDown is the only variable being optimized).
+
+Next, we have {\it Global Settings}, which describe overall settings such as the number of workers, number of steps, number of trials, population size, and number of generations.  In the example below, one local worker is used in a 1000 step optimization with 24 agents for 30 generations.
+
+The next section handles which ECJ algorithm is used, and its relevant parameters.  The dropdown menu provides these algorithms: Genetic Algorithm (GA), CMA-ES, ES, NSGA-II, and Steady State Genetic Algorithm. When one of these is selected, the corresponding mutable variable options appear below it.  In this example, the Genetic Algorithm is selected, with a tournament size of 2, mutation rate and standard deviation of 1.0 and 0.1 respectively, and crossover rate of 0.5.  
+
+After all of the correct values are selected, the optimization can be started by pressing the start button on the bottom left.  The user must first choose where the output file will be written.  It is important to note that variables cannot be changed while the optimization process is running. 
 
 \cleardoublepage
 \footnotesize
