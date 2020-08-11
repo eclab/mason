@@ -1,9 +1,7 @@
 #### Distributed Optimization Makefile
-
 #### Relevant Stuff:
 #### To see all your make options:  type   make help
 #### To add flags (like -O) to javac:  change the FLAGS variable below
-
 
 JAVAC = javac ${FLAGS}
 
@@ -13,15 +11,14 @@ VERSION = 4
 
 
 # Main java files, not including the 3D stuff
-DIRS = \
-sim/util/opt/*.java \
+DIRS = sim/util/opt/*.java
 
 
 # Make the main code
 all:
 	@ echo This builds the distributed optimization code.
-	@ echo You'll need to have ECJ installed to use this code.
-	@ echo To learn about other options, type 'make help'
+	@ echo You\'ll need to have ECJ installed to use this code.
+	@ echo To learn about other options, type \'make help\'
 	@ echo 
 	${JAVAC} ${FLAGS} ${DIRS}
 
