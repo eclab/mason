@@ -1,0 +1,8 @@
+parent.0 = @ec.steadystate.SteadyStateEvolutionState steadystate.params
+parent.1 = flockers.master.params
+
+pop.subpop.0.size = 24
+evaluations = 720
+
+# Make something big here so we stop first on evaluations
+generations = 100000000

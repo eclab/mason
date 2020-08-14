@@ -1,0 +1,81 @@
+# Copyright 2019 by Sean Luke and George Mason University
+# Licensed under the Academic Free License version 3.0
+# See the file "LICENSE" for more information
+
+# The slave needs to know where the Master is.  You need to
+# change this.
+eval.master.host = 127.0.0.1
+eval.master.port = 15000
+
+
+# Standard settings we want to use for distributed evaluation 
+eval.slave.run-evolve = false
+eval.slave.runtime = 0
+eval.return-inds = false
+eval.slave.one-shot = false
+eval.stat = ec.Statistics
+eval.stat.num-children = 0
+eval.masterproblem = ec.eval.MasterProblem
+eval.masterproblem.debug-info = false
+eval.masterproblem.max-jobs-per-slave = 1
+eval.masterproblem.job-size = 1
+eval.compression=false
+# eval.slave.muzzle = true
+
+
+# Our problem is a MASONProblem, which handles all the data transfer
+eval.problem = sim.util.opt.MASONProblem
+
+
+# We're using a DoubleVectorIndividual, so....
+
+pop.subpop.0.species =                  ec.vector.FloatVectorSpecies
+pop.subpop.0.species.ind =              ec.vector.DoubleVectorIndividual
+pop.subpop.0.species.fitness =          ec.simple.SimpleFitness
+#pop.subpop.0.species.fitness =          ec.multiobjective.nsga2.NSGA2MultiObjectiveFitness
+
+multi.fitness.num-objectives = 2
+
+
+
+# Here's gunk required to start things up even though we won't
+# use it in reality
+
+checkpoint-modulo = 1
+checkpoint-prefix = ec
+evalthreads = 1
+breedthreads = 1
+state =                                 ec.simple.SimpleEvolutionState
+init =                                  ec.simple.SimpleInitializer
+finish =                                ec.simple.SimpleFinisher
+exch =                                  ec.simple.SimpleExchanger
+breed =                                 ec.simple.SimpleBreeder
+eval =                                  ec.simple.SimpleEvaluator
+stat =                                  ec.simple.SimpleStatistics
+generations =                           100
+quit-on-run-complete =                  true
+pop =                                   ec.Population
+pop.subpops =                           1
+pop.subpop.0 =                          ec.Subpopulation
+pop.subpop.0.duplicate-retries =        2
+pop.subpop.0.species =                  ec.vector.FloatVectorSpecies
+pop.subpop.0.species.pipe =             ec.breed.ReproductionPipeline
+pop.subpop.0.species.pipe.source.0 = ec.select.TournamentSelection
+pop.subpop.0.species.genome-size =     1
+pop.subpop.0.species.min-gene = 0 
+pop.subpop.0.species.max-gene = 1
+pop.subpop.0.species.crossover-type = one
+select.tournament.size =                2
+pop.subpop.0.species.mutation-prob = 0.01
+pop.subpop.0.species.mutation-stdev = 1.0
+pop.subpop.0.species.mutation-type = gauss
+pop.subpop.0.species.mutation-bounded = true
+
+pop.subpop.0.size =                     10
+stat.file                               $out.stat
+
+
+multi.fitness.max.0             = 200
+multi.fitness.min.0             = 0
+multi.fitness.max.1             = 200
+multi.fitness.min.1             = 0
