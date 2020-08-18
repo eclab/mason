@@ -13207,34 +13207,35 @@ The report would be located in a file called \texttt{/tmp/out.csv} (or \texttt{/
 
 \section{Model Optimization}
 
-MASON has a massively distributed model optimization and calibration facility in combination with ECJ.\footnote{http:/\!/cs.gmu.edu/\(\sim\)eclab/projects/ecj/}  The facility is designed to provide both very flexible model optimization and calibration, and also easy calibration of basic model parameters.
+MASON has a massively distributed model optimization and calibration facility in combination with ECJ,\footnote{http:/\!/cs.gmu.edu/\(\sim\)eclab/projects/ecj/} a massively distributed evolutionary computation toolkit.  The facility is designed to provide both very flexible model optimization and calibration, and also easy calibration of basic model parameters.
 
 \begin{wrapfigure}{r}[0in]{3.5in}
 \vspace{-1em}
 \includegraphics[width=3.5in]{DistributedOptimization.pdf}
 \end{wrapfigure}
 
-As shown in the Figure at right, the general setup is as follows.  You will create one {\it master} MASON process and some \(N\) {\it worker} MASON processes.  The Master MASON process largely exists to set up an ECJ Master facility which will communicate with \(N\) ECJ Slave facilities, each one controlled by a MASON Worker process.  The ECJ Slaves will in turn hold onto a single MASON model.
+As shown in the Figure at right, the general setup is as follows.  You will create one {\it master} MASON process and some \(N\) {\it worker} MASON processes.  The Master MASON process largely exists to set up an ECJ ``master'' facility which will communicate with \(N\) ECJ ``slave'' facilities, each one controlled by a MASON Worker process.  The ECJ ``slave'' facilities will in turn hold onto a single MASON model.  The Master and various Worker processes can be on different threads, in different Java processes in the same computer, or even on different computers: and indeed there can be a great many Worker processes, each assessing its own MASON model instance.   
 
-When the workers are fired up, they are told the IP address and the socket number of the master process.  The default socket port is {\bf 15000}.  If you are running all this on your own machine (perhaps for testing, otherwise, that'd be kind of silly) the IP address would be {\bf 127.0.0.1} (or {\bf localhost}).    Each worker looks for a Master process waiting at that port and IP address, and when one appears, they register themselves with it.
+When the workers are fired up, they are told the IP address and the socket number of the master process.  The default socket port is {\bf 15000}.  If a worker was running on the same machine as the master (it'd be best if you had workers on many machines instead) the IP address would be {\bf 127.0.0.1} (or {\bf localhost}).    Each worker looks for a master process waiting at that port and IP address, and when one appears, they register themselves with it.
 
-When all the processes are up and running and registered, optimization begins.  ECJ's optimization techniques are evolutionary computation methods, which we do not discuss here (you can read more about them in ECJ's manual, or in the free book {\it Essentials of Metaheuristics}.\footnote{https:/\!/cs.gmu.edu/\(\sim\)sean/book/metaheuristics/}  In general, you will specify which model parameters, agent behaviors, or whatnot, should be optimized.  ECJ will then create multiple random assortments of these (in evolutionary computation parlance, ECJ will create a {\it population} of {\it individuals}), then plug them each assortment into the worker processes to be {\it assessed}.  Assessment consists of using these parameters and behaviors in a MASON model, running it, and seeing how it performs.  After a model has been run some \(T\) times, the worker returns to the master a {\it fitness} describing the performance of that given group of model parameter settings.  The ECJ master uses these fitness assessments to resample a next {\it generation} of parameter settings etc., then tries them again, with the goal of finding the fittest possible settings.  
+When all the processes are up and running and registered, optimization begins.  ECJ's optimization techniques are evolutionary computation methods, which we do not discuss here in detail (you can read more about them in ECJ's manual, or in the free book {\it Essentials of Metaheuristics}.\footnote{https:/\!/cs.gmu.edu/\(\sim\)sean/book/metaheuristics/}  In general, you will specify which model parameters, agent behaviors, or whatnot, should be optimized.  ECJ will then create multiple random assortments of these (in evolutionary computation parlance, ECJ will create a {\it population} of {\it individuals}), then plug them each assortment into the worker processes to be {\it assessed}.  Assessment consists of using these parameters and behaviors in a MASON model, running it, and seeing how it performs.  After a model has been run some \(T\) times, the worker returns to the master a {\it fitness} describing the performance of that given group of model parameter settings.  The ECJ master uses these fitness assessments to resample a next {\it generation} of parameter settings etc., then tries them again, with the goal of finding the fittest possible settings.  
 
 You will have only one Master but can have a great number of workers: we've tested with hundreds. These workers can be, and typically are, on separate CPUs or even on separate machines.  Distributed model optimization requires transferring information over a network, and the network cost can be high.  It's worthwhile if the amount of time necessary to run a model is relatively long (at least many seconds) so the network transfer cost is minimal in comparison.    Fortunately, that's the typical situation for ABM models.
 
-We provide two ways you can do optimization:
+We provide three ways you can do optimization:
 
 \begin{itemize}
-\item You optimize only a certain number of numeric or boolean model variables from your global MASON model.   You can choose from a few optimization algorithms and specify some of their optimization parameters. MASON does the rest.
-\item You have the freedom to specify all aspects of optimization: for example, you might optimize rulesets for agent behaviors.  This will require that you understand ECJ pretty well.  Or...
+\item You optimize only a certain number of numeric or boolean model variables from your global MASON model.   You can choose from a few optimization algorithms and specify some of their optimization parameters, plus a function which assesses how good you think a model has performed given these parameters.  All this is done on the command line.  MASON does the rest.
+\item You do exactly the same thing, but using a GUI tool much like the GUI tool for parameter sweeps.
+\item You have the freedom to specify all aspects of optimization: for example, you might optimize rulesets for agent behaviors.  This will require that you understand ECJ pretty well.
 \end{itemize}
 
-Let's start with the first one.
+We'll go through these each in turn. Let's start with the first one.  Its discussion is quite involved, but that's because you'll be introduced to many things also used by the other two.
 
 \subsection{Simple Optimization}
 \label{simpleoptimization}
 
-Even though this is the ``simple'' approach, there's a lot of stuff to cover, though it's not too bad.  
+Even though this is the ``simple'' approach, there's a lot of stuff to cover, though it's not too bad.   This is a command-line-only method, but you still need to understand many of its concepts even if you use the GUI.  So you'll need to read this anyway!
 
 We begin by creating a parameters file\,---\,a text file\,---\,called, say, \file{mymodel.params}.   On the first line of this file, we write:
  
@@ -13538,7 +13539,12 @@ By default the \file{out.stat} file will be written right where you fired up the
 stat.file = /tmp/out.stat
 \end{verbatim}
 
-This would write the file in the \file{/tmp/} directory.
+This would write the file in the \file{/tmp/} directory.  You can also ask that the file be compressed.  For example, you might say:
+\begin{verbatim}
+stat.gzip = true
+\end{verbatim}
+
+This would cause the stat file to be gzipped and saved as \file{out.stat.gz} rather than \file{out.stat}.
 
 We're also writing statistics out in a different way.  The accompanying file \file{short.stat} writes out tabular statistics which you might find more useful. This file will look something like this:
 
@@ -13752,7 +13758,9 @@ Evaluations indicates the total number of individuals to be assessed.  Notice th
 generations = 100000000
 \end{verbatim}
 
-And we're done!  We run it as:
+Alternatively we could have made \parameter{evaluations} really big and \parameter{generations} normal, and it'd stop on a generation boundary.
+
+Anyway, we're done!  We run it as:
 
 \begin{verbatim}
 java sim.util.opt.Optimize mymodel.steady.params
@@ -13772,8 +13780,74 @@ This is because \parameter{stat.child.0} is our tabular statistics, and the obje
 Also note that ECJ at present does not implement an evolutionary algorithm which is {\it both} multiobjective {\it and} steady-state.  You'll have to pick.
 
 
+\subsection{Model Optimization through Graphical Interface}
 
+Nearly all of what's been described previously can also be done at the GUI level.  To use the GUI optimizer, first create an instance of your model, then select {\bf Optimize Model} under the {\bf File} menu.  You will be presented with a window such as the one at right.
 
+The window has four sections.  The top section, labelled {\it Optimization Variables}, is where you select the variables you want MASON to toy with in an attempt to optimize your model.  Note that multiple variables can be selected.   Selection is different from how it's done in the parameter sweep GUI.  There, you select a parameter, then choose its function.  Here, you just highlight several rows (try right-clicking or Command-clicking to select multiple variables).
+
+The variables in question are simply the variables which appear in the {\bf Model} tab when you run your model in MASON's GUI, whittled down to the legal ones for optimization (numeric or boolean parameters, both readable and writeable, and having a \class{sim.util.Interval}, or if not, assumed to have a \class{sim.util.Interval} of 0.0--1.0).
+
+\begin{wrapfigure}{r}[0in]{1.9in}
+\vspace{-1.5em}
+\hspace{-2em}\includegraphics[width=2.5in]{OptGUIWindow.png}
+\vspace{-12em}
+\end{wrapfigure}
+
+Next, we have {\it Global Settings}, which describe overall optimizer settings.  These are:
+
+\begin{itemize}
+\item {\bf Num Workers}\quad The GUI optimizer will create some workers of its own in separate threads. Here you specify how many you want.  You probably shouldn't exceed the number of cores on your computer.  You can of course create more workers as separate processes, even on separate machines, as discussed in Section~\ref{simpleoptimization}.
+
+\item {\bf Max Steps}\quad The number of steps each model should run prior to \method{assess()} being called to see how good the run was.  This is the same as the \parameter{mason-steps} parameter discussed previously.
+
+\item {\bf Num Trials}\quad The number of times a single model will be run, with different random number seeds, to assess a given set of parameters.    This is the same as the \parameter{mason-num-trials} parameter discussed previously. 
+
+\item {\bf Rebuild Model}\quad Whether to rebuild a model from scratch or to reuse a previously-used-for-assessment model instance.   This is the same as the \parameter{mason-rebuild-model} parameter discussed previously.
+
+\item {\bf Population Size}\quad The evolutionary computation population size.   This is the same as the \parameter{pop.subpop.0.size} parameter discussed previously (under ``ECJ Parameter Customization'').
+
+\item {\bf Num Generations}\quad The number of evolutionary generations to run.   This is the same as the \parameter{generations} parameter discussed previously (under ``ECJ Parameter Customization'').
+
+\item {\bf Compress Output File}\quad Whether to compress the statistics file with gzip.  This is the same as the \parameter{stat.gzip} parameter discussed previously (under ``ECJ Parameter Customization'').
+\end{itemize}
+
+Following the Global Settings, you choose which evolutionary algorithm you wish to use, and fill in a few basic settings for that algorithm (if you want to be more exacting in telling ECJ what to do, you'll have to use the command line).  The algorithms available are the same as those previously discussed:
+
+\begin{itemize}
+\item {\bf Genetic Algorithm}
+	\begin{itemize}
+		\item {\it Tournament Size}\quad The GA's tournament size.  A value 1 and higher, though 1 just means random selection.  The standard setting is 2.
+		\item {\it Mutation Rate}\quad  A value between 0.0 and 1.0.  Normally 1.0.
+		\item {\it Mutation Standard Deviation}\quad  A value 0.0 and higher.  Typically about 0.1 of a parameter range.
+		\item {\it Crossover Rate}\quad  A value between 0.0 and 0.5.  Normally 0.5.
+	\end{itemize}
+\item {\bf \((\mu, \lambda)\) Evolution Strategy}
+	\begin{itemize}
+		\item {\it Mu \((\mu)\)}\quad The number of parents used to create the next generation.
+		\item {\it Lambda \((\lambda)\)}\quad The size of the next generation.  This is typically the same as the population size.  If different, then the population size is the {\it first} population size, and \(\lambda\) is used for all future population sizes. \(\lambda\) must be an integer multiple of \(\mu\).
+		\item {\it Mutation Rate}\quad  A value between 0.0 and 1.0.  Normally 1.0.
+		\item {\it Mutation Standard Deviation}\quad  A value 0.0 and higher.  Typically about 0.1 of a parameter range.
+		\item {\it Crossover Rate}\quad  A value between 0.0 and 0.5.  Normally 0.5.
+	\end{itemize}
+\item {\bf CMA-ES}\quad has no GUI-settable parameters.
+\item {\bf NSGA-II}
+	\begin{itemize}
+		\item {\it Tournament Size}\quad The GA's tournament size.  A value 1 and higher, though 1 just means random selection.  The standard setting is 2.
+		\item {\it Mutation Rate}\quad  A value between 0.0 and 1.0.  Normally 1.0.
+		\item {\it Mutation Type}\quad  Either {\it Gaussian} or {\it Polynomial} (a traditional NSGA-II mutation method).
+		\item {\it Mutation Standard Deviation}\quad  A value 0.0 and higher.  Typically about 0.1 of a parameter range.  Only used for Gaussian.
+		\item {\it Mutation Index}\quad  An integer 1 or higher.  Typically 20.  Only used for Polynomial.
+		\item {\it Crossover Rate}\quad  A value between 0.0 and 0.5.  Normally 0.5.
+	\end{itemize}
+\item {\bf Steady-State Evolution}\quad Has the same parameters as the Genetic Algorithm above.  Note that in the GUI you always specify a number of generations rather than number of evaluations.
+\end{itemize}
+
+Finally at the bottom you can start the optimization process by pressing the {\bf Play Button}.  You'll be prompted with a file dialog to specify your statistics output file, and then you're on your way.  A progress bar is provided for your convenience. If you press the {\bf Stop Button}, the optimizer will stop as soon as it can (it has to request that all the workers stop work, and that will probably be at the end of the most recent simulation).
+
+\subsection{Custom Model Optimization}
+
+[Still gotta write this]
 
 \chapter{Distributed MASON}
 
@@ -13859,7 +13933,7 @@ OpenMPI for Java isn't normally available from a package manager like Homebrew o
     \item Place the JAR file \lstinline[style=Bash]{ompi/mpi/java/java/mpi.jar} in your Java CLASSPATH.
 \end{enumerate}
 
-\subsection{Install eclab/mason}
+\subsection{Install MASON}
 Distributed depends on MASON, so we must install that first.  You can grab the MASON jar file as usual, or build it with the Makefile, or via Maven as below:
 
 \begin{enumerate}
