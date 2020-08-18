@@ -1,0 +1,42 @@
+parent.0 = @ec.multiobjective.nsga2.NSGA2Breeder nsga2.params
+parent.1 = flockers.master.params
+
+mason-objectives = 2
+
+# The multiobjective optimization routines here can use any crossover
+# and mutation pipeline you like, but the literature tends to stick with
+# SBX for crossover and Polynomial Mutation.  And with good reason: our
+# tests indicate that Polynomial Mutation is much better than Gaussian of
+# any setting for these problems.  And for SPEA2 at least, SBX seems to
+# outperform most other crossover operators.  Note that we're using the
+# "bounded" Polynomial Mutation variant, which seems to do a bit better.
+
+pop.subpop.0.species.crossover-type = sbx
+pop.subpop.0.species.crossover-distribution-index = 20
+pop.subpop.0.species.mutation-prob = 1.0
+pop.subpop.0.species.mutation-type = polynomial
+pop.subpop.0.species.alternative-polynomial-version = true
+pop.subpop.0.species.mutation-distribution-index = 20
+pop.subpop.0.species.mutation-bounded = true
+
+# Reference point for hypervolume calculation
+# Although we are NOT computing hypervolume
+#stat.reference-point = -1 -1 -1 -1 -1 -1
+stat.do-hypervolume =  false
+
+
+# max and min values of each objective function
+# (important for algorithms that normalize the objective scales relative to each other)
+# I don't think NSGA2 cares
+#multi.fitness.max.0             = 200
+#multi.fitness.min.0             = 0
+#multi.fitness.max.1             = 200
+#multi.fitness.min.1             = 0
+
+# not needed, this is the default
+#pop.subpop.0.species.fitness.maximize = true
+
+pop.subpop.0.size = 30
+generations = 30
+
+
