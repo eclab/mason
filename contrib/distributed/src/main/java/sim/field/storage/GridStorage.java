@@ -1,21 +1,39 @@
 package sim.field.storage;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.stream.IntStream;
 
 import mpi.Datatype;
 import mpi.MPI;
 import mpi.MPIException;
-import sim.util.IntHyperRect;
-import sim.util.IntPoint;
+import sim.field.partitioning.IntHyperRect;
+import sim.field.partitioning.IntPoint;
+import sim.field.partitioning.NdPoint;
 import sim.util.MPIParam;
 
-public abstract class GridStorage {
+/**
+ * internal local storage for distributed grids.
+ *
+ * @param <T> Type of objects to store
+ */
+public abstract class GridStorage<T extends Serializable> {
 	Object storage;
 	IntHyperRect shape;
 	Datatype baseType = MPI.BYTE;
 
 	int[] stride;
+
+	/* Abstract Method of generic storage based on N-dimensional Point */
+	public abstract void setLocation(final T obj, final NdPoint p);
+
+	public abstract NdPoint getLocation(final T obj);
+
+	public abstract void removeObject(final T obj);
+
+	public abstract void removeObjects(final NdPoint p);
+
+	public abstract ArrayList<T> getObjects(final NdPoint p);
 
 	public GridStorage(final IntHyperRect shape) {
 		this.shape = shape;
@@ -62,18 +80,30 @@ public abstract class GridStorage {
 	// This method will be called after the new shape has been set
 	protected abstract Object allocate(int size);
 
+	/**
+	 * Reset the shape, stride, and storage w.r.t. newShape
+	 * 
+	 * @param newShape
+	 */
 	private void reload(final IntHyperRect newShape) {
 		shape = newShape;
 		stride = getStride(newShape.getSize());
 		storage = allocate(newShape.getArea());
 	}
 
+	/**
+	 * Reshapes HyperRect to a newShape
+	 * 
+	 * @param newShape
+	 */
 	public void reshape(final IntHyperRect newShape) {
 		if (newShape.equals(shape))
 			return;
 
 		if (newShape.isIntersect(shape)) {
+
 			final IntHyperRect overlap = newShape.getIntersection(shape);
+
 			final MPIParam fromParam = new MPIParam(overlap, shape, baseType);
 			final MPIParam toParam = new MPIParam(overlap, newShape, baseType);
 
@@ -92,16 +122,30 @@ public abstract class GridStorage {
 			reload(newShape);
 	}
 
+	/**
+	 * @param p
+	 * 
+	 * @return flattened index
+	 */
 	public int getFlatIdx(final IntPoint p) {
 		return IntStream.range(0, p.nd).map(i -> p.c[i] * stride[i]).sum();
 	}
 
-	// Get the flatted index with respect to the given size
+	/**
+	 * @param p
+	 * @param wrtSize
+	 * 
+	 * @return flattened index with respect to the given size
+	 */
 	public static int getFlatIdx(final IntPoint p, final int[] wrtSize) {
 		final int[] s = getStride(wrtSize);
 		return IntStream.range(0, p.nd).map(i -> p.c[i] * s[i]).sum();
 	}
 
+	/**
+	 * @param size
+	 * @return stride
+	 */
 	protected static int[] getStride(final int[] size) {
 		final int[] ret = new int[size.length];
 

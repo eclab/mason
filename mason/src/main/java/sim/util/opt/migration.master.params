@@ -1,0 +1,17 @@
+parent.0 = master.params
+
+num-mason-properties = 4
+mason-property.0 = DangerCare
+mason-property.1 = FamilyAbroadCare
+mason-property.2 = EconomyCare
+mason-property.3 = PopulationCare
+
+
+mason-steps = 10000
+mason-objectives = 1
+mason-num-trials = 1
+eval.compression = false
+
+rebuild-model = true
+
+

@@ -1,0 +1,29 @@
+# Copyright 2019 by Sean Luke and George Mason University
+# Licensed under the Academic Free License version 3.0
+# See the file "LICENSE" for more information
+
+parent.0 = serengetimaster.params
+
+# The slave needs to know where the Master is.  You need to
+# change this.
+eval.master.host = localhost
+eval.master.port = 15000
+
+
+# Standard settings we want to use for distributed evaluation 
+eval.slave.run-evolve = false
+eval.slave.runtime = 0
+eval.return-inds = false
+eval.slave.one-shot = false
+eval.stat = ec.Statistics
+eval.stat.num-children = 0
+#eval.slave.silent = true
+
+evalthreads = 3
+
+stat.file = /dev/null
+
+
+#eval.no-delay = true
+#eval.send-buffer=43530
+#eval.recv-buffer=4352

@@ -5,17 +5,13 @@
 */
 
 package sim.engine;
-import java.io.Serializable;
-
-import sim.util.*;
-import ec.util.*;
 
 /**
    This is a helper class used internally in Schedule to schedule steppables repeating.  It's exposed
    here to enable access by distributed MASON.  You generally shouldn't play with this class.
 */
 
-public class IterativeRepeat implements Steppable, Stoppable
+public class IterativeRepeat implements  Steppable, Stoppable
     {
     private static final long serialVersionUID = 1;
 

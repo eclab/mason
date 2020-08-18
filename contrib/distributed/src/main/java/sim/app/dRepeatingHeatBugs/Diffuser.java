@@ -6,9 +6,9 @@
 
 package sim.app.dRepeatingHeatBugs;
 
-import sim.engine.AbstractStopping;
+import sim.engine.DSteppable;
 import sim.engine.SimState;
-import sim.field.grid.NDoubleGrid2D;
+import sim.field.grid.DDoubleGrid2D;
 
 /**
  * This agent decreases evaporates and diffuses all the heat at each time step.
@@ -16,7 +16,7 @@ import sim.field.grid.NDoubleGrid2D;
  * many-fold in classes such as Diffuser.
  */
 
-public class Diffuser extends AbstractStopping {
+public class Diffuser extends DSteppable {
 	private static final long serialVersionUID = 1;
 
 	public void step(final SimState state) {
@@ -25,12 +25,12 @@ public class Diffuser extends AbstractStopping {
 		// locals are faster than instance variables
 		final double[] _valgrid_field = heatbugs.valgrid.getStorageArray();
 		final double[] _valgrid2_field = heatbugs.valgrid2.getStorageArray();
-		final int _gridWidth = heatbugs.getPartition().getPartition().getSize()[0];
-		final int _gridHeight = heatbugs.getPartition().getPartition().getSize()[1];
+		final int _gridWidth = heatbugs.getPartitioning().getPartition().getSize()[0];
+		final int _gridHeight = heatbugs.getPartitioning().getPartition().getSize()[1];
 		final double _evaporationRate = heatbugs.evaporationRate;
 		final double _diffusionRate = heatbugs.diffusionRate;
 		final int aoi = heatbugs.aoi[0];
-		final int offset = heatbugs.getPartition().getPartition().getSize()[1] + (2 * aoi);
+		final int offset = heatbugs.getPartitioning().getPartition().getSize()[1] + (2 * aoi);
 		int past, curr, next;
 
 		// for each x and y position
@@ -56,7 +56,7 @@ public class Diffuser extends AbstractStopping {
 			next += offset;
 		}
 
-		final NDoubleGrid2D temp = heatbugs.valgrid;
+		final DDoubleGrid2D temp = heatbugs.valgrid;
 		heatbugs.valgrid = heatbugs.valgrid2;
 		heatbugs.valgrid2 = temp;
 	}

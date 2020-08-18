@@ -1,0 +1,76 @@
+parent.0 = @ec.app.moosuite.MooSuite nsga2.params
+parent.1 = master.params
+
+
+num-mason-properties = 5
+mason-property.0 = Avoidance
+mason-property.1 = Cohesion
+mason-property.2 = Consistency
+mason-property.3 = Momentum
+mason-property.4 = Randomness
+
+mason-steps = 1000
+mason-num-trials = 5
+mason-objectives = 2
+mason-class = sim.app.flockers.Flockers
+
+pop.subpop.0.size = 24
+generations = 100
+
+#pop.subpop.0.file = in.stat
+#pop.subpop.0.extra-behavior = wrap
+
+pop.subpop.0.species.mutation-stdev = 0.1
+
+
+# NSGA2's pipeline
+pop.subpop.0.species.pipe                       = ec.vector.breed.VectorMutationPipeline
+pop.subpop.0.species.pipe.likelihood            = 1.0
+pop.subpop.0.species.pipe.source.0              = ec.vector.breed.VectorCrossoverPipeline
+pop.subpop.0.species.pipe.source.0.likelihood   = 0.9
+pop.subpop.0.species.pipe.source.0.source.0     = ec.select.TournamentSelection
+pop.subpop.0.species.pipe.source.0.source.1     = same
+select.tournament.size                          = 2
+
+# The individual
+pop.subpop.0.species = ec.vector.FloatVectorSpecies
+pop.subpop.0.species.ind = ec.vector.DoubleVectorIndividual
+pop.subpop.0.species.fitness.num-objectives = 2
+pop.subpop.0.species.fitness.maximize = false
+
+eval.problem = ec.app.moosuite.MooSuite
+
+# breed.reevaluate-elites.0 = true
+
+# The multiobjective optimization routines here can use any crossover
+# and mutation pipeline you like, but the literature tends to stick with
+# SBX for crossover and Polynomial Mutation.  And with good reason: our
+# tests indicate that Polynomial Mutation is much better than Gaussian of
+# any setting for these problems.  And for SPEA2 at least, SBX seems to
+# outperform most other crossover operators.  Note that we're using the
+# "bounded" Polynomial Mutation variant, which seems to do a bit better.
+
+pop.subpop.0.species.crossover-type = sbx
+pop.subpop.0.species.crossover-distribution-index = 20
+
+pop.subpop.0.species.mutation-prob = 1.0
+pop.subpop.0.species.mutation-type = polynomial
+pop.subpop.0.species.alternative-polynomial-version = true
+pop.subpop.0.species.mutation-distribution-index = 20
+pop.subpop.0.species.mutation-bounded = true
+
+# Reference point for hypervolume calculation
+stat.reference-point = 10 10
+
+# These will not matter
+pop.subpop.0.species.min-gene = 0
+pop.subpop.0.species.max-gene = 1
+pop.subpop.0.species.genome-size = 24
+
+# max and min values of each objective function
+# (important for algorithms that normalize the objective scales relative to each other)
+# I don't think NSGA2 cares
+multi.fitness.max.0             = 1000
+multi.fitness.min.0             = 0
+multi.fitness.max.1             = 1000
+multi.fitness.min.1             = 0

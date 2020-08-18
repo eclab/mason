@@ -2,6 +2,10 @@ package sim.util;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ *
+ *Internal Class used by Timing.java
+ */
 public class TimingStat {
 
     int cap;

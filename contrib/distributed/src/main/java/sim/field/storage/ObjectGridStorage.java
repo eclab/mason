@@ -1,13 +1,20 @@
 package sim.field.storage;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.function.IntFunction;
 
-import sim.util.IntHyperRect;
-import sim.util.IntPoint;
+import sim.field.partitioning.IntHyperRect;
+import sim.field.partitioning.IntPoint;
+import sim.field.partitioning.NdPoint;
 import sim.util.MPIParam;
 
-public class ObjectGridStorage<T extends Serializable> extends GridStorage {
+/**
+ * internal local storage for distributed grids.
+ *
+ * @param <T> Type of objects to store
+ */
+public class ObjectGridStorage<T extends Serializable> extends GridStorage<T> {
 
 	IntFunction<T[]> alloc; // Lambda function which accepts the size as its argument and returns a T array
 
@@ -64,6 +71,36 @@ public class ObjectGridStorage<T extends Serializable> extends GridStorage {
 				stor[getFlatIdx(p)] = objs[curr++];
 
 		return curr;
+	}
+
+	@Override
+	public void setLocation(T obj, NdPoint p) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public NdPoint getLocation(T obj) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeObject(T obj) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void removeObjects(NdPoint p) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public ArrayList<T> getObjects(NdPoint p) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 //	public static void main(final String[] args) throws MPIException {

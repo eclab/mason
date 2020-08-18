@@ -1,0 +1,18 @@
+# Copyright 2006 by Sean Luke and George Mason University
+# Licensed under the Academic Free License version 3.0
+# See the file "LICENSE" for more information
+
+
+parent.0 = @sim.app.serengeti.Serengeti serengeti.params
+parent.1 = @ec.EvolutionState eval/master.params
+
+eval.master.host = localhost
+
+eval.masterproblem.job-size = 20
+eval.masterproblem.max-jobs-per-slave = 1
+mason-num-trials = 10
+
+
+eval.compression=false
+
+pop.subpop.0.size = 5760

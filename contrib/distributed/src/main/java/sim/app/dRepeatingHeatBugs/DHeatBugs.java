@@ -6,12 +6,14 @@
 
 package sim.app.dRepeatingHeatBugs;
 
-import mpi.MPIException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import sim.engine.DSimState;
 import sim.engine.Schedule;
-import sim.field.grid.NDoubleGrid2D;
-import sim.field.grid.NObjectsGrid2D;
-import sim.util.IntPoint;
+import sim.field.grid.DDenseGrid2D;
+import sim.field.grid.DDoubleGrid2D;
+import sim.field.partitioning.IntPoint;
 import sim.util.Interval;
 
 public class DHeatBugs extends DSimState {
@@ -36,9 +38,9 @@ public class DHeatBugs extends DSimState {
 	/*
 	 * Missing get/setGridHeight get/setGridWidth get/setBugCount
 	 */
-	public NDoubleGrid2D valgrid; // Instead of DoubleGrid2D
-	public NDoubleGrid2D valgrid2; // Instead of DoubleGrid2D
-	public NObjectsGrid2D<DHeatBug> bugs; // Instead of SparseGrid2D
+	public DDoubleGrid2D valgrid; // Instead of DoubleGrid2D
+	public DDoubleGrid2D valgrid2; // Instead of DoubleGrid2D
+	public DDenseGrid2D<DHeatBug> bugs; // Instead of SparseGrid2D
 
 	public DHeatBugs(final long seed) {
 		this(seed, 1000, 1000, 1000, 5);
@@ -49,11 +51,11 @@ public class DHeatBugs extends DSimState {
 		gridWidth = width;
 		gridHeight = height;
 		bugCount = count;
-		privBugCount = bugCount / getPartition().numProcessors;
+		privBugCount = bugCount / getPartitioning().numProcessors;
 		try {
-			valgrid = new NDoubleGrid2D(getPartition(), this.aoi, 0, this);
-			valgrid2 = new NDoubleGrid2D(getPartition(), this.aoi, 0, this);
-			bugs = new NObjectsGrid2D<DHeatBug>(getPartition(), this.aoi, this);
+			valgrid = new DDoubleGrid2D(getPartitioning(), this.aoi, 0, this);
+			valgrid2 = new DDoubleGrid2D(getPartitioning(), this.aoi, 0, this);
+			bugs = new DDenseGrid2D<DHeatBug>(getPartitioning(), this.aoi, this);
 		} catch (final Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -136,54 +138,40 @@ public class DHeatBugs extends DSimState {
 	}
 
 	protected void startRoot() {
-		super.startRoot();
-
-		System.out.println("Starting Root");
-
+		HashMap<IntPoint, ArrayList<DHeatBug>> agents = new HashMap<IntPoint, ArrayList<DHeatBug>>();
 		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
 		final double rangeOutputHeat = maxOutputHeat - minOutputHeat;
-
 		for (int x = 0; x < bugCount; x++) {
 			final double idealTemp = random.nextDouble() * rangeIdealTemp + minIdealTemp;
 			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
-			int px, py;
-			do {
-				px = random.nextInt(gridWidth);
-				py = random.nextInt(gridHeight);
-			} while (bugs.get(new IntPoint(px, py)) != null);
+			int px = random.nextInt(gridWidth);
+			int py = random.nextInt(gridHeight);
 			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
-			bugs.addRepeatingAgent(new IntPoint(px, py), b, 1, 1);
+			IntPoint point = new IntPoint(px, py);
+			if (!agents.containsKey(point))
+				agents.put(point, new ArrayList<DHeatBug>());
+			agents.get(point).add(b);
 		}
+		
+		sendRootInfoToAll("agents",agents);
 
-		System.out.println("Root Started");
 	}
 
 	public void start() {
 		super.start();
-//		final int[] size = getPartition().getPartition().getSize();
-//		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
-//		final double rangeOutputHeat = maxOutputHeat - minOutputHeat;
-//
-//		for (int x = 0; x < privBugCount; x++) {
-//			final double idealTemp = random.nextDouble() * rangeIdealTemp + minIdealTemp;
-//			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
-//			int px, py; // Why are we doing this? Relationship?
-//			do {
-//				px = random.nextInt(size[0]) + getPartition().getPartition().ul().getArray()[0];
-//				py = random.nextInt(size[1]) + getPartition().getPartition().ul().getArray()[1];
-//			} while (bugs.get(new IntPoint(px, py)) != null);
-//			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
-//			// bugs.add(new IntPoint(px, py), b);
-//			// schedule.scheduleOnce(b, 1);
-//
-//			bugs.addRepeatingAgent(new IntPoint(px, py), b, 1, 1);
-//		}
-//
+
+		HashMap<IntPoint, ArrayList<DHeatBug>> agents = (HashMap<IntPoint, ArrayList<DHeatBug>>) getRootInfo("agents");
+		for (IntPoint p : agents.keySet()) {
+			for (DHeatBug a : agents.get(p)) {
+				if (partition.getPartition().contains(p))
+					bugs.addRepeatingAgent(p, a, 1, 1);
+			}
+		}
 		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);
 	}
 
-	public static void main(final String[] args) throws MPIException {
-		doLoopMPI(DHeatBugs.class, args);
+	public static void main(final String[] args) {
+		doLoopDistributed(DHeatBugs.class, args);
 		System.exit(0);
 	}
 }
