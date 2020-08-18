@@ -257,20 +257,20 @@ public class DSimState extends SimState {
 		transporter.objectQueue.clear();
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
 
-		if (schedule.getSteps() > 0) {
-			if (schedule.getSteps() % 50 == 0) {
-
-				try {
-					balancePartitions(balancerLevel);
-				} catch (MPIException e) {
-					// TODO: handle exception
-				}
-				if (balancerLevel != 0)
-					balancerLevel--;
-				else
-					balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
-			}
-		}
+//		if (schedule.getSteps() > 0) {
+//			if (schedule.getSteps() % 50 == 0) {
+//
+//				try {
+//					balancePartitions(balancerLevel);
+//				} catch (MPIException e) {
+//					// TODO: handle exception
+//				}
+//				if (balancerLevel != 0)
+//					balancerLevel--;
+//				else
+//					balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
+//			}
+//		}
 
 		try {
 			syncFields();
