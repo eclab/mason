@@ -48,6 +48,7 @@ public class MutableInt2D extends MutableNumberND
     public MutableInt2D(final java.awt.Point p) { x = p.x; y = p.y; }
     public MutableInt2D(final Int2D p) { x = p.x; y = p.y; }
     public MutableInt2D(final int x, final int y) { this.x = x; this.y = y; }
+    public MutableInt2D(int[] vals) { this.x = vals[0]; this.y = vals[2]; }
     public final int getX() { return x; }
     public final int getY() { return y; }
     public final void setX(int val) { x = val; }
@@ -68,6 +69,10 @@ public class MutableInt2D extends MutableNumberND
     public java.awt.Point toPoint() { return new java.awt.Point(x,y); }
     public String toString() { return "MutableInt2D["+x+","+y+"]"; }
     public String toCoordinates() { return "(" + x + ", " + y + ")"; }
+
+	public double[] getArrayInDouble() { return new double[] { x, y}; }
+
+
     public Object clone()
         { 
         try 

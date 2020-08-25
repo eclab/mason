@@ -17,7 +17,11 @@ public abstract class NumberND implements java.io.Serializable
     
     /** Returns the number of dimensions of this NumberND (normally 2 or 3) */
     public abstract int getNumDimensions();
+
+    public int getNd() { return getNumDimensions(); }
     
+	public abstract double[] getArrayInDouble();
+        
     /** Returns the value at position VAL in this Number2D  (val should 0, 1, or sometimes 2) */
     public abstract double getVal(int pos);
 
@@ -199,5 +203,66 @@ public abstract class NumberND implements java.io.Serializable
             }
 
         }
+
+	public NumberND shift(int offset)
+		{
+		if (this instanceof Int2D)
+			return ((Int2D)this).shift(offset);
+		else if (this instanceof Double2D)
+			return ((Double2D)this).shift(offset);
+		else return null;
+		} 
+
+	public NumberND shift(int dim, int offset)
+		{
+		if (this instanceof Int2D)
+			return ((Int2D)this).shift(dim, offset);
+		else if (this instanceof Double2D)
+			return ((Double2D)this).shift(dim, offset);
+		else return null;
+		} 
+
+	// should be renamed "add"
+	public NumberND shift(int[] offset)
+		{
+		if (this instanceof Int2D)
+			return ((Int2D)this).shift(offset);
+		else if (this instanceof Double2D)
+			return ((Double2D)this).shift(offset);
+		else return null;
+		} 
+
+	// should be renamed "add"
+	public NumberND rshift(int[] offset)
+		{
+		if (this instanceof Int2D)
+			return ((Int2D)this).rshift(offset);
+		else if (this instanceof Double2D)
+			return ((Double2D)this).rshift(offset);
+		else return null;
+		} 
+
+		public double[] getOffsetsDouble(final NumberND that) 
+			{
+			int d = getNumDimensions();
+			double[] ret = new double[d];
+			for(int i = 0; i < d; i++)
+				{
+				ret[i] = getVal(i) - that.getVal(i);
+				}
+			return ret;
+			}
+
+		public double getDistanceSq(final NumberND that) 
+			{
+			final double[] a = that.getArrayInDouble();
+			final double[] c = this.getArrayInDouble();
+			int x = a.length;
+			double sum = 0;
+			if (c.length < x) x = c.length;
+			for(int i = 0; i < x; i++)
+				sum += (a[i] - c[i]) * (a[i] - c[i]);
+			return sum;
+			}
     }
         

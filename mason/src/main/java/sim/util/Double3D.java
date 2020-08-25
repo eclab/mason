@@ -60,6 +60,8 @@ public final class Double3D extends NumberND
     public String toString() { return "Double3D["+x+","+y+","+z+"]"; }
     public String toCoordinates() { return "(" + x + ", " + y + ", " + z + ")"; }
 
+	public double[] getArrayInDouble() { return new double[] { x, y, z}; }
+
     public int hashCode()
         {
         double x = this.x;

@@ -37,6 +37,7 @@ public final class Int2D extends NumberND
     public Int2D(final java.awt.Point p) { x = p.x; y = p.y; }
     public Int2D(final MutableInt2D p) { x = p.x; y = p.y; }
     public Int2D(final int x, final int y) { this.x = x; this.y = y; }
+    public Int2D(int[] vals) { this.x = vals[0]; this.y = vals[2]; }
     public final int getX() { return x; }
     public final int getY() { return y; }
     public java.awt.geom.Point2D.Double toPoint2D() { return new java.awt.geom.Point2D.Double(x,y); }
@@ -44,6 +45,11 @@ public final class Int2D extends NumberND
     public String toString() { return "Int2D["+x+","+y+"]"; }
     public String toCoordinates() { return "(" + x + ", " + y + ")"; }
 
+
+	public int c(int i) { return (i == 0 ? x : y); }
+	public int[] c() { return new int[] {x, y}; }
+	public int[] getArray() { return new int[] {x, y}; }
+	public double[] getArrayInDouble() { return new double[] { x, y}; }
 
     public final int hashCode()
         {
@@ -221,4 +227,48 @@ public final class Int2D extends NumberND
         {
         return Math.abs((long)this.x-p.x) + Math.abs((long)this.y-p.y);
         }
+        
+	/// FOR DISTRIBUTED CODE        
+    public Int2D shift(int offset)
+		{
+		return new Int2D(x + offset, y + offset);
+		} 
+
+	public Int2D shift(int dim, int offset)
+		{
+		if (dim == 0)
+			return new Int2D(x + offset, y);
+		else
+			return new Int2D(x, y + offset);
+		} 
+
+	// should be renamed "add"
+	public Int2D shift(int[] offset)
+		{
+		return new Int2D(x + offset[0], y + offset[1]);
+		} 
+
+	// should be renamed "subtract"
+	public Int2D rshift(int[] offset)
+		{
+		return new Int2D(x - offset[0], y - offset[1]);
+		} 
+
+	public int compareTo(final Int2D other) 
+		{
+		if (x == other.x)
+			return (y - other.y);
+		else return (x - other.x);
+		}
+
+	public Int2D max(Int2D val)
+		{
+		return new Int2D(Math.max(x, val.x), Math.max(y, val.y));
+		} 
+
+	public Int2D min(Int2D val)
+		{
+		return new Int2D(Math.min(x, val.x), Math.min(y, val.y));
+		} 
+
     }

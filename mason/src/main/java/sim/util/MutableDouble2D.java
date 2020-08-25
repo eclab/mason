@@ -53,6 +53,7 @@ public final class MutableDouble2D extends MutableNumberND
     /** Only included for completeness' sakes, in case a new Point2D subclass is created in the future. */
     public MutableDouble2D(final java.awt.geom.Point2D p) { x = p.getX(); y = p.getY(); }
     public MutableDouble2D(final double x, final double y) { this.x = x; this.y = y; }
+    public MutableDouble2D(double[] vals) { this.x = vals[0]; this.y = vals[1]; }
     public final double getX() { return x; }
     public final double getY() { return y; }
     public final void setX(double val) { x = val; }
@@ -66,6 +67,8 @@ public final class MutableDouble2D extends MutableNumberND
     public String toCoordinates() { return "(" + x + ", " + y + ")"; }
 
     public java.awt.geom.Point2D.Double toPoint2D() { return new java.awt.geom.Point2D.Double(x,y); }
+
+	public double[] getArrayInDouble() { return new double[] { x, y}; }
 
     public Object clone()
         { 
