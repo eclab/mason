@@ -58,7 +58,7 @@ import java.util.*;
     
     <p>This affects you in only one way in a Network: edges are hashed by nodes.  The Network permits you to use any object
     as a node -- but you have been suitably warned: if you use a mutable but hashed-by-value node object, do NOT modify its values while
-    it's being used as a key in the Network.
+    it's being used as a key in the Network, at least not values which are used to compute its hash function.
     
     <p><b>Directed vs. Undirected Graphs.</b>  Networks are constructed to be either directed or undirected, and they cannot be changed
     afterwards without being entirely cleared first (using reset(...)).  If the network is directed, then an Edge's to() and from() nodes 
