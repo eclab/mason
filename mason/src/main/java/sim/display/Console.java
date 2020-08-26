@@ -1040,6 +1040,23 @@ public class Console extends JFrame implements Controller
                 }
             });
         fileMenu.add(sweepMenu);
+        
+        JMenuItem optMenu = new JMenuItem("Optimize");
+        if (!isOptimizeInstalled())
+        	{
+        	optMenu.setEnabled(false);
+        	optMenu.setToolTipText("To use this, build and install the contrib/optimize package.");
+        	}
+        else if (SimApplet.isApplet) 
+        	optMenu.setEnabled(false);
+        optMenu.addActionListener(new ActionListener()
+            {
+            public void actionPerformed(ActionEvent e)
+                {
+                doOptimize();
+                }
+            });
+        fileMenu.add(optMenu);
 
         JMenuItem _about = new JMenuItem("About MASON");
         _about.addActionListener(new ActionListener()
@@ -2171,6 +2188,52 @@ public class Console extends JFrame implements Controller
         frame.pack();
         frame.setVisible(true);
         }
+    
+	public boolean isOptimizeInstalled()
+		{
+		try
+			{
+			boolean result = Class.forName("sim.util.opt.OptimizeGUI") != null;
+			return result;
+			}
+		catch (Exception ex)
+			{
+			return false;
+			}
+		}
+		
+    public void doOptimize()
+	    {
+	    try
+	    	{
+		    Constructor c = Class.forName("sim.util.opt.OptimizeGUI").getConstructor(
+		    	sim.util.Properties.class,
+		    	GUIState.class); 
+	    	
+		    JComponent opt = (JComponent)(c.newInstance(sim.util.Properties.getProperties(simulation.state), simulation));
+		    JFrame frame = new JFrame("Optimize for " + simulation.getName(simulation.getClass()));
+		    frame.getContentPane().setLayout(new BorderLayout());
+		    frame.getContentPane().add(opt, BorderLayout.CENTER);
+		    frame.pack();
+		    frame.setVisible(true);
+		    }
+		catch (Exception ex)
+			{
+			ex.printStackTrace();
+			JOptionPane.showMessageDialog(null, "An error occurred trying to launch the optimization GUI.", "Optimization GUI Error", JOptionPane.ERROR_MESSAGE);
+			}
+	    /*
+        OptimizeGUI opt = 
+	        new OptimizeGUI(
+	            sim.util.Properties.getProperties(simulation.state),
+	            simulation);
+	    JFrame frame = new JFrame("Optimize for " + simulation.getName(simulation.getClass()));
+	    frame.getContentPane().setLayout(new BorderLayout());
+	    frame.getContentPane().add(opt, BorderLayout.CENTER);
+	    frame.pack();
+	    frame.setVisible(true);
+	    */
+	    }
 
 
 
