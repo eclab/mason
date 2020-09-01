@@ -1,8 +1,6 @@
 package sim.app.dantsforage;
 
 import mpi.MPIException;
-import sim.app.dheatbugs.DHeatBug;
-import sim.app.dheatbugs.Diffuser;
 import sim.engine.DSimState;
 import sim.engine.DSteppable;
 import sim.engine.Steppable;
