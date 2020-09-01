@@ -13,10 +13,10 @@ import sim.engine.Stopping;
 import sim.field.DAbstractGrid2D;
 import sim.field.DGrid;
 import sim.field.HaloGrid2D;
-import sim.field.partitioning.NdPoint;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.storage.ContStorage;
 import sim.util.MPIParam;
+import sim.util.*;
 
 /**
  * A countinous field that contains lists of objects of type T. Analogous to
@@ -24,9 +24,9 @@ import sim.util.MPIParam;
  * 
  * @param <T> Type of object stored in the field
  */
-public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D implements DGrid<T, NdPoint> {
+public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D implements DGrid<T, NumberND> {
 
-	private HaloGrid2D<T, NdPoint, ContStorage<T>> halo;
+	private HaloGrid2D<T, NumberND, ContStorage<T>> halo;
 
 	public DContinuous2D(final PartitionInterface ps, final int[] aoi, final double[] discretizations,
 			final DSimState state) {
@@ -35,16 +35,16 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 		if (ps.getNumDim() != 2)
 			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + ps.getNumDim());
 
-		halo = new HaloGrid2D<T, NdPoint, ContStorage<T>>(ps, aoi,
+		halo = new HaloGrid2D<T, NumberND, ContStorage<T>>(ps, aoi,
 				new ContStorage<T>(ps.getPartition(), discretizations), state);
 
 	}
 
-	public NdPoint getLocation(final T obj) {
+	public NumberND getLocation(final T obj) {
 		return halo.localStorage.getLocation(obj);
 	}
 
-	public List<T> get(final NdPoint p) {
+	public List<T> get(final NumberND p) {
 		if (!halo.inLocalAndHalo(p)) {
 			System.out.println(String.format("PID %d get %s is out of local boundary, accessing remotely through RMI",
 					halo.partition.getPid(), p.toString()));
@@ -53,16 +53,16 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 			return getLocal(p);
 	}
 
-	public void addLocal(final NdPoint p, final T t) {
+	public void addLocal(final NumberND p, final T t) {
 		halo.localStorage.setLocation(t, p);
 	}
 
-	public void removeLocal(final NdPoint p, final T t) {
+	public void removeLocal(final NumberND p, final T t) {
 		// TODO: Remove from just p
 		halo.localStorage.removeObject(t);
 	}
 
-	public void removeLocal(final NdPoint p) {
+	public void removeLocal(final NumberND p) {
 		halo.localStorage.removeObjects(p);
 	}
 
@@ -89,21 +89,21 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 				.collect(Collectors.toList());
 	}
 
-	public ArrayList<T> getLocal(final NdPoint p) {
+	public ArrayList<T> getLocal(final NumberND p) {
 		return halo.localStorage.getObjects(p);
 	}
 
-	public void addAgent(final NdPoint p, final T t) {
+	public void addAgent(final NumberND p, final T t) {
 		halo.addAgent(p, t);
 	}
 
-	public void moveAgent(final NdPoint fromP, final NdPoint toP, final T t) {
+	public void moveAgent(final NumberND fromP, final NumberND toP, final T t) {
 		halo.moveAgent(fromP, toP, t);
 	}
 
 	// Re-implementing this because
 	// add also moves the objects in this field
-	public void move(final NdPoint fromP, final NdPoint toP, final T t) {
+	public void move(final NumberND fromP, final NumberND toP, final T t) {
 		final int fromPid = halo.partition.toPartitionId(fromP);
 		final int toPid = halo.partition.toPartitionId(fromP);
 
@@ -125,25 +125,25 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 		}
 	}
 
-	public void add(NdPoint p, T t) {
+	public void add(NumberND p, T t) {
 		halo.add(p, t);
 	}
 
-	public void remove(NdPoint p, T t) {
+	public void remove(NumberND p, T t) {
 		halo.remove(p, t);
 	}
 
-	public void remove(NdPoint p) {
+	public void remove(NumberND p) {
 		halo.remove(p);
 	}
 
-	public void addAgent(NdPoint p, T t, int ordering, double time) {
+	public void addAgent(NumberND p, T t, int ordering, double time) {
 		halo.addAgent(p, t, ordering, time);
 	}
 
 	// Re-implementing this because
 	// add also moves the objects in this field
-	public void moveAgent(NdPoint fromP, NdPoint toP, T t, int ordering, double time) {
+	public void moveAgent(NumberND fromP, NumberND toP, T t, int ordering, double time) {
 		if (!halo.inLocal(fromP)) {
 			// System.out.println("pid " + halo.partition.pid + " agent" + t);
 			// System.out.println("partitioning " + halo.partition.getPartition());
@@ -166,25 +166,25 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 		}
 	}
 
-	public void addRepeatingAgent(NdPoint p, T t, double time, int ordering, double interval) {
+	public void addRepeatingAgent(NumberND p, T t, double time, int ordering, double interval) {
 		halo.addRepeatingAgent(p, t, time, ordering, interval);
 	}
 
-	public void addRepeatingAgent(NdPoint p, T t, int ordering, double interval) {
+	public void addRepeatingAgent(NumberND p, T t, int ordering, double interval) {
 		halo.addRepeatingAgent(p, t, ordering, interval);
 	}
 
-	public void removeAndStopRepeatingAgent(NdPoint p, T t) {
+	public void removeAndStopRepeatingAgent(NumberND p, T t) {
 		halo.removeAndStopRepeatingAgent(p, t);
 	}
 
-	public void removeAndStopRepeatingAgent(NdPoint p, DistributedIterativeRepeat iterativeRepeat) {
+	public void removeAndStopRepeatingAgent(NumberND p, DistributedIterativeRepeat iterativeRepeat) {
 		halo.removeAndStopRepeatingAgent(p, iterativeRepeat);
 	}
 
 	// Re-implementing this because
 	// add also moves the objects in this field
-	public void moveRepeatingAgent(NdPoint fromP, NdPoint toP, T t) {
+	public void moveRepeatingAgent(NumberND fromP, NumberND toP, T t) {
 		if (!halo.inLocal(fromP))
 			throw new IllegalArgumentException("fromP must be local");
 
@@ -207,7 +207,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 
 	// Re-implementing this because
 	// add also moves the objects in this field
-	public void moveRepeatingAgent(NdPoint fromP, NdPoint toP, DistributedIterativeRepeat iterativeRepeat) {
+	public void moveRepeatingAgent(NumberND fromP, NumberND toP, DistributedIterativeRepeat iterativeRepeat) {
 		if (!halo.inLocal(fromP))
 			throw new IllegalArgumentException("fromP must be local");
 

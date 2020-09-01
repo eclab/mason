@@ -22,15 +22,14 @@ import sim.engine.transport.PayloadWrapper;
 import sim.engine.transport.RMIProxy;
 import sim.engine.transport.TransportRMIInterface;
 import sim.field.partitioning.IntHyperRect;
-import sim.field.partitioning.IntPoint;
 import sim.field.partitioning.IntPointGenerator;
-import sim.field.partitioning.NdPoint;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.QuadTreePartition;
 import sim.field.storage.GridStorage;
 import sim.util.GroupComm;
 import sim.util.MPIParam;
 import sim.util.MPIUtil;
+import sim.util.*;
 
 /**
  * All fields in distributed MASON must contain this class. Stores
@@ -40,7 +39,7 @@ import sim.util.MPIUtil;
  * @param <P> The Type of P to use
  * @param <S> The Type of Storage to use
  */
-public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends GridStorage>
+public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends GridStorage>
 		implements TransportRMIInterface<Serializable, P>, Synchronizable, DGrid<T, P> {
 
 	/**
@@ -69,9 +68,9 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 			final ArrayList<IntHyperRect> overlaps = new ArrayList<IntHyperRect>();
 
 			if (partition.isToroidal())
-				for (final IntPoint p : IntPointGenerator.getLayer(numDimensions, 1)) {
+				for (final Int2D p : IntPointGenerator.getLayer(numDimensions, 1)) {
 					final IntHyperRect sp = p2
-							.shift(IntStream.range(0, numDimensions).map(i -> p.c[i] * fieldSize[i]).toArray());
+							.shift(IntStream.range(0, numDimensions).map(i -> p.c(i) * fieldSize[i]).toArray());
 					if (p1.isIntersect(sp))
 						overlaps.add(p1.getIntersection(sp));
 				}
@@ -174,7 +173,7 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 	 * @param p
 	 * @return location on the local partition
 	 */
-	public IntPoint toLocalPoint(final IntPoint p) {
+	public Int2D toLocalPoint(final Int2D p) {
 		return p.rshift(haloPart.ul().getArray());
 	}
 
@@ -184,8 +183,9 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 	 * @param p
 	 * @return location in a toroidal plane
 	 */
-	public IntPoint toToroidal(final IntPoint p) {
-		return p.toToroidal(world);
+	public Int2D toToroidal(final Int2D p) {
+		//return p.toToroidal(world);
+		return world.toToroidal(p);
 	}
 
 	public void add(final P p, final T t) {
@@ -496,9 +496,9 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 	 * @param point
 	 * @return true if point is within the global grid
 	 */
-	public boolean inGlobal(final IntPoint point) {
-		return IntStream.range(0, numDimensions).allMatch(i -> point.c[i] >= 0
-				&& point.c[i] < fieldSize[i]);
+	public boolean inGlobal(final Int2D point) {
+		return IntStream.range(0, numDimensions).allMatch(i -> point.c(i) >= 0
+				&& point.c(i) < fieldSize[i]);
 	}
 
 	/**

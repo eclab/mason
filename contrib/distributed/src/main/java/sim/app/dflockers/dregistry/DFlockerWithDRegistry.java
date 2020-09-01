@@ -13,7 +13,7 @@ import mpi.MPIException;
 import sim.engine.DSteppable;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
-import sim.field.partitioning.DoublePoint;
+import sim.util.*;
 
 interface DFlockerDummyRemote extends Remote{
 	public  int addAndGetVal() throws RemoteException;
@@ -23,8 +23,8 @@ interface DFlockerDummyRemote extends Remote{
 
 public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRemote {
 	private static final long serialVersionUID = 1;
-	public DoublePoint loc;
-	public DoublePoint lastd = new DoublePoint(0, 0);
+	public Double2D loc;
+	public Double2D lastd = new Double2D(0, 0);
 	public boolean dead = false;
 	
 	public boolean amItheBoss = false;
@@ -34,7 +34,7 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 	
 	AtomicInteger val = new AtomicInteger(0);
 
-	public DFlockerWithDRegistry(final DoublePoint location, final int id) {
+	public DFlockerWithDRegistry(final Double2D location, final int id) {
 		loc = location;
 		this.id = id;
 	}
@@ -52,22 +52,22 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 	}
 
 	public void setOrientation2D(final double val) {
-		lastd = new DoublePoint(Math.cos(val), Math.sin(val));
+		lastd = new Double2D(Math.cos(val), Math.sin(val));
 	}
 
 	public double orientation2D() {
-		if (lastd.c[0] == 0 && lastd.c[1] == 0)
+		if (lastd.c(0) == 0 && lastd.c(1) == 0)
 			return 0;
-		return Math.atan2(lastd.c[1], lastd.c[0]);
+		return Math.atan2(lastd.c(1), lastd.c(0));
 	}
 
-	public DoublePoint momentum() {
+	public Double2D momentum() {
 		return lastd;
 	}
 
-	public DoublePoint consistency(final List<DFlockerWithDRegistry> b, final DContinuous2D<DFlockerWithDRegistry> flockers) {
+	public Double2D consistency(final List<DFlockerWithDRegistry> b, final DContinuous2D<DFlockerWithDRegistry> flockers) {
 		if (b == null || b.size() == 0)
-			return new DoublePoint(0, 0);
+			return new Double2D(0, 0);
 
 		double x = 0;
 		double y = 0;
@@ -76,22 +76,22 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 		for (i = 0; i < b.size(); i++) {
 			final DFlockerWithDRegistry other = (b.get(i));
 			if (!other.dead) {
-				final DoublePoint m = b.get(i).momentum();
+				final Double2D m = b.get(i).momentum();
 				count++;
-				x += m.c[0];
-				y += m.c[1];
+				x += m.c(0);
+				y += m.c(1);
 			}
 		}
 		if (count > 0) {
 			x /= count;
 			y /= count;
 		}
-		return new DoublePoint(x, y);
+		return new Double2D(x, y);
 	}
 
-	public DoublePoint cohesion(final List<DFlockerWithDRegistry> b, final DContinuous2D<DFlockerWithDRegistry> flockers) {
+	public Double2D cohesion(final List<DFlockerWithDRegistry> b, final DContinuous2D<DFlockerWithDRegistry> flockers) {
 		if (b == null || b.size() == 0)
-			return new DoublePoint(0, 0);
+			return new Double2D(0, 0);
 
 		double x = 0;
 		double y = 0;
@@ -101,8 +101,8 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 		for (i = 0; i < b.size(); i++) {
 			final DFlockerWithDRegistry other = (b.get(i));
 			if (!other.dead) {
-				final double dx = flockers.tdx(loc.c[0], other.loc.c[0]);
-				final double dy = flockers.tdy(loc.c[1], other.loc.c[1]);
+				final double dx = flockers.tdx(loc.c(0), other.loc.c(0));
+				final double dy = flockers.tdy(loc.c(1), other.loc.c(1));
 				count++;
 				x += dx;
 				y += dy;
@@ -112,12 +112,12 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 			x /= count;
 			y /= count;
 		}
-		return new DoublePoint(-x / 10, -y / 10);
+		return new Double2D(-x / 10, -y / 10);
 	}
 
-	public DoublePoint avoidance(final List<DFlockerWithDRegistry> b, final DContinuous2D<DFlockerWithDRegistry> flockers) {
+	public Double2D avoidance(final List<DFlockerWithDRegistry> b, final DContinuous2D<DFlockerWithDRegistry> flockers) {
 		if (b == null || b.size() == 0)
-			return new DoublePoint(0, 0);
+			return new Double2D(0, 0);
 		double x = 0;
 		double y = 0;
 
@@ -127,8 +127,8 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 		for (i = 0; i < b.size(); i++) {
 			final DFlockerWithDRegistry other = (b.get(i));
 			if (other != this) {
-				final double dx = flockers.tdx(loc.c[0], other.loc.c[0]);
-				final double dy = flockers.tdy(loc.c[1], other.loc.c[1]);
+				final double dx = flockers.tdx(loc.c(0), other.loc.c(0));
+				final double dy = flockers.tdy(loc.c(1), other.loc.c(1));
 				final double lensquared = dx * dx + dy * dy;
 				count++;
 				x += dx / (lensquared * lensquared + 1);
@@ -139,14 +139,14 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 			x /= count;
 			y /= count;
 		}
-		return new DoublePoint(400 * x, 400 * y);
+		return new Double2D(400 * x, 400 * y);
 	}
 
-	public DoublePoint randomness(final MersenneTwisterFast r) {
+	public Double2D randomness(final MersenneTwisterFast r) {
 		final double x = r.nextDouble() * 2 - 1.0;
 		final double y = r.nextDouble() * 2 - 1.0;
 		final double l = Math.sqrt(x * x + y * y);
-		return new DoublePoint(0.05 * x / l, 0.05 * y / l);
+		return new Double2D(0.05 * x / l, 0.05 * y / l);
 	}
 	
 	public int addAndGetVal() {
@@ -170,11 +170,11 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 		
 		final DFlockersWithDRegistry dFlockers = (DFlockersWithDRegistry) state;
 		
-		final DoublePoint oldloc = loc;
-		loc = (DoublePoint) dFlockers.flockers.getLocation(this);
+		final Double2D oldloc = loc;
+		loc = (Double2D) dFlockers.flockers.getLocation(this);
 	
 		if (loc == null) {
-			System.out.printf("pid %d oldx %g oldy %g", dFlockers.getPartitioning().pid, oldloc.c[0], oldloc.c[1]);
+			System.out.printf("pid %d oldx %g oldy %g", dFlockers.getPartitioning().pid, oldloc.c(0), oldloc.c(1));
 			Thread.dumpStack();
 			System.exit(-1);
 		}
@@ -184,18 +184,18 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 
 		final List<DFlockerWithDRegistry> b = dFlockers.flockers.getNeighborsWithin(this, DFlockersWithDRegistry.neighborhood);
 
-		final DoublePoint avoid = avoidance(b, dFlockers.flockers);
-		final DoublePoint cohe = cohesion(b, dFlockers.flockers);
-		final DoublePoint rand = randomness(dFlockers.random);
-		final DoublePoint cons = consistency(b, dFlockers.flockers);
-		final DoublePoint mome = momentum();
+		final Double2D avoid = avoidance(b, dFlockers.flockers);
+		final Double2D cohe = cohesion(b, dFlockers.flockers);
+		final Double2D rand = randomness(dFlockers.random);
+		final Double2D cons = consistency(b, dFlockers.flockers);
+		final Double2D mome = momentum();
 
-		double dx = DFlockersWithDRegistry.cohesion * cohe.c[0] + DFlockersWithDRegistry.avoidance * avoid.c[0]
-				+ DFlockersWithDRegistry.consistency * cons.c[0]
-				+ DFlockersWithDRegistry.randomness * rand.c[0] + DFlockersWithDRegistry.momentum * mome.c[0];
-		double dy = DFlockersWithDRegistry.cohesion * cohe.c[1] + DFlockersWithDRegistry.avoidance * avoid.c[1]
-				+ DFlockersWithDRegistry.consistency * cons.c[1]
-				+ DFlockersWithDRegistry.randomness * rand.c[1] + DFlockersWithDRegistry.momentum * mome.c[1];
+		double dx = DFlockersWithDRegistry.cohesion * cohe.c(0) + DFlockersWithDRegistry.avoidance * avoid.c(0)
+				+ DFlockersWithDRegistry.consistency * cons.c(0)
+				+ DFlockersWithDRegistry.randomness * rand.c(0) + DFlockersWithDRegistry.momentum * mome.c(0);
+		double dy = DFlockersWithDRegistry.cohesion * cohe.c(1) + DFlockersWithDRegistry.avoidance * avoid.c(1)
+				+ DFlockersWithDRegistry.consistency * cons.c(1)
+				+ DFlockersWithDRegistry.randomness * rand.c(1) + DFlockersWithDRegistry.momentum * mome.c(1);
 
 		// re-normalize to the given step size
 		final double dis = Math.sqrt(dx * dx + dy * dy);
@@ -204,8 +204,8 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 			dy = dy / dis * DFlockersWithDRegistry.jump;
 		}
 
-		final DoublePoint old = loc;
-		loc = new DoublePoint(dFlockers.flockers.stx(loc.c[0] + dx), dFlockers.flockers.sty(loc.c[1] + dy));
+		final Double2D old = loc;
+		loc = new Double2D(dFlockers.flockers.stx(loc.c(0) + dx), dFlockers.flockers.sty(loc.c(1) + dy));
 
 		try {
 			DFlockerDummyRemote myfriend = (DFlockerDummyRemote) dFlockers.getDRegistry().getObject("cafebabe");

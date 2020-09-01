@@ -3,12 +3,13 @@ package sim.engine.transport;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import sim.util.*;
 
 /**
  * Implemented by fields that will be used for RMI
  *
  *
- * @param <P> The Type of NdPoint to use
+ * @param <P> The Type of PointND to use
  * @param <T> The Type of Object in the field
  */
 public interface TransportRMIInterface<T extends Serializable, P> extends Remote {

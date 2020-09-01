@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import java.util.function.IntFunction;
 
 import sim.field.partitioning.IntHyperRect;
-import sim.field.partitioning.IntPoint;
-import sim.field.partitioning.NdPoint;
 import sim.util.MPIParam;
+import sim.util.*;
 
 /**
  * internal local storage for distributed grids.
@@ -54,7 +53,7 @@ public class ObjectGridStorage<T extends Serializable> extends GridStorage<T> {
 		int curr = 0;
 
 		for (final IntHyperRect rect : mp.rects)
-			for (final IntPoint p : rect)
+			for (final Int2D p : rect)
 				objs[curr++] = stor[getFlatIdx(p)];
 
 		return objs;
@@ -67,20 +66,20 @@ public class ObjectGridStorage<T extends Serializable> extends GridStorage<T> {
 		int curr = 0;
 
 		for (final IntHyperRect rect : mp.rects)
-			for (final IntPoint p : rect)
+			for (final Int2D p : rect)
 				stor[getFlatIdx(p)] = objs[curr++];
 
 		return curr;
 	}
 
 	@Override
-	public void setLocation(T obj, NdPoint p) {
+	public void setLocation(T obj, NumberND p) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public NdPoint getLocation(T obj) {
+	public NumberND getLocation(T obj) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -92,13 +91,13 @@ public class ObjectGridStorage<T extends Serializable> extends GridStorage<T> {
 	}
 
 	@Override
-	public void removeObjects(NdPoint p) {
+	public void removeObjects(NumberND p) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public ArrayList<T> getObjects(NdPoint p) {
+	public ArrayList<T> getObjects(NumberND p) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -106,10 +105,10 @@ public class ObjectGridStorage<T extends Serializable> extends GridStorage<T> {
 //	public static void main(final String[] args) throws MPIException {
 //		MPI.Init(args);
 //
-//		final IntPoint p1 = new IntPoint(new int[] { 0, 0 });
-//		final IntPoint p2 = new IntPoint(new int[] { 5, 5 });
-//		final IntPoint p3 = new IntPoint(new int[] { 1, 1 });
-//		final IntPoint p4 = new IntPoint(new int[] { 4, 4 });
+//		final Int2D p1 = new Int2D(new int[] { 0, 0 });
+//		final Int2D p2 = new Int2D(new int[] { 5, 5 });
+//		final Int2D p3 = new Int2D(new int[] { 1, 1 });
+//		final Int2D p4 = new Int2D(new int[] { 4, 4 });
 //		final IntHyperRect r1 = new IntHyperRect(0, p1, p2);
 //		final IntHyperRect r2 = new IntHyperRect(1, p3, p4);
 //		final ObjectGridStorage<TestObj> s1 = new ObjectGridStorage<TestObj>(r1, size -> new TestObj[size]);

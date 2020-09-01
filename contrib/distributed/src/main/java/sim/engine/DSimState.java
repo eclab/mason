@@ -33,14 +33,13 @@ import sim.engine.transport.TransporterMPI;
 import sim.field.HaloGrid2D;
 import sim.field.Synchronizable;
 import sim.field.partitioning.IntHyperRect;
-import sim.field.partitioning.IntPoint;
-import sim.field.partitioning.NdPoint;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.QuadTreePartition;
 import sim.field.storage.ContStorage;
 import sim.field.storage.ObjectGridStorage;
 import sim.util.MPIUtil;
 import sim.util.Timing;
+import sim.util.*;
 
 /**
  * Analogous to Mason's SimState. This class represents the entire distributed
@@ -450,7 +449,7 @@ public class DSimState extends SimState {
 		// System.out.println("pid "+partition.getPid()+" new partition
 		// "+partition.getPartition());
 		ArrayList<Object> migratedAgents = new ArrayList<>();
-		for (IntPoint p : old_partition) {
+		for (Int2D p : old_partition) {
 			if (!partition.getPartition().contains(p)) {
 				final int toP = partition.toPartitionId(p);
 				for (Synchronizable field : fieldRegistry) {
@@ -458,7 +457,7 @@ public class DSimState extends SimState {
 						ContStorage st = (ContStorage) ((HaloGrid2D) field).getStorage();
 						HashSet agents = st.getCell(p);
 						for (Object a : agents) {
-							NdPoint loc = st.getLocation((Serializable) a);
+							NumberND loc = st.getLocation((Serializable) a);
 							if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
 									&& !partition.getPartition().contains(loc)) {
 								// st.removeObject((Serializable) a);
@@ -475,7 +474,7 @@ public class DSimState extends SimState {
 							ArrayList<Stopping> agents = st.getObjects(p);
 							for (int i = 0; i < agents.size(); i++) {
 								Object a = agents.get(i);
-								NdPoint loc = st.getLocation((Serializable) a);
+								NumberND loc = st.getLocation((Serializable) a);
 								((Stopping) a).getStoppable().stop();
 								transporter.migrateAgent((Stopping) a, toP, p, ((HaloGrid2D) field).fieldIndex);
 							}

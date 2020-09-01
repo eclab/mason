@@ -2,6 +2,7 @@ package sim.field.partitioning;
 
 import java.util.*;
 import java.util.stream.*;
+import sim.util.*;
 
 // TODO Currently all shapes are restricted to IntHyperRect - switch to NdRectangle once it is completed
 /**
@@ -13,7 +14,7 @@ public class QuadTreeNode {
 	int level, id; // which level in the tree the node is in, its node id
 	int processor; // which processer this node is mapped to
 
-	IntPoint origin;
+	Int2D origin;
 	IntHyperRect shape;
 
 	QuadTreeNode parent = null;
@@ -47,7 +48,7 @@ public class QuadTreeNode {
 		return level;
 	}
 
-	public IntPoint getOrigin() {
+	public Int2D getOrigin() {
 		return origin;
 	}
 
@@ -104,12 +105,12 @@ public class QuadTreeNode {
 	}
 
 	// Get the immediate child node that contains the given point
-	public QuadTreeNode getChildNode(final NdPoint p) {
+	public QuadTreeNode getChildNode(final NumberND p) {
 		return children.get(toChildIdx(p));
 	}
 
 	// Get the leaf node that contains the given point
-	public QuadTreeNode getLeafNode(final NdPoint p) {
+	public QuadTreeNode getLeafNode(final NumberND p) {
 		QuadTreeNode curr = this;
 
 		while (!curr.isLeaf())
@@ -144,7 +145,7 @@ public class QuadTreeNode {
 	 * @param newOrigin
 	 * @return the newly created QTNodes (if any)
 	 */
-	public List<QuadTreeNode> split(final IntPoint newOrigin) {
+	public List<QuadTreeNode> split(final Int2D newOrigin) {
 		final List<QuadTreeNode> ret = new ArrayList<QuadTreeNode>();
 
 		if (!shape.contains(newOrigin))
@@ -265,14 +266,14 @@ public class QuadTreeNode {
 				br[i] = sbr[i];
 			}
 
-		return new IntHyperRect(-1, new IntPoint(ul), new IntPoint(br));
+		return new IntHyperRect(-1, new Int2D(ul), new Int2D(br));
 	}
 
 	/**
 	 * @param p
 	 * @return the index of my immediate child that contains the given point
 	 */
-	protected int toChildIdx(final NdPoint p) {
+	protected int toChildIdx(final NumberND p) {
 		if (!shape.contains(p))
 			throw new IllegalArgumentException("p " + p + " must be inside the shape " + shape);
 

@@ -11,8 +11,6 @@ import sim.app.dflockers.DFlockers;
 import sim.engine.*;
 import sim.field.continuous.DContinuous2D;
 import sim.field.grid.*;
-import sim.field.partitioning.DoublePoint;
-import sim.field.partitioning.IntPoint;
 import sim.util.*;
 
 
@@ -112,10 +110,10 @@ public /*strictfp*/ class DAntsForage extends DSimState
                 for( int x = 0 ; x < GRID_WIDTH ; x++ )
                     for( int y = 0 ; y < GRID_HEIGHT ; y++ )
                         {
-                        obstacles.add(new IntPoint(x, y), 0);
+                        obstacles.add(new Int2D(x, y), 0);
                         if( ((x-55)*0.707+(y-35)*0.707)*((x-55)*0.707+(y-35)*0.707)/36+
                             ((x-55)*0.707-(y-35)*0.707)*((x-55)*0.707-(y-35)*0.707)/1024 <= 1 )
-                        	obstacles.add(new IntPoint(x, y) , 1);
+                        	obstacles.add(new Int2D(x, y) , 1);
               
                         }
                 break;
@@ -123,24 +121,24 @@ public /*strictfp*/ class DAntsForage extends DSimState
                 for( int x = 0 ; x < GRID_WIDTH ; x++ )
                     for( int y = 0 ; y < GRID_HEIGHT ; y++ )
                         {
-                    	obstacles.add(new IntPoint(x, y), 0);
+                    	obstacles.add(new Int2D(x, y), 0);
                         if( ((x-45)*0.707+(y-25)*0.707)*((x-45)*0.707+(y-25)*0.707)/36+
                             ((x-45)*0.707-(y-25)*0.707)*((x-45)*0.707-(y-25)*0.707)/1024 <= 1 )
-                        	obstacles.add(new IntPoint(x, y) , 1);
+                        	obstacles.add(new Int2D(x, y) , 1);
                            
                         if( ((x-35)*0.707+(y-70)*0.707)*((x-35)*0.707+(y-70)*0.707)/36+
                             ((x-35)*0.707-(y-70)*0.707)*((x-35)*0.707-(y-70)*0.707)/1024 <= 1 )
-                        	obstacles.add(new IntPoint(x, y) , 1);
+                        	obstacles.add(new Int2D(x, y) , 1);
                         }
                 break;
             case ONE_LONG_OBSTACLE:
                 for( int x = 0 ; x < GRID_WIDTH ; x++ )
                     for( int y = 0 ; y < GRID_HEIGHT ; y++ )
                         {
-                    	obstacles.add(new IntPoint(x, y), 0);
+                    	obstacles.add(new Int2D(x, y), 0);
                         if( (x-60)*(x-60)/1600+
                             (y-50)*(y-50)/25 <= 1 )
-                        	obstacles.add(new IntPoint(x, y) , 1);
+                        	obstacles.add(new Int2D(x, y) , 1);
                         }
                 break;
             }
@@ -148,18 +146,18 @@ public /*strictfp*/ class DAntsForage extends DSimState
         // initialize the grid with the home and food sites
         for( int x = HOME_XMIN ; x <= HOME_XMAX ; x++ )
             for( int y = HOME_YMIN ; y <= HOME_YMAX ; y++ )
-            	if(getPartitioning().getPartition().contains(new IntPoint(x,y)))
-            		sites.add(new IntPoint(x,y), 1); 
+            	if(getPartitioning().getPartition().contains(new Int2D(x,y)))
+            		sites.add(new Int2D(x,y), 1); 
         for( int x = FOOD_XMIN ; x <= FOOD_XMAX ; x++ )
             for( int y = FOOD_YMIN ; y <= FOOD_YMAX ; y++ )
-            	if(getPartitioning().getPartition().contains(new IntPoint(x,y)))
-            		sites.add(new IntPoint(x,y), 2);
+            	if(getPartitioning().getPartition().contains(new Int2D(x,y)))
+            		sites.add(new Int2D(x,y), 2);
 
         for(int x=0; x < numAnts; x++)
             {
-	        	if(getPartitioning().getPartition().contains(new IntPoint((HOME_XMAX+HOME_XMIN)/2,(HOME_YMAX+HOME_YMIN)/2))) {
+	        	if(getPartitioning().getPartition().contains(new Int2D((HOME_XMAX+HOME_XMIN)/2,(HOME_YMAX+HOME_YMIN)/2))) {
 	        		DAnt ant = new DAnt(reward,(HOME_XMAX+HOME_XMIN)/2,(HOME_YMAX+HOME_YMIN)/2);
-	                buggrid.addAgent(new IntPoint((HOME_XMAX+HOME_XMIN)/2,(HOME_YMAX+HOME_YMIN)/2), ant);
+	                buggrid.addAgent(new Int2D((HOME_XMAX+HOME_XMIN)/2,(HOME_YMAX+HOME_YMIN)/2), ant);
 	                schedule.scheduleRepeating(Schedule.EPOCH + x, 0, ant, 1);
 	        	}	 
             }

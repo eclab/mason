@@ -15,6 +15,7 @@ import mpi.MPIException;
 import sim.util.GroupComm;
 import sim.util.MPITest;
 import sim.util.MPIUtil;
+import sim.util.*;
 
 /**
  * Quad tree partition divides the world into partitions and arranging them as a
@@ -22,7 +23,7 @@ import sim.util.MPIUtil;
  *
  * @param <P> Type of point
  */
-public class QuadTreePartition extends PartitionInterface<NdPoint> {
+public class QuadTreePartition extends PartitionInterface<NumberND> {
 	QuadTree qt;
 	QuadTreeNode myLeafNode; // the leaf node that this pid is mapped to
 	Map<Integer, GroupComm> groups; // Map the level to its corresponding comm group
@@ -56,16 +57,16 @@ public class QuadTreePartition extends PartitionInterface<NdPoint> {
 		return qt.getNeighborPids(myLeafNode, aoi, isToroidal);
 	}
 
-	public int toPartitionId(final NdPoint p) {
+	public int toPartitionId(final NumberND p) {
 		return qt.getLeafNode(p).getProcessor();
 	}
 
 	public int toPartitionId(final int[] c) {
-		return toPartitionId(new IntPoint(c));
+		return toPartitionId(new Int2D(c));
 	}
 
 	public int toPartitionId(final double[] c) {
-		return toPartitionId(new DoublePoint(c));
+		return toPartitionId(new Double2D(c));
 	}
 
 	/**
@@ -92,7 +93,7 @@ public class QuadTreePartition extends PartitionInterface<NdPoint> {
 	 *
 	 * @param splitPoints
 	 */
-	void initQuadTree(final List<IntPoint> splitPoints) {
+	void initQuadTree(final List<Int2D> splitPoints) {
 		// Create the quad tree based on the given split points
 		qt.split(splitPoints);
 
@@ -294,17 +295,17 @@ public class QuadTreePartition extends PartitionInterface<NdPoint> {
 		Object[] sendCentroids = new Object[] { null };
 
 		if (gc != null) {
-			final IntPoint ctr = myLeafNode.getShape().getCenter();
+			final Int2D ctr = myLeafNode.getShape().getCenter();
 			final double[] sendData = new double[ctr.getNd() + 1], recvData = new double[ctr.getNd() + 1];
 			sendData[0] = myRuntime;
 			for (int i = 1; i < sendData.length; i++)
-				sendData[i] = ctr.c[i - 1] * myRuntime;
+				sendData[i] = ctr.c(i - 1) * myRuntime;
 
 			gc.comm.reduce(sendData, recvData, recvData.length, MPI.DOUBLE, MPI.SUM, gc.groupRoot);
 
 			if (isGroupMaster(gc))
 				sendCentroids = new Object[] { gc.master.getId(),
-						new IntPoint(Arrays.stream(recvData).skip(1).mapToInt(x -> (int) (x / recvData[0])).toArray())
+						new Int2D(Arrays.stream(recvData).skip(1).mapToInt(x -> (int) (x / recvData[0])).toArray())
 				};
 		}
 
@@ -318,7 +319,7 @@ public class QuadTreePartition extends PartitionInterface<NdPoint> {
 		// apply changes
 		for (final Object[] obj : newCentroids)
 			if (obj[0] != null)
-				qt.moveOrigin((int) obj[0], (IntPoint) obj[1]);
+				qt.moveOrigin((int) obj[0], (Int2D) obj[1]);
 
 		// Assigns new neighbors after balancing
 		// Recreates MPI topology based on that
@@ -334,12 +335,12 @@ public class QuadTreePartition extends PartitionInterface<NdPoint> {
 
 		final QuadTreePartition p = new QuadTreePartition(new int[] { 100, 100 }, false, new int[] { 1, 1 });
 
-		final IntPoint[] splitPoints = new IntPoint[] {
-				new IntPoint(50, 50),
-				new IntPoint(25, 25),
-				new IntPoint(75, 75),
-				new IntPoint(60, 90),
-				new IntPoint(10, 10)
+		final Int2D[] splitPoints = new Int2D[] {
+				new Int2D(50, 50),
+				new Int2D(25, 25),
+				new Int2D(75, 75),
+				new Int2D(60, 90),
+				new Int2D(10, 10)
 		};
 
 		p.initQuadTree(Arrays.asList(splitPoints));
@@ -357,12 +358,12 @@ public class QuadTreePartition extends PartitionInterface<NdPoint> {
 
 		final QuadTreePartition p = new QuadTreePartition(new int[] { 100, 100 }, false, new int[] { 1, 1 });
 
-		final IntPoint[] splitPoints = new IntPoint[] {
-				new IntPoint(50, 50),
-				new IntPoint(25, 25),
-				new IntPoint(75, 75),
-				new IntPoint(60, 90),
-				new IntPoint(10, 10)
+		final Int2D[] splitPoints = new Int2D[] {
+				new Int2D(50, 50),
+				new Int2D(25, 25),
+				new Int2D(75, 75),
+				new Int2D(60, 90),
+				new Int2D(10, 10)
 		};
 
 		p.initQuadTree(Arrays.asList(splitPoints));

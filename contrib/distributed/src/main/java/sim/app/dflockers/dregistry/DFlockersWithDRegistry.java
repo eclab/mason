@@ -11,8 +11,8 @@ import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
-import sim.field.partitioning.DoublePoint;
 import sim.util.Timing;
+import sim.util.*;
 
 public class DFlockersWithDRegistry extends DSimState {
 	private static final long serialVersionUID = 1;
@@ -45,7 +45,7 @@ public class DFlockersWithDRegistry extends DSimState {
 		for (int x = 0; x < DFlockersWithDRegistry.numFlockers / getPartitioning().numProcessors; x++) {
 			final double px = random.nextDouble() * size[0] + getPartitioning().getPartition().ul().getArray()[0];
 			final double py = random.nextDouble() * size[1] + getPartitioning().getPartition().ul().getArray()[1];
-			final DoublePoint location = new DoublePoint(px, py);
+			final Double2D location = new Double2D(px, py);
 			final DFlockerWithDRegistry flocker = new DFlockerWithDRegistry(location, 
 					(getPartitioning().pid * (DFlockersWithDRegistry.numFlockers / getPartitioning().numProcessors)) + x);
 

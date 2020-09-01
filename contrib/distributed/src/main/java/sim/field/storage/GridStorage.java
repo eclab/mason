@@ -8,9 +8,8 @@ import mpi.Datatype;
 import mpi.MPI;
 import mpi.MPIException;
 import sim.field.partitioning.IntHyperRect;
-import sim.field.partitioning.IntPoint;
-import sim.field.partitioning.NdPoint;
 import sim.util.MPIParam;
+import sim.util.*;
 
 /**
  * internal local storage for distributed grids.
@@ -25,15 +24,15 @@ public abstract class GridStorage<T extends Serializable> {
 	int[] stride;
 
 	/* Abstract Method of generic storage based on N-dimensional Point */
-	public abstract void setLocation(final T obj, final NdPoint p);
+	public abstract void setLocation(final T obj, final NumberND p);
 
-	public abstract NdPoint getLocation(final T obj);
+	public abstract NumberND getLocation(final T obj);
 
 	public abstract void removeObject(final T obj);
 
-	public abstract void removeObjects(final NdPoint p);
+	public abstract void removeObjects(final NumberND p);
 
-	public abstract ArrayList<T> getObjects(final NdPoint p);
+	public abstract ArrayList<T> getObjects(final NumberND p);
 
 	public GridStorage(final IntHyperRect shape) {
 		this.shape = shape;
@@ -127,8 +126,8 @@ public abstract class GridStorage<T extends Serializable> {
 	 * 
 	 * @return flattened index
 	 */
-	public int getFlatIdx(final IntPoint p) {
-		return IntStream.range(0, p.nd).map(i -> p.c[i] * stride[i]).sum();
+	public int getFlatIdx(final Int2D p) {
+		return IntStream.range(0, p.getNumDimensions()).map(i -> p.c(i) * stride[i]).sum();
 	}
 
 	/**
@@ -137,9 +136,9 @@ public abstract class GridStorage<T extends Serializable> {
 	 * 
 	 * @return flattened index with respect to the given size
 	 */
-	public static int getFlatIdx(final IntPoint p, final int[] wrtSize) {
+	public static int getFlatIdx(final Int2D p, final int[] wrtSize) {
 		final int[] s = getStride(wrtSize);
-		return IntStream.range(0, p.nd).map(i -> p.c[i] * s[i]).sum();
+		return IntStream.range(0, p.getNumDimensions()).map(i -> p.c(i) * s[i]).sum();
 	}
 
 	/**

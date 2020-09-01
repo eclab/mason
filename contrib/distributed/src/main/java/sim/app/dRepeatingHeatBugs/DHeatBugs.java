@@ -4,22 +4,17 @@
    See the file "LICENSE" for more information
    */
 
-package sim.app.dheatbugs;
+package sim.app.dRepeatingHeatBugs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import sim.engine.DSimState;
 import sim.engine.Schedule;
-import sim.engine.SimState;
-import sim.engine.Steppable;
 import sim.field.grid.DDenseGrid2D;
 import sim.field.grid.DDoubleGrid2D;
-import sim.field.partitioning.QuadTreePartition;
 import sim.util.Interval;
-import sim.util.Timing;
 import sim.util.*;
-
 
 public class DHeatBugs extends DSimState {
 	private static final long serialVersionUID = 1;
@@ -57,10 +52,14 @@ public class DHeatBugs extends DSimState {
 		gridHeight = height;
 		bugCount = count;
 		privBugCount = bugCount / getPartitioning().numProcessors;
-		valgrid = new DDoubleGrid2D(getPartitioning(), this.aoi, 0, this);
-		valgrid2 = new DDoubleGrid2D(getPartitioning(), this.aoi, 0, this);
-		bugs = new DDenseGrid2D<DHeatBug>(getPartitioning(), this.aoi, this);
-
+		try {
+			valgrid = new DDoubleGrid2D(getPartitioning(), this.aoi, 0, this);
+			valgrid2 = new DDoubleGrid2D(getPartitioning(), this.aoi, 0, this);
+			bugs = new DDenseGrid2D<DHeatBug>(getPartitioning(), this.aoi, this);
+		} catch (final Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
 	}
 
 	// Same getters and setters as HeatBugs
@@ -138,7 +137,6 @@ public class DHeatBugs extends DSimState {
 		return DHeatBugs.MAX_HEAT;
 	}
 
-	@Override
 	protected void startRoot() {
 		HashMap<Int2D, ArrayList<DHeatBug>> agents = new HashMap<Int2D, ArrayList<DHeatBug>>();
 		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
@@ -163,48 +161,13 @@ public class DHeatBugs extends DSimState {
 		super.start();
 
 		HashMap<Int2D, ArrayList<DHeatBug>> agents = (HashMap<Int2D, ArrayList<DHeatBug>>) getRootInfo("agents");
-
 		for (Int2D p : agents.keySet()) {
 			for (DHeatBug a : agents.get(p)) {
 				if (partition.getPartition().contains(p))
-					bugs.addAgent(p, a);
+					bugs.addRepeatingAgent(p, a, 1, 1);
 			}
-
 		}
-
-		// Does this have to happen here? I guess.
 		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);
-
-	}
-
-	@SuppressWarnings("serial")
-	class Balancer implements Steppable {
-		public void step(final SimState state) {
-			final DHeatBugs hb = (DHeatBugs) state;
-			try {
-				final QuadTreePartition ps = (QuadTreePartition) hb.getPartitioning();
-				final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage();
-				Timing.start(Timing.LB_OVERHEAD);
-				ps.balance(runtime, 0);
-				Timing.stop(Timing.LB_OVERHEAD);
-
-			} catch (final Exception e) {
-				e.printStackTrace();
-				System.exit(-1);
-			}
-		}
-	}
-
-	@SuppressWarnings("serial")
-	class Inspector implements Steppable {
-		public void step(final SimState state) {
-			final DHeatBugs hb = (DHeatBugs) state;
-			DSimState.logger.info(String.format("[%d][%d] Step Runtime: %g \tSync Runtime: %g \t LB Overhead: %g\n",
-					hb.getPartitioning().getPid(), hb.schedule.getSteps(),
-					Timing.get(Timing.LB_RUNTIME).getMovingAverage(),
-					Timing.get(Timing.MPI_SYNC_OVERHEAD).getMovingAverage(),
-					Timing.get(Timing.LB_OVERHEAD).getMovingAverage()));
-		}
 	}
 
 	public static void main(final String[] args) {

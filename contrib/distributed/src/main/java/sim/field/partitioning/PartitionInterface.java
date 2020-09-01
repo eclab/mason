@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import mpi.*;
+import sim.util.*;
 
 // Consumer is Raw Type because it's parameter is of type int
 /**
@@ -13,7 +14,7 @@ import mpi.*;
  * @param <P> Type of point
  */
 @SuppressWarnings("rawtypes")
-public abstract class PartitionInterface<P extends NdPoint> {
+public abstract class PartitionInterface<P extends NumberND> {
 	public int pid, numProcessors, numDimensions;
 	public int[] size;
 	boolean isToroidal;

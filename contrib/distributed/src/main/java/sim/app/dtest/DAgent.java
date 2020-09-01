@@ -15,16 +15,16 @@ import sim.engine.DSteppable;
 import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
-import sim.field.partitioning.DoublePoint;
+import sim.util.*;
 
 public class DAgent extends DSteppable implements Remote {
 	private static final long serialVersionUID = 1;
-	public DoublePoint loc;
+	public Double2D loc;
 	public int id;
-	public DoublePoint initLoc;
+	public Double2D initLoc;
 	public ArrayList<Integer> neighbours;
 
-	public DAgent(final DoublePoint location, final int id) {
+	public DAgent(final Double2D location, final int id) {
 		this.loc = location;
 		this.id = id;
 		this.initLoc = location;
@@ -34,9 +34,9 @@ public class DAgent extends DSteppable implements Remote {
 
 	public void step(final SimState state) {
 		final DSimulation dSimstate = (DSimulation) state;
-		DoublePoint curr_loc = loc;
-		double curr_x = loc.c[0];
-		double curr_y = loc.c[1];
+		Double2D curr_loc = loc;
+		double curr_x = loc.c(0);
+		double curr_y = loc.c(1);
 		double new_x = curr_x;
 		double new_y = curr_y;
 		
@@ -52,14 +52,14 @@ public class DAgent extends DSteppable implements Remote {
 				new_y-=5;
 			}		
 		}else {
-			if(curr_x < initLoc.c[0] ) {
+			if(curr_x < initLoc.c(0) ) {
 				new_x+=5;
-			}else if (curr_x > initLoc.c[0]) {
+			}else if (curr_x > initLoc.c(0)) {
 				new_x-=5;
 			}
-			if(curr_y < initLoc.c[1]) {
+			if(curr_y < initLoc.c(1)) {
 				new_y+=5;
-			}else if(curr_y > initLoc.c[1]) {
+			}else if(curr_y > initLoc.c(1)) {
 				new_y-=5;
 			}
 		}
@@ -69,7 +69,7 @@ public class DAgent extends DSteppable implements Remote {
 				neighbours.add(a.id);
 			}
 		}
-		DoublePoint new_loc = new DoublePoint(new_x,new_y);
+		Double2D new_loc = new Double2D(new_x,new_y);
 		loc = new_loc;
 		dSimstate.field.moveAgent(curr_loc, new_loc, this);
 		

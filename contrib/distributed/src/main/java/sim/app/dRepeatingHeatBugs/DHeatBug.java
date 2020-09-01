@@ -4,13 +4,12 @@
   See the file "LICENSE" for more information
 */
 
-package sim.app.dheatbugs;
+package sim.app.dRepeatingHeatBugs;
 
+import sim.engine.DSteppable;
 import sim.engine.SimState;
 import sim.field.grid.DDoubleGrid2D;
-import sim.engine.DSteppable;
 import sim.util.*;
-
 
 public class DHeatBug extends DSteppable {
 	private static final long serialVersionUID = 1;
@@ -103,7 +102,7 @@ public class DHeatBug extends DSteppable {
 		loc_x = dHeatBugs.valgrid.stx(bestx);
 		loc_y = dHeatBugs.valgrid.sty(besty);
 
-		dHeatBugs.bugs.moveAgent(new Int2D(old_x, old_y), new Int2D(loc_x, loc_y), this);
+		dHeatBugs.bugs.moveRepeatingAgent(new Int2D(old_x, old_y), new Int2D(loc_x, loc_y), this);
 
 	}
 

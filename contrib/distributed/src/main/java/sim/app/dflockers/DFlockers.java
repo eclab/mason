@@ -14,8 +14,8 @@ import java.util.HashMap;
 
 import sim.engine.DSimState;
 import sim.field.continuous.DContinuous2D;
-import sim.field.partitioning.DoublePoint;
 import sim.util.Timing;
+import sim.util.*;
 
 public class DFlockers extends DSimState {
 	private static final long serialVersionUID = 1;
@@ -55,7 +55,7 @@ public class DFlockers extends DSimState {
 	protected void startRoot() {
 		ArrayList<DFlocker> agents = new ArrayList<DFlocker>();
 		for (int x = 0; x < DFlockers.numFlockers; x++) {
-			final DoublePoint loc = new DoublePoint(random.nextDouble() * width, random.nextDouble() * height);
+			final Double2D loc = new Double2D(random.nextDouble() * width, random.nextDouble() * height);
 			DFlocker flocker = new DFlocker(loc, x);
 			idAgents.add(x);
 			if (random.nextBoolean(deadFlockerProbability))

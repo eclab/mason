@@ -25,10 +25,10 @@ import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
-import sim.field.partitioning.DoublePoint;
-import sim.field.partitioning.NdPoint;
 //import sim.util.MPIUtil;
 import sim.util.Timing;
+import sim.util.*;
+
 
 public class DSimulation extends DSimState {
 	private static final long serialVersionUID = 1;
@@ -94,7 +94,7 @@ public class DSimulation extends DSimState {
 		int c=0;
 		for(int i=75;i<600;i=i+150) {
 			for(int j=75;j<600;j=j+150) {
-				DoublePoint loc = new DoublePoint(i, j);
+				Double2D loc = new Double2D(i, j);
 				int id = 100*partition.toPartitionId(loc)+c;
 				c++;
 				agents.add(new DAgent(loc, id));

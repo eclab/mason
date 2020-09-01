@@ -12,16 +12,15 @@ import java.util.stream.IntStream;
 import mpi.MPI;
 import mpi.MPIException;
 import sim.field.partitioning.IntHyperRect;
-import sim.field.partitioning.IntPoint;
 import sim.field.partitioning.IntPointGenerator;
-import sim.field.partitioning.NdPoint;
 import sim.util.MPIParam;
+import sim.util.*;
 
 public class ContStorage<T extends Serializable> extends GridStorage<T> {
 
 	int[] dsize;
 	double[] discretizations;
-	public HashMap<T, NdPoint> m;
+	public HashMap<T, NumberND> m;
 
 	public ContStorage(final IntHyperRect shape, final double[] discretizations) {
 		super(shape);
@@ -41,7 +40,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 		// so that getFlatIdx() can correctly get the cell index of a discretized point
 		// TODO better approach?
 		stride = getStride(dsize);
-		this.m = new HashMap<T, NdPoint>();
+		this.m = new HashMap<T, NumberND>();
 		return IntStream.range(0, Arrays.stream(this.dsize).reduce(1, (x, y) -> x * y))
 				.mapToObj(i -> new HashSet<>()).toArray(s -> new HashSet[s]);
 	}
@@ -49,7 +48,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 	public String toString() {
 		final StringBuffer buf = new StringBuffer(String.format("ContStorage-%s\n", shape));
 
-		for (final IntPoint dp : IntPointGenerator.getBlock(dsize))
+		for (final Int2D dp : IntPointGenerator.getBlock(dsize))
 			if (getCelldp(dp).size() > 0)
 				buf.append("Cell " + dp + ":\t" + getCelldp(dp) + "\n");
 
@@ -57,7 +56,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 	}
 
 	// This returns a list of a list of dissimilar Objects
-	// They are either of type T or of type NdPoint
+	// They are either of type T or of type NumberND
 	public Serializable pack(final MPIParam mp) {
 		final ArrayList<ArrayList<Serializable>> ret = new ArrayList<>();
 
@@ -84,15 +83,15 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 
 		for (int k = 0; k < mp.rects.size(); k++)
 			for (int i = 0; i < objs.get(k).size(); i += 2)
-				setLocation((T) objs.get(k).get(i), ((NdPoint) objs.get(k).get(i + 1))
+				setLocation((T) objs.get(k).get(i), ((NumberND) objs.get(k).get(i + 1))
 						.shift(mp.rects.get(k).ul().getArray()).shift(shape.ul().getArray()));
 
 		return objs.stream().mapToInt(x -> x.size()).sum();
 	}
 
-	public IntPoint discretize(final NdPoint p) {
+	public Int2D discretize(final NumberND p) {
 		final double[] offsets = shape.ul().getOffsetsDouble(p);
-		return new IntPoint(IntStream.range(0, offsets.length)
+		return new Int2D(IntStream.range(0, offsets.length)
 				.map(i -> -(int) (offsets[i] / discretizations[i]))
 				.toArray());
 	}
@@ -102,30 +101,30 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 	}
 
 	// Get the corresponding cell given a continuous point
-	public HashSet<T> getCell(final NdPoint p) {
+	public HashSet<T> getCell(final NumberND p) {
 		return getCelldp(discretize(p));
 	}
 
 	// Get the corresponding cell given a discretized point
-	public HashSet<T> getCelldp(final IntPoint p) {
+	public HashSet<T> getCelldp(final Int2D p) {
 		return ((HashSet<T>[]) storage)[getFlatIdx(p)];
 	}
 
 	// Put the object to the given point
-	public void setLocation(final T obj, final NdPoint p) {
-		final NdPoint old = m.put(obj, p);
+	public void setLocation(final T obj, final NumberND p) {
+		final NumberND old = m.put(obj, p);
 		if (old != null)
 			getCell(old).remove(obj);
 		getCell(p).add(obj);
 	}
 
 	// Get the location of the given location
-	public NdPoint getLocation(final T obj) {
+	public NumberND getLocation(final T obj) {
 		return m.get(obj);
 	}
 
 	// Get all the objects at the given point
-	public ArrayList<T> getObjects(final NdPoint p) {
+	public ArrayList<T> getObjects(final NumberND p) {
 		final ArrayList<T> objects = new ArrayList<>();
 		for (final T t : getCell(p)) {
 			if (m.get(t).equals(p))
@@ -138,8 +137,8 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 	public List<T> getObjects(final IntHyperRect r) {
 		final ArrayList<T> objs = new ArrayList<T>();
 
-		final IntPoint ul = discretize(r.ul()), br = discretize(r.br()).shift(1);
-		for (final IntPoint dp : IntPointGenerator.getBlock(ul, br))
+		final Int2D ul = discretize(r.ul()), br = discretize(r.br()).shift(1);
+		for (final Int2D dp : IntPointGenerator.getBlock(ul, br))
 			getCelldp(dp).stream().filter(obj -> r.contains(m.get(obj))).forEach(obj -> objs.add(obj));
 
 		return objs;
@@ -151,7 +150,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 	}
 
 	// Remove all the objects at the given point
-	public void removeObjects(final NdPoint p) {
+	public void removeObjects(final NumberND p) {
 		getObjects(p).stream().forEach(obj -> removeObject(obj));
 	}
 
@@ -163,10 +162,10 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 	// Return a list of k nearest neighbors sorted by their distances
 	// to the query obj, if that many exists
 	public List<T> getNearestNeighbors(final T obj, final int need) {
-		final NdPoint loc = m.get(obj);
-		final IntPoint dloc = discretize(loc);
+		final NumberND loc = m.get(obj);
+		final Int2D dloc = discretize(loc);
 		final int maxLayer = IntStream.range(0, shape.getNd())
-				.map(i -> Math.max(dloc.c[i], dsize[i] - dloc.c[i]))
+				.map(i -> Math.max(dloc.c(i), dsize[i] - dloc.c(i)))
 				.max().getAsInt();
 		final ArrayList<T> objs = new ArrayList<T>();
 		final ArrayList<T> candidates = new ArrayList<T>(getCelldp(dloc));
@@ -175,11 +174,11 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 		int currLayer = 1;
 
 		while (objs.size() < need && currLayer <= maxLayer) {
-			for (final IntPoint dp : IntPointGenerator.getLayer(dloc, currLayer))
-				if (IntStream.range(0, shape.getNd()).allMatch(i -> dp.c[i] >= 0 && dp.c[i] < dsize[i]))
+			for (final Int2D dp : IntPointGenerator.getLayer(dloc, currLayer))
+				if (IntStream.range(0, shape.getNd()).allMatch(i -> dp.c(i) >= 0 && dp.c(i) < dsize[i]))
 					candidates.addAll(getCelldp(dp));
 
-			candidates.sort(Comparator.comparingDouble(o -> m.get(o).getDistance(loc, 2)));
+			candidates.sort(Comparator.comparingDouble(o -> m.get(o).getDistanceSq(loc)));
 			objs.addAll(candidates.subList(0, Math.min(candidates.size(), need - objs.size())));
 			candidates.clear();
 
@@ -191,7 +190,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 
 	// Return a list of neighbors of the given object within the given radius
 	public List<T> getNeighborsWithin(final T obj, final double radius) {
-		NdPoint tmp = null;
+		NumberND tmp = null;
 		try {
 			tmp = m.get(obj);
 		}catch (Exception e) {
@@ -199,8 +198,8 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 			//System.out.println(storage);
 			System.exit(-1);
 		}
-		final NdPoint loc = tmp;
-		IntPoint tmp2 = null;
+		final NumberND loc = tmp;
+		Int2D tmp2 = null;
 		try {
 			tmp2 = discretize(loc);
 		}catch (Exception e) {
@@ -210,22 +209,22 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 			//System.out.println("object "+obj+" loc "+loc);
 			e.printStackTrace();
 		}
-		final IntPoint dloc = tmp2;
+		final Int2D dloc = tmp2;
 		final ArrayList<T> objs = new ArrayList<T>();
 
 		// Calculate how many discretized cells we need to search
 		final int[] offsets = Arrays.stream(discretizations).mapToInt(x -> (int) Math.ceil(radius / x)).toArray();
 
 		// Generate the start/end point subject to the boundaries
-		final IntPoint ul = new IntPoint(
-				IntStream.range(0, shape.getNd()).map(i -> Math.max(dloc.c[i] - offsets[i], 0)).toArray());
-		final IntPoint br = new IntPoint(
-				IntStream.range(0, shape.getNd()).map(i -> Math.min(dloc.c[i] + offsets[i] + 1, dsize[i])).toArray());
+		final Int2D ul = new Int2D(
+				IntStream.range(0, shape.getNd()).map(i -> Math.max(dloc.c(i) - offsets[i], 0)).toArray());
+		final Int2D br = new Int2D(
+				IntStream.range(0, shape.getNd()).map(i -> Math.min(dloc.c(i) + offsets[i] + 1, dsize[i])).toArray());
 
 		// Collect all the objects that are not obj itself and within the given radius
-		for (final IntPoint dp : IntPointGenerator.getBlock(ul, br))
+		for (final Int2D dp : IntPointGenerator.getBlock(ul, br))
 			getCelldp(dp).stream()
-					.filter(x -> x != obj && m.get(x).getDistance(loc, 2) <= radius)
+					.filter(x -> x != obj && m.get(x).getDistanceSq(loc) <= radius * radius)
 					.forEach(x -> objs.add(x));
 
 		return objs;
@@ -234,22 +233,22 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 //	public static void main(final String[] args) throws mpi.MPIException {
 //		mpi.MPI.Init(args);
 //
-//		final IntPoint ul = new IntPoint(10, 20), br = new IntPoint(50, 80);
+//		final Int2D ul = new Int2D(10, 20), br = new Int2D(50, 80);
 //		final IntHyperRect rect = new IntHyperRect(1, ul, br);
 //		final double[] discretize = new double[] { 10, 10 };
 //
 //		final ContStorage<TestObj> f = new ContStorage<TestObj>(rect, discretize);
 //
 //		final TestObj obj1 = new TestObj(1);
-//		final DoublePoint loc1 = new DoublePoint(23.4, 30.2);
+//		final Double2D loc1 = new Double2D(23.4, 30.2);
 //		final TestObj obj2 = new TestObj(2);
-//		final DoublePoint loc2 = new DoublePoint(29.99, 39.99);
+//		final Double2D loc2 = new Double2D(29.99, 39.99);
 //		final TestObj obj3 = new TestObj(3);
-//		final DoublePoint loc3 = new DoublePoint(31, 45.6);
+//		final Double2D loc3 = new Double2D(31, 45.6);
 //		final TestObj obj4 = new TestObj(4);
-//		final DoublePoint loc4 = new DoublePoint(31, 45.6);
+//		final Double2D loc4 = new Double2D(31, 45.6);
 //		final TestObj obj5 = new TestObj(5);
-//		final DoublePoint loc5 = new DoublePoint(31, 45.60001);
+//		final Double2D loc5 = new Double2D(31, 45.60001);
 //
 //		f.setLocation(obj1, loc1);
 //		f.setLocation(obj2, loc2);
@@ -269,7 +268,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 //		for (final TestObj obj : f.getObjects(loc5))
 //			System.out.println(obj);
 //
-//		final IntHyperRect area = new IntHyperRect(1, new IntPoint(25, 35), new IntPoint(35, 47));
+//		final IntHyperRect area = new IntHyperRect(1, new Int2D(25, 35), new Int2D(35, 47));
 //		System.out.println("get objects in " + area);
 //		for (final TestObj obj : f.getObjects(area))
 //			System.out.println(obj);
@@ -282,7 +281,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 //		for (final TestObj obj : f.getObjects(loc5))
 //			System.out.println(obj);
 //
-//		final IntHyperRect r1 = new IntHyperRect(-1, new IntPoint(20, 30), new IntPoint(31, 41));
+//		final IntHyperRect r1 = new IntHyperRect(-1, new Int2D(20, 30), new Int2D(31, 41));
 //		System.out.println("get objects in " + r1);
 //		for (final TestObj obj : f.getObjects(r1))
 //			System.out.println(obj);
@@ -303,7 +302,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 //		for (final TestObj obj : f.getNeighborsWithin(obj2, r))
 //			System.out.println(obj);
 //
-//		final IntHyperRect r2 = new IntHyperRect(-1, new IntPoint(20, 30), new IntPoint(31, 41));
+//		final IntHyperRect r2 = new IntHyperRect(-1, new Int2D(20, 30), new Int2D(31, 41));
 //		System.out.println("after remove " + obj1 + ", get objects in " + r2);
 //		f.removeObject(obj1);
 //		for (final TestObj obj : f.getObjects(r2))
@@ -320,7 +319,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 //		System.out.println("after putting " + obj1 + " " + obj3 + " " + obj4 + " " + "back, get objects in " + rect);
 //		System.out.println(f);
 //
-//		final IntPoint ul2 = new IntPoint(20, 30), br2 = new IntPoint(30, 40);
+//		final Int2D ul2 = new Int2D(20, 30), br2 = new Int2D(30, 40);
 //		final IntHyperRect rect2 = new IntHyperRect(2, ul2, br2);
 //		f.reshape(rect2);
 //		System.out.println("after reshaping from " + rect + " to " + rect2 + ", get objects in " + rect2);

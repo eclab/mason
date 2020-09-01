@@ -8,8 +8,8 @@ import mpi.*;
 import static mpi.MPI.slice;
 
 import sim.field.partitioning.IntHyperRect;
-import sim.field.partitioning.NdPoint;
 import sim.util.MPIParam;
+import sim.util.*;
 
 public class IntGridStorage<T extends Serializable> extends GridStorage<T> {
 
@@ -54,13 +54,13 @@ public class IntGridStorage<T extends Serializable> extends GridStorage<T> {
 	}
 
 	@Override
-	public void setLocation(T obj, NdPoint p) {
+	public void setLocation(T obj, NumberND p) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public NdPoint getLocation(T obj) {
+	public NumberND getLocation(T obj) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -72,13 +72,13 @@ public class IntGridStorage<T extends Serializable> extends GridStorage<T> {
 	}
 
 	@Override
-	public void removeObjects(NdPoint p) {
+	public void removeObjects(NumberND p) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public ArrayList<T> getObjects(NdPoint p) {
+	public ArrayList<T> getObjects(NumberND p) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -13,12 +13,13 @@ import java.util.UUID;
 import mpi.MPI;
 import sim.field.partitioning.PartitionInterface;
 import sim.util.MPIUtil;
+import sim.util.*;
 
 /**
  * RMIProxy for using Java RMI. RMI is used for point to point communication
  * between nodes that are not neighbors.
  *
- * @param <P> The Type of NdPoint to use
+ * @param <P> The Type of PointND to use
  * @param <T> The Type of Object in the field
  */
 public class RMIProxy<T extends Serializable, P> {
