@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>cs.gmu.edu.eclab</groupId>
+		<artifactId>mason-build</artifactId>
+		<version>20</version>
+	</parent>
+	<groupId>cs.gmu.edu.eclab.contrib</groupId>
+	<artifactId>geomason-apps</artifactId>
+	<version>1.6</version>
+	<name>geomason</name>
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>repository</id>
+			<url>file:///${project.basedir}/repository/</url>
+		</repository>
+		<repository>
+			<id>repository2</id>
+			<url>http://download.osgeo.org/webdav/geotools/</url>
+		</repository>
+		<repository>
+			<id>repository3</id>
+			<url>http://maven.geotoolkit.org/</url>
+		</repository>
+		<repository>
+			<id>repository4</id>
+			<url>http://repo.boundlessgeo.com/main/</url>
+		</repository>
+	</repositories>
+
+	<packaging>jar</packaging>
+	<url>http://maven.apache.org</url>
+
+	<dependencies>
+		<dependency>
+			<groupId>cs.gmu.edu.eclab.contrib</groupId>
+			<artifactId>geomason</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.1.7.RELEASE</version>
+		</dependency>
+		<!-- <dependency> <groupId>edu.gmu.eclab</groupId> <artifactId>acequiasData</artifactId> 
+			<version>1.0</version> </dependency> -->
+		<dependency>
+			<groupId>edu.gmu.eclab</groupId>
+			<artifactId>ebolaData</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.gmu.eclab</groupId>
+			<artifactId>dadaabData</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.gmu.eclab</groupId>
+			<artifactId>hotspotsData</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.gmu.eclab</groupId>
+			<artifactId>refugeeData</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.gmu.eclab</groupId>
+			<artifactId>kiberaData</artifactId>
+			<version>1.0</version>
+		</dependency>
+				<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.0</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

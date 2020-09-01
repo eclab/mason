@@ -99,11 +99,7 @@
 			<version>4.3.22</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>5.1.7.RELEASE</version>
-		</dependency>
+
 
 		<dependency>
 			<groupId>edu.gmu.eclab</groupId>
@@ -139,35 +135,5 @@
 			<artifactId>opencsv</artifactId>
 			<version>2.3</version>
 		</dependency>
-
-
-		<!-- <dependency> <groupId>edu.gmu.eclab</groupId> <artifactId>acequiasData</artifactId> 
-			<version>1.0</version> </dependency> -->
-		<dependency>
-			<groupId>edu.gmu.eclab</groupId>
-			<artifactId>ebolaData</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.gmu.eclab</groupId>
-			<artifactId>dadaabData</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.gmu.eclab</groupId>
-			<artifactId>hotspotsData</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.gmu.eclab</groupId>
-			<artifactId>refugeeData</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.gmu.eclab</groupId>
-			<artifactId>kiberaData</artifactId>
-			<version>1.0</version>
-		</dependency>
-
 	</dependencies>
 </project>
