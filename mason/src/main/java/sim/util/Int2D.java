@@ -37,7 +37,7 @@ public final class Int2D extends NumberND
     public Int2D(final java.awt.Point p) { x = p.x; y = p.y; }
     public Int2D(final MutableInt2D p) { x = p.x; y = p.y; }
     public Int2D(final int x, final int y) { this.x = x; this.y = y; }
-    public Int2D(int[] vals) { this.x = vals[0]; this.y = vals[2]; }
+    public Int2D(int[] vals) { this.x = vals[0]; this.y = vals[1]; }
     public final int getX() { return x; }
     public final int getY() { return y; }
     public java.awt.geom.Point2D.Double toPoint2D() { return new java.awt.geom.Point2D.Double(x,y); }
