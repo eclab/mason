@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>cs.gmu.edu.eclab</groupId>
+		<artifactId>mason-build</artifactId>
+		<version>20</version>
+	</parent>
+
+	<artifactId>distributed-geomason</artifactId>
+	<version>1.0</version>
+	<name>distributed-geomason</name>
+	<packaging>jar</packaging>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>repository</id>
+			<url>file:///${project.basedir}/repository</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>cs.gmu.edu.eclab</groupId>
+			<artifactId>distributed</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cs.gmu.edu.eclab.contrib</groupId>
+			<artifactId>geomason</artifactId>
+			<version>1.6</version>
+		</dependency>
+	</dependencies>
+</project>
