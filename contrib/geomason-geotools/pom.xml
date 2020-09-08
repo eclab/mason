@@ -10,7 +10,7 @@
 		<version>20</version>
 	</parent>
 	<groupId>cs.gmu.edu.eclab.contrib</groupId>
-	<artifactId>geomason-apps</artifactId>
+	<artifactId>geomason-geotools</artifactId>
 	<version>1.6</version>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -35,12 +35,22 @@
 		</repository>
 		<repository>
 			<id>repository3</id>
-			<url>http://maven.geotoolkit.org/</url>
+			<url>https://maven.geotoolkit.org/</url>
+		</repository>
+		<repository>
+			<id>osgeo-snapshot</id>
+			<name>OSGeo Snapshot Repository</name>
+			<url>https://repo.osgeo.org/repository/snapshot/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
 		</repository>
 	</repositories>
 
 	<packaging>jar</packaging>
-	<url>http://maven.apache.org</url>
 
 	<dependencies>
 		<dependency>
@@ -49,42 +59,19 @@
 			<version>1.6</version>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>5.1.7.RELEASE</version>
-		</dependency>
-		<!-- <dependency> <groupId>edu.gmu.eclab</groupId> <artifactId>acequiasData</artifactId> 
-			<version>1.0</version> </dependency> -->
-		<dependency>
-			<groupId>edu.gmu.eclab</groupId>
-			<artifactId>ebolaData</artifactId>
-			<version>1.0</version>
+			<groupId>org.gdal</groupId>
+			<artifactId>gdal</artifactId>
+			<version>3.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>edu.gmu.eclab</groupId>
-			<artifactId>dadaabData</artifactId>
-			<version>1.0</version>
+			<groupId>org.geoserver.extension</groupId>
+			<artifactId>gs-ogr-core</artifactId>
+			<version>2.15.1</version>
 		</dependency>
 		<dependency>
-			<groupId>edu.gmu.eclab</groupId>
-			<artifactId>hotspotsData</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.gmu.eclab</groupId>
-			<artifactId>refugeeData</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.gmu.eclab</groupId>
-			<artifactId>kiberaData</artifactId>
-			<version>1.0</version>
-		</dependency>
-				<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.0</version>
-			<scope>test</scope>
+			<groupId>nl.cloudfarming.client</groupId>
+			<artifactId>lib-geotools</artifactId>
+			<version>2.7.4</version>
 		</dependency>
 	</dependencies>
 </project>
