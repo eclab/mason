@@ -90,7 +90,8 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 	}
 
 	public Int2D discretize(final NumberND p) {
-		final double[] offsets = shape.ul().getOffsetsDouble(p);
+
+		final double[] offsets = shape.ul().getOffsetsDouble(p);;
 		return new Int2D(IntStream.range(0, offsets.length)
 				.map(i -> -(int) (offsets[i] / discretizations[i]))
 				.toArray());

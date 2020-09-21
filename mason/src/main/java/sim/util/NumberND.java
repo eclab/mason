@@ -240,7 +240,9 @@ public abstract class NumberND implements java.io.Serializable
 		else if (this instanceof Double2D)
 			return ((Double2D)this).rshift(offset);
 		else return null;
-		} 
+        } 
+        
+        //public abstract double[] getOffsetsDouble(NdPoint that);
 
 		public double[] getOffsetsDouble(final NumberND that) 
 			{
@@ -248,6 +250,7 @@ public abstract class NumberND implements java.io.Serializable
 			double[] ret = new double[d];
 			for(int i = 0; i < d; i++)
 				{
+				//System.out.println("getOffsetsDouble "+getVal(i)+" that "+that.getVal(i));
 				ret[i] = getVal(i) - that.getVal(i);
 				}
 			return ret;

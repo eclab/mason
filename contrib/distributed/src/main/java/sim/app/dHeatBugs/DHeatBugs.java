@@ -7,8 +7,12 @@
 package sim.app.dHeatBugs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.stream.IntStream;
 
+import mpi.MPI;
+import mpi.MPIException;
 import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.field.grid.DDenseGrid2D;
@@ -35,6 +39,9 @@ public class DHeatBugs extends DSimState {
 	// TODO: Should this be updated after migration/balancing?
 	public final int privBugCount; // the replacement for get/setBugCount ?
 
+	public ArrayList<Integer> idAgents;
+	public ArrayList<Integer> idLocal;
+
 	/*
 	 * Missing get/setGridHeight get/setGridWidth get/setBugCount
 	 */
@@ -60,6 +67,8 @@ public class DHeatBugs extends DSimState {
 			e.printStackTrace();
 			System.exit(-1);
 		}
+		idAgents = new ArrayList<Integer>();
+		idLocal = new ArrayList<Integer>();
 	}
 
 	// Same getters and setters as HeatBugs
@@ -146,7 +155,7 @@ public class DHeatBugs extends DSimState {
 			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
 			int px = random.nextInt(gridWidth);
 			int py = random.nextInt(gridHeight);
-			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
+			final DHeatBug b = new DHeatBug(x,idealTemp, heatOutput, randomMovementProbability, px, py);
 			Int2D point = new Int2D(px, py);
 			if (!agents.containsKey(point))
 				agents.put(point, new ArrayList<DHeatBug>());
@@ -156,6 +165,71 @@ public class DHeatBugs extends DSimState {
 		sendRootInfoToAll("agents",agents);
 
 	}
+
+	// @Override
+	// public void preSchedule() {
+	// 	super.preSchedule();
+	// 	try {
+	// 		MPI.COMM_WORLD.barrier();
+	// 	} catch (MPIException e2) {
+	// 		// TODO Auto-generated catch block
+	// 		e2.printStackTrace();
+	// 	}
+	// 	if (schedule.getSteps() > 0) {
+	// 		int[] dstDispl = new int[partition.numProcessors];
+	// 		final int[] dstCount = new int[partition.numProcessors];
+	// 		int[] recv = new int[bugCount];
+
+	// 		int[] ids = new int[idLocal.size()];
+	// 		for (int i = 0; i < idLocal.size(); i++) {
+	// 			ids[i] = idLocal.get(i);
+	// 		}
+
+	// 		int num = ids.length;
+
+	// 		try {
+
+	// 			MPI.COMM_WORLD.gather(new int[] { num }, 1, MPI.INT, dstCount, 1, MPI.INT, 0);
+
+	// 			dstDispl = IntStream.range(0, dstCount.length)
+	// 					.map(x -> Arrays.stream(dstCount).limit(x).sum())
+	// 					.toArray();
+
+	// 			MPI.COMM_WORLD.gatherv(ids, num, MPI.INT, recv, dstCount, dstDispl, MPI.INT, 0);
+
+	// 		} catch (MPIException e1) {
+	// 			// TODO Auto-generated catch block
+	// 			e1.printStackTrace();
+	// 		}
+
+	// 		if (partition.getPid() == 0) {
+	// 			System.out.println("STEP "+schedule.getSteps()+" count ");
+	// 			for (int i = 0; i < dstCount.length; i++) {
+	// 				System.out.print(dstCount[i]+" ");
+	// 			}
+	// 			System.out.println();
+	// 			System.out.println("STEP "+schedule.getSteps()+" disp ");
+	// 			for (int i = 0; i < dstDispl.length; i++) {
+	// 				System.out.print(dstDispl[i]+" ");
+	// 			}
+	// 			System.out.println();
+	// 			try {
+	// 				Thread.sleep(1000);
+	// 			} catch (InterruptedException e) {
+	// 				// TODO Auto-generated catch block
+	// 				e.printStackTrace();
+	// 			}
+	// 			Arrays.sort(recv);
+	// 			for (int i = 0; i < idAgents.size(); i++) {
+	// 				if (idAgents.get(i) != recv[i]) {
+	// 					System.err.println("ERROR: something wrong happens --> idAgents.get(i) "+idAgents.get(i)+" recv[i] "+recv[i]);
+	// 					System.exit(1);
+	// 				}
+	// 			}
+	// 		}
+	// 		idLocal.clear();
+	// 	}
+	// }
 
 	public void start() {
 		super.start();

@@ -34,7 +34,7 @@ public class DFlockersWithDRegistry extends DSimState {
 	/** Creates a Flockers simulation with the given random number seed. */
 	public DFlockersWithDRegistry(final long seed) {
 		super(seed, DFlockersWithDRegistry.width, DFlockersWithDRegistry.height, DFlockersWithDRegistry.neighborhood);
-
+		enableRegistry(); //used to enable the object registry
 		final double[] discretizations = new double[] { DFlockersWithDRegistry.neighborhood / 1.5, DFlockersWithDRegistry.neighborhood / 1.5 };
 		flockers = new DContinuous2D<DFlockerWithDRegistry>(getPartitioning(), aoi, discretizations, this);
 	}

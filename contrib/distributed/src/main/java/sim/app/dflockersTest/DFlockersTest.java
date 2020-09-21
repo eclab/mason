@@ -58,7 +58,12 @@ public class DFlockersTest extends DSimState {
 	@Override
 	public void preSchedule() {
 		super.preSchedule();
-
+		try {
+			MPI.COMM_WORLD.barrier();
+		} catch (MPIException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 		if (schedule.getSteps() > 0) {
 			int[] dstDispl = new int[partition.numProcessors];
 			final int[] dstCount = new int[partition.numProcessors];
@@ -87,22 +92,22 @@ public class DFlockersTest extends DSimState {
 			}
 
 			if (partition.getPid() == 0) {
-//				System.out.println("count ");
-//				for (int i = 0; i < dstCount.length; i++) {
-//					System.out.print(dstCount[i]+" ");
-//				}
-//				System.out.println();
-//				System.out.println("disp ");
-//				for (int i = 0; i < dstDispl.length; i++) {
-//					System.out.print(dstDispl[i]+" ");
-//				}
-//				System.out.println();
-//				try {
-//					Thread.sleep(1000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+				System.out.println("STEP "+schedule.getSteps()+" count ");
+				for (int i = 0; i < dstCount.length; i++) {
+					System.out.print(dstCount[i]+" ");
+				}
+				System.out.println();
+				System.out.println("STEP "+schedule.getSteps()+" disp ");
+				for (int i = 0; i < dstDispl.length; i++) {
+					System.out.print(dstDispl[i]+" ");
+				}
+				System.out.println();
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				Arrays.sort(recv);
 				for (int i = 0; i < idAgents.size(); i++) {
 					if (idAgents.get(i) != recv[i]) {

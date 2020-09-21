@@ -150,11 +150,11 @@ public class DFlocker extends DSteppable implements Remote {
 			return;
 		 List<DFlocker> b = null;
 		
-		try {
+		//try {
 		 b = dFlockers.flockers.getNeighborsWithin(this, DFlockers.neighborhood);
-		}catch (Exception e) {
-			System.out.println(dFlockers.getPartitioning().getPid());
-		}
+//		}catch (Exception e) {
+//			System.out.println("SIMULATION ERROR: agent "+this+ " on pid"+dFlockers.getPartitioning().getPid());
+//		}
 
 		final Double2D avoid = avoidance(b, dFlockers.flockers);
 		final Double2D cohe = cohesion(b, dFlockers.flockers);

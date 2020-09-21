@@ -132,9 +132,9 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		partition.registerPostCommit(arg -> {
 //			final int level = (int) arg;
 //			GridStorage s = null;
-//
+
 			reload();
-//
+
 //			if (q.isGroupMaster(level))
 //				s = tempStor.remove(0);
 //

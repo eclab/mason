@@ -27,7 +27,6 @@
 		</repository>
 	</repositories>
 	<dependencies>
-
 		<dependency>
 			<groupId>cs.gmu.edu.eclab</groupId>
 			<artifactId>mason</artifactId>

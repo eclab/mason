@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import ec.util.MersenneTwisterFast;
 import mpi.MPI;
 import mpi.MPIException;
+import sim.app.dflockers.DFlocker;
 import sim.engine.DSteppable;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
@@ -224,5 +225,31 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 		
 		dFlockers.flockers.moveAgent(old, loc, this);
 
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof DFlocker))
+			return false;
+		DFlocker other = (DFlocker) obj;
+		return (id == other.id);
+	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return "{ "+this.getClass()+"@"+Integer.toHexString(hashCode())+" id: "+this.id+"}";
 	}
 }
