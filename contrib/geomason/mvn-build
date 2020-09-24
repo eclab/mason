@@ -24,7 +24,7 @@ csv4j:
 
 swiselib:
 	rm -rf repository/edu/gmu/eclab/swiselib/
-	mvn install:install-file -DlocalRepositoryPath:repository/ -Dfile=repository/jars/swiselib.jar -DgroupId=edu.gmu.eclab -Dversion=4.0 -DartifactId=swiselib -Dpackaging=jar
+	mvn install:install-file -DlocalRepositoryPath:repository/ -Dfile=repository/jars/swiselib-4.0.jar -DgroupId=edu.gmu.eclab -Dversion=4.0 -DartifactId=swiselib -Dpackaging=jar
 	mkdir -p repository/edu/gmu/eclab/swiselib/
 	cp repository/jars/swiselib.jar repository/edu/gmu/eclab/swiselib/
 
