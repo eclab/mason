@@ -13,21 +13,7 @@ package sim.engine;
 public class DistributedTentativeStep extends TentativeStep {
 	private static final long serialVersionUID = 1;
 
-//	Schedule.Key key;
-//
-//	public int getOrdering() {
-//		return key.ordering;
-//	}
-//
-//	public double getTime() {
-//		return key.time;
-//	}
-//
-//	public Schedule.Key getKey() {
-//		return key;
-//	}
-
-	public DistributedTentativeStep(final Steppable step, final Schedule.Key key) {
+	public DistributedTentativeStep(final Steppable step) {
 		super(step);
 		if (step instanceof Stopping) {
 			((Stopping) step).setStoppable(this);

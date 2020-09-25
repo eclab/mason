@@ -16,42 +16,42 @@ public class DistributedSchedule extends Schedule {
 	public boolean scheduleOnce(final Steppable event) {
 		Key k = new Key(/* must lock for: */time + 1.0, 0);
 		synchronized (lock) {
-			return _scheduleOnce(k, new DistributedTentativeStep(event, k));
+			return _scheduleOnce(k, new DistributedTentativeStep(event));
 		}
 	}
 
 	public boolean scheduleOnceIn(final double delta, final Steppable event) {
 		Key k = new Key(/* must lock for: */ time + delta, 0);
 		synchronized (lock) {
-			return _scheduleOnce(k, new DistributedTentativeStep(event, k));
+			return _scheduleOnce(k, new DistributedTentativeStep(event));
 		}
 	}
 
 	public boolean scheduleOnce(final Steppable event, final int ordering) {
 		Key k = new Key(/* must lock for: */time + 1.0, ordering);
 		synchronized (lock) {
-			return _scheduleOnce(k, new DistributedTentativeStep(event, k));
+			return _scheduleOnce(k, new DistributedTentativeStep(event));
 		}
 	}
 
 	public boolean scheduleOnceIn(final double delta, final Steppable event, final int ordering) {
 		Key k = new Key(/* must lock for: */ time + delta, ordering);
 		synchronized (lock) {
-			return _scheduleOnce(k, new DistributedTentativeStep(event, k));
+			return _scheduleOnce(k, new DistributedTentativeStep(event));
 		}
 	}
 
 	public boolean scheduleOnce(double time, final Steppable event) {
 		Key k = new Key(time, 0);
 		synchronized (lock) {
-			return _scheduleOnce(k, new DistributedTentativeStep(event, k));
+			return _scheduleOnce(k, new DistributedTentativeStep(event));
 		}
 	}
 
 	public boolean scheduleOnce(double time, final int ordering, final Steppable event) {
 		Key k = new Key(time, ordering);
 		synchronized (lock) {
-			return _scheduleOnce(k, new DistributedTentativeStep(event, k));
+			return _scheduleOnce(k, new DistributedTentativeStep(event));
 		}
 	}
 
