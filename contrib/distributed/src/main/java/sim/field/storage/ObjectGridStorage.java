@@ -1,7 +1,6 @@
 package sim.field.storage;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.function.IntFunction;
 
 import sim.field.partitioning.IntHyperRect;
@@ -28,7 +27,7 @@ public class ObjectGridStorage<T extends Serializable> extends GridStorage<T> {
 		return new ObjectGridStorage<T>(shape, alloc);
 	}
 
-	protected Object allocate(final int size) {
+	protected T[] allocate(final int size) {
 		return alloc.apply(size);
 	}
 
@@ -72,34 +71,30 @@ public class ObjectGridStorage<T extends Serializable> extends GridStorage<T> {
 		return curr;
 	}
 
-	@Override
-	public void setLocation(T obj, NumberND p) {
-		// TODO Auto-generated method stub
-
+	@SuppressWarnings("unchecked")
+	public T[] getStorageArray() {
+		return (T[]) getStorage();
 	}
 
-	@Override
-	public NumberND getLocation(T obj) {
-		// TODO Auto-generated method stub
-		return null;
+	public void addToLocation(T obj, NumberND p) {
+		getStorageArray()[getFlatIdx((Int2D) p)] = obj;
 	}
 
-	@Override
-	public void removeObject(T obj) {
-		// TODO Auto-generated method stub
+//	public NumberND getLocation(T obj) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
+	public void removeObject(T obj, NumberND p) {
+		addToLocation(null, p);
 	}
 
-	@Override
 	public void removeObjects(NumberND p) {
-		// TODO Auto-generated method stub
-
+		addToLocation(null, p);
 	}
 
-	@Override
-	public ArrayList<T> getObjects(NumberND p) {
-		// TODO Auto-generated method stub
-		return null;
+	public T getObjects(NumberND p) {
+		return (T) getStorageArray()[getFlatIdx((Int2D) p)];
 	}
 
 //	public static void main(final String[] args) throws MPIException {

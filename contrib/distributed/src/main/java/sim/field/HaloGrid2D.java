@@ -25,6 +25,7 @@ import sim.field.partitioning.IntHyperRect;
 import sim.field.partitioning.IntPointGenerator;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.QuadTreePartition;
+import sim.field.storage.ContStorage;
 import sim.field.storage.GridStorage;
 import sim.util.GroupComm;
 import sim.util.MPIParam;
@@ -40,7 +41,7 @@ import sim.util.*;
  * @param <S> The Type of Storage to use
  */
 public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends GridStorage>
-		implements TransportRMIInterface<Serializable, P>, Synchronizable, DGrid<T, P> {
+		implements TransportRMIInterface<T, P>, Synchronizable, DGrid<T, P> {
 
 	/**
 	 * Helper class to organize neighbor-related data structures and methods
@@ -184,7 +185,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @return location in a toroidal plane
 	 */
 	public Int2D toToroidal(final Int2D p) {
-		//return p.toToroidal(world);
+		// return p.toToroidal(world);
 		return world.toToroidal(p);
 	}
 
@@ -192,15 +193,22 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		if (!inLocal(p)) {
 			addToRemote(p, t);
 		} else {
-			localStorage.setLocation(t, p);
+			if (localStorage instanceof ContStorage)
+				localStorage.addToLocation(t, p);
+			else
+				localStorage.addToLocation(t, toLocalPoint((Int2D) p));
 		}
 	}
 
 	public void remove(final P p, final T t) {
 		if (!inLocal(p))
 			removeFromRemote(p, t);
-		else
-			localStorage.removeObject(t);
+		else {
+			if (localStorage instanceof ContStorage)
+				localStorage.removeObject(t, p);
+			else
+				localStorage.removeObject(t, toLocalPoint((Int2D) p));
+		}
 	}
 
 	public void remove(final P p) {
@@ -412,10 +420,14 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @param t     object to move
 	 */
 	public void moveLocal(final P fromP, final P toP, final T t) {
-		localStorage.removeObject(t);
-		localStorage.setLocation(t, toP);
+		if (localStorage instanceof ContStorage) {
+			localStorage.removeObject(t, fromP);
+			localStorage.addToLocation(t, toP);
+		} else {
+			localStorage.removeObject(t, toLocalPoint((Int2D) fromP));
+			localStorage.addToLocation(t, toLocalPoint((Int2D) toP));
+		}
 	}
-
 	// TODO make a copy of the storage which will be used by the remote field access
 
 	// TODO: Do we need to check for type safety here?
@@ -658,24 +670,33 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 
 	/* RMI METHODS */
 	// TODO: Should we throw exception here if not in local?
-	public void addRMI(P p, Serializable t) throws RemoteException {
-		// addLocal(p, t);
-		localStorage.setLocation(t, p);
-
+	public void addRMI(P p, T t) throws RemoteException {
+//		Checking instanceof because ContStorage store global point 
+		if (localStorage instanceof ContStorage)
+			localStorage.addToLocation(t, p);
+		else
+			localStorage.addToLocation(t, toLocalPoint((Int2D) p));
 	}
 
-	public void removeRMI(P p, Serializable t) throws RemoteException {
-		// removeLocal(p, t);
-		localStorage.removeObject(t);
+	public void removeRMI(P p, T t) throws RemoteException {
+		if (localStorage instanceof ContStorage)
+			localStorage.removeObject(t, p);
+		else
+			localStorage.removeObject(t, toLocalPoint((Int2D) p));
 	}
 
 	public void removeRMI(final P p) throws RemoteException {
-		// removeLocal(p);
-		localStorage.removeObjects(p);
+		if (localStorage instanceof ContStorage)
+			localStorage.removeObjects(p);
+		else
+			localStorage.removeObjects(toLocalPoint((Int2D) p));
 	}
 
 	public Serializable getRMI(P p) throws RemoteException {
-		return localStorage.getObjects(p);
+		if (localStorage instanceof ContStorage)
+			return localStorage.getObjects(p);
+		else
+			return localStorage.getObjects(toLocalPoint((Int2D) p));
 	}
 
 	/**

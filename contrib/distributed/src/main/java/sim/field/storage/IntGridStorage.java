@@ -8,15 +8,17 @@ import mpi.*;
 import static mpi.MPI.slice;
 
 import sim.field.partitioning.IntHyperRect;
-import sim.util.MPIParam;
 import sim.util.*;
 
-public class IntGridStorage<T extends Serializable> extends GridStorage<T> {
+public class IntGridStorage extends GridStorage<Integer> {
+
+	final int initVal;
 
 	public IntGridStorage(IntHyperRect shape, int initVal) {
 		super(shape);
 		baseType = MPI.INT;
 		storage = allocate(shape.getArea());
+		this.initVal = initVal;
 		Arrays.fill((int[]) storage, initVal);
 	}
 
@@ -53,33 +55,32 @@ public class IntGridStorage<T extends Serializable> extends GridStorage<T> {
 		return new int[size];
 	}
 
-	@Override
-	public void setLocation(T obj, NumberND p) {
-		// TODO Auto-generated method stub
-
+	public int[] getStorageArray() {
+		return (int[]) getStorage();
 	}
 
-	@Override
-	public NumberND getLocation(T obj) {
-		// TODO Auto-generated method stub
-		return null;
+	public void addToLocation(Integer t, NumberND p) {
+		getStorageArray()[getFlatIdx((Int2D) p)] = t;
 	}
 
-	@Override
-	public void removeObject(T obj) {
-		// TODO Auto-generated method stub
-
+	public void addToLocation(int t, NumberND p) {
+		getStorageArray()[getFlatIdx((Int2D) p)] = t;
 	}
 
-	@Override
+	public void removeObject(Integer t, NumberND p) {
+		addToLocation(initVal, p);
+	}
+
+	public void removeObject(int t, NumberND p) {
+		addToLocation(initVal, p);
+	}
+
 	public void removeObjects(NumberND p) {
-		// TODO Auto-generated method stub
-
+		addToLocation(initVal, p);
 	}
 
-	@Override
-	public ArrayList<T> getObjects(NumberND p) {
-		// TODO Auto-generated method stub
-		return null;
+	public Serializable getObjects(NumberND p) {
+		return getStorageArray()[getFlatIdx((Int2D) p)];
 	}
+
 }

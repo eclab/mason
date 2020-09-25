@@ -6,11 +6,6 @@
 
 package sim.engine;
 
-import java.io.Serializable;
-
-import sim.util.*;
-import ec.util.*;
-
 /**
  * Overrides scheduleRepeating and scheduleOnce to use DistributedTentativeStep
  *
@@ -74,4 +69,11 @@ public class DistributedSchedule extends Schedule {
 				return null;
 		}
 	}
+
+	public DistributedIterativeRepeat scheduleRepeating(final Steppable event, final int ordering,
+			final double interval) {
+		return scheduleRepeating(time + interval, ordering, event, interval);
+	}
+	
+
 }

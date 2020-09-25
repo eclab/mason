@@ -17,7 +17,7 @@ import sim.util.*;
  */
 public class DIntGrid2D extends DAbstractGrid2D implements DGrid<Integer, Int2D> {
 
-	private HaloGrid2D<Integer, Int2D, IntGridStorage<Integer>> halo;
+	private HaloGrid2D<Integer, Int2D, IntGridStorage> halo;
 	public final int initVal;
 
 	public DIntGrid2D(final PartitionInterface ps, final int[] aoi, final int initVal, final DSimState state) {
@@ -25,23 +25,19 @@ public class DIntGrid2D extends DAbstractGrid2D implements DGrid<Integer, Int2D>
 		if (ps.getNumDim() != 2)
 			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + ps.getNumDim());
 
-		halo = new HaloGrid2D<Integer, Int2D, IntGridStorage<Integer>>(ps, aoi,
+		halo = new HaloGrid2D<Integer, Int2D, IntGridStorage>(ps, aoi,
 				new IntGridStorage(ps.getPartition(), initVal), state);
 		fieldSize = ps.getFieldSize();
 
 		this.initVal = initVal;
 	}
 
-	public int[] getStorageArray() {
-		return (int[]) halo.localStorage.getStorage();
-	}
-
 	public int getLocal(final Int2D p) {
-		return getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))];
+		return halo.localStorage.getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))];
 	}
 
 	public void addLocal(final Int2D p, final int t) {
-		getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))] = t;
+		halo.localStorage.getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))] = t;
 	}
 
 	public Integer getRMI(final Int2D p) {
@@ -49,7 +45,7 @@ public class DIntGrid2D extends DAbstractGrid2D implements DGrid<Integer, Int2D>
 	}
 
 	public void addLocal(final Int2D p, final Integer t) {
-		getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))] = t;
+		halo.localStorage.getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))] = t;
 	}
 
 	public void removeLocal(final Int2D p, final Double t) {

@@ -9,8 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import mpi.MPI;
-import mpi.MPIException;
 import sim.field.partitioning.IntHyperRect;
 import sim.field.partitioning.IntPointGenerator;
 import sim.util.MPIParam;
@@ -33,7 +31,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 		return new ContStorage<>(shape, discretizations);
 	}
 
-	protected Object allocate(final int size) {
+	protected Object[] allocate(final int size) {
 		this.dsize = IntStream.range(0, shape.getNd())
 				.map(i -> (int) Math.ceil(shape.getSize()[i] / discretizations[i]) + 1).toArray();
 		// Overwrite the original stride with the new stride of dsize;
@@ -83,7 +81,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 
 		for (int k = 0; k < mp.rects.size(); k++)
 			for (int i = 0; i < objs.get(k).size(); i += 2)
-				setLocation((T) objs.get(k).get(i), ((NumberND) objs.get(k).get(i + 1))
+				addToLocation((T) objs.get(k).get(i), ((NumberND) objs.get(k).get(i + 1))
 						.shift(mp.rects.get(k).ul().getArray()).shift(shape.ul().getArray()));
 
 		return objs.stream().mapToInt(x -> x.size()).sum();
@@ -91,7 +89,8 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 
 	public Int2D discretize(final NumberND p) {
 
-		final double[] offsets = shape.ul().getOffsetsDouble(p);;
+		final double[] offsets = shape.ul().getOffsetsDouble(p);
+		;
 		return new Int2D(IntStream.range(0, offsets.length)
 				.map(i -> -(int) (offsets[i] / discretizations[i]))
 				.toArray());
@@ -112,7 +111,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 	}
 
 	// Put the object to the given point
-	public void setLocation(final T obj, final NumberND p) {
+	public void addToLocation(final T obj, final NumberND p) {
 		final NumberND old = m.put(obj, p);
 		if (old != null)
 			getCell(old).remove(obj);
@@ -147,6 +146,10 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 
 	// Remove the object from the storage
 	public void removeObject(final T obj) {
+		getCell(m.remove(obj)).remove(obj);
+	}
+
+	public void removeObject(final T obj, NumberND p) {
 		getCell(m.remove(obj)).remove(obj);
 	}
 
@@ -194,20 +197,20 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 		NumberND tmp = null;
 		try {
 			tmp = m.get(obj);
-		}catch (Exception e) {
-			//System.out.println(  );
-			//System.out.println(storage);
+		} catch (Exception e) {
+			// System.out.println( );
+			// System.out.println(storage);
 			System.exit(-1);
 		}
 		final NumberND loc = tmp;
 		Int2D tmp2 = null;
 		try {
 			tmp2 = discretize(loc);
-		}catch (Exception e) {
-			
-			//System.out.println(this.toString());
-			//System.out.println("m: "+ m.keySet());
-			//System.out.println("object "+obj+" loc "+loc);
+		} catch (Exception e) {
+
+			// System.out.println(this.toString());
+			// System.out.println("m: "+ m.keySet());
+			// System.out.println("object "+obj+" loc "+loc);
 			e.printStackTrace();
 		}
 		final Int2D dloc = tmp2;

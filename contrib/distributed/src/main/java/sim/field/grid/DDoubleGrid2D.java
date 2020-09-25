@@ -17,7 +17,7 @@ import sim.util.*;
  */
 public class DDoubleGrid2D extends DAbstractGrid2D implements DGrid<Double, Int2D> {
 
-	private HaloGrid2D<Double, Int2D, DoubleGridStorage<Double>> halo;
+	private HaloGrid2D<Double, Int2D, DoubleGridStorage> halo;
 	public final double initVal;
 
 	public DDoubleGrid2D(final PartitionInterface ps, final int[] aoi, final double initVal, final DSimState state) {
@@ -25,7 +25,7 @@ public class DDoubleGrid2D extends DAbstractGrid2D implements DGrid<Double, Int2
 		if (ps.getNumDim() != 2)
 			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + ps.getNumDim());
 
-		halo = new HaloGrid2D<Double, Int2D, DoubleGridStorage<Double>>(ps, aoi,
+		halo = new HaloGrid2D<Double, Int2D, DoubleGridStorage>(ps, aoi,
 				new DoubleGridStorage(ps.getPartition(), initVal), state);
 
 		this.initVal = initVal;

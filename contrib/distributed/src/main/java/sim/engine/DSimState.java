@@ -255,7 +255,7 @@ public class DSimState extends SimState {
 
 		transporter.objectQueue.clear();
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
-		
+
 		loadBalancing();
 	}
 
@@ -265,7 +265,7 @@ public class DSimState extends SimState {
 
 				try {
 					balancePartitions(balancerLevel);
-					
+
 					syncFields();
 					try {
 						transporter.sync();
@@ -347,7 +347,7 @@ public class DSimState extends SimState {
 					}
 
 					transporter.objectQueue.clear();
-					
+
 				} catch (MPIException e) {
 					// TODO: handle exception
 				}
@@ -372,25 +372,28 @@ public class DSimState extends SimState {
 		Timing.start(Timing.LB_OVERHEAD);
 		((QuadTreePartition) partition).balance(runtime, level);
 		MPI.COMM_WORLD.barrier();
-		//System.out.println("pid "+partition.getPid()+" old_partitioning"+old_partition);
-		System.out.println("pid "+partition.getPid()+" new partition"+partition.getPartition());
-		
+		// System.out.println("pid "+partition.getPid()+"
+		// old_partitioning"+old_partition);
+		System.out.println("pid " + partition.getPid() + " new partition" + partition.getPartition());
+
 		for (Int2D p : old_partition) {
 			if (!partition.getPartition().contains(p)) {
 				final int toP = partition.toPartitionId(p);
 				for (Synchronizable field : fieldRegistry) {
 					ArrayList<Object> migratedAgents = new ArrayList<>();
-					if (((HaloGrid2D) field).getStorage() instanceof ContStorage) {
+					HaloGrid2D haloGrid2D = (HaloGrid2D) field;
+					if (haloGrid2D.getStorage() instanceof ContStorage) {
 						ContStorage st = (ContStorage) ((HaloGrid2D) field).getStorage();
-						HashSet agents = (HashSet) st.getCell(p).clone(); //create a clone to avoid the ConcurrentModificationException
+						HashSet agents = (HashSet) st.getCell(p).clone(); // create a clone to avoid the
+																			// ConcurrentModificationException
 						for (Object a : agents) {
 							NumberND loc = st.getLocation((Serializable) a);
 							if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
 									&& !partition.getPartition().contains(loc)) {
 								try {
-								((Stopping) a).getStoppable().stop();
-								}catch (Exception e) {
-									System.out.println("PID: " + partition.pid +" exception on "+a);
+									((Stopping) a).getStoppable().stop();
+								} catch (Exception e) {
+									System.out.println("PID: " + partition.pid + " exception on " + a);
 								}
 								transporter.migrateAgent((Stopping) a, toP, loc, ((HaloGrid2D) field).fieldIndex);
 								migratedAgents.add(a);
@@ -399,23 +402,17 @@ public class DSimState extends SimState {
 								st.removeObject((Serializable) a);
 							}
 						}
-					} else if (((HaloGrid2D) field).getStorage() instanceof ObjectGridStorage) {
+					} else if (haloGrid2D.getStorage() instanceof ObjectGridStorage) {
 						ObjectGridStorage st = (ObjectGridStorage) ((HaloGrid2D) field).getStorage();
-						if (st.getObjects(p) != null) {
-							ArrayList<Stopping> agents = st.getObjects(p);
-							for (int i = 0; i < agents.size(); i++) {
-								Object a = agents.get(i);
-								NumberND loc = st.getLocation((Serializable) a);
-								if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
-									&& !partition.getPartition().contains(loc)) {
-									((Stopping) a).getStoppable().stop();
-									transporter.migrateAgent((Stopping) a, toP, p, ((HaloGrid2D) field).fieldIndex);
-									migratedAgents.add(a);
-									System.out.println("PID: " + partition.pid + " processor " + old_pid + " move " + a
-										+ " from " + loc + " (point " + p + ") to processor " + toP);
-									st.removeObject((Serializable)a);
-								}
-							}
+						Serializable a = st.getObjects(haloGrid2D.toLocalPoint(p));
+						if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
+								&& old_partition.contains(p) && !partition.getPartition().contains(p)) {
+							((Stopping) a).getStoppable().stop();
+							transporter.migrateAgent((Stopping) a, toP, p, ((HaloGrid2D) field).fieldIndex);
+							migratedAgents.add(a);
+							System.out.println("PID: " + partition.pid + " processor " + old_pid + " move " + a
+									+ " from " + p + " (point " + p + ") to processor " + toP);
+							haloGrid2D.remove(p, a);
 						}
 					}
 				}
@@ -611,9 +608,9 @@ public class DSimState extends SimState {
 	public Object getRootInfo(String key) {
 		return rootInfo.get(key);
 	}
-	
+
 	public void enableRegistry() {
-		withRegistry=true;
+		withRegistry = true;
 	}
 
 }

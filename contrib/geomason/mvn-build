@@ -15,7 +15,6 @@ squeaky_clean: clean
 data: csv4j swiselib
 
 
-
 csv4j:
 	rm -rf repository/edu/gmu/eclab/csv4j-0.4.0/
 	mvn install:install-file -DlocalRepositoryPath:repository/ -Dfile=repository/jars/csv4j-0.4.0.jar -DgroupId=edu.gmu.eclab -DartifactId=csv4j-0.4.0 -Dversion=4.0 -Dpackaging=jar

@@ -24,15 +24,17 @@ public abstract class GridStorage<T extends Serializable> {
 	int[] stride;
 
 	/* Abstract Method of generic storage based on N-dimensional Point */
-	public abstract void setLocation(final T obj, final NumberND p);
+	public abstract void addToLocation(final T obj, final NumberND p);
 
-	public abstract NumberND getLocation(final T obj);
+//	public abstract NumberND getLocation(final T obj);
 
-	public abstract void removeObject(final T obj);
+//	public abstract void removeObject(final T obj);
+
+	public abstract void removeObject(final T obj, NumberND p);
 
 	public abstract void removeObjects(final NumberND p);
 
-	public abstract ArrayList<T> getObjects(final NumberND p);
+	public abstract Serializable getObjects(final NumberND p);
 
 	public GridStorage(final IntHyperRect shape) {
 		this.shape = shape;

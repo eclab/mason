@@ -24,9 +24,9 @@ import sim.util.*;
  * 
  * @param <T> Type of object stored in the field
  */
-public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D implements DGrid<T, NumberND> {
+public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D implements DGrid<T, Double2D> {
 
-	private HaloGrid2D<T, NumberND, ContStorage<T>> halo;
+	private HaloGrid2D<T, Double2D, ContStorage<T>> halo;
 
 	public DContinuous2D(final PartitionInterface ps, final int[] aoi, final double[] discretizations,
 			final DSimState state) {
@@ -35,7 +35,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 		if (ps.getNumDim() != 2)
 			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + ps.getNumDim());
 
-		halo = new HaloGrid2D<T, NumberND, ContStorage<T>>(ps, aoi,
+		halo = new HaloGrid2D<T, Double2D, ContStorage<T>>(ps, aoi,
 				new ContStorage<T>(ps.getPartition(), discretizations), state);
 
 	}
@@ -44,7 +44,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 		return halo.localStorage.getLocation(obj);
 	}
 
-	public List<T> get(final NumberND p) {
+	public List<T> get(final Double2D p) {
 		if (!halo.inLocalAndHalo(p)) {
 			System.out.println(String.format("PID %d get %s is out of local boundary, accessing remotely through RMI",
 					halo.partition.getPid(), p.toString()));
@@ -53,16 +53,16 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 			return getLocal(p);
 	}
 
-	public void addLocal(final NumberND p, final T t) {
-		halo.localStorage.setLocation(t, p);
+	public void addLocal(final Double2D p, final T t) {
+		halo.localStorage.addToLocation(t, p);
 	}
 
-	public void removeLocal(final NumberND p, final T t) {
+	public void removeLocal(final Double2D p, final T t) {
 		// TODO: Remove from just p
 		halo.localStorage.removeObject(t);
 	}
 
-	public void removeLocal(final NumberND p) {
+	public void removeLocal(final Double2D p) {
 		halo.localStorage.removeObjects(p);
 	}
 
@@ -89,21 +89,21 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 				.collect(Collectors.toList());
 	}
 
-	public ArrayList<T> getLocal(final NumberND p) {
+	public ArrayList<T> getLocal(final Double2D p) {
 		return halo.localStorage.getObjects(p);
 	}
 
-	public void addAgent(final NumberND p, final T t) {
+	public void addAgent(final Double2D p, final T t) {
 		halo.addAgent(p, t);
 	}
 
-	public void moveAgent(final NumberND fromP, final NumberND toP, final T t) {
+	public void moveAgent(final Double2D fromP, final Double2D toP, final T t) {
 		halo.moveAgent(fromP, toP, t);
 	}
 
 	// Re-implementing this because
 	// add also moves the objects in this field
-	public void move(final NumberND fromP, final NumberND toP, final T t) {
+	public void move(final Double2D fromP, final Double2D toP, final T t) {
 		final int fromPid = halo.partition.toPartitionId(fromP);
 		final int toPid = halo.partition.toPartitionId(fromP);
 
@@ -125,25 +125,25 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 		}
 	}
 
-	public void add(NumberND p, T t) {
+	public void add(Double2D p, T t) {
 		halo.add(p, t);
 	}
 
-	public void remove(NumberND p, T t) {
+	public void remove(Double2D p, T t) {
 		halo.remove(p, t);
 	}
 
-	public void remove(NumberND p) {
+	public void remove(Double2D p) {
 		halo.remove(p);
 	}
 
-	public void addAgent(NumberND p, T t, int ordering, double time) {
+	public void addAgent(Double2D p, T t, int ordering, double time) {
 		halo.addAgent(p, t, ordering, time);
 	}
 
 	// Re-implementing this because
 	// add also moves the objects in this field
-	public void moveAgent(NumberND fromP, NumberND toP, T t, int ordering, double time) {
+	public void moveAgent(Double2D fromP, Double2D toP, T t, int ordering, double time) {
 		if (!halo.inLocal(fromP)) {
 			// System.out.println("pid " + halo.partition.pid + " agent" + t);
 			// System.out.println("partitioning " + halo.partition.getPartition());
@@ -166,25 +166,25 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 		}
 	}
 
-	public void addRepeatingAgent(NumberND p, T t, double time, int ordering, double interval) {
+	public void addRepeatingAgent(Double2D p, T t, double time, int ordering, double interval) {
 		halo.addRepeatingAgent(p, t, time, ordering, interval);
 	}
 
-	public void addRepeatingAgent(NumberND p, T t, int ordering, double interval) {
+	public void addRepeatingAgent(Double2D p, T t, int ordering, double interval) {
 		halo.addRepeatingAgent(p, t, ordering, interval);
 	}
 
-	public void removeAndStopRepeatingAgent(NumberND p, T t) {
+	public void removeAndStopRepeatingAgent(Double2D p, T t) {
 		halo.removeAndStopRepeatingAgent(p, t);
 	}
 
-	public void removeAndStopRepeatingAgent(NumberND p, DistributedIterativeRepeat iterativeRepeat) {
+	public void removeAndStopRepeatingAgent(Double2D p, DistributedIterativeRepeat iterativeRepeat) {
 		halo.removeAndStopRepeatingAgent(p, iterativeRepeat);
 	}
 
 	// Re-implementing this because
 	// add also moves the objects in this field
-	public void moveRepeatingAgent(NumberND fromP, NumberND toP, T t) {
+	public void moveRepeatingAgent(Double2D fromP, Double2D toP, T t) {
 		if (!halo.inLocal(fromP))
 			throw new IllegalArgumentException("fromP must be local");
 
@@ -207,7 +207,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 
 	// Re-implementing this because
 	// add also moves the objects in this field
-	public void moveRepeatingAgent(NumberND fromP, NumberND toP, DistributedIterativeRepeat iterativeRepeat) {
+	public void moveRepeatingAgent(Double2D fromP, Double2D toP, DistributedIterativeRepeat iterativeRepeat) {
 		if (!halo.inLocal(fromP))
 			throw new IllegalArgumentException("fromP must be local");
 
