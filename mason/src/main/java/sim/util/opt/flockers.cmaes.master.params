@@ -1,8 +1,0 @@
-parent.0 = @ec.eda.cmaes.CMAESBreeder cmaes.params
-parent.1 = flockers.master.params
-
-pop.subpop.0.size = 24
-generations = 100
-
-
-
