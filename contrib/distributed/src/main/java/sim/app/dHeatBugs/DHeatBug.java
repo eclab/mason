@@ -16,19 +16,18 @@ public class DHeatBug extends DSteppable {
 
 	public int loc_x, loc_y;
 	public boolean isFirstStep = true;
-	public int id;
 	public double idealTemp;
 	public double heatOutput;
 	public double randomMovementProbability;
 
-	public DHeatBug(final int id, final double idealTemp, final double heatOutput, final double randomMovementProbability,
-			final int loc_x, final int loc_y) {
+	public DHeatBug(final double idealTemp, final double heatOutput, final double randomMovementProbability,
+			final int loc_x, final int loc_y, final int pid) {
+		super(pid);
 		this.heatOutput = heatOutput;
 		this.idealTemp = idealTemp;
 		this.randomMovementProbability = randomMovementProbability;
 		this.loc_x = loc_x;
 		this.loc_y = loc_y;
-		this.id=id;
 	}
 
 	public void addHeat(final DDoubleGrid2D grid, final int x, final int y, final double heat) {
@@ -41,7 +40,7 @@ public class DHeatBug extends DSteppable {
 	public void step(final SimState state) {
 		final DHeatBugs dHeatBugs = (DHeatBugs) state;
 
-		dHeatBugs.idLocal.add(this.id);
+		dHeatBugs.idLocal.add(this.getId());
 
 		// Skip addHeat for the first step
 		if (!isFirstStep) {
@@ -135,33 +134,9 @@ public class DHeatBug extends DSteppable {
 			randomMovementProbability = t;
 	}
 
-	// public String toString() {
-	// 	return String.format("[%d, %d]", loc_x, loc_y);
-	// }
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof DHeatBug))
-			return false;
-		DHeatBug other = (DHeatBug) obj;
-		return (id == other.id);
-	}
-
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return "{ "+this.getClass()+"@"+Integer.toHexString(hashCode())+" id: "+this.id+"}";
+		return "{ " + this.getClass() + "@" + Integer.toHexString(hashCode()) + " id: " + this.getId() + "}";
 	}
 }

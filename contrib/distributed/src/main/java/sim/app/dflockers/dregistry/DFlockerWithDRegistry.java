@@ -10,14 +10,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import ec.util.MersenneTwisterFast;
 import mpi.MPI;
 import mpi.MPIException;
-import sim.app.dflockers.DFlocker;
 import sim.engine.DSteppable;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
 import sim.util.*;
 
-interface DFlockerDummyRemote extends Remote{
-	public  int addAndGetVal() throws RemoteException;
+interface DFlockerDummyRemote extends Remote {
+	public int addAndGetVal() throws RemoteException;
+
 	public int getVal() throws RemoteException;
 
 }
@@ -27,17 +27,16 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 	public Double2D loc;
 	public Double2D lastd = new Double2D(0, 0);
 	public boolean dead = false;
-	
+
 	public boolean amItheBoss = false;
-	public int id;
-	
+
 	public int oldProcessingMPInode = 0;
-	
+
 	AtomicInteger val = new AtomicInteger(0);
 
-	public DFlockerWithDRegistry(final Double2D location, final int id) {
+	public DFlockerWithDRegistry(final Double2D location, final int pId) {
+		super(pId);
 		loc = location;
-		this.id = id;
 	}
 
 	public double getOrientation() {
@@ -66,7 +65,8 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 		return lastd;
 	}
 
-	public Double2D consistency(final List<DFlockerWithDRegistry> b, final DContinuous2D<DFlockerWithDRegistry> flockers) {
+	public Double2D consistency(final List<DFlockerWithDRegistry> b,
+			final DContinuous2D<DFlockerWithDRegistry> flockers) {
 		if (b == null || b.size() == 0)
 			return new Double2D(0, 0);
 
@@ -116,7 +116,8 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 		return new Double2D(-x / 10, -y / 10);
 	}
 
-	public Double2D avoidance(final List<DFlockerWithDRegistry> b, final DContinuous2D<DFlockerWithDRegistry> flockers) {
+	public Double2D avoidance(final List<DFlockerWithDRegistry> b,
+			final DContinuous2D<DFlockerWithDRegistry> flockers) {
 		if (b == null || b.size() == 0)
 			return new Double2D(0, 0);
 		double x = 0;
@@ -149,31 +150,33 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 		final double l = Math.sqrt(x * x + y * y);
 		return new Double2D(0.05 * x / l, 0.05 * y / l);
 	}
-	
+
 	public int addAndGetVal() {
 		return val.addAndGet(1);
 	}
-	public  int getVal() {
+
+	public int getVal() {
 		return val.get();
 	}
 
 	public void step(final SimState state) {
-		
+
 		try {
-			if(amItheBoss && oldProcessingMPInode != MPI.COMM_WORLD.getRank()) {
-				System.out.println(MPI.COMM_WORLD.getRank()+"] cafebabe moved from "+oldProcessingMPInode+" to "+ MPI.COMM_WORLD.getRank());
-				oldProcessingMPInode= MPI.COMM_WORLD.getRank();
+			if (amItheBoss && oldProcessingMPInode != MPI.COMM_WORLD.getRank()) {
+				System.out.println(MPI.COMM_WORLD.getRank() + "] cafebabe moved from " + oldProcessingMPInode + " to "
+						+ MPI.COMM_WORLD.getRank());
+				oldProcessingMPInode = MPI.COMM_WORLD.getRank();
 			}
 		} catch (MPIException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		final DFlockersWithDRegistry dFlockers = (DFlockersWithDRegistry) state;
-		
+
 		final Double2D oldloc = loc;
 		loc = (Double2D) dFlockers.flockers.getLocation(this);
-	
+
 		if (loc == null) {
 			System.out.printf("pid %d oldx %g oldy %g", dFlockers.getPartitioning().pid, oldloc.c(0), oldloc.c(1));
 			Thread.dumpStack();
@@ -183,7 +186,8 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 		if (dead)
 			return;
 
-		final List<DFlockerWithDRegistry> b = dFlockers.flockers.getNeighborsWithin(this, DFlockersWithDRegistry.neighborhood);
+		final List<DFlockerWithDRegistry> b = dFlockers.flockers.getNeighborsWithin(this,
+				DFlockersWithDRegistry.neighborhood);
 
 		final Double2D avoid = avoidance(b, dFlockers.flockers);
 		final Double2D cohe = cohesion(b, dFlockers.flockers);
@@ -211,7 +215,7 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 		try {
 			DFlockerDummyRemote myfriend = (DFlockerDummyRemote) dFlockers.getDRegistry().getObject("cafebabe");
 			myfriend.addAndGetVal();
-			
+
 		} catch (AccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -221,35 +225,15 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 		} catch (NotBoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-		
+		}
+
 		dFlockers.flockers.moveAgent(old, loc, this);
 
-	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof DFlocker))
-			return false;
-		DFlocker other = (DFlocker) obj;
-		return (id == other.id);
 	}
 
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return "{ "+this.getClass()+"@"+Integer.toHexString(hashCode())+" id: "+this.id+"}";
+		return "{ " + this.getClass() + "@" + Integer.toHexString(hashCode()) + " id: " + this.getId() + "}";
 	}
 }

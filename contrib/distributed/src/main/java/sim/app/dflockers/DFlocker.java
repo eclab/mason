@@ -11,7 +11,6 @@ import java.util.List;
 
 import ec.util.MersenneTwisterFast;
 import sim.engine.DSteppable;
-import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
 import sim.util.*;
@@ -21,12 +20,10 @@ public class DFlocker extends DSteppable implements Remote {
 	public Double2D loc;
 	public Double2D lastd = new Double2D(0, 0);
 	public boolean dead = false;
-	
-	public int id;
 
-	public DFlocker(final Double2D location, final int id) {
+	public DFlocker(final Double2D location, int pId) {
+		super(pId);
 		this.loc = location;
-		this.id = id;
 	}
 
 	public double getOrientation() {
@@ -141,17 +138,17 @@ public class DFlocker extends DSteppable implements Remote {
 
 	public void step(final SimState state) {
 		final DFlockers dFlockers = (DFlockers) state;
-		
-		dFlockers.idLocal.add(this.id);
-		
+
+		dFlockers.idLocal.add(this.getId());
+
 		final Double2D oldloc = loc;
 
 		if (dead)
 			return;
-		 List<DFlocker> b = null;
-		
-		//try {
-		 b = dFlockers.flockers.getNeighborsWithin(this, DFlockers.neighborhood);
+		List<DFlocker> b = null;
+
+		// try {
+		b = dFlockers.flockers.getNeighborsWithin(this, DFlockers.neighborhood);
 //		}catch (Exception e) {
 //			System.out.println("SIMULATION ERROR: agent "+this+ " on pid"+dFlockers.getPartitioning().getPid());
 //		}
@@ -175,40 +172,21 @@ public class DFlocker extends DSteppable implements Remote {
 			dx = dx / dis * DFlockers.jump;
 			dy = dy / dis * DFlockers.jump;
 		}
-		lastd = new Double2D(dx,dy);
+		lastd = new Double2D(dx, dy);
 		loc = new Double2D(dFlockers.flockers.stx(loc.c(0) + dx), dFlockers.flockers.sty(loc.c(1) + dy));
 		try {
 			dFlockers.flockers.moveAgent(oldloc, loc, this);
-		}catch (Exception e) {
-			System.err.println("error on agent "+this+ " in step "+dFlockers.schedule.getSteps()+ "on pid "+dFlockers.getPartitioning().pid);
+		} catch (Exception e) {
+			System.err.println("error on agent " + this + " in step " + dFlockers.schedule.getSteps() + "on pid "
+					+ dFlockers.getPartitioning().pid);
 			System.exit(1);
 		}
 	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		return result;
-	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof DFlocker))
-			return false;
-		DFlocker other = (DFlocker) obj;
-		return (id == other.id);
-	}
 
-	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return "{ "+this.getClass()+"@"+Integer.toHexString(hashCode())+" id: "+this.id+"}";
+		return this.getClass() + " @" + Integer.toHexString(hashCode()) +
+				" [loc=" + loc + ", lastd=" + lastd + ", dead=" + dead +
+				" id: " + this.getId() + "]";
 	}
-	
 }

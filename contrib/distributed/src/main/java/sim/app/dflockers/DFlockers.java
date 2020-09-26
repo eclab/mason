@@ -34,8 +34,8 @@ public class DFlockers extends DSimState {
 
 	public final DContinuous2D<DFlocker> flockers;
 
-	public ArrayList<Integer> idAgents;
-	public ArrayList<Integer> idLocal;
+	public ArrayList<Long> idAgents;
+	public ArrayList<Long> idLocal;
 
 	final SimpleDateFormat format = new SimpleDateFormat("ss-mm-HH-yyyy-MM-dd");
 	String dateString = format.format(new Date());
@@ -47,8 +47,8 @@ public class DFlockers extends DSimState {
 
 		final double[] discretizations = new double[] { DFlockers.neighborhood / 1.5, DFlockers.neighborhood / 1.5 };
 		flockers = new DContinuous2D<DFlocker>(getPartitioning(), aoi, discretizations, this);
-		idAgents = new ArrayList<Integer>();
-		idLocal = new ArrayList<Integer>();
+		idAgents = new ArrayList<>();
+		idLocal = new ArrayList<>();
 	}
 
 	@Override
@@ -56,15 +56,15 @@ public class DFlockers extends DSimState {
 		ArrayList<DFlocker> agents = new ArrayList<DFlocker>();
 		for (int x = 0; x < DFlockers.numFlockers; x++) {
 			final Double2D loc = new Double2D(random.nextDouble() * width, random.nextDouble() * height);
-			DFlocker flocker = new DFlocker(loc, x);
-			idAgents.add(x);
+			DFlocker flocker = new DFlocker(loc, partition.pid);
+			idAgents.add(flocker.getId());
 			if (random.nextBoolean(deadFlockerProbability))
 				flocker.dead = true;
 			agents.add(flocker);
 
 		}
-		
-		sendRootInfoToAll("agents",agents);
+
+		sendRootInfoToAll("agents", agents);
 	}
 
 	@Override
@@ -72,9 +72,9 @@ public class DFlockers extends DSimState {
 		// TODO Auto-generated method stub
 		super.start(); // do not forget this line
 
-		//ArrayList<DFlocker> agents = (ArrayList<DFlocker>) rootInfo.get("agents");
+		// ArrayList<DFlocker> agents = (ArrayList<DFlocker>) rootInfo.get("agents");
 		ArrayList<DFlocker> agents = (ArrayList<DFlocker>) getRootInfo("agents");
-		
+
 		for (Object p : agents) {
 			DFlocker a = (DFlocker) p;
 			if (partition.getPartition().contains(a.loc))
