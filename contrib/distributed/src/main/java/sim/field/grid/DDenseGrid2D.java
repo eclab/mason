@@ -39,10 +39,6 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implem
 		return getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))];
 	}
 
-	public ArrayList<T> getRMI(final Int2D p) throws RemoteException {
-		return getLocal(p);
-	}
-
 	public void addLocal(final Int2D p, final T t) {
 		final ArrayList<T>[] array = getStorageArray();
 		final int idx = halo.localStorage.getFlatIdx(halo.toLocalPoint(p));
@@ -80,7 +76,7 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implem
 
 	/* UTILS METHODS */
 
-	public int toToroidal(final int x, final int dim) {
+/*	public int toToroidal(final int x, final int dim) {
 		final int s = fieldSize[dim];
 		if (x >= s)
 			return x - s;
@@ -110,6 +106,7 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implem
 			return dx + s;
 		return dx;
 	}
+*/
 
 	public void addAgent(final NumberND p, final T t) {
 		halo.addAgent(p, t);

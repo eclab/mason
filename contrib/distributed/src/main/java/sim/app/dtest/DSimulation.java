@@ -70,8 +70,8 @@ public class DSimulation extends DSimState {
 		}
 
 		for (DAgent f : field.getAllObjects()) {
-			out.println("agent " + f.getId() + " in position " + f.loc + " num neighbours: " + f.neighbours.size()
-					+ " neighbours " + f.neighbours);
+//			out.println("agent " + f.getId() + " in position " + f.loc + " num neighbours: " + f.neighbours.size() + " neighbours " + f.neighbours);
+			out.println("agent " + f.getID() + " in position " + f.loc + " num neighbours: " + f.neighbours.size() + " neighbours " + f.neighbours);
 		}
 
 		out.close();
@@ -88,7 +88,7 @@ public class DSimulation extends DSimState {
 				Double2D loc = new Double2D(i, j);
 //				int id = 100 * partition.toPartitionId(loc) + c;
 //				c++;
-				agents.add(new DAgent(loc, partition.pid));
+				agents.add(new DAgent(loc));
 			}
 		}
 

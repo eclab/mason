@@ -34,8 +34,6 @@ public class DHeatBugs extends DSimState {
 	// TODO: Should this be updated after migration/balancing?
 	public final int privBugCount; // the replacement for get/setBugCount ?
 
-	public ArrayList<Long> idLocal;
-
 	/*
 	 * Missing get/setGridHeight get/setGridWidth get/setBugCount
 	 */
@@ -61,7 +59,6 @@ public class DHeatBugs extends DSimState {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		idLocal = new ArrayList<>();
 	}
 
 	// Same getters and setters as HeatBugs
@@ -148,7 +145,7 @@ public class DHeatBugs extends DSimState {
 			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
 			int px = random.nextInt(gridWidth);
 			int py = random.nextInt(gridHeight);
-			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py, partition.pid);
+			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
 			Int2D point = new Int2D(px, py);
 			if (!agents.containsKey(point))
 				agents.put(point, new ArrayList<DHeatBug>());

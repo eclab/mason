@@ -24,14 +24,7 @@ public abstract class DObject implements java.io.Serializable
     
     public DObject()
     	{
-    	try
-    		{
-			firstpid = MPI.COMM_WORLD.getRank();	
-    		}
-    	catch (MPIException ex)
-    		{
-    		throw new RuntimeException(ex);
-    		}
+    	firstpid = getPID();	// called originally to get the FIRST PID
     	localid = idCounter++;
     	}
     
@@ -55,4 +48,27 @@ public abstract class DObject implements java.io.Serializable
         y ^=  (y >>> 16);
         return localid ^ y;
         }
+    
+    /** Returns a unique system-wideID to this object. */ 
+    public long getID() { return (((long)firstpid) << 32) | localid; }
+    
+    /** Returns the current PID on which this object resides. */ 
+    public int getPID() 
+    	{ 
+    	try
+    		{
+			return MPI.COMM_WORLD.getRank();	
+    		}
+    	catch (MPIException ex)
+    		{
+    		throw new RuntimeException(ex);
+    		}
+    	}
+    
+    /** Returns a string consisting of the original pid, followed by the unique local id of the object.
+    	Together these form a unique, permanent systemwide id. */
+    public final String getIDString() { return firstpid + "/" + localid; }
+    
+    /** Returns a string consisting of the form CLASSNAME:UNIQUEID@CURRENTPID */
+    public final String toString() { return this.getClass().getName() + ":" + getIDString() + "@" + getPID(); }
     }

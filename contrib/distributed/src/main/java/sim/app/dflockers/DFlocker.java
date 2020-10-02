@@ -21,7 +21,7 @@ public class DFlocker extends DSteppable implements Remote {
 	public Double2D lastd = new Double2D(0, 0);
 	public boolean dead = false;
 
-	public DFlocker(final Double2D location, int pId) {
+	public DFlocker(final Double2D location) {
 		this.loc = location;
 	}
 
@@ -138,8 +138,6 @@ public class DFlocker extends DSteppable implements Remote {
 	public void step(final SimState state) {
 		final DFlockers dFlockers = (DFlockers) state;
 
-		dFlockers.idLocal.add(this.getId());
-
 		final Double2D oldloc = loc;
 
 		if (dead)
@@ -183,8 +181,7 @@ public class DFlocker extends DSteppable implements Remote {
 	}
 
 	public String toString() {
-		return this.getClass() + " @" + Integer.toHexString(hashCode()) +
-				" [loc=" + loc + ", lastd=" + lastd + ", dead=" + dead +
-				" id: " + this.getId() + "]";
+		return super.toString() + 
+				" [loc=" + loc + ", lastd=" + lastd + ", dead=" + dead + "]";
 	}
 }

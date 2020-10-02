@@ -1,4 +1,5 @@
 package sim.field;
+import sim.field.grid.*;
 
 import java.io.Serializable;
 
@@ -12,7 +13,7 @@ import sim.util.*;
  * @param <P> The Type of NumberND to use
  * @param <T> The Type of Object in the field
  */
-public interface DGrid<T extends Serializable, P extends NumberND> {
+public interface DGrid<T extends Serializable, P extends NumberND>  {
 	// We did not declare get methods because fields may want to return
 	// T[], ArrayList<T>, T or even primitives like int and double
 

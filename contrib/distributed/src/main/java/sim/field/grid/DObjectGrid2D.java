@@ -62,7 +62,7 @@ public class DObjectGrid2D<T extends Serializable> extends DAbstractGrid2D imple
 	}
 
 	/* UTILS METHODS */
-
+/*
 	public int toToroidal(final int x, final int dim) {
 		final int s = fieldSize[dim];
 		if (x >= s)
@@ -93,6 +93,7 @@ public class DObjectGrid2D<T extends Serializable> extends DAbstractGrid2D imple
 			return dx + s;
 		return dx;
 	}
+*/
 
 	public void addAgent(final NumberND p, final T t) {
 		halo.addAgent(p, t);

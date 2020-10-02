@@ -27,7 +27,6 @@ public class DIntGrid2D extends DAbstractGrid2D implements DGrid<Integer, Int2D>
 
 		halo = new HaloGrid2D<Integer, Int2D, IntGridStorage>(ps, aoi,
 				new IntGridStorage(ps.getPartition(), initVal), state);
-		fieldSize = ps.getFieldSize();
 
 		this.initVal = initVal;
 	}
