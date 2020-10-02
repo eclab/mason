@@ -54,7 +54,7 @@ public class DSimState extends SimState {
 	private static final long serialVersionUID = 1L;
 	public static Logger logger;
 
-	protected PartitionInterface partition;
+	protected PartitionInterface<NumberND> partition;
 	protected TransporterMPI transporter;
 	public int[] aoi; // Area of Interest
 	HashMap<String, Object> rootInfo = null;
@@ -532,7 +532,7 @@ public class DSimState extends SimState {
 
 			// schedule a zombie agent to prevent that a processor with no agent is stopped
 			// when the simulation is still going on
-			schedule.scheduleRepeating(new DSteppable(partition.pid) {
+			schedule.scheduleRepeating(new DSteppable() {
 				@Override
 				public void step(SimState state) {
 

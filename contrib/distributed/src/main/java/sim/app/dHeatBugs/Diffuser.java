@@ -19,10 +19,6 @@ import sim.field.grid.DDoubleGrid2D;
 public class Diffuser extends DSteppable {
 	private static final long serialVersionUID = 1;
 
-	public Diffuser(int parentId) {
-		super(parentId);
-	}
-
 	public void step(final SimState state) {
 		final DHeatBugs heatbugs = (DHeatBugs) state;
 

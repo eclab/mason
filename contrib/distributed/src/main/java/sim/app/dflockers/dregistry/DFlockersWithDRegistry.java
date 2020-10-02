@@ -72,7 +72,7 @@ public class DFlockersWithDRegistry extends DSimState {
 			}
 		}
 
-		schedule.scheduleRepeating(Schedule.EPOCH, 2, new DSteppable(partition.pid) {
+		schedule.scheduleRepeating(Schedule.EPOCH, 2, new DSteppable() {
 
 			private static final long serialVersionUID = 1L;
 

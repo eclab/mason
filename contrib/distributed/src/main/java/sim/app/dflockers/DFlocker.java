@@ -22,7 +22,6 @@ public class DFlocker extends DSteppable implements Remote {
 	public boolean dead = false;
 
 	public DFlocker(final Double2D location, int pId) {
-		super(pId);
 		this.loc = location;
 	}
 
@@ -182,7 +181,6 @@ public class DFlocker extends DSteppable implements Remote {
 			System.exit(1);
 		}
 	}
-
 
 	public String toString() {
 		return this.getClass() + " @" + Integer.toHexString(hashCode()) +

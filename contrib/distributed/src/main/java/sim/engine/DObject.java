@@ -14,7 +14,7 @@ import mpi.*;
 	DObject implements a basic form of equals and hashCode based on comparing these IDs.
 */
 
-public abstract class DObject 
+public abstract class DObject implements java.io.Serializable
     {
     private static final long serialVersionUID = 1;
 

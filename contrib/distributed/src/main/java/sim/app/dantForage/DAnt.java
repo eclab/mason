@@ -32,7 +32,6 @@ public class DAnt extends DSteppable implements Remote {
 	Int2D last;
 
 	public DAnt(double initialReward, final int loc_x, final int loc_y, int pid) {
-		super(pid);
 		reward = initialReward;
 		x = loc_x;
 		y = loc_y;

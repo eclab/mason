@@ -24,7 +24,6 @@ public class DFlocker extends DSteppable implements Remote {
 //	public int id;
 
 	public DFlocker(final Double2D location, int pId) {
-		super(pId);
 		this.loc = location;
 	}
 

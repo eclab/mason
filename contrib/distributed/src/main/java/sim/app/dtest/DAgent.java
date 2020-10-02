@@ -21,7 +21,6 @@ public class DAgent extends DSteppable implements Remote {
 	public ArrayList<Long> neighbours;
 
 	public DAgent(final Double2D location, final int pid) {
-		super(pid);
 		this.loc = location;
 		this.initLoc = location;
 		this.neighbours = new ArrayList<>();

@@ -7,12 +7,7 @@
 package sim.app.dHeatBugs;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.stream.IntStream;
-
-import mpi.MPI;
-import mpi.MPIException;
 import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.field.grid.DDenseGrid2D;
@@ -242,7 +237,7 @@ public class DHeatBugs extends DSimState {
 					bugs.addRepeatingAgent(p, a, 1, 1);
 			}
 		}
-		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(partition.pid), 1);
+		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);
 	}
 
 	public static void main(final String[] args) {

@@ -35,7 +35,6 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 	AtomicInteger val = new AtomicInteger(0);
 
 	public DFlockerWithDRegistry(final Double2D location, final int pId) {
-		super(pId);
 		loc = location;
 	}
 
