@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import mpi.*;
-import static mpi.MPI.slice;
 
 import sim.field.partitioning.IntHyperRect;
 import sim.util.*;
@@ -27,12 +26,12 @@ public class DoubleGridStorage extends GridStorage<Double> {
 
 	public byte[] pack(MPIParam mp) throws MPIException {
 		byte[] buf = new byte[MPI.COMM_WORLD.packSize(mp.size, baseType)];
-		MPI.COMM_WORLD.pack(slice((double[]) storage, mp.idx), 1, mp.type, buf, 0);
+		MPI.COMM_WORLD.pack(MPI.slice((double[]) storage, mp.idx), 1, mp.type, buf, 0);
 		return buf;
 	}
 
 	public int unpack(MPIParam mp, Serializable buf) throws MPIException {
-		return MPI.COMM_WORLD.unpack((byte[]) buf, 0, slice((double[]) storage, mp.idx), 1, mp.type);
+		return MPI.COMM_WORLD.unpack((byte[]) buf, 0, MPI.slice((double[]) storage, mp.idx), 1, mp.type);
 	}
 
 	public String toString() {

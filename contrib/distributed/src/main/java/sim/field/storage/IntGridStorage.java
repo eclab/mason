@@ -5,13 +5,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import mpi.*;
-import static mpi.MPI.slice;
 
 import sim.field.partitioning.IntHyperRect;
 import sim.util.*;
 
-public class IntGridStorage extends GridStorage<Integer> {
-
+public class IntGridStorage extends GridStorage<Integer> 
+	{
 	final int initVal;
 
 	public IntGridStorage(IntHyperRect shape, int initVal) {
@@ -28,12 +27,12 @@ public class IntGridStorage extends GridStorage<Integer> {
 
 	public byte[] pack(MPIParam mp) throws MPIException {
 		byte[] buf = new byte[MPI.COMM_WORLD.packSize(mp.size, baseType)];
-		MPI.COMM_WORLD.pack(slice((int[]) storage, mp.idx), 1, mp.type, buf, 0);
+		MPI.COMM_WORLD.pack(MPI.slice((int[]) storage, mp.idx), 1, mp.type, buf, 0);
 		return buf;
 	}
 
 	public int unpack(MPIParam mp, Serializable buf) throws MPIException {
-		return MPI.COMM_WORLD.unpack((byte[]) buf, 0, slice((int[]) storage, mp.idx), 1, mp.type);
+		return MPI.COMM_WORLD.unpack((byte[]) buf, 0, MPI.slice((int[]) storage, mp.idx), 1, mp.type);
 	}
 
 	public String toString() {
