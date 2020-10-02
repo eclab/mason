@@ -17,8 +17,26 @@ import mpi.*;
 public abstract class DObject implements java.io.Serializable
     {
     private static final long serialVersionUID = 1;
-	static int pid = getPID();
+	static int pid;
 	
+	static
+		{
+    	try
+    		{
+			pid = MPI.COMM_WORLD.getRank();	
+    		}
+    	catch (MPIException ex)
+    		{
+    		throw new RuntimeException(ex);
+    		}
+		}
+
+    /** Returns the current PID on which this object resides. */ 
+    public static int getPID() 
+    	{ 
+    	return pid;
+    	}
+    	
     static int idCounter = 0;
 	static int nextCounter()	// FIXME If we need to be multithreaded, we need to figure out how to make this synchronized yet fast
 		{
@@ -57,19 +75,6 @@ public abstract class DObject implements java.io.Serializable
     
     /** Returns a unique system-wideID to this object. */ 
     public long getID() { return (((long)firstpid) << 32) | localid; }
-    
-    /** Returns the current PID on which this object resides. */ 
-    public static int getPID() 
-    	{ 
-    	try
-    		{
-			return MPI.COMM_WORLD.getRank();	
-    		}
-    	catch (MPIException ex)
-    		{
-    		throw new RuntimeException(ex);
-    		}
-    	}
     
     /** Returns a string consisting of the original pid, followed by the unique local id of the object.
     	Together these form a unique, permanent systemwide id. */
