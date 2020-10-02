@@ -17,15 +17,21 @@ import mpi.*;
 public abstract class DObject implements java.io.Serializable
     {
     private static final long serialVersionUID = 1;
-
+	static int pid = getPID();
+	
     static int idCounter = 0;
+	static int nextCounter()	// FIXME If we need to be multithreaded, we need to figure out how to make this synchronized yet fast
+		{
+		return idCounter++;
+		}
+	
     final int firstpid;			// this is the PID of the *original* processor on which this object was created
     final int localid;			// this is a unique ID special to processor PID
     
     public DObject()
     	{
-    	firstpid = getPID();	// called originally to get the FIRST PID
-    	localid = idCounter++;
+    	firstpid = pid;						// called originally to get the FIRST PID
+    	localid = nextCounter();
     	}
     
     public boolean equals(Object other)
@@ -53,7 +59,7 @@ public abstract class DObject implements java.io.Serializable
     public long getID() { return (((long)firstpid) << 32) | localid; }
     
     /** Returns the current PID on which this object resides. */ 
-    public int getPID() 
+    public static int getPID() 
     	{ 
     	try
     		{
