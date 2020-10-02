@@ -4033,12 +4033,14 @@ Second, let's say the Schedule has removed various agents and is in the process 
 If you like you can clear out the entire Schedule.  There are two methods to do this (\method{clear()} and \method{reset()}), but in {\it both cases} any agents which have been removed to be processed will still have their \method{step(...)} methods called.\footnote{We used to have a feature in the Schedule which would prevent those agents from being stepped as well, but the complexity was just too great to be worthwhile.  So it's gone.}  Methods for querying and manipulating the Schedule:
  
 \begin{methods}{\class{sim.engine.Schedule}}
-\mthd{public void clear()} Clears out the schedule.  If this method is called while agents are being stepped, all agents meant to be stepped this timestamp will still be stepped.
-\mthd{public void reset()} Clears out the schedule, as in \method{clear()}, resets the step count to 0, and sets the time to \variable{BEFORE\_SIMULATION}. 
+\mthd{public void clear()} Clears out the schedule.  If this method is called while agents are being stepped, all agents meant to be stepped this timestamp will still be stepped.  If you are looking for a way to prematurely stop your simulation use SimState.kill() instead.
+\mthd{public boolean isSealed()} Returns whether the schedule has been sealed (see seal()).  
+\mthd{public void reset()} Clears out the schedule, as in \method{clear()}, resets the step count to 0, and sets the time to \variable{BEFORE\_SIMULATION}.   If you are looking for a way to prematurely stop your simulation use SimState.kill() instead.
+\mthd{public void seal()} Seals the schedule.  This is a rare need. After a schedule is sealed, no further Steppables may be scheduled on it, and repeating Steppables will not continue to repeat.  If you are looking for a way to prematurely stop your simulation use SimState.kill() instead.
 \mthd{public boolean scheduleComplete()} Returns true if the Schedule is empty.
 \end{methods}
 
-{\bf If your goal is to end the simulation prematurely, don't use the \method{clear()} or \method{reset()} methods, nor state.finish(),} as they don't clear out AsynchronousSteppables (we'll discuss them below). Instead there is a special SimState method which does the task for you:
+{\bf If your goal is to end the simulation prematurely, don't use the \method{clear()}, \method{reset()} methods, nor state.finish(),} as they don't clear out AsynchronousSteppables (we'll discuss them below), and don't use \method{seal()}. Instead there is a special SimState method which does the task for you:
 
 \begin{methods}{\class{sim.engine.SimState}}
 \mthd{public void kill()} Clears the schedule, pushes the Schedule's time forward to \variable{AFTER\_SIMULATION}, and clears out all AsynchronousSteppables.  If this method is called while agents are being stepped, all agents meant to be stepped this timestamp will still be stepped.
