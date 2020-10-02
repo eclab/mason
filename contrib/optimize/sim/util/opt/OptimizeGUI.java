@@ -42,7 +42,6 @@ public class OptimizeGUI extends JPanel
     double maxValue = DEFAULT_MAX;
     PropertyField minField;
     PropertyField maxField;
-//    int divisionValue = 1;
     // GA
     int tournamentSize = 2;
     double mutationRate = 1.0;
@@ -53,7 +52,6 @@ public class OptimizeGUI extends JPanel
     double replacementProb = 1.0;
     // ES
     int mu = 10;
-//    int lambda = 100;
     // NSGA2
     enum MutationType
 	    {
@@ -145,7 +143,6 @@ public class OptimizeGUI extends JPanel
     int currentIndex = 0;
     
     Optimize opt = null;
-    
     
     JList<VariableSettings> propList = new JList<VariableSettings>();
 
@@ -531,8 +528,13 @@ public class OptimizeGUI extends JPanel
         propertySettingsList = new DefaultListModel<VariableSettings>();
         for (int i = 0; i < properties.numProperties(); i++) 
             {
-            if(!properties.isHidden(i) && (properties.getType(i)==Integer.TYPE
-                    ||properties.getType(i)==Double.TYPE || properties.getType(i)==Float.TYPE
+        	Object domain = properties.getDomain(i);
+        	// Don't list if domain is array of elements
+        	if (domain != null && domain.getClass().isArray())
+        		continue;
+        	
+            if(properties.isReadWrite(i) && !properties.isHidden(i) && (properties.getType(i)==Integer.TYPE
+                    || properties.getType(i)==Double.TYPE || properties.getType(i)==Float.TYPE
                     || properties.getType(i)==Boolean.TYPE || properties.getType(i)==Long.TYPE))
                 propertySettingsList.addElement(new VariableSettings(properties, i));
             }
@@ -788,12 +790,20 @@ public class OptimizeGUI extends JPanel
             }
         else
             {
-            String filePath = setFilePath(); 
+        	// Stats file
+            String filePath = setFilePath("Save Results to File..."); 
             if (filePath == null) { return; }
+            
+            // Pareto front stats file
+            String pfStatsFilePath = null;
+            if (ecType.equals(ECClassType.NSGA2)) {
+            	pfStatsFilePath = setFilePath("Save Pareto Front Results to File...");
+            	if (pfStatsFilePath == null) { return; }
+            }
             
             try
                 {
-            	ParameterDatabase pd = createParameterDatabase(filePath); //probably pass class selection parameters here
+            	ParameterDatabase pd = createParameterDatabase(filePath, pfStatsFilePath); //probably pass class selection parameters here
             	String classname = pd.getString(new ec.util.Parameter("mason-class"), null);
                 Class c = Class.forName(classname);
                 opt = new Optimize(Optimize.buildSimState(c), pd);
@@ -820,13 +830,12 @@ public class OptimizeGUI extends JPanel
 						{
 						try
 							{
-//		            		ec.eval.Slave.main(new String[] { "-from", "mason.worker.params", "-at", "sim.util.opt.Worker" });
 		            		ec.eval.Slave.main(new String[] { "-from", "mason.worker.params", "-at", "sim.util.opt.Worker", "-p", "eval.slave.one-shot=true" });
 							}
 						// If Slave throws an Interrupted Exception
 						catch (Exception ex)
 							{
-//							System.out.println("caught " + ex);
+							// do nothing
 							}
 						}
             	});
@@ -899,7 +908,6 @@ public class OptimizeGUI extends JPanel
         			}
         		}
         	
-        	// TODO This correct?
         	// Kill any worker threads
         	for (int i = 0; i < workers.length; i++)
 	        	{
@@ -917,10 +925,10 @@ public class OptimizeGUI extends JPanel
      * Set Output File
      * @return the output filepath
      */
-    String setFilePath()
+    String setFilePath(String msg)
     	{
         String filePath = "";
-        FileDialog dialog = new FileDialog((Frame)null, "Save Results to File...", FileDialog.SAVE);
+        FileDialog dialog = new FileDialog((Frame)null, msg, FileDialog.SAVE);
         dialog.setFilenameFilter(new FilenameFilter()
             {
             public boolean accept(File dir, String name)
@@ -928,7 +936,7 @@ public class OptimizeGUI extends JPanel
                 return !name.endsWith(".stat");
                 }
             });
-            
+        
         dialog.setVisible(true);
         String filename = dialog.getFile();
         if (filename == null)
@@ -956,7 +964,7 @@ public class OptimizeGUI extends JPanel
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    ParameterDatabase createParameterDatabase(String filePath) throws FileNotFoundException, IOException, ClassNotFoundException
+    ParameterDatabase createParameterDatabase(String filePath, String paretoFrontStatPath) throws FileNotFoundException, IOException, ClassNotFoundException
         {
 	    ParameterDatabase pd = new ParameterDatabase();
 	    
@@ -985,8 +993,16 @@ public class OptimizeGUI extends JPanel
             throw new FileNotFoundException("Could not parse file into filename and classname");
             }
 
-    	// Out file
+    	// Out file(s)
     	pd.set(new Parameter("stat.file"), filePath);
+    	if (paretoFrontStatPath != null) {
+	    	// Pareto Front File
+	    	pd.set(new Parameter("stat"), "ec.multiobjective.MultiObjectiveStatistics");
+	    	pd.set(new Parameter("stat.front"), paretoFrontStatPath);
+	    	// Don't print to screen
+	    	pd.set(new Parameter("stat.silent.front"), ""+true);
+    	}
+    	
     	// Don't print to screen
     	pd.set(new Parameter("stat.silent.print"), ""+true);
         
@@ -1101,14 +1117,6 @@ public class OptimizeGUI extends JPanel
 	    	
 	    	pd.set(new Parameter("steady.replacement-probability"), ""+replacementProb);
 	    	}
-	    
-//	    pd.set(new Parameter("min"), "0.1");// 0.9");
-//	    pd.set(new Parameter("max"), "0.9");// 1.0");
-	    
-//	    pd.set(new Parameter("mason-property.0.min"), "0.1");
-//	    pd.set(new Parameter("mason-property.0.max"), "0.9");
-	    
-//	    pd.set(new Parameter("silent"), "true");
 	    
         return pd;
         }

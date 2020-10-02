@@ -5,9 +5,9 @@
 
 JAVAC = javac ${FLAGS}
 
-FLAGS = -target 1.4 -source 1.4 -g -nowarn
+FLAGS = -target 1.8 -source 1.8 -g -nowarn
 
-VERSION = 4
+VERSION = 1
 
 
 # Main java files, not including the 3D stuff
@@ -51,7 +51,7 @@ jar: all
 	touch /tmp/manifest.add
 	rm /tmp/manifest.add
 	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
-	jar -cvfm jar/physics2d.${VERSION}.jar /tmp/manifest.add `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"`
+	jar -cvfm jar/mason.optimize.${VERSION}.jar /tmp/manifest.add `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"`
 
 # Indent to your preferred brace format using emacs.  MASON's default
 # format is Whitesmiths at 4 spaces.  Yes, I know.  Idiosyncratic.

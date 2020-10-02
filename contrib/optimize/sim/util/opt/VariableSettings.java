@@ -12,6 +12,7 @@ public class VariableSettings {
         {
         this.p = p;
         this.index = index;
+        //TODO Set min/max based on p.getDomain(): expected sim.util.Interval, but instead getting null
         }
     
     /**
