@@ -112,10 +112,8 @@ public class DFlockersWithDRegistry extends DSimState {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 			}
 		});
-
 	}
 
 	public static void main(final String[] args) throws MPIException {

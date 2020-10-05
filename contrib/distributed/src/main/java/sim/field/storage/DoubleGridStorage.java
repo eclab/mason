@@ -8,7 +8,7 @@ import mpi.*;
 import sim.field.partitioning.IntHyperRect;
 import sim.util.*;
 
-public class DoubleGridStorage extends GridStorage<Double> {
+public class DoubleGridStorage extends GridStorage<Double, Int2D> {
 
 	final double initVal;
 
@@ -20,7 +20,7 @@ public class DoubleGridStorage extends GridStorage<Double> {
 		Arrays.fill((double[]) storage, initVal);
 	}
 
-	public GridStorage getNewStorage(IntHyperRect shape) {
+	public GridStorage<Double, Int2D> getNewStorage(IntHyperRect shape) {
 		return new DoubleGridStorage(shape, 0);
 	}
 
@@ -57,27 +57,27 @@ public class DoubleGridStorage extends GridStorage<Double> {
 		return (double[]) getStorage();
 	}
 
-	public void addToLocation(Double t, NumberND p) {
+	public void addToLocation(Double t, Int2D p) {
 		getStorageArray()[getFlatIdx((Int2D) p)] = t;
 	}
 
-	public void addToLocation(double t, NumberND p) {
+	public void addToLocation(double t, Int2D p) {
 		getStorageArray()[getFlatIdx((Int2D) p)] = t;
 	}
 
-	public void removeObject(Double t, NumberND p) {
+	public void removeObject(Double t, Int2D p) {
 		addToLocation(initVal, p);
 	}
 
-	public void removeObject(double t, NumberND p) {
+	public void removeObject(double t, Int2D p) {
 		addToLocation(initVal, p);
 	}
 
-	public void removeObjects(NumberND p) {
+	public void removeObjects(Int2D p) {
 		addToLocation(initVal, p);
 	}
 
-	public Serializable getObjects(NumberND p) {
+	public Serializable getObjects(Int2D p) {
 		return getStorageArray()[getFlatIdx((Int2D) p)];
 	}
 

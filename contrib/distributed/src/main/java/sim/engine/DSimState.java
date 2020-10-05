@@ -54,7 +54,7 @@ public class DSimState extends SimState {
 	private static final long serialVersionUID = 1L;
 	public static Logger logger;
 
-	protected PartitionInterface<NumberND> partition;
+	protected PartitionInterface partition;
 	protected TransporterMPI transporter;
 	public int[] aoi; // Area of Interest
 	HashMap<String, Object> rootInfo = null;
@@ -66,6 +66,8 @@ public class DSimState extends SimState {
 
 	protected DRegistry registry;
 	protected boolean withRegistry;
+	
+	protected int balanceInterval = 100;
 
 	protected int balancerLevel;
 
@@ -261,7 +263,7 @@ public class DSimState extends SimState {
 
 	private void loadBalancing() {
 		if (schedule.getSteps() > 0) {
-			if (schedule.getSteps() % 50 == 0) {
+			if (schedule.getSteps() % balanceInterval == 0) {
 
 				try {
 					balancePartitions(balancerLevel);
