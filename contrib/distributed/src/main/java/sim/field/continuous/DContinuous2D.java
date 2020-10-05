@@ -224,4 +224,109 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 			iterativeRepeat.stop();
 		}
 	}
+	
+	
+	//// FIXME SEAN:
+	//// We can't getNeighborsWithinDistance any more very easily
+	//// But we need to figure out how to do something like that (see Continuous2D.java)
+
+	//// FIXME SEAN:
+	//// Width and height are ints :-(
+	
+    /** Toroidal x */
+    // slight revision for more efficiency
+    public final double tx(double x) 
+        { 
+        final double width = this.width;
+        if (x >= 0 && x < width) return x;  // do clearest case first
+        x = x % width;
+        if (x < 0) x = x + width;
+        return x;
+        }
+        
+    /** Toroidal y */
+    // slight revision for more efficiency
+    public final double ty(double y) 
+        { 
+        final double height = this.height;
+        if (y >= 0 && y < height) return y;  // do clearest case first
+        y = y % height;
+        if (y < 0) y = y + height;
+        return y;
+        }
+
+
+    /** Simple [and fast] toroidal x.  Use this if the values you'd pass in never stray
+        beyond (-width ... width * 2) not inclusive.  It's a bit faster than the full
+        toroidal computation as it uses if statements rather than two modulos.
+        The following definition:<br>
+        { double width = this.width; if (x >= 0) { if (x < width) return x; return x - width; } return x + width; } <br>
+        ...produces the shortest code (24 bytes) and is inlined in Hotspot for 1.4.1.   However removing
+        the double width = this.width; is likely to be a little faster if most objects are within the
+        toroidal region. */
+    public double stx(final double x) 
+        { if (x >= 0) { if (x < width) return x; return x - width; } return x + width; }
+    
+    /** Simple [and fast] toroidal y.  Use this if the values you'd pass in never stray
+        beyond (-height ... height * 2) not inclusive.  It's a bit faster than the full
+        toroidal computation as it uses if statements rather than two modulos.
+        The following definition:<br>
+        { double height = this.height; if (y >= 0) { if (y < height) return y ; return y - height; } return y + height; } <br>
+        ...produces the shortest code (24 bytes) and is inlined in Hotspot for 1.4.1.   However removing
+        the double height = this.height; is likely to be a little faster if most objects are within the
+        toroidal region. */
+    public double sty(final double y) 
+        { if (y >= 0) { if (y < height) return y ; return y - height; } return y + height; }
+        
+    
+    // some efficiency to avoid width lookups
+    double _stx(final double x, final double width) 
+        { if (x >= 0) { if (x < width) return x; return x - width; } return x + width; }
+
+    /** Minimum toroidal difference between two values in the X dimension. */
+    public double tdx(final double x1, final double x2)
+        {
+        double width = this.width;
+        if (Math.abs(x1-x2) <= width / 2)
+            return x1 - x2;  // no wraparounds  -- quick and dirty check
+        
+        double dx = _stx(x1,width) - _stx(x2,width);
+        if (dx * 2 > width) return dx - width;
+        if (dx * 2 < -width) return dx + width;
+        return dx;
+        }
+    
+    // some efficiency to avoid height lookups
+    double _sty(final double y, final double height) 
+        { if (y >= 0) { if (y < height) return y ; return y - height; } return y + height; }
+
+    /** Minimum toroidal difference between two values in the Y dimension. */
+    public double tdy(final double y1, final double y2)
+        {
+        double height = this.height;
+        if (Math.abs(y1-y2) <= height / 2)
+            return y1 - y2;  // no wraparounds  -- quick and dirty check
+
+        double dy = _sty(y1,height) - _sty(y2,height);
+        if (dy * 2 > height) return dy - height;
+        if (dy * 2 < -height) return dy + height;
+        return dy;
+        }
+    
+    /** Minimum Toroidal Distance Squared between two points. This computes the "shortest" (squared) distance between two points, considering wrap-around possibilities as well. */
+    public double tds(final Double2D d1, final Double2D d2)
+        {
+        double dx = tdx(d1.x,d2.x);
+        double dy = tdy(d1.y,d2.y);
+        return (dx * dx + dy * dy);
+        }
+
+    /** Minimum Toroidal difference vector between two points.  This subtracts the second point from the first and produces the minimum-length such subtractive vector, considering wrap-around possibilities as well*/
+    public Double2D tv(final Double2D d1, final Double2D d2)
+        {
+        return new Double2D(tdx(d1.x,d2.x),tdy(d1.y,d2.y));
+        }
+    
+	
+	
 }

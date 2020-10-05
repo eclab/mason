@@ -192,7 +192,7 @@ public /* strictfp */ class DAntsForage extends DSimState {
 		for (int x = 0; x < numAnts; x++) {
 			if (getPartitioning().getPartition()
 					.contains(new Int2D((HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2))) {
-				DAnt ant = new DAnt(reward, (HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2, partition.pid);
+				DAnt ant = new DAnt(reward, (HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2);
 				buggrid.addAgent(new Int2D((HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2), ant);
 				schedule.scheduleRepeating(Schedule.EPOCH + x, 0, ant, 1);
 			}

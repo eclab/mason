@@ -32,9 +32,6 @@ public class DFlockers extends DSimState {
 
 	public final DContinuous2D<DFlocker> flockers;
 
-	public ArrayList<Long> idAgents;
-	public ArrayList<Long> idLocal;
-
 	final SimpleDateFormat format = new SimpleDateFormat("ss-mm-HH-yyyy-MM-dd");
 	String dateString = format.format(new Date());
 	String dirname = System.getProperty("user.dir") + File.separator + dateString;
@@ -45,8 +42,6 @@ public class DFlockers extends DSimState {
 
 		final double[] discretizations = new double[] { DFlockers.neighborhood / 1.5, DFlockers.neighborhood / 1.5 };
 		flockers = new DContinuous2D<DFlocker>(getPartitioning(), aoi, discretizations, this);
-		idAgents = new ArrayList<>();
-		idLocal = new ArrayList<>();
 	}
 
 	@Override
@@ -54,8 +49,7 @@ public class DFlockers extends DSimState {
 		ArrayList<DFlocker> agents = new ArrayList<DFlocker>();
 		for (int x = 0; x < DFlockers.numFlockers; x++) {
 			final Double2D loc = new Double2D(random.nextDouble() * width, random.nextDouble() * height);
-			DFlocker flocker = new DFlocker(loc, partition.pid);
-			idAgents.add(flocker.getId());
+			DFlocker flocker = new DFlocker(loc);
 			if (random.nextBoolean(deadFlockerProbability))
 				flocker.dead = true;
 			agents.add(flocker);

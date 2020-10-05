@@ -34,7 +34,7 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 
 	AtomicInteger val = new AtomicInteger(0);
 
-	public DFlockerWithDRegistry(final Double2D location, final int pId) {
+	public DFlockerWithDRegistry(final Double2D location) {
 		loc = location;
 	}
 
@@ -228,11 +228,5 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 
 		dFlockers.flockers.moveAgent(old, loc, this);
 
-	}
-
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return "{ " + this.getClass() + "@" + Integer.toHexString(hashCode()) + " id: " + this.getId() + "}";
 	}
 }

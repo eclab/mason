@@ -37,7 +37,7 @@ public class DFlockersTest extends DSimState {
 
 	public final DContinuous2D<DFlocker> flockers;
 
-	public ArrayList<Long> idAgents;
+	//public ArrayList<Long> idAgents;
 	public ArrayList<Long> idLocal;
 
 	final SimpleDateFormat format = new SimpleDateFormat("ss-mm-HH-yyyy-MM-dd");
@@ -51,7 +51,7 @@ public class DFlockersTest extends DSimState {
 		final double[] discretizations = new double[] { DFlockersTest.neighborhood / 1.5,
 				DFlockersTest.neighborhood / 1.5 };
 		flockers = new DContinuous2D<DFlocker>(getPartitioning(), aoi, discretizations, this);
-		idAgents = new ArrayList<>();
+		//idAgents = new ArrayList<>();
 		idLocal = new ArrayList<>();
 	}
 
@@ -114,6 +114,7 @@ public class DFlockersTest extends DSimState {
 					e.printStackTrace();
 				}
 				Arrays.sort(recv);
+				/*
 				for (int i = 0; i < idAgents.size(); i++) {
 					if (idAgents.get(i) != recv[i]) {
 						System.err.println("ERROR: something wrong happens --> idAgents.get(i) " + idAgents.get(i)
@@ -121,6 +122,7 @@ public class DFlockersTest extends DSimState {
 						System.exit(1);
 					}
 				}
+				*/
 			}
 			idLocal.clear();
 		}
@@ -130,8 +132,8 @@ public class DFlockersTest extends DSimState {
 		ArrayList<DFlocker> agents = new ArrayList<DFlocker>();
 		for (int x = 0; x < DFlockersTest.numFlockers; x++) {
 			final Double2D loc = new Double2D(random.nextDouble() * width, random.nextDouble() * height);
-			DFlocker flocker = new DFlocker(loc, partition.pid);
-			idAgents.add(flocker.getId());
+			DFlocker flocker = new DFlocker(loc);
+			//idAgents.add(flocker.getId());
 			if (random.nextBoolean(deadFlockerProbability))
 				flocker.dead = true;
 			agents.add(flocker);

@@ -534,7 +534,7 @@ public class DSimState extends SimState {
 
 			// schedule a zombie agent to prevent that a processor with no agent is stopped
 			// when the simulation is still going on
-			schedule.scheduleRepeating(new DSteppable() {
+			schedule.scheduleRepeating(new DSteppable() { 		//new DSteppable(partition.pid) {
 				@Override
 				public void step(SimState state) {
 

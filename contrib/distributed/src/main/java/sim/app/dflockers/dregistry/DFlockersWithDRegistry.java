@@ -50,7 +50,7 @@ public class DFlockersWithDRegistry extends DSimState {
 //			final DFlockerWithDRegistry flocker = new DFlockerWithDRegistry(location, 
 //					(getPartitioning().pid * (DFlockersWithDRegistry.numFlockers / getPartitioning().numProcessors)) + x);
 
-			final DFlockerWithDRegistry flocker = new DFlockerWithDRegistry(location, getPartitioning().pid);
+			final DFlockerWithDRegistry flocker = new DFlockerWithDRegistry(location);
 
 			flockers.addAgent(location, flocker);
 

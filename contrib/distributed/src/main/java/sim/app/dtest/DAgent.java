@@ -20,7 +20,7 @@ public class DAgent extends DSteppable implements Remote {
 	public Double2D initLoc;
 	public ArrayList<Long> neighbours;
 
-	public DAgent(final Double2D location, final int pid) {
+	public DAgent(final Double2D location) {
 		this.loc = location;
 		this.initLoc = location;
 		this.neighbours = new ArrayList<>();
@@ -59,8 +59,10 @@ public class DAgent extends DSteppable implements Remote {
 		}
 		List<DAgent> tmp = dSimstate.field.getNeighborsWithin(this, dSimstate.neighborhood);
 		for (DAgent a : tmp) {
-			if (!neighbours.contains(a.getId())) {
-				neighbours.add(a.getId());
+			if (!neighbours.contains(a.getID())) {
+				neighbours.add(a.getID());
+			//if (!neighbours.contains(a.getId())) {
+			//	neighbours.add(a.getId());
 			}
 		}
 		Double2D new_loc = new Double2D(new_x, new_y);
@@ -68,11 +70,4 @@ public class DAgent extends DSteppable implements Remote {
 		dSimstate.field.moveAgent(curr_loc, new_loc, this);
 
 	}
-
-	public String toString() {
-		// TODO Auto-generated method stub
-		return "{ " + this.getClass() + "@" + Integer.toHexString(hashCode()) +
-				" [ id: " + this.getId() + " loc: " + loc + "]}";
-	}
-
 }

@@ -1,7 +1,6 @@
 package sim.field.grid;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import sim.engine.DSimState;
@@ -80,36 +79,22 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implem
 
 	/* UTILS METHODS */
 
-	public int toToroidal(final int x, final int dim) {
-		final int s = fieldSize[dim];
-		if (x >= s)
-			return x - s;
-		else if (x < 0)
-			return x + s;
-		return x;
-	}
-
-	public double toToroidal(final double x, final int dim) {
-		final int s = fieldSize[dim];
-		if (x >= s)
-			return x - s;
-		else if (x < 0)
-			return x + s;
-		return x;
-	}
-
-	public double toToroidalDiff(final double x1, final double x2, final int dim) {
-		final int s = fieldSize[dim];
-		if (Math.abs(x1 - x2) <= s / 2)
-			return x1 - x2; // no wraparounds -- quick and dirty check
-
-		final double dx = toToroidal(x1, dim) - toToroidal(x2, dim);
-		if (dx * 2 > s)
-			return dx - s;
-		if (dx * 2 < -s)
-			return dx + s;
-		return dx;
-	}
+	/*
+	 * public int toToroidal(final int x, final int dim) { final int s =
+	 * fieldSize[dim]; if (x >= s) return x - s; else if (x < 0) return x + s;
+	 * return x; }
+	 * 
+	 * public double toToroidal(final double x, final int dim) { final int s =
+	 * fieldSize[dim]; if (x >= s) return x - s; else if (x < 0) return x + s;
+	 * return x; }
+	 * 
+	 * public double toToroidalDiff(final double x1, final double x2, final int dim)
+	 * { final int s = fieldSize[dim]; if (Math.abs(x1 - x2) <= s / 2) return x1 -
+	 * x2; // no wraparounds -- quick and dirty check
+	 * 
+	 * final double dx = toToroidal(x1, dim) - toToroidal(x2, dim); if (dx * 2 > s)
+	 * return dx - s; if (dx * 2 < -s) return dx + s; return dx; }
+	 */
 
 	public void addAgent(final Int2D p, final T t) {
 		halo.addAgent(p, t);

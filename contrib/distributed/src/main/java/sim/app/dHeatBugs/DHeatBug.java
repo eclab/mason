@@ -20,8 +20,7 @@ public class DHeatBug extends DSteppable {
 	public double heatOutput;
 	public double randomMovementProbability;
 
-	public DHeatBug(final double idealTemp, final double heatOutput, final double randomMovementProbability,
-			final int loc_x, final int loc_y, final int pid) {
+	public DHeatBug(final double idealTemp, final double heatOutput, final double randomMovementProbability, final int loc_x, final int loc_y) {
 		this.heatOutput = heatOutput;
 		this.idealTemp = idealTemp;
 		this.randomMovementProbability = randomMovementProbability;
@@ -38,8 +37,6 @@ public class DHeatBug extends DSteppable {
 
 	public void step(final SimState state) {
 		final DHeatBugs dHeatBugs = (DHeatBugs) state;
-
-		dHeatBugs.idLocal.add(this.getId());
 
 		// Skip addHeat for the first step
 		if (!isFirstStep) {
@@ -131,11 +128,5 @@ public class DHeatBug extends DSteppable {
 		if (t >= 0
 				&& t <= 1)
 			randomMovementProbability = t;
-	}
-
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return "{ " + this.getClass() + "@" + Integer.toHexString(hashCode()) + " id: " + this.getId() + "}";
 	}
 }
