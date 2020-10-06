@@ -39,14 +39,13 @@ import sim.util.*;
  * @param <S> The Type of Storage to use
  */
 public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends GridStorage>
-		extends TransportRMIInterface<T, P>
-		implements Synchronizable, DGrid<T, P> {
+		implements TransportRMIInterface<T, P>, Synchronizable, DGrid<T, P> {
 
 	/**
 	 * Helper class to organize neighbor-related data structures and methods
 	 */
 	class Neighbor {
-		int pid;
+		final int pid;
 		MPIParam sendParam, recvParam;
 
 		public Neighbor(final IntHyperRect neighborPart) {
@@ -104,6 +103,8 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 
 	public RMIProxy<T, P> proxy;
 	private final DSimState state;
+
+	private final Object lockRMI = new boolean[1];
 
 	public HaloGrid2D(final PartitionInterface ps, final int[] aoi, final S stor, final DSimState state) {
 		this.partition = ps;
@@ -679,11 +680,11 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
 			final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
 			add((P) payloadWrapper.loc, (T) iterativeRepeat.getSteppable());
-			
+
 		} else if (payloadWrapper.payload instanceof AgentWrapper) {
 			final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
 			add((P) payloadWrapper.loc, (T) agentWrapper.agent);
-			
+
 		} else {
 			add((P) payloadWrapper.loc, (T) payloadWrapper.payload);
 		}
@@ -725,6 +726,13 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 				return localStorage.getObjects(p);
 			else
 				return localStorage.getObjects(toLocalPoint((Int2D) p));
+		}
+	}
+
+	public void moveRMI(final P fromP, final P toP, final T t) throws RemoteException {
+		synchronized (lockRMI) {
+			removeRMI(fromP, t);
+			addRMI(toP, t);
 		}
 	}
 

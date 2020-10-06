@@ -11,8 +11,7 @@ import java.rmi.RemoteException;
  * @param <P> The Type of PointND to use
  * @param <T> The Type of Object in the field
  */
-public abstract class TransportRMIInterface<T extends Serializable, P> implements Remote {
-	protected final Object lockRMI = new Object();
+public interface TransportRMIInterface<T extends Serializable, P> extends Remote {
 
 	/**
 	 * Used internally for RMI
@@ -68,10 +67,6 @@ public abstract class TransportRMIInterface<T extends Serializable, P> implement
 	 *
 	 * @throws RemoteException If the points are not local to the remote field
 	 */
-	public void moveRMI(final P fromP, final P toP, final T t) throws RemoteException {
-		synchronized (lockRMI) {
-			removeRMI(fromP, t);
-			addRMI(toP, t);
-		}
-	}
+	public void moveRMI(final P fromP, final P toP, final T t) throws RemoteException;
+
 }

@@ -1,5 +1,4 @@
 package sim.field;
-import sim.field.grid.*;
 
 import java.io.Serializable;
 

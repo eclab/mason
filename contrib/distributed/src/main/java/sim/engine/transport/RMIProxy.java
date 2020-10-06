@@ -13,7 +13,6 @@ import java.util.UUID;
 import mpi.MPI;
 import sim.field.partitioning.PartitionInterface;
 import sim.util.MPIUtil;
-import sim.util.*;
 
 /**
  * RMIProxy for using Java RMI. RMI is used for point to point communication
@@ -80,7 +79,7 @@ public class RMIProxy<T extends Serializable, P> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public RMIProxy(final PartitionInterface ps, Remote field) {
+	public RMIProxy(final PartitionInterface ps, TransportRMIInterface<T, P> field) {
 		if (!RMIProxy.isReady)
 			throw new IllegalArgumentException("RMI Registry has not been started yet!");
 
