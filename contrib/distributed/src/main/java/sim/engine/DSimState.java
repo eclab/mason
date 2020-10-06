@@ -388,12 +388,13 @@ public class DSimState extends SimState {
 						Serializable a = st.getObjects(haloGrid2D.toLocalPoint(p));
 						if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
 								&& old_partition.contains(p) && !partition.getPartition().contains(p)) {
-							((Stopping) a).getStoppable().stop();
-							transporter.migrateAgent((Stopping) a, toP, p, ((HaloGrid2D) field).fieldIndex);
-							migratedAgents.add(a);
-							System.out.println("PID: " + partition.pid + " processor " + old_pid + " move " + a
+							Stopping stopping = ((Stopping) a);
+							stopping.getStoppable().stop();
+							transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).fieldIndex);
+							migratedAgents.add(stopping);
+							System.out.println("PID: " + partition.pid + " processor " + old_pid + " move " + stopping
 									+ " from " + p + " (point " + p + ") to processor " + toP);
-							haloGrid2D.remove(p, a);
+							haloGrid2D.remove(p, stopping);
 						}
 					}
 				}

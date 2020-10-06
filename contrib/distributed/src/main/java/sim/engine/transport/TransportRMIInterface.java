@@ -11,7 +11,8 @@ import java.rmi.RemoteException;
  * @param <P> The Type of PointND to use
  * @param <T> The Type of Object in the field
  */
-public interface TransportRMIInterface<T extends Serializable, P> extends Remote {
+public abstract class TransportRMIInterface<T extends Serializable, P> implements Remote {
+	protected final Object lockRMI = new Object();
 
 	/**
 	 * Used internally for RMI
@@ -24,7 +25,7 @@ public interface TransportRMIInterface<T extends Serializable, P> extends Remote
 	 * @throws RemoteException If the point requested is not local to the remote
 	 *                         field
 	 */
-	Serializable getRMI(P p) throws RemoteException;
+	public abstract Serializable getRMI(P p) throws RemoteException;
 
 	/**
 	 * Used internally for RMI
@@ -35,7 +36,7 @@ public interface TransportRMIInterface<T extends Serializable, P> extends Remote
 	 * @throws RemoteException If the point requested is not local to the remote
 	 *                         field
 	 */
-	void addRMI(P p, T t) throws RemoteException;
+	public abstract void addRMI(P p, T t) throws RemoteException;
 
 	/**
 	 * Used internally for RMI
@@ -46,7 +47,7 @@ public interface TransportRMIInterface<T extends Serializable, P> extends Remote
 	 * @throws RemoteException If the point requested is not local to the remote
 	 *                         field
 	 */
-	void removeRMI(P p, T t) throws RemoteException;
+	public abstract void removeRMI(P p, T t) throws RemoteException;
 
 	/**
 	 * Used internally for RMI
@@ -56,7 +57,7 @@ public interface TransportRMIInterface<T extends Serializable, P> extends Remote
 	 * @throws RemoteException If the point requested is not local to the remote
 	 *                         field
 	 */
-	void removeRMI(P p) throws RemoteException;
+	public abstract void removeRMI(P p) throws RemoteException;
 
 	/**
 	 * Used internally for RMI
@@ -67,8 +68,10 @@ public interface TransportRMIInterface<T extends Serializable, P> extends Remote
 	 *
 	 * @throws RemoteException If the points are not local to the remote field
 	 */
-	default void moveRMI(final P fromP, final P toP, final T t) throws RemoteException {
-		removeRMI(fromP, t);
-		addRMI(toP, t);
+	public void moveRMI(final P fromP, final P toP, final T t) throws RemoteException {
+		synchronized (lockRMI) {
+			removeRMI(fromP, t);
+			addRMI(toP, t);
+		}
 	}
 }

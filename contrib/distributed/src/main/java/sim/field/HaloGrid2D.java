@@ -39,7 +39,8 @@ import sim.util.*;
  * @param <S> The Type of Storage to use
  */
 public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends GridStorage>
-		implements TransportRMIInterface<T, P>, Synchronizable, DGrid<T, P> {
+		extends TransportRMIInterface<T, P>
+		implements Synchronizable, DGrid<T, P> {
 
 	/**
 	 * Helper class to organize neighbor-related data structures and methods
@@ -96,7 +97,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 
 	protected List<Neighbor> neighbors; // pointer to the processors who's partitions neighbor me
 	public S localStorage;
-	public PartitionInterface<P> partition;
+	public PartitionInterface partition;
 	public Datatype MPIBaseType;
 
 	public final int fieldIndex;
@@ -227,8 +228,12 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	public void remove(final P p) {
 		if (!inLocal(p))
 			removeFromRemote(p);
-		else
-			localStorage.removeObjects(p);
+		else {
+			if (localStorage instanceof ContStorage)
+				localStorage.removeObjects(p);
+			else
+				localStorage.removeObjects(toLocalPoint((Int2D) p));
+		}
 	}
 
 	public void move(final P fromP, final P toP, final T t) {
@@ -656,7 +661,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	/* METHODS SYNCHO */
 
 	public void initRemote() {
-		proxy = new RMIProxy(partition, this);
+		proxy = new RMIProxy<>(partition, this);
 	}
 
 	public void syncHalo() throws MPIException {
@@ -673,15 +678,12 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	public void syncObject(PayloadWrapper payloadWrapper) {
 		if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
 			final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
-
 			add((P) payloadWrapper.loc, (T) iterativeRepeat.getSteppable());
-
+			
 		} else if (payloadWrapper.payload instanceof AgentWrapper) {
-			// System.out.println("in method syncObject "+payloadWrapper.payload);
 			final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
-
 			add((P) payloadWrapper.loc, (T) agentWrapper.agent);
-
+			
 		} else {
 			add((P) payloadWrapper.loc, (T) payloadWrapper.payload);
 		}
@@ -690,32 +692,40 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	/* RMI METHODS */
 	// TODO: Should we throw exception here if not in local?
 	public void addRMI(P p, T t) throws RemoteException {
+		synchronized (lockRMI) {
 //		Checking instanceof because ContStorage store global point 
-		if (localStorage instanceof ContStorage)
-			localStorage.addToLocation(t, p);
-		else
-			localStorage.addToLocation(t, toLocalPoint((Int2D) p));
+			if (localStorage instanceof ContStorage)
+				localStorage.addToLocation(t, p);
+			else
+				localStorage.addToLocation(t, toLocalPoint((Int2D) p));
+		}
 	}
 
 	public void removeRMI(P p, T t) throws RemoteException {
-		if (localStorage instanceof ContStorage)
-			localStorage.removeObject(t, p);
-		else
-			localStorage.removeObject(t, toLocalPoint((Int2D) p));
+		synchronized (lockRMI) {
+			if (localStorage instanceof ContStorage)
+				localStorage.removeObject(t, p);
+			else
+				localStorage.removeObject(t, toLocalPoint((Int2D) p));
+		}
 	}
 
 	public void removeRMI(final P p) throws RemoteException {
-		if (localStorage instanceof ContStorage)
-			localStorage.removeObjects(p);
-		else
-			localStorage.removeObjects(toLocalPoint((Int2D) p));
+		synchronized (lockRMI) {
+			if (localStorage instanceof ContStorage)
+				localStorage.removeObjects(p);
+			else
+				localStorage.removeObjects(toLocalPoint((Int2D) p));
+		}
 	}
 
 	public Serializable getRMI(P p) throws RemoteException {
-		if (localStorage instanceof ContStorage)
-			return localStorage.getObjects(p);
-		else
-			return localStorage.getObjects(toLocalPoint((Int2D) p));
+		synchronized (lockRMI) {
+			if (localStorage instanceof ContStorage)
+				return localStorage.getObjects(p);
+			else
+				return localStorage.getObjects(toLocalPoint((Int2D) p));
+		}
 	}
 
 	/**

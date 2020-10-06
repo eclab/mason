@@ -10,11 +10,9 @@ import sim.util.*;
 /**
  * An interface for dividing the world into multiple partitions. Each partition
  * then gets assigned to a node.
- *
- * @param <P> Type of point
  */
 @SuppressWarnings("rawtypes")
-public abstract class PartitionInterface<P extends NumberND> {
+public abstract class PartitionInterface {
 	public int pid, numProcessors, numDimensions;
 	public int[] size;
 	boolean isToroidal;
@@ -89,7 +87,7 @@ public abstract class PartitionInterface<P extends NumberND> {
 	 * @param p
 	 * @return partition id (pid) for the point p
 	 */
-	public abstract int toPartitionId(P p);
+	public abstract int toPartitionId(NumberND p);
 
 	/**
 	 * @param c point as an int array

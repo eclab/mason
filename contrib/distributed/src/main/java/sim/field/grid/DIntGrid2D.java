@@ -16,6 +16,7 @@ import sim.util.*;
  * 
  */
 public class DIntGrid2D extends DAbstractGrid2D implements DGrid<Integer, Int2D> {
+	private static final long serialVersionUID = 1L;
 
 	private HaloGrid2D<Integer, Int2D, IntGridStorage> halo;
 	public final int initVal;

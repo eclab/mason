@@ -1,7 +1,6 @@
 package sim.field.storage;
 
 import java.io.Serializable;
-import java.util.stream.IntStream;
 
 import mpi.Datatype;
 import mpi.MPI;

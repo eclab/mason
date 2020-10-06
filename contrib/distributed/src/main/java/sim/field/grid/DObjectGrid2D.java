@@ -18,11 +18,12 @@ import sim.util.*;
  * @param <T> Type of object stored in the grid
  */
 public class DObjectGrid2D<T extends Serializable> extends DAbstractGrid2D implements DGrid<T, NumberND> {
+	private static final long serialVersionUID = 1L;
 
 	private HaloGrid2D<T, NumberND, ObjectGridStorage<T>> halo;
 
 	@SuppressWarnings("unchecked")
-	public DObjectGrid2D(final PartitionInterface<?> ps, final int[] aoi, final DSimState state, Class<T> clazz) {
+	public DObjectGrid2D(final PartitionInterface ps, final int[] aoi, final DSimState state, Class<T> clazz) {
 		super(ps);
 		if (ps.getNumDim() != 2)
 			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + ps.getNumDim());

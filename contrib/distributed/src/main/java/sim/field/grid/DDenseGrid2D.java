@@ -19,10 +19,11 @@ import sim.util.*;
  * @param <T> Type of object stored in the grid
  */
 public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implements DGrid<T, Int2D> {
+	private static final long serialVersionUID = 1L;
 
 	private HaloGrid2D<T, Int2D, DenseGridStorage<T>> halo;
 
-	public DDenseGrid2D(final PartitionInterface<Int2D> ps, final int[] aoi, final DSimState state) {
+	public DDenseGrid2D(final PartitionInterface ps, final int[] aoi, final DSimState state) {
 		super(ps);
 		if (ps.getNumDim() != 2)
 			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + ps.getNumDim());
