@@ -12,7 +12,7 @@ import sim.util.*;
  *
  * @param <T> Type of objects to store
  */
-public class ObjectGridStorage<T extends Serializable> extends GridStorage<T> {
+public class ObjectGridStorage<T extends Serializable> extends GridStorage<T, Int2D> {
 
 	IntFunction<T[]> alloc; // Lambda function which accepts the size as its argument and returns a T array
 
@@ -23,7 +23,7 @@ public class ObjectGridStorage<T extends Serializable> extends GridStorage<T> {
 		storage = allocate(shape.getArea());
 	}
 
-	public GridStorage getNewStorage(final IntHyperRect shape) {
+	public GridStorage<T, Int2D> getNewStorage(final IntHyperRect shape) {
 		return new ObjectGridStorage<T>(shape, alloc);
 	}
 
@@ -76,8 +76,8 @@ public class ObjectGridStorage<T extends Serializable> extends GridStorage<T> {
 		return (T[]) getStorage();
 	}
 
-	public void addToLocation(T obj, NumberND p) {
-		getStorageArray()[getFlatIdx((Int2D) p)] = obj;
+	public void addToLocation(T obj, Int2D p) {
+		getStorageArray()[getFlatIdx(p)] = obj;
 	}
 
 //	public NumberND getLocation(T obj) {
@@ -85,16 +85,16 @@ public class ObjectGridStorage<T extends Serializable> extends GridStorage<T> {
 //		return null;
 //	}
 
-	public void removeObject(T obj, NumberND p) {
+	public void removeObject(T obj, Int2D p) {
 		addToLocation(null, p);
 	}
 
-	public void removeObjects(NumberND p) {
+	public void removeObjects(Int2D p) {
 		addToLocation(null, p);
 	}
 
-	public T getObjects(NumberND p) {
-		return (T) getStorageArray()[getFlatIdx((Int2D) p)];
+	public T getObjects(Int2D p) {
+		return (T) getStorageArray()[getFlatIdx(p)];
 	}
 
 //	public static void main(final String[] args) throws MPIException {

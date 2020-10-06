@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.function.IntFunction;
 
 import sim.field.partitioning.IntHyperRect;
-import sim.util.MPIParam;
 import sim.util.*;
 
 /**
@@ -13,7 +12,7 @@ import sim.util.*;
  *
  * @param <T> Type of objects to store
  */
-public class DenseGridStorage<T extends Serializable> extends GridStorage {
+public class DenseGridStorage<T extends Serializable> extends GridStorage<T, Int2D> {
 
 	IntFunction<ArrayList<T>[]> alloc; // Lambda function which accepts the size as its argument and returns a T array
 
@@ -24,8 +23,8 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage {
 		storage = allocate(shape.getArea());
 	}
 
-	public GridStorage getNewStorage(final IntHyperRect shape) {
-		return new DenseGridStorage(shape, alloc);
+	public GridStorage<T, Int2D> getNewStorage(final IntHyperRect shape) {
+		return new DenseGridStorage<T>(shape, alloc);
 	}
 
 	protected Object[] allocate(final int size) {
@@ -34,7 +33,7 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage {
 
 	public String toString() {
 		final int[] size = shape.getSize();
-		final ArrayList[] array = (ArrayList[]) storage;
+		final ArrayList<T>[] array = (ArrayList[]) storage;
 		final StringBuffer buf = new StringBuffer(
 				String.format("ObjectGridStorage<%s>-%s\n", array.getClass().getSimpleName(), shape));
 
@@ -49,7 +48,8 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage {
 	}
 
 	public Serializable pack(final MPIParam mp) {
-		final ArrayList[] objs = alloc.apply(mp.size), stor = (ArrayList[]) storage;
+		final ArrayList<T>[] objs = alloc.apply(mp.size);
+		final ArrayList<T>[] stor = (ArrayList<T>[]) storage;
 		int curr = 0;
 
 		for (final IntHyperRect rect : mp.rects)
@@ -61,8 +61,8 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage {
 
 	public int unpack(final MPIParam mp, final Serializable buf) {
 //		System.out.println(buf);
-		final ArrayList[] stor = (ArrayList[]) storage;
-		final ArrayList[] objs = (ArrayList[]) buf;
+		final ArrayList<T>[] stor = (ArrayList<T>[]) storage;
+		final ArrayList<T>[] objs = (ArrayList<T>[]) buf;
 		int curr = 0;
 
 		for (final IntHyperRect rect : mp.rects)
@@ -73,20 +73,18 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage {
 	}
 
 	@SuppressWarnings("unchecked")
-	public ArrayList[] getStorageArray() {
+	public ArrayList<T>[] getStorageArray() {
 		return (ArrayList[]) getStorage();
 	}
 
-	public void addToLocation(Serializable obj, NumberND p) {
-		final ArrayList[] array = getStorageArray();
-		final int idx = getFlatIdx((Int2D) p);
+	public void addToLocation(T obj, Int2D p) {
+		final ArrayList<T>[] array = getStorageArray();
+		final int idx = getFlatIdx(p);
 
 		if (array[idx] == null)
 			array[idx] = new ArrayList<T>();
 
 		array[idx].add(obj);
-
-//		getStorageArray()[getFlatIdx((Int2D) p)] = obj;
 	}
 
 //	public NumberND getLocation(T obj) {
@@ -94,15 +92,24 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage {
 //		return null;
 //	}
 
-	public void removeObject(Serializable obj, NumberND p) {
-		addToLocation(null, p);
+	public void removeObject(T obj, Int2D p) {
+		final ArrayList<T>[] array = getStorageArray();
+		final int idx = getFlatIdx(p);
+
+		if (array[idx] != null)
+			array[idx].remove(obj);
 	}
 
-	public void removeObjects(NumberND p) {
-		addToLocation(null, p);
+	public void removeObjects(Int2D p) {
+		final ArrayList<T>[] array = getStorageArray();
+		final int idx = getFlatIdx(p);
+
+		if (array[idx] != null)
+			array[idx].clear();
 	}
 
-	public ArrayList getObjects(NumberND p) {
-		return (ArrayList) getStorageArray()[getFlatIdx((Int2D) p)];
+	public ArrayList<T> getObjects(Int2D p) {
+		return getStorageArray()[getFlatIdx(p)];
 	}
+
 }

@@ -1,14 +1,12 @@
 package sim.field.storage;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.stream.IntStream;
 
 import mpi.Datatype;
 import mpi.MPI;
 import mpi.MPIException;
 import sim.field.partitioning.IntHyperRect;
-import sim.util.MPIParam;
 import sim.util.*;
 
 /**
@@ -16,7 +14,7 @@ import sim.util.*;
  *
  * @param <T> Type of objects to store
  */
-public abstract class GridStorage<T extends Serializable> {
+public abstract class GridStorage<T extends Serializable, P extends NumberND> {
 	Object storage;
 	IntHyperRect shape;
 	Datatype baseType = MPI.BYTE;
@@ -24,17 +22,17 @@ public abstract class GridStorage<T extends Serializable> {
 	int[] stride;
 
 	/* Abstract Method of generic storage based on N-dimensional Point */
-	public abstract void addToLocation(final T obj, final NumberND p);
+	public abstract void addToLocation(final T obj, final P p);
 
-//	public abstract NumberND getLocation(final T obj);
+//	public abstract P getLocation(final T obj);
 
 //	public abstract void removeObject(final T obj);
 
-	public abstract void removeObject(final T obj, NumberND p);
+	public abstract void removeObject(final T obj, P p);
 
-	public abstract void removeObjects(final NumberND p);
+	public abstract void removeObjects(final P p);
 
-	public abstract Serializable getObjects(final NumberND p);
+	public abstract Serializable getObjects(final P p);
 
 	public GridStorage(final IntHyperRect shape) {
 		this.shape = shape;

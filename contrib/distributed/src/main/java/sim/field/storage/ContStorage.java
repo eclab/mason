@@ -14,7 +14,7 @@ import sim.field.partitioning.IntPointGenerator;
 import sim.util.MPIParam;
 import sim.util.*;
 
-public class ContStorage<T extends Serializable> extends GridStorage<T> {
+public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND> {
 
 	int[] dsize;
 	double[] discretizations;

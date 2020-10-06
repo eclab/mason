@@ -1,7 +1,6 @@
 package sim.field.storage;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import mpi.*;
@@ -9,8 +8,7 @@ import mpi.*;
 import sim.field.partitioning.IntHyperRect;
 import sim.util.*;
 
-public class IntGridStorage extends GridStorage<Integer> 
-	{
+public class IntGridStorage extends GridStorage<Integer, Int2D> {
 	final int initVal;
 
 	public IntGridStorage(IntHyperRect shape, int initVal) {
@@ -58,28 +56,28 @@ public class IntGridStorage extends GridStorage<Integer>
 		return (int[]) getStorage();
 	}
 
-	public void addToLocation(Integer t, NumberND p) {
+	public void addToLocation(Integer t, Int2D p) {
 		getStorageArray()[getFlatIdx((Int2D) p)] = t;
 	}
 
-	public void addToLocation(int t, NumberND p) {
+	public void addToLocation(int t, Int2D p) {
 		getStorageArray()[getFlatIdx((Int2D) p)] = t;
 	}
 
-	public void removeObject(Integer t, NumberND p) {
+	public void removeObject(Integer t, Int2D p) {
 		addToLocation(initVal, p);
 	}
 
-	public void removeObject(int t, NumberND p) {
+	public void removeObject(int t, Int2D p) {
 		addToLocation(initVal, p);
 	}
 
-	public void removeObjects(NumberND p) {
+	public void removeObjects(Int2D p) {
 		addToLocation(initVal, p);
 	}
 
-	public Serializable getObjects(NumberND p) {
-		return getStorageArray()[getFlatIdx((Int2D) p)];
+	public Serializable getObjects(Int2D p) {
+		return getStorageArray()[getFlatIdx(p)];
 	}
 
 }
