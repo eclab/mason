@@ -66,7 +66,7 @@ public class DSimState extends SimState {
 
 	protected DRegistry registry;
 	protected boolean withRegistry;
-	
+
 	protected int balanceInterval = 100;
 
 	protected int balancerLevel;
@@ -200,12 +200,9 @@ public class DSimState extends SimState {
 			 * Improperly using the wrappers and/or fieldIndex will cause Class cast
 			 * exceptions to be thrown
 			 */
-
-			if (payloadWrapper.fieldIndex >= 0) {
-				((Synchronizable) fieldRegistry.get(payloadWrapper.fieldIndex)).syncObject(payloadWrapper); // add the
-																											// object to
-																											// the field
-			}
+			if (payloadWrapper.fieldIndex >= 0)
+				// add the object to the field
+				fieldRegistry.get(payloadWrapper.fieldIndex).syncObject(payloadWrapper);
 
 			if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
 				final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
@@ -214,14 +211,9 @@ public class DSimState extends SimState {
 				// Not adding it to specific time because we get an error -
 				// "the time provided (-1.0000000000000002) is < EPOCH (0.0)"
 
-				// TODO: Check for Type Cast here
-				Stopping stopping = (Stopping) iterativeRepeat.step;
+				Stopping stopping = iterativeRepeat.getSteppable();
 				stopping.setStoppable(schedule.scheduleRepeating(stopping, iterativeRepeat.getOrdering(),
 						iterativeRepeat.interval));
-				// Add agent to the field
-				// addToField(iterativeRepeat.step, payloadWrapper.loc,
-				// payloadWrapper.fieldIndex);
-
 			} else if (payloadWrapper.payload instanceof AgentWrapper) {
 				final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
 
@@ -236,14 +228,11 @@ public class DSimState extends SimState {
 						}
 					}
 				}
-
 				if (agentWrapper.time < 0)
 					schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
 				else
 					schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
-
 			}
-
 		}
 
 		// Wait that all nodes have registered their new objects in the distributed
@@ -293,12 +282,9 @@ public class DSimState extends SimState {
 						 * exceptions to be thrown
 						 */
 
-						if (payloadWrapper.fieldIndex >= 0) {
-							((Synchronizable) fieldRegistry.get(payloadWrapper.fieldIndex)).syncObject(payloadWrapper); // add
-																														// the
-							// object to
-							// the field
-						}
+						if (payloadWrapper.fieldIndex >= 0)
+							// add the object to the field
+							fieldRegistry.get(payloadWrapper.fieldIndex).syncObject(payloadWrapper);
 
 						if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
 							final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
@@ -307,14 +293,9 @@ public class DSimState extends SimState {
 							// Not adding it to specific time because we get an error -
 							// "the time provided (-1.0000000000000002) is < EPOCH (0.0)"
 
-							// TODO: Check for Type Cast here
-							Stopping stopping = (Stopping) iterativeRepeat.step;
+							Stopping stopping = iterativeRepeat.getSteppable();
 							stopping.setStoppable(schedule.scheduleRepeating(stopping, iterativeRepeat.getOrdering(),
 									iterativeRepeat.interval));
-							// Add agent to the field
-							// addToField(iterativeRepeat.step, payloadWrapper.loc,
-							// payloadWrapper.fieldIndex);
-
 						} else if (payloadWrapper.payload instanceof AgentWrapper) {
 							final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
 
@@ -329,12 +310,10 @@ public class DSimState extends SimState {
 									}
 								}
 							}
-
 							if (agentWrapper.time < 0)
 								schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
 							else
 								schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
-
 						}
 
 					}
@@ -534,7 +513,7 @@ public class DSimState extends SimState {
 
 			// schedule a zombie agent to prevent that a processor with no agent is stopped
 			// when the simulation is still going on
-			schedule.scheduleRepeating(new DSteppable() { 		//new DSteppable(partition.pid) {
+			schedule.scheduleRepeating(new DSteppable() {
 				@Override
 				public void step(SimState state) {
 

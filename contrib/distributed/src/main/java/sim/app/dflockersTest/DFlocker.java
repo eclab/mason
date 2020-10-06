@@ -201,9 +201,9 @@ public class DFlocker extends DSteppable implements Remote {
 //		}
 	}
 
-//	public String toString() {
-//		return super.toString() + 
-//				" [loc=" + loc + ", lastd=" + lastd + ", dead=" + dead + "]";
-//	}
+	public String toString() {
+		return super.toString() +
+				" [loc=" + loc + ", lastd=" + lastd + ", dead=" + dead + "]";
+	}
 
 }

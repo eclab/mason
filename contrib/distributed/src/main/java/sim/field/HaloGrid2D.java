@@ -685,7 +685,6 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		} else {
 			add((P) payloadWrapper.loc, (T) payloadWrapper.payload);
 		}
-
 	}
 
 	/* RMI METHODS */

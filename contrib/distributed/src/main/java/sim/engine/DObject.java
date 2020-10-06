@@ -17,13 +17,13 @@ import mpi.*;
 public abstract class DObject implements java.io.Serializable
     {
     private static final long serialVersionUID = 1;
-	static int pid;
+	static final int PID;
 	
 	static
 		{
     	try
     		{
-			pid = MPI.COMM_WORLD.getRank();	
+			PID = MPI.COMM_WORLD.getRank();	
     		}
     	catch (MPIException ex)
     		{
@@ -34,7 +34,7 @@ public abstract class DObject implements java.io.Serializable
     /** Returns the current PID on which this object resides. */ 
     public static int getPID() 
     	{ 
-    	return pid;
+    	return PID;
     	}
     	
     static int idCounter = 0;
@@ -48,7 +48,7 @@ public abstract class DObject implements java.io.Serializable
     
     public DObject()
     	{
-    	firstpid = pid;						// called originally to get the FIRST PID
+    	firstpid = PID;						// called originally to get the FIRST PID
     	localid = nextCounter();
     	}
     
@@ -81,5 +81,5 @@ public abstract class DObject implements java.io.Serializable
     public final String getIDString() { return firstpid + "/" + localid; }
     
     /** Returns a string consisting of the form CLASSNAME:UNIQUEID@CURRENTPID */
-    public final String toString() { return this.getClass().getName() + ":" + getIDString() + "@" + getPID(); }
+    public String toString() { return this.getClass().getName() + ":" + getIDString() + "@" + getPID(); }
     }
