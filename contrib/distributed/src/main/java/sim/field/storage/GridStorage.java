@@ -129,7 +129,15 @@ public abstract class GridStorage<T extends Serializable> {
 	 * @return flattened index
 	 */
 	public int getFlatIdx(final Int2D p) {
-		return IntStream.range(0, p.getNumDimensions()).map(i -> p.c(i) * stride[i]).sum();
+		int sum = 0;
+		for (int i = 0; i < p.getNumDimensions(); i++) {
+			sum += p.c(i) * stride[i];
+		}
+		return sum;
+//		return IntStream
+//				.range(0, p.getNumDimensions())
+//				.map(i -> p.c(i) * stride[i])
+//				.sum();
 	}
 
 	/**
@@ -140,7 +148,16 @@ public abstract class GridStorage<T extends Serializable> {
 	 */
 	public static int getFlatIdx(final Int2D p, final int[] wrtSize) {
 		final int[] s = getStride(wrtSize);
-		return IntStream.range(0, p.getNumDimensions()).map(i -> p.c(i) * s[i]).sum();
+		
+		int sum = 0;
+		for (int i = 0; i < p.getNumDimensions(); i++) {
+			sum += p.c(i) * s[i];
+		}
+		return sum;
+//		return IntStream
+//			.range(0, p.getNumDimensions())
+//			.map(i -> p.c(i) * s[i])
+//			.sum();
 	}
 
 	/**

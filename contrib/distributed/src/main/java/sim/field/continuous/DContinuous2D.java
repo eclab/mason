@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+//import java.util.stream.Collectors;
+//import java.util.stream.IntStream;
 
 import sim.engine.DSimState;
 import sim.engine.DistributedIterativeRepeat;
@@ -82,11 +82,17 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 		data = halo.localStorage.pack(new MPIParam(halo.origPart, halo.haloPart, halo.MPIBaseType));
 
 		final List<T> objs = ((ArrayList<ArrayList<T>>) data).get(0);
-
-		return IntStream.range(0, objs.size())
-				.filter(n -> n % 2 == 0)
-				.mapToObj(objs::get)
-				.collect(Collectors.toList());
+		
+		List<T> list = new ArrayList<T>();
+		for (int i = 0; i < objs.size(); i += 2) {
+			list.add(objs.get(i));
+		}
+		return list;
+		
+//		return IntStream.range(0, objs.size())	// 0, 1, 2, ..., obj.size() - 1
+//				.filter(n -> n % 2 == 0)		// 0, 2, 4, ..., 
+//				.mapToObj(objs::get)
+//				.collect(Collectors.toList());
 	}
 
 	public ArrayList<T> getLocal(final Double2D p) {

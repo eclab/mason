@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import mpi.Datatype;
 import mpi.MPI;
@@ -70,8 +68,17 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 
 			if (partition.isToroidal())
 				for (final Int2D p : IntPointGenerator.getLayer(numDimensions, 1)) {
-					final IntHyperRect sp = p2
-							.shift(IntStream.range(0, numDimensions).map(i -> p.c(i) * fieldSize[i]).toArray());
+					int[] ans = new int[numDimensions];
+					for (int i = 0; i < numDimensions; i++) {
+						ans[i] = p.c(i) * fieldSize[i];
+					}
+					final IntHyperRect sp = p2.shift(ans);
+//					final IntHyperRect sp = p2
+//							.shift(
+//								IntStream
+//								.range(0, numDimensions)
+//								.map(i -> p.c(i) * fieldSize[i])
+//								.toArray());
 					if (p1.isIntersect(sp))
 						overlaps.add(p1.getIntersection(sp));
 				}
@@ -163,8 +170,14 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		// partition by aoi at each dimension
 		privatePart = origPart.resize(Arrays.stream(aoi).map(x -> -x).toArray());
 		// Get the neighbors and create Neighbor objects
-		neighbors = Arrays.stream(partition.getNeighborIds()).mapToObj(x -> new Neighbor(partition.getPartition(x)))
-				.collect(Collectors.toList());
+//		neighbors = Arrays
+//				.stream(partition.getNeighborIds())
+//				.mapToObj(x -> new Neighbor(partition.getPartition(x)))
+//				.collect(Collectors.toList());
+		neighbors = new ArrayList<Neighbor>();
+		for (int id : partition.getNeighborIds()) {
+			neighbors.add(new Neighbor(partition.getPartition(id)));
+		}
 		numNeighbors = neighbors.size();
 	}
 
@@ -509,8 +522,15 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @return true if point is within the global grid
 	 */
 	public boolean inGlobal(final Int2D point) {
-		return IntStream.range(0, numDimensions).allMatch(i -> point.c(i) >= 0
-				&& point.c(i) < fieldSize[i]);
+		for (int i = 0; i < numDimensions; i++) {
+			if (!(point.c(i) >= 0 && point.c(i) < fieldSize[i])) {
+				return false;
+			}
+		}
+		return true;
+//		return IntStream
+//				.range(0, numDimensions)
+//				.allMatch(i -> point.c(i) >= 0 && point.c(i) < fieldSize[i]);
 	}
 
 	/**
