@@ -139,6 +139,16 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> {
 
 	/**
 	 * @param p
+	 * 
+	 * @return flattened index
+	 */
+	public int getFlatIdx(int x, int y) {
+		return x * stride[0] + y * stride[1];
+		}
+
+
+	/**
+	 * @param p
 	 * @param wrtSize
 	 * 
 	 * @return flattened index with respect to the given size

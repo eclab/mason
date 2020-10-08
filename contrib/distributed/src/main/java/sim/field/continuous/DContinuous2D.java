@@ -63,10 +63,11 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 		halo.localStorage.removeObjects(p);
 	}
 
+/*
 	public List<T> getNearestNeighbors(final T obj, final int k) {
 		return halo.localStorage.getNearestNeighbors(obj, k);
 	}
-
+*/
 	public List<T> getNeighborsWithin(final T obj, final double r) {
 		return halo.localStorage.getNeighborsWithin(obj, r);
 	}

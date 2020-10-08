@@ -203,8 +203,32 @@ public class IntHyperRect implements Comparable<IntHyperRect>, Iterable<Int2D> {
     }
 
     public Iterator<Int2D> iterator() {
-        return IntPointGenerator.getBlock(this).iterator();
-    }
+        //return IntPointGenerator.getBlock(this).iterator();
+        return new Iterator<Int2D>()
+        	{
+	        int x = ul.x;
+	        int y = ul.y;
+        	public boolean hasNext() { return y < br.y; }
+        	public Int2D next() 
+        		{
+        		if (hasNext())
+        			{
+        			Int2D val = new Int2D(x, y);
+        			x++;
+        			if (x >= br.x)
+        				{
+        				x = ul.x;
+        				y++;
+        				}
+        			return val;
+        			}
+        		else
+        			{
+        			return null;
+        			}
+        		}
+        	};
+        }
 
     public String toString() {
         return String.format("%s<%d, %s, %s>", this.getClass().getSimpleName(), id, ul.toString(), br.toString());

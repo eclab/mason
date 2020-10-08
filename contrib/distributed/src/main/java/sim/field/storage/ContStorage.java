@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import sim.field.partitioning.IntHyperRect;
-import sim.field.partitioning.IntPointGenerator;
+//import sim.field.partitioning.IntPointGenerator;
 import sim.util.MPIParam;
 import sim.util.*;
 
@@ -60,9 +60,22 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 	public String toString() {
 		final StringBuffer buf = new StringBuffer(String.format("ContStorage-%s\n", shape));
 
-		for (final Int2D dp : IntPointGenerator.getBlock(dsize))
-			if (getCelldp(dp).size() > 0)
-				buf.append("Cell " + dp + ":\t" + getCelldp(dp) + "\n");
+//		for (final Int2D dp : IntPointGenerator.getBlock(dsize))
+//			if (getCelldp(dp).size() > 0)
+//				buf.append("Cell " + dp + ":\t" + getCelldp(dp) + "\n");
+
+	for(int x = 0; x < dsize[0]; x++)
+		{
+		for(int y = 0; y < dsize[1]; y++)
+			{
+			HashSet<T> cell = getCelldp(x, y);
+			if (cell.size() > 0)
+				{
+				buf.append("Cell (" + x + ", " + y + "):\t" + cell + "\n");
+				}
+			}
+		}
+
 
 		return buf.toString();
 	}
@@ -137,6 +150,10 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 		return ((HashSet<T>[]) storage)[getFlatIdx(p)];
 	}
 
+	public HashSet<T> getCelldp(int x, int y) {
+		return ((HashSet<T>[]) storage)[getFlatIdx(x, y)];
+	}
+
 	// Put the object to the given point
 	public void addToLocation(final T obj, final NumberND p) {
 		final NumberND old = m.put(obj, p);
@@ -165,14 +182,31 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 		final ArrayList<T> objs = new ArrayList<T>();
 
 		final Int2D ul = discretize(r.ul()), br = discretize(r.br()).shift(1);
-		for (final Int2D dp : IntPointGenerator.getBlock(ul, br)) {
-//			getCelldp(dp)
-//				.stream()
-//				.filter(obj -> r.contains(m.get(obj)))	// 
-//				.forEach(obj -> objs.add(obj));
-			for (T obj : getCelldp(dp)) {
-				if (r.contains(m.get(obj))) {
+
+//		for (final Int2D dp : IntPointGenerator.getBlock(ul, br)) {
+// //			getCelldp(dp)
+// //				.stream()
+// //				.filter(obj -> r.contains(m.get(obj)))	// 
+// //				.forEach(obj -> objs.add(obj));
+//			for (T obj : getCelldp(dp)) {
+//				if (r.contains(m.get(obj))) {
+//					objs.add(obj);
+//				}
+//			}
+//		}
+
+// I believe this code is just doing:
+
+	for(int x = ul.x; x < br.x; x++)
+		{
+		for(int y = ul.y; y < br.y; y++)
+			{
+			for(T obj: getCelldp(x, y))
+				{
+				if (r.contains(m.get(obj))) 
+					{
 					objs.add(obj);
+					}
 				}
 			}
 		}
@@ -205,6 +239,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 		}
 	}
 
+/**
 	// Return a list of k nearest neighbors sorted by their distances
 	// to the query obj, if that many exists
 	public List<T> getNearestNeighbors(final T obj, final int need) {
@@ -229,6 +264,8 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 		candidates.remove(obj); // remove self
 
 		int currLayer = 1;
+
+		while (objs.size 
 
 		while (objs.size() < need && currLayer <= maxLayer) {
 			for (final Int2D dp : IntPointGenerator.getLayer(dloc, currLayer)) {
@@ -258,6 +295,8 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 
 		return objs;
 	}
+*/
+
 
 	// Return a list of neighbors of the given object within the given radius
 	public List<T> getNeighborsWithin(final T obj, final double radius) {
@@ -316,18 +355,31 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 		}
 		final Int2D br = new Int2D(ansBr);
 
-		// Collect all the objects that are not obj itself and within the given radius
-		for (final Int2D dp : IntPointGenerator.getBlock(ul, br)) {
-//			getCelldp(dp).stream()
-//					.filter(x -> x != obj && m.get(x).getDistanceSq(loc) <= radius * radius)
-//					.forEach(x -> objs.add(x));
-			for (T x : getCelldp(dp)) {
-				if (x != obj && m.get(x).getDistanceSq(loc) <= radius * radius) {
-					objs.add(x);
+//		// Collect all the objects that are not obj itself and within the given radius
+//		for (final Int2D dp : IntPointGenerator.getBlock(ul, br)) {
+// //			getCelldp(dp).stream()
+// //					.filter(x -> x != obj && m.get(x).getDistanceSq(loc) <= radius * radius)
+// //					.forEach(x -> objs.add(x));
+//			for (T x : getCelldp(dp)) {
+//				if (x != obj && m.get(x).getDistanceSq(loc) <= radius * radius) {
+//					objs.add(x);
+//				}
+//			}
+//		}
+
+		for(int x = ul.x; x < br.x; x++)
+			{
+			for(int y = ul.y; y < br.y; y++)
+				{
+				for(T foo: getCelldp(x, y))
+					{
+					if (foo != obj && m.get(foo).getDistanceSq(loc) <= radius * radius) 
+						{
+						objs.add(foo);
+						}
+					}
 				}
 			}
-			
-		}
 
 		return objs;
 	}
