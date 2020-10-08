@@ -66,14 +66,27 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		private ArrayList<IntHyperRect> generateOverlaps(final IntHyperRect p1, final IntHyperRect p2) {
 			final ArrayList<IntHyperRect> overlaps = new ArrayList<IntHyperRect>();
 
-			if (partition.isToroidal())
-				for (final Int2D p : IntPointGenerator.getLayer(2, 1)) 		// 2 == number of dimensions (width, height)
-					{
-					int[] ans = new int[2];
-					for (int i = 0; i < 2; i++) {
-						ans[i] = p.c(i) * fieldSize[i];
-					}
-					final IntHyperRect sp = p2.shift(ans);
+			if (partition.isToroidal()) {
+				int xLen = fieldSize[0];
+				int yLen = fieldSize[1];
+
+				Int2D[] shifts = {
+						new Int2D(-xLen, -yLen),
+						new Int2D(-xLen, 0),
+						new Int2D(-xLen, yLen),
+						new Int2D(0, -yLen),
+						new Int2D(0, yLen),
+						new Int2D(xLen, -yLen),
+						new Int2D(xLen, 0),
+						new Int2D(xLen, yLen),
+						new Int2D(0, 0),
+//						new Int2D(-2 * xLen, -2 * yLen) // This is probably a bug
+				};
+
+//				for (final Int2D p : IntPointGenerator.getLayer(2, 1)) // 2 == number of dimensions (width, height)
+				for (final Int2D p : shifts) {
+					final IntHyperRect sp = p2.shift(p.c());
+
 //					final IntHyperRect sp = p2
 //							.shift(
 //								IntStream
@@ -83,7 +96,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 					if (p1.isIntersect(sp))
 						overlaps.add(p1.getIntersection(sp));
 				}
-			else
+			} else
 				overlaps.add(p1.getIntersection(p2));
 
 			return overlaps;
@@ -529,8 +542,8 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @return true if point is within the global grid
 	 */
 	public boolean inGlobal(final Int2D point) {
-		for (int i = 0; i < 2; i++) 	// 2 = numbe of dimensions
-			{
+		for (int i = 0; i < 2; i++) // 2 = numbe of dimensions
+		{
 			if (!(point.c(i) >= 0 && point.c(i) < fieldSize[i])) {
 				return false;
 			}
