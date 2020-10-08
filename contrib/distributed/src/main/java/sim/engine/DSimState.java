@@ -52,6 +52,22 @@ import sim.util.*;
  */
 public class DSimState extends SimState {
 	private static final long serialVersionUID = 1L;
+
+	private static boolean multiThreaded = false;
+	private static boolean multiThreadedSet = false;
+
+	public static boolean isMultiThreaded() {
+		return multiThreaded;
+	}
+
+	public static void setMultiThreaded(boolean multi) {
+		if (!multiThreadedSet) {
+			multiThreaded = multi;
+			multiThreadedSet = true;
+		} else
+			throw new RuntimeException("multiThreaded can only be set once");
+	}
+
 	public static Logger logger;
 
 	protected PartitionInterface partition;
@@ -152,6 +168,7 @@ public class DSimState extends SimState {
 
 			syncFields();
 			transporter.sync();
+			// TODO: Load RMI queue
 
 			if (withRegistry) {
 				// All nodes have finished the synchronization and can unregister exported

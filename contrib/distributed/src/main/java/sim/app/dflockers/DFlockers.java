@@ -41,7 +41,7 @@ public class DFlockers extends DSimState {
 		super(seed, DFlockers.width, DFlockers.height, DFlockers.neighborhood);
 
 		final double[] discretizations = new double[] { DFlockers.neighborhood / 1.5, DFlockers.neighborhood / 1.5 };
-		flockers = new DContinuous2D<DFlocker>(getPartitioning(), aoi, discretizations, this);
+		flockers = new DContinuous2D<>(getPartitioning(), aoi, discretizations, this);
 	}
 
 	@Override
@@ -53,7 +53,6 @@ public class DFlockers extends DSimState {
 			if (random.nextBoolean(deadFlockerProbability))
 				flocker.dead = true;
 			agents.add(flocker);
-
 		}
 
 		sendRootInfoToAll("agents", agents);

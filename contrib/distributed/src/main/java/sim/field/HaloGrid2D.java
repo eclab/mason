@@ -306,6 +306,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	}
 
 	public void moveAgent(final P fromP, final P toP, final T t, final int ordering, final double time) {
+		// TODO: Call the top method here
 		if (!inLocal(fromP))
 			throw new IllegalArgumentException("fromP must be local");
 

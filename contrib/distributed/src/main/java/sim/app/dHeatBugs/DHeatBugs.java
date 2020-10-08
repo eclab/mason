@@ -17,6 +17,10 @@ import sim.util.*;
 
 public class DHeatBugs extends DSimState {
 	private static final long serialVersionUID = 1;
+	
+	static {
+		DSimState.setMultiThreaded(true);
+	}
 
 	public double minIdealTemp = 17000;
 	public double maxIdealTemp = 31000;
