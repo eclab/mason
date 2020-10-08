@@ -33,12 +33,8 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 			final DSimState state) {
 
 		super(ps);
-		if (ps.getNumDim() != 2)
-			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + ps.getNumDim());
-
 		halo = new HaloGrid2D<T, Double2D, ContStorage<T>>(ps, aoi,
 				new ContStorage<T>(ps.getPartition(), discretizations), state);
-
 	}
 
 	public NumberND getLocation(final T obj) {
@@ -67,10 +63,11 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 		halo.localStorage.removeObjects(p);
 	}
 
+/*
 	public List<T> getNearestNeighbors(final T obj, final int k) {
 		return halo.localStorage.getNearestNeighbors(obj, k);
 	}
-
+*/
 	public List<T> getNeighborsWithin(final T obj, final double r) {
 		return halo.localStorage.getNeighborsWithin(obj, r);
 	}

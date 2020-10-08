@@ -11,15 +11,25 @@ public class QuadTree {
 	List<Integer> availIds;
 	Map<Integer, QuadTreeNode> allNodes;
 
+	// we presume the user doesn't have more than a million processors.  :-)
+	public static final int[] POWERS_OF_FOUR = new int[] { 1, 4, 16, 64, 256, 1024, 2048, 4096, 16384, 65536, 262144, 1048576};
+
 	// Shape of field and the maximum number of partitions it can hold
-	public QuadTree(final IntHyperRect shape, final int np) {
-		final int div = 1 << shape.getNd();
+	public QuadTree(final IntHyperRect shape, final int np) 
+	{
+		// there are clever ways of determining powers of four, but we're just gonna use a lookup table here
+		boolean found = false;
+		for(int i = 0; i < POWERS_OF_FOUR.length; i++)
+			{
+			if (np == POWERS_OF_FOUR[i]) { found = true; break; }
+			}
+			
+		if (!found)
+			throw new IllegalArgumentException("The given number of processors " + np + " must be a power of four");
 
-		if (np % (div - 1) != 1)
-			throw new IllegalArgumentException("The given number of processors " + np + " is illegal");
-
+		int div = 4;			// 4 divisions
 		root = new QuadTreeNode(shape, null);
-		availIds = IntStream.range(1, np / (div - 1) * div + 1).boxed().collect(Collectors.toList());
+		availIds = IntStream.range(1, np / (div - 1) * div + 1).boxed().collect(Collectors.toList());		// FIXME -- What is this supposed to be?s
 
 		allNodes = new HashMap<Integer, QuadTreeNode>();
 		// root node is the 0th node
@@ -120,7 +130,8 @@ public class QuadTree {
 				sibling.getLeaves().stream().filter(x -> myHalo.isIntersect(x.getShape())).forEach(x -> ret.add(x));
 
 		// Add neighbors on the other directions
-		for (int dim = 0; dim < node.nd; dim++) {
+		for (int dim = 0; dim < 2; dim++) 				// 2 is num dimensions
+			{
 			final boolean dir = node.getDir(dim);
 
 			// Go up to find the first node that contains my neighbor on the given direction

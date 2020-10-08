@@ -25,8 +25,6 @@ public class DObjectGrid2D<T extends Serializable> extends DAbstractGrid2D imple
 	@SuppressWarnings("unchecked")
 	public DObjectGrid2D(final PartitionInterface ps, final int[] aoi, final DSimState state, Class<T> clazz) {
 		super(ps);
-		if (ps.getNumDim() != 2)
-			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + ps.getNumDim());
 		halo = new HaloGrid2D<T, NumberND, ObjectGridStorage<T>>(ps, aoi,
 				new ObjectGridStorage<T>(ps.getPartition(), s -> (T[]) Array.newInstance(clazz, s)), state);
 	}

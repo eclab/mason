@@ -120,11 +120,12 @@ public class QuadTreePartition extends PartitionInterface {
 		while ((numProcessors >> nz & 0x1) != 0x1)
 			nz++;
 
-		if ((numProcessors & numProcessors - 1) != 0 || nz % numDimensions != 0)
+		if ((numProcessors & numProcessors - 1) != 0 || nz % 2 != 0)		// 2 == number of dimensions, width and height
 			throw new IllegalArgumentException(
-					"Currently only support the number processors that is power of " + (2 * numDimensions));
+					"Currently only support the number processors that is power of " + 4);
 
-		for (int level = 0; level < nz / numDimensions; level++) {
+		for (int level = 0; level < nz / 2; level++) 						// 2 == number of dimensions, width and height
+			{			
 			final List<QuadTreeNode> leaves = qt.getAllLeaves();
 			for (final QuadTreeNode leaf : leaves)
 				qt.split(leaf.getShape().getCenter());
@@ -296,7 +297,7 @@ public class QuadTreePartition extends PartitionInterface {
 
 		if (gc != null) {
 			final Int2D ctr = myLeafNode.getShape().getCenter();
-			final double[] sendData = new double[ctr.getNd() + 1], recvData = new double[ctr.getNd() + 1];
+			final double[] sendData = new double[2 + 1], recvData = new double[2 + 1];		// 2 == num dimensions
 			sendData[0] = myRuntime;
 			for (int i = 1; i < sendData.length; i++)
 				sendData[i] = ctr.c(i - 1) * myRuntime;

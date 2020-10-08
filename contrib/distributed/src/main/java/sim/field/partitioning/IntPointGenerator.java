@@ -13,8 +13,6 @@ public abstract class IntPointGenerator implements Supplier<Int2D>, Iterable<Int
     protected IntPointGenerator(int remaining) {
         this.remaining = remaining;
     }
-
-	public int getNd() { return 2; }
 	
     protected abstract Int2D getNext();
 
@@ -97,12 +95,12 @@ public abstract class IntPointGenerator implements Supplier<Int2D>, Iterable<Int
         // Generate all the points layer by layer around the given points
         // Starting from the fromLayer to toLayer, both inclusive
         public LayerGenerator(Int2D p, int fromLayer, int toLayer) {
-            super((int)Math.pow(toLayer * 2 + 1, p.getNd())
-                  - (int)Math.pow(fromLayer > 0 ? fromLayer * 2 - 1 : 0, p.getNd()));
+            super((int)Math.pow(toLayer * 2 + 1, 2)
+                  - (int)Math.pow(fromLayer > 0 ? fromLayer * 2 - 1 : 0, 2));
 
             this.p = p;
             this.ml = toLayer;
-            this.offsets = new int[getNd()];
+            this.offsets = new int[2];
 
             setLayer(fromLayer);
         }
@@ -110,7 +108,7 @@ public abstract class IntPointGenerator implements Supplier<Int2D>, Iterable<Int
         private void setLayer(int k) {
             cl = k;
             idx = 0;
-            ub = (int)Math.pow(2 * cl + 1, getNd());
+            ub = (int)Math.pow(2 * cl + 1, 2);
             Arrays.fill(offsets, -cl);
         }
 
@@ -119,14 +117,14 @@ public abstract class IntPointGenerator implements Supplier<Int2D>, Iterable<Int
             if (++idx == ub)
                 setLayer(cl + 1);
             else {
-                for (int i = getNd() - 1; i >= 0; i--)
+                for (int i = 2 - 1; i >= 0; i--)
                     if (++offsets[i] == cl + 1)
                         offsets[i] = -cl;
                     else
                         break;
                 // skip the points that are not on the current layer
                 if (Arrays.stream(offsets).allMatch(x -> x < cl && x > -cl)) {
-                    offsets[getNd() - 1] = cl;
+                    offsets[2 - 1] = cl;
                     idx += 2 * cl - 1;
                 }
             }
@@ -145,11 +143,11 @@ public abstract class IntPointGenerator implements Supplier<Int2D>, Iterable<Int
 
             ul = rect.ul;
             br = rect.br;
-            c = Arrays.copyOf(ul.c(), getNd());
+            c = Arrays.copyOf(ul.c(), 2);
         }
 
         public Int2D getNext() {
-            for (int i = getNd() - 1; i >= 0; i--)
+            for (int i = 2 - 1; i >= 0; i--)
                 if (++c[i] == br.c(i))
                     c[i] = ul.c(i);
                 else

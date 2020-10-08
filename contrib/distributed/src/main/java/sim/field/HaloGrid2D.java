@@ -67,16 +67,17 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 			final ArrayList<IntHyperRect> overlaps = new ArrayList<IntHyperRect>();
 
 			if (partition.isToroidal())
-				for (final Int2D p : IntPointGenerator.getLayer(numDimensions, 1)) {
-					int[] ans = new int[numDimensions];
-					for (int i = 0; i < numDimensions; i++) {
+				for (final Int2D p : IntPointGenerator.getLayer(2, 1)) 		// 2 == number of dimensions (width, height)
+					{
+					int[] ans = new int[2];
+					for (int i = 0; i < 2; i++) {
 						ans[i] = p.c(i) * fieldSize[i];
 					}
 					final IntHyperRect sp = p2.shift(ans);
 //					final IntHyperRect sp = p2
 //							.shift(
 //								IntStream
-//								.range(0, numDimensions)
+//								.range(0, 2)
 //								.map(i -> p.c(i) * fieldSize[i])
 //								.toArray());
 					if (p1.isIntersect(sp))
@@ -89,7 +90,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		}
 	}
 
-	protected int numDimensions, numNeighbors;
+	protected int numNeighbors;
 	protected int[] aoi, fieldSize, haloSize;
 
 	public IntHyperRect world, haloPart, origPart, privatePart;
@@ -112,7 +113,6 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		localStorage = stor;
 		this.state = state;
 		// init variables that don't change with the partition scheme
-		numDimensions = ps.getNumDim();
 		world = ps.createField();
 		fieldSize = ps.getFieldSize();
 		MPIBaseType = localStorage.getMPIBaseType();
@@ -529,14 +529,15 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @return true if point is within the global grid
 	 */
 	public boolean inGlobal(final Int2D point) {
-		for (int i = 0; i < numDimensions; i++) {
+		for (int i = 0; i < 2; i++) 	// 2 = numbe of dimensions
+			{
 			if (!(point.c(i) >= 0 && point.c(i) < fieldSize[i])) {
 				return false;
 			}
 		}
 		return true;
 //		return IntStream
-//				.range(0, numDimensions)
+//				.range(0, 2)
 //				.allMatch(i -> point.c(i) >= 0 && point.c(i) < fieldSize[i]);
 	}
 

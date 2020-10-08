@@ -13,7 +13,7 @@ import sim.util.*;
  */
 @SuppressWarnings("rawtypes")
 public abstract class PartitionInterface {
-	public int pid, numProcessors, numDimensions;
+	public int pid, numProcessors;
 	public int[] size;
 	boolean isToroidal;
 	public Comm comm;
@@ -22,10 +22,11 @@ public abstract class PartitionInterface {
 	ArrayList<Consumer> preCallbacks, postCallbacks;
 
 	PartitionInterface(final int[] size, final boolean isToroidal, final int[] aoi) {
-		numDimensions = size.length;
-		this.size = Arrays.copyOf(size, numDimensions);
+		//numDimensions = size.length;
+		this.size = (int[])(size.clone());
+		this.size = Arrays.copyOf(size, 2);
 		this.isToroidal = isToroidal;
-		this.aoi = aoi;
+		this.aoi = (int[])(aoi.clone());
 
 		try {
 			pid = MPI.COMM_WORLD.getRank();
@@ -47,10 +48,6 @@ public abstract class PartitionInterface {
 		return numProcessors;
 	}
 
-	public int getNumDim() {
-		return numDimensions;
-	}
-
 	public boolean isToroidal() {
 		return isToroidal;
 	}
@@ -60,7 +57,7 @@ public abstract class PartitionInterface {
 	}
 
 	public int[] getFieldSize() {
-		return Arrays.copyOf(size, numDimensions);
+		return (int[])(size.clone());
 	}
 
 	public IntHyperRect createField() {

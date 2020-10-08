@@ -25,8 +25,6 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implem
 
 	public DDenseGrid2D(final PartitionInterface ps, final int[] aoi, final DSimState state) {
 		super(ps);
-		if (ps.getNumDim() != 2)
-			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + ps.getNumDim());
 		halo = new HaloGrid2D<>(ps, aoi, new DenseGridStorage<>(ps.getPartition(), s -> new ArrayList[s]), state);
 
 	}
