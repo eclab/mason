@@ -23,9 +23,6 @@ public class DIntGrid2D extends DAbstractGrid2D implements DGrid<Integer, Int2D>
 
 	public DIntGrid2D(final PartitionInterface ps, final int[] aoi, final int initVal, final DSimState state) {
 		super(ps);
-		if (ps.getNumDim() != 2)
-			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + ps.getNumDim());
-
 		halo = new HaloGrid2D<Integer, Int2D, IntGridStorage>(ps, aoi,
 				new IntGridStorage(ps.getPartition(), initVal), state);
 

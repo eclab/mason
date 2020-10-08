@@ -14,7 +14,7 @@ public class IntHyperRect implements Comparable<IntHyperRect>, Iterable<Int2D> {
     public IntHyperRect(int id, Int2D ul, Int2D br) {
         this.id = id;
 
-        for (int i = 0; i < getNd(); i++)
+        for (int i = 0; i < 2; i++)
             if (br.c(i) < ul.c(i))
                 throw new IllegalArgumentException("All br's components " + Arrays.toString(br.c()) + " should be greater than or equal to ul's " + Arrays.toString(ul.c()));
 
@@ -24,10 +24,6 @@ public class IntHyperRect implements Comparable<IntHyperRect>, Iterable<Int2D> {
 
     public IntHyperRect(int[] size) {
         this(-1, new Int2D(new int[size.length]), new Int2D(size));
-    }
-
-    public int getNd() {
-        return 2;
     }
 
     public int getId() {
@@ -154,9 +150,9 @@ public class IntHyperRect implements Comparable<IntHyperRect>, Iterable<Int2D> {
 
     // Get all the vertices in order
     public Int2D[] getAllVertices() {
-        return IntStream.range(0, 1 << getNd())
+        return IntStream.range(0, 1 << 2)
             .mapToObj(k -> new Int2D(
-                                        IntStream.range(0, getNd())
+                                        IntStream.range(0, 2)
                                         .map(i -> ((k >> i) & 1) == 1 ? this.ul.c(i) : this.br.c(i))
                                         .toArray()))
             .toArray(size -> new Int2D[size]);
@@ -165,7 +161,7 @@ public class IntHyperRect implements Comparable<IntHyperRect>, Iterable<Int2D> {
 
 
     public Int2D getCenter() {
-        return new Int2D(IntStream.range(0, getNd()).map(i -> (br.c(i) - ul.c(i)) / 2 + ul.c(i)).toArray());
+        return new Int2D(IntStream.range(0, 2).map(i -> (br.c(i) - ul.c(i)) / 2 + ul.c(i)).toArray());
     }
 
     // Return whether two hyper rectangles align along the given dimension
@@ -228,10 +224,10 @@ public class IntHyperRect implements Comparable<IntHyperRect>, Iterable<Int2D> {
 
         ArrayList<IntHyperRect> ret = new ArrayList<IntHyperRect>();
         final int numDelims = ps.length + 2;
-        final int numRects = (int)Math.pow(numDelims - 1, getNd());
-        int[][] delims = new int[getNd()][numDelims];
+        final int numRects = (int)Math.pow(numDelims - 1, 2);
+        int[][] delims = new int[2][numDelims];
 
-        for (int i = 0; i < getNd(); i++) {
+        for (int i = 0; i < 2; i++) {
             delims[i][0] = this.ul.c(i);
             delims[i][1] = this.br.c(i);
 
@@ -243,10 +239,10 @@ public class IntHyperRect implements Comparable<IntHyperRect>, Iterable<Int2D> {
 
         for (int k = 0; k < numRects; k++) {
             boolean nonEmpty = true;
-            int[] ul = new int[getNd()], br = new int[getNd()];
+            int[] ul = new int[2], br = new int[2];
 
-            for (int i = 0; i < getNd(); i++) {
-                int stride = (int)Math.pow(numDelims - 1, getNd() - i - 1);
+            for (int i = 0; i < 2; i++) {
+                int stride = (int)Math.pow(numDelims - 1, 2 - i - 1);
                 int idx = k / stride % (numDelims - 1);
                 ul[i] = delims[i][idx];
                 br[i] = delims[i][idx + 1];
@@ -270,8 +266,8 @@ public class IntHyperRect implements Comparable<IntHyperRect>, Iterable<Int2D> {
         int[] size = bound.getSize();
 
         for (IntHyperRect rect : this.split(this.getIntersection(bound).getVertices())) {
-            int[] offsets = new int[getNd()];
-            for (int i = 0; i < getNd(); i++)
+            int[] offsets = new int[2];
+            for (int i = 0; i < 2; i++)
                 if (rect.br.c(i) > bound.br.c(i))
                     offsets[i] = -size[i];
                 else if (rect.ul.c(i) < bound.ul.c(i))

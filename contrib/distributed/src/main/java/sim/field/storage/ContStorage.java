@@ -33,11 +33,11 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 
 	protected Object[] allocate(final int size) {
 //		this.dsize =
-//			IntStream.range(0, shape.getNd())
+//			IntStream.range(0, 2)				// 2 = num dimensions
 //				.map(i -> (int) Math.ceil(shape.getSize()[i] / discretizations[i]) + 1)
 //				.toArray();
-		this.dsize = new int[shape.getNd()];
-		for (int i = 0; i < shape.getNd(); i++) {
+		this.dsize = new int[2];					// 2 = num dimensions
+		for (int i = 0; i < this.dsize.length; i++) {
 			this.dsize[i] = (int) Math.ceil(shape.getSize()[i] / discretizations[i]) + 1;	
 		}
 		
@@ -210,12 +210,13 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 	public List<T> getNearestNeighbors(final T obj, final int need) {
 		final NumberND loc = m.get(obj);
 		final Int2D dloc = discretize(loc);
-//		final int maxLayer = IntStream.range(0, shape.getNd())	// 0, ..., shape.getNd() - 1
+//		final int maxLayer = IntStream.range(0, 2)	// 0, ..., 2 - 1		// 2 = num dimensions
 //				.map(i -> Math.max(dloc.c(i), dsize[i] - dloc.c(i)))
 //				.max()
 //				.getAsInt();
 		int max = Integer.MIN_VALUE;
-		for (int i = 0; i < shape.getNd(); i++) {
+		for (int i = 0; i < 2; i++) 		// 2 = num dimensions
+			{
 			int mapI = Math.max(dloc.c(i), dsize[i] - dloc.c(i));
 			if (mapI > max) {
 				max = mapI;
@@ -232,7 +233,8 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 		while (objs.size() < need && currLayer <= maxLayer) {
 			for (final Int2D dp : IntPointGenerator.getLayer(dloc, currLayer)) {
 				boolean flag = true;
-				for (int i = 0; i < shape.getNd(); i++) {
+				for (int i = 0; i < 2; i++) 			// 2 = num dimensions
+					{
 					if (!(dp.c(i) >= 0 && dp.c(i) < dsize[i])) {
 						flag = false;
 						break;
@@ -241,7 +243,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 				if (flag) {
 					candidates.addAll(getCelldp(dp));
 				}
-//				if (IntStream.range(0, shape.getNd())
+//				if (IntStream.range(0, 2)					// 2 = num dimensions
 //						.allMatch(i -> dp.c(i) >= 0 && dp.c(i) < dsize[i])) {
 //					candidates.addAll(getCelldp(dp));
 //				}
@@ -293,22 +295,23 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 		// Generate the start/end point subject to the boundaries
 //		final Int2D ul = new Int2D(
 //				IntStream
-//					.range(0, shape.getNd())
+//					.range(0, 2)					// 2 = num dimensions
 //					.map(i -> Math.max(dloc.c(i) - offsets[i], 0))
 //					.toArray());
-		int[] ansUl = new int[shape.getNd()];
-		for (int i = 0; i < shape.getNd(); i++) {
+		int[] ansUl = new int[2];						// 2 = num dimensions
+		for (int i = 0; i < ansUl.length; i++) {
 			ansUl[i] = Math.max(dloc.c(i) - offsets[i], 0);
 		}
 		final Int2D ul = new Int2D(ansUl);
 		
 //		final Int2D br = new Int2D(
 //				IntStream
-//					.range(0, shape.getNd())
+//					.range(0, 2)						// 2 = num dimensions
 //					.map(i -> Math.min(dloc.c(i) + offsets[i] + 1, dsize[i]))
 //					.toArray());
-		int[] ansBr = new int[shape.getNd()];
-		for (int i = 0; i < shape.getNd(); i++) {
+		int[] ansBr = new int[2];						// 2 = num dimensions
+		for (int i = 0; i < ansBr.length; i++) 				
+			{
 			ansBr[i] = Math.min(dloc.c(i) + offsets[i] + 1, dsize[i]);
 		}
 		final Int2D br = new Int2D(ansBr);

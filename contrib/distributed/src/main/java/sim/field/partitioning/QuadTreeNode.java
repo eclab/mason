@@ -10,7 +10,6 @@ import sim.util.*;
  *
  */
 public class QuadTreeNode {
-	final int nd;
 	int level, id; // which level in the tree the node is in, its node id
 	int processor; // which processer this node is mapped to
 
@@ -21,7 +20,6 @@ public class QuadTreeNode {
 	List<QuadTreeNode> children;
 
 	public QuadTreeNode(final IntHyperRect shape, final QuadTreeNode parent) {
-		nd = shape.getNd();
 		this.shape = shape;
 		this.parent = parent;
 		children = new ArrayList<QuadTreeNode>();
@@ -154,7 +152,7 @@ public class QuadTreeNode {
 		origin = newOrigin;
 
 		if (isLeaf()) {
-			children = IntStream.range(0, 1 << nd)
+			children = IntStream.range(0, 1 << 2)		// 2 == num dimensions
 					.mapToObj(i -> new QuadTreeNode(getChildShape(i), this))
 					.collect(Collectors.toList());
 			ret.addAll(children);
@@ -197,8 +195,9 @@ public class QuadTreeNode {
 	 * @param dim
 	 * @return the direction (forward/backward) on the given dimension
 	 */
-	public boolean getDir(final int dim) {
-		return ((getIndexInSiblings() >> (nd - dim - 1)) & 0x1) == 0x1;
+	public boolean getDir(final int dim) 
+		{
+		return ((getIndexInSiblings() >> (2 - dim - 1)) & 0x1) == 0x1;			// 2 is num dimensions
 	}
 
 	/**
@@ -260,8 +259,8 @@ public class QuadTreeNode {
 		final int[] br = origin.getArray();
 		final int[] sbr = shape.br().getArray();
 
-		for (int i = 0; i < nd; i++)
-			if (((childId >> (nd - i - 1)) & 0x1) == 1) {
+		for (int i = 0; i < 2; i++)						// 2 = num dimensions
+			if (((childId >> (2 - i - 1)) & 0x1) == 1) {				// 2 = num dimensions    FIXME: what is this?
 				ul[i] = br[i];
 				br[i] = sbr[i];
 			}
@@ -279,7 +278,7 @@ public class QuadTreeNode {
 
 		final double[] oc = origin.getArrayInDouble(), pc = p.getArrayInDouble();
 
-		return IntStream.range(0, nd)
+		return IntStream.range(0, 2)							// 2 = num dimensions
 				.map(i -> pc[i] < oc[i] ? 0 : 1)
 				.reduce(0, (r, x) -> r << 1 | x);
 	}

@@ -38,7 +38,6 @@ public class IntGridStorage extends GridStorage<Integer, Int2D> {
 		int[] array = (int[]) storage;
 		StringBuffer buf = new StringBuffer(String.format("IntGridStorage-%s\n", shape));
 
-		if (shape.getNd() == 2)
 			for (int i = 0; i < size[0]; i++) {
 				for (int j = 0; j < size[1]; j++)
 					buf.append(String.format(" %4d ", array[i * size[1] + j]));
