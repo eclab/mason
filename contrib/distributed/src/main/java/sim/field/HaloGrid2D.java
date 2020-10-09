@@ -85,14 +85,13 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 
 //				for (final Int2D p : IntPointGenerator.getLayer(2, 1)) // 2 == number of dimensions (width, height)
 				for (final Int2D p : shifts) {
-					final IntHyperRect sp = p2.shift(p.c());
-
 //					final IntHyperRect sp = p2
 //							.shift(
 //								IntStream
 //								.range(0, 2)
 //								.map(i -> p.c(i) * fieldSize[i])
 //								.toArray());
+					final IntHyperRect sp = p2.shift(p.c());
 					if (p1.isIntersect(sp))
 						overlaps.add(p1.getIntersection(sp));
 				}

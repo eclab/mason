@@ -18,7 +18,7 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> {
 	IntHyperRect shape;
 	Datatype baseType = MPI.BYTE;
 
-	int[] stride;
+	int stride;
 
 	/* Abstract Method of generic storage based on N-dimensional Point */
 	public abstract void addToLocation(final T obj, final P p);
@@ -34,6 +34,7 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> {
 	public abstract Serializable getObjects(final P p);
 
 	public GridStorage(final IntHyperRect shape) {
+		super();
 		this.shape = shape;
 		stride = getStride(shape.getSize());
 	}
@@ -42,7 +43,7 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> {
 		super();
 		this.storage = storage;
 		this.shape = shape;
-		stride = shape.getSize();
+		stride = getStride(shape.getSize());
 	}
 
 	public GridStorage(final Object storage, final IntHyperRect shape, final Datatype baseType) {
@@ -50,7 +51,7 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> {
 		this.storage = storage;
 		this.shape = shape;
 		this.baseType = baseType;
-		stride = shape.getSize();
+		stride = getStride(shape.getSize());
 	}
 
 	public Object getStorage() {
@@ -126,11 +127,13 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> {
 	 * @return flattened index
 	 */
 	public int getFlatIdx(final Int2D p) {
-		int sum = 0;
-		for (int i = 0; i < p.getNumDimensions(); i++) {
-			sum += p.c(i) * stride[i];
-		}
-		return sum;
+		return getFlatIdx(p.x, p.y);
+//		int sum = 0;
+//		for (int i = 0; i < p.getNumDimensions(); i++) {
+//			sum += p.c(i) * stride[i];
+//		}
+//		return sum;
+
 //		return IntStream
 //				.range(0, p.getNumDimensions())
 //				.map(i -> p.c(i) * stride[i])
@@ -143,9 +146,8 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> {
 	 * @return flattened index
 	 */
 	public int getFlatIdx(int x, int y) {
-		return x * stride[0] + y * stride[1];
-		}
-
+		return x * stride + y;
+	}
 
 	/**
 	 * @param p
@@ -154,13 +156,15 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> {
 	 * @return flattened index with respect to the given size
 	 */
 	public static int getFlatIdx(final Int2D p, final int[] wrtSize) {
-		final int[] s = getStride(wrtSize);
-		
-		int sum = 0;
-		for (int i = 0; i < p.getNumDimensions(); i++) {
-			sum += p.c(i) * s[i];
-		}
-		return sum;
+		return p.c(0) * getStride(wrtSize) + p.c(1);
+
+//		final int s = getStride(wrtSize);
+//		int sum = 0;
+//		for (int i = 0; i < p.getNumDimensions(); i++) {
+//			sum += p.c(i) * s[i];
+//		}
+//		return sum;
+
 //		return IntStream
 //			.range(0, p.getNumDimensions())
 //			.map(i -> p.c(i) * s[i])
@@ -171,13 +175,18 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> {
 	 * @param size
 	 * @return stride
 	 */
-	protected static int[] getStride(final int[] size) {
-		final int[] ret = new int[size.length];
-
-		ret[size.length - 1] = 1;
-		for (int i = size.length - 2; i >= 0; i--)
-			ret[i] = ret[i + 1] * size[i + 1];
-
-		return ret;
+	protected static int getStride(final int[] size) {
+		return size[1];
 	}
+
+//	protected static int[] getStride(final int[] size) {
+//	final int[] ret = new int[size.length];
+//
+//	ret[size.length - 1] = 1;
+//	for (int i = size.length - 2; i >= 0; i--)
+//		ret[i] = ret[i + 1] * size[i + 1];
+//
+//	return ret;
+//}
+
 }
