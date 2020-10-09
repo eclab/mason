@@ -20,7 +20,6 @@ import sim.engine.transport.PayloadWrapper;
 import sim.engine.transport.RMIProxy;
 import sim.engine.transport.TransportRMIInterface;
 import sim.field.partitioning.IntHyperRect;
-import sim.field.partitioning.IntPointGenerator;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.QuadTreePartition;
 import sim.field.storage.ContStorage;

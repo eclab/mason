@@ -3,7 +3,6 @@ package sim.field.storage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -58,26 +57,27 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 	}
 
 	public String toString() {
-		final StringBuffer buf = new StringBuffer(String.format("ContStorage-%s\n", shape));
+		final StringBuffer string = new StringBuffer(String.format("ContStorage-%s\n", shape));
+
+//		TODO: Should we use StringBuilder here?
+//		StringBuffer uses synchronization and is generally slower than StringBuilder
+//		final StringBuilder string = new StringBuilder(String.format("ContStorage-%s\n", shape));
 
 //		for (final Int2D dp : IntPointGenerator.getBlock(dsize))
 //			if (getCelldp(dp).size() > 0)
-//				buf.append("Cell " + dp + ":\t" + getCelldp(dp) + "\n");
+//				string.append("Cell " + dp + ":\t" + getCelldp(dp) + "\n");
 
-	for(int x = 0; x < dsize[0]; x++)
-		{
-		for(int y = 0; y < dsize[1]; y++)
+		for (int x = 0; x < dsize[0]; x++) 
 			{
-			HashSet<T> cell = getCelldp(x, y);
-			if (cell.size() > 0)
+			for (int y = 0; y < dsize[1]; y++) 
 				{
-				buf.append("Cell (" + x + ", " + y + "):\t" + cell + "\n");
+				HashSet<T> cell = getCelldp(x, y);
+				if (cell.size() > 0) 
+					string.append("Cell (" + x + ", " + y + "):\t" + cell + "\n");
 				}
 			}
-		}
 
-
-		return buf.toString();
+		return string.toString();
 	}
 
 	// This returns a list of a list of dissimilar Objects

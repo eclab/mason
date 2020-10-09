@@ -60,6 +60,18 @@ public class DSimState extends SimState {
 		return multiThreaded;
 	}
 
+	/**
+	 * Set multiThreaded as true if any processing node (e.g. pid = 0) uses more
+	 * than one thread. This must be set in a static block and before any DObjects
+	 * have been created. </br>
+	 * </br>
+	 * To set multiThreaded add the followings line to the top of your simulation -
+	 * </br>
+	 * 
+	 * static { DSimState.setMultiThreaded(true); }
+	 * 
+	 * @param multi
+	 */
 	public static void setMultiThreaded(boolean multi) {
 		if (!multiThreadedSet) {
 			multiThreaded = multi;
