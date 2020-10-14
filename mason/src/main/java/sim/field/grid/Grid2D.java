@@ -127,6 +127,10 @@ public interface Grid2D extends java.io.Serializable
     /** Returns the width of the field. */
     public int getHeight();
     
+    /** Entirely wipes the grid and reshapes it into a different sized rectangle.
+    	You should generally not call this: it's used for exotic purposes such as in Distributed MASON. */
+    public void reshape(int width, int height);
+    
     /** Toroidal x. The following definition:<br><br>
         final int length = this.length; <br>
         if (z >= 0) return (z % length); <br>

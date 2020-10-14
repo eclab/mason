@@ -44,13 +44,11 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
         {
         setTo(values);
         }
-    
-    /** Replaces the existing array with a new one of the given width and height,
-        and with arbitrary values stored. */
-    protected void reshape(int width, int height)
+
+	// sets to all 0    
+    public void reshape(int width, int height)
         {
-        this.width = width;
-        this.height = height;
+        super.reshape(width, height);
         field = new int[width][height];
         }
     

@@ -38,11 +38,9 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
         setTo(initialValue);
         }
 
-    protected void reshape(int width, int height)
+    public void reshape(int width, int height)
         {
-        this.width = width;
-        this.height = height;
-
+        super.reshape(width, height);
         field = new double[width][height];
         }
         

@@ -63,13 +63,12 @@ public class ObjectGrid2D extends AbstractGrid2D
         return field[x][y];
         }
 
-    protected void reshape(int width, int height)
+    public void reshape(int width, int height)
         {
-        this.width = width;
-        this.height = height;
-
+        super.reshape(width, height);
         field = new Object[width][height];
         }
+        
     /** Sets all the locations in the grid the provided element. <b>WARNING:
         this may conflict with setTo(Object[][]) -- make sure you have casted properly.   */
     public final ObjectGrid2D setTo(Object thisObj)

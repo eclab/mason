@@ -41,6 +41,8 @@ public abstract class AbstractGrid2D implements Grid2D
     
     public final int getHeight() { return height; }
     
+    public void reshape(int width, int height) { this.width = width; this.height = height; }
+    
     public Map buildMap(Map other) { return new HashMap(other); }
     public Map buildMap(int size) 
         {
