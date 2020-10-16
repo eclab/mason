@@ -8,8 +8,6 @@ package sim.engine;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import mpi.*;
-
 /**
  * A superclass for objects that may be accessed and queried remotely. To do
  * this, such objects need a unique system-wide ID. This ID is generated through
@@ -20,21 +18,6 @@ import mpi.*;
 
 public abstract class DObject implements java.io.Serializable {
 	private static final long serialVersionUID = 1;
-	static final int PID;
-//	private static boolean multiThreaded;
-
-	static {
-		try {
-			PID = MPI.COMM_WORLD.getRank();
-		} catch (MPIException ex) {
-			throw new RuntimeException(ex);
-		}
-	}
-
-	/** Returns the current PID on which this object resides. */
-	public static int getPID() {
-		return PID;
-	}
 
 	private static int idCounter = 0;
 	private static final AtomicInteger threadSafeCounter = new AtomicInteger();
@@ -50,7 +33,7 @@ public abstract class DObject implements java.io.Serializable {
 	final int localid; // this is a unique ID special to processor PID
 
 	public DObject() {
-		firstpid = PID; // called originally to get the FIRST PID
+		firstpid = DSimState.getPID(); // called originally to get the FIRST PID
 		localid = nextCounter();
 	}
 
@@ -92,6 +75,6 @@ public abstract class DObject implements java.io.Serializable {
 
 	/** Returns a string consisting of the form CLASSNAME:UNIQUEID@CURRENTPID */
 	public String toString() {
-		return this.getClass().getName() + ":" + getIDString() + "@" + getPID();
+		return this.getClass().getName() + ":" + getIDString() + "@" + DSimState.getPID();
 	}
 }

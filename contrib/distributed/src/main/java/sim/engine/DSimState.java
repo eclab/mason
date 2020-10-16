@@ -55,9 +55,14 @@ public class DSimState extends SimState {
 
 	private static boolean multiThreaded = false;
 	private static boolean multiThreadedSet = false;
+	private static int PID;
 
 	public static boolean isMultiThreaded() {
 		return multiThreaded;
+	}
+
+	public static int getPID() {
+		return PID;
 	}
 
 	/**
@@ -518,7 +523,13 @@ public class DSimState extends SimState {
 
 	public void start() {
 		super.start();
-		RMIProxy.init();
+//		RMIProxy.init();
+
+		try {
+			PID = MPI.COMM_WORLD.getRank();
+		} catch (MPIException ex) {
+			throw new RuntimeException(ex);
+		}
 
 		if (withRegistry) {
 			/* distributed registry inizialization */
