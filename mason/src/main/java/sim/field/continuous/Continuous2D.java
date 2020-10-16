@@ -145,6 +145,13 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         if (result) doubleLocationHash.put(obj,location);
         return result;
         }
+    
+    public void reshape(double width, double height)
+    	{
+    	this.width = width;
+    	this.height = height;
+    	clear();
+    	}
         
     public final Bag clear()
         {
