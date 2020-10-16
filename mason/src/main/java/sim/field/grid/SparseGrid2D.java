@@ -66,7 +66,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
         height = values.height;
         }
     
-    public int reshape(int width, int height) { super.reshape(width, height); clear(); }
+    public void reshape(int width, int height) { this.width = width; this.height = height; clear(); }
     
     /** Returns the width of the grid */
     public int getWidth() { return width; }
