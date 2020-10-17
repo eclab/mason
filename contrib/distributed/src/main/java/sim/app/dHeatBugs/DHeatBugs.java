@@ -234,7 +234,7 @@ public class DHeatBugs extends DSimState {
 		HashMap<Int2D, ArrayList<DHeatBug>> agents = (HashMap<Int2D, ArrayList<DHeatBug>>) getRootInfo("agents");
 		for (Int2D p : agents.keySet()) {
 			for (DHeatBug a : agents.get(p)) {
-				if (partition.getPartition().contains(p))
+				if (partition.getBounds().contains(p))
 					bugs.addRepeatingAgent(p, a, 1, 1);
 			}
 		}

@@ -124,7 +124,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		localStorage = stor;
 		this.state = state;
 		// init variables that don't change with the partition scheme
-		world = ps.createField();
+		world = ps.getWorldBounds();
 		fieldSize = ps.getFieldSize();
 		MPIBaseType = localStorage.getMPIBaseType();
 		registerCallbacks();
@@ -173,7 +173,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * Resizes partition and halo. Also sets up the neighbors
 	 */
 	public void reload() {
-		origPart = partition.getPartition();
+		origPart = partition.getBounds();
 		// Get the partition representing halo and local area by expanding the original
 		// partition by aoi at each dimension
 		haloPart = origPart.resize(aoi);
@@ -189,7 +189,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 //				.collect(Collectors.toList());
 		neighbors = new ArrayList<Neighbor>();
 		for (int id : partition.getNeighborIds()) {
-			neighbors.add(new Neighbor(partition.getPartition(id)));
+			neighbors.add(new Neighbor(partition.getBounds(id)));
 		}
 		numNeighbors = neighbors.size();
 	}
@@ -297,7 +297,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 
 		if (!inLocal(fromP)) {
 			System.out.println("pid " + partition.pid + " agent" + t);
-			System.out.println("partitioning " + partition.getPartition());
+			System.out.println("partitioning " + partition.getBounds());
 			throw new IllegalArgumentException("fromP must be local");
 		}
 
@@ -608,7 +608,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 
 		if (partition.getPid() == dst)
 			for (int i = 0; i < partition.getNumProc(); i++)
-				fullField.unpack(new MPIParam(partition.getPartition(i), world, MPIBaseType), recvObjs.get(i));
+				fullField.unpack(new MPIParam(partition.getBounds(i), world, MPIBaseType), recvObjs.get(i));
 	}
 
 	/**

@@ -55,14 +55,23 @@ public class DSimState extends SimState {
 
 	private static boolean multiThreaded = false;
 	private static boolean multiThreadedSet = false;
-	private static int PID;
 
 	public static boolean isMultiThreaded() {
 		return multiThreaded;
 	}
 
+	/**
+	 * Only call this method after COMM_WORLD has been setup. </br>
+	 * It's safe to call it in the start method and after.
+	 * 
+	 * @return Current pid
+	 */
 	public static int getPID() {
-		return PID;
+		try {
+			return MPI.COMM_WORLD.getRank();
+		} catch (MPIException ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 
 	/**
@@ -93,9 +102,11 @@ public class DSimState extends SimState {
 	HashMap<String, Object> rootInfo = null;
 	HashMap<String, Object>[] init = null;
 
+	RemoteProcessor processor;
+
 	// A list of all fields in the Model.
 	// Any HaloField that is created will register itself here
-	protected final ArrayList<Synchronizable> fieldRegistry;
+	protected final ArrayList<HaloGrid2D> fieldRegistry;
 
 	protected DRegistry registry;
 	protected boolean withRegistry;
@@ -112,8 +123,8 @@ public class DSimState extends SimState {
 		partition.initialize();
 		balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
 		transporter = new TransporterMPI(partition);
-		fieldRegistry = new ArrayList<Synchronizable>();
-		rootInfo = new HashMap();
+		fieldRegistry = new ArrayList<>();
+		rootInfo = new HashMap<>();
 		withRegistry = false;
 	}
 
@@ -126,7 +137,7 @@ public class DSimState extends SimState {
 		balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
 		transporter = new TransporterMPI(partition);
 		fieldRegistry = new ArrayList<>();
-		rootInfo = new HashMap();
+		rootInfo = new HashMap<>();
 		withRegistry = false;
 	}
 
@@ -158,7 +169,7 @@ public class DSimState extends SimState {
 	 * @param haloField
 	 * @return index of the field
 	 */
-	public int registerField(final Synchronizable halo) {
+	public int registerField(final HaloGrid2D halo) {
 		// Must be called in a deterministic manner
 		final int index = fieldRegistry.size();
 		fieldRegistry.add(halo);
@@ -180,7 +191,19 @@ public class DSimState extends SimState {
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
 
 		try {
+			// Wait for all agents globally to stop moving
+			MPI.COMM_WORLD.barrier();
 
+			// give time for Visualizer
+			try {
+				// TODO: How to handle the exception here?
+				processor.unlock();
+				processor.lock();
+			} catch (RemoteException e1) {
+				throw new RuntimeException(e1);
+			}
+
+			// Stop the world and wait for the Visualizer to unlock
 			MPI.COMM_WORLD.barrier();
 
 			syncFields();
@@ -381,7 +404,7 @@ public class DSimState extends SimState {
 	}
 
 	private void balancePartitions(int level) throws MPIException {
-		final IntHyperRect old_partition = partition.getPartition();
+		final IntHyperRect old_partition = partition.getBounds();
 		final int old_pid = partition.getPid();
 		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage();
 		Timing.start(Timing.LB_OVERHEAD);
@@ -389,10 +412,10 @@ public class DSimState extends SimState {
 		MPI.COMM_WORLD.barrier();
 		// System.out.println("pid "+partition.getPid()+"
 		// old_partitioning"+old_partition);
-		System.out.println("pid " + partition.getPid() + " new partition" + partition.getPartition());
+		System.out.println("pid " + partition.getPid() + " new partition" + partition.getBounds());
 
 		for (Int2D p : old_partition) {
-			if (!partition.getPartition().contains(p)) {
+			if (!partition.getBounds().contains(p)) {
 				final int toP = partition.toPartitionId(p);
 				for (Synchronizable field : fieldRegistry) {
 					ArrayList<Object> migratedAgents = new ArrayList<>();
@@ -404,7 +427,7 @@ public class DSimState extends SimState {
 						for (Object a : agents) {
 							NumberND loc = st.getLocation((Serializable) a);
 							if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
-									&& !partition.getPartition().contains(loc)) {
+									&& !partition.getBounds().contains(loc)) {
 								try {
 									((Stopping) a).getStoppable().stop();
 								} catch (Exception e) {
@@ -421,7 +444,7 @@ public class DSimState extends SimState {
 						ObjectGridStorage st = (ObjectGridStorage) ((HaloGrid2D) field).getStorage();
 						Serializable a = st.getObjects(haloGrid2D.toLocalPoint(p));
 						if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
-								&& old_partition.contains(p) && !partition.getPartition().contains(p)) {
+								&& old_partition.contains(p) && !partition.getBounds().contains(p)) {
 							Stopping stopping = ((Stopping) a);
 							stopping.getStoppable().stop();
 							transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).fieldIndex);
@@ -525,15 +548,17 @@ public class DSimState extends SimState {
 		super.start();
 //		RMIProxy.init();
 
-		try {
-			PID = MPI.COMM_WORLD.getRank();
-		} catch (MPIException ex) {
-			throw new RuntimeException(ex);
-		}
-
 		if (withRegistry) {
 			/* distributed registry inizialization */
 			registry = DRegistry.getInstance();
+		}
+
+		processor = new RemoteProcessor(this);
+		try {
+			processor.lock();
+			// unlocks in preSchedule
+		} catch (RemoteException e1) {
+			throw new RuntimeException(e1);
 		}
 
 		try {

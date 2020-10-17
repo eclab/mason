@@ -26,7 +26,7 @@ public class DObjectGrid2D<T extends Serializable> extends DAbstractGrid2D imple
 	public DObjectGrid2D(final PartitionInterface ps, final int[] aoi, final DSimState state, Class<T> clazz) {
 		super(ps);
 		halo = new HaloGrid2D<T, NumberND, ObjectGridStorage<T>>(ps, aoi,
-				new ObjectGridStorage<T>(ps.getPartition(), s -> (T[]) Array.newInstance(clazz, s)), state);
+				new ObjectGridStorage<T>(ps.getBounds(), s -> (T[]) Array.newInstance(clazz, s)), state);
 	}
 
 	public T getLocal(final Int2D p) {

@@ -60,20 +60,20 @@ public abstract class PartitionInterface {
 		return (int[])(size.clone());
 	}
 
-	public IntHyperRect createField() {
+	public IntHyperRect getWorldBounds() {
 		return new IntHyperRect(size);
 	}
 
 	/**
 	 * @return partition for the current node
 	 */
-	public abstract IntHyperRect getPartition();
+	public abstract IntHyperRect getBounds();
 
 	/**
 	 * @param pid
 	 * @return partition for pid node
 	 */
-	public abstract IntHyperRect getPartition(int pid);
+	public abstract IntHyperRect getBounds(int pid);
 
 	public abstract int getNumNeighbors();
 

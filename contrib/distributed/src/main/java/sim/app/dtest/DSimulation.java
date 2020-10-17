@@ -104,7 +104,7 @@ public class DSimulation extends DSimState {
 
 		for (Object p : agents) {
 			DAgent a = (DAgent) p;
-			if (partition.getPartition().contains(a.loc)) {
+			if (partition.getBounds().contains(a.loc)) {
 				field.addAgent(a.loc, a);
 				System.out.println("pid " + partition.getPid() + " add agent " + a);
 			}

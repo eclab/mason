@@ -25,7 +25,7 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implem
 
 	public DDenseGrid2D(final PartitionInterface ps, final int[] aoi, final DSimState state) {
 		super(ps);
-		halo = new HaloGrid2D<>(ps, aoi, new DenseGridStorage<>(ps.getPartition(), s -> new ArrayList[s]), state);
+		halo = new HaloGrid2D<>(ps, aoi, new DenseGridStorage<>(ps.getBounds(), s -> new ArrayList[s]), state);
 
 	}
 

@@ -42,10 +42,10 @@ public class DFlockersWithDRegistry extends DSimState {
 
 	public void start() {
 		super.start();
-		final int[] size = getPartitioning().getPartition().getSize();
+		final int[] size = getPartitioning().getBounds().getSize();
 		for (int x = 0; x < DFlockersWithDRegistry.numFlockers / getPartitioning().numProcessors; x++) {
-			final double px = random.nextDouble() * size[0] + getPartitioning().getPartition().ul().getArray()[0];
-			final double py = random.nextDouble() * size[1] + getPartitioning().getPartition().ul().getArray()[1];
+			final double px = random.nextDouble() * size[0] + getPartitioning().getBounds().ul().getArray()[0];
+			final double py = random.nextDouble() * size[1] + getPartitioning().getBounds().ul().getArray()[1];
 			final Double2D location = new Double2D(px, py);
 //			final DFlockerWithDRegistry flocker = new DFlockerWithDRegistry(location, 
 //					(getPartitioning().pid * (DFlockersWithDRegistry.numFlockers / getPartitioning().numProcessors)) + x);

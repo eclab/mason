@@ -24,7 +24,7 @@ public class DDoubleGrid2D extends DAbstractGrid2D implements DGrid<Double, Int2
 	public DDoubleGrid2D(final PartitionInterface ps, final int[] aoi, final double initVal, final DSimState state) {
 		super(ps);
 		halo = new HaloGrid2D<Double, Int2D, DoubleGridStorage>(ps, aoi,
-				new DoubleGridStorage(ps.getPartition(), initVal), state);
+				new DoubleGridStorage(ps.getBounds(), initVal), state);
 
 		this.initVal = initVal;
 	}
@@ -102,7 +102,7 @@ public class DDoubleGrid2D extends DAbstractGrid2D implements DGrid<Double, Int2
 		if (byThisMuch == 1.0)
 			return this;
 
-		for (Int2D p : halo.partition.getPartition()) {
+		for (Int2D p : halo.partition.getBounds()) {
 			Double obj = get(p);
 			removeLocal(p);
 			add(p, obj * byThisMuch);

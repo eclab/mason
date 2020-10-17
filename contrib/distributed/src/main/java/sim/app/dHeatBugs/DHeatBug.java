@@ -20,7 +20,8 @@ public class DHeatBug extends DSteppable {
 	public double heatOutput;
 	public double randomMovementProbability;
 
-	public DHeatBug(final double idealTemp, final double heatOutput, final double randomMovementProbability, final int loc_x, final int loc_y) {
+	public DHeatBug(final double idealTemp, final double heatOutput, final double randomMovementProbability,
+			final int loc_x, final int loc_y) {
 		this.heatOutput = heatOutput;
 		this.idealTemp = idealTemp;
 		this.randomMovementProbability = randomMovementProbability;

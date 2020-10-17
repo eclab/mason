@@ -33,11 +33,11 @@ public class QuadTreePartition extends PartitionInterface {
 		qt = new QuadTree(new IntHyperRect(size), numProcessors);
 	}
 
-	public IntHyperRect getPartition() {
+	public IntHyperRect getBounds() {
 		return myLeafNode.getShape();
 	}
 
-	public IntHyperRect getPartition(final int pid) {
+	public IntHyperRect getBounds(final int pid) {
 		for (final QuadTreeNode node : qt.getAllLeaves())
 			if (node.getProcessor() == pid)
 				return node.getShape();

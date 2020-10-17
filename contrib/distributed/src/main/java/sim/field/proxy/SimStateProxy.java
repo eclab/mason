@@ -55,17 +55,17 @@ public class SimStateProxy extends SimState
 	public void setRegistryPort(int port) { this.port = port; }
 	
 	/** Returns the string by which the visualization root (a VisualizationRoot instance) is registered with the Registry. */
-	public final String getVisualizationRootString() { return "root"; }						// or whatever
+	public final String getVisualizationRootString() { return getVisualizationProcessorString(0); }						// or whatever
 	
 	/** Returns the string by which a given visualization processor (a VisualizationProcessor instance) is registered with the Registry. */
-	public final String VisualizationProcessorString(int pid) { return "proc" + pid; }		// or whatever
+	public final String getVisualizationProcessorString(int pid) { return RemoteProcessor.NAME_PREFIX + pid; }		// or whatever
 	
 	// The registry proper
 	Registry registry = null;
 	// World bounds
 	IntHyperRect worldBounds = null;
 	// The visualization root
-	VisualizationRoot visualizationRoot = null;
+	VisualizationProcessor visualizationRoot = null;
 	// a cache of Visualization Processors so we don't keep querying for them
 	VisualizationProcessor[] visualizationCache = null;
 	// The number of pids.
@@ -108,7 +108,7 @@ public class SimStateProxy extends SimState
 		{
 		if (visualizationCache[processor] == null)
 			{
-			visualizationCache[processor] = (VisualizationProcessor)(registry.lookup(VisualizationProcessorString(processor)));
+			visualizationCache[processor] = (VisualizationProcessor)(registry.lookup(getVisualizationProcessorString(processor)));
 			}
 		return visualizationCache[processor];
 		}
@@ -132,7 +132,7 @@ public class SimStateProxy extends SimState
 			{
 			// grab the registry and query it for basic information
 			registry = LocateRegistry.getRegistry(getRegistryHost(), getRegistryPort());
-			visualizationRoot = (VisualizationRoot)(registry.lookup(getVisualizationRootString()));
+			visualizationRoot = (VisualizationProcessor)(registry.lookup(getVisualizationRootString()));
 			worldBounds = visualizationRoot.getWorldBounds();
 			numProcessors = visualizationRoot.getNumProcessors();
 			
