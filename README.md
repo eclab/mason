@@ -1,3 +1,12 @@
+
+# MASON Layout
+This GitHub Repository for MASON contains the core MASON project in the mason/ directory and also contains various extensions to MASON in the contrib/ directory. Each extension in contrib/ is a project on its own. More details about MASON and its extensions can be found at the MASON website.
+
+## Website
+https://cs.gmu.edu/~eclab/projects/mason/
+
+
+
 # Build MASON Toolkit
 
 ## Build Core MASON Only
