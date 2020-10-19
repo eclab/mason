@@ -1,7 +1,7 @@
 package sim.field.partitioning;
 
 import java.util.*;
-//import java.util.stream.*;
+import java.util.stream.*;
 import sim.util.*;
 
 public class QuadTree {
@@ -29,11 +29,7 @@ public class QuadTree {
 
 		int div = 4;			// 4 divisions
 		root = new QuadTreeNode(shape, null);
-//		availIds = IntStream.range(1, np / (div - 1) * div + 1).boxed().collect(Collectors.toList());		// FIXME -- What is this supposed to be?s
-		availIds = new ArrayList<Integer>();
-		for (int i = 1; i < np / (div - 1) * div + 1; i++) {
-			availIds.add(i);
-		}
+		availIds = IntStream.range(1, np / (div - 1) * div + 1).boxed().collect(Collectors.toList());		// FIXME -- What is this supposed to be?s
 
 		allNodes = new HashMap<Integer, QuadTreeNode>();
 		// root node is the 0th node
@@ -60,18 +56,8 @@ public class QuadTree {
 		return new ArrayList<QuadTreeNode>(allNodes.values());
 	}
 
-	// Note: allNodes is HashMap, so no guaranteed order of leaves
 	public List<QuadTreeNode> getAllLeaves() {
-//		return allNodes.values().stream().filter(node -> node.isLeaf()).collect(Collectors.toList());
-		List<QuadTreeNode> leaves = new ArrayList<QuadTreeNode>();
-		List<QuadTreeNode> nodes = new ArrayList<QuadTreeNode>();
-		nodes.addAll(allNodes.values());
-		for (int i = 0; i < nodes.size(); i++) {
-			QuadTreeNode node = nodes.get(i);
-			if (node.isLeaf())
-				leaves.add(node);
-		}
-		return leaves;
+		return allNodes.values().stream().filter(node -> node.isLeaf()).collect(Collectors.toList());
 	}
 
 	public String toString() {
@@ -79,26 +65,15 @@ public class QuadTree {
 	}
 
 	public void split(final Int2D p) {
-//		root.getLeafNode(p).split(p).forEach(x -> addNode(x));
-		List<QuadTreeNode> newNodes = root.getLeafNode(p).split(p);
-		for (int i = 0; i < newNodes.size(); i++) {
-			addNode(newNodes.get(i));
-		}
+		root.getLeafNode(p).split(p).forEach(x -> addNode(x));
 	}
 
 	public void split(final List<Int2D> ps) {
-//		ps.forEach(p -> split(p));
-		for (int i = 0; i < ps.size(); i++) {
-			split(ps.get(i));
-		}
+		ps.forEach(p -> split(p));
 	}
 
 	public void moveOrigin(final QuadTreeNode node, final Int2D newOrig) {
-//		node.split(newOrig).forEach(x -> addNode(x));
-		List<QuadTreeNode> newNodes = node.split(newOrig);
-		for (int i = 0; i < newNodes.size(); i++) {
-			addNode(newNodes.get(i));
-		}
+		node.split(newOrig).forEach(x -> addNode(x));
 	}
 
 	public void moveOrigin(final int id, final Int2D newOrig) {
@@ -106,11 +81,7 @@ public class QuadTree {
 	}
 
 	public void merge(final QuadTreeNode node) {
-//		node.merge().forEach(x -> delNode(x));
-		List<QuadTreeNode> merged = node.merge();
-		for (int i = 0; i < merged.size(); i++) {
-			delNode(merged.get(i));
-		}
+		node.merge().forEach(x -> delNode(x));
 	}
 
 	public void merge(final int id) {
@@ -131,20 +102,8 @@ public class QuadTree {
 		final int id = node.getId();
 		allNodes.remove(id);
 		availIds.add(id);
-		if (depth == node.getLevel()) {
-//			depth = allNodes.values().stream().mapToInt(x -> x.getLevel()).max().orElse(0);
-			List<QuadTreeNode> nodes = new ArrayList<QuadTreeNode>();
-			nodes.addAll(allNodes.values());
-			int max =
-				nodes.get(0) != null
-				? nodes.get(0).getLevel()
-				: Integer.MIN_VALUE; // TODO <- maybe unnecessary
-			for (int i = 0; i < nodes.size(); i++) {
-				if (nodes.get(i).getLevel() > max)
-					max = nodes.get(i).getLevel();
-			}
-			depth = max;
-		}
+		if (depth == node.getLevel())
+			depth = allNodes.values().stream().mapToInt(x -> x.getLevel()).max().orElse(0);
 	}
 
 	public HashSet<QuadTreeNode> getNeighbors(final QuadTreeNode node, final int[] aoi, final boolean isToroidal) {
@@ -164,22 +123,11 @@ public class QuadTree {
 		final ArrayList<QuadTreeNode> stack = new ArrayList<QuadTreeNode>();
 
 		// Add neighbors from my siblings
-//		for (final QuadTreeNode sibling : node.getSiblings())
-		for (int i = 0; i < node.getSiblings().size(); i++) {
-			final QuadTreeNode sibling = node.getSiblings().get(i);
+		for (final QuadTreeNode sibling : node.getSiblings())
 			if (sibling.isLeaf())
 				ret.add(sibling);
-			else {
-//				sibling.getLeaves().stream().filter(x -> myHalo.isIntersect(x.getShape())).forEach(x -> ret.add(x));
-				List<QuadTreeNode> nodes = sibling.getLeaves();
-				for (int j = 0; j < nodes.size(); j++) {
-					QuadTreeNode x = nodes.get(j);
-					if (myHalo.isIntersect(x.getShape())) {
-						ret.add(x);
-					}
-				}
-			}
-		}
+			else
+				sibling.getLeaves().stream().filter(x -> myHalo.isIntersect(x.getShape())).forEach(x -> ret.add(x));
 
 		// Add neighbors on the other directions
 		for (int dim = 0; dim < 2; dim++) 				// 2 is num dimensions
@@ -191,12 +139,9 @@ public class QuadTree {
 			QuadTreeNode curr = node.getParent();
 			while (!curr.isRoot() && curr.getDir(dim) == dir)
 				curr = curr.getParent();
-//			for (final QuadTreeNode sibling : curr.getSiblings())
-			for (int i = 0; i < curr.getSiblings().size(); i++) {
-				final QuadTreeNode sibling = curr.getSiblings().get(i);
+			for (final QuadTreeNode sibling : curr.getSiblings())
 				if (sibling.getDir(dim) == dir)
 					stack.add(sibling);
-			}
 			
 			// Next go down to find all the leaf nodes that intersect with my halo
 			while (stack.size() > 0 && (curr = stack.remove(0)) != null)
@@ -205,14 +150,10 @@ public class QuadTree {
 					continue;
 				else if (curr.isLeaf())
 					ret.add(curr);
-				else {
-//					for (final QuadTreeNode child : curr.getChildren())
-					for (int i = 0; i < curr.getChildren().size(); i++) {
-						final QuadTreeNode child = curr.getChildren().get(i);
+				else
+					for (final QuadTreeNode child : curr.getChildren())
 						if (child.getDir(dim) != dir)
 							stack.add(child);
-					}
-				}
 		}
 
 		return ret;
@@ -322,51 +263,36 @@ public class QuadTree {
 		final HashSet<QuadTreeNode> ret = new HashSet<QuadTreeNode>();
 		final ArrayList<QuadTreeNode> stack = new ArrayList<QuadTreeNode>();
 		
-//		for(final QuadTreeNode sibling : node.getSiblings()) {
-		for(int i = 0; i < node.getSiblings().size(); i++) {
-			final QuadTreeNode sibling = node.getSiblings().get(i);
+		for(final QuadTreeNode sibling : node.getSiblings()) {
 			if(sibling.isLeaf())
 				ret.add(sibling);
-			else {
-//				for(final QuadTreeNode leaf : sibling.getLeaves()) {
-				for(int leafI = 0; leafI < sibling.getLeaves().size(); leafI++) {
-					final QuadTreeNode leaf = sibling.getLeaves().get(leafI);
+			else
+				for(final QuadTreeNode leaf : sibling.getLeaves()) {
 					// if intersect at least one of my halo regions add to ret
-//					for(final IntHyperRect region : haloRegions) {
-					for(int regionI = 0; regionI < haloRegions.size(); i++) {
-						final IntHyperRect region = haloRegions.get(regionI);
+					for(final IntHyperRect region : haloRegions) {
 						if(leaf.getShape().isIntersect(region)) {
 							ret.add(leaf);
 							break;
 						}
 					}
 				}
-			}
 		}
 		
 		QuadTreeNode curr = node.getParent();
 		while(!curr.isRoot()) {
-//			for (final QuadTreeNode sibling : curr.getSiblings()) {
-			for (int i = 0; i < curr.getSiblings().size(); i++) {
-				final QuadTreeNode sibling = curr.getSiblings().get(i);
+			for (final QuadTreeNode sibling : curr.getSiblings()) {
 				if (sibling.isLeaf()) {
 					// if intersect at least one of my halo regions add to ret
-//					for(final IntHyperRect region : haloRegions) {
-					for(int regionI = 0; regionI < haloRegions.size(); regionI++) {
-						final IntHyperRect region = haloRegions.get(regionI);
+					for(final IntHyperRect region : haloRegions) {
 						if(sibling.getShape().isIntersect(region)) {
 							ret.add(sibling);
 							break;
 						}
 					}
 				} else {
-//					for(final QuadTreeNode leaf : sibling.getLeaves()) {
-					for(int leafI = 0; leafI < sibling.getLeaves().size(); i++) {
-						final QuadTreeNode leaf = sibling.getLeaves().get(i);
+					for(final QuadTreeNode leaf : sibling.getLeaves()) {
 						// if intersect at least one of my halo regions add to ret
-//						for(final IntHyperRect region : haloRegions) {
-						for(int regionI = 0; regionI < haloRegions.size(); regionI++) {
-							final IntHyperRect region = haloRegions.get(regionI);
+						for(final IntHyperRect region : haloRegions) {
 							if(leaf.getShape().isIntersect(region)) {
 								ret.add(leaf);
 								break;
@@ -382,29 +308,11 @@ public class QuadTree {
 	}
 
 	public int[] getNeighborIds(final QuadTreeNode node, final int[] aoi,final boolean isToroidal) {
-//		return getNeighbors(node, aoi,isToroidal).stream().mapToInt(x -> x.getId()).sorted().toArray();		
-		List<QuadTreeNode> neighbors = new ArrayList<QuadTreeNode>();
-		neighbors.addAll(getNeighbors(node, aoi,isToroidal));
-		int[] ids = new int[neighbors.size()];
-		for (int i = 0; i < neighbors.size(); i++) {
-			QuadTreeNode x = neighbors.get(i);
-			ids[i] = x.getId();
-		}
-		Arrays.sort(ids);
-		return ids;
+		return getNeighbors(node, aoi,isToroidal).stream().mapToInt(x -> x.getId()).sorted().toArray();
 	}
 
 	public int[] getNeighborPids(final QuadTreeNode node, final int[] aoi,final boolean isToroidal) {
-//		return getNeighbors(node, aoi,isToroidal).stream().mapToInt(x -> x.getProcessor()).sorted().toArray();
-		List<QuadTreeNode> neighbors = new ArrayList<QuadTreeNode>();
-		neighbors.addAll(getNeighbors(node, aoi,isToroidal));
-		int[] pids = new int[neighbors.size()];
-		for (int i = 0; i < neighbors.size(); i++) {
-			QuadTreeNode x = neighbors.get(i);
-			pids[i] = x.getProcessor();
-		}
-		Arrays.sort(pids);
-		return pids;
+		return getNeighbors(node, aoi,isToroidal).stream().mapToInt(x -> x.getProcessor()).sorted().toArray();
 	}
 
 	private static void testFindNeighbor() {
@@ -439,11 +347,8 @@ public class QuadTree {
 			}
 		};
 
-//		for (final Int2D p : splitPoints)
-		for (int i = 0; i < splitPoints.length; i++) {
-			final Int2D p = splitPoints[i];
+		for (final Int2D p : splitPoints)
 			qt.split(p);
-		}
 
 		System.out.println("Testing neighbor finding in the following tree...\n" + qt);
 

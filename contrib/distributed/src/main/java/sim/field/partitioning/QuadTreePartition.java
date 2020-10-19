@@ -33,11 +33,11 @@ public class QuadTreePartition extends PartitionInterface {
 		qt = new QuadTree(new IntHyperRect(size), numProcessors);
 	}
 
-	public IntHyperRect getPartition() {
+	public IntHyperRect getBounds() {
 		return myLeafNode.getShape();
 	}
 
-	public IntHyperRect getPartition(final int pid) {
+	public IntHyperRect getBounds(final int pid) {
 		for (final QuadTreeNode node : qt.getAllLeaves())
 			if (node.getProcessor() == pid)
 				return node.getShape();
@@ -304,19 +304,10 @@ public class QuadTreePartition extends PartitionInterface {
 
 			gc.comm.reduce(sendData, recvData, recvData.length, MPI.DOUBLE, MPI.SUM, gc.groupRoot);
 
-			if (isGroupMaster(gc)) {
-				int[] locVals = new int[recvData.length - 1];
-				// skip first (i = 1)
-				for (int i = 1; i < recvData.length; i++) {
-					double x = recvData[i];
-					locVals[i] = (int) (x / recvData[0]);
-				}
-				sendCentroids = new Object[] {
-					gc.master.getId(),
-//					new Int2D(Arrays.stream(recvData).skip(1).mapToInt(x -> (int) (x / recvData[0])).toArray())
-					new Int2D(locVals)
+			if (isGroupMaster(gc))
+				sendCentroids = new Object[] { gc.master.getId(),
+						new Int2D(Arrays.stream(recvData).skip(1).mapToInt(x -> (int) (x / recvData[0])).toArray())
 				};
-			}
 		}
 
 		// broadcast to all nodes
