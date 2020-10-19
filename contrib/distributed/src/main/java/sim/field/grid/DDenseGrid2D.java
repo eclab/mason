@@ -2,6 +2,7 @@ package sim.field.grid;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.function.IntFunction;
 
 import sim.engine.DSimState;
 import sim.engine.DistributedIterativeRepeat;
@@ -25,8 +26,20 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implem
 
 	public DDenseGrid2D(final PartitionInterface ps, final int[] aoi, final DSimState state) {
 		super(ps);
-		halo = new HaloGrid2D<>(ps, aoi, new DenseGridStorage<>(ps.getBounds(), s -> new ArrayList[s]), state);
-
+		IntFunction<ArrayList<T>[]> func = new IntFunction<ArrayList<T>[]>() {
+			public ArrayList<T>[] apply(int s) {
+				return new ArrayList[s];
+			}
+		};
+//		halo = new HaloGrid2D<>(ps, aoi, new DenseGridStorage<>(ps.getPartition(), s -> new ArrayList[s]), state);		
+		halo = new HaloGrid2D<T, Int2D, DenseGridStorage<T>>(ps, aoi, new DenseGridStorage<T>(ps.getPartition(),
+				//s -> new ArrayList[s]
+				new IntFunction<ArrayList<T>[]>() {
+						public ArrayList<T>[] apply(int s) {
+						return new ArrayList[s];
+					}
+				}),
+				state);
 	}
 
 	public ArrayList<T>[] getStorageArray() {

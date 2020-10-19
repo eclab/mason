@@ -1,7 +1,7 @@
 package sim.field.partitioning;
 
 import java.util.*;
-import java.util.stream.*;
+//import java.util.stream.*;
 import sim.util.*;
 
 // TODO Currently all shapes are restricted to IntHyperRect - switch to NdRectangle once it is completed
@@ -152,9 +152,14 @@ public class QuadTreeNode {
 		origin = newOrigin;
 
 		if (isLeaf()) {
-			children = IntStream.range(0, 1 << 2)		// 2 == num dimensions
-					.mapToObj(i -> new QuadTreeNode(getChildShape(i), this))
-					.collect(Collectors.toList());
+//			children = IntStream.range(0, 1 << 2)		// 2 == num dimensions
+//					.mapToObj(i -> new QuadTreeNode(getChildShape(i), this))
+//					.collect(Collectors.toList());
+			children = new ArrayList<>();
+			// TODO 1 << 2 = 1*2^2 = 4
+			for (int i = 0; i < 1 << 2; i++) {
+				children.add(new QuadTreeNode(getChildShape(i), this));
+			}
 			ret.addAll(children);
 		} else
 			for (int i = 0; i < children.size(); i++)
@@ -172,7 +177,9 @@ public class QuadTreeNode {
 		final List<QuadTreeNode> ret = new ArrayList<QuadTreeNode>();
 
 		if (!isLeaf()) {
-			for (final QuadTreeNode child : children) {
+//			for (final QuadTreeNode child : children) {
+			for (int i = 0; i < children.size(); i++) {
+				final QuadTreeNode child = children.get(i);
 				ret.addAll(child.merge());
 				ret.add(child);
 			}
@@ -278,8 +285,25 @@ public class QuadTreeNode {
 
 		final double[] oc = origin.getArrayInDouble(), pc = p.getArrayInDouble();
 
-		return IntStream.range(0, 2)							// 2 = num dimensions
-				.map(i -> pc[i] < oc[i] ? 0 : 1)
-				.reduce(0, (r, x) -> r << 1 | x);
+		// IntStream.range(0, 2)
+		int[] mapd = new int[2];
+		for (int i = 0; i < 2; i++) {
+			// .map(i -> pc[i] < oc[i] ? 0 : 1)
+			int map = 1; // 0 or 1
+			if (pc[i] < oc[i]) {
+				map = 0;
+			}
+			mapd[i] = map;
+		}
+		// .reduce(0, (r, x) -> r << 1 | x);
+		int r = 0;
+		for (int i = 0; i < 2; i++) {
+			int x = mapd[i];
+			r = r << 1 | x;
+		}
+		return r;
+//		return IntStream.range(0, 2)							// 2 = num dimensions
+//				.map(i -> pc[i] < oc[i] ? 0 : 1)
+//				.reduce(0, (r, x) -> r << 1 | x);
 	}
 }
