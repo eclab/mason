@@ -2650,7 +2650,8 @@ public class Console extends JFrame implements Controller
             }
         updateTime(steps,time,rate);
         }
-        
+    
+    /*
     void updateTime(long steps, double time, double rate)
         {
         int showing;
@@ -2667,6 +2668,61 @@ public class Console extends JFrame implements Controller
                 break;
             case SHOWING_TPS:
                 if (lastRate != 0) updateTimeText(lastRate < 0 ? "" : rateFormat.format(lastRate));
+                break;
+            case SHOWING_NOTHING:
+                updateTimeText("");
+                break;
+            default:
+                throw new RuntimeException("default case should never occur");
+            }
+        }
+    */
+
+
+
+    void updateTime(long steps, double time, double rate)
+        {
+        int showing;
+        boolean simulationExists = (simulation != null && simulation.state != null);
+        synchronized (this.time) { lastRate = rate; lastSteps = steps; lastTime = time; showing = this.showing; }
+        switch(showing)
+            {
+            case SHOWING_TIME:
+            	{
+            	if (!simulationExists)
+            		updateTimeText("");
+            	else
+            		{
+	            	if (simulation.state.isRemoteProxy())		// are we a remote visualization proxy?  If so, get the "real" time
+	            		{
+		                updateTimeText("" + simulation.state.schedule.getTimestamp(simulation.state.remoteTime(), "At Start", "At End"));
+		                }
+	            	else
+	            		{
+		                updateTimeText("" + simulation.state.schedule.getTimestamp(lastTime, "At Start", "At End"));
+	            		}
+	            	}
+                }
+            	break;
+            case SHOWING_STEPS:
+            	{
+            	if (!simulationExists)
+            		updateTimeText("");
+            	else
+            		{
+	            	if (simulation.state.isRemoteProxy())		// are we a remote visualization proxy?  If so, get the "real" steps
+	            		{
+		                updateTimeText("" + simulation.state.remoteSteps());
+		                }
+	            	else
+	            		{
+		            	updateTimeText("" + lastSteps);
+		            	}
+	            	}
+                }
+                break;
+            case SHOWING_TPS:
+                if (lastRate != 0) updateTimeText(rate < 0 ? "" : rateFormat.format(rate));
                 break;
             case SHOWING_NOTHING:
                 updateTimeText("");
