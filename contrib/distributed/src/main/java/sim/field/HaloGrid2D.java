@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import mpi.Datatype;
 import mpi.MPI;
@@ -137,7 +138,8 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 
 		final List<GridStorage> tempStor = new ArrayList<GridStorage>();
 		final QuadTreePartition q = (QuadTreePartition) partition;
-		partition.registerPreCommit(arg -> {
+		partition.registerPreCommit(new Consumer() {
+			public void accept(Object arg) {
 //			final int level = (int) arg;
 //			GridStorage s = null;
 //
@@ -149,8 +151,10 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 //				System.exit(-1);
 //			}
 //			if (q.isGroupMaster(level)) tempStor.add(s);
+			}
 		});
-		partition.registerPostCommit(arg -> {
+		partition.registerPostCommit(new Consumer() {
+			public void accept(Object t) {
 //			final int level = (int) arg;
 //			GridStorage s = null;
 
@@ -165,6 +169,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 //				e.printStackTrace();
 //				System.exit(-1);
 //			}
+			}
 		});
 
 	}
@@ -181,7 +186,13 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		localStorage.reshape(haloPart);
 		// Get the partition representing private area by shrinking the original
 		// partition by aoi at each dimension
-		privatePart = origPart.resize(Arrays.stream(aoi).map(x -> -x).toArray());
+		
+		int[] negAoi = new int[aoi.length];
+		for (int i = 0; i < aoi.length; i++) {
+			negAoi[i] = - aoi[i];
+		}
+		privatePart = origPart.resize(negAoi);
+		//privatePart = origPart.resize(Arrays.stream(aoi).map(x -> -x).toArray());
 		// Get the neighbors and create Neighbor objects
 //		neighbors = Arrays
 //				.stream(partition.getNeighborIds())

@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.IntStream;
+//import java.util.stream.IntStream;
 
 import sim.field.partitioning.IntHyperRect;
 //import sim.field.partitioning.IntPointGenerator;
@@ -52,8 +52,19 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 //				.reduce(1, (x, y) -> x * y))				// 1*0=0, 0 => 0, 0, ..., 0
 //				.mapToObj(i -> new HashSet<>())				// <new HashSet<>(), ..., new HashSet<>()
 //				.toArray(s -> new HashSet[s]);				// 
-		return IntStream.range(0, Arrays.stream(this.dsize).reduce(1, (x,y) -> x*y))
-				.mapToObj(i -> new HashSet<>()).toArray(s -> new HashSet[s]);
+		
+		int volume = 1;
+		for (int i = 0; i < this.dsize.length; i++) { // <- size of 2
+			volume *= this.dsize[i];
+		}
+		HashSet[] set = new HashSet[volume];
+		for (int i = 0; i < volume; i++) {
+			set[i] = new HashSet();
+		}
+		return set;
+		
+		//return IntStream.range(0, Arrays.stream(this.dsize).reduce(1, (x,y) -> x*y))
+		//		.mapToObj(i -> new HashSet<>()).toArray(s -> new HashSet[s]);
 	}
 
 	public String toString() {

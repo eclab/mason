@@ -304,10 +304,19 @@ public class QuadTreePartition extends PartitionInterface {
 
 			gc.comm.reduce(sendData, recvData, recvData.length, MPI.DOUBLE, MPI.SUM, gc.groupRoot);
 
-			if (isGroupMaster(gc))
-				sendCentroids = new Object[] { gc.master.getId(),
-						new Int2D(Arrays.stream(recvData).skip(1).mapToInt(x -> (int) (x / recvData[0])).toArray())
+			if (isGroupMaster(gc)) {
+				int[] locVals = new int[recvData.length - 1];
+				// skip first (i = 1)
+				for (int i = 1; i < recvData.length; i++) {
+					double x = recvData[i];
+					locVals[i-1] = (int) (x / recvData[0]);
+				}
+				sendCentroids = new Object[] {
+					gc.master.getId(),
+//					new Int2D(Arrays.stream(recvData).skip(1).mapToInt(x -> (int) (x / recvData[0])).toArray())
+					new Int2D(locVals)
 				};
+			}
 		}
 
 		// broadcast to all nodes
