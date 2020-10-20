@@ -2695,7 +2695,7 @@ public class Console extends JFrame implements Controller
             		{
 	            	if (simulation.state.isRemoteProxy())		// are we a remote visualization proxy?  If so, get the "real" time
 	            		{
-		                updateTimeText("" + simulation.state.remoteTime());
+		                updateTimeText("" + simulation.state.schedule.getTimestamp(simulation.state.remoteTime(), "At Start", "At End"));
 		                }
 	            	else
 	            		{
