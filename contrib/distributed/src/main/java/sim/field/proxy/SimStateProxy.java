@@ -60,6 +60,16 @@ public class SimStateProxy extends SimState
 	/** Returns the string by which a given visualization processor (a VisualizationProcessor instance) is registered with the Registry. */
 	public final String getVisualizationProcessorString(int pid) { return RemoteProcessor.NAME_PREFIX + pid; }		// or whatever
 	
+	public static final int SLEEP = 25;	// ms
+	public long refresh = 0;
+	public static final int DEFAULT_RATE = 1000;
+	public int rate = DEFAULT_RATE;
+	/** Returns the update rate in ms */
+	public int getRate() { return rate; }
+	/** Sets the update rate in ms */
+	public void setRate(int val) { rate = val; }
+	public long lastSteps = -1;
+	
 	// The registry proper
 	Registry registry = null;
 	// World bounds
@@ -128,6 +138,9 @@ public class SimStateProxy extends SimState
 	public void start()
 		{
 		super.start();
+		lastSteps = -1;
+		refresh = System.currentTimeMillis();
+		
 		try
 			{
 			// grab the registry and query it for basic information
@@ -144,23 +157,48 @@ public class SimStateProxy extends SimState
 				{
 				public void step(SimState state)
 					{
+					// First we sleep a little bit so we don't just constantly poll
 					try
 						{
-						VisualizationProcessor vp = getVisualizationProcessor();
-						vp.lock();
-						for(int i = 0; i < fields.size(); i++)
+						Thread.currentThread().sleep(SLEEP);
+						}
+					catch (InterruptedException ex)
+						{
+						ex.printStackTrace();
+						}
+					
+					// Next we check to see if enough time has elapsed to bother querying the remote processor
+					long cur = System.currentTimeMillis();
+					if (cur - refresh >= DEFAULT_RATE)
+						{
+						refresh = cur;
+						try
 							{
-							fields.get(i).update(SimStateProxy.this, i);
+							
+							// Now we query the remote processor to see if a new step has elapsed
+							VisualizationProcessor vp = getVisualizationProcessor();
+							long steps = vp.getSteps();
+							if (steps > lastSteps)
+								{
+								
+								// Okay it's worth updating, so let's grab the data
+								vp.lock();
+								for(int i = 0; i < fields.size(); i++)
+									{
+									fields.get(i).update(SimStateProxy.this, i);
+									}
+								vp.unlock();
+								}
+							lastSteps = steps;
 							}
-						vp.unlock();
-						}
-					catch (RemoteException ex)
-						{
-						ex.printStackTrace();
-						}
-					catch (NotBoundException ex)
-						{
-						ex.printStackTrace();
+						catch (RemoteException ex)
+							{
+							ex.printStackTrace();
+							}
+						catch (NotBoundException ex)
+							{
+							ex.printStackTrace();
+							}
 						}
 					}
 				});
@@ -180,5 +218,37 @@ public class SimStateProxy extends SimState
 		{
 		super(seed);
 		}
+
+    public boolean isRemoteProxy()
+    	{
+    	return true;
+    	}
+    	
+    public long remoteSteps()
+    	{
+    	try
+    		{
+	    	return getVisualizationProcessor().getSteps();
+	    	}
+	    catch (RemoteException ex)
+	    	{
+	    	ex.printStackTrace();
+		    return 0;
+	    	}
+    	}
+    
+    public double remoteTime()
+    	{
+    	try
+    		{
+	    	return getVisualizationProcessor().getTime();
+	    	}
+	    catch (RemoteException ex)
+	    	{
+	    	ex.printStackTrace();
+		    return Schedule.BEFORE_SIMULATION;
+	    	}
+    	}
+    
 	}
 	
