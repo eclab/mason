@@ -830,5 +830,26 @@ public class SimState implements java.io.Serializable
     	{
     	return writer;
     	}
+    
+    /** Returns true if the simulation is a remote proxy simulation. Ordinarily you should leave this
+    	alone: it's provided mostly for the distributed visualizer. */
+    public boolean isRemoteProxy()
+    	{
+    	return false;
+    	}
+    	
+    /** Override this to revise the steps displayed in the Console.  Ordinarily you should leave this
+    	alone: it's provided mostly for the distributed visualizer. */
+    public long reviseSteps(long steps)
+    	{
+    	return steps;
+    	}
+    
+    /** Override this to revise the time displayed in the Console.  Ordinarily you should leave this
+    	alone: it's provided mostly for the distributed visualizer. */
+    public double reviseTime(double time)
+    	{
+    	return time;
+    	}
     }
 
