@@ -37,4 +37,18 @@ public interface VisualizationProcessor extends Remote {
 
 	/** Returns the world (non-toroidal) bounds of the distributed model */
 	public IntHyperRect getWorldBounds() throws RemoteException;
+	
+	//// WE ALSO NEED THE FOLLOWING, WHICH DO *NOT* REQUIRE LOCKING BECAUSE THEY ARE SYNCHRONIZED.
+	//// JUST CALL THE SECHEDULE'S VERSION
+	
+	/** Returns the schedule's current steps */	
+	public long getSteps() throws RemoteException;
+
+	/** Returns the schedule's current time */	
+	public double getTime() throws RemoteException;
+
+	/// Not sure how to do this one -- grab information from the quad tree?
+	/// The IntHyperRects in this method should return the LOCAL storage size, not
+	/// including the halo rect, I think.
+	public ArrayList<IntHyperRect> getAllLocalBounds() throws RemoteException;
 }
