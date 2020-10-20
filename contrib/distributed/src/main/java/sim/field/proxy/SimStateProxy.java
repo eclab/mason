@@ -230,7 +230,7 @@ public class SimStateProxy extends SimState
     		{
 	    	return getVisualizationProcessor().getSteps();
 	    	}
-	    catch (RemoteException ex)
+	    catch (RemoteException | NotBoundException ex)
 	    	{
 	    	ex.printStackTrace();
 		    return 0;
@@ -243,7 +243,7 @@ public class SimStateProxy extends SimState
     		{
 	    	return getVisualizationProcessor().getTime();
 	    	}
-	    catch (RemoteException ex)
+	    catch (RemoteException | NotBoundException ex)
 	    	{
 	    	ex.printStackTrace();
 		    return Schedule.BEFORE_SIMULATION;

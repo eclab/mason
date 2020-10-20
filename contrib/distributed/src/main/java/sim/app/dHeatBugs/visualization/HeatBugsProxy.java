@@ -4,7 +4,8 @@
   See the file "LICENSE" for more information
 */
 
-package sim.app.dHeatbugs.visualization;
+package sim.app.dHeatBugs.visualization;
+
 import sim.engine.*;
 import sim.field.grid.*;
 import sim.util.*;

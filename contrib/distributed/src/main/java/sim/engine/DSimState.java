@@ -28,7 +28,6 @@ import mpi.MPIException;
 import sim.engine.registry.DRegistry;
 import sim.engine.transport.AgentWrapper;
 import sim.engine.transport.PayloadWrapper;
-import sim.engine.transport.RMIProxy;
 import sim.engine.transport.TransporterMPI;
 import sim.field.HaloGrid2D;
 import sim.field.Synchronizable;
@@ -388,6 +387,7 @@ public class DSimState extends SimState {
 
 				} catch (MPIException e) {
 					// TODO: handle exception
+					e.printStackTrace();
 				}
 				if (balancerLevel != 0)
 					balancerLevel--;

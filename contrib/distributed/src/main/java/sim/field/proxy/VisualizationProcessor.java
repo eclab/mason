@@ -3,6 +3,7 @@ package sim.field.proxy;
 import sim.field.partitioning.*;
 import sim.field.storage.*;
 import java.rmi.*;
+import java.util.ArrayList;
 
 /**
  * This is implemented by a single object for each processor and added to the
