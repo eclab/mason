@@ -840,16 +840,16 @@ public class SimState implements java.io.Serializable
     	
     /** Override this to revise the steps displayed in the Console.  Ordinarily you should leave this
     	alone: it's provided mostly for the distributed visualizer. */
-    public long reviseSteps(long steps)
+    public long remoteSteps()
     	{
-    	return steps;
+    	return 0;
     	}
     
     /** Override this to revise the time displayed in the Console.  Ordinarily you should leave this
     	alone: it's provided mostly for the distributed visualizer. */
-    public double reviseTime(double time)
+    public double remoteTime()
     	{
-    	return time;
+    	return 0;
     	}
     }
 
