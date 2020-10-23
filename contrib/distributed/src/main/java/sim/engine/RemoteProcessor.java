@@ -1,10 +1,12 @@
 package sim.engine;
 
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sim.engine.registry.DRegistry;
+import sim.engine.transport.TransportRMIInterface;
 import sim.field.partitioning.IntHyperRect;
 import sim.field.proxy.VisualizationProcessor;
 import sim.field.storage.GridStorage;
@@ -57,8 +59,12 @@ public class RemoteProcessor implements VisualizationProcessor {
 		return dSimState.getPartitioning().getBounds();
 	}
 
-	public GridStorage getStorage(int storageId) throws RemoteException {
-		return dSimState.fieldRegistry.get(storageId).localStorage;
+	public GridStorage getStorage(int fieldId) throws RemoteException {
+		return dSimState.fieldRegistry.get(fieldId).localStorage;
+	}
+
+	public TransportRMIInterface getTransportRMI(int fieldId) throws RemoteException {
+		return (TransportRMIInterface) dSimState.fieldRegistry.get(fieldId);
 	}
 
 	public int getNumProcessors() throws RemoteException {
@@ -81,11 +87,16 @@ public class RemoteProcessor implements VisualizationProcessor {
 		return dSimState.getPartitioning().getAllBounds();
 	}
 
-//	public RemoteProcessor getRemoteProcessor(final int pid) {
-//		// TODO: what's better, ArrayList or HashMap?
-////		return (RemoteProcessor) processorCache.get(pid);
+	public static VisualizationProcessor getProcessor(final int pid) {
+		// TODO: what's better, ArrayList or HashMap?
+//		return (RemoteProcessor) processorCache.get(pid);
 //		return (RemoteProcessor) getRemote(NAME_PREFIX + pid);
-//	}
+		try {
+			return (VisualizationProcessor) DRegistry.getInstance().getObject(NAME_PREFIX + pid);
+		} catch (RemoteException | NotBoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
 //
 //	// TODO: do we extend this to other Remote objects?
 //	private Remote getRemote(final String key) {

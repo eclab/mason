@@ -27,19 +27,24 @@ public class DObjectGrid2D<T extends Serializable> extends DAbstractGrid2D imple
 	@SuppressWarnings("unchecked")
 	public DObjectGrid2D(final PartitionInterface ps, final int[] aoi, final DSimState state, Class<T> clazz) {
 		super(ps);
-		//halo = new HaloGrid2D<T, NumberND, ObjectGridStorage<T>>(ps, aoi,
-		//		new ObjectGridStorage<T>(ps.getBounds(), s -> (T[]) Array.newInstance(clazz, s)), state);
-		
-		halo = new HaloGrid2D<T, NumberND, ObjectGridStorage<T>>(ps, aoi,
-				new ObjectGridStorage<T>(
-					ps.getBounds(),
-					//s -> (T[]) Array.newInstance(clazz, s)),
-					new IntFunction<T[]>() {
-						public T[] apply(int s) {
-							return (T[]) Array.newInstance(clazz, s);
-						}
-					}),
-				state);
+		// halo = new HaloGrid2D<T, NumberND, ObjectGridStorage<T>>(ps, aoi,
+		// new ObjectGridStorage<T>(ps.getBounds(), s -> (T[]) Array.newInstance(clazz,
+		// s)), state);
+
+		try {
+			halo = new HaloGrid2D<T, NumberND, ObjectGridStorage<T>>(ps, aoi,
+					new ObjectGridStorage<T>(
+							ps.getBounds(),
+							// s -> (T[]) Array.newInstance(clazz, s)),
+							new IntFunction<T[]>() {
+								public T[] apply(int s) {
+									return (T[]) Array.newInstance(clazz, s);
+								}
+							}),
+					state);
+		} catch (RemoteException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public T getLocal(final Int2D p) {

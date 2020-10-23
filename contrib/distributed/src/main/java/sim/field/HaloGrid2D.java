@@ -2,6 +2,7 @@ package sim.field;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +39,9 @@ import sim.util.*;
  * @param <S> The Type of Storage to use
  */
 public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends GridStorage>
+		extends UnicastRemoteObject
 		implements TransportRMIInterface<T, P>, Synchronizable, DGrid<T, P> {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Helper class to organize neighbor-related data structures and methods
@@ -118,7 +121,9 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 
 	private final Object lockRMI = new boolean[1];
 
-	public HaloGrid2D(final PartitionInterface ps, final int[] aoi, final S stor, final DSimState state) {
+	public HaloGrid2D(final PartitionInterface ps, final int[] aoi, final S stor, final DSimState state)
+			throws RemoteException {
+		super();
 		this.partition = ps;
 		this.aoi = aoi;
 		localStorage = stor;

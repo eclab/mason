@@ -1,11 +1,10 @@
 package sim.engine.transport;
 
 import java.io.Serializable;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
-import sim.engine.DSimState;
-import sim.engine.registry.DRegistry;
+import sim.engine.RemoteProcessor;
 import sim.field.HaloGrid2D;
 import sim.field.partitioning.PartitionInterface;
 import sim.util.NumberND;
@@ -18,33 +17,25 @@ import sim.util.NumberND;
  * @param <T> The Type of Object in the field
  */
 public class RMIProxy<T extends Serializable, P extends NumberND> {
-	/** This registry object points to the registry in DRegistry */
-	final DRegistry registry;
-	final String prefix = "field: ";
-	final String suffix;
-	final String fieldName;
+	final ArrayList<TransportRMIInterface<T, P>> cache;
+	final int fieldId;
 
-	public RMIProxy(final PartitionInterface ps, HaloGrid2D<T, P, ?> field) {
-		suffix = "," + field.fieldIndex;
-		fieldName = prefix + DSimState.getPID() + suffix;
-		registry = DRegistry.getInstance();
+	public RMIProxy(final PartitionInterface ps, HaloGrid2D haloGrid) {
+		this.fieldId = haloGrid.fieldIndex;
+		this.cache = new ArrayList<>();
 
-		try {
-			if (!registry.registerObject(fieldName, field))
-				throw new RuntimeException("Failed to register field: " + field);
-		} catch (RemoteException e) {
-			throw new RuntimeException(e);
-		}
+		// init with nulls
+		for (int i = 0; i < ps.numProcessors; i++)
+			cache.add(null);
 	}
-
 
 	@SuppressWarnings("unchecked")
-	public TransportRMIInterface<T, P> getField(final int pid) {
-		try {
-			return (TransportRMIInterface<T, P>) registry.getObject(prefix + pid + suffix);
-		} catch (RemoteException | NotBoundException e) {
-			throw new RuntimeException(e);
+	public TransportRMIInterface<T, P> getField(final int pid) throws RemoteException {
+		TransportRMIInterface<T, P> transportRMI = cache.get(pid);
+		if (transportRMI == null) {
+			transportRMI = RemoteProcessor.getProcessor(pid).getTransportRMI(fieldId);
+			cache.add(pid, transportRMI);
 		}
+		return transportRMI;
 	}
-
 }

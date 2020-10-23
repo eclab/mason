@@ -23,8 +23,12 @@ public class DDoubleGrid2D extends DAbstractGrid2D implements DGrid<Double, Int2
 
 	public DDoubleGrid2D(final PartitionInterface ps, final int[] aoi, final double initVal, final DSimState state) {
 		super(ps);
-		halo = new HaloGrid2D<Double, Int2D, DoubleGridStorage>(ps, aoi,
-				new DoubleGridStorage(ps.getBounds(), initVal), state);
+		try {
+			halo = new HaloGrid2D<Double, Int2D, DoubleGridStorage>(ps, aoi,
+					new DoubleGridStorage(ps.getBounds(), initVal), state);
+		} catch (RemoteException e) {
+			throw new RuntimeException(e);
+		}
 
 		this.initVal = initVal;
 	}

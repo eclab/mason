@@ -422,7 +422,8 @@ public class DSimState extends SimState {
 					HaloGrid2D haloGrid2D = (HaloGrid2D) field;
 					if (haloGrid2D.getStorage() instanceof ContStorage) {
 						ContStorage st = (ContStorage) ((HaloGrid2D) field).getStorage();
-						HashSet agents = (HashSet) st.getCell(p).clone(); // create a clone to avoid the
+						Double2D doublep = new Double2D(p);
+						HashSet agents = (HashSet) st.getCell(doublep).clone(); // create a clone to avoid the
 																			// ConcurrentModificationException
 						for (Object a : agents) {
 							NumberND loc = st.getLocation((Serializable) a);

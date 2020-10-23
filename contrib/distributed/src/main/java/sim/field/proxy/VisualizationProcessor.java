@@ -1,5 +1,6 @@
 package sim.field.proxy;
 
+import sim.engine.transport.TransportRMIInterface;
 import sim.field.partitioning.*;
 import sim.field.storage.*;
 import java.rmi.*;
@@ -52,4 +53,9 @@ public interface VisualizationProcessor extends Remote {
 	/// The IntHyperRects in this method should return the LOCAL storage size, not
 	/// including the halo rect, I think.
 	public ArrayList<IntHyperRect> getAllLocalBounds() throws RemoteException;
+	
+	// TODO: Adding here for now
+	// Not sure if one class can implement two remote interfaces
+	public TransportRMIInterface getTransportRMI(int fieldId) throws RemoteException;
+
 }

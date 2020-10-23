@@ -67,6 +67,6 @@ public interface TransportRMIInterface<T extends Serializable, P> extends Remote
 	 *
 	 * @throws RemoteException If the points are not local to the remote field
 	 */
-	public void moveRMI(final P fromP, final P toP, final T t) throws RemoteException;
+	public abstract void moveRMI(final P fromP, final P toP, final T t) throws RemoteException;
 
 }

@@ -1,6 +1,7 @@
 package sim.field.grid;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.function.IntFunction;
 
@@ -26,16 +27,21 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implem
 
 	public DDenseGrid2D(final PartitionInterface ps, final int[] aoi, final DSimState state) {
 		super(ps);
-		//halo = new HaloGrid2D<>(ps, aoi, new DenseGridStorage<>(ps.getBounds(), s -> new ArrayList[s]), state);
-		
-		halo = new HaloGrid2D<T, Int2D, DenseGridStorage<T>>(ps, aoi, new DenseGridStorage<T>(ps.getBounds(),
-				//s -> new ArrayList[s]
-				new IntFunction<ArrayList<T>[]>() {
+		// halo = new HaloGrid2D<>(ps, aoi, new DenseGridStorage<>(ps.getBounds(), s ->
+		// new ArrayList[s]), state);
+
+		try {
+			halo = new HaloGrid2D<T, Int2D, DenseGridStorage<T>>(ps, aoi, new DenseGridStorage<T>(ps.getBounds(),
+					// s -> new ArrayList[s]
+					new IntFunction<ArrayList<T>[]>() {
 						public ArrayList<T>[] apply(int s) {
-						return new ArrayList[s];
-					}
-				}),
-				state);
+							return new ArrayList[s];
+						}
+					}),
+					state);
+		} catch (RemoteException e) {
+			throw new RuntimeException(e);
+		}
 
 	}
 
