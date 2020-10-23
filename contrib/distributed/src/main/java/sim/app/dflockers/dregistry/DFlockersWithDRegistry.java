@@ -35,9 +35,8 @@ public class DFlockersWithDRegistry extends DSimState {
 	public DFlockersWithDRegistry(final long seed) {
 		super(seed, DFlockersWithDRegistry.width, DFlockersWithDRegistry.height, DFlockersWithDRegistry.neighborhood);
 		enableRegistry(); // used to enable the object registry
-		final double[] discretizations = new double[] { DFlockersWithDRegistry.neighborhood / 1.5,
-				DFlockersWithDRegistry.neighborhood / 1.5 };
-		flockers = new DContinuous2D<DFlockerWithDRegistry>(getPartitioning(), aoi, discretizations, this);
+		// final double[] discretizations = new double[] { DFlockersWithDRegistry.neighborhood / 1.5, DFlockersWithDRegistry.neighborhood / 1.5 };
+		flockers = new DContinuous2D<DFlockerWithDRegistry>(getPartitioning(), aoi, DFlockersWithDRegistry.neighborhood / 1.5, this);
 	}
 
 	public void start() {
