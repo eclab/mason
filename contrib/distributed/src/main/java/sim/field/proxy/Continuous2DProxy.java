@@ -14,7 +14,7 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
 	public void update(SimStateProxy stateProxy, int proxyIndex) throws RemoteException, NotBoundException
 		{
 		// reshape if needed
-		IntHyperRect bounds = stateProxy.getBounds();
+		IntHyperRect bounds = stateProxy.bounds();
 		double width = bounds.br.x - (double)bounds.ul.x;
 		double height = bounds.br.y - (double)bounds.ul.y;
 		if (width != this.width || height != this.height)
@@ -27,7 +27,7 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
 		// Perhaps we should make it a Remote object and grab only the data we need
 		// rather than pushing the whole object over the network for visualization
 		
-		ContStorage storage = (ContStorage)(stateProxy.getStorage(proxyIndex));
+		ContStorage storage = (ContStorage)(stateProxy.storage(proxyIndex));
 		HashMap<Object, Double2D> map = (HashMap)(storage.getStorageObjects());
 		
 		// FIXME: discretization is final, cannot be assigned

@@ -44,28 +44,28 @@ public class SimStateProxy extends SimState
 	{
 	String host = "localhost";
 	/** Returns the IP address of the distributed RMI registry.  You need to set this before start() is called. */
-	public String getRegistryHost() { return host; }
+	public String registryHost() { return host; }
 	/** Sets the IP address of the distributed RMI registry.  You need to set this before start() is called. */
 	public void setRegistryHost(String host) { this.host = host; }
 	
 	int port = 5000;
 	/** Returns the IP address of the distributed RMI registry.  You need to set this before start() is called. */
-	public int getRegistryPort() { return port; }
+	public int registryPort() { return port; }
 	/** Sets the IP address of the distributed RMI registry.  You need to set this before start() is called. */
 	public void setRegistryPort(int port) { this.port = port; }
 	
 	/** Returns the string by which the visualization root (a VisualizationRoot instance) is registered with the Registry. */
-	public final String getVisualizationRootString() { return getVisualizationProcessorString(0); }						// or whatever
+	public final String visualizationRootString() { return visualizationProcessorString(0); }						// or whatever
 	
 	/** Returns the string by which a given visualization processor (a VisualizationProcessor instance) is registered with the Registry. */
-	public final String getVisualizationProcessorString(int pid) { return RemoteProcessor.NAME_PREFIX + pid; }		// or whatever
+	public final String visualizationProcessorString(int pid) { return RemoteProcessor.NAME_PREFIX + pid; }		// or whatever
 	
 	public static final int SLEEP = 25;	// ms
 	public long refresh = 0;
 	public static final int DEFAULT_RATE = 1000;
 	public int rate = DEFAULT_RATE;
 	/** Returns the update rate in ms */
-	public int getRate() { return rate; }
+	public int rate() { return rate; }
 	/** Sets the update rate in ms */
 	public void setRate(int val) { rate = val; }
 	public long lastSteps = -1;
@@ -95,13 +95,13 @@ public class SimStateProxy extends SimState
 		}
 	
 	/** Returns the registry */
-	public Registry getRegistry()
+	public Registry registry()
 		{
 		return registry;
 		}
 	
 	/** Returns the number of processors */
-	public int getNumProcessors() { return numProcessors; }
+	public int numProcessors() { return numProcessors; }
 
 	/** Sets the current processor to be visualized */
 	public void setCurrentProcessor(int pid)
@@ -111,28 +111,28 @@ public class SimStateProxy extends SimState
 		}
 		
 	/** Sets the current processor to be visualized */
-	public int getCurrentProcessor() { return processor; }
+	public int currentProcessor() { return processor; }
 	
 	/** Returns the current Visualization Processor either cached or by fetching it remotely. */
-	public VisualizationProcessor getVisualizationProcessor() throws RemoteException, NotBoundException
+	public VisualizationProcessor visualizationProcessor() throws RemoteException, NotBoundException
 		{
 		if (visualizationCache[processor] == null)
 			{
-			visualizationCache[processor] = (VisualizationProcessor)(registry.lookup(getVisualizationProcessorString(processor)));
+			visualizationCache[processor] = (VisualizationProcessor)(registry.lookup(visualizationProcessorString(processor)));
 			}
 		return visualizationCache[processor];
 		}
 		
 	/** Fetches the requested storage from the current Visualization Processor. */
-	public GridStorage getStorage(int storage) throws RemoteException, NotBoundException
+	public GridStorage storage(int storage) throws RemoteException, NotBoundException
 		{
-		return getVisualizationProcessor().getStorage(storage);
+		return visualizationProcessor().getStorage(storage);
 		}
 		
 	/** Fetches the halo bounds from the current Visualization Processor. */
-	public IntHyperRect getBounds() throws RemoteException, NotBoundException
+	public IntHyperRect bounds() throws RemoteException, NotBoundException
 		{
-		return getVisualizationProcessor().getBounds();
+		return visualizationProcessor().getBounds();
 		}
 		
 	public void start()
@@ -144,8 +144,8 @@ public class SimStateProxy extends SimState
 		try
 			{
 			// grab the registry and query it for basic information
-			registry = LocateRegistry.getRegistry(getRegistryHost(), getRegistryPort());
-			visualizationRoot = (VisualizationProcessor)(registry.lookup(getVisualizationRootString()));
+			registry = LocateRegistry.getRegistry(registryHost(), registryPort());
+			visualizationRoot = (VisualizationProcessor)(registry.lookup(visualizationRootString()));
 			worldBounds = visualizationRoot.getWorldBounds();
 			numProcessors = visualizationRoot.getNumProcessors();
 			
@@ -176,7 +176,7 @@ public class SimStateProxy extends SimState
 							{
 							
 							// Now we query the remote processor to see if a new step has elapsed
-							VisualizationProcessor vp = getVisualizationProcessor();
+							VisualizationProcessor vp = visualizationProcessor();
 							long steps = vp.getSteps();
 							if (steps > lastSteps)
 								{
@@ -228,7 +228,7 @@ public class SimStateProxy extends SimState
     	{
     	try
     		{
-	    	return getVisualizationProcessor().getSteps();
+	    	return visualizationProcessor().getSteps();
 	    	}
 	    catch (RemoteException | NotBoundException ex)
 	    	{
@@ -241,7 +241,7 @@ public class SimStateProxy extends SimState
     	{
     	try
     		{
-	    	return getVisualizationProcessor().getTime();
+	    	return visualizationProcessor().getTime();
 	    	}
 	    catch (RemoteException | NotBoundException ex)
 	    	{

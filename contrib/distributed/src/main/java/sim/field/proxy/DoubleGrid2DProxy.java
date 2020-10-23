@@ -12,14 +12,14 @@ public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
 	public void update(SimStateProxy stateProxy, int proxyIndex) throws RemoteException, NotBoundException
 		{
 		// reshape if needed
-		IntHyperRect bounds = stateProxy.getBounds();
+		IntHyperRect bounds = stateProxy.bounds();
 		int width = bounds.br.x - bounds.ul.x;
 		int height = bounds.br.y - bounds.ul.y;
 		if (width != this.width || height != this.height)
 			reshape(width, height);
 		
 		// load storage
-		DoubleGridStorage storage = (DoubleGridStorage)(stateProxy.getStorage(proxyIndex));
+		DoubleGridStorage storage = (DoubleGridStorage)(stateProxy.storage(proxyIndex));
 		double[] data = (double[])(storage.getStorageArray());	
 		for(int x = 0; x < width; x++)
 			{

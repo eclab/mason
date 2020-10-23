@@ -14,14 +14,14 @@ public class DenseGrid2DProxy extends DenseGrid2D implements UpdatableProxy
 	public void update(SimStateProxy stateProxy, int proxyIndex) throws RemoteException, NotBoundException
 		{
 		// reshape if needed
-		IntHyperRect bounds = stateProxy.getBounds();
+		IntHyperRect bounds = stateProxy.bounds();
 		int width = bounds.br.x - bounds.ul.x;
 		int height = bounds.br.y - bounds.ul.y;
 		if (width != this.width || height != this.height)
 			reshape(width, height);
 		
 		// load storage
-		DenseGridStorage storage = (DenseGridStorage)(stateProxy.getStorage(proxyIndex));
+		DenseGridStorage storage = (DenseGridStorage)(stateProxy.storage(proxyIndex));
 		ArrayList[] data = (ArrayList[])(storage.getStorageArray());	
 		for(int x = 0; x < width; x++)
 			{

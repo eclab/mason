@@ -12,14 +12,14 @@ public class ObjectGrid2DProxy extends ObjectGrid2D implements UpdatableProxy
 	public void update(SimStateProxy stateProxy, int proxyIndex) throws RemoteException, NotBoundException
 		{
 		// reshape if needed
-		IntHyperRect bounds = stateProxy.getBounds();
+		IntHyperRect bounds = stateProxy.bounds();
 		int width = bounds.br.x - bounds.ul.x;
 		int height = bounds.br.y - bounds.ul.y;
 		if (width != this.width || height != this.height)
 			reshape(width, height);
 		
 		// load storage
-		ObjectGridStorage storage = (ObjectGridStorage)(stateProxy.getStorage(proxyIndex));
+		ObjectGridStorage storage = (ObjectGridStorage)(stateProxy.storage(proxyIndex));
 		Object[] data = (Object[])(storage.getStorageArray());	
 		for(int x = 0; x < width; x++)
 			{
