@@ -1,13 +1,15 @@
 package sim.field.partitioning;
 
 import java.util.Arrays;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.stream.IntStream;
 import sim.util.*;
 
 // TODO Move to NdRectangle
-public class IntHyperRect implements Comparable<IntHyperRect>, Iterable<Int2D> {
+public class IntHyperRect implements Comparable<IntHyperRect>, Iterable<Int2D>, Serializable {
+	private static final long serialVersionUID = 1L;
 	public int id;
 	public Int2D ul, br;
 

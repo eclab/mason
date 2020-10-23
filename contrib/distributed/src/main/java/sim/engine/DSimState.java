@@ -554,8 +554,8 @@ public class DSimState extends SimState {
 			registry = DRegistry.getInstance();
 		}
 
-		processor = new RemoteProcessor(this);
 		try {
+			processor = new RemoteProcessor(this);
 			processor.lock();
 			// unlocks in preSchedule
 		} catch (RemoteException e1) {

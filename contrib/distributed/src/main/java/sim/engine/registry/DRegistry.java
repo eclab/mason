@@ -87,7 +87,8 @@ public class DRegistry {
 		rank = MPI.COMM_WORLD.getRank();
 		initLocalLogger(String.format("MPI-Job-%d", rank));
 
-		port = getAvailablePort();
+//		port = getAvailablePort();
+		port = 5000;
 		String myip = InetAddress.getLocalHost().getHostAddress();
 
 		if (rank == 0) {
