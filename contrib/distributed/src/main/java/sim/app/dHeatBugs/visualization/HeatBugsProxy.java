@@ -28,8 +28,8 @@ public class HeatBugsProxy extends SimStateProxy
     public void start()
         {
         super.start();
-		registerFieldProxy(valgrid);
-		registerFieldProxy(buggrid);
+		registerFieldProxy(valgrid, 0);
+		registerFieldProxy(buggrid, 2);
         }
     
     public static void main(String[] args)

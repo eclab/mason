@@ -85,13 +85,15 @@ public class SimStateProxy extends SimState
 	// The SimState's fields (on the MASON side), all field proxies.
 	// These need to be in the same order as the order associated with the remote grids
 	ArrayList<UpdatableProxy> fields = new ArrayList<UpdatableProxy>();
+	ArrayList<Integer> indices = new ArrayList<Integer>();
 	
 	/** Registers a field proxy with the SimState.  Each timestep or whatnot the proxy will get updated,
 		which causes it to go out and load information remotely.  The order in which the fields are registered
 		must be the same as the order associated with the remote grids' storage objects returned by the VisualizationProcessor. */
-	public void registerFieldProxy(UpdatableProxy proxy)
+	public void registerFieldProxy(UpdatableProxy proxy, int index)
 		{
 		fields.add(proxy);
+		indices.add(index);
 		}
 	
 	/** Returns the registry */
@@ -197,7 +199,7 @@ public class SimStateProxy extends SimState
 								for(int i = 0; i < fields.size(); i++)
 									{
 			System.err.println("update field " + i);
-									fields.get(i).update(SimStateProxy.this, i);
+									fields.get(i).update(SimStateProxy.this, indices.get(i));
 			System.err.println("-update field " + i);
 									}
 			System.err.println("unlock()");

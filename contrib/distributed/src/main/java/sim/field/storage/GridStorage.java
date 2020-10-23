@@ -14,9 +14,11 @@ import sim.util.*;
  * @param <T> Type of objects to store
  */
 public abstract class GridStorage<T extends Serializable, P extends NumberND> implements java.io.Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	Object storage;
 	IntHyperRect shape;
-	Datatype baseType = MPI.BYTE;
+	transient Datatype baseType = MPI.BYTE;
 
 	int stride;
 
