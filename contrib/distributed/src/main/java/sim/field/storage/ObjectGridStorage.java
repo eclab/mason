@@ -14,7 +14,7 @@ import sim.util.*;
  */
 public class ObjectGridStorage<T extends Serializable> extends GridStorage<T, Int2D> {
 
-	IntFunction<T[]> alloc; // Lambda function which accepts the size as its argument and returns a T array
+	transient IntFunction<T[]> alloc; // Lambda function which accepts the size as its argument and returns a T array
 
 	public ObjectGridStorage(final IntHyperRect shape, final IntFunction<T[]> allocator) {
 		super(shape);

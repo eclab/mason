@@ -44,6 +44,12 @@ public class QuadTreePartition extends PartitionInterface {
 
 		throw new IllegalArgumentException("The partition for " + pid + " does not exist");
 	}
+	
+	public IntHyperRect getHaloBounds() {
+		return myLeafNode.getShape().resize(aoi);
+	}
+	
+	 
 
 	public ArrayList<IntHyperRect> getAllBounds() {
 		ArrayList<IntHyperRect> allBounds = new ArrayList<>();

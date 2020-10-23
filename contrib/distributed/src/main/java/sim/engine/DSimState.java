@@ -203,7 +203,7 @@ public class DSimState extends SimState {
 			}
 
 			// Stop the world and wait for the Visualizer to unlock
-			MPI.COMM_WORLD.barrier();
+//			MPI.COMM_WORLD.barrier();
 
 			syncFields();
 			transporter.sync();

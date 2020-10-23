@@ -14,7 +14,7 @@ import sim.util.*;
  */
 public class DenseGridStorage<T extends Serializable> extends GridStorage<T, Int2D> {
 
-	IntFunction<ArrayList<T>[]> alloc; // Lambda function which accepts the size as its argument and returns a T array
+	transient IntFunction<ArrayList<T>[]> alloc; // Lambda function which accepts the size as its argument and returns a T array
 
 	public DenseGridStorage(final IntHyperRect shape, final IntFunction<ArrayList<T>[]> allocator) {
 		super(shape);

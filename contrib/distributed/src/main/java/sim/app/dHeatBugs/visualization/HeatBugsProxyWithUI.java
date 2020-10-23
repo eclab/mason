@@ -84,7 +84,7 @@ public class HeatBugsProxyWithUI extends GUIState
         super.init(c);
         
         // Make the Display2D.  We'll have it display stuff later.
-        display = new Display2D(400,400,this); // at 400x400, we've got 4x4 per array position
+        display = new Display2D(500,500,this); // at 400x400, we've got 4x4 per array position
         displayFrame = display.createFrame();
         displayFrame.setTitle(displayFrame.getTitle());
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list

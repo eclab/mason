@@ -75,6 +75,8 @@ public abstract class PartitionInterface {
 	 */
 	public abstract IntHyperRect getBounds(int pid);
 
+	public abstract IntHyperRect getHaloBounds();
+	
 	public abstract ArrayList<IntHyperRect> getAllBounds();
 	
 	public abstract int getNumNeighbors();

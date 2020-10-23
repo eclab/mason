@@ -31,7 +31,7 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
 		HashMap<Object, Double2D> map = (HashMap)(storage.getStorageObjects());
 		
 		// FIXME: discretization is final, cannot be assigned
-		//discretization = storage.getDiscretization();
+		discretization = storage.getDiscretization();
 		
 		clear();
 		

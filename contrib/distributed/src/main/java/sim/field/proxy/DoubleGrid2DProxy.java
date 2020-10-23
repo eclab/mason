@@ -27,7 +27,7 @@ public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
 			for(int y = 0; y < height; y++)
 				{
 				fieldx[y] = data[x * height + y];
-				System.err.println("" + x + " " + y + " " + fieldx[y]);
+//				System.err.println("" + x + " " + y + " " + fieldx[y]);
 				}
 			}		
 		}

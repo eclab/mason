@@ -118,13 +118,13 @@ public class SimStateProxy extends SimState
 	/** Returns the current Visualization Processor either cached or by fetching it remotely. */
 	public VisualizationProcessor visualizationProcessor() throws RemoteException, NotBoundException
 		{
-		System.err.println("visualizationProcessor()");
+//		System.err.println("visualizationProcessor()");
 		if (visualizationCache[processor] == null)
 			{
-			System.err.println("visualizationProcessor() -> registry lookup");
+//			System.err.println("visualizationProcessor() -> registry lookup");
 			visualizationCache[processor] = (VisualizationProcessor)(registry.lookup(visualizationProcessorString(processor)));
 			}
-		System.err.println("-visualizationProcessor()");
+//		System.err.println("-visualizationProcessor()");
 		return visualizationCache[processor];
 		}
 		
@@ -137,26 +137,27 @@ public class SimStateProxy extends SimState
 	/** Fetches the halo bounds from the current Visualization Processor. */
 	public IntHyperRect bounds() throws RemoteException, NotBoundException
 		{
+		System.err.println(visualizationProcessor().getBounds());
 		return visualizationProcessor().getBounds();
 		}
 		
 	public void start()
 		{
-			System.err.println("start()");
+//			System.err.println("start()");
 		super.start();
 		lastSteps = -1;
 		refresh = System.currentTimeMillis();
 		
 		try
 			{
-			System.err.println("start()->getRegistry()");
+//			System.err.println("start()->getRegistry()");
 			// grab the registry and query it for basic information
 			registry = LocateRegistry.getRegistry(registryHost(), registryPort());
-			System.err.println("start()->registry root lookup");
+//			System.err.println("start()->registry root lookup");
 			visualizationRoot = (VisualizationProcessor)(registry.lookup(visualizationRootString()));
-			System.err.println("start()->registry get world bounds");
+//			System.err.println("start()->registry get world bounds");
 			worldBounds = visualizationRoot.getWorldBounds();
-			System.err.println("start()->registry get num processors");
+//			System.err.println("start()->registry get num processors");
 			numProcessors = visualizationRoot.getNumProcessors();
 			
 			// set up the cache
@@ -184,27 +185,27 @@ public class SimStateProxy extends SimState
 						refresh = cur;
 						try
 							{
-			System.err.println("step()");
+//			System.err.println("step()");
 							// Now we query the remote processor to see if a new step has elapsed
 							VisualizationProcessor vp = visualizationProcessor();
-			System.err.println("vp->getSteps()");
+//			System.err.println("vp->getSteps()");
 							long steps = vp.getSteps();
 							if (steps > lastSteps)
 								{
 								
 								// Okay it's worth updating, so let's grab the data
-			System.err.println("lock()");
+//			System.err.println("lock()");
 								vp.lock();
-			System.err.println("-lock()");
+//			System.err.println("-lock()");
 								for(int i = 0; i < fields.size(); i++)
 									{
-			System.err.println("update field " + i);
+//			System.err.println("update field " + i);
 									fields.get(i).update(SimStateProxy.this, indices.get(i));
-			System.err.println("-update field " + i);
+//			System.err.println("-update field " + i);
 									}
-			System.err.println("unlock()");
+//			System.err.println("unlock()");
 								vp.unlock();
-			System.err.println("-unlock()");
+//			System.err.println("-unlock()");
 								}
 							lastSteps = steps;
 							}
@@ -229,7 +230,7 @@ public class SimStateProxy extends SimState
 			{
 			ex.printStackTrace();
 			}	
-			System.err.println("-start()");
+//			System.err.println("-start()");
 		}
 		
 	public SimStateProxy(long seed)

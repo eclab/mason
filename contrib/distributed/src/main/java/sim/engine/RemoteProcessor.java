@@ -59,7 +59,7 @@ public class RemoteProcessor implements VisualizationProcessor {
 	}
 
 	public IntHyperRect getBounds() throws RemoteException {
-		return dSimState.getPartitioning().getBounds();
+		return dSimState.getPartitioning().getHaloBounds();
 	}
 
 	public GridStorage getStorage(int fieldId) throws RemoteException {
