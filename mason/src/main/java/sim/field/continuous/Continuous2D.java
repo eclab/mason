@@ -94,8 +94,9 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
     public double width;
     public double height;
     
-    public final double discretization;
-    
+    /** Do not change this unless you have completely cleared the Continuous2D, or things will be lost in the hash. */
+    public double discretization;
+        
     /** Provide expected bounds on the SparseContinuous2D */
     public Continuous2D(final double discretization, double width, double height)
         {
