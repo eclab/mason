@@ -130,7 +130,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, Double2D
 		return sum;
 	}
 
-	public Int2D discretize(final Double2D p) {
+	public Int2D discretize(final NumberND p) {
 
 		final double[] offsets = shape.ul().getOffsetsDouble(p);
 		
@@ -146,11 +146,6 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, Double2D
 //				.toArray()
 //		);
 	}
-
-	// FIXME:  All this needs to be more efficient
-	public Int2D discretize(final Int2D p) {
-		return discretize(new Double2D(p));
-		}
 
 	public void clear() {
 		storage = allocate(shape.getArea());
