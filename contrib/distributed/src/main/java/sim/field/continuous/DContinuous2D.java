@@ -37,7 +37,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 				new ContStorage<T>(ps.getBounds(), discretization), state);
 	}
 
-	public NumberND getLocation(final T obj) {
+	public Double2D getLocation(final T obj) {
 		return halo.localStorage.getLocation(obj);
 	}
 
