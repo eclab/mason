@@ -16,18 +16,18 @@ import sim.util.*;
 public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND> {
 
 	int[] dsize;
-	double[] discretizations;
+	double discretization;
 	public HashMap<T, NumberND> m;
 
-	public ContStorage(final IntHyperRect shape, final double[] discretizations) {
+	public ContStorage(final IntHyperRect shape, final double discretization) {
 		super(shape);
 
-		this.discretizations = discretizations;
+		this.discretization = discretization;
 		storage = allocate(shape.getArea());
 	}
 
 	public GridStorage getNewStorage(final IntHyperRect shape) {
-		return new ContStorage<>(shape, discretizations);
+		return new ContStorage<>(shape, discretization);
 	}
 
 	protected Object[] allocate(final int size) {
@@ -37,7 +37,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 //				.toArray();
 		this.dsize = new int[2];					// 2 = num dimensions
 		for (int i = 0; i < this.dsize.length; i++) {
-			this.dsize[i] = (int) Math.ceil(shape.getSize()[i] / discretizations[i]) + 1;	
+			this.dsize[i] = (int) Math.ceil(shape.getSize()[i] / discretization) + 1;	
 		}
 		
 		// Overwrite the original stride with the new stride of dsize;
@@ -136,13 +136,13 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 		
 		int[] ans = new int[2];
 		for (int i = 0; i < offsets.length; i++) {
-			ans[i] = -(int) (offsets[i] / discretizations[i]);
+			ans[i] = -(int) (offsets[i] / discretization);
 		}
 		return new Int2D(ans);
 		
 //		return new Int2D(
 //			IntStream.range(0, offsets.length)
-//				.map(i -> -(int) (offsets[i] / discretizations[i]))
+//				.map(i -> -(int) (offsets[i] / discretization))
 //				.toArray()
 //		);
 	}
@@ -337,9 +337,10 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 //		final int[] offsets = Arrays.stream(discretizations)
 //				.mapToInt(x -> (int) Math.ceil(radius / x))
 //				.toArray();
-		final int[] offsets = new int[discretizations.length];
-		for (int i = 0; i < discretizations.length; i++) {
-			offsets[i] = (int) Math.ceil(radius / discretizations[i]);
+		final int[] offsets = new int[2];		// new int[discretizations.length];
+		for (int i = 0; i < offsets.length; i++)  				// discretizations.length; i++) {
+			{
+			offsets[i] = (int) Math.ceil(radius / discretization);
 		}
 
 		// Generate the start/end point subject to the boundaries
@@ -394,6 +395,20 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 
 		return objs;
 	}
+
+	public HashSet[] getStorageArray() {
+		return (HashSet[]) getStorage();
+	}
+
+	public HashMap<T, NumberND> getStorageObjects() {
+		return m;
+	}
+
+	public double getDiscretization() {
+		return discretization;
+	}
+
+
 
 //	public static void main(final String[] args) throws mpi.MPIException {
 //		mpi.MPI.Init(args);

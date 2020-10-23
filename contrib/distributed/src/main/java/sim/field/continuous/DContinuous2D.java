@@ -29,12 +29,12 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 
 	private HaloGrid2D<T, Double2D, ContStorage<T>> halo;
 
-	public DContinuous2D(final PartitionInterface ps, final int[] aoi, final double[] discretizations,
+	public DContinuous2D(final PartitionInterface ps, final int[] aoi, final double discretization,
 			final DSimState state) {
 
 		super(ps);
 		halo = new HaloGrid2D<T, Double2D, ContStorage<T>>(ps, aoi,
-				new ContStorage<T>(ps.getBounds(), discretizations), state);
+				new ContStorage<T>(ps.getBounds(), discretization), state);
 	}
 
 	public NumberND getLocation(final T obj) {

@@ -37,9 +37,8 @@ public class DSimulation extends DSimState {
 	public DSimulation(final long seed) {
 		super(seed, DSimulation.width, DSimulation.height, DSimulation.neighborhood);
 
-		final double[] discretizations = new double[] { DSimulation.neighborhood / 1.5,
-				DSimulation.neighborhood / 1.5 };
-		field = new DContinuous2D<DAgent>(getPartitioning(), aoi, discretizations, this);
+		// final double[] discretizations = new double[] { DSimulation.neighborhood / 1.5, DSimulation.neighborhood / 1.5 };
+		field = new DContinuous2D<DAgent>(getPartitioning(), aoi, DSimulation.neighborhood / 1.5, this);
 	}
 
 	@Override
