@@ -89,27 +89,33 @@ public class RemoteProcessor implements VisualizationProcessor {
 	}
 
 	public static VisualizationProcessor getProcessor(final int pid) {
-		if (processorCache.size() <= pid)
-			extendCache(pid);
-
-		VisualizationProcessor processor = processorCache.get(pid);
-		if (processor == null)
-			try {
-				processor = (VisualizationProcessor) DRegistry.getInstance().getObject(getProcessorName(pid));
-				processorCache.add(pid, processor);
-			} catch (RemoteException | NotBoundException e) {
-				throw new RuntimeException(e);
-			}
+		VisualizationProcessor processor;
+		if (processorCache.size() <= pid) {
+			// Extend the dynamic array
+			for (int i = processorCache.size(); i <= pid; i++)
+				processorCache.add(null);
+			processor = fetchAndUpdate(pid);
+		} else {
+			processor = processorCache.get(pid);
+			if (processor == null)
+				processor = fetchAndUpdate(pid);
+		}
 		return processor;
-	}
-
-	private static void extendCache(int target) {
-		for (int i = processorCache.size(); i <= target; i++)
-			processorCache.add(null);
 	}
 
 	public static String getProcessorName(final int pid) {
 		return NAME_PREFIX + pid;
+	}
+
+	private static VisualizationProcessor fetchAndUpdate(int pid) {
+		try {
+			VisualizationProcessor processor = (VisualizationProcessor) DRegistry.getInstance()
+					.getObject(getProcessorName(pid));
+			processorCache.add(pid, processor);
+			return processor;
+		} catch (RemoteException | NotBoundException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 //	public static VisualizationProcessor getProcessor(final int pid) {
