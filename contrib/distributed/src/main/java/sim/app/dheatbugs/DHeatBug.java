@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package sim.app.dheatbug;
+package sim.app.dheatbugs;
 
 import sim.engine.DSimState;
 import sim.engine.DSteppable;

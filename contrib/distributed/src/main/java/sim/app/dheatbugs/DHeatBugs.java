@@ -4,7 +4,7 @@
    See the file "LICENSE" for more information
    */
 
-package sim.app.dheatbug;
+package sim.app.dheatbugs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
