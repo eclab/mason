@@ -2,7 +2,6 @@ package sim.engine.transport;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 
 import sim.engine.RemoteProcessor;
 import sim.field.HaloGrid2D;
@@ -16,25 +15,23 @@ import sim.util.NumberND;
  * @param <P> The Type of PointND to use
  * @param <T> The Type of Object in the field
  */
+@SuppressWarnings("rawtypes")
 public class RMIProxy<T extends Serializable, P extends NumberND> {
-	final ArrayList<TransportRMIInterface<T, P>> cache;
+
+	final TransportRMIInterface[] cache;
 	final int fieldId;
 
 	public RMIProxy(final PartitionInterface ps, HaloGrid2D haloGrid) {
 		this.fieldId = haloGrid.fieldIndex;
-		this.cache = new ArrayList<>();
-
-		// init with nulls
-		for (int i = 0; i < ps.numProcessors; i++)
-			cache.add(null);
+		this.cache = new TransportRMIInterface[ps.numProcessors];
 	}
 
 	@SuppressWarnings("unchecked")
 	public TransportRMIInterface<T, P> getField(final int pid) throws RemoteException {
-		TransportRMIInterface<T, P> transportRMI = cache.get(pid);
+		TransportRMIInterface<T, P> transportRMI = cache[pid];
 		if (transportRMI == null) {
 			transportRMI = RemoteProcessor.getProcessor(pid).getTransportRMI(fieldId);
-			cache.add(pid, transportRMI);
+			cache[pid] = transportRMI;
 		}
 		return transportRMI;
 	}

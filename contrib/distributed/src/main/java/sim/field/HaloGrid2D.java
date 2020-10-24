@@ -26,9 +26,10 @@ import sim.field.partitioning.QuadTreePartition;
 import sim.field.storage.ContStorage;
 import sim.field.storage.GridStorage;
 import sim.util.GroupComm;
+import sim.util.Int2D;
 import sim.util.MPIParam;
 import sim.util.MPIUtil;
-import sim.util.*;
+import sim.util.NumberND;
 
 /**
  * All fields in distributed MASON must contain this class. Stores
@@ -162,7 +163,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 //			final int level = (int) arg;
 //			GridStorage s = null;
 
-			reload();
+				reload();
 
 //			if (q.isGroupMaster(level))
 //				s = tempStor.remove(0);
@@ -190,13 +191,13 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		localStorage.reshape(haloPart);
 		// Get the partition representing private area by shrinking the original
 		// partition by aoi at each dimension
-		
+
 		int[] negAoi = new int[aoi.length];
 		for (int i = 0; i < aoi.length; i++) {
-			negAoi[i] = - aoi[i];
+			negAoi[i] = -aoi[i];
 		}
 		privatePart = origPart.resize(negAoi);
-		//privatePart = origPart.resize(Arrays.stream(aoi).map(x -> -x).toArray());
+		// privatePart = origPart.resize(Arrays.stream(aoi).map(x -> -x).toArray());
 		// Get the neighbors and create Neighbor objects
 //		neighbors = Arrays
 //				.stream(partition.getNeighborIds())

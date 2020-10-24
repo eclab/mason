@@ -55,10 +55,13 @@ public class SimStateProxy extends SimState
 	public void setRegistryPort(int port) { this.port = port; }
 	
 	/** Returns the string by which the visualization root (a VisualizationRoot instance) is registered with the Registry. */
-	public final String visualizationRootString() { return visualizationProcessorString(0); }						// or whatever
+	public final String visualizationRootString() { return visualizationProcessorString(visualizationRootPId()); }						// or whatever
+	
+	/** Returns the pid by which the visualization root (a VisualizationRoot instance) is registered with the Registry. */
+	public final int visualizationRootPId() { return 0; }						// or whatever
 	
 	/** Returns the string by which a given visualization processor (a VisualizationProcessor instance) is registered with the Registry. */
-	public final String visualizationProcessorString(int pid) { return RemoteProcessor.NAME_PREFIX + pid; }		// or whatever
+	public final String visualizationProcessorString(int pid) { return RemoteProcessor.getProcessorName(pid); }		// or whatever
 	
 	public static final int SLEEP = 25;	// ms
 	public long refresh = 0;
@@ -77,7 +80,7 @@ public class SimStateProxy extends SimState
 	// The visualization root
 	VisualizationProcessor visualizationRoot = null;
 	// a cache of Visualization Processors so we don't keep querying for them
-	VisualizationProcessor[] visualizationCache = null;
+//	VisualizationProcessor[] visualizationCache = null;
 	// The number of pids.
 	int numProcessors = 0;
 	// which processor are we currently visualizing?
@@ -118,14 +121,16 @@ public class SimStateProxy extends SimState
 	/** Returns the current Visualization Processor either cached or by fetching it remotely. */
 	public VisualizationProcessor visualizationProcessor() throws RemoteException, NotBoundException
 		{
-//		System.err.println("visualizationProcessor()");
-		if (visualizationCache[processor] == null)
-			{
-//			System.err.println("visualizationProcessor() -> registry lookup");
-			visualizationCache[processor] = (VisualizationProcessor)(registry.lookup(visualizationProcessorString(processor)));
-			}
-//		System.err.println("-visualizationProcessor()");
-		return visualizationCache[processor];
+		return RemoteProcessor.getProcessor(processor);
+		
+////		System.err.println("visualizationProcessor()");
+//		if (visualizationCache[processor] == null)
+//			{
+////			System.err.println("visualizationProcessor() -> registry lookup");
+//			visualizationCache[processor] = (VisualizationProcessor)(registry.lookup(visualizationProcessorString(processor)));
+//			}
+////		System.err.println("-visualizationProcessor()");
+//		return visualizationCache[processor];
 		}
 		
 	/** Fetches the requested storage from the current Visualization Processor. */
@@ -154,14 +159,16 @@ public class SimStateProxy extends SimState
 			// grab the registry and query it for basic information
 			registry = LocateRegistry.getRegistry(registryHost(), registryPort());
 //			System.err.println("start()->registry root lookup");
-			visualizationRoot = (VisualizationProcessor)(registry.lookup(visualizationRootString()));
+			visualizationRoot = RemoteProcessor.getProcessor(visualizationRootPId());
+//			visualizationRoot = (VisualizationProcessor)(registry.lookup(visualizationRootString()));
 //			System.err.println("start()->registry get world bounds");
 			worldBounds = visualizationRoot.getWorldBounds();
 //			System.err.println("start()->registry get num processors");
 			numProcessors = visualizationRoot.getNumProcessors();
 			
+			//	Setup a cache in RemoteProcessor to try and standardize it.
 			// set up the cache
-			visualizationCache = new VisualizationProcessor[numProcessors];
+//			visualizationCache = new VisualizationProcessor[numProcessors];
 
 			// set up the field proxies to be updated.  We may wish to change the rate at which they're updated, dunno
 			schedule.scheduleRepeating(new Steppable()
@@ -226,10 +233,10 @@ public class SimStateProxy extends SimState
 			ex.printStackTrace();
 			// we're done
 			}	
-		catch (NotBoundException ex)
-			{
-			ex.printStackTrace();
-			}	
+//		catch (NotBoundException ex)
+//			{
+//			ex.printStackTrace();
+//			}	
 //			System.err.println("-start()");
 		}
 		
