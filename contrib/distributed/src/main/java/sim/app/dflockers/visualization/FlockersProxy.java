@@ -15,8 +15,8 @@ public class FlockersProxy extends SimStateProxy
     private static final long serialVersionUID = 1;
 
     public Continuous2DProxy flockers = new Continuous2DProxy(100, 100, 100);
-    public double width = 150;
-    public double height = 150;
+    public double width = 300;
+    public double height = 300;
     public int numFlockers = 200;
 
     /** Creates a Flockers simulation with the given random number seed. */

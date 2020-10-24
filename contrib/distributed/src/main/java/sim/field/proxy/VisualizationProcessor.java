@@ -26,7 +26,7 @@ public interface VisualizationProcessor extends Remote {
 	public void unlock() throws RemoteException;
 
 	/** Returns the current bounds of the processor's local region. */
-	public IntHyperRect getBounds() throws RemoteException;
+	public IntHyperRect getStorageBounds() throws RemoteException;
 
 	/** Returns a full copy of GridStorage object number STORAGE. */
 	public GridStorage getStorage(int storage) throws RemoteException;

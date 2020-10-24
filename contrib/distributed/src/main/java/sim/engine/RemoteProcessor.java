@@ -57,7 +57,7 @@ public class RemoteProcessor implements VisualizationProcessor {
 		lock.unlock();
 	}
 
-	public IntHyperRect getBounds() throws RemoteException {
+	public IntHyperRect getStorageBounds() throws RemoteException {
 		return dSimState.getPartitioning().getHaloBounds();
 	}
 
