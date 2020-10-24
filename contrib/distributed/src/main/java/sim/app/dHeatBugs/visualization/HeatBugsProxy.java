@@ -31,12 +31,6 @@ public class HeatBugsProxy extends SimStateProxy
 		registerFieldProxy(valgrid, 0);
 		registerFieldProxy(buggrid, 2);
         }
-    
-    public static void main(String[] args)
-        {
-        doLoop(HeatBugsProxy.class, args);
-        System.exit(0);
-        }    
     }
     
     
