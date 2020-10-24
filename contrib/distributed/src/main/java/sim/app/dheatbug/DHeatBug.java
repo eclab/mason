@@ -4,12 +4,13 @@
   See the file "LICENSE" for more information
 */
 
-package sim.app.dHeatBugs;
+package sim.app.dheatbug;
 
+import sim.engine.DSimState;
 import sim.engine.DSteppable;
 import sim.engine.SimState;
 import sim.field.grid.DDoubleGrid2D;
-import sim.util.*;
+import sim.util.Int2D;
 
 public class DHeatBug extends DSteppable {
 	private static final long serialVersionUID = 1;
@@ -101,8 +102,9 @@ public class DHeatBug extends DSteppable {
 		loc_x = dHeatBugs.valgrid.stx(bestx);
 		loc_y = dHeatBugs.valgrid.sty(besty);
 
-		dHeatBugs.bugs.moveRepeatingAgent(new Int2D(old_x, old_y), new Int2D(loc_x, loc_y), this);
+//		System.out.println(DSimState.getPID() + " : " + dHeatBugs.bugs.get(new Int2D(0, 0)));
 
+		dHeatBugs.bugs.moveRepeatingAgent(new Int2D(old_x, old_y), new Int2D(loc_x, loc_y), this);
 	}
 
 	public double getIdealTemperature() {

@@ -4,7 +4,7 @@
    See the file "LICENSE" for more information
    */
 
-package sim.app.dHeatBugs;
+package sim.app.dheatbug;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,6 +66,8 @@ public class DHeatBugs extends DSimState {
 			e.printStackTrace();
 			System.exit(-1);
 		}
+
+//		balanceInterval = 100000;
 	}
 
 	// Same getters and setters as HeatBugs

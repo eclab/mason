@@ -17,9 +17,7 @@ public class RemoteProcessor implements VisualizationProcessor {
 	private final ReentrantLock lock = new ReentrantLock(true); // Fair lock
 	public static final String NAME_PREFIX = "processorPId: ";
 	public final String processorName;
-//	private static VisualizationProcessor[] processorCache = null;
-//	static final Map<Integer, VisualizationProcessor> processorCache = new HashMap<>();
-	static final ArrayList<VisualizationProcessor> processorCache = new ArrayList<>();
+	private static final ArrayList<VisualizationProcessor> processorCache = new ArrayList<>();
 
 	/**
 	 * Creates a processor and registers it to the RMI Registry
@@ -28,8 +26,8 @@ public class RemoteProcessor implements VisualizationProcessor {
 	 * @throws RemoteException
 	 */
 	public RemoteProcessor(DSimState dSimState) throws RemoteException {
-//		super(DSimState.getPID());
-		// TODO: What constructor to use??????
+		// super(DSimState.getPID());
+		// TODO: What constructor to use for UnicastRemoteObject?
 		super();
 
 		this.dSimState = dSimState;
@@ -43,9 +41,6 @@ public class RemoteProcessor implements VisualizationProcessor {
 			throw new RuntimeException("Failed to register processor: " + processorName + ";  " +
 					e.getMessage());
 		}
-
-//		if (processorCache == null)
-//			processorCache = new VisualizationProcessor[dSimState.getPartitioning().numProcessors];
 	}
 
 	public void lock() throws RemoteException {
@@ -117,23 +112,6 @@ public class RemoteProcessor implements VisualizationProcessor {
 			throw new RuntimeException(e);
 		}
 	}
-
-//	public static VisualizationProcessor getProcessor(final int pid) {
-//		try {
-//			VisualizationProcessor processor = processorCache[pid];
-//			if (processor == null)
-//				try {
-//					processor = (VisualizationProcessor) DRegistry.getInstance().getObject(NAME_PREFIX + pid);
-//					processorCache[pid] = processor;
-//				} catch (RemoteException | NotBoundException | NullPointerException e) {
-//					throw new RuntimeException(e);
-//				}
-//			return processor;
-//		} catch (NullPointerException e) {
-//			throw new RuntimeException("Cache not setup; "
-//					+ "Only call this method after an instance of RemoteProcessor has been created");
-//		}
-//	}
 
 //	// TODO: do we extend this to other Remote objects?
 //	private Remote getRemote(final String key) {
