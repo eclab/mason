@@ -18,7 +18,6 @@ import sim.engine.Steppable;
 import sim.engine.Stopping;
 import sim.engine.transport.AgentWrapper;
 import sim.engine.transport.PayloadWrapper;
-import sim.engine.transport.RMIProxy;
 import sim.engine.transport.TransportRMIInterface;
 import sim.field.partitioning.IntHyperRect;
 import sim.field.partitioning.PartitionInterface;

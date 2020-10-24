@@ -1,10 +1,10 @@
-package sim.engine.transport;
+package sim.field;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import sim.engine.RemoteProcessor;
-import sim.field.HaloGrid2D;
+import sim.engine.transport.TransportRMIInterface;
 import sim.field.partitioning.PartitionInterface;
 import sim.util.NumberND;
 

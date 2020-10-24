@@ -3,8 +3,6 @@ package sim.engine;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sim.engine.registry.DRegistry;
@@ -20,7 +18,8 @@ public class RemoteProcessor implements VisualizationProcessor {
 	public static final String NAME_PREFIX = "processorPId: ";
 	public final String processorName;
 //	private static VisualizationProcessor[] processorCache = null;
-	static final Map<Integer, VisualizationProcessor> processorCache = new HashMap<>();
+//	static final Map<Integer, VisualizationProcessor> processorCache = new HashMap<>();
+	static final ArrayList<VisualizationProcessor> processorCache = new ArrayList<>();
 
 	/**
 	 * Creates a processor and registers it to the RMI Registry
@@ -90,15 +89,23 @@ public class RemoteProcessor implements VisualizationProcessor {
 	}
 
 	public static VisualizationProcessor getProcessor(final int pid) {
+		if (processorCache.size() <= pid)
+			extendCache(pid);
+
 		VisualizationProcessor processor = processorCache.get(pid);
 		if (processor == null)
 			try {
 				processor = (VisualizationProcessor) DRegistry.getInstance().getObject(getProcessorName(pid));
-				processorCache.put(pid, processor);
+				processorCache.add(pid, processor);
 			} catch (RemoteException | NotBoundException e) {
 				throw new RuntimeException(e);
 			}
 		return processor;
+	}
+
+	private static void extendCache(int target) {
+		for (int i = processorCache.size(); i <= target; i++)
+			processorCache.add(null);
 	}
 
 	public static String getProcessorName(final int pid) {
