@@ -6,6 +6,7 @@
 
 package sim.app.dHeatBugs;
 
+import sim.engine.DSimState;
 import sim.engine.DSteppable;
 import sim.engine.SimState;
 import sim.field.grid.DDoubleGrid2D;
@@ -56,8 +57,10 @@ public class Diffuser extends DSteppable {
 			next += offset;
 		}
 
-		final DDoubleGrid2D temp = heatbugs.valgrid;
-		heatbugs.valgrid = heatbugs.valgrid2;
-		heatbugs.valgrid2 = temp;
+//		final DDoubleGrid2D temp = heatbugs.valgrid;
+//		heatbugs.valgrid = heatbugs.valgrid2;
+//		heatbugs.valgrid2 = temp;
+//		heatbugs.valgrid.getStorageArray()
+		System.arraycopy(_valgrid2_field, 0, _valgrid_field, 0, _valgrid_field.length);
 	}
 }

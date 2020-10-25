@@ -2,8 +2,8 @@ package sim.field;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -18,7 +18,6 @@ import sim.engine.Steppable;
 import sim.engine.Stopping;
 import sim.engine.transport.AgentWrapper;
 import sim.engine.transport.PayloadWrapper;
-import sim.engine.transport.RMIProxy;
 import sim.engine.transport.TransportRMIInterface;
 import sim.field.partitioning.IntRect2D;
 import sim.field.partitioning.PartitionInterface;
@@ -26,9 +25,10 @@ import sim.field.partitioning.QuadTreePartition;
 import sim.field.storage.ContStorage;
 import sim.field.storage.GridStorage;
 import sim.util.GroupComm;
+import sim.util.Int2D;
 import sim.util.MPIParam;
 import sim.util.MPIUtil;
-import sim.util.*;
+import sim.util.NumberND;
 
 /**
  * All fields in distributed MASON must contain this class. Stores
@@ -39,7 +39,9 @@ import sim.util.*;
  * @param <S> The Type of Storage to use
  */
 public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends GridStorage>
+		extends UnicastRemoteObject
 		implements TransportRMIInterface<T, P>, Synchronizable, DGrid<T, P> {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Helper class to organize neighbor-related data structures and methods
@@ -119,7 +121,9 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 
 	private final Object lockRMI = new boolean[1];
 
-	public HaloGrid2D(final PartitionInterface ps, final int[] aoi, final S stor, final DSimState state) {
+	public HaloGrid2D(final PartitionInterface ps, final int[] aoi, final S stor, final DSimState state)
+			throws RemoteException {
+		super();
 		this.partition = ps;
 		this.aoi = aoi;
 		localStorage = stor;
@@ -158,7 +162,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 //			final int level = (int) arg;
 //			GridStorage s = null;
 
-			reload();
+				reload();
 
 //			if (q.isGroupMaster(level))
 //				s = tempStor.remove(0);
@@ -186,13 +190,13 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		localStorage.reshape(haloPart);
 		// Get the partition representing private area by shrinking the original
 		// partition by aoi at each dimension
-		
+
 		int[] negAoi = new int[aoi.length];
 		for (int i = 0; i < aoi.length; i++) {
-			negAoi[i] = - aoi[i];
+			negAoi[i] = -aoi[i];
 		}
 		privatePart = origPart.resize(negAoi);
-		//privatePart = origPart.resize(Arrays.stream(aoi).map(x -> -x).toArray());
+		// privatePart = origPart.resize(Arrays.stream(aoi).map(x -> -x).toArray());
 		// Get the neighbors and create Neighbor objects
 //		neighbors = Arrays
 //				.stream(partition.getNeighborIds())

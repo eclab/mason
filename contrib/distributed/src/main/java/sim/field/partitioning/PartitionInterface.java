@@ -75,6 +75,10 @@ public abstract class PartitionInterface {
 	 */
 	public abstract IntRect2D getBounds(int pid);
 
+	public abstract IntRect2D getHaloBounds();
+	
+	public abstract ArrayList<IntRect2D> getAllBounds();
+	
 	public abstract int getNumNeighbors();
 
 	public abstract int[] getNeighborIds();

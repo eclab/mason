@@ -28,7 +28,6 @@ import mpi.MPIException;
 import sim.engine.registry.DRegistry;
 import sim.engine.transport.AgentWrapper;
 import sim.engine.transport.PayloadWrapper;
-import sim.engine.transport.RMIProxy;
 import sim.engine.transport.TransporterMPI;
 import sim.field.HaloGrid2D;
 import sim.field.Synchronizable;
@@ -204,7 +203,7 @@ public class DSimState extends SimState {
 			}
 
 			// Stop the world and wait for the Visualizer to unlock
-			MPI.COMM_WORLD.barrier();
+//			MPI.COMM_WORLD.barrier();
 
 			syncFields();
 			transporter.sync();
@@ -388,6 +387,7 @@ public class DSimState extends SimState {
 
 				} catch (MPIException e) {
 					// TODO: handle exception
+					e.printStackTrace();
 				}
 				if (balancerLevel != 0)
 					balancerLevel--;
@@ -422,7 +422,8 @@ public class DSimState extends SimState {
 					HaloGrid2D haloGrid2D = (HaloGrid2D) field;
 					if (haloGrid2D.getStorage() instanceof ContStorage) {
 						ContStorage st = (ContStorage) ((HaloGrid2D) field).getStorage();
-						HashSet agents = (HashSet) st.getCell(p).clone(); // create a clone to avoid the
+						Double2D doublep = new Double2D(p);
+						HashSet agents = (HashSet) st.getCell(doublep).clone(); // create a clone to avoid the
 																			// ConcurrentModificationException
 						for (Object a : agents) {
 							NumberND loc = st.getLocation((Serializable) a);
@@ -557,8 +558,8 @@ public class DSimState extends SimState {
 			registry = DRegistry.getInstance();
 		}
 
-		processor = new RemoteProcessor(this);
 		try {
+			processor = new RemoteProcessor(this);
 			processor.lock();
 			// unlocks in preSchedule
 		} catch (RemoteException e1) {

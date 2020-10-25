@@ -9,7 +9,10 @@ package sim.app.dHeatBugs;
 import java.util.ArrayList;
 import java.util.HashMap;
 import sim.engine.DSimState;
+import sim.engine.DSteppable;
 import sim.engine.Schedule;
+import sim.engine.SimState;
+import sim.engine.Steppable;
 import sim.field.grid.DDenseGrid2D;
 import sim.field.grid.DDoubleGrid2D;
 import sim.util.Interval;
@@ -17,7 +20,7 @@ import sim.util.*;
 
 public class DHeatBugs extends DSimState {
 	private static final long serialVersionUID = 1;
-	
+
 	static {
 		DSimState.setMultiThreaded(true);
 	}
@@ -46,7 +49,7 @@ public class DHeatBugs extends DSimState {
 	public DDenseGrid2D<DHeatBug> bugs; // Instead of SparseGrid2D
 
 	public DHeatBugs(final long seed) {
-		this(seed, 1000, 1000, 1000, 5);
+		this(seed, 1000, 1000, 10000, 5);
 	}
 
 	public DHeatBugs(final long seed, final int width, final int height, final int count, final int aoi) {
@@ -63,6 +66,8 @@ public class DHeatBugs extends DSimState {
 			e.printStackTrace();
 			System.exit(-1);
 		}
+
+//		balanceInterval = 100000;
 	}
 
 	// Same getters and setters as HeatBugs
@@ -235,10 +240,10 @@ public class DHeatBugs extends DSimState {
 		for (Int2D p : agents.keySet()) {
 			for (DHeatBug a : agents.get(p)) {
 				if (partition.getBounds().contains(p))
-					bugs.addRepeatingAgent(p, a, 1, 1);
+					bugs.addRepeatingAgent(p, a, 0, 1);
 			}
 		}
-		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);
+		schedule.scheduleRepeating(Schedule.EPOCH, 1, new Diffuser(), 1);
 	}
 
 	public static void main(final String[] args) {

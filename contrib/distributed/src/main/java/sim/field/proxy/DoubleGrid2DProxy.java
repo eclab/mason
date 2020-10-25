@@ -15,11 +15,12 @@ public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
 		IntRect2D bounds = stateProxy.getBounds();
 		int width = bounds.br().x - bounds.ul().x;
 		int height = bounds.br().y - bounds.ul().y;
+
 		if (width != this.width || height != this.height)
 			reshape(width, height);
 		
 		// load storage
-		DoubleGridStorage storage = (DoubleGridStorage)(stateProxy.getStorage(proxyIndex));
+		DoubleGridStorage storage = (DoubleGridStorage)(stateProxy.storage(proxyIndex));
 		double[] data = (double[])(storage.getStorageArray());	
 		for(int x = 0; x < width; x++)
 			{
@@ -27,6 +28,7 @@ public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
 			for(int y = 0; y < height; y++)
 				{
 				fieldx[y] = data[x * height + y];
+//				System.err.println("" + x + " " + y + " " + fieldx[y]);
 				}
 			}		
 		}

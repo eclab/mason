@@ -40,8 +40,8 @@ public class DFlockers extends DSimState {
 	public DFlockers(final long seed) {
 		super(seed, DFlockers.width, DFlockers.height, DFlockers.neighborhood);
 
-		final double[] discretizations = new double[] { DFlockers.neighborhood / 1.5, DFlockers.neighborhood / 1.5 };
-		flockers = new DContinuous2D<>(getPartitioning(), aoi, discretizations, this);
+		//final double[] discretizations = new double[] { DFlockers.neighborhood / 1.5, DFlockers.neighborhood / 1.5 };
+		flockers = new DContinuous2D<>(getPartitioning(), aoi, DFlockers.neighborhood / 1.5, this);
 	}
 
 	@Override

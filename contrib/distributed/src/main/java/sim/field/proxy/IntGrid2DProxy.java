@@ -15,11 +15,12 @@ public class IntGrid2DProxy extends IntGrid2D implements UpdatableProxy
 		IntRect2D bounds = stateProxy.getBounds();
 		int width = bounds.br().x - bounds.ul().x;
 		int height = bounds.br().y - bounds.ul().y;
+
 		if (width != this.width || height != this.height)
 			reshape(width, height);
 		
 		// load storage
-		IntGridStorage storage = (IntGridStorage)(stateProxy.getStorage(proxyIndex));
+		IntGridStorage storage = (IntGridStorage)(stateProxy.storage(proxyIndex));
 		int[] data = (int[])(storage.getStorageArray());	
 		for(int x = 0; x < width; x++)
 			{

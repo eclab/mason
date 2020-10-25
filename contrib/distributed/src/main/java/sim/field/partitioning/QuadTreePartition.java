@@ -44,6 +44,24 @@ public class QuadTreePartition extends PartitionInterface {
 
 		throw new IllegalArgumentException("The partition for " + pid + " does not exist");
 	}
+	
+	public IntRect2D getHaloBounds() {
+		return myLeafNode.getShape().resize(aoi);
+	}
+	
+	 
+
+	public ArrayList<IntRect2D> getAllBounds() {
+		ArrayList<IntRect2D> allBounds = new ArrayList<>();
+
+		// init with nulls
+		for (int i = 0; i < numProcessors; i++)
+			allBounds.add(null);
+
+		for (final QuadTreeNode node : qt.getAllLeaves())
+			allBounds.add(node.getProcessor(), node.getShape());
+		return allBounds;
+	}
 
 	public QuadTree getQt() {
 		return qt;
@@ -120,12 +138,12 @@ public class QuadTreePartition extends PartitionInterface {
 		while ((numProcessors >> nz & 0x1) != 0x1)
 			nz++;
 
-		if ((numProcessors & numProcessors - 1) != 0 || nz % 2 != 0)		// 2 == number of dimensions, width and height
+		if ((numProcessors & numProcessors - 1) != 0 || nz % 2 != 0) // 2 == number of dimensions, width and height
 			throw new IllegalArgumentException(
 					"Currently only support the number processors that is power of " + 4);
 
-		for (int level = 0; level < nz / 2; level++) 						// 2 == number of dimensions, width and height
-			{			
+		for (int level = 0; level < nz / 2; level++) // 2 == number of dimensions, width and height
+		{
 			final List<QuadTreeNode> leaves = qt.getAllLeaves();
 			for (final QuadTreeNode leaf : leaves)
 				qt.split(leaf.getShape().getInt2DCenter());
@@ -300,6 +318,7 @@ public class QuadTreePartition extends PartitionInterface {
 		if (gc != null) {
 			final Int2D ctr = myLeafNode.getShape().getInt2DCenter();
 			final double[] sendData = new double[2 + 1], recvData = new double[2 + 1];		// 2 == num dimensions
+
 			sendData[0] = myRuntime;
 			for (int i = 1; i < sendData.length; i++)
 				sendData[i] = ctr.c(i - 1) * myRuntime;
@@ -311,12 +330,12 @@ public class QuadTreePartition extends PartitionInterface {
 				// skip first (i = 1)
 				for (int i = 1; i < recvData.length; i++) {
 					double x = recvData[i];
-					locVals[i-1] = (int) (x / recvData[0]);
+					locVals[i - 1] = (int) (x / recvData[0]);
 				}
 				sendCentroids = new Object[] {
-					gc.master.getId(),
+						gc.master.getId(),
 //					new Int2D(Arrays.stream(recvData).skip(1).mapToInt(x -> (int) (x / recvData[0])).toArray())
-					new Int2D(locVals)
+						new Int2D(locVals)
 				};
 			}
 		}

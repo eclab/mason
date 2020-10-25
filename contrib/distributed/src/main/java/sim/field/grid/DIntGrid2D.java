@@ -23,8 +23,12 @@ public class DIntGrid2D extends DAbstractGrid2D implements DGrid<Integer, Int2D>
 
 	public DIntGrid2D(final PartitionInterface ps, final int[] aoi, final int initVal, final DSimState state) {
 		super(ps);
-		halo = new HaloGrid2D<Integer, Int2D, IntGridStorage>(ps, aoi,
-				new IntGridStorage(ps.getBounds(), initVal), state);
+		try {
+			halo = new HaloGrid2D<Integer, Int2D, IntGridStorage>(ps, aoi,
+					new IntGridStorage(ps.getBounds(), initVal), state);
+		} catch (RemoteException e) {
+			throw new RuntimeException(e);
+		}
 
 		this.initVal = initVal;
 	}
