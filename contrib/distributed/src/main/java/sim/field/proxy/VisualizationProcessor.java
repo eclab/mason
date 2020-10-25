@@ -24,7 +24,7 @@ public interface VisualizationProcessor extends Remote {
 	public void unlock() throws RemoteException;
 
 	/** Returns the current bounds of the processor's local region. */
-	public IntHyperRect getBounds() throws RemoteException;
+	public IntRect2D getBounds() throws RemoteException;
 
 	/** Returns a full copy of GridStorage object number STORAGE. */
 	public GridStorage getStorage(int storage) throws RemoteException;
@@ -36,5 +36,5 @@ public interface VisualizationProcessor extends Remote {
 	public int getNumProcessors() throws RemoteException;
 
 	/** Returns the world (non-toroidal) bounds of the distributed model */
-	public IntHyperRect getWorldBounds() throws RemoteException;
+	public IntRect2D getWorldBounds() throws RemoteException;
 }

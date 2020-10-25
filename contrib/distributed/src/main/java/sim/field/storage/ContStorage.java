@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 //import java.util.stream.IntStream;
 
-import sim.field.partitioning.IntHyperRect;
+import sim.field.partitioning.IntRect2D;
 //import sim.field.partitioning.IntPointGenerator;
 import sim.util.MPIParam;
 import sim.util.*;
@@ -19,14 +19,14 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 	double[] discretizations;
 	public HashMap<T, NumberND> m;
 
-	public ContStorage(final IntHyperRect shape, final double[] discretizations) {
+	public ContStorage(final IntRect2D shape, final double[] discretizations) {
 		super(shape);
 
 		this.discretizations = discretizations;
 		storage = allocate(shape.getArea());
 	}
 
-	public GridStorage getNewStorage(final IntHyperRect shape) {
+	public GridStorage getNewStorage(final IntRect2D shape) {
 		return new ContStorage<>(shape, discretizations);
 	}
 
@@ -37,7 +37,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 //				.toArray();
 		this.dsize = new int[2];					// 2 = num dimensions
 		for (int i = 0; i < this.dsize.length; i++) {
-			this.dsize[i] = (int) Math.ceil(shape.getSize()[i] / discretizations[i]) + 1;	
+			this.dsize[i] = (int) Math.ceil(shape.getSizes()[i] / discretizations[i]) + 1;	
 		}
 		
 		// Overwrite the original stride with the new stride of dsize;
@@ -96,7 +96,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 	public Serializable pack(final MPIParam mp) {
 		final ArrayList<ArrayList<Serializable>> ret = new ArrayList<>();
 
-		for (final IntHyperRect rect : mp.rects) {
+		for (final IntRect2D rect : mp.rects) {
 			final ArrayList<Serializable> objs = new ArrayList<>();
 			for (final T obj : getObjects(rect.shift(shape.ul().getArray()))) {
 				objs.add(obj);
@@ -114,7 +114,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 
 		// Remove any objects that are in the unpack area (overwrite the area)
 		// shift the rect with local coordinates back to global coordinates
-		for (final IntHyperRect rect : mp.rects)
+		for (final IntRect2D rect : mp.rects)
 			removeObjects(rect.shift(shape.ul().getArray()));
 
 		for (int k = 0; k < mp.rects.size(); k++)
@@ -189,7 +189,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 	}
 
 	// Get all the objects inside the given rectangle
-	public List<T> getObjects(final IntHyperRect r) {
+	public List<T> getObjects(final IntRect2D r) {
 		final ArrayList<T> objs = new ArrayList<T>();
 
 		final Int2D ul = discretize(r.ul()), br = discretize(r.br()).shift(1);
@@ -243,7 +243,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 	}
 
 	// Remove all the objects inside the given rectangle
-	public void removeObjects(final IntHyperRect r) {
+	public void removeObjects(final IntRect2D r) {
 //		getObjects(r).stream().forEach(obj -> removeObject(obj));
 		for (T obj : getObjects(r)) {
 			removeObject(obj);
@@ -399,7 +399,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 //		mpi.MPI.Init(args);
 //
 //		final Int2D ul = new Int2D(10, 20), br = new Int2D(50, 80);
-//		final IntHyperRect rect = new IntHyperRect(1, ul, br);
+//		final IntRect2D rect = new IntRect2D(1, ul, br);
 //		final double[] discretize = new double[] { 10, 10 };
 //
 //		final ContStorage<TestObj> f = new ContStorage<TestObj>(rect, discretize);
@@ -433,7 +433,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 //		for (final TestObj obj : f.getObjects(loc5))
 //			System.out.println(obj);
 //
-//		final IntHyperRect area = new IntHyperRect(1, new Int2D(25, 35), new Int2D(35, 47));
+//		final IntRect2D area = new IntRect2D(1, new Int2D(25, 35), new Int2D(35, 47));
 //		System.out.println("get objects in " + area);
 //		for (final TestObj obj : f.getObjects(area))
 //			System.out.println(obj);
@@ -446,7 +446,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 //		for (final TestObj obj : f.getObjects(loc5))
 //			System.out.println(obj);
 //
-//		final IntHyperRect r1 = new IntHyperRect(-1, new Int2D(20, 30), new Int2D(31, 41));
+//		final IntRect2D r1 = new IntRect2D(-1, new Int2D(20, 30), new Int2D(31, 41));
 //		System.out.println("get objects in " + r1);
 //		for (final TestObj obj : f.getObjects(r1))
 //			System.out.println(obj);
@@ -467,7 +467,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 //		for (final TestObj obj : f.getNeighborsWithin(obj2, r))
 //			System.out.println(obj);
 //
-//		final IntHyperRect r2 = new IntHyperRect(-1, new Int2D(20, 30), new Int2D(31, 41));
+//		final IntRect2D r2 = new IntRect2D(-1, new Int2D(20, 30), new Int2D(31, 41));
 //		System.out.println("after remove " + obj1 + ", get objects in " + r2);
 //		f.removeObject(obj1);
 //		for (final TestObj obj : f.getObjects(r2))
@@ -485,7 +485,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, NumberND
 //		System.out.println(f);
 //
 //		final Int2D ul2 = new Int2D(20, 30), br2 = new Int2D(30, 40);
-//		final IntHyperRect rect2 = new IntHyperRect(2, ul2, br2);
+//		final IntRect2D rect2 = new IntRect2D(2, ul2, br2);
 //		f.reshape(rect2);
 //		System.out.println("after reshaping from " + rect + " to " + rect2 + ", get objects in " + rect2);
 //		System.out.println(f);

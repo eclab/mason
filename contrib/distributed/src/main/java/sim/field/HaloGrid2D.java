@@ -20,7 +20,7 @@ import sim.engine.transport.AgentWrapper;
 import sim.engine.transport.PayloadWrapper;
 import sim.engine.transport.RMIProxy;
 import sim.engine.transport.TransportRMIInterface;
-import sim.field.partitioning.IntHyperRect;
+import sim.field.partitioning.IntRect2D;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.QuadTreePartition;
 import sim.field.storage.ContStorage;
@@ -45,26 +45,26 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * Helper class to organize neighbor-related data structures and methods
 	 */
 	class Neighbor {
-		final int pid;
+		//final int pid;
 		MPIParam sendParam, recvParam;
 
-		public Neighbor(final IntHyperRect neighborPart) {
-			pid = neighborPart.getId();
-			final ArrayList<IntHyperRect> sendOverlaps = generateOverlaps(origPart, neighborPart.resize(aoi));
-			final ArrayList<IntHyperRect> recvOverlaps = generateOverlaps(haloPart, neighborPart);
+		public Neighbor(final IntRect2D neighborPart) {
+			//pid = neighborPart.getId();
+			final ArrayList<IntRect2D> sendOverlaps = generateOverlaps(origPart, neighborPart.resize(aoi));
+			final ArrayList<IntRect2D> recvOverlaps = generateOverlaps(haloPart, neighborPart);
 
 			assert sendOverlaps.size() == recvOverlaps.size();
 
 			// Sort these overlaps so that they corresponds to each other
-			Collections.sort(sendOverlaps);
-			Collections.sort(recvOverlaps, Collections.reverseOrder());
+			//Collections.sort(sendOverlaps);
+			//Collections.sort(recvOverlaps, Collections.reverseOrder());
 
 			sendParam = new MPIParam(sendOverlaps, haloPart, MPIBaseType);
 			recvParam = new MPIParam(recvOverlaps, haloPart, MPIBaseType);
 		}
 
-		private ArrayList<IntHyperRect> generateOverlaps(final IntHyperRect p1, final IntHyperRect p2) {
-			final ArrayList<IntHyperRect> overlaps = new ArrayList<IntHyperRect>();
+		private ArrayList<IntRect2D> generateOverlaps(final IntRect2D p1, final IntRect2D p2) {
+			final ArrayList<IntRect2D> overlaps = new ArrayList<IntRect2D>();
 
 			if (partition.isToroidal()) {
 				int xLen = fieldSize[0];
@@ -85,14 +85,14 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 
 //				for (final Int2D p : IntPointGenerator.getLayer(2, 1)) // 2 == number of dimensions (width, height)
 				for (final Int2D p : shifts) {
-//					final IntHyperRect sp = p2
+//					final IntRect2D sp = p2
 //							.shift(
 //								IntStream
 //								.range(0, 2)
 //								.map(i -> p.c(i) * fieldSize[i])
 //								.toArray());
-					final IntHyperRect sp = p2.shift(p.c());
-					if (p1.isIntersect(sp))
+					final IntRect2D sp = p2.shift(p.c());
+					if (p1.intersects(sp))
 						overlaps.add(p1.getIntersection(sp));
 				}
 			} else
@@ -105,7 +105,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	protected int numNeighbors;
 	protected int[] aoi, fieldSize, haloSize;
 
-	public IntHyperRect world, haloPart, origPart, privatePart;
+	public IntRect2D world, haloPart, origPart, privatePart;
 
 	protected List<Neighbor> neighbors; // pointer to the processors who's partitions neighbor me
 	public S localStorage;
@@ -182,7 +182,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		// Get the partition representing halo and local area by expanding the original
 		// partition by aoi at each dimension
 		haloPart = origPart.resize(aoi);
-		haloSize = haloPart.getSize();
+		haloSize = haloPart.getSizes();
 		localStorage.reshape(haloPart);
 		// Get the partition representing private area by shrinking the original
 		// partition by aoi at each dimension

@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sim.engine.registry.DRegistry;
-import sim.field.partitioning.IntHyperRect;
+import sim.field.partitioning.IntRect2D;
 import sim.field.proxy.VisualizationProcessor;
 import sim.field.storage.GridStorage;
 
@@ -42,7 +42,7 @@ public class RemoteProcessor implements VisualizationProcessor {
 		lock.unlock();
 	}
 
-	public IntHyperRect getBounds() throws RemoteException {
+	public IntRect2D getBounds() throws RemoteException {
 		return dSimState.getPartitioning().getBounds();
 	}
 
@@ -54,7 +54,7 @@ public class RemoteProcessor implements VisualizationProcessor {
 		return dSimState.getPartitioning().numProcessors;
 	}
 
-	public IntHyperRect getWorldBounds() throws RemoteException {
+	public IntRect2D getWorldBounds() throws RemoteException {
 		return dSimState.getPartitioning().getWorldBounds();
 	}
 

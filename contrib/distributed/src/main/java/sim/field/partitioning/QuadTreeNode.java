@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.stream.*;
 import sim.util.*;
 
-// TODO Currently all shapes are restricted to IntHyperRect - switch to NdRectangle once it is completed
+// TODO Currently all shapes are restricted to IntRect2D - switch to NdRectangle once it is completed
 /**
  * A node in a Quad Tree.
  *
@@ -14,12 +14,12 @@ public class QuadTreeNode {
 	int processor; // which processer this node is mapped to
 
 	Int2D origin;
-	IntHyperRect shape;
+	IntRect2D shape;
 
 	QuadTreeNode parent = null;
 	List<QuadTreeNode> children;
 
-	public QuadTreeNode(final IntHyperRect shape, final QuadTreeNode parent) {
+	public QuadTreeNode(final IntRect2D shape, final QuadTreeNode parent) {
 		this.shape = shape;
 		this.parent = parent;
 		children = new ArrayList<QuadTreeNode>();
@@ -50,7 +50,7 @@ public class QuadTreeNode {
 		return origin;
 	}
 
-	public IntHyperRect getShape() {
+	public IntRect2D getShape() {
 		return shape;
 	}
 
@@ -241,13 +241,14 @@ public class QuadTreeNode {
 	 * 
 	 * @param newShape
 	 */
-	protected void reshape(final IntHyperRect newShape) {
+	protected void reshape(final IntRect2D newShape) {
 		shape = newShape;
 		if (isLeaf())
 			return;
 
 		if (!newShape.contains(origin))
-			origin = newShape.getCenter();
+			//origin = newShape.getCenter();
+			origin = newShape.getInt2DCenter();
 
 		for (int i = 0; i < children.size(); i++)
 			children.get(i).reshape(getChildShape(i));
@@ -259,7 +260,7 @@ public class QuadTreeNode {
 	 * @param childId
 	 * @return child's shape
 	 */
-	protected IntHyperRect getChildShape(final int childId) {
+	protected IntRect2D getChildShape(final int childId) {
 		final int[] ul = shape.ul().getArray();
 		final int[] br = origin.getArray();
 		final int[] sbr = shape.br().getArray();
@@ -270,7 +271,7 @@ public class QuadTreeNode {
 				br[i] = sbr[i];
 			}
 
-		return new IntHyperRect(-1, new Int2D(ul), new Int2D(br));
+		return new IntRect2D(new Int2D(ul), new Int2D(br));
 	}
 
 	/**

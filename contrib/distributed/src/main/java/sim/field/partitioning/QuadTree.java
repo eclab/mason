@@ -15,7 +15,7 @@ public class QuadTree {
 	public static final int[] POWERS_OF_FOUR = new int[] { 1, 4, 16, 64, 256, 1024, 2048, 4096, 16384, 65536, 262144, 1048576};
 
 	// Shape of field and the maximum number of partitions it can hold
-	public QuadTree(final IntHyperRect shape, final int np) 
+	public QuadTree(final IntRect2D shape, final int np) 
 	{
 		// there are clever ways of determining powers of four, but we're just gonna use a lookup table here
 		boolean found = false;
@@ -157,7 +157,7 @@ public class QuadTree {
 		if (node.isRoot())
 			return new HashSet<QuadTreeNode>();
 
-		final IntHyperRect myHalo = node.getShape().resize(aoi);
+		final IntRect2D myHalo = node.getShape().resize(aoi);
 		final HashSet<QuadTreeNode> ret = new HashSet<QuadTreeNode>();
 		final ArrayList<QuadTreeNode> stack = new ArrayList<QuadTreeNode>();
 
@@ -172,7 +172,7 @@ public class QuadTree {
 				List<QuadTreeNode> nodes = sibling.getLeaves();
 				for (int j = 0; j < nodes.size(); j++) {
 					QuadTreeNode x = nodes.get(j);
-					if (myHalo.isIntersect(x.getShape())) {
+					if (myHalo.intersects(x.getShape())) {
 						ret.add(x);
 					}
 				}
@@ -199,7 +199,7 @@ public class QuadTree {
 			// Next go down to find all the leaf nodes that intersect with my halo
 			while (stack.size() > 0 && (curr = stack.remove(0)) != null)
 				
-				if (!myHalo.isIntersect(curr.getShape()))
+				if (!myHalo.intersects(curr.getShape()))
 					continue;
 				else if (curr.isLeaf())
 					ret.add(curr);
@@ -222,25 +222,25 @@ public class QuadTree {
 			return new HashSet<QuadTreeNode>();
 
 		//calculate all Halo Region
-		final IntHyperRect myShape = node.getShape();
+		final IntRect2D myShape = node.getShape();
 		
 		
 		//fieldsize
-		final IntHyperRect rootShape = root.getShape();
+		final IntRect2D rootShape = root.getShape();
 		final int width = rootShape.br.c(0) - rootShape.ul.c(0) ;
 		final int height = rootShape.br.c(1) -rootShape.ul.c(1) ;
 		
-		//IntHyperRect point
+		//IntRect2D point
 		final int[] ul = myShape.ul.c();
 		final int[] br = myShape.br.c();
 	
 		//TODO maybe I can use myShape.toToroidal() --- maybe not
-		//final List<IntHyperRect> haloRegions = myShape.resize(aoi).toToroidal(myShape);
-		final List<IntHyperRect> haloRegions = new ArrayList<IntHyperRect>();
+		//final List<IntRect2D> haloRegions = myShape.resize(aoi).toToroidal(myShape);
+		final List<IntRect2D> haloRegions = new ArrayList<IntRect2D>();
 		
 		//north
 		try {
-		haloRegions.add(new IntHyperRect(-1, new Int2D((ul[0]+width)%width,(ul[1]-aoi[1]+height)%height),
+		haloRegions.add(new IntRect2D(new Int2D((ul[0]+width)%width,(ul[1]-aoi[1]+height)%height),
 				new Int2D((br[0]+width)%width==0?width:(br[0]+width)%width,(ul[1]+height)%height==0?height:(ul[1]+height)%height)));
 		}catch (Exception e) {
 			System.out.println("error in north of "+ myShape + "heigth "+height+" width "+width );
@@ -249,7 +249,7 @@ public class QuadTree {
 		}
 		//south
 		try {
-		haloRegions.add(new IntHyperRect(-1,new Int2D((ul[0]+width)%width,(br[1]+height)%height),
+		haloRegions.add(new IntRect2D(new Int2D((ul[0]+width)%width,(br[1]+height)%height),
 				new Int2D((br[0]+width)%width==0?width:(br[0]+width)%width,(br[1]+aoi[1]+height)%height==0?height:(br[1]+aoi[1]+height)%height)));
 		}catch (Exception e) {
 			System.out.println("error in south of "+ myShape);
@@ -258,7 +258,7 @@ public class QuadTree {
 		}
 		//west
 		try {
-		haloRegions.add(new IntHyperRect(-1,new Int2D((ul[0]-aoi[0]+width)%width,(ul[1]+height)%height),
+		haloRegions.add(new IntRect2D(new Int2D((ul[0]-aoi[0]+width)%width,(ul[1]+height)%height),
 				new Int2D((ul[0]+width)%width==0?width:(ul[0]+width)%width,(br[1]+height)%height==0?height:(br[1]+height)%height)));
 		}catch (Exception e) {
 			// TODO: handle exception
@@ -268,7 +268,7 @@ public class QuadTree {
 		}
 		//east
 		try {
-		haloRegions.add(new IntHyperRect(-1,new Int2D((br[0]+width)%width,(ul[1]+height)%height),
+		haloRegions.add(new IntRect2D(new Int2D((br[0]+width)%width,(ul[1]+height)%height),
 				new Int2D((br[0]+aoi[0]+width)%width==0?width:(br[0]+aoi[0]+width)%width,(br[1]+height)%height==0?height:(br[1]+height)%height)));
 		}catch (Exception e) {
 			// TODO: handle exception
@@ -278,7 +278,7 @@ public class QuadTree {
 		}
 		//north-west
 		try {
-		haloRegions.add(new IntHyperRect(-1,new Int2D((ul[0]-aoi[0]+width)%width,(ul[1]-aoi[1]+height)%height),
+		haloRegions.add(new IntRect2D(new Int2D((ul[0]-aoi[0]+width)%width,(ul[1]-aoi[1]+height)%height),
 				new Int2D((ul[0]+width)%width==0?width:(ul[0]+width)%width,(ul[1]+height)%height==0?height:(ul[1]+height)%height)));
 		}catch (Exception e) {
 			// TODO: handle exception
@@ -288,7 +288,7 @@ public class QuadTree {
 		}
 		//north-east
 		try {
-		haloRegions.add(new IntHyperRect(-1,new Int2D((br[0]+width)%width,(ul[1]-aoi[1]+height)%height),
+		haloRegions.add(new IntRect2D(new Int2D((br[0]+width)%width,(ul[1]-aoi[1]+height)%height),
 				new Int2D((br[0]+aoi[0]+width)%width==0?width:(br[0]+aoi[0]+width)%width,(ul[1]+height)%height==0?height:(ul[1]+height)%height)));
 		}catch (Exception e) {
 			// TODO: handle exception
@@ -298,7 +298,7 @@ public class QuadTree {
 		}
 		//south-west
 		try {
-		haloRegions.add(new IntHyperRect(-1,new Int2D((ul[0]-aoi[0]+width)%width,(br[1]+height)%height),
+		haloRegions.add(new IntRect2D(new Int2D((ul[0]-aoi[0]+width)%width,(br[1]+height)%height),
 				new Int2D((ul[0]+width)%width==0?width:(ul[0]+width)%width,(br[1]+aoi[1]+height)%height==0?height:(br[1]+aoi[1]+height)%height)));
 		}catch (Exception e) {
 			// TODO: handle exception
@@ -308,7 +308,7 @@ public class QuadTree {
 		}
 		//south-east
 		try {
-		haloRegions.add(new IntHyperRect(-1,new Int2D((br[0]+width)%width,(br[1]+height)%height),
+		haloRegions.add(new IntRect2D(new Int2D((br[0]+width)%width,(br[1]+height)%height),
 				new Int2D((br[0]+aoi[0]+width)%width==0?width:(br[0]+aoi[0]+width)%width,(br[1]+aoi[1]+height)%height==0?height:(br[1]+aoi[1]+height)%height)));
 		}catch (Exception e) {
 			// TODO: handle exception
@@ -326,8 +326,8 @@ public class QuadTree {
 			else
 				for(final QuadTreeNode leaf : sibling.getLeaves()) {
 					// if intersect at least one of my halo regions add to ret
-					for(final IntHyperRect region : haloRegions) {
-						if(leaf.getShape().isIntersect(region)) {
+					for(final IntRect2D region : haloRegions) {
+						if(leaf.getShape().intersects(region)) {
 							ret.add(leaf);
 							break;
 						}
@@ -340,8 +340,8 @@ public class QuadTree {
 			for (final QuadTreeNode sibling : curr.getSiblings()) {
 				if (sibling.isLeaf()) {
 					// if intersect at least one of my halo regions add to ret
-					for(final IntHyperRect region : haloRegions) {
-						if(sibling.getShape().isIntersect(region)) {
+					for(final IntRect2D region : haloRegions) {
+						if(sibling.getShape().intersects(region)) {
 							ret.add(sibling);
 							break;
 						}
@@ -349,8 +349,8 @@ public class QuadTree {
 				} else {
 					for(final QuadTreeNode leaf : sibling.getLeaves()) {
 						// if intersect at least one of my halo regions add to ret
-						for(final IntHyperRect region : haloRegions) {
-							if(leaf.getShape().isIntersect(region)) {
+						for(final IntRect2D region : haloRegions) {
+							if(leaf.getShape().intersects(region)) {
 								ret.add(leaf);
 								break;
 							}
@@ -391,7 +391,7 @@ public class QuadTree {
 	}
 
 	private static void testFindNeighbor() {
-		final IntHyperRect field = new IntHyperRect(-1, new Int2D(0, 0), new Int2D(100, 100));
+		final IntRect2D field = new IntRect2D(new Int2D(0, 0), new Int2D(100, 100));
 		final QuadTree qt = new QuadTree(field, 22);
 		final int[] aoi = new int[] { 1, 1 };
 
@@ -442,7 +442,7 @@ public class QuadTree {
 	}
 
 	public static void main(final String[] args) {
-		final IntHyperRect field = new IntHyperRect(-1, new Int2D(0, 0), new Int2D(100, 100));
+		final IntRect2D field = new IntRect2D(new Int2D(0, 0), new Int2D(100, 100));
 
 		final QuadTree qt = new QuadTree(field, 7);
 

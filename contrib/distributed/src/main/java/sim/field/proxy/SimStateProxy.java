@@ -63,7 +63,7 @@ public class SimStateProxy extends SimState
 	// The registry proper
 	Registry registry = null;
 	// World bounds
-	IntHyperRect worldBounds = null;
+	IntRect2D worldBounds = null;
 	// The visualization root
 	VisualizationProcessor visualizationRoot = null;
 	// a cache of Visualization Processors so we don't keep querying for them
@@ -120,7 +120,7 @@ public class SimStateProxy extends SimState
 		}
 		
 	/** Fetches the halo bounds from the current Visualization Processor. */
-	public IntHyperRect getBounds() throws RemoteException, NotBoundException
+	public IntRect2D getBounds() throws RemoteException, NotBoundException
 		{
 		return getVisualizationProcessor().getBounds();
 		}

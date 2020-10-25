@@ -12,9 +12,9 @@ public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
 	public void update(SimStateProxy stateProxy, int proxyIndex) throws RemoteException, NotBoundException
 		{
 		// reshape if needed
-		IntHyperRect bounds = stateProxy.getBounds();
-		int width = bounds.br.x - bounds.ul.x;
-		int height = bounds.br.y - bounds.ul.y;
+		IntRect2D bounds = stateProxy.getBounds();
+		int width = bounds.br().x - bounds.ul().x;
+		int height = bounds.br().y - bounds.ul().y;
 		if (width != this.width || height != this.height)
 			reshape(width, height);
 		

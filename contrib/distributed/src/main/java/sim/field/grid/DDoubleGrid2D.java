@@ -102,7 +102,7 @@ public class DDoubleGrid2D extends DAbstractGrid2D implements DGrid<Double, Int2
 		if (byThisMuch == 1.0)
 			return this;
 
-		for (Int2D p : halo.partition.getBounds()) {
+		for (Int2D p : halo.partition.getBounds().getPointList()) {
 			Double obj = get(p);
 			removeLocal(p);
 			add(p, obj * byThisMuch);

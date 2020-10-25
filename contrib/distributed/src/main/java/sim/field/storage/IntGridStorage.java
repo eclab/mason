@@ -5,13 +5,13 @@ import java.util.Arrays;
 
 import mpi.*;
 
-import sim.field.partitioning.IntHyperRect;
+import sim.field.partitioning.IntRect2D;
 import sim.util.*;
 
 public class IntGridStorage extends GridStorage<Integer, Int2D> {
 	final int initVal;
 
-	public IntGridStorage(IntHyperRect shape, int initVal) {
+	public IntGridStorage(IntRect2D shape, int initVal) {
 		super(shape);
 		baseType = MPI.INT;
 		storage = allocate(shape.getArea());
@@ -19,7 +19,7 @@ public class IntGridStorage extends GridStorage<Integer, Int2D> {
 		Arrays.fill((int[]) storage, initVal);
 	}
 
-	public GridStorage getNewStorage(IntHyperRect shape) {
+	public GridStorage getNewStorage(IntRect2D shape) {
 		return new IntGridStorage(shape, 0);
 	}
 
@@ -34,7 +34,7 @@ public class IntGridStorage extends GridStorage<Integer, Int2D> {
 	}
 
 	public String toString() {
-		int[] size = shape.getSize();
+		int[] size = shape.getSizes();
 		int[] array = (int[]) storage;
 		StringBuffer buf = new StringBuffer(String.format("IntGridStorage-%s\n", shape));
 
