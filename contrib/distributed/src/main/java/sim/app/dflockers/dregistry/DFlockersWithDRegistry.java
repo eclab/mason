@@ -41,7 +41,7 @@ public class DFlockersWithDRegistry extends DSimState {
 
 	public void start() {
 		super.start();
-		final int[] size = getPartitioning().getBounds().getSize();
+		final int[] size = getPartitioning().getBounds().getSizes();
 		for (int x = 0; x < DFlockersWithDRegistry.numFlockers / getPartitioning().numProcessors; x++) {
 			final double px = random.nextDouble() * size[0] + getPartitioning().getBounds().ul().getArray()[0];
 			final double py = random.nextDouble() * size[1] + getPartitioning().getBounds().ul().getArray()[1];

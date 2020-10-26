@@ -30,14 +30,14 @@ public class QuadTreePartition extends PartitionInterface {
 
 	public QuadTreePartition(final int[] size, final boolean isToroidal, final int[] aoi) {
 		super(size, isToroidal, aoi);
-		qt = new QuadTree(new IntHyperRect(size), numProcessors);
+		qt = new QuadTree(new IntRect2D(size[0], size[1]), numProcessors);
 	}
 
-	public IntHyperRect getBounds() {
+	public IntRect2D getBounds() {
 		return myLeafNode.getShape();
 	}
 
-	public IntHyperRect getBounds(final int pid) {
+	public IntRect2D getBounds(final int pid) {
 		for (final QuadTreeNode node : qt.getAllLeaves())
 			if (node.getProcessor() == pid)
 				return node.getShape();
@@ -45,14 +45,14 @@ public class QuadTreePartition extends PartitionInterface {
 		throw new IllegalArgumentException("The partition for " + pid + " does not exist");
 	}
 	
-	public IntHyperRect getHaloBounds() {
+	public IntRect2D getHaloBounds() {
 		return myLeafNode.getShape().resize(aoi);
 	}
 	
 	 
 
-	public ArrayList<IntHyperRect> getAllBounds() {
-		ArrayList<IntHyperRect> allBounds = new ArrayList<>();
+	public ArrayList<IntRect2D> getAllBounds() {
+		ArrayList<IntRect2D> allBounds = new ArrayList<>();
 
 		// init with nulls
 		for (int i = 0; i < numProcessors; i++)
@@ -146,7 +146,7 @@ public class QuadTreePartition extends PartitionInterface {
 		{
 			final List<QuadTreeNode> leaves = qt.getAllLeaves();
 			for (final QuadTreeNode leaf : leaves)
-				qt.split(leaf.getShape().getCenter());
+				qt.split(leaf.getShape().getInt2DCenter());
 		}
 		mapNodeToProc();
 		createMPITopo();
@@ -180,10 +180,12 @@ public class QuadTreePartition extends PartitionInterface {
 			leaves.add(parent);
 		}
 
-		// Set the proc id to the IntHyperRect so it can be printed out when debugging
+		// Set the proc id to the IntRect2D so it can be printed out when debugging
 		// it is not used by the program itself (TODO double-check)
-		for (final QuadTreeNode leaf : qt.getAllLeaves())
-			leaf.getShape().setId(leaf.getProcessor());
+		
+		//removed by Raj Patel
+		//for (final QuadTreeNode leaf : qt.getAllLeaves())
+		//	leaf.getShape().setId(leaf.getProcessor());
 	}
 
 	/**
@@ -261,7 +263,7 @@ public class QuadTreePartition extends PartitionInterface {
 	 *         level <br>
 	 *         null otherwise
 	 */
-	public IntHyperRect getNodeShapeAtLevel(final int level) {
+	public IntRect2D getNodeShapeAtLevel(final int level) {
 		final GroupComm gc = getGroupComm(level);
 		if (isGroupMaster(gc))
 			return gc.master.getShape();
@@ -314,8 +316,9 @@ public class QuadTreePartition extends PartitionInterface {
 		Object[] sendCentroids = new Object[] { null };
 
 		if (gc != null) {
-			final Int2D ctr = myLeafNode.getShape().getCenter();
-			final double[] sendData = new double[2 + 1], recvData = new double[2 + 1]; // 2 == num dimensions
+			final Int2D ctr = myLeafNode.getShape().getInt2DCenter();
+			final double[] sendData = new double[2 + 1], recvData = new double[2 + 1];		// 2 == num dimensions
+
 			sendData[0] = myRuntime;
 			for (int i = 1; i < sendData.length; i++)
 				sendData[i] = ctr.c(i - 1) * myRuntime;

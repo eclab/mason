@@ -1,14 +1,16 @@
 package sim.engine;
 
 import java.rmi.NotBoundException;
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sim.engine.registry.DRegistry;
+import sim.field.partitioning.IntRect2D;
 import sim.engine.transport.TransportRMIInterface;
-import sim.field.partitioning.IntHyperRect;
+//import sim.field.partitioning.IntHyperRect;
 import sim.field.proxy.VisualizationProcessor;
 import sim.field.storage.GridStorage;
 
@@ -52,7 +54,8 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 		lock.unlock();
 	}
 
-	public IntHyperRect getStorageBounds() throws RemoteException {
+
+	public IntRect2D getStorageBounds() throws RemoteException {
 		return dSimState.getPartitioning().getHaloBounds();
 	}
 
@@ -68,7 +71,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 		return dSimState.getPartitioning().numProcessors;
 	}
 
-	public IntHyperRect getWorldBounds() throws RemoteException {
+	public IntRect2D getWorldBounds() throws RemoteException {
 		return dSimState.getPartitioning().getWorldBounds();
 	}
 
@@ -80,7 +83,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 		return dSimState.schedule.getTime();
 	}
 
-	public ArrayList<IntHyperRect> getAllLocalBounds() throws RemoteException {
+	public ArrayList<IntRect2D> getAllLocalBounds() throws RemoteException {
 		return dSimState.getPartitioning().getAllBounds();
 	}
 

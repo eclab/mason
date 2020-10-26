@@ -26,7 +26,8 @@ public interface VisualizationProcessor extends Remote {
 	public void unlock() throws RemoteException;
 
 	/** Returns the current bounds of the processor's local region. */
-	public IntHyperRect getStorageBounds() throws RemoteException;
+
+	public IntRect2D getStorageBounds() throws RemoteException;
 
 	/** Returns a full copy of GridStorage object number STORAGE. */
 	public GridStorage getStorage(int storage) throws RemoteException;
@@ -38,7 +39,8 @@ public interface VisualizationProcessor extends Remote {
 	public int getNumProcessors() throws RemoteException;
 
 	/** Returns the world (non-toroidal) bounds of the distributed model */
-	public IntHyperRect getWorldBounds() throws RemoteException;
+
+	public IntRect2D getWorldBounds() throws RemoteException;
 	
 	//// WE ALSO NEED THE FOLLOWING, WHICH DO *NOT* REQUIRE LOCKING BECAUSE THEY ARE SYNCHRONIZED.
 	//// JUST CALL THE SECHEDULE'S VERSION
@@ -52,7 +54,7 @@ public interface VisualizationProcessor extends Remote {
 	/// Not sure how to do this one -- grab information from the quad tree?
 	/// The IntHyperRects in this method should return the LOCAL storage size, not
 	/// including the halo rect, I think.
-	public ArrayList<IntHyperRect> getAllLocalBounds() throws RemoteException;
+	public ArrayList<IntRect2D> getAllLocalBounds() throws RemoteException;
 	
 	// TODO: Adding here for now
 	// Not sure if one class can implement two remote interfaces

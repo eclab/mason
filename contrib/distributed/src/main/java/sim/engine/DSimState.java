@@ -31,7 +31,7 @@ import sim.engine.transport.PayloadWrapper;
 import sim.engine.transport.TransporterMPI;
 import sim.field.HaloGrid2D;
 import sim.field.Synchronizable;
-import sim.field.partitioning.IntHyperRect;
+import sim.field.partitioning.IntRect2D;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.QuadTreePartition;
 import sim.field.storage.ContStorage;
@@ -403,7 +403,7 @@ public class DSimState extends SimState {
 	}
 
 	private void balancePartitions(int level) throws MPIException {
-		final IntHyperRect old_partition = partition.getBounds();
+		final IntRect2D old_partition = partition.getBounds();
 		final int old_pid = partition.getPid();
 		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage();
 		Timing.start(Timing.LB_OVERHEAD);
@@ -413,7 +413,7 @@ public class DSimState extends SimState {
 		// old_partitioning"+old_partition);
 		System.out.println("pid " + partition.getPid() + " new partition" + partition.getBounds());
 
-		for (Int2D p : old_partition) {
+		for (Int2D p : old_partition.getPointList()) {
 			if (!partition.getBounds().contains(p)) {
 				final int toP = partition.toPartitionId(p);
 				for (Synchronizable field : fieldRegistry) {
@@ -433,7 +433,11 @@ public class DSimState extends SimState {
 								} catch (Exception e) {
 									System.out.println("PID: " + partition.pid + " exception on " + a);
 								}
-								transporter.migrateAgent((Stopping) a, toP, loc, ((HaloGrid2D) field).fieldIndex);
+								
+								final int locToP = partition.toPartitionId(loc);
+								transporter.migrateAgent((Stopping) a, locToP, loc, ((HaloGrid2D) field).fieldIndex);
+								
+								//transporter.migrateAgent((Stopping) a, toP, loc, ((HaloGrid2D) field).fieldIndex);
 								migratedAgents.add(a);
 								System.out.println("PID: " + partition.pid + " processor " + old_pid + " move " + a
 										+ " from " + loc + " (point " + p + ") to processor " + toP);

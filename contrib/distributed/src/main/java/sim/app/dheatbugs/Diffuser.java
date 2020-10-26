@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package sim.app.dheatbugs;
+package sim.app.dHeatBugs;
 
 import sim.engine.DSimState;
 import sim.engine.DSteppable;
@@ -26,12 +26,12 @@ public class Diffuser extends DSteppable {
 		// locals are faster than instance variables
 		final double[] _valgrid_field = heatbugs.valgrid.getStorageArray();
 		final double[] _valgrid2_field = heatbugs.valgrid2.getStorageArray();
-		final int _gridWidth = heatbugs.getPartitioning().getBounds().getSize()[0];
-		final int _gridHeight = heatbugs.getPartitioning().getBounds().getSize()[1];
+		final int _gridWidth = heatbugs.getPartitioning().getBounds().getSizes()[0];
+		final int _gridHeight = heatbugs.getPartitioning().getBounds().getSizes()[1];
 		final double _evaporationRate = heatbugs.evaporationRate;
 		final double _diffusionRate = heatbugs.diffusionRate;
 		final int aoi = heatbugs.aoi[0];
-		final int offset = heatbugs.getPartitioning().getBounds().getSize()[1] + (2 * aoi);
+		final int offset = heatbugs.getPartitioning().getBounds().getSizes()[1] + (2 * aoi);
 		int past, curr, next;
 
 		// for each x and y position

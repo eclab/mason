@@ -52,12 +52,12 @@ public abstract class IntPointGenerator implements Supplier<Int2D>, Iterable<Int
         return getLayer(new Int2D(0, 0), 0, toLayer);
     }
 
-    public static IntPointGenerator getBlock(IntHyperRect rect) {
+    public static IntPointGenerator getBlock(IntRect2D rect) {
         return new BlockGenerator(rect);
     }
 
     public static IntPointGenerator getBlock(Int2D st, Int2D ed) {
-        return getBlock(new IntHyperRect(-1, st, ed));
+        return getBlock(new IntRect2D(st, ed));
     }
 
     public static IntPointGenerator getBlock(int[] size) {
@@ -138,7 +138,7 @@ public abstract class IntPointGenerator implements Supplier<Int2D>, Iterable<Int
         final int[] c;
         final Int2D ul, br;
 
-        public BlockGenerator(IntHyperRect rect) {
+        public BlockGenerator(IntRect2D rect) {
             super(rect.getArea());
 
             ul = rect.ul;

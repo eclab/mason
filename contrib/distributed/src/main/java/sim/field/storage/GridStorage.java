@@ -5,7 +5,7 @@ import java.io.Serializable;
 import mpi.Datatype;
 import mpi.MPI;
 import mpi.MPIException;
-import sim.field.partitioning.IntHyperRect;
+import sim.field.partitioning.IntRect2D;
 import sim.util.*;
 
 /**
@@ -17,8 +17,10 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	private static final long serialVersionUID = 1L;
 	
 	Object storage;
-	IntHyperRect shape;
-	transient Datatype baseType = MPI.BYTE;
+
+	IntRect2D shape;
+	Datatype baseType = MPI.BYTE;
+
 
 	int stride;
 
@@ -35,25 +37,25 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 
 	public abstract Serializable getObjects(final P p);
 
-	public GridStorage(final IntHyperRect shape) {
+	public GridStorage(final IntRect2D shape) {
 		super();
 		this.shape = shape;
-		stride = getStride(shape.getSize());
+		stride = getStride(shape.getSizes());
 	}
 
-	public GridStorage(final Object storage, final IntHyperRect shape) {
+	public GridStorage(final Object storage, final IntRect2D shape) {
 		super();
 		this.storage = storage;
 		this.shape = shape;
-		stride = getStride(shape.getSize());
+		stride = getStride(shape.getSizes());
 	}
 
-	public GridStorage(final Object storage, final IntHyperRect shape, final Datatype baseType) {
+	public GridStorage(final Object storage, final IntRect2D shape, final Datatype baseType) {
 		super();
 		this.storage = storage;
 		this.shape = shape;
 		this.baseType = baseType;
-		stride = getStride(shape.getSize());
+		stride = getStride(shape.getSizes());
 	}
 
 	public Object getStorage() {
@@ -64,12 +66,12 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 		return baseType;
 	}
 
-	public IntHyperRect getShape() {
+	public IntRect2D getShape() {
 		return shape;
 	}
 
 	// Return a new instance of the subclass (IntStorage/DoubleStorage/etc...)
-	public abstract GridStorage getNewStorage(IntHyperRect shape);
+	public abstract GridStorage getNewStorage(IntRect2D shape);
 
 	public abstract String toString();
 
@@ -86,9 +88,9 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	 * 
 	 * @param newShape
 	 */
-	private void reload(final IntHyperRect newShape) {
+	private void reload(final IntRect2D newShape) {
 		shape = newShape;
-		stride = getStride(newShape.getSize());
+		stride = getStride(newShape.getSizes());
 		storage = allocate(newShape.getArea());
 	}
 
@@ -97,13 +99,13 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	 * 
 	 * @param newShape
 	 */
-	public void reshape(final IntHyperRect newShape) {
+	public void reshape(final IntRect2D newShape) {
 		if (newShape.equals(shape))
 			return;
 
-		if (newShape.isIntersect(shape)) {
+		if (newShape.intersects(shape)) {
 
-			final IntHyperRect overlap = newShape.getIntersection(shape);
+			final IntRect2D overlap = newShape.getIntersection(shape);
 
 			final MPIParam fromParam = new MPIParam(overlap, shape, baseType);
 			final MPIParam toParam = new MPIParam(overlap, newShape, baseType);

@@ -5,14 +5,14 @@ import java.util.Arrays;
 
 import mpi.*;
 
-import sim.field.partitioning.IntHyperRect;
+import sim.field.partitioning.IntRect2D;
 import sim.util.*;
 
 public class DoubleGridStorage extends GridStorage<Double, Int2D> {
 
 	final double initVal;
 
-	public DoubleGridStorage(IntHyperRect shape, double initVal) {
+	public DoubleGridStorage(IntRect2D shape, double initVal) {
 		super(shape);
 		baseType = MPI.DOUBLE;
 		storage = allocate(shape.getArea());
@@ -20,7 +20,7 @@ public class DoubleGridStorage extends GridStorage<Double, Int2D> {
 		Arrays.fill((double[]) storage, initVal);
 	}
 
-	public GridStorage<Double, Int2D> getNewStorage(IntHyperRect shape) {
+	public GridStorage<Double, Int2D> getNewStorage(IntRect2D shape) {
 		return new DoubleGridStorage(shape, 0);
 	}
 
@@ -35,7 +35,7 @@ public class DoubleGridStorage extends GridStorage<Double, Int2D> {
 	}
 
 	public String toString() {
-		int[] size = shape.getSize();
+		int[] size = shape.getSizes();
 		double[] array = (double[]) storage;
 		StringBuffer buf = new StringBuffer(String.format("DoubleGridStorage-%s\n", shape));
 

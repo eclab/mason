@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.function.IntFunction;
 
-import sim.field.partitioning.IntHyperRect;
+import sim.field.partitioning.IntRect2D;
 import sim.util.*;
 
 /**
@@ -16,14 +16,14 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage<T, Int
 
 	transient IntFunction<ArrayList<T>[]> alloc; // Lambda function which accepts the size as its argument and returns a T array
 
-	public DenseGridStorage(final IntHyperRect shape, final IntFunction<ArrayList<T>[]> allocator) {
+	public DenseGridStorage(final IntRect2D shape, final IntFunction<ArrayList<T>[]> allocator) {
 		super(shape);
 
 		alloc = allocator;
 		storage = allocate(shape.getArea());
 	}
 
-	public GridStorage<T, Int2D> getNewStorage(final IntHyperRect shape) {
+	public GridStorage<T, Int2D> getNewStorage(final IntRect2D shape) {
 		return new DenseGridStorage<T>(shape, alloc);
 	}
 
@@ -32,7 +32,7 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage<T, Int
 	}
 
 	public String toString() {
-		final int[] size = shape.getSize();
+		final int[] size = shape.getSizes();
 		final ArrayList<T>[] array = (ArrayList[]) storage;
 		final StringBuffer buf = new StringBuffer(
 				String.format("ObjectGridStorage<%s>-%s\n", array.getClass().getSimpleName(), shape));
@@ -51,8 +51,8 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage<T, Int
 		final ArrayList<T>[] stor = (ArrayList<T>[]) storage;
 		int curr = 0;
 
-		for (final IntHyperRect rect : mp.rects)
-			for (final Int2D p : rect)
+		for (final IntRect2D rect : mp.rects)
+			for (final Int2D p : rect.getPointList())
 				objs[curr++] = stor[getFlatIdx(p)];
 
 		return objs;
@@ -64,8 +64,8 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage<T, Int
 		final ArrayList<T>[] objs = (ArrayList<T>[]) buf;
 		int curr = 0;
 
-		for (final IntHyperRect rect : mp.rects)
-			for (final Int2D p : rect)
+		for (final IntRect2D rect : mp.rects)
+			for (final Int2D p : rect.getPointList())
 				stor[getFlatIdx(p)] = objs[curr++];
 
 		return curr;
