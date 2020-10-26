@@ -293,12 +293,13 @@ public class DSimState extends SimState {
 
 		// Wait that all nodes have registered their new objects in the distributed
 		// registry.
-		try {
-			MPI.COMM_WORLD.barrier();
-		} catch (MPIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if (withRegistry)
+			try {
+				MPI.COMM_WORLD.barrier();
+			} catch (MPIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 		transporter.objectQueue.clear();
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
@@ -307,99 +308,97 @@ public class DSimState extends SimState {
 	}
 
 	private void loadBalancing() {
-		if (schedule.getSteps() > 0) {
-			if (schedule.getSteps() % balanceInterval == 0) {
+		if (schedule.getSteps() > 0 && (schedule.getSteps() % balanceInterval == 0)) {
+			try {
+				balancePartitions(balancerLevel);
 
+				syncFields();
 				try {
-					balancePartitions(balancerLevel);
+					transporter.sync();
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 
-					syncFields();
-					try {
-						transporter.sync();
-					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+				for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
 
-					for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
+					/*
+					 * Assumptions about what is to be added to the field using addToField method
+					 * rely on the fact that the wrapper classes are not directly used By the
+					 * modelers
+					 *
+					 * In case of IterativeRepeat step is added to the field. For PayloadWrapper we
+					 * add agent and, for all other cases we add the object itself to the field
+					 *
+					 * Improperly using the wrappers and/or fieldIndex will cause Class cast
+					 * exceptions to be thrown
+					 */
 
-						/*
-						 * Assumptions about what is to be added to the field using addToField method
-						 * rely on the fact that the wrapper classes are not directly used By the
-						 * modelers
-						 *
-						 * In case of IterativeRepeat step is added to the field. For PayloadWrapper we
-						 * add agent and, for all other cases we add the object itself to the field
-						 *
-						 * Improperly using the wrappers and/or fieldIndex will cause Class cast
-						 * exceptions to be thrown
-						 */
+					if (payloadWrapper.fieldIndex >= 0)
+						// add the object to the field
+						fieldRegistry.get(payloadWrapper.fieldIndex).syncObject(payloadWrapper);
 
-						if (payloadWrapper.fieldIndex >= 0)
-							// add the object to the field
-							fieldRegistry.get(payloadWrapper.fieldIndex).syncObject(payloadWrapper);
+					if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
+						final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
 
-						if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
-							final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
+						// TODO: how to schedule for a specified time?
+						// Not adding it to specific time because we get an error -
+						// "the time provided (-1.0000000000000002) is < EPOCH (0.0)"
 
-							// TODO: how to schedule for a specified time?
-							// Not adding it to specific time because we get an error -
-							// "the time provided (-1.0000000000000002) is < EPOCH (0.0)"
+						Stopping stopping = iterativeRepeat.getSteppable();
+						stopping.setStoppable(schedule.scheduleRepeating(stopping, iterativeRepeat.getOrdering(),
+								iterativeRepeat.interval));
+					} else if (payloadWrapper.payload instanceof AgentWrapper) {
+						final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
 
-							Stopping stopping = iterativeRepeat.getSteppable();
-							stopping.setStoppable(schedule.scheduleRepeating(stopping, iterativeRepeat.getOrdering(),
-									iterativeRepeat.interval));
-						} else if (payloadWrapper.payload instanceof AgentWrapper) {
-							final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
-
-							if (withRegistry) {
-								if (agentWrapper.getExportedName() != null) {
-									try {
-										DRegistry.getInstance().registerObject(agentWrapper.getExportedName(),
-												(Remote) agentWrapper.agent);
-									} catch (RemoteException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
+						if (withRegistry) {
+							if (agentWrapper.getExportedName() != null) {
+								try {
+									DRegistry.getInstance().registerObject(agentWrapper.getExportedName(),
+											(Remote) agentWrapper.agent);
+								} catch (RemoteException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
 								}
 							}
-							if (agentWrapper.time < 0)
-								schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
-							else
-								schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
 						}
-
+						if (agentWrapper.time < 0)
+							schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
+						else
+							schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
 					}
 
-					// Wait that all nodes have registered their new objects in the distributed
-					// registry.
-					try {
-						MPI.COMM_WORLD.barrier();
-					} catch (MPIException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				}
 
-					transporter.objectQueue.clear();
-
+				// Wait that all nodes have registered their new objects in the distributed
+				// registry.
+				try {
+					MPI.COMM_WORLD.barrier();
 				} catch (MPIException e) {
-					// TODO: handle exception
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				if (balancerLevel != 0)
-					balancerLevel--;
-				else
-					balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
+
+				transporter.objectQueue.clear();
+
+			} catch (MPIException e) {
+				// TODO: handle exception
+				e.printStackTrace();
 			}
-		}
-		try {
-			MPI.COMM_WORLD.barrier();
-		} catch (MPIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (balancerLevel != 0)
+				balancerLevel--;
+			else
+				balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
+			
+			try {
+				MPI.COMM_WORLD.barrier();
+			} catch (MPIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -424,7 +423,7 @@ public class DSimState extends SimState {
 						ContStorage st = (ContStorage) ((HaloGrid2D) field).getStorage();
 						Double2D doublep = new Double2D(p);
 						HashSet agents = (HashSet) st.getCell(doublep).clone(); // create a clone to avoid the
-																			// ConcurrentModificationException
+						// ConcurrentModificationException
 						for (Object a : agents) {
 							NumberND loc = st.getLocation((Serializable) a);
 							if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)

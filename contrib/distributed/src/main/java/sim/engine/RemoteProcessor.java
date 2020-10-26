@@ -2,6 +2,7 @@ package sim.engine;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -11,8 +12,8 @@ import sim.field.partitioning.IntHyperRect;
 import sim.field.proxy.VisualizationProcessor;
 import sim.field.storage.GridStorage;
 
-//public class RemoteProcessor extends UnicastRemoteObject implements VisualizationProcessor {
-public class RemoteProcessor implements VisualizationProcessor {
+public class RemoteProcessor extends UnicastRemoteObject implements VisualizationProcessor {
+//public class RemoteProcessor implements VisualizationProcessor {
 	final DSimState dSimState;
 	private final ReentrantLock lock = new ReentrantLock(true); // Fair lock
 	public static final String NAME_PREFIX = "processorPId: ";

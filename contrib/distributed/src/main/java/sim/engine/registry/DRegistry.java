@@ -146,7 +146,7 @@ public class DRegistry {
 	}
 
 	/**
-	 * Register an object obj with kay name on the registry
+	 * Register an object obj with key name on the registry
 	 * 
 	 * @param name
 	 * @param obj
@@ -159,6 +159,33 @@ public class DRegistry {
 		if (!exported_names.containsKey(name)) {
 			try {
 				Remote stub = UnicastRemoteObject.exportObject(obj, 0);
+				registry.bind(name, stub);
+				exported_names.put(name, obj);
+				exported_objects.put(obj, name);
+			} catch (AlreadyBoundException e) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+
+	}
+
+	/**
+	 * Register an already exporter UnicastRemoteObject obj with key name on the
+	 * registry
+	 * 
+	 * @param name
+	 * @param obj
+	 * 
+	 * @return true if successful
+	 * @throws AccessException
+	 * @throws RemoteException
+	 */
+	public boolean registerObject(String name, UnicastRemoteObject obj) throws AccessException, RemoteException {
+		if (!exported_names.containsKey(name)) {
+			try {
+				Remote stub = UnicastRemoteObject.toStub(obj);
 				registry.bind(name, stub);
 				exported_names.put(name, obj);
 				exported_objects.put(obj, name);
