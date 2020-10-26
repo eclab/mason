@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package sim.app.dantForage;
+package sim.app.dantforage;
 
 import sim.engine.*;
 import sim.field.grid.*;
