@@ -7,6 +7,7 @@
 package sim.engine;
 
 import java.io.IOException;
+
 import java.io.Serializable;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
@@ -34,7 +35,7 @@ import sim.field.Synchronizable;
 import sim.field.partitioning.IntRect2D;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.QuadTreePartition;
-import sim.field.storage.ContStorage;
+import sim.field.storage.ContinuousStorage;
 import sim.field.storage.ObjectGridStorage;
 import sim.util.MPIUtil;
 import sim.util.Timing;
@@ -419,8 +420,8 @@ public class DSimState extends SimState {
 				for (Synchronizable field : fieldRegistry) {
 					ArrayList<Object> migratedAgents = new ArrayList<>();
 					HaloGrid2D haloGrid2D = (HaloGrid2D) field;
-					if (haloGrid2D.getStorage() instanceof ContStorage) {
-						ContStorage st = (ContStorage) ((HaloGrid2D) field).getStorage();
+					if (haloGrid2D.getStorage() instanceof ContinuousStorage) {
+						ContinuousStorage st = (ContinuousStorage) ((HaloGrid2D) field).getStorage();
 						Double2D doublep = new Double2D(p);
 						HashSet agents = (HashSet) st.getCell(doublep).clone(); // create a clone to avoid the
 						// ConcurrentModificationException

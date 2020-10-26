@@ -31,7 +31,7 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
 		// rather than pushing the whole object over the network for visualization
 		
 		// FIXME: HashMap in ContStorage contains global coordinates, not local ones.
-		ContStorage storage = (ContStorage)(stateProxy.storage(proxyIndex));
+		ContinuousStorage storage = (ContinuousStorage)(stateProxy.storage(proxyIndex));
 		HashMap<Object, Double2D> map = (HashMap)(storage.getStorageObjects());
 		
 		discretization = storage.getDiscretization();

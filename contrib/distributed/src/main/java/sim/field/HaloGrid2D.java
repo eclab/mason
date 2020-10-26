@@ -1,6 +1,7 @@
 package sim.field;
 
 import java.io.Serializable;
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import sim.engine.transport.TransportRMIInterface;
 import sim.field.partitioning.IntRect2D;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.QuadTreePartition;
-import sim.field.storage.ContStorage;
+import sim.field.storage.ContinuousStorage;
 import sim.field.storage.GridStorage;
 import sim.util.GroupComm;
 import sim.util.Int2D;
@@ -234,7 +235,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		if (!inLocal(p)) {
 			addToRemote(p, t);
 		} else {
-			if (localStorage instanceof ContStorage)
+			if (localStorage instanceof ContinuousStorage)
 				localStorage.addToLocation(t, p);
 			else
 				localStorage.addToLocation(t, toLocalPoint((Int2D) p));
@@ -245,7 +246,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		if (!inLocal(p))
 			removeFromRemote(p, t);
 		else {
-			if (localStorage instanceof ContStorage)
+			if (localStorage instanceof ContinuousStorage)
 				localStorage.removeObject(t, p);
 			else
 				localStorage.removeObject(t, toLocalPoint((Int2D) p));
@@ -256,7 +257,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		if (!inLocal(p))
 			removeFromRemote(p);
 		else {
-			if (localStorage instanceof ContStorage)
+			if (localStorage instanceof ContinuousStorage)
 				localStorage.removeObjects(p);
 			else
 				localStorage.removeObjects(toLocalPoint((Int2D) p));
@@ -466,7 +467,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @param t     object to move
 	 */
 	public void moveLocal(final P fromP, final P toP, final T t) {
-		if (localStorage instanceof ContStorage) {
+		if (localStorage instanceof ContinuousStorage) {
 			localStorage.removeObject(t, fromP);
 			localStorage.addToLocation(t, toP);
 		} else {
@@ -723,7 +724,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	public void addRMI(P p, T t) throws RemoteException {
 		synchronized (lockRMI) {
 //		Checking instanceof because ContStorage store global point 
-			if (localStorage instanceof ContStorage)
+			if (localStorage instanceof ContinuousStorage)
 				localStorage.addToLocation(t, p);
 			else
 				localStorage.addToLocation(t, toLocalPoint((Int2D) p));
@@ -732,7 +733,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 
 	public void removeRMI(P p, T t) throws RemoteException {
 		synchronized (lockRMI) {
-			if (localStorage instanceof ContStorage)
+			if (localStorage instanceof ContinuousStorage)
 				localStorage.removeObject(t, p);
 			else
 				localStorage.removeObject(t, toLocalPoint((Int2D) p));
@@ -741,7 +742,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 
 	public void removeRMI(final P p) throws RemoteException {
 		synchronized (lockRMI) {
-			if (localStorage instanceof ContStorage)
+			if (localStorage instanceof ContinuousStorage)
 				localStorage.removeObjects(p);
 			else
 				localStorage.removeObjects(toLocalPoint((Int2D) p));
@@ -750,7 +751,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 
 	public Serializable getRMI(P p) throws RemoteException {
 		synchronized (lockRMI) {
-			if (localStorage instanceof ContStorage)
+			if (localStorage instanceof ContinuousStorage)
 				return localStorage.getObjects(p);
 			else
 				return localStorage.getObjects(toLocalPoint((Int2D) p));

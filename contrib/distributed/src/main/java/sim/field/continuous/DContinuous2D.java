@@ -1,6 +1,7 @@
 package sim.field.continuous;
 
 import java.io.Serializable;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import sim.field.DAbstractGrid2D;
 import sim.field.DGrid;
 import sim.field.HaloGrid2D;
 import sim.field.partitioning.PartitionInterface;
-import sim.field.storage.ContStorage;
+import sim.field.storage.ContinuousStorage;
 import sim.util.MPIParam;
 import sim.util.*;
 
@@ -27,14 +28,14 @@ import sim.util.*;
 public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D implements DGrid<T, Double2D> {
 	private static final long serialVersionUID = 1L;
 
-	private HaloGrid2D<T, Double2D, ContStorage<T>> halo;
+	private HaloGrid2D<T, Double2D, ContinuousStorage<T>> halo;
 
 	public DContinuous2D(final PartitionInterface ps, final int[] aoi, final double discretization,
 			final DSimState state) {
 		super(ps);
 		try {
-			halo = new HaloGrid2D<T, Double2D, ContStorage<T>>(ps, aoi,
-					new ContStorage<T>(ps.getBounds(), discretization), state);
+			halo = new HaloGrid2D<T, Double2D, ContinuousStorage<T>>(ps, aoi,
+					new ContinuousStorage<T>(ps.getBounds(), discretization), state);
 		} catch (RemoteException e) {
 			throw new RuntimeException(e);
 		}

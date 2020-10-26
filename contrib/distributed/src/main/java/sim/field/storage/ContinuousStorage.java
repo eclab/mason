@@ -13,14 +13,14 @@ import sim.field.partitioning.IntRect2D;
 import sim.util.MPIParam;
 import sim.util.*;
 
-public class ContStorage<T extends Serializable> extends GridStorage<T, Double2D> {
+public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Double2D> {
 
 	int[] dsize;
 	double discretization;
 	public HashMap<T, Double2D> m;
 
 
-	public ContStorage(final IntRect2D shape, final double discretization) {
+	public ContinuousStorage(final IntRect2D shape, final double discretization) {
 		super(shape);
 
 		this.discretization = discretization;
@@ -29,7 +29,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T, Double2D
 
 
 	public GridStorage getNewStorage(final IntRect2D shape) {
-		return new ContStorage<>(shape, discretization);
+		return new ContinuousStorage<>(shape, discretization);
 	}
 
 	protected Object[] allocate(final int size) {
