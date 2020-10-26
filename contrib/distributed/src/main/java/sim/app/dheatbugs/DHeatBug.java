@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package sim.app.dHeatBugs;
+package sim.app.dheatbugs;
 
 import sim.engine.DSimState;
 import sim.engine.DSteppable;
