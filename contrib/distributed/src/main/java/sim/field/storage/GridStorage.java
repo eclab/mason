@@ -19,7 +19,7 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	Object storage;
 
 	IntRect2D shape;
-	Datatype baseType = MPI.BYTE;
+	transient Datatype baseType = MPI.BYTE;
 
 
 	int stride;

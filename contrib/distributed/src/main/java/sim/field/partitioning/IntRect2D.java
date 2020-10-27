@@ -1,7 +1,7 @@
 package sim.field.partitioning;
 
 import java.util.Arrays;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.stream.IntStream;
@@ -10,9 +10,10 @@ import sim.util.*;
 
 
 // TODO Move to NdRectangle
-public class IntRect2D
+public class IntRect2D implements Serializable
 {
-//// SEAN FIXME: I am presuming that this rectangle is HALF-OPEN, that is br is out of bounds
+	private static final long serialVersionUID = 1L;
+	//// SEAN FIXME: I am presuming that this rectangle is HALF-OPEN, that is br is out of bounds
 //// IS THIS A VALID ASSUMPTION GIVEN THE HALO FIELD USAGE ETC.?
     Int2D ul, br;
 

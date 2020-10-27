@@ -140,7 +140,7 @@ public class SimStateProxy extends SimState
 		}
 		
 	/** Fetches the halo bounds from the current Visualization Processor. */
-	public IntRect2D getBounds() throws RemoteException, NotBoundException
+	public IntRect2D bounds() throws RemoteException, NotBoundException
 
 		{
 		System.err.println(visualizationProcessor().getStorageBounds());

@@ -14,7 +14,7 @@ public class DenseGrid2DProxy extends DenseGrid2D implements UpdatableProxy
 	public void update(SimStateProxy stateProxy, int proxyIndex) throws RemoteException, NotBoundException
 		{
 		// reshape if needed
-		IntRect2D bounds = stateProxy.getBounds();
+		IntRect2D bounds = stateProxy.bounds();
 		int width = bounds.br().x - bounds.ul().x;
 		int height = bounds.br().y - bounds.ul().y;
 
