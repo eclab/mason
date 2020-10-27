@@ -70,7 +70,7 @@ public class MutableInt2D extends MutableNumberND
     public String toString() { return "MutableInt2D["+x+","+y+"]"; }
     public String toCoordinates() { return "(" + x + ", " + y + ")"; }
 
-	public double[] getArrayInDouble() { return new double[] { x, y}; }
+	public double[] getArrayAsDouble() { return new double[] { x, y}; }
 
 
     public Object clone()

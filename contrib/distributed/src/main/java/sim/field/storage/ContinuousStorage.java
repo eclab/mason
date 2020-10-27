@@ -353,9 +353,13 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 //					.map(i -> Math.max(dloc.c(i) - offsets[i], 0))
 //					.toArray());
 		int[] ansUl = new int[2];						// 2 = num dimensions
-		for (int i = 0; i < ansUl.length; i++) {
-			ansUl[i] = Math.max(dloc.c(i) - offsets[i], 0);
-		}
+		// Refactor 20201026 >>>>>>>>>>>>>
+		ansUl[0] = Math.max(dloc.x - offsets[0], 0);
+		ansUl[1] = Math.max(dloc.y - offsets[1], 0);
+//		for (int i = 0; i < ansUl.length; i++) {
+//			ansUl[i] = Math.max(dloc.c(i) - offsets[i], 0);
+//		}
+	    // <<<<<<<<<<<<<<<<<<<<	Refactor 20201026
 		final Int2D ul = new Int2D(ansUl);
 		
 //		final Int2D br = new Int2D(
@@ -364,10 +368,14 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 //					.map(i -> Math.min(dloc.c(i) + offsets[i] + 1, dsize[i]))
 //					.toArray());
 		int[] ansBr = new int[2];						// 2 = num dimensions
-		for (int i = 0; i < ansBr.length; i++) 				
-			{
-			ansBr[i] = Math.min(dloc.c(i) + offsets[i] + 1, dsize[i]);
-		}
+		// Refactor 20201026 >>>>>>>>>>>>>
+		ansBr[0] = Math.min(dloc.x + offsets[0] + 1, dsize[0]);
+		ansBr[1] = Math.min(dloc.y + offsets[1] + 1, dsize[1]);
+//		for (int i = 0; i < ansBr.length; i++) 				
+//			{
+//			ansBr[i] = Math.min(dloc.c(i) + offsets[i] + 1, dsize[i]);
+//		}
+	    // <<<<<<<<<<<<<<<<<<<<	Refactor 20201026
 		final Int2D br = new Int2D(ansBr);
 
 //		// Collect all the objects that are not obj itself and within the given radius

@@ -35,12 +35,12 @@ public class MPIParam {
 	public MPIParam(IntRect2D rect, IntRect2D bound, Datatype baseType) {
 		int[] bsize = bound.getSizes();
 
-		this.idx = GridStorage.getFlatIdx(rect.ul().rshift(bound.ul().c()), bsize);
+		this.idx = GridStorage.getFlatIdx(rect.ul().rshift(new int[]{bound.ul().x,bound.ul().y}), bsize);
 		this.type = getNdArrayDatatype(rect.getSizes(), baseType, bsize);
 		this.size = rect.getArea();
 		this.rects = new ArrayList<IntRect2D>() {
 			{
-				add(rect.rshift(bound.ul().c()));
+				add(rect.rshift(new int[]{bound.ul().x,bound.ul().y}));
 			}
 		};
 	}
@@ -63,11 +63,11 @@ public class MPIParam {
 
 		for (int i = 0; i < count; i++) {
 			IntRect2D rect = rects.get(i);
-			displ[i] = GridStorage.getFlatIdx(rect.ul().rshift(bound.ul().c()), bsize) * typeSize; // displacement from the
+			displ[i] = GridStorage.getFlatIdx(rect.ul().rshift(new int[]{bound.ul().x,bound.ul().y}), bsize) * typeSize; // displacement from the
 																								// start in bytes
 			types[i] = getNdArrayDatatype(rect.getSizes(), baseType, bsize);
 			this.size += rect.getArea();
-			this.rects.add(rect.rshift(bound.ul().c()));
+			this.rects.add(rect.rshift(new int[]{bound.ul().x,bound.ul().y}));
 		}
 
 		try {

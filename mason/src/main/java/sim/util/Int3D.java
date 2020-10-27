@@ -48,7 +48,7 @@ public final class Int3D extends NumberND
     public String toString() { return "Int3D["+x+","+y+","+z+"]"; }
     public String toCoordinates() { return "(" + x + ", " + y + ", " + z + ")"; }    
     
-	public double[] getArrayInDouble() { return new double[] { x, y, z}; }
+	public double[] getArrayAsDouble() { return new double[] { x, y, z}; }
 
 	public int hashCode()
         {

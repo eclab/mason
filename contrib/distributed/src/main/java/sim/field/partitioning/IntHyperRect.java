@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 import sim.util.*;
 
@@ -16,11 +17,22 @@ public class IntHyperRect implements Comparable<IntHyperRect>, Iterable<Int2D>, 
 	public IntHyperRect(int id, Int2D ul, Int2D br) {
 		this.id = id;
 
-		for (int i = 0; i < 2; i++)
-			if (br.c(i) < ul.c(i))
-				throw new IllegalArgumentException("All br's components " + Arrays.toString(br.c())
-						+ " should be greater than or equal to ul's " + Arrays.toString(ul.c()));
-
+		// Refactor 20201026
+		int[] d = new int[] {br.x, br.y};
+		if (br.x < ul.x) {
+			throw new IllegalArgumentException("All br's components " + Arrays.toString(new int[] {br.x, br.y})
+					+ " should be greater than or equal to ul's " + Arrays.toString(new int[] {ul.x, ul.y}));
+		}
+		if (br.y < ul.y) {
+			throw new IllegalArgumentException("All br's components " + Arrays.toString(new int[] {br.x, br.y})
+					+ " should be greater than or equal to ul's " + Arrays.toString(new int[] {ul.x, ul.y}));
+		}
+//		for (int i = 0; i < 2; i++)
+//			if (br.c(i) < ul.c(i))
+//				throw new IllegalArgumentException("All br's components " + Arrays.toString(br.c())
+//						+ " should be greater than or equal to ul's " + Arrays.toString(ul.c()));
+		// >>>>>>>>>>>>>>>>>
+		
 		this.ul = ul;
 		this.br = br;
 	}
@@ -151,16 +163,38 @@ public class IntHyperRect implements Comparable<IntHyperRect>, Iterable<Int2D>, 
 
 	// Get all the vertices in order
 	public Int2D[] getAllVertices() {
-		return IntStream.range(0, 1 << 2)
-				.mapToObj(k -> new Int2D(
-						IntStream.range(0, 2)
-								.map(i -> ((k >> i) & 1) == 1 ? this.ul.c(i) : this.br.c(i))
-								.toArray()))
-				.toArray(size -> new Int2D[size]);
+		// Refactor 20201026 >>>>>>>>>>>>>
+		Int2D[] vertices = new Int2D[4]; // 4 =  1*2^(2) = 1 << 2
+		for (int k = 0; k < vertices.length; k++) {
+			int[] array = new int[2];
+			array[0] = ((k >> 0) & 1) == 1 ? this.ul.x : this.br.x;
+			array[1] = ((k >> 1) & 1) == 1 ? this.ul.y : this.br.y;
+			Int2D d = new Int2D(array);
+			vertices[k] = d;
+		}
+		return vertices;
+//		return IntStream.range(0, 1 << 2)
+//				.mapToObj(k -> new Int2D(
+//						IntStream.range(0, 2)
+//								.map(i -> ((k >> i) & 1) == 1 ? this.ul.c(i) : this.br.c(i))
+//								.toArray()))
+//				.toArray(size -> new Int2D[size]);
+		// <<<<<<<<<<<<<<< Refactor 20201026
 	}
 
 	public Int2D getCenter() {
-		return new Int2D(IntStream.range(0, 2).map(i -> (br.c(i) - ul.c(i)) / 2 + ul.c(i)).toArray());
+		// Refactor 20201026 >>>>>>>>>>>>>
+		int[] center = new int[2];
+		center[0] = (br.x - ul.x) / 2 + ul.x;
+		center[1] = (br.y - ul.y) / 2 + ul.y;
+		return new Int2D(center);
+//		Int2D d = new Int2D(
+//				IntStream.range(0, 2)
+//				.map(i -> (br.c(i) - ul.c(i)) / 2 + ul.c(i))
+//				.toArray());
+//		
+//		return new Int2D(IntStream.range(0, 2).map(i -> (br.c(i) - ul.c(i)) / 2 + ul.c(i)).toArray());
+	    // <<<<<<<<<<<<<<<<<<<<	Refactor 20201026
 	}
 
 	// Return whether two hyper rectangles align along the given dimension
@@ -248,15 +282,29 @@ public class IntHyperRect implements Comparable<IntHyperRect>, Iterable<Int2D>, 
 		final int numRects = (numDelims - 1) * (numDelims - 1);
 		int[][] delims = new int[2][numDelims];
 
-		for (int i = 0; i < 2; i++) {
-			delims[i][0] = this.ul.c(i);
-			delims[i][1] = this.br.c(i);
-
-			for (int j = 2; j < numDelims; j++)
-				delims[i][j] = ps[j - 2].c(i);
-
-			Arrays.sort(delims[i]);
-		}
+		// Refactor 20201026 >>>>>>>>>>>>>
+		delims[0][0] = this.ul.x;
+		delims[0][1] = this.br.x;
+		delims[1][0] = this.ul.y;
+		delims[1][1] = this.br.y;
+//		when i = 0;
+		for (int j = 2; j < numDelims; j++)
+			delims[0][j] = ps[j - 2].x;
+		Arrays.sort(delims[0]);
+//		when i = 1;
+		for (int j = 2; j < numDelims; j++)
+			delims[1][j] = ps[j - 2].y;
+		Arrays.sort(delims[1]);
+//		for (int i = 0; i < 2; i++) {
+//			delims[i][0] = this.ul.c(i);
+//			delims[i][1] = this.br.c(i);
+//
+//			for (int j = 2; j < numDelims; j++)
+//				delims[i][j] = ps[j - 2].c(i);
+//
+//			Arrays.sort(delims[i]);
+//		}
+	    // <<<<<<<<<<<<<<<<<<<<	Refactor 20201026
 
 		for (int k = 0; k < numRects; k++) {
 			boolean empty = false;
@@ -290,11 +338,21 @@ public class IntHyperRect implements Comparable<IntHyperRect>, Iterable<Int2D>, 
 
 		for (IntHyperRect rect : this.split(this.getIntersection(bound).getVertices())) {
 			int[] offsets = new int[2];
-			for (int i = 0; i < 2; i++)
-				if (rect.br.c(i) > bound.br.c(i))
-					offsets[i] = -size[i];
-				else if (rect.ul.c(i) < bound.ul.c(i))
-					offsets[i] = size[i];
+			// Refactor 20201026 >>>>>>>>>>>>>
+			if (rect.br.x > bound.br.x)
+				offsets[0] = -size[0];
+			else if (rect.ul.x < bound.ul.x)
+				offsets[0] = size[0];
+			if (rect.br.y > bound.br.y)
+				offsets[1] = -size[1];
+			else if (rect.ul.y < bound.ul.y)
+				offsets[1] = size[1];
+//			for (int i = 0; i < 2; i++)
+//				if (rect.br.c(i) > bound.br.c(i))
+//					offsets[i] = -size[i];
+//				else if (rect.ul.c(i) < bound.ul.c(i))
+//					offsets[i] = size[i];
+		    // <<<<<<<<<<<<<<<<<<<<	Refactor 20201026
 			ret.add(rect.shift(offsets));
 		}
 

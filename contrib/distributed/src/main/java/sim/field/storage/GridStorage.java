@@ -160,7 +160,7 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	 * @return flattened index with respect to the given size
 	 */
 	public static int getFlatIdx(final Int2D p, final int[] wrtSize) {
-		return p.c(0) * getStride(wrtSize) + p.c(1);
+		return p.x * getStride(wrtSize) + p.y;
 
 //		final int s = getStride(wrtSize);
 //		int sum = 0;

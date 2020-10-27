@@ -118,8 +118,8 @@ public class DAnt extends DSteppable implements Remote {
 			if (max == 0 && last != null) // nowhere to go! Maybe go straight
 			{
 				if (state.random.nextBoolean(af.momentumProbability)) {
-					int xm = x + (x - last.c(0));
-					int ym = y + (y - last.c(1));
+					int xm = x + (x - last.x);
+					int ym = y + (y - last.y);
 					if (xm >= 0 && xm < DAntsForage.GRID_WIDTH && ym >= 0 && ym < DAntsForage.GRID_HEIGHT
 							&& af.obstacles.get(new Int2D(xm, ym)) == 0) {
 						max_x = xm;
@@ -178,8 +178,8 @@ public class DAnt extends DSteppable implements Remote {
 			if (max == 0 && last != null) // nowhere to go! Maybe go straight
 			{
 				if (state.random.nextBoolean(af.momentumProbability)) {
-					int xm = x + (x - last.c(0));
-					int ym = y + (y - last.c(1));
+					int xm = x + (x - last.x);
+					int ym = y + (y - last.y);
 					if (xm >= 0 && xm < DAntsForage.GRID_WIDTH && ym >= 0 && ym < DAntsForage.GRID_HEIGHT
 							&& af.obstacles.get(new Int2D(xm, ym)) == 0) {
 						max_x = xm;

@@ -20,7 +20,7 @@ public abstract class NumberND implements java.io.Serializable
 
     public int getNd() { return getNumDimensions(); }
     
-	public abstract double[] getArrayInDouble();
+	public abstract double[] getArrayAsDouble();
         
     /** Returns the value at position VAL in this Number2D  (val should 0, 1, or sometimes 2) */
     public abstract double getVal(int pos);
@@ -258,8 +258,8 @@ public abstract class NumberND implements java.io.Serializable
 
 		public double getDistanceSq(final NumberND that) 
 			{
-			final double[] a = that.getArrayInDouble();
-			final double[] c = this.getArrayInDouble();
+			final double[] a = that.getArrayAsDouble();
+			final double[] c = this.getArrayAsDouble();
 			int x = a.length;
 			double sum = 0;
 			if (c.length < x) x = c.length;

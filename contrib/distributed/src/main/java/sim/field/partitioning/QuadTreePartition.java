@@ -12,9 +12,6 @@ import mpi.Comm;
 import mpi.Info;
 import mpi.MPI;
 import mpi.MPIException;
-import sim.util.GroupComm;
-import sim.util.MPITest;
-import sim.util.MPIUtil;
 import sim.util.*;
 
 /**
@@ -145,8 +142,12 @@ public class QuadTreePartition extends PartitionInterface {
 		for (int level = 0; level < nz / 2; level++) // 2 == number of dimensions, width and height
 		{
 			final List<QuadTreeNode> leaves = qt.getAllLeaves();
-			for (final QuadTreeNode leaf : leaves)
-				qt.split(leaf.getShape().getInt2DCenter());
+			for (final QuadTreeNode leaf : leaves) {
+				//qt.split(leaf.getShape().getInt2DCenter());
+				Double2D d = leaf.getShape().getCenter();
+				qt.split(new Int2D((int)Math.floor(d.x), (int)Math.floor(d.y)));
+			}
+			
 		}
 		mapNodeToProc();
 		createMPITopo();
@@ -316,12 +317,27 @@ public class QuadTreePartition extends PartitionInterface {
 		Object[] sendCentroids = new Object[] { null };
 
 		if (gc != null) {
-			final Int2D ctr = myLeafNode.getShape().getInt2DCenter();
+			
+			Double2D d = myLeafNode.getShape().getCenter();
+			final Int2D ctr = new Int2D((int)Math.floor(d.x), (int)Math.floor(d.y));
+			//final Int2D ctr = myLeafNode.getShape().getInt2DCenter();
 			final double[] sendData = new double[2 + 1], recvData = new double[2 + 1];		// 2 == num dimensions
 
 			sendData[0] = myRuntime;
-			for (int i = 1; i < sendData.length; i++)
-				sendData[i] = ctr.c(i - 1) * myRuntime;
+			// Refactor 20201026 >>>>>>>>>>>>>
+			sendData[1] = ctr.x * myRuntime;
+			sendData[2] = ctr.y * myRuntime;
+			//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+			// This one's whacky
+			// |sendData| = 2 + 1 = 3
+//			int i = 1;
+//			sendData[1] = ctr.c(1 - 1) * myRuntime;
+//			int i = 2;
+//			sendData[2] = ctr.c(2 - 1) * myRuntime;
+			//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//			for (int i = 1; i < sendData.length; i++)
+//				sendData[i] = ctr.c(i - 1) * myRuntime;
+		    // <<<<<<<<<<<<<<<<<<<<	Refactor 20201026
 
 			gc.comm.reduce(sendData, recvData, recvData.length, MPI.DOUBLE, MPI.SUM, gc.groupRoot);
 

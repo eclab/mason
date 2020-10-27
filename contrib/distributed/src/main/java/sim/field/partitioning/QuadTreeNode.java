@@ -246,9 +246,11 @@ public class QuadTreeNode {
 		if (isLeaf())
 			return;
 
-		if (!newShape.contains(origin))
+		if (!newShape.contains(origin)) {
 			//origin = newShape.getCenter();
-			origin = newShape.getInt2DCenter();
+			Double2D d = newShape.getCenter();
+			origin =  new Int2D((int)Math.floor(d.x), (int)Math.floor(d.y));
+		}
 
 		for (int i = 0; i < children.size(); i++)
 			children.get(i).reshape(getChildShape(i));
@@ -282,7 +284,7 @@ public class QuadTreeNode {
 		if (!shape.contains(p))
 			throw new IllegalArgumentException("p " + p + " must be inside the shape " + shape);
 
-		final double[] oc = origin.getArrayInDouble(), pc = p.getArrayInDouble();
+		final double[] oc = origin.getArrayAsDouble(), pc = p.getArrayAsDouble();
 
 		int[] mapd = new int[2];
 		for (int i = 0; i < 2; i++) {

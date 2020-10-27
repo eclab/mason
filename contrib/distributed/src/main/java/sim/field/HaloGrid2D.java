@@ -94,7 +94,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 //								.range(0, 2)
 //								.map(i -> p.c(i) * fieldSize[i])
 //								.toArray());
-					final IntRect2D sp = p2.shift(p.c());
+					final IntRect2D sp = p2.shift(new int[]{p.x,p.y});
 					if (p1.intersects(sp))
 						overlaps.add(p1.getIntersection(sp));
 				}
@@ -556,12 +556,20 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @return true if point is within the global grid
 	 */
 	public boolean inGlobal(final Int2D point) {
-		for (int i = 0; i < 2; i++) // 2 = numbe of dimensions
-		{
-			if (!(point.c(i) >= 0 && point.c(i) < fieldSize[i])) {
-				return false;
-			}
+		// Refactor 20201026 >>>>>>>>>>>>>
+		if (!(point.x >= 0 && point.x < fieldSize[0])) {
+			return false;
 		}
+		if (!(point.y >= 0 && point.y < fieldSize[1])) {
+			return false;
+		}
+//		for (int i = 0; i < 2; i++) // 2 = numbe of dimensions
+//		{
+//			if (!(point.c(i) >= 0 && point.c(i) < fieldSize[i])) {
+//				return false;
+//			}
+//		}
+	    // <<<<<<<<<<<<<<<<<<<<	Refactor 20201026
 		return true;
 //		return IntStream
 //				.range(0, 2)

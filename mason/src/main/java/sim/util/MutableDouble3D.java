@@ -77,7 +77,7 @@ public final class MutableDouble3D extends MutableNumberND
     public String toString() { return "MutableDouble3D["+x+","+y+","+z+"]"; }
     public String toCoordinates() { return "(" + x + ", " + y + ", " + z + ")"; }
 
-	public double[] getArrayInDouble() { return new double[] { x, y, z}; }
+	public double[] getArrayAsDouble() { return new double[] { x, y, z}; }
 
     public Object clone()
         { 

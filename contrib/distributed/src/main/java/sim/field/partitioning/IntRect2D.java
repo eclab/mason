@@ -234,6 +234,7 @@ public class IntRect2D
 		return new IntRect2D(ul.rshift(offsets), br.rshift(offsets));
 	}
 	
+	/*
     public Int2D getInt2DCenter() 
 	{
 		//return new Double2D((br.x - ul.x + 1) / 2.0, (br.y - ul.y + 1) / 2.0);
@@ -242,7 +243,9 @@ public class IntRect2D
 
 	    //return new Int2D(IntStream.range(0, getNd()).map(i -> (br.c(i) - ul.c(i)) / 2 + ul.c(i)).toArray());
 	}
+	*/
 	
+
     
 
      
