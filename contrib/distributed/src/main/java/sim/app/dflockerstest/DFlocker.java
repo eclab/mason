@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package sim.app.dflockersTest;
+package sim.app.dflockerstest;
 
 import java.rmi.Remote;
 import java.util.List;
