@@ -395,14 +395,8 @@ public class Console extends JFrame implements Controller
         
         //////// add any additional pane
         
-		JComponent comp = simulation.state.provideAdditionalTab();
-		if (comp != null)
-			{
-			String str = simulation.state.provideAdditionalTabName();
-			// for Quaqua
-			tabPane.putClientProperty("Quaqua.TabbedPane.contentBorderPainted", Boolean.FALSE);
-			tabPane.addTab(str, comp);
-			}
+		JComponent additional = simulation.state.provideAdditionalTab();
+		String additionalLabel = simulation.state.provideAdditionalTabName();
 
 
         //////// create the "about" tab pane
@@ -976,6 +970,9 @@ public class Console extends JFrame implements Controller
                 
         tabPane.addTab("Console", outerPane);
         tabPane.addTab("Displays", frameListPanel);
+		if (additional != null)
+			tabPane.addTab("" + additionalLabel, additional);
+
         tabPane.addTab("Inspectors", inspectorPanel);
         // add an optional pane if the GUIState has an inspector
         buildModelInspector();
