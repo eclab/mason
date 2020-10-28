@@ -21,8 +21,4 @@ public abstract class DSteppable extends DObject implements Steppable, Stopping 
 		this.stop = stop;
 	}
 
-	// TODO: Replace this with a better solution
-	public long getId() {
-		return (10000 + (long) firstpid) * 100000000 + (long) localid;
-	}
 }
