@@ -17,7 +17,7 @@ package sim.util;
 */
 public final class Int2D extends NumberND
     {
-    public int getNumDimensions() { return 2; }
+    public int numDimensions() { return 2; }
     public double getVal(int val) { return (val == 0 ? x : val == 1 ? y : Double.NaN); }
     public byte[] toBytes() 
         { 
@@ -48,8 +48,8 @@ public final class Int2D extends NumberND
 
 	public int c(int i) { return (i == 0 ? x : y); }
 	public int[] c() { return new int[] {x, y}; }
-	public int[] getArray() { return new int[] {x, y}; }
-	public double[] getArrayInDouble() { return new double[] { x, y}; }
+	public int[] toArray() { return new int[] {x, y}; }
+	public double[] toArrayAsDouble() { return new double[] { x, y}; }
 
     public final int hashCode()
         {

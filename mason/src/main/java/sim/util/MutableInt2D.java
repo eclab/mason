@@ -18,7 +18,8 @@ package sim.util;
 
 public class MutableInt2D extends MutableNumberND
     {
-    public int getNumDimensions() { return 2; }
+    public boolean mutable() { return true; }
+    public int numDimensions() { return 2; }
     public double getVal(int val) { return (val == 0 ? x : val == 1 ? y : Double.NaN); }
     public void setVal(int val, double to) 
         {
@@ -70,7 +71,7 @@ public class MutableInt2D extends MutableNumberND
     public String toString() { return "MutableInt2D["+x+","+y+"]"; }
     public String toCoordinates() { return "(" + x + ", " + y + ")"; }
 
-	public double[] getArrayInDouble() { return new double[] { x, y}; }
+	public double[] toArrayAsDouble() { return new double[] { x, y}; }
 
 
     public Object clone()

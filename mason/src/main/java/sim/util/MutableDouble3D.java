@@ -16,7 +16,8 @@ package sim.util;
 
 public final class MutableDouble3D extends MutableNumberND
     {
-    public int getNumDimensions() { return 3; }
+    public boolean mutable() { return true; }
+    public int numDimensions() { return 3; }
     public double getVal(int val) { return (val == 0 ? x : val == 1 ? y : val == 2 ? z : Double.NaN); }
     public void setVal(int val, double to) 
         {
@@ -77,7 +78,7 @@ public final class MutableDouble3D extends MutableNumberND
     public String toString() { return "MutableDouble3D["+x+","+y+","+z+"]"; }
     public String toCoordinates() { return "(" + x + ", " + y + ", " + z + ")"; }
 
-	public double[] getArrayInDouble() { return new double[] { x, y, z}; }
+	public double[] toArrayAsDouble() { return new double[] { x, y, z}; }
 
     public Object clone()
         { 
