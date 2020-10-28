@@ -38,12 +38,18 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
 		
 		clear();
 		
+		Int2D origin = bounds.ul();
+		
 		// Using EntrySet because its faster (no additional map.get) and 
 		// doesn't create additional objects either
 		// KeySet returns nextNode().key
 		// EntrySet returns nextNode()
-		for (Entry<Object, Double2D> entry : map.entrySet()) 
-			setObjectLocation(entry.getKey(), entry.getValue());
+		for (Entry<Object, Double2D> entry : map.entrySet())
+			{
+			Double2D loc = (Double2D)(entry.getValue());
+			Double2D newLoc = new Double2D(loc.x - origin.x, loc.y - origin.y);
+			setObjectLocation(entry.getKey(), newLoc);
+			}
 		}
 
 	}
