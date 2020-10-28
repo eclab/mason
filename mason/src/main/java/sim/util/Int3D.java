@@ -17,7 +17,7 @@ package sim.util;
 */
 public final class Int3D extends NumberND
     {
-    public int getNumDimensions() { return 3; }
+    public int numDimensions() { return 3; }
     public double getVal(int val) { return (val == 0 ? x : val == 1 ? y : val == 2 ? z : Double.NaN); }
     public byte[] toBytes() 
         { 
@@ -48,7 +48,8 @@ public final class Int3D extends NumberND
     public String toString() { return "Int3D["+x+","+y+","+z+"]"; }
     public String toCoordinates() { return "(" + x + ", " + y + ", " + z + ")"; }    
     
-	public double[] getArrayAsDouble() { return new double[] { x, y, z}; }
+	public double[] toArrayAsDouble() { return new double[] { x, y, z}; }
+
 
 	public int hashCode()
         {

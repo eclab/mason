@@ -392,7 +392,17 @@ public class Console extends JFrame implements Controller
         buttonBox.add(timeBox1);
         if (Display2D.isMacOSX()) buttonBox.add(new JLabel("    "));  // move away from the scroll box
         
-
+        
+        //////// add any additional pane
+        
+		JComponent comp = simulation.state.provideAdditionalTab();
+		if (comp != null)
+			{
+			String str = simulation.state.provideAdditionalTabName();
+			// for Quaqua
+			tabPane.putClientProperty("Quaqua.TabbedPane.contentBorderPainted", Boolean.FALSE);
+			tabPane.addTab(str, comp);
+			}
 
 
         //////// create the "about" tab pane

@@ -16,7 +16,8 @@ package sim.util;
 
 public final class MutableDouble2D extends MutableNumberND
     {
-    public int getNumDimensions() { return 3; }
+    public boolean mutable() { return true; }
+    public int numDimensions() { return 2; }
     public double getVal(int val) { return (val == 0 ? x : val == 1 ? y : Double.NaN); }
     public void setVal(int val, double to) 
         {
@@ -68,7 +69,8 @@ public final class MutableDouble2D extends MutableNumberND
 
     public java.awt.geom.Point2D.Double toPoint2D() { return new java.awt.geom.Point2D.Double(x,y); }
 
-	public double[] getArrayAsDouble() { return new double[] { x, y}; }
+	public double[] toArrayAsDouble() { return new double[] { x, y}; }
+
 
     public Object clone()
         { 

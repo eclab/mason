@@ -11,6 +11,8 @@ CLASSROOT = target/classes
 JAVACFLAGS = -target 1.8 -source 1.8 ${FLAGS} -nowarn -d ${CLASSROOT}
 FLAGS = -g -Xlint:deprecation
 
+#sim/app/serengeti/*.java \
+
 
 VERSION = 20
 
@@ -30,7 +32,6 @@ sim/app/keepaway/*.java \
 sim/app/lsystem/*.java \
 sim/app/lightcycles/*.java \
 sim/app/swarmgame/*.java \
-sim/app/serengeti/*.java \
 sim/app/flockers/*.java \
 sim/app/tutorial1and2/*.java \
 sim/app/tutorial3/*.java \
