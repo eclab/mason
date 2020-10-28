@@ -214,12 +214,6 @@ public class TransporterMPI {
 
 		AgentWrapper wrapper = new AgentWrapper(agent);
 
-		if (withRegistry) {
-			String name = DRegistry.getInstance().ifExportedThenAddMigratedName(agent);
-			if (name != null)
-				wrapper.setExportedName(name);
-		}
-
 		migrateAgent(wrapper, dst);
 	}
 
@@ -234,13 +228,6 @@ public class TransporterMPI {
 	 */
 	public void migrateAgent(final int ordering, final Stopping agent, final int dst) {
 		AgentWrapper wrapper = new AgentWrapper(ordering, agent);
-
-		if (withRegistry) {
-			String name = DRegistry.getInstance().ifExportedThenAddMigratedName(agent);
-			if (name != null)
-				wrapper.setExportedName(name);
-		}
-
 		migrateAgent(wrapper, dst);
 	}
 
@@ -256,13 +243,6 @@ public class TransporterMPI {
 	 */
 	public void migrateAgent(final int ordering, final double time, final Stopping agent, final int dst) {
 		AgentWrapper wrapper = new AgentWrapper(ordering, time, agent);
-
-		if (withRegistry) {
-			String name = DRegistry.getInstance().ifExportedThenAddMigratedName(agent);
-			if (name != null)
-				wrapper.setExportedName(name);
-		}
-
 		migrateAgent(wrapper, dst);
 	}
 
@@ -293,13 +273,6 @@ public class TransporterMPI {
 	public void migrateAgent(final Stopping agent, final int dst, final NumberND loc,
 			final int fieldIndex) {
 		AgentWrapper wrapper = new AgentWrapper(agent);
-
-		if (withRegistry) {
-			String name = DRegistry.getInstance().ifExportedThenAddMigratedName(agent);
-			if (name != null)
-				wrapper.setExportedName(name);
-		}
-
 		migrateAgent(wrapper, dst, loc, fieldIndex);
 	}
 
@@ -317,13 +290,6 @@ public class TransporterMPI {
 	public void migrateAgent(final int ordering, final Stopping agent, final int dst, final NumberND loc,
 			final int fieldIndex) {
 		AgentWrapper wrapper = new AgentWrapper(ordering, agent);
-
-		if (withRegistry) {
-			String name = DRegistry.getInstance().ifExportedThenAddMigratedName(agent);
-			if (name != null)
-				wrapper.setExportedName(name);
-		}
-
 		migrateAgent(wrapper, dst, loc, fieldIndex);
 	}
 
@@ -342,13 +308,6 @@ public class TransporterMPI {
 	public void migrateAgent(final int ordering, final double time, final Stopping agent, final int dst,
 			final NumberND loc, final int fieldIndex) {
 		AgentWrapper wrapper = new AgentWrapper(ordering, time, agent);
-
-		if (withRegistry) {
-			String name = DRegistry.getInstance().ifExportedThenAddMigratedName(agent);
-			if (name != null)
-				wrapper.setExportedName(name);
-		}
-
 		migrateAgent(wrapper, dst, loc, fieldIndex);
 	}
 

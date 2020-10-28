@@ -42,7 +42,7 @@ public class DRegistry {
 	private static Registry registry;
 	private static HashMap<String, Remote> exported_names = new HashMap<>();
 	private static HashMap<Remote, String> exported_objects = new HashMap<>();
-	private ArrayList<String> migrated_names = new ArrayList<>();
+	private static ArrayList<String> migrated_names = new ArrayList<>();
 
 	/**
 	 * Clear the list of the registered agent’s keys on the registry
@@ -148,7 +148,6 @@ public class DRegistry {
 			return instance = instance == null ? new DRegistry() : instance;
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "Error Distributed Registry started for MPI node.");
-
 			return null;
 		}
 	}
@@ -187,7 +186,7 @@ public class DRegistry {
 	}
 
 	/**
-	 * Register an already exporter UnicastRemoteObject obj with key name on the
+	 * Register an already exported UnicastRemoteObject obj with key name on the
 	 * registry
 	 * 
 	 * @param name
@@ -259,12 +258,11 @@ public class DRegistry {
 	 * @throws NotBoundException
 	 */
 	public boolean unRegisterObject(String name) throws AccessException, RemoteException, NotBoundException {
-
-		if (exported_names.containsKey(name)) {
+		Remote remote = exported_names.remove(name);
+		if (remote != null) {
 			registry.unbind(name);
-			Object obj = exported_names.remove(name);
-			UnicastRemoteObject.unexportObject((Remote) obj, true);
-			exported_objects.remove(obj);
+			UnicastRemoteObject.unexportObject(remote, true);
+			exported_objects.remove(remote);
 			return true;
 		}
 		return false;
