@@ -851,5 +851,17 @@ public class SimState implements java.io.Serializable
     	{
     	return 0;
     	}
+
+	/** Override this to add a tab to the Console. Normally you'd not do this from the SimState, but the Distributed code needs to use this. */
+    public javax.swing.JComponent provideAdditionalTab()
+    	{
+    	return null;
+    	}
+    
+	/** Override this to add a tab name to the Console. Normally you'd not do this from the SimState, but the Distributed code needs to use this.  */
+    public String provideAdditionalTabName()
+    	{
+    	return null;
+    	}
     }
 
