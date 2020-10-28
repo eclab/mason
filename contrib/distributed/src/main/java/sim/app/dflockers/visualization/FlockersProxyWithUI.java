@@ -134,6 +134,7 @@ public class FlockersProxyWithUI extends GUIState
         display.attach( trailsPortrayal, "Trails" );
                 
         display.attach( flockersPortrayal, "Behold the Flock!" );
+        display.setClipping(false);
         }
         
     public void quit()
