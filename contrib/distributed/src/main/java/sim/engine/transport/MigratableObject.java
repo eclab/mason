@@ -9,6 +9,7 @@ import java.io.Serializable;
  *
  */
 public abstract class MigratableObject implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	private String export_name = null;
 

@@ -40,9 +40,9 @@ public class DRegistry {
 	private static int rank;
 
 	private static Registry registry;
-	private static HashMap<String, Object> exported_names = new HashMap<String, Object>();
-	private static HashMap<Object, String> exported_objects = new HashMap<Object, String>();
-	private ArrayList<String> migrated_names = new ArrayList<String>();
+	private static HashMap<String, Remote> exported_names = new HashMap<>();
+	private static HashMap<Remote, String> exported_objects = new HashMap<>();
+	private ArrayList<String> migrated_names = new ArrayList<>();
 
 	/**
 	 * Clear the list of the registered agent’s keys on the registry
@@ -60,6 +60,20 @@ public class DRegistry {
 
 	public void addMigratedName(Object obj) {
 		migrated_names.add(exported_objects.get(obj));
+	}
+
+	/**
+	 * If Object obj isExported is True then, add its name to migrated names and
+	 * return the name. Returns null if isExported is False.
+	 * 
+	 * @param obj
+	 * @return Object name if isExported is True, null otherwise.
+	 */
+	public String ifExportedThenAddMigratedName(Object obj) {
+		String name = exported_objects.get(obj);
+		if (name != null)
+			migrated_names.add(name);
+		return name;
 	}
 
 	private static void initLocalLogger(final String loggerName) {
@@ -87,7 +101,8 @@ public class DRegistry {
 		rank = MPI.COMM_WORLD.getRank();
 		initLocalLogger(String.format("MPI-Job-%d", rank));
 
-//		port = getAvailablePort();
+		// TODO: hard codding the port for now
+		// port = getAvailablePort();
 		port = 5000;
 		String myip = InetAddress.getLocalHost().getHostAddress();
 
@@ -215,10 +230,15 @@ public class DRegistry {
 	}
 
 	/**
+	 * This method unchecked casts the return Remote Object to type T. <br>
+	 * To ensure type safety make sure that the Object bound to the give "name" is
+	 * of type T.
+	 * 
 	 * @param <T>  Type of Object to be returned
 	 * @param name
 	 * 
-	 * @return
+	 * @return Remote Object bound to "name" cast to Type T
+	 * 
 	 * @throws AccessException
 	 * @throws RemoteException
 	 * @throws NotBoundException
@@ -252,7 +272,7 @@ public class DRegistry {
 
 	/**
 	 * @param agent
-	 * @return rue if the object agent is reigested on the registry.
+	 * @return True if the object agent is registered on the registry.
 	 */
 	public boolean isExported(Object agent) {
 		return exported_objects.containsKey(agent);
