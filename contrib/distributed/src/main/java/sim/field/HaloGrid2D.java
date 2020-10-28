@@ -93,7 +93,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 //								IntStream
 //								.range(0, 2)
 //								.map(i -> p.c(i) * fieldSize[i])
-//								.toArray());
+//								.toArray()());
 					final IntRect2D sp = p2.shift(new int[]{p.x,p.y});
 					if (p1.intersects(sp))
 						overlaps.add(p1.getIntersection(sp));
@@ -197,7 +197,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 			negAoi[i] = -aoi[i];
 		}
 		privatePart = origPart.resize(negAoi);
-		// privatePart = origPart.resize(Arrays.stream(aoi).map(x -> -x).toArray());
+		// privatePart = origPart.resize(Arrays.stream(aoi).map(x -> -x).toArray()());
 		// Get the neighbors and create Neighbor objects
 //		neighbors = Arrays
 //				.stream(partition.getNeighborIds())
@@ -217,7 +217,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @return location on the local partition
 	 */
 	public Int2D toLocalPoint(final Int2D p) {
-		return p.rshift(haloPart.ul().getArray());
+		return p.rshift(haloPart.ul().toArray());
 	}
 
 	/**

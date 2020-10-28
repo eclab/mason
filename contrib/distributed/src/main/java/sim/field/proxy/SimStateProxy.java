@@ -90,6 +90,9 @@ public class SimStateProxy extends SimState
 	ArrayList<UpdatableProxy> fields = new ArrayList<UpdatableProxy>();
 	ArrayList<Integer> indices = new ArrayList<Integer>();
 	
+	// The visualization overview
+	Overview overview = null;
+	
 	/** Registers a field proxy with the SimState.  Each timestep or whatnot the proxy will get updated,
 		which causes it to go out and load information remotely.  The order in which the fields are registered
 		must be the same as the order associated with the remote grids' storage objects returned by the VisualizationProcessor. */
@@ -121,15 +124,10 @@ public class SimStateProxy extends SimState
 	/** Returns the current Visualization Processor either cached or by fetching it remotely. */
 	public VisualizationProcessor visualizationProcessor() throws RemoteException, NotBoundException
 		{
-//		return RemoteProcessor.getProcessor(processor);
-		
-//		System.err.println("visualizationProcessor()");
 		if (visualizationCache[processor] == null)
 			{
-//			System.err.println("visualizationProcessor() -> registry lookup");
 			visualizationCache[processor] = (VisualizationProcessor)(registry.lookup(visualizationProcessorString(processor)));
 			}
-//		System.err.println("-visualizationProcessor()");
 		return visualizationCache[processor];
 		}
 		
@@ -149,22 +147,16 @@ public class SimStateProxy extends SimState
 		
 	public void start()
 		{
-//			System.err.println("start()");
 		super.start();
 		lastSteps = -1;
 		refresh = System.currentTimeMillis();
 		
 		try
 			{
-//			System.err.println("start()->getRegistry()");
 			// grab the registry and query it for basic information
 			registry = LocateRegistry.getRegistry(registryHost(), registryPort());
-//			System.err.println("start()->registry root lookup");
-//			visualizationRoot = RemoteProcessor.getProcessor(visualizationRootPId());
 			visualizationRoot = (VisualizationProcessor)(registry.lookup(visualizationRootString()));
-//			System.err.println("start()->registry get world bounds");
 			worldBounds = visualizationRoot.getWorldBounds();
-//			System.err.println("start()->registry get num processors");
 			numProcessors = visualizationRoot.getNumProcessors();
 			
 			// set up the cache
@@ -192,27 +184,25 @@ public class SimStateProxy extends SimState
 						refresh = cur;
 						try
 							{
-//			System.err.println("step()");
 							// Now we query the remote processor to see if a new step has elapsed
 							VisualizationProcessor vp = visualizationProcessor();
-//			System.err.println("vp->getSteps()");
+							
+							if (overview != null)
+								{
+								overview.update(vp.getAllLocalBounds(), vp.getAOI());
+								}
+							
 							long steps = vp.getSteps();
 							if (steps > lastSteps)
 								{
 								
 								// Okay it's worth updating, so let's grab the data
-//			System.err.println("lock()");
 								vp.lock();
-//			System.err.println("-lock()");
 								for(int i = 0; i < fields.size(); i++)
 									{
-//			System.err.println("update field " + i);
 									fields.get(i).update(SimStateProxy.this, indices.get(i));
-//			System.err.println("-update field " + i);
 									}
-//			System.err.println("unlock()");
 								vp.unlock();
-//			System.err.println("-unlock()");
 								}
 							lastSteps = steps;
 							}
@@ -272,5 +262,16 @@ public class SimStateProxy extends SimState
 	    	}
     	}
     
+	/** Override this to add a tab to the Console. Normally you'd not do this from the SimState, but the Distributed code needs to use this. */
+    public javax.swing.JComponent provideAdditionalTab()
+    	{
+    	return (overview = new Overview(this));
+    	}
+    
+	/** Override this to add a tab name to the Console. Normally you'd not do this from the SimState, but the Distributed code needs to use this.  */
+    public String provideAdditionalTabName()
+    	{
+    	return "Overview";
+    	}
 	}
 	

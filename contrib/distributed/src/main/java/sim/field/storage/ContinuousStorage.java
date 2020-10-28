@@ -19,7 +19,6 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 	double discretization;
 	public HashMap<T, Double2D> m;
 
-
 	public ContinuousStorage(final IntRect2D shape, final double discretization) {
 		super(shape);
 
@@ -101,10 +100,10 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 
 		for (final IntRect2D rect : mp.rects) {
 			final ArrayList<Serializable> objs = new ArrayList<>();
-			for (final T obj : getObjects(rect.shift(shape.ul().getArray()))) {
+			for (final T obj : getObjects(rect.shift(shape.ul().toArray()))) {
 				objs.add(obj);
 				// Append the object's location relative to the rectangle
-				objs.add(m.get(obj).rshift(shape.ul().getArray()).rshift(rect.ul().getArray()));
+				objs.add(m.get(obj).rshift(shape.ul().toArray()).rshift(rect.ul().toArray()));
 			}
 			ret.add(objs);
 		}
@@ -118,12 +117,12 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 		// Remove any objects that are in the unpack area (overwrite the area)
 		// shift the rect with local coordinates back to global coordinates
 		for (final IntRect2D rect : mp.rects)
-			removeObjects(rect.shift(shape.ul().getArray()));
+			removeObjects(rect.shift(shape.ul().toArray()));
 
 		for (int k = 0; k < mp.rects.size(); k++)
 			for (int i = 0; i < objs.get(k).size(); i += 2)
 				addToLocation((T) objs.get(k).get(i), ((Double2D) objs.get(k).get(i + 1))
-						.shift(mp.rects.get(k).ul().getArray()).shift(shape.ul().getArray()));
+						.shift(mp.rects.get(k).ul().toArray()).shift(shape.ul().toArray()));
 
 //		return objs.stream().mapToInt(x -> x.size()).sum();
 		int sum = 0;

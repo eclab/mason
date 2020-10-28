@@ -263,9 +263,9 @@ public class QuadTreeNode {
 	 * @return child's shape
 	 */
 	protected IntRect2D getChildShape(final int childId) {
-		final int[] ul = shape.ul().getArray();
-		final int[] br = origin.getArray();
-		final int[] sbr = shape.br().getArray();
+		final int[] ul = shape.ul().toArray();
+		final int[] br = origin.toArray();
+		final int[] sbr = shape.br().toArray();
 
 		for (int i = 0; i < 2; i++)						// 2 = num dimensions
 			if (((childId >> (2 - i - 1)) & 0x1) == 1) {				// 2 = num dimensions    FIXME: what is this?
@@ -284,7 +284,7 @@ public class QuadTreeNode {
 		if (!shape.contains(p))
 			throw new IllegalArgumentException("p " + p + " must be inside the shape " + shape);
 
-		final double[] oc = origin.getArrayAsDouble(), pc = p.getArrayAsDouble();
+		final double[] oc = origin.toArrayAsDouble(), pc = p.toArrayAsDouble();
 
 		int[] mapd = new int[2];
 		for (int i = 0; i < 2; i++) {

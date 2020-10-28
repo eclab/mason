@@ -56,6 +56,9 @@ public interface VisualizationProcessor extends Remote {
 	/// including the halo rect, I think.
 	public ArrayList<IntRect2D> getAllLocalBounds() throws RemoteException;
 	
+	/// Need this one too
+	public int getAOI() throws RemoteException;
+	
 	// TODO: Adding here for now
 	// Not sure if one class can implement two remote interfaces
 	public TransportRMIInterface getTransportRMI(int fieldId) throws RemoteException;
