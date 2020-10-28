@@ -17,6 +17,7 @@ import sim.portrayal.Oriented2D;
 import sim.util.*;
 
 public class DFlocker extends DSteppable implements Remote, Oriented2D {
+
 	private static final long serialVersionUID = 1;
 	public Double2D loc;
 	public Double2D lastd = new Double2D(0, 0);
