@@ -212,7 +212,7 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 		loc = new Double2D(dFlockers.flockers.stx(loc.c(0) + dx), dFlockers.flockers.sty(loc.c(1) + dy));
 
 		try {
-			DFlockerDummyRemote myfriend = (DFlockerDummyRemote) dFlockers.getDRegistry().getObject("cafebabe");
+			DFlockerDummyRemote myfriend = dFlockers.getDRegistry().getObjectT("cafebabe");
 			myfriend.addAndGetVal();
 
 		} catch (AccessException e) {

@@ -109,9 +109,9 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 
 	private static VisualizationProcessor fetchAndUpdate(int pid) {
 		try {
-			VisualizationProcessor processor = (VisualizationProcessor) DRegistry.getInstance().getObject(getProcessorName(pid));
-			processorCache.add(pid, processor);
-			return processor;
+			VisualizationProcessor proc = DRegistry.getInstance().getObjectT(getProcessorName(pid));
+			processorCache.add(pid, proc);
+			return proc;
 		} catch (RemoteException | NotBoundException e) {
 			throw new RuntimeException(e);
 		}

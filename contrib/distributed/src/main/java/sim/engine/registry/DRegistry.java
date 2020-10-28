@@ -215,6 +215,20 @@ public class DRegistry {
 	}
 
 	/**
+	 * @param <T>  Type of Object to be returned
+	 * @param name
+	 * 
+	 * @return
+	 * @throws AccessException
+	 * @throws RemoteException
+	 * @throws NotBoundException
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends Remote> T getObjectT(String name) throws AccessException, RemoteException, NotBoundException {
+		return (T) registry.lookup(name);
+	}
+
+	/**
 	 * Remove the object with key name from the registry
 	 * 
 	 * @param name

@@ -35,8 +35,11 @@ public class DFlockersWithDRegistry extends DSimState {
 	public DFlockersWithDRegistry(final long seed) {
 		super(seed, DFlockersWithDRegistry.width, DFlockersWithDRegistry.height, DFlockersWithDRegistry.neighborhood);
 		enableRegistry(); // used to enable the object registry
-		// final double[] discretizations = new double[] { DFlockersWithDRegistry.neighborhood / 1.5, DFlockersWithDRegistry.neighborhood / 1.5 };
-		flockers = new DContinuous2D<DFlockerWithDRegistry>(getPartitioning(), aoi, DFlockersWithDRegistry.neighborhood / 1.5, this);
+		// final double[] discretizations = new double[] {
+		// DFlockersWithDRegistry.neighborhood / 1.5,
+		// DFlockersWithDRegistry.neighborhood / 1.5 };
+		flockers = new DContinuous2D<DFlockerWithDRegistry>(getPartitioning(), aoi,
+				DFlockersWithDRegistry.neighborhood / 1.5, this);
 	}
 
 	public void start() {
@@ -80,20 +83,16 @@ public class DFlockersWithDRegistry extends DSimState {
 				try {
 
 					MPI.COMM_WORLD.barrier();
-
 					if (MPI.COMM_WORLD.getRank() == 0) {
-						DFlockerDummyRemote myfriend = (DFlockerDummyRemote) ((DFlockersWithDRegistry) state)
-								.getDRegistry().getObject("cafebabe");
+						DFlockersWithDRegistry flockers = (DFlockersWithDRegistry) state;
+						DFlockerDummyRemote myfriend = flockers.getDRegistry().getObjectT("cafebabe");
 						int fval = myfriend.getVal();
-
 						int update_val = (int) (DFlockersWithDRegistry.numFlockers *
-								(((DFlockersWithDRegistry) state).schedule.getSteps() + 1));
+								(flockers.schedule.getSteps() + 1));
 						if (fval != update_val) {
-
 							System.err.println("Error in friend value for processor : " + MPI.COMM_WORLD.getRank()
-									+ " at step " + ((DFlockersWithDRegistry) state).schedule.getSteps());
-							System.err.println(((DFlockersWithDRegistry) state).schedule.getSteps() + " " + fval
-									+ " != " + update_val);
+									+ " at step " + flockers.schedule.getSteps());
+							System.err.println(flockers.schedule.getSteps() + " " + fval + " != " + update_val);
 							System.exit(-1);
 						}
 					}
