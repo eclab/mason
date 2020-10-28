@@ -44,9 +44,9 @@ public class DFlocker extends DSteppable implements Remote {
 	}
 
 	public double orientation2D() {
-		if (lastd.c(0) == 0 && lastd.c(1) == 0)
+		if (lastd.x == 0 && lastd.y == 0)
 			return 0;
-		return Math.atan2(lastd.c(1), lastd.c(0));
+		return Math.atan2(lastd.y, lastd.x);
 	}
 
 	public Double2D momentum() {
@@ -66,8 +66,8 @@ public class DFlocker extends DSteppable implements Remote {
 			if (!other.dead) {
 				final Double2D m = b.get(i).momentum();
 				count++;
-				x += m.c(0);
-				y += m.c(1);
+				x += m.x;
+				y += m.y;
 			}
 		}
 		if (count > 0) {
@@ -89,8 +89,8 @@ public class DFlocker extends DSteppable implements Remote {
 		for (i = 0; i < b.size(); i++) {
 			final DFlocker other = (b.get(i));
 			if (!other.dead) {
-				final double dx = flockers.tdx(loc.c(0), other.loc.c(0));
-				final double dy = flockers.tdy(loc.c(1), other.loc.c(1));
+				final double dx = flockers.tdx(loc.x, other.loc.x);
+				final double dy = flockers.tdy(loc.y, other.loc.y);
 				count++;
 				x += dx;
 				y += dy;
@@ -115,8 +115,8 @@ public class DFlocker extends DSteppable implements Remote {
 		for (i = 0; i < b.size(); i++) {
 			final DFlocker other = (b.get(i));
 			if (other != this) {
-				final double dx = flockers.tdx(loc.c(0), other.loc.c(0));
-				final double dy = flockers.tdy(loc.c(1), other.loc.c(1));
+				final double dx = flockers.tdx(loc.x, other.loc.x);
+				final double dy = flockers.tdy(loc.y, other.loc.y);
 				final double lensquared = dx * dx + dy * dy;
 				count++;
 				x += dx / (lensquared * lensquared + 1);
@@ -158,12 +158,12 @@ public class DFlocker extends DSteppable implements Remote {
 		final Double2D cons = consistency(b, dFlockers.flockers);
 		final Double2D mome = momentum();
 
-		double dx = DFlockersTest.cohesion * cohe.c(0) + DFlockersTest.avoidance * avoid.c(0)
-				+ DFlockersTest.consistency * cons.c(0)
-				+ DFlockersTest.randomness * rand.c(0) + DFlockersTest.momentum * mome.c(0);
-		double dy = DFlockersTest.cohesion * cohe.c(1) + DFlockersTest.avoidance * avoid.c(1)
-				+ DFlockersTest.consistency * cons.c(1)
-				+ DFlockersTest.randomness * rand.c(1) + DFlockersTest.momentum * mome.c(1);
+		double dx = DFlockersTest.cohesion * cohe.x + DFlockersTest.avoidance * avoid.x
+				+ DFlockersTest.consistency * cons.x
+				+ DFlockersTest.randomness * rand.x + DFlockersTest.momentum * mome.x;
+		double dy = DFlockersTest.cohesion * cohe.y + DFlockersTest.avoidance * avoid.y
+				+ DFlockersTest.consistency * cons.y
+				+ DFlockersTest.randomness * rand.y + DFlockersTest.momentum * mome.y;
 
 		// re-normalize to the given step size
 		final double dis = Math.sqrt(dx * dx + dy * dy);
@@ -172,7 +172,7 @@ public class DFlocker extends DSteppable implements Remote {
 			dy = dy / dis * DFlockersTest.jump;
 		}
 		lastd = new Double2D(dx, dy);
-		loc = new Double2D(dFlockers.flockers.stx(loc.c(0) + dx), dFlockers.flockers.sty(loc.c(1) + dy));
+		loc = new Double2D(dFlockers.flockers.stx(loc.x + dx), dFlockers.flockers.sty(loc.y + dy));
 		try {
 			dFlockers.flockers.moveAgent(oldloc, loc, this);
 		} catch (Exception e) {

@@ -147,19 +147,12 @@ public abstract class IntPointGenerator implements Supplier<Int2D>, Iterable<Int
         }
 
         public Int2D getNext() {
-        	// Refactor 20201026 >>>>>>>>>>>>>
             if (++c[1] == br.y) {
                 c[1] = ul.y;
 	            if (++c[0] == br.x) {
 	                c[0] = ul.x;
 	            }
             }
-//            for (int i = 2 - 1; i >= 0; i--)
-//                if (++c[i] == br.c(i))
-//                    c[i] = ul.c(i);
-//                else
-//                    break;
-            // <<<<<<<<<<<<<<<<<<<<	Refactor 20201026
 
             Int2D ret = new Int2D(c);
             return ret;

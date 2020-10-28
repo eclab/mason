@@ -5,8 +5,6 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-//import java.util.stream.Collectors;
-//import java.util.stream.IntStream;
 
 import sim.engine.DSimState;
 import sim.engine.DistributedIterativeRepeat;

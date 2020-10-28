@@ -1,7 +1,6 @@
 package sim.field.partitioning;
 
 import java.util.*;
-import java.util.stream.*;
 import sim.util.*;
 
 // TODO Currently all shapes are restricted to IntRect2D - switch to NdRectangle once it is completed
@@ -152,12 +151,8 @@ public class QuadTreeNode {
 		origin = newOrigin;
 
 		if (isLeaf()) {
-//			children = IntStream.range(0, 1 << 2)		// 2 == num dimensions
-//					.mapToObj(i -> new QuadTreeNode(getChildShape(i), this))
-//					.collect(Collectors.toList());
 			children = new ArrayList<>();
-			// TODO 1 << 2 = 1*2^2 = 4
-			for (int i = 0; i < 1 << 2; i++) {
+			for (int i = 0; i < 4; i++) {
 				children.add(new QuadTreeNode(getChildShape(i), this));
 			}
 			ret.addAll(children);
@@ -267,8 +262,8 @@ public class QuadTreeNode {
 		final int[] br = origin.toArray();
 		final int[] sbr = shape.br().toArray();
 
-		for (int i = 0; i < 2; i++)						// 2 = num dimensions
-			if (((childId >> (2 - i - 1)) & 0x1) == 1) {				// 2 = num dimensions    FIXME: what is this?
+		for (int i = 0; i < 2; i++)
+			if (((childId >> (2 - i - 1)) & 0x1) == 1) { //FIXME: what is this?
 				ul[i] = br[i];
 				br[i] = sbr[i];
 			}
@@ -288,22 +283,17 @@ public class QuadTreeNode {
 
 		int[] mapd = new int[2];
 		for (int i = 0; i < 2; i++) {
-			// .map(i -> pc[i] < oc[i] ? 0 : 1)
 			int map = 1; // 0 or 1
 			if (pc[i] < oc[i]) {
 				map = 0;
 			}
 			mapd[i] = map;
 		}
-		// .reduce(0, (r, x) -> r << 1 | x);
 		int r = 0;
 		for (int i = 0; i < 2; i++) {
 			int x = mapd[i];
 			r = r << 1 | x;
 		}
 		return r;
-		//return IntStream.range(0, 2)							// 2 = num dimensions
-		//		.map(i -> pc[i] < oc[i] ? 0 : 1)
-		//		.reduce(0, (r, x) -> r << 1 | x);
 	}
 }

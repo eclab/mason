@@ -1,7 +1,6 @@
 package sim.field.partitioning;
 
 import java.util.*;
-import java.util.stream.*;
 import sim.util.*;
 
 public class QuadTree {

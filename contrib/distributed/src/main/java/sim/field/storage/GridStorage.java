@@ -137,11 +137,6 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 //			sum += p.c(i) * stride[i];
 //		}
 //		return sum;
-
-//		return IntStream
-//				.range(0, p.getNumDimensions())
-//				.map(i -> p.c(i) * stride[i])
-//				.sum();
 	}
 
 	/**
@@ -168,11 +163,6 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 //			sum += p.c(i) * s[i];
 //		}
 //		return sum;
-
-//		return IntStream
-//			.range(0, p.getNumDimensions())
-//			.map(i -> p.c(i) * s[i])
-//			.sum();
 	}
 
 	/**

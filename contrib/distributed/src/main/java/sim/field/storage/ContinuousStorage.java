@@ -2,14 +2,11 @@ package sim.field.storage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-//import java.util.stream.IntStream;
 
 import sim.field.partitioning.IntRect2D;
-//import sim.field.partitioning.IntPointGenerator;
 import sim.util.MPIParam;
 import sim.util.*;
 
@@ -32,10 +29,6 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 	}
 
 	protected Object[] allocate(final int size) {
-//		this.dsize =
-//			IntStream.range(0, 2)				// 2 = num dimensions
-//				.map(i -> (int) Math.ceil(shape.getSize()[i] / discretizations[i]) + 1)
-//				.toArray();
 		this.dsize = new int[2];					// 2 = num dimensions
 		for (int i = 0; i < this.dsize.length; i++) {
 
@@ -47,14 +40,7 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 		// TODO better approach?
 		stride = getStride(dsize);
 		this.m = new HashMap<T, Double2D>();
-		
-//		return 
-//		IntStream.range(0,
-//			Arrays.stream(this.dsize)	// 0, 1, ..., 
-//				.reduce(1, (x, y) -> x * y))				// 1*0=0, 0 => 0, 0, ..., 0
-//				.mapToObj(i -> new HashSet<>())				// <new HashSet<>(), ..., new HashSet<>()
-//				.toArray(s -> new HashSet[s]);				// 
-		
+
 		int volume = 1;
 		for (int i = 0; i < this.dsize.length; i++) { // <- size of 2
 			volume *= this.dsize[i];
@@ -64,9 +50,6 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 			set[i] = new HashSet();
 		}
 		return set;
-		
-		//return IntStream.range(0, Arrays.stream(this.dsize).reduce(1, (x,y) -> x*y))
-		//		.mapToObj(i -> new HashSet<>()).toArray(s -> new HashSet[s]);
 	}
 
 	public String toString() {
@@ -141,12 +124,6 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 			ans[i] = -(int) (offsets[i] / discretization);
 		}
 		return new Int2D(ans);
-		
-//		return new Int2D(
-//			IntStream.range(0, offsets.length)
-//				.map(i -> -(int) (offsets[i] / discretization))
-//				.toArray()
-//		);
 	}
 
 	public void clear() {
@@ -336,45 +313,22 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 		final ArrayList<T> objs = new ArrayList<T>();
 
 		// Calculate how many discretized cells we need to search
-//		final int[] offsets = Arrays.stream(discretizations)
-//				.mapToInt(x -> (int) Math.ceil(radius / x))
-//				.toArray();
-		final int[] offsets = new int[2];		// new int[discretizations.length];
-		for (int i = 0; i < offsets.length; i++)  				// discretizations.length; i++) {
+		final int[] offsets = new int[2];
+		for (int i = 0; i < offsets.length; i++)
 			{
 			offsets[i] = (int) Math.ceil(radius / discretization);
 		}
 
 		// Generate the start/end point subject to the boundaries
-//		final Int2D ul = new Int2D(
-//				IntStream
-//					.range(0, 2)					// 2 = num dimensions
-//					.map(i -> Math.max(dloc.c(i) - offsets[i], 0))
-//					.toArray());
 		int[] ansUl = new int[2];						// 2 = num dimensions
-		// Refactor 20201026 >>>>>>>>>>>>>
 		ansUl[0] = Math.max(dloc.x - offsets[0], 0);
 		ansUl[1] = Math.max(dloc.y - offsets[1], 0);
-//		for (int i = 0; i < ansUl.length; i++) {
-//			ansUl[i] = Math.max(dloc.c(i) - offsets[i], 0);
-//		}
-	    // <<<<<<<<<<<<<<<<<<<<	Refactor 20201026
 		final Int2D ul = new Int2D(ansUl);
 		
-//		final Int2D br = new Int2D(
-//				IntStream
-//					.range(0, 2)						// 2 = num dimensions
-//					.map(i -> Math.min(dloc.c(i) + offsets[i] + 1, dsize[i]))
-//					.toArray());
 		int[] ansBr = new int[2];						// 2 = num dimensions
-		// Refactor 20201026 >>>>>>>>>>>>>
 		ansBr[0] = Math.min(dloc.x + offsets[0] + 1, dsize[0]);
 		ansBr[1] = Math.min(dloc.y + offsets[1] + 1, dsize[1]);
-//		for (int i = 0; i < ansBr.length; i++) 				
-//			{
-//			ansBr[i] = Math.min(dloc.c(i) + offsets[i] + 1, dsize[i]);
-//		}
-	    // <<<<<<<<<<<<<<<<<<<<	Refactor 20201026
+
 		final Int2D br = new Int2D(ansBr);
 
 //		// Collect all the objects that are not obj itself and within the given radius

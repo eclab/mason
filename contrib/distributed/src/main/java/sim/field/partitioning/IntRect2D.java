@@ -1,10 +1,6 @@
 package sim.field.partitioning;
 
-import java.util.Arrays;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.stream.IntStream;
 import sim.util.*;
 
 
