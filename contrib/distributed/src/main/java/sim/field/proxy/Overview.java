@@ -53,15 +53,15 @@ public class Overview extends JComponent
 	
 	public void setCurrent(int current) { this.current = current; }
 		
-	public void update(ArrayList<IntRect2D> b, int aoi)
+	public void update(ArrayList<IntRect2D> b) 	// , int aoi)
 		{
 		IntRect2D[] bounds = b.toArray(new IntRect2D[0]);
 		
 		// strip off aoi
-		int[] extra = new int[] { -aoi, -aoi, -aoi, -aoi };
+		//int[] extra = new int[] { -aoi, -aoi, -aoi, -aoi };
 		for(int i = 0; i < bounds.length; i++)
 			{
-			bounds[i] = bounds[i].resize(extra);
+			// bounds[i] = bounds[i].resize(extra);
 			if (i == 0 || bounds[i].ul().x < outerX) outerX = bounds[i].ul().x;
 			if (i == 0 || bounds[i].ul().y < outerY) outerY = bounds[i].ul().y;
 			if (i == 0 || bounds[i].br().x - bounds[i].ul().x > outerWidth) outerWidth = bounds[i].br().x - bounds[i].ul().x; 

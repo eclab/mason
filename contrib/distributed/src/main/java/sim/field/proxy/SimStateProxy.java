@@ -189,7 +189,7 @@ public class SimStateProxy extends SimState
 							
 							if (overview != null)
 								{
-								overview.update(vp.getAllLocalBounds(), vp.getAOI());
+								overview.update(vp.getAllLocalBounds());
 								}
 							
 							long steps = vp.getSteps();
