@@ -16,8 +16,8 @@ import mpi.MPIException;
 import sim.engine.DistributedIterativeRepeat;
 import sim.engine.Stopping;
 import sim.engine.registry.DRegistry;
-import sim.field.partitioning.NdPoint;
 import sim.field.partitioning.PartitionInterface;
+import sim.util.*;
 
 /**
  * This class contains the methods for moving objects and agents between
@@ -33,14 +33,14 @@ public class TransporterMPI {
 
 	HashMap<Integer, RemoteOutputStream> dstMap;
 
-	PartitionInterface<?> partition;
+	PartitionInterface partition;
 	int[] neighbors;
 
 	public ArrayList<PayloadWrapper> objectQueue;
 
 	protected boolean withRegistry;
 
-	public TransporterMPI(final PartitionInterface<?> partition) {
+	public TransporterMPI(final PartitionInterface partition) {
 		this.partition = partition;
 		this.withRegistry = false;
 		reload();
@@ -293,7 +293,7 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void migrateAgent(final Stopping agent, final int dst, final NdPoint loc,
+	public void migrateAgent(final Stopping agent, final int dst, final NumberND loc,
 			final int fieldIndex) {
 		AgentWrapper wrapper = new AgentWrapper(agent);
 
@@ -318,7 +318,7 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void migrateAgent(final int ordering, final Stopping agent, final int dst, final NdPoint loc,
+	public void migrateAgent(final int ordering, final Stopping agent, final int dst, final NumberND loc,
 			final int fieldIndex) {
 		AgentWrapper wrapper = new AgentWrapper(ordering, agent);
 
@@ -345,7 +345,7 @@ public class TransporterMPI {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final int ordering, final double time, final Stopping agent, final int dst,
-			final NdPoint loc, final int fieldIndex) {
+			final NumberND loc, final int fieldIndex) {
 		AgentWrapper wrapper = new AgentWrapper(ordering, time, agent);
 
 		if (withRegistry) {
@@ -368,7 +368,7 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void migrateAgent(final AgentWrapper agentWrapper, final int dst, final NdPoint loc,
+	public void migrateAgent(final AgentWrapper agentWrapper, final int dst, final NumberND loc,
 			final int fieldIndex) {
 		// These methods differ in just the datatype of the WrappedObject
 		transportObject(agentWrapper, dst, loc, fieldIndex);
@@ -399,7 +399,7 @@ public class TransporterMPI {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateRepeatingAgent(final DistributedIterativeRepeat iterativeRepeat, final int dst,
-			final NdPoint loc,
+			final NumberND loc,
 			final int fieldIndex) {
 
 		// TODO: do we need to synchronize something to ensure that the stoppable is
@@ -420,14 +420,13 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void transportObject(final Serializable obj, final int dst, final NdPoint loc,
+	public void transportObject(final Serializable obj, final int dst, final NumberND loc,
 			final int fieldIndex) {
 		if (partition.pid == dst)
 			throw new IllegalArgumentException("Destination cannot be local, must be remote");
 
-		System.out.println("transporting: " + obj); //added by Raj Patel (see email from rlather 7/31/2020)
-		
-		
+		// System.out.println("transporting: " + obj);
+
 		// Wrap the agent, this is important because we want to keep track of
 		// dst, which could be the diagonal processor
 		final PayloadWrapper wrapper = new PayloadWrapper(dst, obj, loc, fieldIndex);
@@ -514,7 +513,7 @@ public class TransporterMPI {
 //			e.printStackTrace();
 //		}
 //		// read in the data
-//		Transportee wrapper = new Transportee(dst, newAgent, new DoublePoint(x, y), migrate);
+//		Transportee wrapper = new Transportee(dst, newAgent, new Double2D(x, y), migrate);
 //		return wrapper;
 //	}
 

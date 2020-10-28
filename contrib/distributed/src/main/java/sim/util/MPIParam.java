@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import mpi.*;
-import sim.field.partitioning.IntHyperRect;
+import sim.field.partitioning.IntRect2D;
 import sim.field.storage.GridStorage;
 
 // TODO need to use generic for other type of rectangles
@@ -26,35 +26,35 @@ public class MPIParam {
 	 * is due to the limitations of openmpi java bindings coordinates of the rects
 	 * stored here are local
 	 */
-	public List<IntHyperRect> rects;
+	public List<IntRect2D> rects;
 
 	// TODO need to track all previously allocated datatypes and implement free() to
 	// free them all
 	// TODO should store rects in local coordinates?
 
-	public MPIParam(IntHyperRect rect, IntHyperRect bound, Datatype baseType) {
-		int[] bsize = bound.getSize();
+	public MPIParam(IntRect2D rect, IntRect2D bound, Datatype baseType) {
+		int[] bsize = bound.getSizes();
 
-		this.idx = GridStorage.getFlatIdx(rect.ul.rshift(bound.ul.c), bsize);
-		this.type = getNdArrayDatatype(rect.getSize(), baseType, bsize);
+		this.idx = GridStorage.getFlatIdx(rect.ul().rshift(new int[]{bound.ul().x,bound.ul().y}), bsize);
+		this.type = getNdArrayDatatype(rect.getSizes(), baseType, bsize);
 		this.size = rect.getArea();
-		this.rects = new ArrayList<IntHyperRect>() {
+		this.rects = new ArrayList<IntRect2D>() {
 			{
-				add(rect.rshift(bound.ul.c));
+				add(rect.rshift(new int[]{bound.ul().x,bound.ul().y}));
 			}
 		};
 	}
 
-	public MPIParam(List<IntHyperRect> rects, IntHyperRect bound, Datatype baseType) {
+	public MPIParam(List<IntRect2D> rects, IntRect2D bound, Datatype baseType) {
 		this.idx = 0;
 		this.size = 0;
-		this.rects = new ArrayList<IntHyperRect>();
+		this.rects = new ArrayList<IntRect2D>();
 
 		int count = rects.size();
 		int typeSize = getTypePackSize(baseType);
 
 		int[] bl = new int[count], displ = new int[count];
-		int[] bsize = bound.getSize();
+		int[] bsize = bound.getSizes();
 
 		Datatype[] types = new Datatype[count];
 
@@ -62,12 +62,12 @@ public class MPIParam {
 		Arrays.fill(bl, 1);
 
 		for (int i = 0; i < count; i++) {
-			IntHyperRect rect = rects.get(i);
-			displ[i] = GridStorage.getFlatIdx(rect.ul.rshift(bound.ul.c), bsize) * typeSize; // displacement from the
+			IntRect2D rect = rects.get(i);
+			displ[i] = GridStorage.getFlatIdx(rect.ul().rshift(new int[]{bound.ul().x,bound.ul().y}), bsize) * typeSize; // displacement from the
 																								// start in bytes
-			types[i] = getNdArrayDatatype(rect.getSize(), baseType, bsize);
+			types[i] = getNdArrayDatatype(rect.getSizes(), baseType, bsize);
 			this.size += rect.getArea();
-			this.rects.add(rect.rshift(bound.ul.c));
+			this.rects.add(rect.rshift(new int[]{bound.ul().x,bound.ul().y}));
 		}
 
 		try {

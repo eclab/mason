@@ -19,6 +19,7 @@ public abstract class NumberND implements java.io.Serializable
     public abstract int numDimensions();
 
 	public abstract double[] toArrayAsDouble();
+    //public int getNd() { return getNumDimensions(); }
         
     /** Returns the value at position VAL in this NumberND  (val should 0, 1, or sometimes 2) */
     public abstract double getVal(int pos);
@@ -238,7 +239,9 @@ public abstract class NumberND implements java.io.Serializable
 		else if (this instanceof Double2D)
 			return ((Double2D)this).rshift(offset);
 		else return null;
-		} 
+        } 
+        
+        //public abstract double[] getOffsetsDouble(NdPoint that);
 
 		public double[] getOffsetsDouble(final NumberND that) 
 			{
@@ -246,6 +249,7 @@ public abstract class NumberND implements java.io.Serializable
 			double[] ret = new double[d];
 			for(int i = 0; i < d; i++)
 				{
+				//System.out.println("getOffsetsDouble "+getVal(i)+" that "+that.getVal(i));
 				ret[i] = getVal(i) - that.getVal(i);
 				}
 			return ret;
@@ -253,8 +257,10 @@ public abstract class NumberND implements java.io.Serializable
 
 		public double getDistanceSq(final NumberND that) 
 			{
+
 			final double[] a = that.toArrayAsDouble();
 			final double[] c = this.toArrayAsDouble();
+
 			int x = a.length;
 			double sum = 0;
 			if (c.length < x) x = c.length;

@@ -4,194 +4,165 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.Iterator;
 import java.util.stream.Stream;
+import sim.util.*;
 
-/**
- * Iterable for iterating over all points in a IntHyperRect
- *
- */
-public abstract class IntPointGenerator implements Supplier<IntPoint>, Iterable<IntPoint> {
-	final int nd;
-	int remaining;
+public abstract class IntPointGenerator implements Supplier<Int2D>, Iterable<Int2D> {
+    int remaining;
 
-	protected IntPointGenerator(int nd, int remaining) {
-		this.nd = nd;
-		this.remaining = remaining;
-	}
+// used to have nd
+    protected IntPointGenerator(int remaining) {
+        this.remaining = remaining;
+    }
+	
+    protected abstract Int2D getNext();
 
-	protected abstract IntPoint getNext();
+    public int getNumRemaining() {
+        return remaining;
+    }
 
-	public int getNumRemaining() {
-		return remaining;
-	}
+    @Override
+    public Int2D get() {
+        --remaining;
+        return getNext();
+    }
 
-	public IntPoint get() {
-		--remaining;
-		return getNext();
-	}
+    @Override
+    public Iterator<Int2D> iterator() {
+        return new Iterator<Int2D>() {
+            public boolean hasNext() {
+                return remaining > 0;
+            }
 
-	public Iterator<IntPoint> iterator() {
-		return new Iterator<IntPoint>() {
-			public boolean hasNext() {
-				return remaining > 0;
-			}
+            public Int2D next() {
+                return get();
+            }
+        };
+    }
 
-			public IntPoint next() {
-				return get();
-			}
-		};
-	}
+    public static IntPointGenerator getLayer(Int2D st, int fromLayer, int toLayer) {
+        return new LayerGenerator(st, fromLayer, toLayer);
+    }
 
-	/**
-	 * Generates all the points layer by layer around the given points Starting from
-	 * the fromLayer to toLayer, both inclusive
-	 * 
-	 * @param st
-	 * @param fromLayer
-	 * @param toLayer
-	 * 
-	 * @return Generator
-	 */
-	public static IntPointGenerator getLayer(IntPoint st, int fromLayer, int toLayer) {
-		return new LayerGenerator(st, fromLayer, toLayer);
-	}
+    public static IntPointGenerator getLayer(Int2D st, int thisLayer) {
+        return getLayer(st, thisLayer, thisLayer);
+    }
 
-	/**
-	 * Generates all the points layer by layer around the given points Starting from
-	 * the fromLayer to toLayer, both inclusive
-	 * 
-	 * @param st
-	 * @param fromLayer
-	 * 
-	 * @return Generator
-	 */
-	public static IntPointGenerator getLayer(IntPoint st, int thisLayer) {
-		return getLayer(st, thisLayer, thisLayer);
-	}
+	// I think this is just centered at 0?
+    public static IntPointGenerator getLayer(int nd, int toLayer) {
+        return getLayer(new Int2D(0, 0), 0, toLayer);
+    }
 
-	/**
-	 * Generates all the points layer by layer around the given points Starting from
-	 * the fromLayer to toLayer, both inclusive
-	 * 
-	 * @param st
-	 * @param toLayer
-	 * 
-	 * @return Generator
-	 */
-	public static IntPointGenerator getLayer(int nd, int toLayer) {
-		return getLayer(new IntPoint(new int[nd]), 0, toLayer);
-	}
+    public static IntPointGenerator getBlock(IntRect2D rect) {
+        return new BlockGenerator(rect);
+    }
 
-	public static IntPointGenerator getBlock(IntHyperRect rect) {
-		return new BlockGenerator(rect);
-	}
+    public static IntPointGenerator getBlock(Int2D st, Int2D ed) {
+        return getBlock(new IntRect2D(st, ed));
+    }
 
-	public static IntPointGenerator getBlock(IntPoint st, IntPoint ed) {
-		return getBlock(new IntHyperRect(-1, st, ed));
-	}
+    public static IntPointGenerator getBlock(int[] size) {
+        return getBlock(new Int2D(new int[size.length]), new Int2D(size));
+    }
 
-	public static IntPointGenerator getBlock(int[] size) {
-		return getBlock(new IntPoint(new int[size.length]), new IntPoint(size));
-	}
+    public static void main(String[] args) {
+        System.out.println("Test LayerGenerator with stream...");
+        IntPointGenerator gl = getLayer(new Int2D(0, 0), 2);
+        Stream.generate(gl).limit(gl.getNumRemaining()).forEach(System.out::println);
 
-	public static void main(String[] args) {
-		System.out.println("Test LayerGenerator with stream...");
-		IntPointGenerator gl = getLayer(new IntPoint(0, 0, 0), 2);
-		Stream.generate(gl).limit(gl.getNumRemaining()).forEach(System.out::println);
+        System.out.println("Test BlockGenerator with stream...");
+        IntPointGenerator gb = getBlock(new int[] {3, 3, 3});
+        Stream.generate(gb).limit(gb.getNumRemaining()).forEach(System.out::println);
 
-		System.out.println("Test BlockGenerator with stream...");
-		IntPointGenerator gb = getBlock(new int[] { 3, 3, 3 });
-		Stream.generate(gb).limit(gb.getNumRemaining()).forEach(System.out::println);
+        System.out.println("Test LayerGenerator with iteration...");
+        IntPointGenerator gliter = getLayer(new Int2D(0, 0), 2);
+        gliter.forEach(System.out::println);
 
-		System.out.println("Test LayerGenerator with iteration...");
-		IntPointGenerator gliter = getLayer(new IntPoint(0, 0, 0), 2);
-		gliter.forEach(System.out::println);
+        System.out.println("Test BlockGenerator with iteration...");
+        IntPointGenerator gbiter = getBlock(new int[] {3, 3, 3});
+        gbiter.forEach(System.out::println);
 
-		System.out.println("Test BlockGenerator with iteration...");
-		IntPointGenerator gbiter = getBlock(new int[] { 3, 3, 3 });
-		gbiter.forEach(System.out::println);
+        System.out.println("Test LayerGenerator with iteration from 2 to 2...");
+        IntPointGenerator gliter2 = getLayer(new Int2D(0, 0), 2, 2);
+        gliter2.forEach(System.out::println);
+    }
 
-		System.out.println("Test LayerGenerator with iteration from 2 to 2...");
-		IntPointGenerator gliter2 = getLayer(new IntPoint(0, 0, 0), 2, 2);
-		gliter2.forEach(System.out::println);
-	}
+    protected static class LayerGenerator extends IntPointGenerator {
+        final Int2D p;
+        final int ml;
+        final int[] offsets;
+        int cl, idx, ub;
 
-	protected static class LayerGenerator extends IntPointGenerator {
-		final IntPoint p;
-		final int ml;
-		final int[] offsets;
-		int cl, idx, ub;
+        // Generate all the points layer by layer around the given points
+        // Starting from the fromLayer to toLayer, both inclusive
+        public LayerGenerator(Int2D p, int fromLayer, int toLayer) {
+            super((int)Math.pow(toLayer * 2 + 1, 2)
+                  - (int)Math.pow(fromLayer > 0 ? fromLayer * 2 - 1 : 0, 2));
 
-		/**
-		 * Generate all the points layer by layer around the given points Starting from
-		 * the fromLayer to toLayer, both inclusive
-		 * 
-		 * @param p
-		 * @param fromLayer
-		 * @param toLayer
-		 */
-		public LayerGenerator(IntPoint p, int fromLayer, int toLayer) {
-			super(p.nd, (int) Math.pow(toLayer * 2 + 1, p.nd)
-					- (int) Math.pow(fromLayer > 0 ? fromLayer * 2 - 1 : 0, p.nd));
+            this.p = p;
+            this.ml = toLayer;
+            this.offsets = new int[2];
 
-			this.p = p;
-			this.ml = toLayer;
-			this.offsets = new int[nd];
+            setLayer(fromLayer);
+        }
 
-			setLayer(fromLayer);
-		}
+        private void setLayer(int k) {
+            cl = k;
+            idx = 0;
+            ub = (int)Math.pow(2 * cl + 1, 2);
+            Arrays.fill(offsets, -cl);
+        }
 
-		private void setLayer(int k) {
-			cl = k;
-			idx = 0;
-			ub = (int) Math.pow(2 * cl + 1, nd);
-			Arrays.fill(offsets, -cl);
-		}
+        public Int2D getNext() {
+            // check if we need to expand to an outer layer
+            if (++idx == ub)
+                setLayer(cl + 1);
+            else {
+                for (int i = 2 - 1; i >= 0; i--)
+                    if (++offsets[i] == cl + 1)
+                        offsets[i] = -cl;
+                    else
+                        break;
+                // skip the points that are not on the current layer
+                if (Arrays.stream(offsets).allMatch(x -> x < cl && x > -cl)) {
+                    offsets[2 - 1] = cl;
+                    idx += 2 * cl - 1;
+                }
+            }
 
-		public IntPoint getNext() {
-			IntPoint ret = p.shift(offsets);
+            Int2D ret = p.shift(offsets);
+            return ret;
+        }
+    }
 
-			// check if we need to expand to an outer layer
-			if (++idx == ub)
-				setLayer(cl + 1);
-			else {
-				for (int i = nd - 1; i >= 0; i--)
-					if (++offsets[i] == cl + 1)
-						offsets[i] = -cl;
-					else
-						break;
-				// skip the points that are not on the current layer
-				if (Arrays.stream(offsets).allMatch(x -> x < cl && x > -cl)) {
-					offsets[nd - 1] = cl;
-					idx += 2 * cl - 1;
-				}
-			}
+    protected static class BlockGenerator extends IntPointGenerator {
+        final int[] c;
+        final Int2D ul, br;
 
-			return ret;
-		}
-	}
+        public BlockGenerator(IntRect2D rect) {
+            super(rect.getArea());
 
-	protected static class BlockGenerator extends IntPointGenerator {
-		final int[] c;
-		final IntPoint ul, br;
+            ul = rect.ul;
+            br = rect.br;
+            c = Arrays.copyOf(new int[] {ul.x,ul.y}, 2);
+        }
 
-		public BlockGenerator(IntHyperRect rect) {
-			super(rect.nd, rect.getArea());
+        public Int2D getNext() {
+        	// Refactor 20201026 >>>>>>>>>>>>>
+            if (++c[1] == br.y) {
+                c[1] = ul.y;
+	            if (++c[0] == br.x) {
+	                c[0] = ul.x;
+	            }
+            }
+//            for (int i = 2 - 1; i >= 0; i--)
+//                if (++c[i] == br.c(i))
+//                    c[i] = ul.c(i);
+//                else
+//                    break;
+            // <<<<<<<<<<<<<<<<<<<<	Refactor 20201026
 
-			ul = rect.ul;
-			br = rect.br;
-			c = Arrays.copyOf(ul.c, nd);
-		}
-
-		public IntPoint getNext() {
-			IntPoint ret = new IntPoint(c);
-
-			for (int i = nd - 1; i >= 0; i--)
-				if (++c[i] == br.c[i])
-					c[i] = ul.c[i];
-				else
-					break;
-
-			return ret;
-		}
-	}
+            Int2D ret = new Int2D(c);
+            return ret;
+        }
+    }
 }

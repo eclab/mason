@@ -55,6 +55,7 @@ public final class Double2D extends NumberND
 	public double[] c() { return new double[] {x, y}; }
 	public double[] toArray() { return new double[] {x, y}; }
 	public double[] toArrayAsDouble() { return new double[] { x, y}; }
+
         
     public final int hashCode()
         {

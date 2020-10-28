@@ -31,6 +31,10 @@ public class DistributedIterativeRepeat extends IterativeRepeat {
 		}
 	}
 
+	public Stopping getSteppable() {
+		return (Stopping) step;
+	}
+
 	public String toString() {
 		return "Schedule.DistributedIterativeRepeat[" + step + "]";
 	}

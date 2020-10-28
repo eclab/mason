@@ -1,17 +1,20 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
-
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>cs.gmu.edu.eclab</groupId>
+		<artifactId>mason-build</artifactId>
+		<version>20</version>
+	</parent>
+
 	<artifactId>distributed</artifactId>
 	<version>1.0</version>
-	<groupId>cs.gmu.edu.eclab</groupId>
 	<name>distributed</name>
 	<packaging>jar</packaging>
-
-
+	<url>http://maven.apache.org</url>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -20,18 +23,14 @@
 	<repositories>
 		<repository>
 			<id>repository</id>
-			<url>file:///${project.parent.basedir}/repository</url>
-		</repository>  
-		<repository>
-			<id>tomp2p.net</id>
-			<url>http://tomp2p.net/dev/mvn/</url>
+			<url>file:///${project.basedir}/repository</url>
 		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
-			<groupId>net.tomp2p</groupId>
-			<artifactId>tomp2p-all</artifactId>
-			<version>5.0-Beta8</version>
+			<groupId>cs.gmu.edu.eclab</groupId>
+			<artifactId>mason</artifactId>
+			<version>20</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

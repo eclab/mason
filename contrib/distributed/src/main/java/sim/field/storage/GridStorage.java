@@ -1,58 +1,61 @@
 package sim.field.storage;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.stream.IntStream;
 
 import mpi.Datatype;
 import mpi.MPI;
 import mpi.MPIException;
-import sim.field.partitioning.IntHyperRect;
-import sim.field.partitioning.IntPoint;
-import sim.field.partitioning.NdPoint;
-import sim.util.MPIParam;
+import sim.field.partitioning.IntRect2D;
+import sim.util.*;
 
 /**
  * internal local storage for distributed grids.
  *
  * @param <T> Type of objects to store
  */
-public abstract class GridStorage<T extends Serializable> {
+public abstract class GridStorage<T extends Serializable, P extends NumberND> implements java.io.Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	Object storage;
-	IntHyperRect shape;
-	Datatype baseType = MPI.BYTE;
 
-	int[] stride;
+	IntRect2D shape;
+	transient Datatype baseType = MPI.BYTE;
+
+
+	int stride;
 
 	/* Abstract Method of generic storage based on N-dimensional Point */
-	public abstract void setLocation(final T obj, final NdPoint p);
+	public abstract void addToLocation(final T obj, final P p);
 
-	public abstract NdPoint getLocation(final T obj);
+//	public abstract P getLocation(final T obj);
 
-	public abstract void removeObject(final T obj);
+//	public abstract void removeObject(final T obj);
 
-	public abstract void removeObjects(final NdPoint p);
+	public abstract void removeObject(final T obj, P p);
 
-	public abstract ArrayList<T> getObjects(final NdPoint p);
+	public abstract void removeObjects(final P p);
 
-	public GridStorage(final IntHyperRect shape) {
+	public abstract Serializable getObjects(final P p);
+
+	public GridStorage(final IntRect2D shape) {
+		super();
 		this.shape = shape;
-		stride = getStride(shape.getSize());
+		stride = getStride(shape.getSizes());
 	}
 
-	public GridStorage(final Object storage, final IntHyperRect shape) {
+	public GridStorage(final Object storage, final IntRect2D shape) {
 		super();
 		this.storage = storage;
 		this.shape = shape;
-		stride = shape.getSize();
+		stride = getStride(shape.getSizes());
 	}
 
-	public GridStorage(final Object storage, final IntHyperRect shape, final Datatype baseType) {
+	public GridStorage(final Object storage, final IntRect2D shape, final Datatype baseType) {
 		super();
 		this.storage = storage;
 		this.shape = shape;
 		this.baseType = baseType;
-		stride = shape.getSize();
+		stride = getStride(shape.getSizes());
 	}
 
 	public Object getStorage() {
@@ -63,12 +66,12 @@ public abstract class GridStorage<T extends Serializable> {
 		return baseType;
 	}
 
-	public IntHyperRect getShape() {
+	public IntRect2D getShape() {
 		return shape;
 	}
 
 	// Return a new instance of the subclass (IntStorage/DoubleStorage/etc...)
-	public abstract GridStorage getNewStorage(IntHyperRect shape);
+	public abstract GridStorage getNewStorage(IntRect2D shape);
 
 	public abstract String toString();
 
@@ -85,9 +88,9 @@ public abstract class GridStorage<T extends Serializable> {
 	 * 
 	 * @param newShape
 	 */
-	private void reload(final IntHyperRect newShape) {
+	private void reload(final IntRect2D newShape) {
 		shape = newShape;
-		stride = getStride(newShape.getSize());
+		stride = getStride(newShape.getSizes());
 		storage = allocate(newShape.getArea());
 	}
 
@@ -96,13 +99,13 @@ public abstract class GridStorage<T extends Serializable> {
 	 * 
 	 * @param newShape
 	 */
-	public void reshape(final IntHyperRect newShape) {
+	public void reshape(final IntRect2D newShape) {
 		if (newShape.equals(shape))
 			return;
 
-		if (newShape.isIntersect(shape)) {
+		if (newShape.intersects(shape)) {
 
-			final IntHyperRect overlap = newShape.getIntersection(shape);
+			final IntRect2D overlap = newShape.getIntersection(shape);
 
 			final MPIParam fromParam = new MPIParam(overlap, shape, baseType);
 			final MPIParam toParam = new MPIParam(overlap, newShape, baseType);
@@ -127,8 +130,27 @@ public abstract class GridStorage<T extends Serializable> {
 	 * 
 	 * @return flattened index
 	 */
-	public int getFlatIdx(final IntPoint p) {
-		return IntStream.range(0, p.nd).map(i -> p.c[i] * stride[i]).sum();
+	public int getFlatIdx(final Int2D p) {
+		return getFlatIdx(p.x, p.y);
+//		int sum = 0;
+//		for (int i = 0; i < p.getNumDimensions(); i++) {
+//			sum += p.c(i) * stride[i];
+//		}
+//		return sum;
+
+//		return IntStream
+//				.range(0, p.getNumDimensions())
+//				.map(i -> p.c(i) * stride[i])
+//				.sum();
+	}
+
+	/**
+	 * @param p
+	 * 
+	 * @return flattened index
+	 */
+	public int getFlatIdx(int x, int y) {
+		return x * stride + y;
 	}
 
 	/**
@@ -137,22 +159,38 @@ public abstract class GridStorage<T extends Serializable> {
 	 * 
 	 * @return flattened index with respect to the given size
 	 */
-	public static int getFlatIdx(final IntPoint p, final int[] wrtSize) {
-		final int[] s = getStride(wrtSize);
-		return IntStream.range(0, p.nd).map(i -> p.c[i] * s[i]).sum();
+	public static int getFlatIdx(final Int2D p, final int[] wrtSize) {
+		return p.x * getStride(wrtSize) + p.y;
+
+//		final int s = getStride(wrtSize);
+//		int sum = 0;
+//		for (int i = 0; i < p.getNumDimensions(); i++) {
+//			sum += p.c(i) * s[i];
+//		}
+//		return sum;
+
+//		return IntStream
+//			.range(0, p.getNumDimensions())
+//			.map(i -> p.c(i) * s[i])
+//			.sum();
 	}
 
 	/**
 	 * @param size
 	 * @return stride
 	 */
-	protected static int[] getStride(final int[] size) {
-		final int[] ret = new int[size.length];
-
-		ret[size.length - 1] = 1;
-		for (int i = size.length - 2; i >= 0; i--)
-			ret[i] = ret[i + 1] * size[i + 1];
-
-		return ret;
+	protected static int getStride(final int[] size) {
+		return size[1];
 	}
+
+//	protected static int[] getStride(final int[] size) {
+//	final int[] ret = new int[size.length];
+//
+//	ret[size.length - 1] = 1;
+//	for (int i = size.length - 2; i >= 0; i--)
+//		ret[i] = ret[i + 1] * size[i + 1];
+//
+//	return ret;
+//}
+
 }

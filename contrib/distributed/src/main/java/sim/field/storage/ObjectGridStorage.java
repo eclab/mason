@@ -1,45 +1,42 @@
 package sim.field.storage;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.function.IntFunction;
 
-import sim.field.partitioning.IntHyperRect;
-import sim.field.partitioning.IntPoint;
-import sim.field.partitioning.NdPoint;
+import sim.field.partitioning.IntRect2D;
 import sim.util.MPIParam;
+import sim.util.*;
 
 /**
  * internal local storage for distributed grids.
  *
  * @param <T> Type of objects to store
  */
-public class ObjectGridStorage<T extends Serializable> extends GridStorage<T> {
+public class ObjectGridStorage<T extends Serializable> extends GridStorage<T, Int2D> {
 
-	IntFunction<T[]> alloc; // Lambda function which accepts the size as its argument and returns a T array
+	transient IntFunction<T[]> alloc; // Lambda function which accepts the size as its argument and returns a T array
 
-	public ObjectGridStorage(final IntHyperRect shape, final IntFunction<T[]> allocator) {
+	public ObjectGridStorage(final IntRect2D shape, final IntFunction<T[]> allocator) {
 		super(shape);
 
 		alloc = allocator;
 		storage = allocate(shape.getArea());
 	}
 
-	public GridStorage getNewStorage(final IntHyperRect shape) {
+	public GridStorage<T, Int2D> getNewStorage(final IntRect2D shape) {
 		return new ObjectGridStorage<T>(shape, alloc);
 	}
 
-	protected Object allocate(final int size) {
+	protected T[] allocate(final int size) {
 		return alloc.apply(size);
 	}
 
 	public String toString() {
-		final int[] size = shape.getSize();
+		final int[] size = shape.getSizes();
 		final T[] array = (T[]) storage;
 		final StringBuffer buf = new StringBuffer(
 				String.format("ObjectGridStorage<%s>-%s\n", array.getClass().getSimpleName(), shape));
 
-		if (shape.getNd() == 2)
 			for (int i = 0; i < size[0]; i++) {
 				for (int j = 0; j < size[1]; j++)
 					buf.append(String.format(" %8s ", array[i * size[1] + j]));
@@ -53,8 +50,8 @@ public class ObjectGridStorage<T extends Serializable> extends GridStorage<T> {
 		final T[] objs = alloc.apply(mp.size), stor = (T[]) storage;
 		int curr = 0;
 
-		for (final IntHyperRect rect : mp.rects)
-			for (final IntPoint p : rect)
+		for (final IntRect2D rect : mp.rects)
+			for (final Int2D p : rect.getPointList())
 				objs[curr++] = stor[getFlatIdx(p)];
 
 		return objs;
@@ -66,52 +63,48 @@ public class ObjectGridStorage<T extends Serializable> extends GridStorage<T> {
 		final T[] objs = (T[]) buf;
 		int curr = 0;
 
-		for (final IntHyperRect rect : mp.rects)
-			for (final IntPoint p : rect)
+		for (final IntRect2D rect : mp.rects)
+			for (final Int2D p : rect.getPointList())
 				stor[getFlatIdx(p)] = objs[curr++];
 
 		return curr;
 	}
 
-	@Override
-	public void setLocation(T obj, NdPoint p) {
-		// TODO Auto-generated method stub
-
+	@SuppressWarnings("unchecked")
+	public T[] getStorageArray() {
+		return (T[]) getStorage();
 	}
 
-	@Override
-	public NdPoint getLocation(T obj) {
-		// TODO Auto-generated method stub
-		return null;
+	public void addToLocation(T obj, Int2D p) {
+		getStorageArray()[getFlatIdx(p)] = obj;
 	}
 
-	@Override
-	public void removeObject(T obj) {
-		// TODO Auto-generated method stub
+//	public NumberND getLocation(T obj) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
+	public void removeObject(T obj, Int2D p) {
+		addToLocation(null, p);
 	}
 
-	@Override
-	public void removeObjects(NdPoint p) {
-		// TODO Auto-generated method stub
-
+	public void removeObjects(Int2D p) {
+		addToLocation(null, p);
 	}
 
-	@Override
-	public ArrayList<T> getObjects(NdPoint p) {
-		// TODO Auto-generated method stub
-		return null;
+	public T getObjects(Int2D p) {
+		return (T) getStorageArray()[getFlatIdx(p)];
 	}
 
 //	public static void main(final String[] args) throws MPIException {
 //		MPI.Init(args);
 //
-//		final IntPoint p1 = new IntPoint(new int[] { 0, 0 });
-//		final IntPoint p2 = new IntPoint(new int[] { 5, 5 });
-//		final IntPoint p3 = new IntPoint(new int[] { 1, 1 });
-//		final IntPoint p4 = new IntPoint(new int[] { 4, 4 });
-//		final IntHyperRect r1 = new IntHyperRect(0, p1, p2);
-//		final IntHyperRect r2 = new IntHyperRect(1, p3, p4);
+//		final Int2D p1 = new Int2D(new int[] { 0, 0 });
+//		final Int2D p2 = new Int2D(new int[] { 5, 5 });
+//		final Int2D p3 = new Int2D(new int[] { 1, 1 });
+//		final Int2D p4 = new Int2D(new int[] { 4, 4 });
+//		final IntRect2D r1 = new IntRect2D(0, p1, p2);
+//		final IntRect2D r2 = new IntRect2D(1, p3, p4);
 //		final ObjectGridStorage<TestObj> s1 = new ObjectGridStorage<TestObj>(r1, size -> new TestObj[size]);
 //		final ObjectGridStorage<TestObj> s2 = new ObjectGridStorage<TestObj>(r1, size -> new TestObj[size]);
 //

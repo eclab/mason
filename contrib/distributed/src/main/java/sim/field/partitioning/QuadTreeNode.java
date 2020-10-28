@@ -2,25 +2,24 @@ package sim.field.partitioning;
 
 import java.util.*;
 import java.util.stream.*;
+import sim.util.*;
 
-// TODO Currently all shapes are restricted to IntHyperRect - switch to NdRectangle once it is completed
+// TODO Currently all shapes are restricted to IntRect2D - switch to NdRectangle once it is completed
 /**
  * A node in a Quad Tree.
  *
  */
 public class QuadTreeNode {
-	final int nd;
 	int level, id; // which level in the tree the node is in, its node id
 	int processor; // which processer this node is mapped to
 
-	IntPoint origin;
-	IntHyperRect shape;
+	Int2D origin;
+	IntRect2D shape;
 
 	QuadTreeNode parent = null;
 	List<QuadTreeNode> children;
 
-	public QuadTreeNode(final IntHyperRect shape, final QuadTreeNode parent) {
-		nd = shape.getNd();
+	public QuadTreeNode(final IntRect2D shape, final QuadTreeNode parent) {
 		this.shape = shape;
 		this.parent = parent;
 		children = new ArrayList<QuadTreeNode>();
@@ -47,11 +46,11 @@ public class QuadTreeNode {
 		return level;
 	}
 
-	public IntPoint getOrigin() {
+	public Int2D getOrigin() {
 		return origin;
 	}
 
-	public IntHyperRect getShape() {
+	public IntRect2D getShape() {
 		return shape;
 	}
 
@@ -104,12 +103,12 @@ public class QuadTreeNode {
 	}
 
 	// Get the immediate child node that contains the given point
-	public QuadTreeNode getChildNode(final NdPoint p) {
+	public QuadTreeNode getChildNode(final NumberND p) {
 		return children.get(toChildIdx(p));
 	}
 
 	// Get the leaf node that contains the given point
-	public QuadTreeNode getLeafNode(final NdPoint p) {
+	public QuadTreeNode getLeafNode(final NumberND p) {
 		QuadTreeNode curr = this;
 
 		while (!curr.isLeaf())
@@ -144,7 +143,7 @@ public class QuadTreeNode {
 	 * @param newOrigin
 	 * @return the newly created QTNodes (if any)
 	 */
-	public List<QuadTreeNode> split(final IntPoint newOrigin) {
+	public List<QuadTreeNode> split(final Int2D newOrigin) {
 		final List<QuadTreeNode> ret = new ArrayList<QuadTreeNode>();
 
 		if (!shape.contains(newOrigin))
@@ -153,9 +152,14 @@ public class QuadTreeNode {
 		origin = newOrigin;
 
 		if (isLeaf()) {
-			children = IntStream.range(0, 1 << nd)
-					.mapToObj(i -> new QuadTreeNode(getChildShape(i), this))
-					.collect(Collectors.toList());
+//			children = IntStream.range(0, 1 << 2)		// 2 == num dimensions
+//					.mapToObj(i -> new QuadTreeNode(getChildShape(i), this))
+//					.collect(Collectors.toList());
+			children = new ArrayList<>();
+			// TODO 1 << 2 = 1*2^2 = 4
+			for (int i = 0; i < 1 << 2; i++) {
+				children.add(new QuadTreeNode(getChildShape(i), this));
+			}
 			ret.addAll(children);
 		} else
 			for (int i = 0; i < children.size(); i++)
@@ -196,8 +200,9 @@ public class QuadTreeNode {
 	 * @param dim
 	 * @return the direction (forward/backward) on the given dimension
 	 */
-	public boolean getDir(final int dim) {
-		return ((getIndexInSiblings() >> (nd - dim - 1)) & 0x1) == 0x1;
+	public boolean getDir(final int dim) 
+		{
+		return ((getIndexInSiblings() >> (2 - dim - 1)) & 0x1) == 0x1;			// 2 is num dimensions
 	}
 
 	/**
@@ -236,13 +241,16 @@ public class QuadTreeNode {
 	 * 
 	 * @param newShape
 	 */
-	protected void reshape(final IntHyperRect newShape) {
+	protected void reshape(final IntRect2D newShape) {
 		shape = newShape;
 		if (isLeaf())
 			return;
 
-		if (!newShape.contains(origin))
-			origin = newShape.getCenter();
+		if (!newShape.contains(origin)) {
+			//origin = newShape.getCenter();
+			Double2D d = newShape.getCenter();
+			origin =  new Int2D((int)Math.floor(d.x), (int)Math.floor(d.y));
+		}
 
 		for (int i = 0; i < children.size(); i++)
 			children.get(i).reshape(getChildShape(i));
@@ -254,32 +262,48 @@ public class QuadTreeNode {
 	 * @param childId
 	 * @return child's shape
 	 */
-	protected IntHyperRect getChildShape(final int childId) {
-		final int[] ul = shape.ul().getArray();
-		final int[] br = origin.getArray();
-		final int[] sbr = shape.br().getArray();
+	protected IntRect2D getChildShape(final int childId) {
+		final int[] ul = shape.ul().toArray();
+		final int[] br = origin.toArray();
+		final int[] sbr = shape.br().toArray();
 
-		for (int i = 0; i < nd; i++)
-			if (((childId >> (nd - i - 1)) & 0x1) == 1) {
+		for (int i = 0; i < 2; i++)						// 2 = num dimensions
+			if (((childId >> (2 - i - 1)) & 0x1) == 1) {				// 2 = num dimensions    FIXME: what is this?
 				ul[i] = br[i];
 				br[i] = sbr[i];
 			}
 
-		return new IntHyperRect(-1, new IntPoint(ul), new IntPoint(br));
+		return new IntRect2D(new Int2D(ul), new Int2D(br));
 	}
 
 	/**
 	 * @param p
 	 * @return the index of my immediate child that contains the given point
 	 */
-	protected int toChildIdx(final NdPoint p) {
+	protected int toChildIdx(final NumberND p) {
 		if (!shape.contains(p))
 			throw new IllegalArgumentException("p " + p + " must be inside the shape " + shape);
 
-		final double[] oc = origin.getArrayInDouble(), pc = p.getArrayInDouble();
+		final double[] oc = origin.toArrayAsDouble(), pc = p.toArrayAsDouble();
 
-		return IntStream.range(0, nd)
-				.map(i -> pc[i] < oc[i] ? 0 : 1)
-				.reduce(0, (r, x) -> r << 1 | x);
+		int[] mapd = new int[2];
+		for (int i = 0; i < 2; i++) {
+			// .map(i -> pc[i] < oc[i] ? 0 : 1)
+			int map = 1; // 0 or 1
+			if (pc[i] < oc[i]) {
+				map = 0;
+			}
+			mapd[i] = map;
+		}
+		// .reduce(0, (r, x) -> r << 1 | x);
+		int r = 0;
+		for (int i = 0; i < 2; i++) {
+			int x = mapd[i];
+			r = r << 1 | x;
+		}
+		return r;
+		//return IntStream.range(0, 2)							// 2 = num dimensions
+		//		.map(i -> pc[i] < oc[i] ? 0 : 1)
+		//		.reduce(0, (r, x) -> r << 1 | x);
 	}
 }

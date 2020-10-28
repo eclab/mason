@@ -46,10 +46,12 @@ public final class Int2D extends NumberND
     public String toCoordinates() { return "(" + x + ", " + y + ")"; }
 
 
+
 	public int c(int i) { return (i == 0 ? x : y); }
 	public int[] c() { return new int[] {x, y}; }
 	public int[] toArray() { return new int[] {x, y}; }
 	public double[] toArrayAsDouble() { return new double[] { x, y}; }
+
 
     public final int hashCode()
         {

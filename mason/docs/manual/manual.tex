@@ -10928,7 +10928,7 @@ There are several kinds of Simple Portrayals in 3D, many of which are similar to
 \item {\bf Value Simple Portrayals} portray numbers as if they were simple shapes (typically cubes) of various colors, using a \class{sim.util.gui.ColorMap} to translate between numerical values and colors.  These are designed primarily to work with \class{sim.portrayal3d.grid.ValueGridPortrayal3D}.
 \item {\bf Quad Portrayals} portray numbers as if they were squares or points in a mesh, of various colors, using a \class{sim.util.gui.ColorMap} to translate between numerical values and colors.  These are designed primarily to work with \class{sim.portrayal3d.grid.Value2DGridPortrayal3D}.  Quad Portrayals were discussed in Section \ref{sim.portrayal3d.grid.quad.QuadPortrayal}.
 \item {\bf Edge Simple Portrayals} draw edges in networks.  These are designed to work with \method{sim.portrayal3d.network.NetworkPortrayal3D}.
-\item {\bf Wrapper Simple Portrayals}  ``wrap'' around subsidiary Simple Portrayals to add additional gizmos  to them. For example. to add a label, or to circle an object when itÕs selected, simply create a wrapper portrayal around your basic portrayal and submit the wrapper portrayal as the Simple Portrayal to the Field Portrayal. Wrapper portrayals can wrap other wrapper portrayals, creating a sequence of ``wraps'' around a basic portrayal. 
+\item {\bf Wrapper Simple Portrayals}  ``wrap'' around subsidiary Simple Portrayals to add additional gizmos  to them. For example. to add a label, or to circle an object when itï¿½s selected, simply create a wrapper portrayal around your basic portrayal and submit the wrapper portrayal as the Simple Portrayal to the Field Portrayal. Wrapper portrayals can wrap other wrapper portrayals, creating a sequence of ``wraps'' around a basic portrayal. 
 \end{itemize}
 
 
@@ -14605,7 +14605,7 @@ Get all the objects from a remote location p.
 The inner class sim.field.HaloGrid2D\$Neighbor contains the information about which part of my region should be sent out to which neighbor and where I should put the received data from my neighbors into my halo area.
 
 \begin{methods}{\class{sim.field.HaloGrid2D\$Neighbor}}
-\mthd{private ArrayList\(<\)IntHyperRect\(>\) generateOverlaps(final IntHyperRect p1, final IntHyperRect p2)}
+\mthd{private ArrayList\(<\)IntRect2D\(>\) generateOverlaps(final IntRect2D p1, final IntRect2D p2)}
 Generate the Halo Area.
 \end{methods}
 
@@ -14646,11 +14646,11 @@ Return true if the field is toroidal.
 Return the MPI communicator.
 \mthd{public int[] getFieldSize()}
 Return an array thath contains the height and width of the field.
-\mthd{public IntHyperRect getField()}
+\mthd{public IntRect2D getField()}
 Return a rectangle that represents the field.
-\mthd{public abstract IntHyperRect getPartition()}
+\mthd{public abstract IntRect2D getPartition()}
 Return a rectangle that represents the partiton of the current processor.
-\mthd{public abstract IntHyperRect getPartition(int pid)}
+\mthd{public abstract IntRect2D getPartition(int pid)}
 Return a rectangle that represents the partiton of the processor with PID pid.
 \mthd{public abstract int getNumNeighbors()}
 Return the number of neighbors of the current processors.
@@ -14679,7 +14679,7 @@ Return true if the current processor is the master of the MPI group communicator
 Return true if the current processor is the master of the specified Quadtree level.
 \mthd{public GroupComm getGroupComm(final int level)}
 Return the MPI group communicator of the specified Quadtree level.
-\mthd{public IntHyperRect getNodeShapeAtLevel(final int level)}
+\mthd{public IntRect2D getNodeShapeAtLevel(final int level)}
 Return a rectangle that represents the partition at the specified level of the Quadtree
 \mthd{public void balance(final double myRt, final int level) throws MPIException}
 Rebalance the QuadTreePartion in order to keep balanced the workload of all processors in the simulation.

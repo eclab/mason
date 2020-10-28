@@ -8,9 +8,21 @@ package sim.engine;
 
 /** A simple implementation of Stopping in a Steppable. */
 
-public abstract class DSteppable implements Steppable, Stopping 
-    {
-    Stoppable stop = null;
-    public Stoppable getStoppable() { return stop; }
-    public void setStoppable(Stoppable stop) { this.stop = stop; }
-    }
+public abstract class DSteppable extends DObject implements Steppable, Stopping {
+	private static final long serialVersionUID = 1L;
+
+	Stoppable stop = null;
+
+	public Stoppable getStoppable() {
+		return stop;
+	}
+
+	public void setStoppable(Stoppable stop) {
+		this.stop = stop;
+	}
+
+	// TODO: Replace this with a better solution
+	public long getId() {
+		return (10000 + (long) firstpid) * 100000000 + (long) localid;
+	}
+}
