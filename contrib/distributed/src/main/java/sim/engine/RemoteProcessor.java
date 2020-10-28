@@ -15,7 +15,9 @@ import sim.field.proxy.VisualizationProcessor;
 import sim.field.storage.GridStorage;
 
 public class RemoteProcessor extends UnicastRemoteObject implements VisualizationProcessor {
-//public class RemoteProcessor implements VisualizationProcessor {
+	// public class RemoteProcessor implements VisualizationProcessor {
+	private static final long serialVersionUID = 1L;
+
 	final DSimState dSimState;
 	private final ReentrantLock lock = new ReentrantLock(true); // Fair lock
 	public static final String NAME_PREFIX = "processorPId: ";
@@ -53,7 +55,6 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	public void unlock() throws RemoteException {
 		lock.unlock();
 	}
-
 
 	public IntRect2D getStorageBounds() throws RemoteException {
 		return dSimState.getPartitioning().getHaloBounds();
@@ -114,6 +115,11 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 		} catch (RemoteException | NotBoundException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public int getAOI() throws RemoteException {
+		// TODO: aoi is multi dimentional
+		return dSimState.partition.aoi[0];
 	}
 
 //	// TODO: do we extend this to other Remote objects?

@@ -210,7 +210,7 @@ public class DRegistry {
 	 * @throws RemoteException
 	 * @throws NotBoundException
 	 */
-	public Object getObject(String name) throws AccessException, RemoteException, NotBoundException {
+	public Remote getObject(String name) throws AccessException, RemoteException, NotBoundException {
 		return registry.lookup(name);
 	}
 
