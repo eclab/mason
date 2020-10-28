@@ -29,8 +29,8 @@ public abstract class DObject implements java.io.Serializable {
 			return idCounter++;
 	}
 
-	final int firstpid; // this is the PID of the *original* processor on which this object was created
-	final int localid; // this is a unique ID special to processor PID
+	public final int firstpid; // this is the PID of the *original* processor on which this object was created
+	public final int localid; // this is a unique ID special to processor PID
 
 	public DObject() {
 		firstpid = DSimState.getPID(); // called originally to get the FIRST PID
@@ -50,14 +50,14 @@ public abstract class DObject implements java.io.Serializable {
 
 	public final int hashCode() {
 		// stolen from Int2D.hashCode()
-		int y = this.firstpid;
+		int y = this.localid;
 		y += ~(y << 15);
 		y ^= (y >>> 10);
 		y += (y << 3);
 		y ^= (y >>> 6);
 		y += ~(y << 11);
 		y ^= (y >>> 16);
-		return localid ^ y;
+		return firstpid ^ y;
 	}
 
 	/** Returns a unique system-wideID to this object. */
@@ -75,6 +75,14 @@ public abstract class DObject implements java.io.Serializable {
 
 	/** Returns a string consisting of the form CLASSNAME:UNIQUEID@CURRENTPID */
 	public String toString() {
-		return this.getClass().getName() + ":" + getIDString() + "@" + DSimState.getPID();
+		int pid = -1;
+
+		try {
+			pid = DSimState.getPID();
+		} catch (Throwable e) {
+			// if its running on the remote visualizer its not going have a pid
+		}
+
+		return this.getClass().getName() + ":" + getIDString() + "@" + pid;
 	}
 }

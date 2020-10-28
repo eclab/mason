@@ -13,18 +13,17 @@ import ec.util.MersenneTwisterFast;
 import sim.engine.DSteppable;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
+import sim.portrayal.Oriented2D;
 import sim.util.*;
 
-public class DFlocker extends DSteppable implements Remote {
+public class DFlocker extends DSteppable implements Remote, Oriented2D {
 	private static final long serialVersionUID = 1;
 	public Double2D loc;
 	public Double2D lastd = new Double2D(0, 0);
-	public int color;
 	public boolean dead = false;
 
-	public DFlocker(final Double2D location, int color) {
+	public DFlocker(final Double2D location) {
 		this.loc = location;
-		this.color = color;
 	}
 
 	public double getOrientation() {

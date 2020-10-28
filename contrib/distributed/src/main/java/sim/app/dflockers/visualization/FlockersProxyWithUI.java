@@ -72,7 +72,18 @@ public class FlockersProxyWithUI extends GUIState
                     	{
     					public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
                     		{
-                    		paint = new Color(((DFlocker)object).color);
+    						DObject dObject= (DObject)object;
+    						int h = dObject.hashCode();
+    						int hi = h >>> 24;
+    						h = h & 0xFFFFFF;
+    						h = h ^ (hi);
+    						h = h ^ (hi << 8);
+    						h = h ^ (hi << 16);
+    						h = h | 128;
+    						h = h | (128 << 8);
+    						h = h | (128 << 16);
+    						
+                    		paint = new Color(h);
                     		super.draw(object, graphics, info);
                     		}
                     	},                    	
