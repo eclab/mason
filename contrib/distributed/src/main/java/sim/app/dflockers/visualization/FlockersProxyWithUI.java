@@ -12,6 +12,8 @@ import javax.swing.*;
 import java.awt.*;
 import sim.portrayal.simple.*;
 import sim.portrayal.SimplePortrayal2D;
+import sim.portrayal.*;
+import sim.app.dflockers.*;
 
 public class FlockersProxyWithUI extends GUIState
     {
@@ -62,17 +64,18 @@ public class FlockersProxyWithUI extends GUIState
         // uncomment this to try out trails  (also need to uncomment out some others in this file, look around)
         trailsPortrayal.setField(flock.flockers);
         
-        // make the flockers random colors and four times their normal size (prettier)
-        for(int x=0;x<flock.flockers.allObjects.numObjs;x++)
-            {
-            SimplePortrayal2D basic =       new TrailedPortrayal2D(
+            SimplePortrayal2D basic = new TrailedPortrayal2D(
                 this,
                 new OrientedPortrayal2D(
-                    new SimplePortrayal2D(), 0, 4.0,
-                    new Color(      128 + guirandom.nextInt(128),
-                        128 + guirandom.nextInt(128),
-                        128 + guirandom.nextInt(128)),
-                    OrientedPortrayal2D.SHAPE_COMPASS),
+                    new SimplePortrayal2D(), 0, 4.0, Color.WHITE,
+                    OrientedPortrayal2D.SHAPE_COMPASS)
+                    	{
+    					public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+                    		{
+                    		paint = new Color(((DFlocker)object).color);
+                    		super.draw(object, graphics, info);
+                    		}
+                    	},                    	
                 trailsPortrayal, 100);
 
             // note that the basic portrayal includes the TrailedPortrayal.  We'll add that to BOTH 
@@ -83,10 +86,8 @@ public class FlockersProxyWithUI extends GUIState
             // It's okay because the TrailedPortrayal will only draw itself in the trailsPortrayal, which
             // we passed into its constructor.
                         
-            flockersPortrayal.setPortrayalForObject(flock.flockers.allObjects.objs[x], 
-                new AdjustablePortrayal2D(new MovablePortrayal2D(basic)));
-            trailsPortrayal.setPortrayalForObject(flock.flockers.allObjects.objs[x], basic );
-            }
+            flockersPortrayal.setPortrayalForAll(new AdjustablePortrayal2D(new MovablePortrayal2D(basic)));
+            trailsPortrayal.setPortrayalForAll( basic );
         
         // update the size of the display appropriately.
         double w = flock.flockers.getWidth();

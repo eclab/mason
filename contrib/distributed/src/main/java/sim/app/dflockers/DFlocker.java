@@ -19,10 +19,12 @@ public class DFlocker extends DSteppable implements Remote {
 	private static final long serialVersionUID = 1;
 	public Double2D loc;
 	public Double2D lastd = new Double2D(0, 0);
+	public int color;
 	public boolean dead = false;
 
-	public DFlocker(final Double2D location) {
+	public DFlocker(final Double2D location, int color) {
 		this.loc = location;
+		this.color = color;
 	}
 
 	public double getOrientation() {

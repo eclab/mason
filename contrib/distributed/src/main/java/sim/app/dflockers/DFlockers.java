@@ -49,7 +49,10 @@ public class DFlockers extends DSimState {
 		ArrayList<DFlocker> agents = new ArrayList<DFlocker>();
 		for (int x = 0; x < DFlockers.numFlockers; x++) {
 			final Double2D loc = new Double2D(random.nextDouble() * width, random.nextDouble() * height);
-			DFlocker flocker = new DFlocker(loc);
+			int color = ((random.nextInt(128) + 128) << 0) |
+						((random.nextInt(128) + 128) << 8) |
+						((random.nextInt(128) + 128) << 16);
+			DFlocker flocker = new DFlocker(loc, color);
 			if (random.nextBoolean(deadFlockerProbability))
 				flocker.dead = true;
 			agents.add(flocker);
