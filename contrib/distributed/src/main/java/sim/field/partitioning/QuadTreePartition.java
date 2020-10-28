@@ -41,12 +41,10 @@ public class QuadTreePartition extends PartitionInterface {
 
 		throw new IllegalArgumentException("The partition for " + pid + " does not exist");
 	}
-	
+
 	public IntRect2D getHaloBounds() {
 		return myLeafNode.getShape().resize(aoi);
 	}
-	
-	 
 
 	public ArrayList<IntRect2D> getAllBounds() {
 		ArrayList<IntRect2D> allBounds = new ArrayList<>();
@@ -56,7 +54,7 @@ public class QuadTreePartition extends PartitionInterface {
 			allBounds.add(null);
 
 		for (final QuadTreeNode node : qt.getAllLeaves())
-			allBounds.add(node.getProcessor(), node.getShape());
+			allBounds.set(node.getProcessor(), node.getShape());
 		return allBounds;
 	}
 
@@ -143,11 +141,11 @@ public class QuadTreePartition extends PartitionInterface {
 		{
 			final List<QuadTreeNode> leaves = qt.getAllLeaves();
 			for (final QuadTreeNode leaf : leaves) {
-				//qt.split(leaf.getShape().getInt2DCenter());
+				// qt.split(leaf.getShape().getInt2DCenter());
 				Double2D d = leaf.getShape().getCenter();
-				qt.split(new Int2D((int)Math.floor(d.x), (int)Math.floor(d.y)));
+				qt.split(new Int2D((int) Math.floor(d.x), (int) Math.floor(d.y)));
 			}
-			
+
 		}
 		mapNodeToProc();
 		createMPITopo();
@@ -183,10 +181,10 @@ public class QuadTreePartition extends PartitionInterface {
 
 		// Set the proc id to the IntRect2D so it can be printed out when debugging
 		// it is not used by the program itself (TODO double-check)
-		
-		//removed by Raj Patel
-		//for (final QuadTreeNode leaf : qt.getAllLeaves())
-		//	leaf.getShape().setId(leaf.getProcessor());
+
+		// removed by Raj Patel
+		// for (final QuadTreeNode leaf : qt.getAllLeaves())
+		// leaf.getShape().setId(leaf.getProcessor());
 	}
 
 	/**
@@ -317,11 +315,11 @@ public class QuadTreePartition extends PartitionInterface {
 		Object[] sendCentroids = new Object[] { null };
 
 		if (gc != null) {
-			
+
 			Double2D d = myLeafNode.getShape().getCenter();
-			final Int2D ctr = new Int2D((int)Math.floor(d.x), (int)Math.floor(d.y));
-			//final Int2D ctr = myLeafNode.getShape().getInt2DCenter();
-			final double[] sendData = new double[2 + 1], recvData = new double[2 + 1];		// 2 == num dimensions
+			final Int2D ctr = new Int2D((int) Math.floor(d.x), (int) Math.floor(d.y));
+			// final Int2D ctr = myLeafNode.getShape().getInt2DCenter();
+			final double[] sendData = new double[2 + 1], recvData = new double[2 + 1]; // 2 == num dimensions
 
 			sendData[0] = myRuntime;
 			sendData[1] = ctr.x * myRuntime;
