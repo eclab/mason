@@ -29,8 +29,8 @@ public class DAgent extends DSteppable implements Remote {
 	public void step(final SimState state) {
 		final DSimulation dSimstate = (DSimulation) state;
 		Double2D curr_loc = loc;
-		double curr_x = loc.c(0);
-		double curr_y = loc.c(1);
+		double curr_x = loc.x;
+		double curr_y = loc.y;
 		double new_x = curr_x;
 		double new_y = curr_y;
 
@@ -46,14 +46,14 @@ public class DAgent extends DSteppable implements Remote {
 				new_y -= 5;
 			}
 		} else {
-			if (curr_x < initLoc.c(0)) {
+			if (curr_x < initLoc.x) {
 				new_x += 5;
-			} else if (curr_x > initLoc.c(0)) {
+			} else if (curr_x > initLoc.x) {
 				new_x -= 5;
 			}
-			if (curr_y < initLoc.c(1)) {
+			if (curr_y < initLoc.y) {
 				new_y += 5;
-			} else if (curr_y > initLoc.c(1)) {
+			} else if (curr_y > initLoc.y) {
 				new_y -= 5;
 			}
 		}

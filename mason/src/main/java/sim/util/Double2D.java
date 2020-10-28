@@ -51,8 +51,9 @@ public final class Double2D extends NumberND
     
     public java.awt.geom.Point2D.Double toPoint2D() { return new java.awt.geom.Point2D.Double(x,y); }
 
-	public double c(int i) { return (i == 0 ? x : y); }
-	public double[] c() { return new double[] {x, y}; }
+    
+//	public double c(int i) { return (i == 0 ? x : y); }
+//	public double[] c() { return new double[] {x, y}; }
 	public double[] toArray() { return new double[] {x, y}; }
 	public double[] toArrayAsDouble() { return new double[] { x, y}; }
 

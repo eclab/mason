@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -86,14 +85,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 //						new Int2D(-2 * xLen, -2 * yLen) // This is probably a bug
 				};
 
-//				for (final Int2D p : IntPointGenerator.getLayer(2, 1)) // 2 == number of dimensions (width, height)
 				for (final Int2D p : shifts) {
-//					final IntRect2D sp = p2
-//							.shift(
-//								IntStream
-//								.range(0, 2)
-//								.map(i -> p.c(i) * fieldSize[i])
-//								.toArray()());
 					final IntRect2D sp = p2.shift(new int[]{p.x,p.y});
 					if (p1.intersects(sp))
 						overlaps.add(p1.getIntersection(sp));
@@ -199,10 +191,6 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		privatePart = origPart.resize(negAoi);
 		// privatePart = origPart.resize(Arrays.stream(aoi).map(x -> -x).toArray()());
 		// Get the neighbors and create Neighbor objects
-//		neighbors = Arrays
-//				.stream(partition.getNeighborIds())
-//				.mapToObj(x -> new Neighbor(partition.getPartition(x)))
-//				.collect(Collectors.toList());
 		neighbors = new ArrayList<Neighbor>();
 		for (int id : partition.getNeighborIds()) {
 			neighbors.add(new Neighbor(partition.getBounds(id)));
@@ -556,24 +544,13 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @return true if point is within the global grid
 	 */
 	public boolean inGlobal(final Int2D point) {
-		// Refactor 20201026 >>>>>>>>>>>>>
 		if (!(point.x >= 0 && point.x < fieldSize[0])) {
 			return false;
 		}
 		if (!(point.y >= 0 && point.y < fieldSize[1])) {
 			return false;
 		}
-//		for (int i = 0; i < 2; i++) // 2 = numbe of dimensions
-//		{
-//			if (!(point.c(i) >= 0 && point.c(i) < fieldSize[i])) {
-//				return false;
-//			}
-//		}
-	    // <<<<<<<<<<<<<<<<<<<<	Refactor 20201026
 		return true;
-//		return IntStream
-//				.range(0, 2)
-//				.allMatch(i -> point.c(i) >= 0 && point.c(i) < fieldSize[i]);
 	}
 
 	/**

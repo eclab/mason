@@ -324,20 +324,8 @@ public class QuadTreePartition extends PartitionInterface {
 			final double[] sendData = new double[2 + 1], recvData = new double[2 + 1];		// 2 == num dimensions
 
 			sendData[0] = myRuntime;
-			// Refactor 20201026 >>>>>>>>>>>>>
 			sendData[1] = ctr.x * myRuntime;
 			sendData[2] = ctr.y * myRuntime;
-			//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-			// This one's whacky
-			// |sendData| = 2 + 1 = 3
-//			int i = 1;
-//			sendData[1] = ctr.c(1 - 1) * myRuntime;
-//			int i = 2;
-//			sendData[2] = ctr.c(2 - 1) * myRuntime;
-			//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-//			for (int i = 1; i < sendData.length; i++)
-//				sendData[i] = ctr.c(i - 1) * myRuntime;
-		    // <<<<<<<<<<<<<<<<<<<<	Refactor 20201026
 
 			gc.comm.reduce(sendData, recvData, recvData.length, MPI.DOUBLE, MPI.SUM, gc.groupRoot);
 
@@ -350,7 +338,6 @@ public class QuadTreePartition extends PartitionInterface {
 				}
 				sendCentroids = new Object[] {
 						gc.master.getId(),
-//					new Int2D(Arrays.stream(recvData).skip(1).mapToInt(x -> (int) (x / recvData[0])).toArray())
 						new Int2D(locVals)
 				};
 			}
