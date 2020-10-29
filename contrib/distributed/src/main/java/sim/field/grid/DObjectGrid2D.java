@@ -23,6 +23,7 @@ public class DObjectGrid2D<T extends Serializable> extends DAbstractGrid2D imple
 	private static final long serialVersionUID = 1L;
 
 	private HaloGrid2D<T, NumberND, ObjectGridStorage<T>> halo;
+	ObjectGridStorage<T> storage;
 
 	@SuppressWarnings("unchecked")
 	public DObjectGrid2D(final PartitionInterface ps, final int[] aoi, final DSimState state, Class<T> clazz) {
@@ -31,24 +32,25 @@ public class DObjectGrid2D<T extends Serializable> extends DAbstractGrid2D imple
 		// new ObjectGridStorage<T>(ps.getBounds(), s -> (T[]) Array.newInstance(clazz,
 		// s)), state);
 
+		storage = new ObjectGridStorage<T>(ps.getBounds());
 		try {
-			halo = new HaloGrid2D<T, NumberND, ObjectGridStorage<T>>(ps, aoi,
-					new ObjectGridStorage<T>(
-							ps.getBounds(),
-							// s -> (T[]) Array.newInstance(clazz, s)),
-							new IntFunction<T[]>() {
-								public T[] apply(int s) {
-									return (T[]) Array.newInstance(clazz, s);
-								}
-							}),
+			halo = new HaloGrid2D<T, NumberND, ObjectGridStorage<T>>(ps, aoi, storage,
+//							// s -> (T[]) Array.newInstance(clazz, s)),
+//							new IntFunction<T[]>() {
+//								public T[] apply(int s) {
+//									return (T[]) Array.newInstance(clazz, s);
+//								}
+//							}),
 					state);
 		} catch (RemoteException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
+	public T[] getStorageArray() { return storage.storage; }
+
 	public T getLocal(final Int2D p) {
-		return halo.localStorage.getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))];
+		return storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))];
 	}
 
 	public T getRMI(final Int2D p) throws RemoteException {
@@ -56,7 +58,7 @@ public class DObjectGrid2D<T extends Serializable> extends DAbstractGrid2D imple
 	}
 
 	public void addLocal(final Int2D p, final T t) {
-		halo.localStorage.getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))] = t;
+		storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))] = t;
 	}
 
 	public void removeLocal(final Int2D p, final T t) {

@@ -13,22 +13,30 @@ import sim.util.*;
  * @param <T> Type of objects to store
  */
 public class DenseGridStorage<T extends Serializable> extends GridStorage<T, Int2D> {
+	public ArrayList<T>[] storage;
+	
+	/// SEAN -- for the time being we're just doing removeEmptyBags, not replaceLargeBags, though we really oughta do that too...
+	/// See DenseGrid2D
+	
+    /** Should we remove bags in the field if they have been emptied, and let them GC, or should
+        we keep them around? */
+    public boolean removeEmptyBags = true;
 
-	transient IntFunction<ArrayList<T>[]> alloc; // Lambda function which accepts the size as its argument and returns a T array
-
-	public DenseGridStorage(final IntRect2D shape, final IntFunction<ArrayList<T>[]> allocator) {
+	public DenseGridStorage(final IntRect2D shape) {
 		super(shape);
-
-		alloc = allocator;
-		storage = allocate(shape.getArea());
+		clear();
+		//storage = allocate(shape.getArea());
 	}
 
+/*
 	public GridStorage<T, Int2D> getNewStorage(final IntRect2D shape) {
-		return new DenseGridStorage<T>(shape, alloc);
+		return new DenseGridStorage<T>(shape);
 	}
+*/
 
-	protected Object[] allocate(final int size) {
-		return alloc.apply(size);
+	public void clear() {
+// We don't really need this to compile:    @SuppressWarnings("unchecked") 	
+    storage = (ArrayList<T>[]) new Object[shape.getArea()];		//alloc.apply(size);
 	}
 
 	public String toString() {
@@ -47,7 +55,7 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage<T, Int
 	}
 
 	public Serializable pack(final MPIParam mp) {
-		final ArrayList<T>[] objs = alloc.apply(mp.size);
+		final ArrayList<T>[] objs = (ArrayList<T>[]) new Object[mp.size]; 	// alloc.apply(mp.size);
 		final ArrayList<T>[] stor = (ArrayList<T>[]) storage;
 		int curr = 0;
 
@@ -71,13 +79,8 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage<T, Int
 		return curr;
 	}
 
-	@SuppressWarnings("unchecked")
-	public ArrayList<T>[] getStorageArray() {
-		return (ArrayList[]) getStorage();
-	}
-
 	public void addToLocation(T obj, Int2D p) {
-		final ArrayList<T>[] array = getStorageArray();
+		final ArrayList<T>[] array = storage;
 		final int idx = getFlatIdx(p);
 
 		if (array[idx] == null)
@@ -92,23 +95,32 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage<T, Int
 //	}
 
 	public void removeObject(T obj, Int2D p) {
-		final ArrayList<T>[] array = getStorageArray();
+		final ArrayList<T>[] array = storage;
 		final int idx = getFlatIdx(p);
 
 		if (array[idx] != null)
+			{
 			array[idx].remove(obj);
+			if (array[idx].size() == 0 && removeEmptyBags)
+				array[idx] = null;
+			}
 	}
 
 	public void removeObjects(Int2D p) {
-		final ArrayList<T>[] array = getStorageArray();
+		final ArrayList<T>[] array = storage;
 		final int idx = getFlatIdx(p);
 
 		if (array[idx] != null)
-			array[idx].clear();
+			{
+			if (removeEmptyBags)
+				array[idx] = null;
+			else
+				array[idx].clear();
+			}
 	}
 
 	public ArrayList<T> getObjects(Int2D p) {
-		return getStorageArray()[getFlatIdx(p)];
+		return storage[getFlatIdx(p)];
 	}
 
 }

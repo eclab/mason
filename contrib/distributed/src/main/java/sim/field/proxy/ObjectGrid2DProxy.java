@@ -21,7 +21,7 @@ public class ObjectGrid2DProxy extends ObjectGrid2D implements UpdatableProxy
 		
 		// load storage
 		ObjectGridStorage storage = (ObjectGridStorage)(stateProxy.storage(proxyIndex));
-		Object[] data = (Object[])(storage.getStorageArray());	
+		Object[] data = (Object[])(storage.storage);	
 		for(int x = 0; x < width; x++)
 			{
 			Object[] fieldx = field[x];

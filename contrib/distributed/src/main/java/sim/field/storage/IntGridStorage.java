@@ -9,19 +9,24 @@ import sim.field.partitioning.IntRect2D;
 import sim.util.*;
 
 public class IntGridStorage extends GridStorage<Integer, Int2D> {
-	final int initVal;
 
-	public IntGridStorage(IntRect2D shape, int initVal) {
+	public int[] storage;
+//	final int initVal;
+
+	public IntGridStorage(IntRect2D shape) {
 		super(shape);
 		baseType = MPI.INT;
-		storage = allocate(shape.getArea());
-		this.initVal = initVal;
-		Arrays.fill((int[]) storage, initVal);
+		clear();
+//		storage = allocate(shape.getArea());
+//		this.initVal = initVal;
+//		Arrays.fill((int[]) storage, initVal);
 	}
 
+/*
 	public GridStorage getNewStorage(IntRect2D shape) {
 		return new IntGridStorage(shape, 0);
 	}
+*/
 
 	public byte[] pack(MPIParam mp) throws MPIException {
 		byte[] buf = new byte[MPI.COMM_WORLD.packSize(mp.size, baseType)];
@@ -47,36 +52,32 @@ public class IntGridStorage extends GridStorage<Integer, Int2D> {
 		return buf.toString();
 	}
 
-	protected Object allocate(int size) {
-		return new int[size];
-	}
-
-	public int[] getStorageArray() {
-		return (int[]) getStorage();
+	public void clear() {
+		storage = new int[shape.getArea()];
 	}
 
 	public void addToLocation(Integer t, Int2D p) {
-		getStorageArray()[getFlatIdx((Int2D) p)] = t;
+		storage[getFlatIdx((Int2D) p)] = t;
 	}
 
 	public void addToLocation(int t, Int2D p) {
-		getStorageArray()[getFlatIdx((Int2D) p)] = t;
+		storage[getFlatIdx((Int2D) p)] = t;
 	}
 
 	public void removeObject(Integer t, Int2D p) {
-		addToLocation(initVal, p);
+		addToLocation(0, p);
 	}
 
 	public void removeObject(int t, Int2D p) {
-		addToLocation(initVal, p);
+		addToLocation(0, p);
 	}
 
 	public void removeObjects(Int2D p) {
-		addToLocation(initVal, p);
+		addToLocation(0, p);
 	}
 
 	public Serializable getObjects(Int2D p) {
-		return getStorageArray()[getFlatIdx(p)];
+		return storage[getFlatIdx(p)];
 	}
 
 }

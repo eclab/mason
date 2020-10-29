@@ -27,20 +27,20 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 	private static final long serialVersionUID = 1L;
 
 	private HaloGrid2D<T, Double2D, ContinuousStorage<T>> halo;
-
-	public DContinuous2D(final PartitionInterface ps, final int[] aoi, final double discretization,
-			final DSimState state) {
+	ContinuousStorage<T> storage;
+	
+	public DContinuous2D(final PartitionInterface ps, final int[] aoi, final double discretization, final DSimState state) {
 		super(ps);
+		storage = new ContinuousStorage<T>(ps.getBounds(), discretization);
 		try {
-			halo = new HaloGrid2D<T, Double2D, ContinuousStorage<T>>(ps, aoi,
-					new ContinuousStorage<T>(ps.getBounds(), discretization), state);
+			halo = new HaloGrid2D<T, Double2D, ContinuousStorage<T>>(ps, aoi, storage, state);
 		} catch (RemoteException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	public Double2D getLocation(final T obj) {
-		return halo.localStorage.getLocation(obj);
+		return storage.getLocation(obj);
 	}
 
 	public List<T> get(final Double2D p) {
@@ -53,24 +53,24 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 	}
 
 	public void addLocal(final Double2D p, final T t) {
-		halo.localStorage.addToLocation(t, p);
+		storage.addToLocation(t, p);
 	}
 
 	public void removeLocal(final Double2D p, final T t) {
 		// TODO: Remove from just p
-		halo.localStorage.removeObject(t);
+		storage.removeObject(t);
 	}
 
 	public void removeLocal(final Double2D p) {
-		halo.localStorage.removeObjects(p);
+		storage.removeObjects(p);
 	}
 
 //	public List<T> getNearestNeighbors(final T obj, final int k) {
-//		return halo.localStorage.getNearestNeighbors(obj, k);
+//		return storage.getNearestNeighbors(obj, k);
 //	}
 
 	public List<T> getNeighborsWithin(final T obj, final double r) {
-		return halo.localStorage.getNeighborsWithin(obj, r);
+		return storage.getNeighborsWithin(obj, r);
 	}
 
 	// TODO refactor this after new pack/unpack is introduced in Storage
@@ -78,7 +78,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 	public final List<T> getAllObjects() {
 		Serializable data = null;
 
-		data = halo.localStorage.pack(new MPIParam(halo.origPart, halo.haloPart, halo.MPIBaseType));
+		data = storage.pack(new MPIParam(halo.origPart, halo.haloPart, halo.MPIBaseType));
 
 		final List<T> objs = ((ArrayList<ArrayList<T>>) data).get(0);
 
@@ -95,7 +95,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 	}
 
 	public ArrayList<T> getLocal(final Double2D p) {
-		return halo.localStorage.getObjects(p);
+		return storage.getObjects(p);
 	}
 
 	public void addAgent(final Double2D p, final T t) {

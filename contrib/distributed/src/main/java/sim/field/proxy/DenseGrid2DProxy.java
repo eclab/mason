@@ -23,7 +23,7 @@ public class DenseGrid2DProxy extends DenseGrid2D implements UpdatableProxy
 		
 		// load storage
 		DenseGridStorage storage = (DenseGridStorage)(stateProxy.storage(proxyIndex));
-		ArrayList[] data = (ArrayList[])(storage.getStorageArray());	
+		ArrayList[] data = (ArrayList[])(storage.storage);	
 		for(int x = 0; x < width; x++)
 			{
 			Bag[] fieldx = field[x];

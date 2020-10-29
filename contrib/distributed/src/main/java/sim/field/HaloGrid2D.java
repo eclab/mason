@@ -103,7 +103,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	public IntRect2D world, haloPart, origPart, privatePart;
 
 	protected List<Neighbor> neighbors; // pointer to the processors who's partitions neighbor me
-	public S localStorage;
+	public final S localStorage;
 	public PartitionInterface partition;
 	transient public Datatype MPIBaseType;
 

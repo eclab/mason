@@ -1,6 +1,10 @@
 package sim.field.partitioning;
 
+import java.util.Arrays;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.stream.IntStream;
 import sim.util.*;
 
 
@@ -55,8 +59,19 @@ public class IntRect2D implements Serializable
     // Return the size of the hyper rectangle in each dimension
     public int[] getSizes() 
     {
-    	return new int[] { br.x - ul.x, br.y - ul.y };
+    	return new int[] { getWidth(), getHeight() };
     }
+
+    public int getHeight() 
+    {
+    	return br.y - ul.y;
+    }
+
+    public int getWidth() 
+    {
+    	return br.x - ul.x;
+    }
+
 
     // Return whether the rect contains p
     // Noted that the rect is treated as half-inclusive (ul) and half-exclusive (br)

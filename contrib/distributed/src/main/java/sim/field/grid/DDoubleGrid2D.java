@@ -19,30 +19,29 @@ public class DDoubleGrid2D extends DAbstractGrid2D implements DGrid<Double, Int2
 	private static final long serialVersionUID = 1L;
 
 	private HaloGrid2D<Double, Int2D, DoubleGridStorage> halo;
-	public final double initVal;
+	DoubleGridStorage storage;
+//	public final double initVal;
 
-	public DDoubleGrid2D(final PartitionInterface ps, final int[] aoi, final double initVal, final DSimState state) {
+	public DDoubleGrid2D(final PartitionInterface ps, final int[] aoi, final DSimState state) {
 		super(ps);
+		storage = new DoubleGridStorage(ps.getBounds());
 		try {
-			halo = new HaloGrid2D<Double, Int2D, DoubleGridStorage>(ps, aoi,
-					new DoubleGridStorage(ps.getBounds(), initVal), state);
+			halo = new HaloGrid2D<Double, Int2D, DoubleGridStorage>(ps, aoi, storage, state);
 		} catch (RemoteException e) {
 			throw new RuntimeException(e);
 		}
 
-		this.initVal = initVal;
+//		this.initVal = initVal;
 	}
 
-	public double[] getStorageArray() {
-		return (double[]) halo.localStorage.getStorage();
-	}
+	public double[] getStorageArray() { return storage.storage; }
 
 	public double getLocal(final Int2D p) {
-		return getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))];
+		return storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))];
 	}
 
 	public void addLocal(final Int2D p, final double t) {
-		getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))] = t;
+		storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))] = t;
 	}
 
 	public Double getRMI(final Int2D p) {
@@ -50,7 +49,7 @@ public class DDoubleGrid2D extends DAbstractGrid2D implements DGrid<Double, Int2
 	}
 
 	public void addLocal(final Int2D p, final Double t) {
-		getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))] = t;
+		storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))] = t;
 	}
 
 	public void removeLocal(final Int2D p, final Double t) {
@@ -58,7 +57,7 @@ public class DDoubleGrid2D extends DAbstractGrid2D implements DGrid<Double, Int2
 	}
 
 	public void removeLocal(final Int2D p) {
-		addLocal(p, initVal);
+		addLocal(p, 0);
 	}
 
 	public double get(final Int2D p) {

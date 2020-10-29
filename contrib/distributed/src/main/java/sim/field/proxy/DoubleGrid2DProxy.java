@@ -21,7 +21,7 @@ public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
 		
 		// load storage
 		DoubleGridStorage storage = (DoubleGridStorage)(stateProxy.storage(proxyIndex));
-		double[] data = (double[])(storage.getStorageArray());	
+		double[] data = (double[])(storage.storage);	
 		for(int x = 0; x < width; x++)
 			{
 			double[] fieldx = field[x];

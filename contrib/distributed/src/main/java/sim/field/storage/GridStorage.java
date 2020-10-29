@@ -16,13 +16,10 @@ import sim.util.*;
 public abstract class GridStorage<T extends Serializable, P extends NumberND> implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	Object storage;
-
+	//Object storage;
 	IntRect2D shape;
-	transient Datatype baseType = MPI.BYTE;
-
-
-	int stride;
+	transient Datatype baseType = MPI.BYTE;		// something by default
+	int height;		// this is the same as shape.getHeight(), pulled out just in case inlining doesn't work
 
 	/* Abstract Method of generic storage based on N-dimensional Point */
 	public abstract void addToLocation(final T obj, final P p);
@@ -37,30 +34,33 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 
 	public abstract Serializable getObjects(final P p);
 
+	public abstract void clear();
+	
+	//// NOTE: Subclasses are responsible for allocating the storage
+	//// and setting the base type
 	public GridStorage(final IntRect2D shape) {
-		super();
 		this.shape = shape;
-		stride = getStride(shape.getSizes());
+		height = shape.getHeight();		//getHeight(shape.getSizes());
 	}
 
+/*
 	public GridStorage(final Object storage, final IntRect2D shape) {
-		super();
+		this(shape);
 		this.storage = storage;
-		this.shape = shape;
-		stride = getStride(shape.getSizes());
 	}
 
+/*
 	public GridStorage(final Object storage, final IntRect2D shape, final Datatype baseType) {
-		super();
-		this.storage = storage;
-		this.shape = shape;
+		this(storage, shape);
 		this.baseType = baseType;
-		stride = getStride(shape.getSizes());
 	}
+*/
 
+	/*
 	public Object getStorage() {
 		return storage;
 	}
+	*/
 
 	public Datatype getMPIBaseType() {
 		return baseType;
@@ -71,7 +71,7 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	}
 
 	// Return a new instance of the subclass (IntStorage/DoubleStorage/etc...)
-	public abstract GridStorage getNewStorage(IntRect2D shape);
+	// public abstract GridStorage getNewStorage(IntRect2D shape);
 
 	public abstract String toString();
 
@@ -81,17 +81,18 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 
 	// Method that allocates an array of objects of desired type
 	// This method will be called after the new shape has been set
-	protected abstract Object allocate(int size);
+	// protected abstract Object allocate(int size);
 
 	/**
-	 * Reset the shape, stride, and storage w.r.t. newShape
+	 * Reset the shape, height, and storage w.r.t. newShape
 	 * 
 	 * @param newShape
 	 */
-	private void reload(final IntRect2D newShape) {
+	void reload(final IntRect2D newShape) {
 		shape = newShape;
-		stride = getStride(newShape.getSizes());
-		storage = allocate(newShape.getArea());
+		height = newShape.getHeight();		//getHeight(newShape.getSizes());
+		clear();
+		//storage = allocate(newShape.getArea());
 	}
 
 	/**
@@ -131,10 +132,10 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	 * @return flattened index
 	 */
 	public int getFlatIdx(final Int2D p) {
-		return getFlatIdx(p.x, p.y);
+		return p.x * height + p.y;
 //		int sum = 0;
 //		for (int i = 0; i < p.getNumDimensions(); i++) {
-//			sum += p.c(i) * stride[i];
+//			sum += p.c(i) * height[i];
 //		}
 //		return sum;
 	}
@@ -145,19 +146,19 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	 * @return flattened index
 	 */
 	public int getFlatIdx(int x, int y) {
-		return x * stride + y;
+		return x * height + y;
 	}
 
 	/**
 	 * @param p
-	 * @param wrtSize
+	 * @param height
 	 * 
-	 * @return flattened index with respect to the given size
+	 * @return flattened index with respect to the given height
 	 */
 	public static int getFlatIdx(final Int2D p, final int[] wrtSize) {
-		return p.x * getStride(wrtSize) + p.y;
+		return p.x * wrtSize[1] + p.y;		// [1] is height //return p.x * getHeight(wrtSize) + p.y;
 
-//		final int s = getStride(wrtSize);
+//		final int s = getHeight(wrtSize);
 //		int sum = 0;
 //		for (int i = 0; i < p.getNumDimensions(); i++) {
 //			sum += p.c(i) * s[i];
@@ -167,13 +168,13 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 
 	/**
 	 * @param size
-	 * @return stride
+	 * @return height
 	 */
-	protected static int getStride(final int[] size) {
-		return size[1];
-	}
+//	protected static int getHeight(final int[] size) {
+//		return size[1];
+//	}
 
-//	protected static int[] getStride(final int[] size) {
+//	protected static int[] getHeight(final int[] size) {
 //	final int[] ret = new int[size.length];
 //
 //	ret[size.length - 1] = 1;

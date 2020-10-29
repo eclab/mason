@@ -62,5 +62,7 @@ public interface VisualizationProcessor extends Remote {
 	// TODO: Adding here for now
 	// Not sure if one class can implement two remote interfaces
 	public TransportRMIInterface getTransportRMI(int fieldId) throws RemoteException;
+	
+	
 
 }

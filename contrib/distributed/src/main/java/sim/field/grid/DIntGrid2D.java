@@ -19,26 +19,30 @@ public class DIntGrid2D extends DAbstractGrid2D implements DGrid<Integer, Int2D>
 	private static final long serialVersionUID = 1L;
 
 	private HaloGrid2D<Integer, Int2D, IntGridStorage> halo;
-	public final int initVal;
+	IntGridStorage storage;
+	
+	// public final int initVal;
 
-	public DIntGrid2D(final PartitionInterface ps, final int[] aoi, final int initVal, final DSimState state) {
+	public DIntGrid2D(final PartitionInterface ps, final int[] aoi, final DSimState state) {
 		super(ps);
+		storage = new IntGridStorage(ps.getBounds());
 		try {
-			halo = new HaloGrid2D<Integer, Int2D, IntGridStorage>(ps, aoi,
-					new IntGridStorage(ps.getBounds(), initVal), state);
+			halo = new HaloGrid2D<Integer, Int2D, IntGridStorage>(ps, aoi, storage, state);
 		} catch (RemoteException e) {
 			throw new RuntimeException(e);
 		}
 
-		this.initVal = initVal;
+		// this.initVal = initVal;
 	}
 
+	public int[] getStorageArray() { return storage.storage; }
+
 	public int getLocal(final Int2D p) {
-		return halo.localStorage.getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))];
+		return storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))];
 	}
 
 	public void addLocal(final Int2D p, final int t) {
-		halo.localStorage.getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))] = t;
+		storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))] = t;
 	}
 
 	public Integer getRMI(final Int2D p) {
@@ -46,7 +50,7 @@ public class DIntGrid2D extends DAbstractGrid2D implements DGrid<Integer, Int2D>
 	}
 
 	public void addLocal(final Int2D p, final Integer t) {
-		halo.localStorage.getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))] = t;
+		storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))] = t;
 	}
 
 	public void removeLocal(final Int2D p, final Double t) {
@@ -54,7 +58,7 @@ public class DIntGrid2D extends DAbstractGrid2D implements DGrid<Integer, Int2D>
 	}
 
 	public void removeLocal(final Int2D p) {
-		addLocal(p, initVal);
+		addLocal(p, 0);
 	}
 
 	public int get(final Int2D p) {

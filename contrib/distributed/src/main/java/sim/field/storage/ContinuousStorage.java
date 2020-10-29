@@ -15,41 +15,43 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 	int[] dsize;
 	double discretization;
 	public HashMap<T, Double2D> m;
+	public HashSet<T>[] storage;
 
 	public ContinuousStorage(final IntRect2D shape, final double discretization) {
 		super(shape);
-
 		this.discretization = discretization;
-		storage = allocate(shape.getArea());
+		clear();
 	}
 
 
+/*
 	public GridStorage getNewStorage(final IntRect2D shape) {
 		return new ContinuousStorage<>(shape, discretization);
 	}
+*/
 
-	protected Object[] allocate(final int size) {
+	public void clear() {
+		int size = shape.getArea();
 		this.dsize = new int[2];					// 2 = num dimensions
 		for (int i = 0; i < this.dsize.length; i++) {
 
 			this.dsize[i] = (int) Math.ceil(shape.getSizes()[i] / discretization) + 1;	
 		}
 		
-		// Overwrite the original stride with the new stride of dsize;
+		// Overwrite the original height with the new height of dsize;
 		// so that getFlatIdx() can correctly get the cell index of a discretized point
 		// TODO better approach?
-		stride = getStride(dsize);
+		height = dsize[1];		// getHeight(dsize);
 		this.m = new HashMap<T, Double2D>();
 
 		int volume = 1;
 		for (int i = 0; i < this.dsize.length; i++) { // <- size of 2
 			volume *= this.dsize[i];
 		}
-		HashSet[] set = new HashSet[volume];
+		storage = new HashSet[volume];
 		for (int i = 0; i < volume; i++) {
-			set[i] = new HashSet();
+			storage[i] = new HashSet<T>();
 		}
-		return set;
 	}
 
 	public String toString() {
@@ -124,10 +126,6 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 			ans[i] = -(int) (offsets[i] / discretization);
 		}
 		return new Int2D(ans);
-	}
-
-	public void clear() {
-		storage = allocate(shape.getArea());
 	}
 
 	// Get the corresponding cell given a continuous point
@@ -358,10 +356,6 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 			}
 
 		return objs;
-	}
-
-	public HashSet[] getStorageArray() {
-		return (HashSet[]) getStorage();
 	}
 
 	public HashMap<T, Double2D> getStorageObjects() {

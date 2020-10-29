@@ -24,20 +24,22 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implem
 	private static final long serialVersionUID = 1L;
 
 	private HaloGrid2D<T, Int2D, DenseGridStorage<T>> halo;
-
+	DenseGridStorage<T> storage;
+	
 	public DDenseGrid2D(final PartitionInterface ps, final int[] aoi, final DSimState state) {
 		super(ps);
 		// halo = new HaloGrid2D<>(ps, aoi, new DenseGridStorage<>(ps.getBounds(), s ->
 		// new ArrayList[s]), state);
-
+		storage = new DenseGridStorage<T>(ps.getBounds());
+		
 		try {
-			halo = new HaloGrid2D<T, Int2D, DenseGridStorage<T>>(ps, aoi, new DenseGridStorage<T>(ps.getBounds(),
-					// s -> new ArrayList[s]
-					new IntFunction<ArrayList<T>[]>() {
-						public ArrayList<T>[] apply(int s) {
-							return new ArrayList[s];
-						}
-					}),
+			halo = new HaloGrid2D<T, Int2D, DenseGridStorage<T>>(ps, aoi, storage,
+//					// s -> new ArrayList[s]
+//					new IntFunction<ArrayList<T>[]>() {
+//						public ArrayList<T>[] apply(int s) {
+//							return new ArrayList[s];
+//						}
+//					}),
 					state);
 		} catch (RemoteException e) {
 			throw new RuntimeException(e);
@@ -45,12 +47,10 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implem
 
 	}
 
-	public ArrayList<T>[] getStorageArray() {
-		return halo.localStorage.getStorageArray();
-	}
+	public ArrayList<T>[] getStorageArray() { return storage.storage; }
 
 	public ArrayList<T> getLocal(final Int2D p) {
-		return getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))];
+		return storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))];
 	}
 
 //	public ArrayList<T> getRMI(final Int2D p) throws RemoteException {
@@ -58,8 +58,8 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implem
 //	}
 
 	public void addLocal(final Int2D p, final T t) {
-		final ArrayList<T>[] array = getStorageArray();
-		final int idx = halo.localStorage.getFlatIdx(halo.toLocalPoint(p));
+		final ArrayList<T>[] array = storage.storage;
+		final int idx = storage.getFlatIdx(halo.toLocalPoint(p));
 
 		if (array[idx] == null)
 			array[idx] = new ArrayList<T>();
@@ -68,8 +68,8 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implem
 	}
 
 	public void removeLocal(final Int2D p, final T t) {
-		final ArrayList<T>[] array = getStorageArray();
-		final int idx = halo.localStorage.getFlatIdx(halo.toLocalPoint(p));
+		final ArrayList<T>[] array = storage.storage;
+		final int idx = storage.getFlatIdx(halo.toLocalPoint(p));
 
 		if (array[idx] != null)
 			array[idx].remove(t);
@@ -77,8 +77,8 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implem
 	}
 
 	public void removeLocal(final Int2D p) {
-		final ArrayList<T>[] array = getStorageArray();
-		final int idx = halo.localStorage.getFlatIdx(halo.toLocalPoint(p));
+		final ArrayList<T>[] array = storage.storage;
+		final int idx = storage.getFlatIdx(halo.toLocalPoint(p));
 
 		if (array[idx] != null)
 			array[idx].clear();

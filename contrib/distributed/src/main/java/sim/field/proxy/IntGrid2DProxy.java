@@ -21,7 +21,7 @@ public class IntGrid2DProxy extends IntGrid2D implements UpdatableProxy
 		
 		// load storage
 		IntGridStorage storage = (IntGridStorage)(stateProxy.storage(proxyIndex));
-		int[] data = (int[])(storage.getStorageArray());	
+		int[] data = (int[])(storage.storage);	
 		for(int x = 0; x < width; x++)
 			{
 			int[] fieldx = field[x];

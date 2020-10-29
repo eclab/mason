@@ -9,21 +9,24 @@ import sim.field.partitioning.IntRect2D;
 import sim.util.*;
 
 public class DoubleGridStorage extends GridStorage<Double, Int2D> {
+	public double[] storage;
+	
+	//final double initVal;
 
-	final double initVal;
-
-	public DoubleGridStorage(IntRect2D shape, double initVal) {
+	public DoubleGridStorage(IntRect2D shape) {
 		super(shape);
 		baseType = MPI.DOUBLE;
-		storage = allocate(shape.getArea());
-		this.initVal = initVal;
-		Arrays.fill((double[]) storage, initVal);
+		clear();
+		//storage = allocate(shape.getArea());
+		//this.initVal = initVal;
+		//Arrays.fill((double[]) storage, initVal);
 	}
 
+/*
 	public GridStorage<Double, Int2D> getNewStorage(IntRect2D shape) {
 		return new DoubleGridStorage(shape, 0);
 	}
-
+*/
 	public byte[] pack(MPIParam mp) throws MPIException {
 		byte[] buf = new byte[MPI.COMM_WORLD.packSize(mp.size, baseType)];
 		MPI.COMM_WORLD.pack(MPI.slice((double[]) storage, mp.idx), 1, mp.type, buf, 0);
@@ -48,36 +51,32 @@ public class DoubleGridStorage extends GridStorage<Double, Int2D> {
 		return buf.toString();
 	}
 
-	protected Object allocate(int size) {
-		return new double[size];
-	}
-
-	public double[] getStorageArray() {
-		return (double[]) getStorage();
+	public void clear() {
+		storage = new double[shape.getArea()];
 	}
 
 	public void addToLocation(Double t, Int2D p) {
-		getStorageArray()[getFlatIdx((Int2D) p)] = t;
+		storage[getFlatIdx((Int2D) p)] = t;
 	}
 
 	public void addToLocation(double t, Int2D p) {
-		getStorageArray()[getFlatIdx((Int2D) p)] = t;
+		storage[getFlatIdx((Int2D) p)] = t;
 	}
 
 	public void removeObject(Double t, Int2D p) {
-		addToLocation(initVal, p);
+		addToLocation(0, p);
 	}
 
 	public void removeObject(double t, Int2D p) {
-		addToLocation(initVal, p);
+		addToLocation(0, p);
 	}
 
 	public void removeObjects(Int2D p) {
-		addToLocation(initVal, p);
+		addToLocation(0, p);
 	}
 
 	public Serializable getObjects(Int2D p) {
-		return getStorageArray()[getFlatIdx((Int2D) p)];
+		return storage[getFlatIdx((Int2D) p)];
 	}
 
 }
