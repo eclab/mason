@@ -36,4 +36,16 @@ public class Promise
 		ready = promise.ready;
 		object = promise.object;
 		}
+	
+	/** Constructs and unfulfilled promise */
+	public Promise() { }
+	
+	/** Constructs an already fulfilled promise */
+	public Promise(Serializable object) { this.object = object; ready = true; }
+
+	/** Constructs an already fulfilled promise */
+	public Promise(int value) { this.object = Integer.valueOf(value); ready = true; }
+
+	/** Constructs an already fulfilled promise */
+	public Promise(double value) { this.object = Double.valueOf(value); ready = true; }
 	}
