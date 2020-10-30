@@ -40,7 +40,7 @@ import sim.util.NumberND;
  */
 public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends GridStorage>
 		extends UnicastRemoteObject
-		implements TransportRMIInterface<T, P>, Synchronizable, DGrid<T, P> {
+		implements TransportRMIInterface<T, P>, Synchronizable {
 	private static final long serialVersionUID = 1L;
 
 	/**
