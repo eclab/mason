@@ -17,13 +17,10 @@ package sim.engine;
     public int getOrdering() { return key.ordering; }
     public double getTime() { return key.time; }
 
-	public DistributedTentativeStep(final Steppable step, Schedule.Key key) {
+	public DistributedTentativeStep(final Stopping step, Schedule.Key key) {
 		super(step);
-		if (step instanceof Stopping) {
-			((Stopping) step).setStoppable(this);
-		} else
-			throw new RuntimeException("DistributedTentativeStep built on a non-Stopping Steppable");
-    this.key = key;
+		step.setStoppable(this);
+    	this.key = key;
 	}
 
 	public void stop() {
