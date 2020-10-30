@@ -6,8 +6,10 @@ import java.io.*;
 	It is in many ways like a simplified and easier to use version of java.util.concurrent.Future.
 */
 	
-public class Promise
+public class Promise implements java.io.Serializable
 	{
+	private static final long serialVersionUID = 1L;
+
 	boolean ready = false;
 	Serializable object = null;
 	
