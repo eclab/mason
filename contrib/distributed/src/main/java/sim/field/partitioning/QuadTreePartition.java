@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -24,6 +25,7 @@ public class QuadTreePartition extends PartitionInterface {
 	QuadTree qt;
 	QuadTreeNode myLeafNode; // the leaf node that this pid is mapped to
 	Map<Integer, GroupComm> groups; // Map the level to its corresponding comm group
+	int treeDepth;
 
 	public QuadTreePartition(final int[] size, final boolean isToroidal, final int[] aoi) {
 		super(size, isToroidal, aoi);
@@ -147,6 +149,7 @@ public class QuadTreePartition extends PartitionInterface {
 			}
 
 		}
+		treeDepth = (nz / 2) - 1;
 		mapNodeToProc();
 		createMPITopo();
 	}
@@ -222,6 +225,12 @@ public class QuadTreePartition extends PartitionInterface {
 			currLevel = nextLevel;
 			currDepth++;
 		}
+//		for (Entry<Integer, GroupComm> entry : groups.entrySet()) {
+//			System.err.println(entry);
+//			System.err.println(entry.getValue().leaves);
+//		}
+//		if (groups.size() > 1)
+//			throw new RuntimeException();
 	}
 
 	/**
@@ -267,6 +276,13 @@ public class QuadTreePartition extends PartitionInterface {
 		if (isGroupMaster(gc))
 			return gc.master.getShape();
 		return null;
+	}
+
+	/**
+	 * @return the treeDepth
+	 */
+	public int getTreeDepth() {
+		return treeDepth;
 	}
 
 	private void testIntraGroupComm(final int depth) throws MPIException {

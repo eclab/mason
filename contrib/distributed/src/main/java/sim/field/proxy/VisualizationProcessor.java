@@ -59,6 +59,11 @@ public interface VisualizationProcessor extends Remote {
 	/// Need this one too
 	public int getAOI() throws RemoteException;
 	
+	public int getProcessorLevels() throws RemoteException;
+	
+	// TODO: add this method
+	// public int[] getProcessorNeighborhood(int processor, int level) throws RemoteException;
+	
 	// TODO: Adding here for now
 	// Not sure if one class can implement two remote interfaces
 	public TransportRMIInterface getTransportRMI(int fieldId) throws RemoteException;

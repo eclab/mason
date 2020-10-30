@@ -36,12 +36,12 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage<T, Int
 
 	public void clear() {
 // We don't really need this to compile:    @SuppressWarnings("unchecked") 	
-    storage = (ArrayList<T>[]) new Object[shape.getArea()];		//alloc.apply(size);
+    storage =  new ArrayList[shape.getArea()];		//alloc.apply(size);
 	}
 
 	public String toString() {
 		final int[] size = shape.getSizes();
-		final ArrayList<T>[] array = (ArrayList[]) storage;
+		final ArrayList<T>[] array = storage;
 		final StringBuffer buf = new StringBuffer(
 				String.format("ObjectGridStorage<%s>-%s\n", array.getClass().getSimpleName(), shape));
 
@@ -55,8 +55,8 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage<T, Int
 	}
 
 	public Serializable pack(final MPIParam mp) {
-		final ArrayList<T>[] objs = (ArrayList<T>[]) new Object[mp.size]; 	// alloc.apply(mp.size);
-		final ArrayList<T>[] stor = (ArrayList<T>[]) storage;
+		final ArrayList<T>[] objs = new ArrayList[mp.size]; 	// alloc.apply(mp.size);
+		final ArrayList<T>[] stor = storage;
 		int curr = 0;
 
 		for (final IntRect2D rect : mp.rects)

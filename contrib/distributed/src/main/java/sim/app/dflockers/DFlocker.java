@@ -178,7 +178,7 @@ public class DFlocker extends DSteppable implements Remote, Oriented2D {
 		} catch (Exception e) {
 			System.err.println("error on agent " + this + " in step " + dFlockers.schedule.getSteps() + "on pid "
 					+ dFlockers.getPartitioning().pid);
-			System.exit(1);
+			throw new RuntimeException(e);
 		}
 	}
 

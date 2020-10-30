@@ -122,6 +122,14 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 		return dSimState.partition.aoi[0];
 	}
 
+	public int getProcessorLevels() throws RemoteException {
+		return dSimState.partition.getTreeDepth();
+	}
+
+//	public int[] getProcessorNeighborhood(int processor, int level) throws RemoteException {
+//		return null;
+//	}
+
 //	// TODO: do we extend this to other Remote objects?
 //	private Remote getRemote(final String key) {
 //		Remote remote = cache.get(key);

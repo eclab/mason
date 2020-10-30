@@ -14,7 +14,6 @@ import mpi.MPIException;
 import sim.engine.DSimState;
 import sim.engine.DistributedIterativeRepeat;
 import sim.engine.IterativeRepeat;
-import sim.engine.Steppable;
 import sim.engine.Stopping;
 import sim.engine.transport.AgentWrapper;
 import sim.engine.transport.PayloadWrapper;
@@ -47,19 +46,19 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * Helper class to organize neighbor-related data structures and methods
 	 */
 	class Neighbor {
-		//final int pid;
+		// final int pid;
 		MPIParam sendParam, recvParam;
 
 		public Neighbor(final IntRect2D neighborPart) {
-			//pid = neighborPart.getId();
+			// pid = neighborPart.getId();
 			final ArrayList<IntRect2D> sendOverlaps = generateOverlaps(origPart, neighborPart.resize(aoi));
 			final ArrayList<IntRect2D> recvOverlaps = generateOverlaps(haloPart, neighborPart);
 
 			assert sendOverlaps.size() == recvOverlaps.size();
 
 			// Sort these overlaps so that they corresponds to each other
-			//Collections.sort(sendOverlaps);
-			//Collections.sort(recvOverlaps, Collections.reverseOrder());
+			// Collections.sort(sendOverlaps);
+			// Collections.sort(recvOverlaps, Collections.reverseOrder());
 
 			sendParam = new MPIParam(sendOverlaps, haloPart, MPIBaseType);
 			recvParam = new MPIParam(recvOverlaps, haloPart, MPIBaseType);
@@ -86,7 +85,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 				};
 
 				for (final Int2D p : shifts) {
-					final IntRect2D sp = p2.shift(new int[]{p.x,p.y});
+					final IntRect2D sp = p2.shift(new int[] { p.x, p.y });
 					if (p1.intersects(sp))
 						overlaps.add(p1.getIntersection(sp));
 				}
@@ -392,13 +391,9 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		if (!inLocal(p))
 			throw new IllegalArgumentException("p must be local");
 
-		final Steppable step = iterativeRepeat.getSteppable();
+		final Stopping stopping = iterativeRepeat.getSteppable();
 
-		if (!(step instanceof Stopping))
-			throw new IllegalArgumentException("t must be a Stopping");
-
-		final Stopping stopping = (Stopping) step;
-		remove(p, (T) step);
+		remove(p, (T) stopping);
 		stopping.getStoppable().stop();
 	}
 

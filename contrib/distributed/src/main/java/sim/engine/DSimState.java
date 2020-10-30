@@ -96,7 +96,7 @@ public class DSimState extends SimState {
 
 	public static Logger logger;
 
-	protected PartitionInterface partition;
+	protected QuadTreePartition partition;
 	protected TransporterMPI transporter;
 	public int[] aoi; // Area of Interest
 	HashMap<String, Object> rootInfo = null;
@@ -129,7 +129,7 @@ public class DSimState extends SimState {
 	}
 
 	protected DSimState(final long seed, final MersenneTwisterFast random, final DistributedSchedule schedule,
-			final PartitionInterface partition) {
+			final QuadTreePartition partition) {
 		super(seed, random, schedule);
 		aoi = partition.aoi;
 		this.partition = partition;
@@ -621,7 +621,7 @@ public class DSimState extends SimState {
 	/**
 	 * @return the partition
 	 */
-	public PartitionInterface getPartitioning() {
+	public QuadTreePartition getPartitioning() {
 		return partition;
 	}
 
@@ -632,7 +632,7 @@ public class DSimState extends SimState {
 	/**
 	 * @param partition the partition to set
 	 */
-	public void setPartition(final PartitionInterface partition) {
+	public void setPartition(final QuadTreePartition partition) {
 		this.partition = partition;
 		aoi = partition.aoi;
 		partition.initialize();
