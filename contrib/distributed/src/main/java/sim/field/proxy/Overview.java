@@ -8,7 +8,7 @@ import sim.util.*;
 
 public class Overview extends JComponent
 	{
-	public static final double SIZE_SCALING = 0.5;
+	public static final double SIZE_SCALING = 0.125;
 	IntRect2D[] bounds = new IntRect2D[0];
 	int outerX;
 	int outerY;
