@@ -81,7 +81,7 @@ public class DIntGrid2D extends DAbstractGrid2D implements DGrid<Integer, Int2D>
 
 	// Overloading to prevent AutoBoxing-UnBoxing
 	public void remove(final Int2D p, final int t) {
-		halo.remove(p);
+		halo.removeAllObjects(p);
 	}
 
 	// Overloading to prevent AutoBoxing-UnBoxing
@@ -110,8 +110,8 @@ public class DIntGrid2D extends DAbstractGrid2D implements DGrid<Integer, Int2D>
 		halo.remove(p, t);
 	}
 
-	public void remove(Int2D p) {
-		halo.remove(p);
+	public void removeAllObjects(Int2D p) {
+		halo.removeAllObjects(p);
 	}
 
 	public void move(Int2D fromP, Int2D toP, Integer t) {

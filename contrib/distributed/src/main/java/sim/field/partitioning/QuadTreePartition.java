@@ -1,11 +1,10 @@
 package sim.field.partitioning;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -108,7 +107,7 @@ public class QuadTreePartition extends PartitionInterface {
 	 *
 	 * @param splitPoints
 	 */
-	void initQuadTree(final List<Int2D> splitPoints) {
+	void initQuadTree(final ArrayList<Int2D> splitPoints) {
 		// Create the quad tree based on the given split points
 		qt.split(splitPoints);
 
@@ -141,7 +140,7 @@ public class QuadTreePartition extends PartitionInterface {
 
 		for (int level = 0; level < nz / 2; level++) // 2 == number of dimensions, width and height
 		{
-			final List<QuadTreeNode> leaves = qt.getAllLeaves();
+			final ArrayList<QuadTreeNode> leaves = qt.getAllLeaves();
 			for (final QuadTreeNode leaf : leaves) {
 				// qt.split(leaf.getShape().getInt2DCenter());
 				Double2D d = leaf.getShape().getCenter();
@@ -159,7 +158,7 @@ public class QuadTreePartition extends PartitionInterface {
 	 * 
 	 */
 	protected void mapNodeToProc() {
-		final List<QuadTreeNode> leaves = qt.getAllLeaves();
+		final ArrayList<QuadTreeNode> leaves = qt.getAllLeaves();
 
 		if (leaves.size() != numProcessors)
 			throw new IllegalArgumentException("The number of leaves " + leaves.size()
@@ -200,10 +199,10 @@ public class QuadTreePartition extends PartitionInterface {
 		groups = new HashMap<Integer, GroupComm>();
 
 		// Iterate level by level to create groups
-		List<QuadTreeNode> currLevel = new ArrayList<QuadTreeNode>();
+		ArrayList<QuadTreeNode> currLevel = new ArrayList<>();
 		currLevel.add(qt.getRoot());
 		while (currLevel.size() > 0) {
-			final List<QuadTreeNode> nextLevel = new ArrayList<QuadTreeNode>();
+			final ArrayList<QuadTreeNode> nextLevel = new ArrayList<>();
 
 			for (final QuadTreeNode node : currLevel) {
 				nextLevel.addAll(node.getChildren());
@@ -225,12 +224,14 @@ public class QuadTreePartition extends PartitionInterface {
 			currLevel = nextLevel;
 			currDepth++;
 		}
-//		for (Entry<Integer, GroupComm> entry : groups.entrySet()) {
-//			System.err.println(entry);
-//			System.err.println(entry.getValue().leaves);
-//		}
-//		if (groups.size() > 1)
-//			throw new RuntimeException();
+	}
+
+	public int[] getProcessorNeighborhood(int level) throws RemoteException {
+		ArrayList<QuadTreeNode> leaves = groups.get(level).leaves;
+		int[] pids = new int[leaves.size()];
+		for (int i = 0; i < pids.length; i++)
+			pids[i] = leaves.get(i).getProcessor();
+		return pids;
 	}
 
 	/**
@@ -391,7 +392,7 @@ public class QuadTreePartition extends PartitionInterface {
 				new Int2D(10, 10)
 		};
 
-		p.initQuadTree(Arrays.asList(splitPoints));
+		p.initQuadTree(new ArrayList<>(Arrays.asList(splitPoints)));
 
 		final Random rand = new Random();
 		final double myRt = rand.nextDouble() * 10;
@@ -414,7 +415,7 @@ public class QuadTreePartition extends PartitionInterface {
 				new Int2D(10, 10)
 		};
 
-		p.initQuadTree(Arrays.asList(splitPoints));
+		p.initQuadTree(new ArrayList<>(Arrays.asList(splitPoints)));
 
 		for (int i = 0; i < 3; i++) {
 			p.testIntraGroupComm(i);

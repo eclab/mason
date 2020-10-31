@@ -58,10 +58,10 @@ public class QuadTree {
 		return new ArrayList<QuadTreeNode>(allNodes.values());
 	}
 
-	public List<QuadTreeNode> getAllLeaves() {
+	public ArrayList<QuadTreeNode> getAllLeaves() {
 		//return allNodes.values().stream().filter(node -> node.isLeaf()).collect(Collectors.toList());
-		List<QuadTreeNode> leaves = new ArrayList<QuadTreeNode>();
-		List<QuadTreeNode> nodes = new ArrayList<QuadTreeNode>();
+		ArrayList<QuadTreeNode> leaves = new ArrayList<>();
+		ArrayList<QuadTreeNode> nodes = new ArrayList<>();
 		nodes.addAll(allNodes.values());
 		for (int i = 0; i < nodes.size(); i++) {
 			QuadTreeNode node = nodes.get(i);

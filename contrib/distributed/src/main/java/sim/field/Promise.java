@@ -39,7 +39,7 @@ public class Promise implements java.io.Serializable
 		object = promise.object;
 		}
 	
-	/** Constructs and unfulfilled promise */
+	/** Constructs an unfulfilled promise */
 	public Promise() { }
 	
 	/** Constructs an already fulfilled promise */

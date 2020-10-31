@@ -1,6 +1,6 @@
 package sim.util;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import mpi.*;
 import sim.field.partitioning.QuadTreeNode;
@@ -11,7 +11,7 @@ import sim.field.partitioning.QuadTreeNode;
  */
 public class GroupComm {
 	public QuadTreeNode master;
-	public List<QuadTreeNode> leaves;
+	public ArrayList<QuadTreeNode> leaves;
 
 	public Comm comm, interComm;
 	public int groupRoot;
@@ -41,7 +41,7 @@ public class GroupComm {
 	 * @param nodes
 	 * @throws MPIException
 	 */
-	public void setInterComm(List<QuadTreeNode> nodes) throws MPIException {
+	public void setInterComm(ArrayList<QuadTreeNode> nodes) throws MPIException {
 		Group world = MPI.COMM_WORLD.getGroup();
 		Group group = world.incl(nodes.stream()
 				.filter(node -> !node.isLeaf())

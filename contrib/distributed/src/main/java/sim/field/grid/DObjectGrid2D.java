@@ -138,8 +138,8 @@ public class DObjectGrid2D<T extends Serializable> extends DAbstractGrid2D imple
 		halo.remove(p, t);
 	}
 
-	public void remove(NumberND p) {
-		halo.remove(p);
+	public void removeAllObjects(NumberND p) {
+		halo.removeAllObjects(p);
 	}
 
 	public void move(NumberND fromP, NumberND toP, T t) {

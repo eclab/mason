@@ -135,8 +135,8 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implem
 		halo.remove(p, t);
 	}
 
-	public void remove(Int2D p) {
-		halo.remove(p);
+	public void removeAllObjects(Int2D p) {
+		halo.removeAllObjects(p);
 	}
 
 	public void move(Int2D fromP, Int2D toP, T t) {

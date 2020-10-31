@@ -240,7 +240,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		}
 	}
 
-	public void remove(final P p) {
+	public void removeAllObjects(final P p) {
 		if (!inLocal(p))
 			removeFromRemote(p);
 		else {

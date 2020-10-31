@@ -40,7 +40,7 @@ public interface DGrid<T extends Serializable, P extends NumberND>  {
 	 *
 	 * @param p location
 	 */
-	void remove(final P p);
+	void removeAllObjects(final P p);
 
 	/**
 	 * The location can be remote

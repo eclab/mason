@@ -1,6 +1,6 @@
 package sim.field.partitioning;
 
-import java.util.*;
+import java.util.ArrayList;
 import sim.util.*;
 
 // TODO Currently all shapes are restricted to IntRect2D - switch to NdRectangle once it is completed
@@ -9,14 +9,18 @@ import sim.util.*;
  *
  */
 public class QuadTreeNode {
-	int level, id; // which level in the tree the node is in, its node id
-	int processor; // which processer this node is mapped to
+	/** level in the tree the node is in */
+	int level;
+	/** its node id */
+	int id;
+	/** which processer this node is mapped to */
+	int processor;
 
 	Int2D origin;
 	IntRect2D shape;
 
 	QuadTreeNode parent = null;
-	List<QuadTreeNode> children;
+	ArrayList<QuadTreeNode> children;
 
 	public QuadTreeNode(final IntRect2D shape, final QuadTreeNode parent) {
 		this.shape = shape;
@@ -62,7 +66,7 @@ public class QuadTreeNode {
 		return children.get(i);
 	}
 
-	public List<QuadTreeNode> getChildren() {
+	public ArrayList<QuadTreeNode> getChildren() {
 		return children;
 	}
 
@@ -89,8 +93,8 @@ public class QuadTreeNode {
 
 	// Return siblings (not including the node itself) if exist, empty list
 	// otherwise
-	public List<QuadTreeNode> getSiblings() {
-		final List<QuadTreeNode> ret = new ArrayList<QuadTreeNode>();
+	public ArrayList<QuadTreeNode> getSiblings() {
+		final ArrayList<QuadTreeNode> ret = new ArrayList<>();
 
 		if (isRoot())
 			return ret;
@@ -117,13 +121,9 @@ public class QuadTreeNode {
 	}
 
 	// Get all the leaves that are my offsprings
-	public List<QuadTreeNode> getLeaves() {
-		final List<QuadTreeNode> ret = new ArrayList<QuadTreeNode>();
-		final List<QuadTreeNode> stack = new ArrayList<QuadTreeNode>() {
-			{
-				addAll(children);
-			}
-		};
+	public ArrayList<QuadTreeNode> getLeaves() {
+		final ArrayList<QuadTreeNode> ret = new ArrayList<>();
+		final ArrayList<QuadTreeNode> stack = new ArrayList<QuadTreeNode>() {{addAll(children);}};
 
 		while (stack.size() > 0) {
 			final QuadTreeNode curr = stack.remove(0);
@@ -142,8 +142,8 @@ public class QuadTreeNode {
 	 * @param newOrigin
 	 * @return the newly created QTNodes (if any)
 	 */
-	public List<QuadTreeNode> split(final Int2D newOrigin) {
-		final List<QuadTreeNode> ret = new ArrayList<QuadTreeNode>();
+	public ArrayList<QuadTreeNode> split(final Int2D newOrigin) {
+		final ArrayList<QuadTreeNode> ret = new ArrayList<>();
 
 		if (!shape.contains(newOrigin))
 			throw new IllegalArgumentException("newOrigin " + newOrigin + " is outside the region " + shape);
@@ -168,8 +168,8 @@ public class QuadTreeNode {
 	 * 
 	 * @return all the nodes that are merged
 	 */
-	public List<QuadTreeNode> merge() {
-		final List<QuadTreeNode> ret = new ArrayList<QuadTreeNode>();
+	public ArrayList<QuadTreeNode> merge() {
+		final ArrayList<QuadTreeNode> ret = new ArrayList<QuadTreeNode>();
 
 		if (!isLeaf()) {
 			for (final QuadTreeNode child : children) {
@@ -195,9 +195,8 @@ public class QuadTreeNode {
 	 * @param dim
 	 * @return the direction (forward/backward) on the given dimension
 	 */
-	public boolean getDir(final int dim) 
-		{
-		return ((getIndexInSiblings() >> (2 - dim - 1)) & 0x1) == 0x1;			// 2 is num dimensions
+	public boolean getDir(final int dim) {
+		return ((getIndexInSiblings() >> (2 - dim - 1)) & 0x1) == 0x1; // 2 is num dimensions
 	}
 
 	/**
@@ -242,9 +241,9 @@ public class QuadTreeNode {
 			return;
 
 		if (!newShape.contains(origin)) {
-			//origin = newShape.getCenter();
+			// origin = newShape.getCenter();
 			Double2D d = newShape.getCenter();
-			origin =  new Int2D((int)Math.floor(d.x), (int)Math.floor(d.y));
+			origin = new Int2D((int) Math.floor(d.x), (int) Math.floor(d.y));
 		}
 
 		for (int i = 0; i < children.size(); i++)
@@ -263,7 +262,7 @@ public class QuadTreeNode {
 		final int[] sbr = shape.br().toArray();
 
 		for (int i = 0; i < 2; i++)
-			if (((childId >> (2 - i - 1)) & 0x1) == 1) { //FIXME: what is this?
+			if (((childId >> (2 - i - 1)) & 0x1) == 1) { // FIXME: what is this?
 				ul[i] = br[i];
 				br[i] = sbr[i];
 			}

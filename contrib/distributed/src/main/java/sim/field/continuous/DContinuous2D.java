@@ -139,8 +139,8 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 		halo.remove(p, t);
 	}
 
-	public void remove(Double2D p) {
-		halo.remove(p);
+	public void removeAllObjects(Double2D p) {
+		halo.removeAllObjects(p);
 	}
 
 	public void addAgent(Double2D p, T t, int ordering, double time) {
