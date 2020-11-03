@@ -26,6 +26,7 @@ import java.util.logging.SocketHandler;
 import ec.util.MersenneTwisterFast;
 import mpi.MPI;
 import mpi.MPIException;
+import sim.app.dHeatBugs.DHeatBug;
 import sim.engine.registry.DRegistry;
 import sim.engine.transport.AgentWrapper;
 import sim.engine.transport.PayloadWrapper;
@@ -36,9 +37,10 @@ import sim.field.partitioning.IntRect2D;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.QuadTreePartition;
 import sim.field.storage.ContinuousStorage;
+import sim.field.storage.DenseGridStorage;
+import sim.field.storage.DoubleGridStorage;
+import sim.field.storage.GridStorage;
 import sim.field.storage.ObjectGridStorage;
-import sim.util.MPIUtil;
-import sim.util.Timing;
 import sim.util.*;
 
 /**
@@ -421,24 +423,40 @@ public class DSimState extends SimState {
 					ArrayList<Object> migratedAgents = new ArrayList<>();
 					HaloGrid2D haloGrid2D = (HaloGrid2D) field;
 					if (haloGrid2D.getStorage() instanceof ContinuousStorage) {
+
 						ContinuousStorage st = (ContinuousStorage) ((HaloGrid2D) field).getStorage();
 						Double2D doublep = new Double2D(p);
 						HashSet agents = (HashSet) st.getCell(doublep).clone(); // create a clone to avoid the
 						// ConcurrentModificationException
 						for (Object a : agents) {
 							NumberND loc = st.getLocation((Serializable) a);
+							final int locToP = partition.toPartitionId(loc);
 							if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
 									&& !partition.getBounds().contains(loc)) {
+
+								Stopping stopping = ((Stopping) a);
+								if (stopping.getStoppable() instanceof TentativeStep) {
+								
 								try {
-									((Stopping) a).getStoppable().stop();
+									stopping.getStoppable().stop();
 								} catch (Exception e) {
 									System.out.println("PID: " + partition.pid + " exception on " + a);
 								}
-								
-								final int locToP = partition.toPartitionId(loc);
+		
 								transporter.migrateAgent((Stopping) a, locToP, loc, ((HaloGrid2D) field).fieldIndex);
+								}
 								
-								//transporter.migrateAgent((Stopping) a, toP, loc, ((HaloGrid2D) field).fieldIndex);
+							    if (stopping.getStoppable() instanceof IterativeRepeat) {
+								    final IterativeRepeat iterativeRepeat = (IterativeRepeat) stopping.getStoppable();
+								    final DistributedIterativeRepeat distributedIterativeRepeat = new DistributedIterativeRepeat(stopping,
+											iterativeRepeat.getTime(), iterativeRepeat.getInterval(), iterativeRepeat.getOrdering());
+								    transporter.migrateRepeatingAgent(distributedIterativeRepeat,  toP, p, ((HaloGrid2D) field).fieldIndex);
+								    iterativeRepeat.stop();
+							    }
+								
+								
+								
+								
 								migratedAgents.add(a);
 								System.out.println("PID: " + partition.pid + " processor " + old_pid + " move " + a
 										+ " from " + loc + " (point " + p + ") to processor " + toP);
@@ -446,18 +464,122 @@ public class DSimState extends SimState {
 							}
 						}
 					} else if (haloGrid2D.getStorage() instanceof ObjectGridStorage) {
+
 						ObjectGridStorage st = (ObjectGridStorage) ((HaloGrid2D) field).getStorage();
 						Serializable a = st.getObjects(haloGrid2D.toLocalPoint(p));
 						if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
 								&& old_partition.contains(p) && !partition.getBounds().contains(p)) {
 							Stopping stopping = ((Stopping) a);
-							stopping.getStoppable().stop();
-							transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).fieldIndex);
+							
+							if (stopping.getStoppable() instanceof TentativeStep) 
+							{	
+							   stopping.getStoppable().stop();
+							   transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).fieldIndex);
+					    	}
+							
+							else  if (stopping.getStoppable() instanceof IterativeRepeat) {
+									final IterativeRepeat iterativeRepeat = (IterativeRepeat) stopping.getStoppable();
+									final DistributedIterativeRepeat distributedIterativeRepeat = new DistributedIterativeRepeat(stopping,
+												iterativeRepeat.getTime(), iterativeRepeat.getInterval(), iterativeRepeat.getOrdering());
+									 transporter.migrateRepeatingAgent(distributedIterativeRepeat,  toP, p, ((HaloGrid2D) field).fieldIndex);
+									 iterativeRepeat.stop();
+							}
+							
 							migratedAgents.add(stopping);
 							System.out.println("PID: " + partition.pid + " processor " + old_pid + " move " + stopping
 									+ " from " + p + " (point " + p + ") to processor " + toP);
 							haloGrid2D.remove(p, stopping);
 						}
+					}
+					
+					//is this needed?
+					else if (haloGrid2D.getStorage() instanceof DoubleGridStorage) {
+						
+						//so here, move the point and the double associated with it to correct partition?
+						DoubleGridStorage st = (DoubleGridStorage) ((HaloGrid2D) field).getStorage();
+						Serializable a = st.getObjects(haloGrid2D.toLocalPoint(p));  //this is a double[]
+						
+						//Do  I need to do anything here!?!!!
+						
+					
+					}
+
+					
+					else if (haloGrid2D.getStorage() instanceof DenseGridStorage){
+				         GridStorage st = ((HaloGrid2D) field).getStorage();
+						 //System.out.println(st.getClass());
+						 Serializable a_list = st.getObjects(haloGrid2D.toLocalPoint(p));
+						 
+
+						 
+						 if (a_list != null) {
+						 for (int i=0; i<((ArrayList)a_list).size(); i++) {
+							 Serializable a = ((ArrayList<Serializable>)a_list).get(i);
+						 
+						 
+						     if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
+								    && old_partition.contains(p) && !partition.getBounds().contains(p)) {
+						     Stopping stopping = ((Stopping) a);
+						     
+	
+							 if (stopping.getStoppable() instanceof TentativeStep) {
+						         stopping.getStoppable().stop();
+						         transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).fieldIndex);
+						     }
+						     
+						    if (stopping.getStoppable() instanceof IterativeRepeat) {
+							    final IterativeRepeat iterativeRepeat = (IterativeRepeat) stopping.getStoppable();
+							    final DistributedIterativeRepeat distributedIterativeRepeat = new DistributedIterativeRepeat(stopping,
+										iterativeRepeat.getTime(), iterativeRepeat.getInterval(), iterativeRepeat.getOrdering());
+							    transporter.migrateRepeatingAgent(distributedIterativeRepeat,  toP, p, ((HaloGrid2D) field).fieldIndex);
+							    iterativeRepeat.stop();
+						    }
+						     
+						     
+						     
+						     
+                             //migrateRepeatingAgent(final DistributedIterativeRepeat iterativeRepeat, final int dst,final NumberND loc,final int fieldIndex)
+						     migratedAgents.add(stopping);
+						     System.out.println("PID: " + partition.pid + " processor " + old_pid + " move " + stopping
+										+ " from " + p + " (point " + p + ") to processor " + toP);
+						     haloGrid2D.remove(p, stopping);
+							}}}
+						
+						
+					}
+					
+					else {//other GridStorage types, NOT tested!
+				         GridStorage st = ((HaloGrid2D) field).getStorage();
+						 Serializable a = st.getObjects(haloGrid2D.toLocalPoint(p));
+						 
+
+						 
+						 if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
+								&& old_partition.contains(p) && !partition.getBounds().contains(p)) {
+						 Stopping stopping = ((Stopping) a);
+						 
+						 
+						 if (stopping.getStoppable() instanceof TentativeStep) {						 
+						     stopping.getStoppable().stop();
+						     System.out.println("migrating!");
+						     transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).fieldIndex);
+						 }
+						 
+						 if (stopping.getStoppable() instanceof IterativeRepeat) {
+							final IterativeRepeat iterativeRepeat = (IterativeRepeat) stopping.getStoppable();
+							final DistributedIterativeRepeat distributedIterativeRepeat = new DistributedIterativeRepeat(stopping,
+										iterativeRepeat.getTime(), iterativeRepeat.getInterval(), iterativeRepeat.getOrdering());
+							 transporter.migrateRepeatingAgent(distributedIterativeRepeat,  toP, p, ((HaloGrid2D) field).fieldIndex);
+							 iterativeRepeat.stop();
+						 }
+						 
+						 migratedAgents.add(stopping);
+						 System.out.println("PID: " + partition.pid + " processor " + old_pid + " move " + stopping
+										+ " from " + p + " (point " + p + ") to processor " + toP);
+						 haloGrid2D.remove(p, stopping);
+							}
+						
+						
 					}
 				}
 			}
