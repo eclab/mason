@@ -204,7 +204,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @return location on the local partition
 	 */
 	public Int2D toLocalPoint(final Int2D p) {
-		return p.rshift(haloPart.ul().toArray());
+		return p.subtract(haloPart.ul().toArray());
 	}
 
 	/**
