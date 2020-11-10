@@ -230,13 +230,10 @@ public final class Int2D extends NumberND
         return Math.abs((long)this.x-p.x) + Math.abs((long)this.y-p.y);
         }
         
-	/// FOR DISTRIBUTED CODE        
-    public Int2D shift(int offset)
-		{
-		return new Int2D(x + offset, y + offset);
-		} 
+	/// FOR DISTRIBUTED CODE 
 
-	public Int2D shift(int dim, int offset)
+
+	public Int2D add(int dim, int offset)
 		{
 		if (dim == 0)
 			return new Int2D(x + offset, y);
@@ -245,24 +242,37 @@ public final class Int2D extends NumberND
 		} 
 
 	// should be renamed "add"
-	public Int2D shift(int[] offset)
+	public Int2D add(int[] offset)
 		{
 		return new Int2D(x + offset[0], y + offset[1]);
 		} 
+	
+	// should be renamed "add"
+	public Int2D add(Int2D other)
+		{
+		return new Int2D(x + other.x, y + other.y);
+		} 
 
 	// should be renamed "subtract"
-	public Int2D rshift(int[] offset)
+	public Int2D subtract(int[] offset)
 		{
 		return new Int2D(x - offset[0], y - offset[1]);
 		} 
 
-	public int compareTo(final Int2D other) 
-		{
-		if (x == other.x)
-			return (y - other.y);
-		else return (x - other.x);
-		}
+	/** Returns true I am equal to val */
+    
+    public final boolean equals(Int2D val)
+        {
+        return x == val.x && y == val.y;
+        }
+        
 
+	/** Returns true I am equal to val */
+    public final boolean equals(Double2D val)
+        {
+        return x == val.x && y == val.y;
+        }
+    
 	public Int2D max(Int2D val)
 		{
 		return new Int2D(Math.max(x, val.x), Math.max(y, val.y));

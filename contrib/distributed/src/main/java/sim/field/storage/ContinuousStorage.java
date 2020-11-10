@@ -88,7 +88,7 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 			for (final T obj : getObjects(rect.shift(shape.ul().toArray()))) {
 				objs.add(obj);
 				// Append the object's location relative to the rectangle
-				objs.add(m.get(obj).rshift(shape.ul().toArray()).rshift(rect.ul().toArray()));
+				objs.add(m.get(obj).subtract(shape.ul().toArray()).subtract(rect.ul().toArray()));
 			}
 			ret.add(objs);
 		}
@@ -107,7 +107,7 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 		for (int k = 0; k < mp.rects.size(); k++)
 			for (int i = 0; i < objs.get(k).size(); i += 2)
 				addToLocation((T) objs.get(k).get(i), ((Double2D) objs.get(k).get(i + 1))
-						.shift(mp.rects.get(k).ul().toArray()).shift(shape.ul().toArray()));
+						.add(mp.rects.get(k).ul().toArray()).add(shape.ul().toArray()));
 
 //		return objs.stream().mapToInt(x -> x.size()).sum();
 		int sum = 0;
@@ -119,7 +119,7 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 
 	public Int2D discretize(final NumberND p) {
 
-		final double[] offsets = shape.ul().getOffsetsDouble(p);
+		final double[] offsets = shape.ul().getOffsets(p);
 		
 		int[] ans = new int[2];
 		for (int i = 0; i < offsets.length; i++) {
@@ -169,7 +169,11 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 	public List<T> getObjects(final IntRect2D r) {
 		final ArrayList<T> objs = new ArrayList<T>();
 
-		final Int2D ul = discretize(r.ul()), br = discretize(r.br()).shift(1);
+		final Int2D ul = discretize(r.ul());
+		
+		int [] offset = {1,1};
+		
+		final Int2D br = discretize(r.br()).add(offset);
 
 //		for (final Int2D dp : IntPointGenerator.getBlock(ul, br)) {
 // //			getCelldp(dp)
@@ -347,7 +351,7 @@ public class ContinuousStorage<T extends Serializable> extends GridStorage<T, Do
 				{
 				for(T foo: getCelldp(x, y))
 					{
-					if (foo != obj && m.get(foo).getDistanceSq(loc) <= radius * radius) 
+					if (foo != obj && m.get(foo).distanceSq(loc) <= radius * radius) 
 						{
 						objs.add(foo);
 						}
