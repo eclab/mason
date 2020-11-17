@@ -192,7 +192,7 @@ public class DSimState extends SimState {
 		for (final HaloGrid2D<?, ?> haloField : fieldRegistry)
 			haloField.syncRemoveAndAdd();
 	}
-	
+
 	public void preSchedule() {
 		Timing.stop(Timing.LB_RUNTIME);
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
@@ -225,7 +225,7 @@ public class DSimState extends SimState {
 
 			// Sync all the Remove and Add queues for RMI
 			syncRemoveAndAdd();
-			
+
 			transporter.sync();
 			// TODO: Load RMI queue
 
@@ -319,7 +319,7 @@ public class DSimState extends SimState {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 //		if (withRegistry)
 //			try {
 //				MPI.COMM_WORLD.barrier();
@@ -816,6 +816,14 @@ public class DSimState extends SimState {
 
 	public void enableRegistry() {
 		withRegistry = true;
+	}
+
+	public Serializable getStatistics() {
+		return null;
+	}
+
+	public Serializable getDebug() {
+		return null;
 	}
 
 }

@@ -1,5 +1,6 @@
 package sim.engine;
 
+import java.io.Serializable;
 import java.rmi.NotBoundException;
 
 import java.rmi.RemoteException;
@@ -128,6 +129,14 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 
 	public int[] getProcessorNeighborhood(int level) throws RemoteException {
 		return dSimState.partition.getProcessorNeighborhood(level);
+	}
+
+	public Serializable getStatistics() {
+		return dSimState.getStatistics();
+	}
+
+	public Serializable getDebug() {
+		return dSimState.getDebug();
 	}
 
 //	// TODO: do we extend this to other Remote objects?

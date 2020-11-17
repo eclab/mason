@@ -3,6 +3,8 @@ package sim.field.proxy;
 import sim.engine.transport.TransportRMIInterface;
 import sim.field.partitioning.*;
 import sim.field.storage.*;
+
+import java.io.Serializable;
 import java.rmi.*;
 import java.util.ArrayList;
 
@@ -61,13 +63,14 @@ public interface VisualizationProcessor extends Remote {
 	
 	public int getProcessorLevels() throws RemoteException;
 	
-	// TODO: add method with int processor, int level
-	 public int[] getProcessorNeighborhood(int level) throws RemoteException;
-	
+	public int[] getProcessorNeighborhood(int level) throws RemoteException;
+
+	public Serializable getStatistics();
+
+	public Serializable getDebug();
+
 	// TODO: Adding here for now
 	// Not sure if one class can implement two remote interfaces
 	public TransportRMIInterface getTransportRMI(int fieldId) throws RemoteException;
-	
-	
 
 }
