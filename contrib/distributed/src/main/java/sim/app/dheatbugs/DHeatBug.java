@@ -44,16 +44,16 @@ public class DHeatBug extends DSteppable {
 	public void step(final SimState state) {
 		final DHeatBugs dHeatBugs = (DHeatBugs) state;
 
-		double old_heat;
-		try {
-			RemoteFulfillable promise = dHeatBugs.valgrid.get(new Int2D(loc_x, loc_y));
-			// FIXME: This should only be used after the promise has been fulfilled
-			old_heat = promise.getDouble();
-		} catch (RemoteException e) {
-			throw new RuntimeException(e);
-		}
+//		double old_heat;
+//		try {
+//			RemoteFulfillable promise = dHeatBugs.valgrid.get(new Int2D(loc_x, loc_y));
+//			// FIXME: This should only be used after the promise has been fulfilled
+//			old_heat = promise.getDouble();
+//		} catch (RemoteException e) {
+//			throw new RuntimeException(e);
+//		}
 
-//		double old_heat = dHeatBugs.valgrid.getLocal(new Int2D(loc_x, loc_y));
+		double old_heat = dHeatBugs.valgrid.getLocal(new Int2D(loc_x, loc_y));
 		double new_heat = 0;
 
 		// Skip addHeat for the first step

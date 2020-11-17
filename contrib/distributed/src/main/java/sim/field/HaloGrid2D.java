@@ -525,20 +525,18 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		proxy = new RMIProxy<>(partition, this);
 	}
 
-	public void syncHalo() throws MPIException, RemoteException {
-		// TODO: what should the order be?
-		for (final Pair<NumberND, T> pair : inQueue)
-			addLocal(pair.a, pair.b);
-
+	public void syncRemoveAndAdd() throws MPIException, RemoteException {
 		for (final Pair<NumberND, Long> pair : removeQueue)
 			removeLocal(pair.a, pair.b);
 
 		for (final NumberND p : removeAllQueue)
 			removeAllLocal(p);
-
-		for (final Pair<RemoteFulfillable, Serializable> pair : getQueue)
-			pair.a.fulfill(pair.b);
-
+		
+		for (final Pair<NumberND, T> pair : inQueue)
+			addLocal(pair.a, pair.b);
+	}
+	
+	public void syncHalo() throws MPIException, RemoteException {
 		final Serializable[] sendObjs = new Serializable[numNeighbors];
 		for (int i = 0; i < numNeighbors; i++)
 			sendObjs[i] = localStorage.pack(neighbors.get(i).sendParam);
@@ -547,6 +545,9 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 
 		for (int i = 0; i < numNeighbors; i++)
 			localStorage.unpack(neighbors.get(i).recvParam, recvObjs.get(i));
+		
+		for (final Pair<RemoteFulfillable, Serializable> pair : getQueue)
+			pair.a.fulfill(pair.b);
 	}
 
 	public void syncObject(PayloadWrapper payloadWrapper) {

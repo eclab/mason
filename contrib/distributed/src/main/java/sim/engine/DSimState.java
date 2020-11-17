@@ -188,6 +188,11 @@ public class DSimState extends SimState {
 			haloField.syncHalo();
 	}
 
+	protected void syncRemoveAndAdd() throws MPIException, RemoteException {
+		for (final HaloGrid2D<?, ?> haloField : fieldRegistry)
+			haloField.syncRemoveAndAdd();
+	}
+	
 	public void preSchedule() {
 		Timing.stop(Timing.LB_RUNTIME);
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
@@ -218,7 +223,9 @@ public class DSimState extends SimState {
 			// Stop the world and wait for the Visualizer to unlock
 //			MPI.COMM_WORLD.barrier();
 
-			syncFields();
+			// Sync all the Remove and Add queues for RMI
+			syncRemoveAndAdd();
+			
 			transporter.sync();
 			// TODO: Load RMI queue
 
@@ -257,7 +264,6 @@ public class DSimState extends SimState {
 		}
 
 		for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
-
 			/*
 			 * Assumptions about what is to be added to the field using addToField method
 			 * rely on the fact that the wrapper classes are not directly used By the
@@ -306,13 +312,21 @@ public class DSimState extends SimState {
 
 		// Wait that all nodes have registered their new objects in the distributed
 		// registry.
-		if (withRegistry)
-			try {
-				MPI.COMM_WORLD.barrier();
-			} catch (MPIException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		try {
+			MPI.COMM_WORLD.barrier();
+			syncFields();
+		} catch (MPIException | RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+//		if (withRegistry)
+//			try {
+//				MPI.COMM_WORLD.barrier();
+//			} catch (MPIException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 
 		transporter.objectQueue.clear();
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
@@ -324,14 +338,9 @@ public class DSimState extends SimState {
 		if (schedule.getSteps() > 0 && (schedule.getSteps() % balanceInterval == 0)) {
 			try {
 				balancePartitions(balancerLevel);
-
-				syncFields();
 				try {
 					transporter.sync();
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
+				} catch (ClassNotFoundException | IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
@@ -390,6 +399,7 @@ public class DSimState extends SimState {
 				// registry.
 				try {
 					MPI.COMM_WORLD.barrier();
+					syncFields();
 				} catch (MPIException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
