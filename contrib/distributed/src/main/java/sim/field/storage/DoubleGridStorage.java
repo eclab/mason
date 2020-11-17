@@ -10,23 +10,22 @@ import sim.util.*;
 
 public class DoubleGridStorage extends GridStorage<Double, Int2D> {
 	public double[] storage;
-	
-	//final double initVal;
+
+	// final double initVal;
 
 	public DoubleGridStorage(IntRect2D shape) {
 		super(shape);
 		baseType = MPI.DOUBLE;
 		clear();
-		//storage = allocate(shape.getArea());
-		//this.initVal = initVal;
-		//Arrays.fill((double[]) storage, initVal);
+		// storage = allocate(shape.getArea());
+		// this.initVal = initVal;
+		// Arrays.fill((double[]) storage, initVal);
 	}
 
-/*
-	public GridStorage<Double, Int2D> getNewStorage(IntRect2D shape) {
-		return new DoubleGridStorage(shape, 0);
-	}
-*/
+	/*
+	 * public GridStorage<Double, Int2D> getNewStorage(IntRect2D shape) { return new
+	 * DoubleGridStorage(shape, 0); }
+	 */
 	public byte[] pack(MPIParam mp) throws MPIException {
 		byte[] buf = new byte[MPI.COMM_WORLD.packSize(mp.size, baseType)];
 		MPI.COMM_WORLD.pack(MPI.slice((double[]) storage, mp.idx), 1, mp.type, buf, 0);
@@ -42,11 +41,11 @@ public class DoubleGridStorage extends GridStorage<Double, Int2D> {
 		double[] array = (double[]) storage;
 		StringBuffer buf = new StringBuffer(String.format("DoubleGridStorage-%s\n", shape));
 
-			for (int i = 0; i < size[0]; i++) {
-				for (int j = 0; j < size[1]; j++)
-					buf.append(String.format(" %4.2f ", array[i * size[1] + j]));
-				buf.append("\n");
-			}
+		for (int i = 0; i < size[0]; i++) {
+			for (int j = 0; j < size[1]; j++)
+				buf.append(String.format(" %4.2f ", array[i * size[1] + j]));
+			buf.append("\n");
+		}
 
 		return buf.toString();
 	}
@@ -63,7 +62,7 @@ public class DoubleGridStorage extends GridStorage<Double, Int2D> {
 		storage[getFlatIdx((Int2D) p)] = t;
 	}
 
-	public void removeObject(Double t, Int2D p) {
+	public void removeObject(Int2D p, Double t) {
 		addToLocation(0, p);
 	}
 

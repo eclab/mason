@@ -174,7 +174,7 @@ public class DFlocker extends DSteppable implements Remote, Oriented2D {
 		lastd = new Double2D(dx, dy);
 		loc = new Double2D(dFlockers.flockers.stx(loc.x + dx), dFlockers.flockers.sty(loc.y + dy));
 		try {
-			dFlockers.flockers.moveAgent(oldloc, loc, this);
+			dFlockers.flockers.moveAgent(loc, this);
 		} catch (Exception e) {
 			System.err.println("error on agent " + this + " in step " + dFlockers.schedule.getSteps() + "on pid "
 					+ dFlockers.getPartitioning().pid);

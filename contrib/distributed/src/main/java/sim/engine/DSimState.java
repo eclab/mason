@@ -33,12 +33,9 @@ import sim.engine.transport.TransporterMPI;
 import sim.field.HaloGrid2D;
 import sim.field.Synchronizable;
 import sim.field.partitioning.IntRect2D;
-import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.QuadTreePartition;
 import sim.field.storage.ContinuousStorage;
 import sim.field.storage.ObjectGridStorage;
-import sim.util.MPIUtil;
-import sim.util.Timing;
 import sim.util.*;
 
 /**
@@ -180,8 +177,9 @@ public class DSimState extends SimState {
 	 * Calls Sync on all the fields
 	 *
 	 * @throws MPIException
+	 * @throws RemoteException
 	 */
-	protected void syncFields() throws MPIException {
+	protected void syncFields() throws MPIException, RemoteException {
 		for (final Synchronizable haloField : fieldRegistry)
 			haloField.syncHalo();
 	}
@@ -202,6 +200,16 @@ public class DSimState extends SimState {
 			} catch (RemoteException e1) {
 				throw new RuntimeException(e1);
 			}
+
+//			for (final HaloGrid2D<?, ?> haloField : fieldRegistry)
+//				for (final Pair<RemoteFulfillable, Serializable> pair : haloField.getQueue)
+//					pair.getA().fulfill(pair.getB());
+//			
+//			for (final HaloGrid2D<?, ?> haloField : fieldRegistry)
+//				for (final Pair<NumberND, ? extends Serializable> pair : haloField.inQueue)
+//					haloField.addLocal(pair.getA(), pair.getB());
+
+			// TODO inQueue and outQueue
 
 			// Stop the world and wait for the Visualizer to unlock
 //			MPI.COMM_WORLD.barrier();
@@ -385,15 +393,15 @@ public class DSimState extends SimState {
 
 				transporter.objectQueue.clear();
 
-			} catch (MPIException e) {
+			} catch (MPIException | RemoteException e) {
 				// TODO: handle exception
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 			if (balancerLevel != 0)
 				balancerLevel--;
 			else
 				balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
-			
+
 			try {
 				MPI.COMM_WORLD.barrier();
 			} catch (MPIException e) {
@@ -426,7 +434,7 @@ public class DSimState extends SimState {
 						HashSet agents = (HashSet) st.getCell(doublep).clone(); // create a clone to avoid the
 						// ConcurrentModificationException
 						for (Object a : agents) {
-							NumberND loc = st.getLocation((Serializable) a);
+							NumberND loc = st.getLocation((DObject) a);
 							if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
 									&& !partition.getBounds().contains(loc)) {
 								try {
@@ -434,15 +442,16 @@ public class DSimState extends SimState {
 								} catch (Exception e) {
 									System.out.println("PID: " + partition.pid + " exception on " + a);
 								}
-								
+
 								final int locToP = partition.toPartitionId(loc);
 								transporter.migrateAgent((Stopping) a, locToP, loc, ((HaloGrid2D) field).fieldIndex);
-								
-								//transporter.migrateAgent((Stopping) a, toP, loc, ((HaloGrid2D) field).fieldIndex);
+
+								// transporter.migrateAgent((Stopping) a, toP, loc, ((HaloGrid2D)
+								// field).fieldIndex);
 								migratedAgents.add(a);
 								System.out.println("PID: " + partition.pid + " processor " + old_pid + " move " + a
 										+ " from " + loc + " (point " + p + ") to processor " + toP);
-								st.removeObject((Serializable) a);
+								st.removeObject((DObject) a);
 							}
 						}
 					} else if (haloGrid2D.getStorage() instanceof ObjectGridStorage) {
@@ -450,13 +459,13 @@ public class DSimState extends SimState {
 						Serializable a = st.getObjects(haloGrid2D.toLocalPoint(p));
 						if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
 								&& old_partition.contains(p) && !partition.getBounds().contains(p)) {
-							Stopping stopping = ((Stopping) a);
+							DSteppable stopping = ((DSteppable) a);
 							stopping.getStoppable().stop();
 							transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).fieldIndex);
 							migratedAgents.add(stopping);
 							System.out.println("PID: " + partition.pid + " processor " + old_pid + " move " + stopping
 									+ " from " + p + " (point " + p + ") to processor " + toP);
-							haloGrid2D.remove(p, stopping);
+							haloGrid2D.removeLocal(p, stopping.getID());
 						}
 					}
 				}
@@ -593,7 +602,7 @@ public class DSimState extends SimState {
 
 			// On all processors, wait for the start to finish
 			MPI.COMM_WORLD.barrier();
-		} catch (final MPIException e) {
+		} catch (final MPIException | RemoteException e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}

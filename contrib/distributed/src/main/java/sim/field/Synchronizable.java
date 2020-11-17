@@ -1,5 +1,7 @@
 package sim.field;
 
+import java.rmi.RemoteException;
+
 import mpi.MPIException;
 import sim.engine.transport.PayloadWrapper;
 
@@ -22,8 +24,9 @@ public interface Synchronizable {
 	 * Sync all Halos
 	 * 
 	 * @throws MPIException
+	 * @throws RemoteException
 	 */
-	public void syncHalo() throws MPIException;
+	public void syncHalo() throws MPIException, RemoteException;
 
 	/**
 	 * adds payload to Halo Grid (for when agents or objects are transported in)

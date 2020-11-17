@@ -22,11 +22,10 @@ public class IntGridStorage extends GridStorage<Integer, Int2D> {
 //		Arrays.fill((int[]) storage, initVal);
 	}
 
-/*
-	public GridStorage getNewStorage(IntRect2D shape) {
-		return new IntGridStorage(shape, 0);
-	}
-*/
+	/*
+	 * public GridStorage getNewStorage(IntRect2D shape) { return new
+	 * IntGridStorage(shape, 0); }
+	 */
 
 	public byte[] pack(MPIParam mp) throws MPIException {
 		byte[] buf = new byte[MPI.COMM_WORLD.packSize(mp.size, baseType)];
@@ -43,11 +42,11 @@ public class IntGridStorage extends GridStorage<Integer, Int2D> {
 		int[] array = (int[]) storage;
 		StringBuffer buf = new StringBuffer(String.format("IntGridStorage-%s\n", shape));
 
-			for (int i = 0; i < size[0]; i++) {
-				for (int j = 0; j < size[1]; j++)
-					buf.append(String.format(" %4d ", array[i * size[1] + j]));
-				buf.append("\n");
-			}
+		for (int i = 0; i < size[0]; i++) {
+			for (int j = 0; j < size[1]; j++)
+				buf.append(String.format(" %4d ", array[i * size[1] + j]));
+			buf.append("\n");
+		}
 
 		return buf.toString();
 	}
@@ -64,7 +63,7 @@ public class IntGridStorage extends GridStorage<Integer, Int2D> {
 		storage[getFlatIdx((Int2D) p)] = t;
 	}
 
-	public void removeObject(Integer t, Int2D p) {
+	public void removeObject(Int2D p, Integer t) {
 		addToLocation(0, p);
 	}
 

@@ -4,17 +4,24 @@ import java.io.Serializable;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
+import sim.engine.DObject;
 import sim.engine.DSimState;
 import sim.engine.DistributedIterativeRepeat;
+import sim.engine.DistributedTentativeStep;
+import sim.engine.Stoppable;
 import sim.engine.Stopping;
 import sim.field.DAbstractGrid2D;
 import sim.field.DGrid;
 import sim.field.HaloGrid2D;
+import sim.field.Promise;
+import sim.field.RemoteFulfillable;
+import sim.field.partitioning.IntRect2D;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.storage.ContinuousStorage;
-import sim.util.MPIParam;
 import sim.util.*;
 
 /**
@@ -23,213 +30,418 @@ import sim.util.*;
  * 
  * @param <T> Type of object stored in the field
  */
-public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D implements DGrid<T, Double2D> {
+public class DContinuous2D<T extends DObject> extends DAbstractGrid2D 
+	{
 	private static final long serialVersionUID = 1L;
 
-	private HaloGrid2D<T, Double2D, ContinuousStorage<T>> halo;
+	private HaloGrid2D<T, ContinuousStorage<T>> halo;
 	ContinuousStorage<T> storage;
+	boolean removeEmptyBags = true;
 	
-	public DContinuous2D(final PartitionInterface ps, final int[] aoi, final double discretization, final DSimState state) {
-		super(ps);
+	public DContinuous2D(PartitionInterface ps, int aoi, double discretization, DSimState state) 
+		{
+		super(ps, state);
 		storage = new ContinuousStorage<T>(ps.getBounds(), discretization);
-		try {
-			halo = new HaloGrid2D<T, Double2D, ContinuousStorage<T>>(ps, aoi, storage, state);
-		} catch (RemoteException e) {
+		
+		try 
+		{
+			halo = new HaloGrid2D<>(ps, aoi, storage, state);
+		} 
+		catch (RemoteException e) 
+		{
 			throw new RuntimeException(e);
 		}
 	}
 
-	public Double2D getLocation(final T obj) {
-		return storage.getLocation(obj);
-	}
 
-	public List<T> get(final Double2D p) {
-		if (!halo.inLocalAndHalo(p)) {
-			System.out.println(String.format("PID %d get %s is out of local boundary, accessing remotely through RMI",
-					halo.partition.getPid(), p.toString()));
-			return ((List<T>) halo.getFromRemote(p));
-		} else
-			return getLocal(p);
-	}
-
-	public void addLocal(final Double2D p, final T t) {
-		storage.addToLocation(t, p);
-	}
-
-	public void removeLocal(final Double2D p, final T t) {
-		// TODO: Remove from just p
-		storage.removeObject(t);
-	}
-
-	public void removeLocal(final Double2D p) {
-		storage.removeObjects(p);
-	}
-
-//	public List<T> getNearestNeighbors(final T obj, final int k) {
-//		return storage.getNearestNeighbors(obj, k);
-//	}
-
-	public List<T> getNeighborsWithin(final T obj, final double r) {
-		return storage.getNeighborsWithin(obj, r);
-	}
-
-	// TODO refactor this after new pack/unpack is introduced in Storage
-	@SuppressWarnings("unchecked")
-	public final List<T> getAllObjects() {
-		Serializable data = null;
-
-		data = storage.pack(new MPIParam(halo.origPart, halo.haloPart, halo.MPIBaseType));
-
-		final List<T> objs = ((ArrayList<ArrayList<T>>) data).get(0);
-
-		List<T> list = new ArrayList<T>();
-		for (int i = 0; i < objs.size(); i += 2) {
-			list.add(objs.get(i));
+	/** Returns the local location of the given object, if any, else null.*/
+	public Double2D getObjectLocationLocal(T t)
+		{
+		HashMap<Long, Double2D> map = storage.getStorageMap();
+		return map.get(t.getID());
 		}
-		return list;
+	
+	/** Returns the local location of the given object, if any, else null.*/
+	public Double2D getObjectLocationLocal(long id)
+		{
+		HashMap<Long, Double2D> map = storage.getStorageMap();
+		return map.get(id);
+		}
 
-//		return IntStream.range(0, objs.size())	// 0, 1, 2, ..., obj.size() - 1
-//				.filter(n -> n % 2 == 0)		// 0, 2, 4, ..., 
-//				.mapToObj(objs::get)
-//				.collect(Collectors.toList());
-	}
+	/** Returns true if the data is located locally.  */
+	public boolean containsLocal(T t) 
+		{
+		return (getObjectLocationLocal(t) != null);
+		}
 
-	public ArrayList<T> getLocal(final Double2D p) {
-		return storage.getObjects(p);
-	}
+	/** Returns true if the data is located at the given point.  This point
+		must lie within the local region or an exception will be thrown.  */
+	public boolean containsLocal(Double2D p, T t) 
+		{
+		if (!isHalo(p)) throwNotLocalException(p);
+		return (p.equals(getObjectLocationLocal(t)));
+		}
 
-	public void addAgent(final Double2D p, final T t) {
-		halo.addAgent(p, t);
-	}
+	/** Returns true if the data is located at the given point.  This point
+		must lie within the halo region or an exception will be thrown.  */
+	public boolean containsLocal(Double2D p, long id) 
+		{
+		return (getLocal(id) != null); // uses hashmap
+		}
 
-	public void moveAgent(final Double2D fromP, final Double2D toP, final T t) {
-		halo.moveAgent(fromP, toP, t);
-	}
+	/** Returns all the local data located in discretized cell in the <i>vicinity</i> of the given point.  This point
+		must lie within the local region or an exception will be thrown.  */
+	public HashMap<Long, T> getCellLocal(Double2D p) 
+		{
+		if (!isHalo(p)) throwNotLocalException(p);
+		return storage.getCell(p);
+		}
 
-	// Re-implementing this because
-	// add also moves the objects in this field
-	public void move(final Double2D fromP, final Double2D toP, final T t) {
-		final int fromPid = halo.partition.toPartitionId(fromP);
-		final int toPid = halo.partition.toPartitionId(fromP);
+	/** Returns all the local data located <i>exactly</i> at the given point.  This point
+		must lie within the local region or an exception will be thrown.  */
+	public HashMap<Long, T> getLocal(Double2D p) 
+		{
+		HashMap<Long, T> cell = getCellLocal(p);
+		HashMap<Long, T> reduced = new HashMap<>();
+		if (cell == null) return reduced;
+		for(T t : cell.values())
+			 {
+			 if (p.equals(getObjectLocationLocal(t)))
+			 	reduced.put(t.getID(),t);
+			 }
+		return reduced;
+		}
 
-		if (fromPid == toPid) {
-			if (fromPid != halo.partition.pid)
+	/** Returns all the local data located <i>exactly</i> at the given point.  This point
+		must lie within the local region or an exception will be thrown.  */
+	public DObject getLocal(long id) 
+		{
+		Double2D p = getObjectLocationLocal(id);
+		return getCellLocal(p).get(id);
+		}
+	
+	/** Returns all the local data located <i>exactly</i> at the given point.  This point
+	must lie within the local region or an exception will be thrown.  */
+	public DObject getLocal(Double2D p, long id) 
+		{
+		return getCellLocal(p).get(id);
+		}
+
+		
+	/** Sets or moves the given object, which must be currently local or not set. */
+	// this could be done by just calling removeLocal but I'm
+	// trying to avoid some unnecessary hash lookups, copies, and hashset deletion
+	public void addLocal(Double2D p, T t) 
+		{
+		if (!isLocal(p)) throwNotLocalException(p);	
+		Double2D oldLoc = getObjectLocationLocal(t);
+		HashMap<Long, T> newCell = getCellLocal(p);
+		if (oldLoc != null)
+			{
+			HashMap<Long, T> oldCell = getCellLocal(oldLoc);
+			
+			
+			if (oldCell == newCell)
+				{
+				// don't mess with them
+				}
+			else 
+				{
+				if (oldCell != null)
+					{
+					oldCell.remove(t);
+					if (oldCell.isEmpty() && removeEmptyBags)
+						storage.setCell(oldLoc, null);
+					}
+				if (newCell == null)
+					{
+					newCell = new HashMap<>();
+					storage.setCell(p, newCell);
+					}
+				newCell.put(t.getID(), t);
+				}
+			}
+		else
+			{
+			if (newCell == null)
+				{
+				newCell = new HashMap<>();
+				storage.setCell(p, newCell);
+				}
+			newCell.put(t.getID(), t);
+			}
+
+		HashMap<Long, Double2D> map = storage.getStorageMap();
+		map.put(t.getID(), p);
+		}
+	
+	public boolean removeLocal(long id)
+		{
+		return removeLocal(storage.getLocation(id), id);
+		}
+		
+	/** Removes the object, which must be local.  If it doesn't exist, returns FALSE. */
+	public boolean removeLocal(T t)
+		{
+		if (t == null) return false;
+		Double2D loc = getObjectLocationLocal(t);
+		if (loc == null) return false;
+		else
+			{
+			HashMap<Long, T> cell = getCellLocal(loc);
+			if (cell != null)
+				cell.remove(t);
+			if (cell.isEmpty() && removeEmptyBags)
+				storage.setCell(loc, null);
+			return true;
+			}
+		}
+	
+	/** Removes the object, which must be local.  If it doesn't exist, returns FALSE. */
+	public boolean removeLocal(Double2D p, long id)
+		{
+		// TODO: global vs local coordinates?
+		HashMap<Long, T> cell = getCellLocal(p);
+		T t = cell.get(id);
+		if (t == null) return false;
+		else
+			{
+			if (cell != null)
+				cell.remove(t);
+			if (cell.isEmpty() && removeEmptyBags)
+				storage.setCell(p, null);
+			return true;
+			}
+		}
+		
+	/** Returns the local (non-halo) region.  */
+	public IntRect2D localBounds()  { return halo.origPart; }
+
+	/** Returns the halo region.  */
+	public IntRect2D haloBounds()  { return halo.haloPart; }
+
+	/** Returns true if the point is within the local (non-halo) region.  */
+	public boolean isLocal(Double2D p) { return halo.inLocal(p); }
+
+	/** Returns true if the point is within the halo region.  */
+	public boolean isHalo(Double2D p) { return halo.inLocalAndHalo(p); }
+		
+		
+	/** Returns a Promise which will eventually (immediately or within one timestep)
+		hold the data (which must be a DObject) requested if it is located, else null.  This point can be outside
+		the local and halo regions. */
+	public RemoteFulfillable get(Double2D p, long id) 
+		{
+//		DObject obj = (DObject) t;		// this may throw a runtime exception
+		if (isHalo(p))
+			{
 				try {
-					remove(fromP, t);
-					halo.proxy.getField(fromPid).addRMI(toP, t);
-				} catch (final RemoteException e) {
+					return new Promise(getLocal(p, id));
+				} catch (RemoteException e) {
 					throw new RuntimeException(e);
 				}
+			}
+		else
+			return halo.getFromRemote(p, id);
+		}
+
+	/** Adds the data to the given point.  This point can be outside
+		the local and halo regions; if so, it will be added after the end of this timestep.  */
+	public void add(Double2D p, T t) 
+		{
+		if (isLocal(p))
+			addLocal(p, t);
+		else
+			halo.addToRemote(p, t);
+		}
+
+	/** Removes the data (which must be a DObject) from the given point.  This point can be outside
+		the local and halo regions. */
+	public void remove(long id) 
+		{
+		Double2D p = getObjectLocationLocal(id);
+		if (isLocal(p))
+			removeLocal(id);
+		else
+			halo.removeFromRemote(p, id);
+		}
+
+	/** Removes the data (which must be a DObject) from the given point.  This point can be outside
+		the local and halo regions. */
+	public void remove(T t) 
+		{
+		remove(((DObject) t).getID());
+		}
+
+
+	/** Adds an agent to the given point and schedules it.  This point can be outside
+		the local and halo regions; if so, it will be set after the end of this timestep.  */
+	public void addAndScheduleAgent(Double2D p, T agent, double time, int ordering) 
+		{
+		if (agent == null)
+			{
+			throw new RuntimeException("Cannot move null agent to " + p);
+			}
+		if (isLocal(p))
+			{
+			Stopping a = (Stopping) agent;		// may generate a runtime error
+			addLocal(p, agent);
+			state.schedule.scheduleOnce(time, ordering, a); 
+			}
+		else
+			{
+			halo.addAgent(p, agent, ordering, time);
+			}
+		}
+		
+	/** Adds an agent to the given point and schedules it repeating.  This point can be outside
+		the local and halo regions; if so, it will be set after the end of this timestep.  */
+	public void addAndScheduleAgent(Double2D p, T agent, double time, int ordering, double interval) 
+		{
+		if (agent == null)
+			{
+			throw new RuntimeException("Cannot move null agent to " + p);
+			}
+		if (isLocal(p))
+			{
+			Stopping a = (Stopping) agent;		// may generate a runtime error
+			addLocal(p, agent);
+			state.schedule.scheduleRepeating(time, ordering, a, interval); 
+			}
+		else
+			{
+			halo.addAgent(p, agent, ordering, time, interval);
+			}
+		}
+
+	/** Removes the given agent from the given point and stops it.  This point can be outside
+		the local and halo regions; if so, it will be set after the end of this timestep.  
+		The agent must be a DObject and a Stopping: realistically this means it should
+		be a DSteppable. */ 
+	public void removeAgent(T agent) 
+		{
+		if (agent == null) return;
+		
+		Double2D p = getObjectLocationLocal(agent);
+		
+		// will this work or is Java too smart?
+		Stopping b = (Stopping) agent;		// may generate a runtime error
+		
+		if (isLocal(p))
+			{
+			Stoppable stop = ((Stopping)b).getStoppable();
+			if (stop == null)
+				{
+				// we're done
+				}
+			else if ((stop instanceof DistributedTentativeStep))
+				{
+				((DistributedTentativeStep)stop).stop();
+				}
+			else if ((stop instanceof DistributedIterativeRepeat))
+				{
+				((DistributedIterativeRepeat)stop).stop();
+				}
 			else
-				add(toP, t);
-		} else {
-			// move cannot be with a single call
-			// Since, the fromP and toP are different Remove from one partition &
-			// add to another
-			remove(fromP, t);
-			add(toP, t);
+				{
+				throw new RuntimeException("Cannot remove agent " + agent + " from " + p + " because it is wrapped in a Stoppable other than a DistributedIterativeRepeat or DistributedTenativeStep.  This should not happen.");
+				}
+			removeLocal(agent);
+			}
+		else
+			{
+			halo.removeAgent(null, agent.getID());
+			}
 		}
-	}
+		
 
-	public void add(Double2D p, T t) {
-		halo.add(p, t);
-	}
-
-	public void remove(Double2D p, T t) {
-		halo.remove(p, t);
-	}
-
-	public void removeAllObjects(Double2D p) {
-		halo.removeAllObjects(p);
-	}
-
-	public void addAgent(Double2D p, T t, int ordering, double time) {
-		halo.addAgent(p, t, ordering, time);
-	}
-
-	// Re-implementing this because
-	// add also moves the objects in this field
-	public void moveAgent(Double2D fromP, Double2D toP, T t, int ordering, double time) {
-		if (!halo.inLocal(fromP)) {
-			// System.out.println("pid " + halo.partition.pid + " agent" + t);
-			// System.out.println("partitioning " + halo.partition.getPartition());
-			throw new IllegalArgumentException("fromP must be local");
+	/** Moves an agent from one location to another, possibly rescheduling it if the new location is remote.
+	  	The [from] location must be local, but the [to] location can be outside
+		the local and halo regions; if so, it will be set and rescheduled after the end of this timestep.
+		If the agent is not presently AT from, then the from location is undisturbed. */
+	public void moveAgent(Double2D to, T agent) 
+		{
+		if (agent == null)
+			{
+			throw new RuntimeException("Cannot move null agent to " + to);
+			}
+		else if (containsLocal(agent))
+			{
+			Double2D p = getObjectLocationLocal(agent);
+			if (isLocal(to))
+				{
+				removeLocal(agent);
+				addLocal(to, agent);
+				}
+			else
+				{
+				// Here we have to move the agent remotely and reschedule him
+				Stopping a = (Stopping) agent;			// may throw exception if it's not really an agent
+				Stoppable stop = a.getStoppable();
+				if (stop == null)
+					{
+					// we're done, just move it but don't bother rescheduling
+					removeLocal(agent);
+					halo.addToRemote(to, agent);
+					}
+				else if (stop instanceof DistributedTentativeStep)
+					{
+					DistributedTentativeStep _stop = (DistributedTentativeStep)stop;
+					double time = _stop.getTime();
+					int ordering = _stop.getOrdering();
+					_stop.stop();
+					if (time > state.schedule.getTime())  // scheduled in the future
+						{
+						removeLocal(agent);
+						halo.addAgent(to, agent, ordering, time);
+						}
+					else	// this could theoretically happen because TentativeStep doesn't null out its agent after step()
+						{
+						// we're done, just move it
+						removeLocal(agent);
+						halo.addToRemote(to, agent);
+						}
+					}
+				else if (stop instanceof DistributedIterativeRepeat)
+					{
+					DistributedIterativeRepeat _stop = (DistributedIterativeRepeat)stop;
+					double time = _stop.getTime();
+					int ordering = _stop.getOrdering();
+					double interval = _stop.getInterval();
+					_stop.stop();
+					
+					// now we have to revise the time
+					double delta = state.schedule.getTime() - time;
+					if (delta > interval)
+						{					
+						double remainder = delta % interval;	// how much is left?
+						time = time + delta + remainder;		// I THINK this is right?  -- Sean
+						}
+					else
+						{
+						time = time + interval;					// advance to next
+						}
+					removeLocal(agent);
+					halo.addAgent(to, agent, ordering, time, interval);
+					}
+				else
+					{
+					throw new RuntimeException("Cannot move agent " + a + " from " + p + " to " + to + " because it is wrapped in a Stoppable other than a DistributedIterativeRepeat or DistributedTenativeStep.  This should not happen.");
+					}
+				}
+			}
+		else
+			{
+			throw new RuntimeException("Cannot move agent " + agent + " to " + to + " because agent is not local.");
+			}
 		}
 
-		if (!(t instanceof Stopping))
-			throw new IllegalArgumentException("t must be a Stopping");
 
-		final Stopping agent = (Stopping) t;
 
-		if (halo.inLocal(toP)) {
-			// no need to remove for local moves
-			add(toP, t);
-			halo.getState().schedule.scheduleOnce(agent);
-		} else {
-			remove(fromP, t);
-			halo.getState().getTransporter().migrateAgent(agent,
-					halo.partition.toPartitionId(toP), toP, halo.fieldIndex);
-		}
-	}
 
-	public void addRepeatingAgent(Double2D p, T t, double time, int ordering, double interval) {
-		halo.addRepeatingAgent(p, t, time, ordering, interval);
-	}
 
-	public void addRepeatingAgent(Double2D p, T t, int ordering, double interval) {
-		halo.addRepeatingAgent(p, t, ordering, interval);
-	}
 
-	public void removeAndStopRepeatingAgent(Double2D p, T t) {
-		halo.removeAndStopRepeatingAgent(p, t);
-	}
 
-	public void removeAndStopRepeatingAgent(Double2D p, DistributedIterativeRepeat iterativeRepeat) {
-		halo.removeAndStopRepeatingAgent(p, iterativeRepeat);
-	}
-
-	// Re-implementing this because
-	// add also moves the objects in this field
-	public void moveRepeatingAgent(Double2D fromP, Double2D toP, T t) {
-		if (!halo.inLocal(fromP))
-			throw new IllegalArgumentException("fromP must be local");
-
-		// TODO: Should we remove the instanceOf check and assume that the
-		// pre-conditions are always met?
-		if (halo.inLocal(toP))
-			add(toP, t);
-		else if (!(t instanceof Stopping))
-			throw new IllegalArgumentException("t must be a Stopping");
-		else {
-			remove(fromP, t);
-			final Stopping stopping = (Stopping) t;
-			// TODO: check type cast here
-			final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) stopping.getStoppable();
-			halo.getState().getTransporter()
-					.migrateRepeatingAgent(iterativeRepeat, halo.partition.toPartitionId(toP), toP, halo.fieldIndex);
-			iterativeRepeat.stop();
-		}
-	}
-
-	// Re-implementing this because
-	// add also moves the objects in this field
-	public void moveRepeatingAgent(Double2D fromP, Double2D toP, DistributedIterativeRepeat iterativeRepeat) {
-		if (!halo.inLocal(fromP))
-			throw new IllegalArgumentException("fromP must be local");
-
-		// We cannot use checked cast for generics because of erasure
-		// TODO: is there a safe way of doing this?
-		final T t = (T) iterativeRepeat.getSteppable();
-
-		if (halo.inLocal(toP))
-			add(toP, t);
-		else {
-			remove(fromP, t);
-			halo.getState().getTransporter()
-					.migrateRepeatingAgent(iterativeRepeat, halo.partition.toPartitionId(toP), toP, halo.fieldIndex);
-			iterativeRepeat.stop();
-		}
-	}
 
 	//// FIXME SEAN:
 	//// We can't getNeighborsWithinDistance any more very easily
@@ -241,8 +453,8 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 
 	/** Toroidal x */
 	// slight revision for more efficiency
-	public final double tx(double x) {
-		final double width = this.width;
+	public double tx(double x) {
+		double width = this.width;
 		if (x >= 0 && x < width)
 			return x; // do clearest case first
 		x = x % width;
@@ -253,8 +465,8 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 
 	/** Toroidal y */
 	// slight revision for more efficiency
-	public final double ty(double y) {
-		final double height = this.height;
+	public double ty(double y) {
+		double height = this.height;
 		if (y >= 0 && y < height)
 			return y; // do clearest case first
 		y = y % height;
@@ -274,7 +486,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 	 * However removing the double width = this.width; is likely to be a little
 	 * faster if most objects are within the toroidal region.
 	 */
-	public double stx(final double x) {
+	public double stx(double x) {
 		if (x >= 0) {
 			if (x < width)
 				return x;
@@ -294,7 +506,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 	 * However removing the double height = this.height; is likely to be a little
 	 * faster if most objects are within the toroidal region.
 	 */
-	public double sty(final double y) {
+	public double sty(double y) {
 		if (y >= 0) {
 			if (y < height)
 				return y;
@@ -304,7 +516,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 	}
 
 	// some efficiency to avoid width lookups
-	double _stx(final double x, final double width) {
+	double _stx(double x, double width) {
 		if (x >= 0) {
 			if (x < width)
 				return x;
@@ -314,7 +526,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 	}
 
 	/** Minimum toroidal difference between two values in the X dimension. */
-	public double tdx(final double x1, final double x2) {
+	public double tdx(double x1, double x2) {
 		double width = this.width;
 		if (Math.abs(x1 - x2) <= width / 2)
 			return x1 - x2; // no wraparounds -- quick and dirty check
@@ -328,7 +540,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 	}
 
 	// some efficiency to avoid height lookups
-	double _sty(final double y, final double height) {
+	double _sty(double y, double height) {
 		if (y >= 0) {
 			if (y < height)
 				return y;
@@ -338,7 +550,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 	}
 
 	/** Minimum toroidal difference between two values in the Y dimension. */
-	public double tdy(final double y1, final double y2) {
+	public double tdy(double y1, double y2) {
 		double height = this.height;
 		if (Math.abs(y1 - y2) <= height / 2)
 			return y1 - y2; // no wraparounds -- quick and dirty check
@@ -356,7 +568,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 	 * "shortest" (squared) distance between two points, considering wrap-around
 	 * possibilities as well.
 	 */
-	public double tds(final Double2D d1, final Double2D d2) {
+	public double tds(Double2D d1, Double2D d2) {
 		double dx = tdx(d1.x, d2.x);
 		double dy = tdy(d1.y, d2.y);
 		return (dx * dx + dy * dy);
@@ -367,7 +579,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 	 * second point from the first and produces the minimum-length such subtractive
 	 * vector, considering wrap-around possibilities as well
 	 */
-	public Double2D tv(final Double2D d1, final Double2D d2) {
+	public Double2D tv(Double2D d1, Double2D d2) {
 		return new Double2D(tdx(d1.x, d2.x), tdy(d1.y, d2.y));
 	}
 

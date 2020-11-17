@@ -9,10 +9,7 @@ package sim.app.dheatbugs;
 import java.util.ArrayList;
 import java.util.HashMap;
 import sim.engine.DSimState;
-import sim.engine.DSteppable;
 import sim.engine.Schedule;
-import sim.engine.SimState;
-import sim.engine.Steppable;
 import sim.field.grid.DDenseGrid2D;
 import sim.field.grid.DDoubleGrid2D;
 import sim.util.Interval;
@@ -59,15 +56,15 @@ public class DHeatBugs extends DSimState {
 		bugCount = count;
 		privBugCount = bugCount / getPartitioning().numProcessors;
 		try {
-			valgrid = new DDoubleGrid2D(getPartitioning(), this.aoi, this);
-			valgrid2 = new DDoubleGrid2D(getPartitioning(), this.aoi, this);
-			bugs = new DDenseGrid2D<DHeatBug>(getPartitioning(), this.aoi, this);
+			valgrid = new DDoubleGrid2D(getPartitioning(), aoi, this);
+			valgrid2 = new DDoubleGrid2D(getPartitioning(), aoi, this);
+			bugs = new DDenseGrid2D<DHeatBug>(getPartitioning(), aoi, this);
 		} catch (final Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
 
-//		balanceInterval = 100000;
+		balanceInterval = 100000;
 	}
 
 	// Same getters and setters as HeatBugs
@@ -240,7 +237,7 @@ public class DHeatBugs extends DSimState {
 		for (Int2D p : agents.keySet()) {
 			for (DHeatBug a : agents.get(p)) {
 				if (partition.getBounds().contains(p))
-					bugs.addRepeatingAgent(p, a, 0, 1);
+					bugs.addAndScheduleAgent(p, a, 0, 0, 1);
 			}
 		}
 		schedule.scheduleRepeating(Schedule.EPOCH, 1, new Diffuser(), 1);

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.function.IntFunction;
 
+import sim.engine.DObject;
 import sim.field.partitioning.IntRect2D;
 import sim.util.*;
 
@@ -12,31 +13,33 @@ import sim.util.*;
  *
  * @param <T> Type of objects to store
  */
-public class DenseGridStorage<T extends Serializable> extends GridStorage<T, Int2D> {
+public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 	public ArrayList<T>[] storage;
-	
-	/// SEAN -- for the time being we're just doing removeEmptyBags, not replaceLargeBags, though we really oughta do that too...
+
+	/// SEAN -- for the time being we're just doing removeEmptyBags, not
+	/// replaceLargeBags, though we really oughta do that too...
 	/// See DenseGrid2D
-	
-    /** Should we remove bags in the field if they have been emptied, and let them GC, or should
-        we keep them around? */
-    public boolean removeEmptyBags = true;
+
+	/**
+	 * Should we remove bags in the field if they have been emptied, and let them
+	 * GC, or should we keep them around?
+	 */
+	public boolean removeEmptyBags = true;
 
 	public DenseGridStorage(final IntRect2D shape) {
 		super(shape);
 		clear();
-		//storage = allocate(shape.getArea());
+		// storage = allocate(shape.getArea());
 	}
 
-/*
-	public GridStorage<T, Int2D> getNewStorage(final IntRect2D shape) {
-		return new DenseGridStorage<T>(shape);
-	}
-*/
+	/*
+	 * public GridStorage<T, Int2D> getNewStorage(final IntRect2D shape) { return
+	 * new DenseGridStorage<T>(shape); }
+	 */
 
 	public void clear() {
 // We don't really need this to compile:    @SuppressWarnings("unchecked") 	
-    storage =  new ArrayList[shape.getArea()];		//alloc.apply(size);
+		storage = new ArrayList[shape.getArea()]; // alloc.apply(size);
 	}
 
 	public String toString() {
@@ -45,17 +48,17 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage<T, Int
 		final StringBuffer buf = new StringBuffer(
 				String.format("ObjectGridStorage<%s>-%s\n", array.getClass().getSimpleName(), shape));
 
-			for (int i = 0; i < size[0]; i++) {
-				for (int j = 0; j < size[1]; j++)
-					buf.append(String.format(" %8s ", array[i * size[1] + j]));
-				buf.append("\n");
-			}
+		for (int i = 0; i < size[0]; i++) {
+			for (int j = 0; j < size[1]; j++)
+				buf.append(String.format(" %8s ", array[i * size[1] + j]));
+			buf.append("\n");
+		}
 
 		return buf.toString();
 	}
 
 	public Serializable pack(final MPIParam mp) {
-		final ArrayList<T>[] objs = new ArrayList[mp.size]; 	// alloc.apply(mp.size);
+		final ArrayList<T>[] objs = new ArrayList[mp.size]; // alloc.apply(mp.size);
 		final ArrayList<T>[] stor = storage;
 		int curr = 0;
 
@@ -94,15 +97,32 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage<T, Int
 //		return null;
 //	}
 
-	public void removeObject(T obj, Int2D p) {
+	public void removeObject(Int2D p, T obj) {
 		final ArrayList<T>[] array = storage;
 		final int idx = getFlatIdx(p);
 
-		if (array[idx] != null)
-			{
+		if (array[idx] != null) {
 			array[idx].remove(obj);
 			if (array[idx].size() == 0 && removeEmptyBags)
 				array[idx] = null;
+		}
+	}
+
+	public void removeObject(Int2D p, long id) {
+		// TODO: this may throw a null pointer if object is not there
+		final ArrayList<T>[] array = storage;
+		final int idx = getFlatIdx(p);
+		ArrayList<T> ts = array[idx];
+		if (ts != null)
+			for (int i = 0; i < ts.size(); i++) {
+				T t = ts.get(i);
+				if (t.getID() == id) {
+					ts.remove(i);
+					if (array[idx].size() == 0 && removeEmptyBags)
+						array[idx] = null;
+					// TODO: do we break here or remove duplicates as well?
+					break;
+				}
 			}
 	}
 
@@ -110,17 +130,25 @@ public class DenseGridStorage<T extends Serializable> extends GridStorage<T, Int
 		final ArrayList<T>[] array = storage;
 		final int idx = getFlatIdx(p);
 
-		if (array[idx] != null)
-			{
+		if (array[idx] != null) {
 			if (removeEmptyBags)
 				array[idx] = null;
 			else
 				array[idx].clear();
-			}
+		}
 	}
 
 	public ArrayList<T> getObjects(Int2D p) {
 		return storage[getFlatIdx(p)];
+	}
+
+	public T getObjects(Int2D p, long id) {
+		// TODO: is this right??
+		ArrayList<T> ts = getObjects(p);
+		for (T t : ts)
+			if (t.getID() == id)
+				return t;
+		return null;
 	}
 
 }

@@ -13,26 +13,25 @@ import sim.util.*;
  * @param <T> Type of objects to store
  */
 public class ObjectGridStorage<T extends Serializable> extends GridStorage<T, Int2D> {
-	
+
 	public T[] storage;
-	
+
 	public ObjectGridStorage(final IntRect2D shape) {
 		super(shape);
 		clear();
-		//storage = allocate(shape.getArea());
+		// storage = allocate(shape.getArea());
 	}
 
-/*
-	public GridStorage<T, Int2D> getNewStorage(final IntRect2D shape) {
-		return new ObjectGridStorage<T>(shape);
-	}
-*/
+	/*
+	 * public GridStorage<T, Int2D> getNewStorage(final IntRect2D shape) { return
+	 * new ObjectGridStorage<T>(shape); }
+	 */
 
 // This is "weak", perhaps we should change it to "strong" checking
 // See https://stackoverflow.com/questions/529085/how-to-create-a-generic-array-in-java
 	public void clear() {
 // We don't really need this to compile:    @SuppressWarnings("unchecked") 	
-    storage = (T[]) new Object[shape.getArea()];		//alloc.apply(size);
+		storage = (T[]) new Object[shape.getArea()]; // alloc.apply(size);
 	}
 
 	public String toString() {
@@ -40,11 +39,11 @@ public class ObjectGridStorage<T extends Serializable> extends GridStorage<T, In
 		final StringBuffer buf = new StringBuffer(
 				String.format("ObjectGridStorage<%s>-%s\n", storage.getClass().getSimpleName(), shape));
 
-			for (int i = 0; i < size[0]; i++) {
-				for (int j = 0; j < size[1]; j++)
-					buf.append(String.format(" %8s ", storage[i * size[1] + j]));
-				buf.append("\n");
-			}
+		for (int i = 0; i < size[0]; i++) {
+			for (int j = 0; j < size[1]; j++)
+				buf.append(String.format(" %8s ", storage[i * size[1] + j]));
+			buf.append("\n");
+		}
 
 		return buf.toString();
 	}
@@ -83,7 +82,7 @@ public class ObjectGridStorage<T extends Serializable> extends GridStorage<T, In
 //		return null;
 //	}
 
-	public void removeObject(T obj, Int2D p) {
+	public void removeObject(Int2D p, T obj) {
 		addToLocation(null, p);
 	}
 

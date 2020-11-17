@@ -15,11 +15,12 @@ import sim.util.*;
  */
 public abstract class GridStorage<T extends Serializable, P extends NumberND> implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
-	
-	//Object storage;
+
+	// Object storage;
 	IntRect2D shape;
-	transient Datatype baseType = MPI.BYTE;		// something by default
-	int height;		// this is the same as shape.getHeight(), pulled out just in case inlining doesn't work
+	transient Datatype baseType = MPI.BYTE; // something by default
+	int height; // this is the same as shape.getHeight(), pulled out just in case inlining
+				// doesn't work
 
 	/* Abstract Method of generic storage based on N-dimensional Point */
 	public abstract void addToLocation(final T obj, final P p);
@@ -28,39 +29,44 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 
 //	public abstract void removeObject(final T obj);
 
-	public abstract void removeObject(final T obj, P p);
-
 	public abstract void removeObjects(final P p);
+
+	public abstract void removeObject(P p, final T obj);
+
+	public void removeObject(P p, long id) {
+		// TODO: what to do for int grid storage etc?
+		throw new UnsupportedOperationException(
+				"A getObjects method which searches for an id is not implemented for this storage");
+	}
 
 	public abstract Serializable getObjects(final P p);
 
+	public T getObjects(final P p, long id) {
+		// TODO: what to do for int grid storage etc?
+		throw new UnsupportedOperationException(
+				"A getObjects method which searches for an id is not implemented for this storage");
+	}
+
 	public abstract void clear();
-	
+
 	//// NOTE: Subclasses are responsible for allocating the storage
 	//// and setting the base type
 	public GridStorage(final IntRect2D shape) {
 		this.shape = shape;
-		height = shape.getHeight();		//getHeight(shape.getSizes());
+		height = shape.getHeight(); // getHeight(shape.getSizes());
 	}
-
-/*
-	public GridStorage(final Object storage, final IntRect2D shape) {
-		this(shape);
-		this.storage = storage;
-	}
-
-/*
-	public GridStorage(final Object storage, final IntRect2D shape, final Datatype baseType) {
-		this(storage, shape);
-		this.baseType = baseType;
-	}
-*/
 
 	/*
-	public Object getStorage() {
-		return storage;
-	}
-	*/
+	 * public GridStorage(final Object storage, final IntRect2D shape) {
+	 * this(shape); this.storage = storage; }
+	 * 
+	 * /* public GridStorage(final Object storage, final IntRect2D shape, final
+	 * Datatype baseType) { this(storage, shape); this.baseType = baseType; }
+	 */
+
+	/*
+	 * public Object getStorage() { return storage; }
+	 */
 
 	public Datatype getMPIBaseType() {
 		return baseType;
@@ -90,9 +96,9 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	 */
 	void reload(final IntRect2D newShape) {
 		shape = newShape;
-		height = newShape.getHeight();		//getHeight(newShape.getSizes());
+		height = newShape.getHeight(); // getHeight(newShape.getSizes());
 		clear();
-		//storage = allocate(newShape.getArea());
+		// storage = allocate(newShape.getArea());
 	}
 
 	/**
@@ -156,7 +162,7 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	 * @return flattened index with respect to the given height
 	 */
 	public static int getFlatIdx(final Int2D p, final int[] wrtSize) {
-		return p.x * wrtSize[1] + p.y;		// [1] is height //return p.x * getHeight(wrtSize) + p.y;
+		return p.x * wrtSize[1] + p.y; // [1] is height //return p.x * getHeight(wrtSize) + p.y;
 
 //		final int s = getHeight(wrtSize);
 //		int sum = 0;

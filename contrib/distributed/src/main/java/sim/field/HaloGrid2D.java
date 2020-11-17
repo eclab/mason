@@ -1,7 +1,6 @@
 package sim.field;
 
 import java.io.Serializable;
-
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -28,19 +27,24 @@ import sim.util.Int2D;
 import sim.util.MPIParam;
 import sim.util.MPIUtil;
 import sim.util.NumberND;
+import sim.util.Pair;
 
 /**
  * All fields in distributed MASON must contain this class. Stores
  * objects/agents and implements methods to add, move and remove them.
  *
  * @param <T> The Class of Object to store in the field
- * @param <P> The Type of P to use
  * @param <S> The Type of Storage to use
  */
-public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends GridStorage>
+public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		extends UnicastRemoteObject
-		implements TransportRMIInterface<T, P>, Synchronizable {
+		implements TransportRMIInterface<T, NumberND>, Synchronizable {
 	private static final long serialVersionUID = 1L;
+
+	public ArrayList<Pair<RemoteFulfillable, Serializable>> getQueue = new ArrayList<>();
+	public ArrayList<Pair<NumberND, T>> inQueue = new ArrayList<>();
+	public ArrayList<Pair<NumberND, Long>> removeQueue = new ArrayList<>();
+	public ArrayList<NumberND> removeAllQueue = new ArrayList<>();
 
 	/**
 	 * Helper class to organize neighbor-related data structures and methods
@@ -97,7 +101,8 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	}
 
 	protected int numNeighbors;
-	protected int[] aoi, fieldSize, haloSize;
+	protected int aoi;
+	protected int[] fieldSize, haloSize;
 
 	public IntRect2D world, haloPart, origPart, privatePart;
 
@@ -108,12 +113,12 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 
 	public final int fieldIndex;
 
-	public RMIProxy<T, P> proxy;
+	public RMIProxy<T, NumberND> proxy;
 	private final DSimState state;
 
 	private final Object lockRMI = new boolean[1];
 
-	public HaloGrid2D(final PartitionInterface ps, final int[] aoi, final S stor, final DSimState state)
+	public HaloGrid2D(final PartitionInterface ps, final int aoi, final S stor, final DSimState state)
 			throws RemoteException {
 		super();
 		this.partition = ps;
@@ -183,11 +188,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		// Get the partition representing private area by shrinking the original
 		// partition by aoi at each dimension
 
-		int[] negAoi = new int[aoi.length];
-		for (int i = 0; i < aoi.length; i++) {
-			negAoi[i] = -aoi[i];
-		}
-		privatePart = origPart.resize(negAoi);
+		privatePart = origPart.resize(-aoi); // Negative aoi
 		// privatePart = origPart.resize(Arrays.stream(aoi).map(x -> -x).toArray()());
 		// Get the neighbors and create Neighbor objects
 		neighbors = new ArrayList<Neighbor>();
@@ -218,29 +219,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		return world.toToroidal(p);
 	}
 
-	public void add(final P p, final T t) {
-		if (!inLocal(p)) {
-			addToRemote(p, t);
-		} else {
-			if (localStorage instanceof ContinuousStorage)
-				localStorage.addToLocation(t, p);
-			else
-				localStorage.addToLocation(t, toLocalPoint((Int2D) p));
-		}
-	}
-
-	public void remove(final P p, final T t) {
-		if (!inLocal(p))
-			removeFromRemote(p, t);
-		else {
-			if (localStorage instanceof ContinuousStorage)
-				localStorage.removeObject(t, p);
-			else
-				localStorage.removeObject(t, toLocalPoint((Int2D) p));
-		}
-	}
-
-	public void removeAllObjects(final P p) {
+	public void removeAllAgentsAndObjects(final NumberND p) {
 		if (!inLocal(p))
 			removeFromRemote(p);
 		else {
@@ -251,101 +230,35 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		}
 	}
 
-	public void move(final P fromP, final P toP, final T t) {
-		final int fromPid = partition.toPartitionId(fromP);
-		final int toPid = partition.toPartitionId(toP);
-
-		if (fromPid == toPid && fromPid != partition.pid) {
-			// So that we make only a single RMI call instead of two
-			try {
-				proxy.getField(fromPid).moveRMI(fromP, toP, t);
-
-			} catch (final RemoteException e) {
-				throw new RuntimeException(e);
-			}
-		} else {
-			remove(fromP, t);
-			add(toP, t);
-		}
-	}
-
-	public void addAgent(final P p, final T t) {
-		// TODO: is there a better way than just doing a Type Cast?
+	public void addAgent(final NumberND p, final T t, final int ordering, final double time) {
 		if (!(t instanceof Stopping))
 			throw new IllegalArgumentException("t must be a Stopping");
 
 		final Stopping agent = (Stopping) t;
 
 		if (inLocal(p)) {
-			add(p, t);
-			state.schedule.scheduleOnce(agent);
-		} else
-			state.getTransporter().migrateAgent(agent, partition.toPartitionId(p));
-	}
+			// TODO: remove local case
+			// TODO: check this
+			// add(p, t);
+			addLocal(p, t);
 
-	public void addAgent(final P p, final T t, final int ordering, final double time) {
-		if (!(t instanceof Stopping))
-			throw new IllegalArgumentException("t must be a Stopping");
-
-		final Stopping agent = (Stopping) t;
-
-		if (inLocal(p)) {
-			add(p, t);
 			state.schedule.scheduleOnce(time, ordering, agent);
 		} else
 			state.getTransporter().migrateAgent(ordering, time, agent, partition.toPartitionId(p));
+		// TODO: Should we have remote here?
+		// TODO: add RMI case
 	}
 
-	public void moveAgent(final P fromP, final P toP, final T t) {
-
-		if (!inLocal(fromP)) {
-			System.out.println("pid " + partition.pid + " agent" + t);
-			System.out.println("partitioning " + partition.getBounds());
-			throw new IllegalArgumentException("fromP must be local");
-		}
-
-		if (!(t instanceof Stopping))
-			throw new IllegalArgumentException("t must be a Stopping");
-
-		final Stopping agent = (Stopping) t;
-
-		remove(fromP, t);
-
-		if (inLocal(toP)) {
-			add(toP, t);
-			state.schedule.scheduleOnce(agent);
-		} else
-			state.getTransporter().migrateAgent(agent,
-					partition.toPartitionId(toP), toP, fieldIndex);
-	}
-
-	public void moveAgent(final P fromP, final P toP, final T t, final int ordering, final double time) {
-		// TODO: Call the top method here
-		if (!inLocal(fromP))
-			throw new IllegalArgumentException("fromP must be local");
-
-		if (!(t instanceof Stopping))
-			throw new IllegalArgumentException("t must be a Stopping");
-
-		final Stopping agent = (Stopping) t;
-
-		remove(fromP, t);
-
-		if (inLocal(toP)) {
-			add(toP, t);
-			state.schedule.scheduleOnce(time, ordering, agent);
-		} else
-			state.getTransporter().migrateAgent(ordering, time, agent,
-					partition.toPartitionId(toP), toP, fieldIndex);
-	}
-
-	public void addRepeatingAgent(final P p, final T t, final double time, final int ordering, final double interval) {
+	public void addAgent(final NumberND p, final T t, final int ordering, final double time, final double interval) {
 		if (!(t instanceof Stopping))
 			throw new IllegalArgumentException("t must be a Stopping");
 		Stopping stopping = (Stopping) t;
 
 		if (inLocal(p)) {
-			add(p, t);
+			// TODO: check this
+			// add(p, t);
+			addLocal(p, t);
+
 			final IterativeRepeat iterativeRepeat = state.schedule.scheduleRepeating(time, ordering, stopping,
 					interval);
 			stopping.setStoppable(iterativeRepeat);
@@ -356,26 +269,11 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		}
 	}
 
-	public void addRepeatingAgent(final P p, final T t, final int ordering, final double interval) {
-		if (!(t instanceof Stopping))
-			throw new IllegalArgumentException("t must be a Stopping");
-		Stopping stopping = (Stopping) t;
-
-		if (inLocal(p)) {
-			add(p, t);
-			final IterativeRepeat iterativeRepeat = state.schedule.scheduleRepeating(stopping, ordering, interval);
-			stopping.setStoppable(iterativeRepeat);
-		} else {
-			// TODO: look at the time here
-			final DistributedIterativeRepeat iterativeRepeat = new DistributedIterativeRepeat(stopping, -1, interval,
-					ordering);
-			state.getTransporter().migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(p));
-		}
-	}
-
-	public void removeAndStopRepeatingAgent(final P p, final T t) {
+	public void removeAgent(final NumberND p, long id) {
 		if (!inLocal(p))
 			throw new IllegalArgumentException("p must be local");
+
+		T t = getLocal(p, id);
 
 		// TODO: Should we remove the instanceOf check and assume that the
 		// pre-conditions are always met?
@@ -383,81 +281,10 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 			throw new IllegalArgumentException("t must be a Stopping");
 
 		final Stopping stopping = (Stopping) t;
-		remove(p, t);
+		removeLocal(p, id);
 		stopping.getStoppable().stop();
 	}
 
-	public void removeAndStopRepeatingAgent(final P p, final DistributedIterativeRepeat iterativeRepeat) {
-		if (!inLocal(p))
-			throw new IllegalArgumentException("p must be local");
-
-		final Stopping stopping = iterativeRepeat.getSteppable();
-
-		remove(p, (T) stopping);
-		stopping.getStoppable().stop();
-	}
-
-	public void moveRepeatingAgent(final P fromP, final P toP, final T t) {
-		if (!inLocal(fromP))
-			throw new IllegalArgumentException("fromP must be local");
-
-		remove(fromP, t);
-
-		// TODO: Should we remove the instanceOf check and assume that the
-		// pre-conditions are always met?
-		if (inLocal(toP))
-			add(toP, t);
-		else if (!(t instanceof Stopping))
-			throw new IllegalArgumentException("t must be a Stopping");
-		else {
-			final Stopping stopping = (Stopping) t;
-			final IterativeRepeat iterativeRepeat = (IterativeRepeat) stopping.getStoppable();
-
-			final DistributedIterativeRepeat distributedIterativeRepeat = new DistributedIterativeRepeat(stopping,
-					iterativeRepeat.getTime(), iterativeRepeat.getInterval(), iterativeRepeat.getOrdering());
-			state.getTransporter().migrateRepeatingAgent(distributedIterativeRepeat, partition.toPartitionId(toP), toP,
-					fieldIndex);
-
-			iterativeRepeat.stop();
-		}
-	}
-
-//	public void moveRepeatingAgent(final P fromP, final P toP, final DistributedIterativeRepeat iterativeRepeat) {
-//		if (!inLocal(fromP))
-//			throw new IllegalArgumentException("fromP must be local");
-//
-//		// We cannot use checked cast for generics because of erasure
-//		// TODO: is there a safe way of doing this?
-//
-//		final T t = (T) iterativeRepeat.getSteppable();
-//
-//		remove(fromP, t);
-//
-//		if (inLocal(toP))
-//			add(toP, t);
-//		else {
-//			state.getTransporter().migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(toP), toP,
-//					fieldIndex);
-//			iterativeRepeat.stop();
-//		}
-//	}
-
-	/**
-	 * Move for when both the from and to are local
-	 * 
-	 * @param fromP
-	 * @param toP
-	 * @param t     object to move
-	 */
-	public void moveLocal(final P fromP, final P toP, final T t) {
-		if (localStorage instanceof ContinuousStorage) {
-			localStorage.removeObject(t, fromP);
-			localStorage.addToLocation(t, toP);
-		} else {
-			localStorage.removeObject(t, toLocalPoint((Int2D) fromP));
-			localStorage.addToLocation(t, toLocalPoint((Int2D) toP));
-		}
-	}
 	// TODO make a copy of the storage which will be used by the remote field access
 
 	// TODO: Do we need to check for type safety here?
@@ -469,9 +296,32 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * 
 	 * @param p point to get from
 	 */
-	public Serializable getFromRemote(final P p) {
+	public RemoteFulfillable getFromRemote(final NumberND p) {
 		try {
-			return proxy.getField(partition.toPartitionId(p)).getRMI(p);
+			RemotePromise remotePromise = new RemotePromise();
+			// Make promise remote
+			// update promise remotely
+			proxy.getField(partition.toPartitionId(p)).getRMI(p, remotePromise);
+			return remotePromise;
+		} catch (final NullPointerException e) {
+			throw new IllegalArgumentException("Remote Proxy is not initialized");
+		} catch (final RemoteException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Get using RMI the object (or objects) contained at a point p
+	 * 
+	 * @param p point to get from
+	 */
+	public RemoteFulfillable getFromRemote(final NumberND p, long id) {
+		try {
+			RemotePromise remotePromise = new RemotePromise();
+			// Make promise remote
+			// update promise remotely
+			proxy.getField(partition.toPartitionId(p)).getRMI(p, id, remotePromise);
+			return remotePromise;
 		} catch (final NullPointerException e) {
 			throw new IllegalArgumentException("Remote Proxy is not initialized");
 		} catch (final RemoteException e) {
@@ -485,7 +335,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @param p point to add at
 	 * @param t object to add
 	 */
-	public void addToRemote(final P p, final T t) {
+	public void addToRemote(final NumberND p, final T t) {
 		try {
 			proxy.getField(partition.toPartitionId(p)).addRMI(p, t);
 		} catch (final NullPointerException e) {
@@ -501,9 +351,9 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @param p point to remove from
 	 * @param t object to remove
 	 */
-	public void removeFromRemote(final P p, final T t) {
+	public void removeFromRemote(final NumberND p, long id) {
 		try {
-			proxy.getField(partition.toPartitionId(p)).removeRMI(p, t);
+			proxy.getField(partition.toPartitionId(p)).removeRMI(p, id);
 		} catch (final NullPointerException e) {
 			throw new IllegalArgumentException("Remote Proxy is not initialized");
 		} catch (final RemoteException e) {
@@ -516,7 +366,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * 
 	 * @param p point to remove from
 	 */
-	public void removeFromRemote(final P p) {
+	public void removeFromRemote(final NumberND p) {
 		try {
 			proxy.getField(partition.toPartitionId(p)).removeRMI(p);
 		} catch (final NullPointerException e) {
@@ -552,7 +402,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @param point
 	 * @return true if point is local
 	 */
-	public boolean inLocal(final P point) {
+	public boolean inLocal(final NumberND point) {
 		return origPart.contains(point);
 	}
 
@@ -560,7 +410,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @param point
 	 * @return true if point is local and not in the halo
 	 */
-	public boolean inPrivate(final P point) {
+	public boolean inPrivate(final NumberND point) {
 		return privatePart.contains(point);
 	}
 
@@ -568,7 +418,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @param point
 	 * @return true if point is local or in the halo
 	 */
-	public boolean inLocalAndHalo(final P point) {
+	public boolean inLocalAndHalo(final NumberND point) {
 		return haloPart.contains(point);
 	}
 
@@ -576,7 +426,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @param point
 	 * @return true if point p is local and in the halo
 	 */
-	public boolean inShared(final P point) {
+	public boolean inShared(final NumberND point) {
 		return inLocal(point) && !inPrivate(point);
 	}
 
@@ -584,7 +434,7 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @param point
 	 * @return true if point p is in the halo (and not local)
 	 */
-	public boolean inHalo(final P point) {
+	public boolean inHalo(final NumberND point) {
 		return inLocalAndHalo(point) && !inLocal(point);
 	}
 
@@ -643,8 +493,9 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	 * @param level
 	 * @param groupField
 	 * @throws MPIException
+	 * @throws RemoteException
 	 */
-	public void distributeGroup(final int level, final GridStorage groupField) throws MPIException {
+	public void distributeGroup(final int level, final GridStorage groupField) throws MPIException, RemoteException {
 		if (!(partition instanceof QuadTreePartition))
 			throw new UnsupportedOperationException(
 					"Can only distribute to group with DQuadTreePartition, got "
@@ -674,7 +525,20 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 		proxy = new RMIProxy<>(partition, this);
 	}
 
-	public void syncHalo() throws MPIException {
+	public void syncHalo() throws MPIException, RemoteException {
+		// TODO: what should the order be?
+		for (final Pair<NumberND, T> pair : inQueue)
+			addLocal(pair.a, pair.b);
+
+		for (final Pair<NumberND, Long> pair : removeQueue)
+			removeLocal(pair.a, pair.b);
+
+		for (final NumberND p : removeAllQueue)
+			removeAllLocal(p);
+
+		for (final Pair<RemoteFulfillable, Serializable> pair : getQueue)
+			pair.a.fulfill(pair.b);
+
 		final Serializable[] sendObjs = new Serializable[numNeighbors];
 		for (int i = 0; i < numNeighbors; i++)
 			sendObjs[i] = localStorage.pack(neighbors.get(i).sendParam);
@@ -688,62 +552,104 @@ public class HaloGrid2D<T extends Serializable, P extends NumberND, S extends Gr
 	public void syncObject(PayloadWrapper payloadWrapper) {
 		if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
 			final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
-			add((P) payloadWrapper.loc, (T) iterativeRepeat.getSteppable());
+			addLocal((NumberND) payloadWrapper.loc, (T) iterativeRepeat.getSteppable());
 
 		} else if (payloadWrapper.payload instanceof AgentWrapper) {
 			final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
-			add((P) payloadWrapper.loc, (T) agentWrapper.agent);
+			addLocal((NumberND) payloadWrapper.loc, (T) agentWrapper.agent);
 
 		} else {
-			add((P) payloadWrapper.loc, (T) payloadWrapper.payload);
+			addLocal((NumberND) payloadWrapper.loc, (T) payloadWrapper.payload);
 		}
 	}
 
 	/* RMI METHODS */
-	// TODO: Should we throw exception here if not in local?
-	public void addRMI(P p, T t) throws RemoteException {
-		synchronized (lockRMI) {
-//		Checking instanceof because ContStorage store global point 
-			if (localStorage instanceof ContinuousStorage)
-				localStorage.addToLocation(t, p);
-			else
-				localStorage.addToLocation(t, toLocalPoint((Int2D) p));
-		}
+	public void addRMI(NumberND p, T t) throws RemoteException {
+		inQueue.add(new Pair<>(p, t));
 	}
 
-	public void removeRMI(P p, T t) throws RemoteException {
-		synchronized (lockRMI) {
-			if (localStorage instanceof ContinuousStorage)
-				localStorage.removeObject(t, p);
-			else
-				localStorage.removeObject(t, toLocalPoint((Int2D) p));
-		}
+	public void removeRMI(NumberND p, long id) throws RemoteException {
+		removeQueue.add(new Pair<>(p, id));
 	}
 
-	public void removeRMI(final P p) throws RemoteException {
-		synchronized (lockRMI) {
-			if (localStorage instanceof ContinuousStorage)
-				localStorage.removeObjects(p);
-			else
-				localStorage.removeObjects(toLocalPoint((Int2D) p));
-		}
+	public void removeRMI(final NumberND p) throws RemoteException {
+		removeAllQueue.add(p);
 	}
 
-	public Serializable getRMI(P p) throws RemoteException {
-		synchronized (lockRMI) {
-			if (localStorage instanceof ContinuousStorage)
-				return localStorage.getObjects(p);
-			else
-				return localStorage.getObjects(toLocalPoint((Int2D) p));
-		}
+	public void getRMI(NumberND p, RemoteFulfillable promise) throws RemoteException {
+		// Make promise remote
+		// update promise remotely
+		// Must happen asynchronously
+		// Do it in the queue
+		// Add to a queue here
+		getQueue.add(new Pair<>(promise, getLocal(p)));
 	}
 
-	public void moveRMI(final P fromP, final P toP, final T t) throws RemoteException {
-		synchronized (lockRMI) {
-			removeRMI(fromP, t);
-			addRMI(toP, t);
-		}
+	public void getRMI(NumberND p, long id, RemoteFulfillable promise) throws RemoteException {
+		// Make promise remote
+		// update promise remotely
+		// Must happen asynchronously
+		getQueue.add(new Pair<>(promise, getLocal(p, id)));
 	}
+
+	// TODO: what add do we need?
+
+//	public void add(final NumberND p, final T t) {
+//		if (!inLocal(p)) {
+//			addToRemote(p, t);
+//		} else {
+//			if (localStorage instanceof ContinuousStorage)
+//				localStorage.addToLocation(t, p);
+//			else
+//				localStorage.addToLocation(t, toLocalPoint((Int2D) p));
+//		}
+//	}
+
+	public void addLocal(final NumberND p, final T t) {
+		if (localStorage instanceof ContinuousStorage)
+			localStorage.addToLocation(t, p);
+		else
+			localStorage.addToLocation(t, toLocalPoint((Int2D) p));
+	}
+
+	public T getLocal(NumberND p) {
+		if (localStorage instanceof ContinuousStorage)
+			return (T) localStorage.getObjects(p);
+		else
+			return (T) localStorage.getObjects(toLocalPoint((Int2D) p));
+	}
+
+	public T getLocal(NumberND p, long id) {
+		if (localStorage instanceof ContinuousStorage)
+			return (T) localStorage.getObjects(p, id);
+		else
+			return (T) localStorage.getObjects(toLocalPoint((Int2D) p), id);
+	}
+
+	public void removeLocal(NumberND p, long id) {
+		if (localStorage instanceof ContinuousStorage)
+			localStorage.removeObject(p, id);
+		else
+			localStorage.removeObject(toLocalPoint((Int2D) p), id);
+	}
+
+	public void removeAllLocal(NumberND p) {
+		if (localStorage instanceof ContinuousStorage)
+			localStorage.removeObjects(p);
+		else
+			localStorage.removeObjects(toLocalPoint((Int2D) p));
+	}
+
+//	public void remove(final NumberND p, final T t) {
+//		if (!inLocal(p))
+//			removeFromRemote(p, t);
+//		else {
+//			if (localStorage instanceof ContinuousStorage)
+//				localStorage.removeObject(t, p);
+//			else
+//				localStorage.removeObject(t, toLocalPoint((Int2D) p));
+//		}
+//	}
 
 	/**
 	 * @return DSimState for the current sim
