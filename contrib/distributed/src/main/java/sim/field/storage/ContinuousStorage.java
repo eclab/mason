@@ -84,7 +84,8 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 			for (final T obj : getObjects(rect.shift(shape.ul().toArray()))) {
 				objs.add(obj);
 				// Append the object's location relative to the rectangle
-				objs.add(m.get(obj.getID()).rshift(shape.ul().toArray()).rshift(rect.ul().toArray()));
+//				objs.add(m.get(obj.getID()).rshift(shape.ul().toArray()).rshift(rect.ul().toArray()));
+				objs.add(m.get(obj).subtract(shape.ul().toArray()).subtract(rect.ul().toArray()));
 			}
 			ret.add(objs);
 		}
@@ -103,7 +104,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 		for (int k = 0; k < mp.rects.size(); k++)
 			for (int i = 0; i < objs.get(k).size(); i += 2)
 				addToLocation((T) objs.get(k).get(i), ((Double2D) objs.get(k).get(i + 1))
-						.shift(mp.rects.get(k).ul().toArray()).shift(shape.ul().toArray()));
+						.add(mp.rects.get(k).ul().toArray()).add(shape.ul().toArray()));
 
 //		return objs.stream().mapToInt(x -> x.size()).sum();
 		int sum = 0;
@@ -115,7 +116,8 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 
 	public Int2D discretize(final NumberND p) {
 
-		final double[] offsets = shape.ul().getOffsetsDouble(p);
+//		final double[] offsets = shape.ul().getOffsetsDouble(p);
+		final double[] offsets = shape.ul().getOffsets(p);
 
 		int[] ans = new int[2];
 		for (int i = 0; i < offsets.length; i++) {
@@ -136,9 +138,83 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 		storage[getFlatIdx(x, y)] = cell;
 	}
 
+//<<<<<<< HEAD
 	// Get the corresponding cell given a continuous point
 	public HashMap<Long, T> getCell(final Double2D p) {
 		return getCelldp(discretize(p));
+//=======
+//	// Put the object to the given point
+//	public void addToLocation(final T obj, final Double2D p) {
+//		final Double2D old = m.put(obj, p);
+//		if (old != null)
+//			getCell(old).remove(obj);
+//		getCell(p).add(obj);
+//	}
+//
+//	// Get the location of the given location
+//	public Double2D getLocation(final T obj) {
+//		return m.get(obj);
+//	}
+//
+//	// Get all the objects at the given point
+//	public ArrayList<T> getObjects(final Double2D p) {
+//		final ArrayList<T> objects = new ArrayList<>();
+//		for (final T t : getCell(p)) {
+//			if (m.get(t).equals(p))
+//				objects.add(t);
+//		}
+//		return objects;
+//	}
+//
+//	// Get all the objects inside the given rectangle
+//	public List<T> getObjects(final IntRect2D r) {
+//		final ArrayList<T> objs = new ArrayList<T>();
+//
+//		final Int2D ul = discretize(r.ul());
+//		
+//		int [] offset = {1,1};
+//		
+//		final Int2D br = discretize(r.br()).add(offset);
+//
+////		for (final Int2D dp : IntPointGenerator.getBlock(ul, br)) {
+//// //			getCelldp(dp)
+//// //				.stream()
+//// //				.filter(obj -> r.contains(m.get(obj)))	// 
+//// //				.forEach(obj -> objs.add(obj));
+////			for (T obj : getCelldp(dp)) {
+////				if (r.contains(m.get(obj))) {
+////					objs.add(obj);
+////				}
+////			}
+////		}
+//
+//// I believe this code is just doing:
+//
+//	for(int x = ul.x; x < br.x; x++)
+//		{
+//		for(int y = ul.y; y < br.y; y++)
+//			{
+//			for(T obj: getCelldp(x, y))
+//				{
+//				if (r.contains(m.get(obj))) 
+//					{
+//					objs.add(obj);
+//					}
+//				}
+//			}
+//		}
+//
+//		return objs;
+//	}
+//
+//	// Remove the object from the storage
+//	public void removeObject(final T obj) {
+//		getCell(m.remove(obj)).remove(obj);
+//	}
+//
+//	public void removeObject(final T obj, Double2D p) {
+//		getCell(m.remove(obj)).remove(obj);
+//>>>>>>> 5a7347af137247b63139aa9f8f7b6717db8010f9
 	}
 
 	// Get the corresponding cell given a discretized point
@@ -239,10 +315,21 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 //			}
 //		}
 
+//<<<<<<< HEAD
 		for (int x = ul.x; x < br.x; x++) {
 			for (int y = ul.y; y < br.y; y++) {
 				for (T foo : getCelldp(x, y).values()) {
-					if (foo != obj && m.get(foo.getID()).getDistanceSq(loc) <= radius * radius) {
+					if (foo != obj && m.get(foo.getID()).distanceSq(loc) <= radius * radius) {
+//=======
+//		for(int x = ul.x; x < br.x; x++)
+//			{
+//			for(int y = ul.y; y < br.y; y++)
+//				{
+//				for(T foo: getCelldp(x, y))
+//					{
+//					if (foo != obj && m.get(foo).distanceSq(loc) <= radius * radius) 
+//						{
+//>>>>>>> 5a7347af137247b63139aa9f8f7b6717db8010f9
 						objs.add(foo);
 					}
 				}
@@ -329,8 +416,9 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 	// Get all the objects inside the given rectangle
 	List<T> getObjects(final IntRect2D r) {
 		final ArrayList<T> objs = new ArrayList<T>();
+		int[] offset = { 1, 1 };
 
-		final Int2D ul = discretize(r.ul()), br = discretize(r.br()).shift(1);
+		final Int2D ul = discretize(r.ul()), br = discretize(r.br()).add(offset);
 
 //		for (final Int2D dp : IntPointGenerator.getBlock(ul, br)) {
 // //			getCelldp(dp)

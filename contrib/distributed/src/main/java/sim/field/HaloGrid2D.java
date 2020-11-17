@@ -205,7 +205,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 	 * @return location on the local partition
 	 */
 	public Int2D toLocalPoint(final Int2D p) {
-		return p.rshift(haloPart.ul().toArray());
+		return p.subtract(haloPart.ul().toArray());
 	}
 
 	/**
