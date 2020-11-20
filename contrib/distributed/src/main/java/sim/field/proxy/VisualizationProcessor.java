@@ -65,9 +65,9 @@ public interface VisualizationProcessor extends Remote {
 	
 	public int[] getProcessorNeighborhood(int level) throws RemoteException;
 
-	public Serializable getStatistics();
+	public Serializable getStatistics() throws RemoteException;
 
-	public Serializable getDebug();
+	public Serializable getDebug() throws RemoteException;
 
 	// TODO: Adding here for now
 	// Not sure if one class can implement two remote interfaces

@@ -131,11 +131,11 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 		return dSimState.partition.getProcessorNeighborhood(level);
 	}
 
-	public Serializable getStatistics() {
+	public Serializable getStatistics() throws RemoteException{
 		return dSimState.getStatistics();
 	}
 
-	public Serializable getDebug() {
+	public Serializable getDebug() throws RemoteException{
 		return dSimState.getDebug();
 	}
 
