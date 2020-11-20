@@ -1,6 +1,5 @@
 package sim.engine;
 
-import java.io.Serializable;
 import java.rmi.NotBoundException;
 
 import java.rmi.RemoteException;
@@ -11,7 +10,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import sim.engine.registry.DRegistry;
 import sim.field.partitioning.IntRect2D;
 import sim.engine.transport.TransportRMIInterface;
-//import sim.field.partitioning.IntHyperRect;
 import sim.field.proxy.VisualizationProcessor;
 import sim.field.storage.GridStorage;
 
@@ -131,12 +129,12 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 		return dSimState.partition.getProcessorNeighborhood(level);
 	}
 
-	public Serializable getStatistics() throws RemoteException{
-		return dSimState.getStatistics();
+	public ArrayList<Stat> getStatList() throws RemoteException {
+		return dSimState.getStatList();
 	}
 
-	public Serializable getDebug() throws RemoteException{
-		return dSimState.getDebug();
+	public ArrayList<Stat> getDebugList() throws RemoteException {
+		return dSimState.getDebugList();
 	}
 
 //	// TODO: do we extend this to other Remote objects?

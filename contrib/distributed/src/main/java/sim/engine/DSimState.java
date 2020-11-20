@@ -26,7 +26,6 @@ import java.util.logging.SocketHandler;
 import ec.util.MersenneTwisterFast;
 import mpi.MPI;
 import mpi.MPIException;
-import sim.app.dheatbugs.DHeatBug;
 import sim.engine.registry.DRegistry;
 import sim.engine.transport.AgentWrapper;
 import sim.engine.transport.PayloadWrapper;
@@ -102,6 +101,11 @@ public class DSimState extends SimState {
 	public int[] aoi; // Area of Interest
 	HashMap<String, Object> rootInfo = null;
 	HashMap<String, Object>[] init = null;
+
+	final Object statLock = new Object[0];
+	final Object debugStatLock = new Object[0];
+	ArrayList<Stat> statList = new ArrayList<>();
+	ArrayList<Stat> debugList = new ArrayList<>();
 
 	RemoteProcessor processor;
 
@@ -462,7 +466,6 @@ public class DSimState extends SimState {
 									} catch (Exception e) {
 										System.out.println("PID: " + partition.pid + " exception on " + a);
 									}
-//<<<<<<< HEAD
 //								final int locToP = partition.toPartitionId(loc);
 //								transporter.migrateAgent((Stopping) a, locToP, loc, ((HaloGrid2D) field).fieldIndex);
 //								transporter.migrateAgent((Stopping) a, toP, loc, ((HaloGrid2D) field).fieldIndex);
@@ -482,7 +485,6 @@ public class DSimState extends SimState {
 									iterativeRepeat.stop();
 								}
 
-//>>>>>>> 5a7347af137247b63139aa9f8f7b6717db8010f9
 								migratedAgents.add(a);
 								System.out.println("PID: " + partition.pid + " processor " + old_pid + " move " + a
 										+ " from " + loc + " (point " + p + ") to processor " + toP);
@@ -495,7 +497,6 @@ public class DSimState extends SimState {
 						Serializable a = st.getObjects(haloGrid2D.toLocalPoint(p));
 						if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
 								&& old_partition.contains(p) && !partition.getBounds().contains(p)) {
-//<<<<<<< HEAD
 //							DSteppable stopping = ((DSteppable) a);
 //							stopping.getStoppable().stop();
 //							transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).fieldIndex);
@@ -518,7 +519,6 @@ public class DSimState extends SimState {
 								iterativeRepeat.stop();
 							}
 
-//>>>>>>> 5a7347af137247b63139aa9f8f7b6717db8010f9
 							migratedAgents.add(stopping);
 							System.out.println("PID: " + partition.pid + " processor " + old_pid + " move " + stopping
 									+ " from " + p + " (point " + p + ") to processor " + toP);
@@ -818,12 +818,31 @@ public class DSimState extends SimState {
 		withRegistry = true;
 	}
 
-	public Serializable getStatistics() {
-		return null;
+	public void addStat(Serializable data) {
+		synchronized (statLock) {
+			statList.add(new Stat(data, schedule.getSteps()));
+		}
 	}
 
-	public Serializable getDebug() {
-		return null;
+	public void addDebug(Serializable data) {
+		synchronized (debugStatLock) {
+			debugList.add(new Stat(data, schedule.getSteps()));
+		}
 	}
 
+	ArrayList<Stat> getStatList() {
+		synchronized (statLock) {
+			ArrayList<Stat> ret = statList;
+			statList = new ArrayList<>();
+			return ret;
+		}
+	}
+
+	ArrayList<Stat> getDebugList() {
+		synchronized (debugStatLock) {
+			ArrayList<Stat> ret = debugList;
+			debugList = new ArrayList<>();
+			return ret;
+		}
+	}
 }
