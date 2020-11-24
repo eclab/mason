@@ -41,10 +41,10 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		implements TransportRMIInterface<T, NumberND>, Synchronizable {
 	private static final long serialVersionUID = 1L;
 
-	public ArrayList<Pair<RemoteFulfillable, Serializable>> getQueue = new ArrayList<>();
-	public ArrayList<Pair<NumberND, T>> inQueue = new ArrayList<>();
-	public ArrayList<Pair<NumberND, Long>> removeQueue = new ArrayList<>();
-	public ArrayList<NumberND> removeAllQueue = new ArrayList<>();
+	public final ArrayList<Pair<RemoteFulfillable, Serializable>> getQueue = new ArrayList<>();
+	public final ArrayList<Pair<NumberND, T>> inQueue = new ArrayList<>();
+	public final ArrayList<Pair<NumberND, Long>> removeQueue = new ArrayList<>();
+	public final ArrayList<NumberND> removeAllQueue = new ArrayList<>();
 
 	/**
 	 * Helper class to organize neighbor-related data structures and methods
@@ -528,14 +528,17 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 	public void syncRemoveAndAdd() throws MPIException, RemoteException {
 		for (final Pair<NumberND, Long> pair : removeQueue)
 			removeLocal(pair.a, pair.b);
+		removeQueue.clear();
 
 		for (final NumberND p : removeAllQueue)
 			removeAllLocal(p);
-		
+		removeAllQueue.clear();
+
 		for (final Pair<NumberND, T> pair : inQueue)
 			addLocal(pair.a, pair.b);
+		inQueue.clear();
 	}
-	
+
 	public void syncHalo() throws MPIException, RemoteException {
 		final Serializable[] sendObjs = new Serializable[numNeighbors];
 		for (int i = 0; i < numNeighbors; i++)
@@ -545,9 +548,10 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 
 		for (int i = 0; i < numNeighbors; i++)
 			localStorage.unpack(neighbors.get(i).recvParam, recvObjs.get(i));
-		
+
 		for (final Pair<RemoteFulfillable, Serializable> pair : getQueue)
 			pair.a.fulfill(pair.b);
+		getQueue.clear();
 	}
 
 	public void syncObject(PayloadWrapper payloadWrapper) {
