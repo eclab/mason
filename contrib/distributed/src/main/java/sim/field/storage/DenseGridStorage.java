@@ -82,6 +82,10 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 		return curr;
 	}
 
+
+
+	///// GRIDSTORAGE GUNK
+
 	public void addToLocation(T obj, Int2D p) {
 		final ArrayList<T>[] array = storage;
 		final int idx = getFlatIdx(p);
@@ -92,17 +96,29 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 		array[idx].add(obj);
 	}
 
-//	public NumberND getLocation(T obj) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+	boolean removeFast(ArrayList<T> list, int pos)
+		{
+		int top = list.size() - 1;
+		if (top == pos)
+			list.set(pos, list.get(top));
+		return list.remove(top) != null;
+		}
+
+	boolean removeFast(ArrayList<T> list, T t)
+		{
+		int pos = list.indexOf(t);
+		if (pos >= 0)
+			return removeFast(list, pos);
+		else return (pos >= 0);
+		}
+
 
 	public void removeObject(Int2D p, T obj) {
 		final ArrayList<T>[] array = storage;
 		final int idx = getFlatIdx(p);
 
 		if (array[idx] != null) {
-			array[idx].remove(obj);
+			removeFast(array, obj);
 			if (array[idx].size() == 0 && removeEmptyBags)
 				array[idx] = null;
 		}
@@ -112,16 +128,19 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 		// TODO: this may throw a null pointer if object is not there
 		final ArrayList<T>[] array = storage;
 		final int idx = getFlatIdx(p);
-		ArrayList<T> ts = array[idx];
-		if (ts != null)
-			for (int i = 0; i < ts.size(); i++) {
-				T t = ts.get(i);
-				if (t.getID() == id) {
-					ts.remove(i);
+		
+		if (array[idx] != null)
+			{
+			for (int i = 0; i < array[idx].size(); i++) 
+				{
+				T t = array[idx].get(i);
+				if (t.getID() == id) 
+					{
+					removeFast(array, i);
 					if (array[idx].size() == 0 && removeEmptyBags)
 						array[idx] = null;
-					// TODO: do we break here or remove duplicates as well?
 					break;
+					}
 				}
 			}
 	}
@@ -144,7 +163,9 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 
 	public T getObjects(Int2D p, long id) {
 		// TODO: is this right??
-		ArrayList<T> ts = getObjects(p);
+		ArrayList<T> ts = storage[getFlatIdx(p)];
+		if (ts == null)
+			return null;
 		for (T t : ts)
 			if (t.getID() == id)
 				return t;
