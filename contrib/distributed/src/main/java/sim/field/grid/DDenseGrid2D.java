@@ -33,7 +33,6 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 
 	private HaloGrid2D<T, DenseGridStorage<T>> halo;
 	DenseGridStorage<T> storage;
-	boolean removeEmptyBags = true;
 		
 	public DDenseGrid2D(PartitionInterface ps, int aoi, DSimState state) 
 		{
@@ -95,7 +94,8 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 
 		array[idx].add(t);
 		}
-
+		
+		
 	boolean removeFast(ArrayList<T> list, int pos)
 		{
 		int top = list.size() - 1;
@@ -117,6 +117,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 		If the object does not exist here, FALSE is returned. */
 	public boolean removeLocal(Int2D p, T t) 
 	{
+		if (!isLocal(p)) throwNotLocalException(p);
 		ArrayList<T>[] array = storage.storage;
 		int idx = storage.getFlatIdx(halo.toLocalPoint(p));
 
@@ -124,7 +125,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 			{
 			if (removeFast(array[idx], t))
 				{
-				if (array[idx].size() == 0 && removeEmptyBags)
+				if (array[idx].size() == 0 && storage.removeEmptyBags)
 					array[idx] = null;
 				return true;
 				}
@@ -159,7 +160,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 					}
 				}
 
-			if (found && array[idx].size() == 0 && removeEmptyBags)
+			if (found && array[idx].size() == 0 && storage.removeEmptyBags)
 				array[idx] = null;
 			}
 		return found;
@@ -176,9 +177,10 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 		if (array[idx] != null)
 			{
 			boolean ret = (array[idx].size() == 0);
-			array[idx].clear();
-			if (array[idx].size() == 0 && removeEmptyBags)
+			if (storage.removeEmptyBags)
 				array[idx] = null;
+			else
+				array[idx].clear();
 			return ret;
  			}
  		else return false;
@@ -270,7 +272,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 		if (isLocal(p))
 			removeAllLocal(p);
 		else
-			halo.removeFromRemote(p);
+			halo.removeFromRemote(p);			// FIXME: maybe rename to removeAllFromRemote?
 		}
 
 	/** Adds an agent to the given point and schedules it.  This point can be outside
@@ -443,8 +445,6 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 			}
 		else if (isLocal(from))
 			{
-			int fromidx = storage.getFlatIdx(halo.toLocalPoint(from));
-			
 			if (from.equals(to))
 				{
 				// do nothing
