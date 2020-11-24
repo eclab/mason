@@ -1,10 +1,7 @@
 package sim.field.grid;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.function.IntFunction;
-
 import sim.engine.DObject;
 import sim.engine.DSimState;
 import sim.engine.DistributedIterativeRepeat;
@@ -12,7 +9,6 @@ import sim.engine.DistributedTentativeStep;
 import sim.engine.Stoppable;
 import sim.engine.Stopping;
 import sim.field.DAbstractGrid2D;
-import sim.field.DGrid;
 import sim.field.HaloGrid2D;
 import sim.field.Promise;
 import sim.field.RemoteFulfillable;

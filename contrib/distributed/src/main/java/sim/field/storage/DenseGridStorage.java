@@ -118,7 +118,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 		final int idx = getFlatIdx(p);
 
 		if (array[idx] != null) {
-			removeFast(array, obj);
+			removeFast(array[idx], obj);
 			if (array[idx].size() == 0 && removeEmptyBags)
 				array[idx] = null;
 		}
@@ -136,7 +136,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 				T t = array[idx].get(i);
 				if (t.getID() == id) 
 					{
-					removeFast(array, i);
+					removeFast(array[idx], i);
 					if (array[idx].size() == 0 && removeEmptyBags)
 						array[idx] = null;
 					break;
