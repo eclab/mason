@@ -99,7 +99,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 	boolean removeFast(ArrayList<T> list, int pos)
 		{
 		int top = list.size() - 1;
-		if (top == pos)
+		if (top != pos)
 			list.set(pos, list.get(top));
 		return list.remove(top) != null;
 		}
