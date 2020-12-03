@@ -447,6 +447,384 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	//// We can't getNeighborsWithinDistance any more very easily
 	//// But we need to figure out how to do something like that (see
 	//// Continuous2D.java)
+	
+    final static double SQRT_2_MINUS_1_DIV_2 = (Math.sqrt(2.0) - 1) * 0.5;  // about 0.20710678118654757, yeesh, I hope my math's right.
+    final static int NEAREST_NEIGHBOR_GAIN = 10;  // the ratio of searches before we give up and just hand back the entire allObjects bag.
+    public Bag getNearestNeighbors(Double2D position, int atLeastThisMany, final boolean toroidal, final boolean nonPointObjects, boolean radial, Bag result)
+
+    {
+    if (toroidal) throw new InternalError("Toroidal not presently supported in getNearestNeighbors");
+    if (result == null) result = new Bag(atLeastThisMany);
+    else result.clear();
+    int maxSearches = this.storage.m.size() / NEAREST_NEIGHBOR_GAIN;
+    
+
+    if (atLeastThisMany >= this.storage.m.size())  { result.clear(); result.addAll(this.storage.m.keySet()); return result; }
+
+    Int2D d = this.storage.discretize(position);
+    int x1 = d.x;
+    int x2 = d.x;
+    int y1 = d.y;
+    int y2 = d.y;
+    int searches = 0;
+    
+    //MutableInt2D speedyMutableInt2D = new MutableInt2D();
+
+
+    // grab the first box
+        
+    if (searches >= maxSearches) { result.clear(); result.addAll(this.storage.m.keySet()); return result; }
+    searches++;
+    //speedyMutableInt2D.x = x1; speedyMutableInt2D.y = y1;
+    //Bag temp = getRawObjectsAtLocation(speedyMutableInt2D);
+	Double2D pt = new Double2D(x1, y1);
+    ArrayList temp = this.storage.getObjects(pt);
+    
+    if (temp!= null) result.addAll(temp);
+    
+    boolean nonPointOneMoreTime = false;
+    // grab onion layers
+    while(true)
+        {
+        if (result.numObjs >= atLeastThisMany)
+            {
+            if (nonPointObjects && !nonPointOneMoreTime)  // need to go out one more onion layer
+                nonPointOneMoreTime = true;
+            else break;
+            }
+            
+        x1--; y1--; x2++; y2++;
+        // do top onion layer
+        //speedyMutableInt2D.y = y1;
+        pt = new Double2D(pt.x, y1);
+        
+        for(int x = x1 ; x <= x2 /* yes, <= */ ; x++)
+            {
+            if (searches >= maxSearches) { result.clear(); result.addAll(this.storage.m.keySet()); return result; }
+            searches++;
+            //speedyMutableInt2D.x = x;
+            //pt.x = x;
+            pt = new Double2D(x, pt.y);
+
+            temp = this.storage.getObjects(pt);
+            if (temp!=null) result.addAll(temp);
+            }
+
+        // do bottom onion layer
+        //pt.y = y2;
+        pt = new Double2D(pt.x, y2);
+
+        for(int x = x1 ; x <= x2 /* yes, <= */ ; x++)
+            {
+            if (searches >= maxSearches) { result.clear(); result.addAll(this.storage.m.keySet()); return result; }
+            searches++;
+            //pt.x = x;
+            pt = new Double2D(x, pt.y);
+
+            temp = this.storage.getObjects(pt);
+            if (temp!=null) result.addAll(temp);
+            }
+            
+        // do left onion layer not including corners
+        //pt.x = x1;
+        pt = new Double2D(x1, pt.y);
+
+        for(int y = y1 + 1 ; y <= y2 - 1 /* yes, <= */ ; y++)
+            {
+            if (searches >= maxSearches) { result.clear(); result.addAll(this.storage.m.keySet()); return result; }
+            searches++;
+            //pt.y = y;
+            pt = new Double2D(pt.x, y);
+
+            temp = this.storage.getObjects(pt);
+            if (temp!=null) result.addAll(temp);
+            }
+
+        // do right onion layer not including corners
+        //pt.x = x2;
+        pt = new Double2D(x2, pt.y);
+
+        for(int y = y1 + 1 ; y <= y2 - 1 /* yes, <= */ ; y++)
+            {
+            if (searches >= maxSearches) { result.clear(); result.addAll(this.storage.m.keySet()); return result; }
+            searches++;
+            //pt.y = y;
+            pt = new Double2D(pt.x, y);
+
+            temp = this.storage.getObjects(pt);
+            if (temp!=null) result.addAll(temp);
+            }
+        }
+        
+    if (!radial) return result;
+    
+    // Now grab some more layers, in a "+" form around the box.  We need enough extension that it includes
+    // the circle which encompasses the box.  To do this we need to compute 'm', the maximum extent of the
+    // extension.  Let 'n' be the width of the box.
+    //
+    // m = sqrt(n^2 + n^2)
+    //
+    // Now we need to subtract m from n, divide by 2, take the floor, and add 1 for good measure.  That's the size of
+    // the extension in any direction:
+    //
+    // e = floor(m-n) + 1
+    // 
+    // this comes to:
+    //
+    // e = floor(n * (sqrt(2) - 1)/2 ) + 1
+    //
+    
+    int n = (x2 - x1 + 1);  // always an odd number
+    int e = (int)(Math.floor(n * SQRT_2_MINUS_1_DIV_2)) + 1;
+    
+    // first determine: is it worth it?
+    int numAdditionalSearches = (x2 - x1 + 1) * e * 4;
+    if (searches + numAdditionalSearches >= maxSearches) { result.clear(); result.addAll(this.storage.m.keySet()); return result; }
+    
+    // okay, let's do the additional searches
+    for(int x = 0 ; x < x2 - x1 + 1 /* yes, <= */ ; x++)
+        {
+        for(int y = 0 ; y < e; y++)
+            {
+            // top
+            //pt.x = x1 + x ;
+            //pt.y = y1 - e - 1 ;
+            pt = new Double2D(x1 + x, y1 - e - 1);
+
+            temp = this.storage.getObjects(pt);
+            if (temp!=null) result.addAll(temp);
+
+            // bottom
+           // pt.x = x1 + x ;
+            //pt.y = y2 + e + 1 ;
+            pt = new Double2D(x1 + x , y2 + e + 1);
+
+            temp = this.storage.getObjects(pt);
+            if (temp!=null) result.addAll(temp);
+
+            // left
+            //pt.x = x1 - e - 1 ;
+            //pt.y = y1 + x;
+            pt = new Double2D(x1 - e - 1, y1 + x);
+            
+            temp = this.storage.getObjects(pt);
+            if (temp!=null) result.addAll(temp);
+
+            // right
+            //pt.x = x2 + e + 1 ;
+            //pt.y = y1 + x;
+            pt = new Double2D(x2 + e + 1, y1 + x);
+
+            temp = this.storage.getObjects(pt);
+            if (temp!=null) result.addAll(temp);
+            }
+        }
+        
+    // it better have it now!
+    return result;
+    }
+	
+    public Bag getNeighborsExactlyWithinDistance(final Double2D position, final double distance, final boolean toroidal, final boolean radial, final boolean inclusive, Bag result)
+            {
+            result = getNeighborsWithinDistance(position, distance, toroidal, false, result);
+            int numObjs = result.numObjs;
+            Object[] objs = result.objs;
+            double distsq = distance*distance;
+            if (radial) 
+                for(int i=0;i<numObjs;i++)
+                    {
+                    double d = 0;
+                    Double2D loc = this.storage.getLocation((T)objs[i]);
+                    if (toroidal) d = tds(position, loc);
+                    else d = position.distanceSq(loc);
+                    if (d > distsq || (!inclusive && d >= distsq)) 
+                        { result.remove(i); i--; numObjs--; }
+                    }
+            else 
+                for(int i=0;i<numObjs;i++)
+                    {
+                    Double2D loc = this.storage.getLocation((T)objs[i]);
+                    double minx = 0;
+                    double miny = 0;
+                    if (toroidal)
+                        {
+                        minx = tdx(loc.x, position.x);
+                        miny = tdy(loc.y, position.y);
+                        }
+                    else
+                        {
+                        minx = loc.x - position.x;
+                        miny = loc.y - position.y;
+                        }
+                    if (minx < 0) minx = -minx;
+                    if (miny < 0) miny = -miny;
+                    if ((minx > distance || miny > distance) ||
+                        (!inclusive && ( minx >= distance || miny >= distance)))
+                        { result.remove(i); i--;  numObjs--; }
+                    }
+            return result;
+            }
+	
+    public Bag getNeighborsWithinDistance( Double2D position, final double distance, final boolean toroidal, final boolean nonPointObjects, Bag result)
+            {
+            // push location to within legal boundaries
+    	
+    	
+    	    //Should toroidal apply within a partition?  I don't think so
+            //if (toroidal && (position.x >= width || position.y >= height || position.x < 0 || position.y < 0))
+            //   position = new Double2D(tx(position.x), ty(position.y));
+            
+            double discDistance = distance / this.storage.getDiscretization();
+            double discX = position.x / this.storage.getDiscretization();
+            double discY = position.y / this.storage.getDiscretization();
+            
+            if (nonPointObjects)
+                {
+                // We assume that the discretization is larger than the bounding
+                // box width or height for the object in question.  In this case, then
+                // we can just increase the range by 1 in each direction and we are
+                // guaranteed to have the location of the object in our collection.
+                discDistance++;
+                }
+
+            final int expectedBagSize = 1;  // in the future, pick a smarter bag size?
+            if (result!=null) result.clear();
+            else result = new Bag(expectedBagSize);
+            
+            ArrayList temp;
+        
+
+            /*          
+            // do the loop
+            if( toroidal )
+                {
+                final int iWidth = (int)(StrictMath.ceil(width / this.storage.getDiscretization()));
+                final int iHeight = (int)(StrictMath.ceil(height / this.storage.getDiscretization()));
+
+                // we're using StrictMath.floor instead of Math.floor because
+                // Math.floor just calls StrictMath.floor, and so using the
+                // StrictMath version may help in the inlining (one function
+                // to inline, not two).  They should be identical in function anyway.
+                
+                int minX = (int) StrictMath.floor(discX - discDistance);
+                int maxX = (int) StrictMath.floor(discX + discDistance);
+                int minY = (int) StrictMath.floor(discY - discDistance);
+                int maxY = (int) StrictMath.floor(discY + discDistance);
+
+                if (position.x + distance >= width && maxX == iWidth - 1)  // oops, need to recompute wrap-around if width is not a multiple of discretization
+                    maxX = 0;
+
+                if (position.y + distance >= height && maxY == iHeight - 1)  // oops, need to recompute wrap-around if height is not a multiple of discretization
+                    maxY = 0;
+
+
+
+                // we promote to longs so that maxX - minX can't totally wrap around by accident
+                if ((long)maxX - (long)minX >= iWidth)  // total wrap-around.
+                    { minX = 0; maxX = iWidth-1; }
+                if ((long)maxY - (long)minY >= iHeight) // similar
+                    { minY = 0; maxY = iHeight-1; }
+
+                // okay, now tx 'em.
+                final int tmaxX = toroidal(maxX,iWidth);
+                final int tmaxY = toroidal(maxY,iHeight);
+                final int tminX = toroidal(minX,iWidth);
+                final int tminY = toroidal(minY,iHeight);
+                            
+                int x = tminX ;
+                do
+                    {
+                    int y = tminY;
+                    do
+                        {
+                        // grab location
+                        speedyMutableInt2D.x=x;
+                        speedyMutableInt2D.y=y;
+                        temp = getRawObjectsAtLocation(speedyMutableInt2D);
+                        if( temp != null && !temp.isEmpty())
+                            {
+                            // a little efficiency: add if we're 1, addAll if we're > 1, 
+                            // do nothing if we're <= 0 (we're empty)
+                            final int n = temp.numObjs;
+                            if (n==1) result.add(temp.objs[0]);
+                            else result.addAll(temp);
+                            }
+
+                        // update y
+                        if( y == tmaxY )
+                            break;
+                        else if( y == iHeight-1 )
+                            y = 0;
+                        else
+                            y++;
+                        }
+                    while(true);
+
+                    // update x
+                    if( x == tmaxX )
+                        break;
+                    else if( x == iWidth-1 )
+                        x = 0;
+                    else
+                        x++;
+                    }
+                while(true);
+                }
+            
+            */
+            
+           // else
+             //   {
+                // we're using StrictMath.floor instead of Math.floor because
+                // Math.floor just calls StrictMath.floor, and so using the
+                // StrictMath version may help in the inlining (one function
+                // to inline, not two).  They should be identical in function anyway.
+                
+                int minX = (int) StrictMath.floor(discX - discDistance);
+                int maxX = (int) StrictMath.floor(discX + discDistance);
+                int minY = (int) StrictMath.floor(discY - discDistance);
+                int maxY = (int) StrictMath.floor(discY + discDistance);
+                
+                
+
+
+                // for non-toroidal, it is easier to do the inclusive for-loops
+                for(int x = minX; x<= maxX; x++)
+                    for(int y = minY ; y <= maxY; y++)
+                        {
+
+                        
+                        //inLocalAndHalo do we check this?
+                    	Double2D pt = new Double2D(x, y);
+                        temp = this.storage.getObjects(pt);
+                        
+                        if( temp != null && !temp.isEmpty())
+                            {
+                            // a little efficiency: add if we're 1, addAll if we're > 1, 
+                            // do nothing if we're <= 0 (we're empty)
+                            final int n = temp.size();
+                            if (n==1) result.add(temp.get(0));
+                            else result.addAll(temp);
+                            }
+                        }
+               // }
+
+            return result;
+            }
+    
+    public Bag getNeighborsExactlyWithinDistance(final Double2D position, final double distance)
+    {
+    return getNeighborsExactlyWithinDistance(position, distance, false, true, true, null);
+    }
+
+    public Bag getNeighborsExactlyWithinDistance(final Double2D position, final double distance, final boolean toroidal)
+
+    {
+    return getNeighborsExactlyWithinDistance(position, distance, toroidal, true, true, null);
+    }
+
+    
+	
 
 	//// FIXME SEAN:
 	//// Width and height are ints :-(
