@@ -313,6 +313,7 @@ public class DSimState extends SimState {
 					schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
 			}
 		}
+		transporter.objectQueue.clear();
 
 		// Wait that all nodes have registered their new objects in the distributed
 		// registry.
@@ -332,9 +333,8 @@ public class DSimState extends SimState {
 //				e.printStackTrace();
 //			}
 
-		transporter.objectQueue.clear();
+		
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
-
 		loadBalancing();
 	}
 

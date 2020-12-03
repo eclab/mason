@@ -95,7 +95,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	boolean removeFast(ArrayList<T> list, int pos)
 		{
 		int top = list.size() - 1;
-		if (top == pos)
+		if (top != pos)
 			list.set(pos, list.get(top));
 		return list.remove(top) != null;
 		}
@@ -116,9 +116,9 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 		if (!isLocal(p)) throwNotLocalException(p);
 		ArrayList<T>[] array = storage.storage;
 		int idx = storage.getFlatIdx(halo.toLocalPoint(p));
-
 		if (array[idx] != null)
 			{
+//			return array[idx].remove(t);
 			if (removeFast(array[idx], t))
 				{
 				if (array[idx].size() == 0 && storage.removeEmptyBags)
