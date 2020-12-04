@@ -444,6 +444,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 		final ArrayList<T> objs = new ArrayList<T>();
 		int[] offset = { 1, 1 };
 
+		//final Int2D ul = discretize(r.ul()), br = discretize(r.br()).add(offset);
 		final Int2D ul = discretize(r.ul()), br = discretize(r.br()).add(offset);
 
 //		for (final Int2D dp : IntPointGenerator.getBlock(ul, br)) {
@@ -462,7 +463,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 
 		for (int x = ul.x; x < br.x; x++) {
 			for (int y = ul.y; y < br.y; y++) {
-				for (T obj : getCelldp(discretize(new Int2D(x, y))).values()) { //need to offset/discretize!
+				for (T obj : getCelldp(x, y).values()) { //need to offset/discretize!
 					if (r.contains(m.get(obj.getID()))) {
 						objs.add(obj);
 					}
