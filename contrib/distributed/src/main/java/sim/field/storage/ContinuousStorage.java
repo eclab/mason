@@ -89,7 +89,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 				
 				//m.get(obj) is null?
 
-				objs.add(m.get(obj).subtract(shape.ul().toArray()).subtract(rect.ul().toArray()));
+				objs.add(m.get(obj.getID()).subtract(shape.ul().toArray()).subtract(rect.ul().toArray()));
 			}
 			ret.add(objs);
 		}
@@ -145,6 +145,27 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 //<<<<<<< HEAD
 	// Get the corresponding cell given a continuous point
 	public HashMap<Long, T> getCell(final Double2D p) {
+		
+		try {
+			storage[getFlatIdx(discretize(p))] = storage[getFlatIdx(discretize(p))]; //check for null pointer
+			
+		}
+		
+		catch(Exception e) {
+			System.out.println("shape.ul : "+shape.ul());
+			System.out.println("shape.br : "+shape.br());
+
+			System.out.println("getCell p : "+p);
+			System.out.println("getCell discretize(p) : "+discretize(p));
+			System.out.println("getFlatIdx(discretize(p)) : "+getFlatIdx(discretize(p)));
+			System.out.println("storage size : "+storage.length);
+			
+			System.out.println(e);
+			//System.exit(-1);
+			
+		}
+		
+
 		return getCelldp(discretize(p));
 //=======
 //	// Put the object to the given point
@@ -223,6 +244,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 
 	// Get the corresponding cell given a discretized point
 	public HashMap<Long, T> getCelldp(final Int2D p) {
+
 		return storage[getFlatIdx(p)];
 	}
 
@@ -390,7 +412,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 
 	// Remove the object from the storage
 	public void removeObject(final T obj) {
-		getCell(m.remove(obj.getID())).remove(obj);
+		getCell(m.remove(obj.getID())).remove(obj.getID());
 	}
 
 	// Get all the objects at the given point
@@ -440,7 +462,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 
 		for (int x = ul.x; x < br.x; x++) {
 			for (int y = ul.y; y < br.y; y++) {
-				for (T obj : getCelldp(x, y).values()) {
+				for (T obj : getCelldp(discretize(new Int2D(x, y))).values()) { //need to offset/discretize!
 					if (r.contains(m.get(obj.getID()))) {
 						objs.add(obj);
 					}
