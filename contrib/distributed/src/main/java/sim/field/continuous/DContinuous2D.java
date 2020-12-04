@@ -54,6 +54,11 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	}
 
 
+	public ContinuousStorage getStorage()
+	{
+		return storage;
+	}
+	
 	/** Returns the local location of the given object, if any, else null.*/
 	public Double2D getObjectLocationLocal(T t)
 		{
