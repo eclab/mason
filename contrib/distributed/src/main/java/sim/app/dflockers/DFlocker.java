@@ -148,16 +148,16 @@ public class DFlocker extends DSteppable implements Remote, Oriented2D {
 
 		// try {
 		//b = dFlockers.flockers.getNeighborsWithin(this, DFlockers.neighborhood);
-		b = dFlockers.flockers.getStorage().getNeighborsWithin(this, DFlockers.neighborhood); //this works too
+		//b = dFlockers.flockers.getStorage().getNeighborsWithin(this, DFlockers.neighborhood); //this works too
 
 		//this is the newest version
-		/*
+		
 		Bag b_bag = dFlockers.flockers.getNeighborsWithinDistance(this.loc, (double)DFlockers.neighborhood, true, true, null);
 		for(int i=0; i<b_bag.numObjs; i++)
 		{
 			b.add((DFlocker)b_bag.objs[i]);
 		}
-		*/
+		
 		
 		
 		

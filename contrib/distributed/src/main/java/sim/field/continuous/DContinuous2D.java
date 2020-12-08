@@ -36,7 +36,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 
 	private HaloGrid2D<T, ContinuousStorage<T>> halo;
 	ContinuousStorage<T> storage;
-	boolean removeEmptyBags = true;
+	boolean removeEmptyBags = false;
 	
 	public DContinuous2D(PartitionInterface ps, int aoi, double discretization, DSimState state) 
 		{
@@ -195,7 +195,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			{
 			HashMap<Long, T> cell = getCellLocal(loc);
 			if (cell != null)
-				cell.remove(t);
+				cell.remove(t.getID());
 			if (cell.isEmpty() && removeEmptyBags)
 				storage.setCell(loc, null);
 			return true;
@@ -212,7 +212,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		else
 			{
 			if (cell != null)
-				cell.remove(t);
+				cell.remove(t.getID());
 			if (cell.isEmpty() && removeEmptyBags)
 				storage.setCell(p, null);
 			return true;
@@ -366,6 +366,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		If the agent is not presently AT from, then the from location is undisturbed. */
 	public void moveAgent(Double2D to, T agent) 
 		{
+
 		if (agent == null)
 			{
 			throw new RuntimeException("Cannot move null agent to " + to);
@@ -375,8 +376,17 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			Double2D p = getObjectLocationLocal(agent);
 			if (isLocal(to))
 				{
+				//System.out.println(agent);
+				//HashMap a = storage.getCell(p);
+				//HashMap b = storage.getCell(to);
 				removeLocal(agent);
+				//HashMap c = storage.getCell(p);
+				//HashMap d = storage.getCell(to);
 				addLocal(to, agent);
+				//HashMap e = storage.getCell(p);
+				//HashMap f = storage.getCell(to);
+				//storage.same_agent_multiple_cells("dolphin1 a :"+a+" b: "+b+" c: "+c+" d: "+d+" e: "+e+" f: "+f+" agent "+agent+" to "+to+" p "+p);
+
 				}
 			else
 				{
@@ -629,6 +639,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
     return result;
     }
 	
+    //test this!
     public Bag getNeighborsExactlyWithinDistance(final Double2D position, final double distance, final boolean toroidal, final boolean radial, final boolean inclusive, Bag result)
             {
             result = getNeighborsWithinDistance(position, distance, toroidal, false, result);
@@ -790,7 +801,11 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
                 int minY = (int) StrictMath.floor(discY - discDistance);
                 int maxY = (int) StrictMath.floor(discY + discDistance);
                 
-                
+                //control bounds to match storage
+                minX = Math.max(minX, this.storage.getShape().ul().x);
+                minY = Math.max(minY, this.storage.getShape().ul().y);
+                maxX = Math.min(maxX, this.storage.getShape().br().x);
+                maxY = Math.min(maxY, this.storage.getShape().br().y);
 
 
                 // for non-toroidal, it is easier to do the inclusive for-loops
@@ -801,7 +816,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
                         
                         //inLocalAndHalo do we check this?
                     	Double2D pt = new Double2D(x, y);
-                        temp = this.storage.getObjects(pt);
+                        temp = this.storage.getObjects(pt);  //control for range here!
                         
                         if( temp != null && !temp.isEmpty())
                             {

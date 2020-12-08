@@ -82,6 +82,7 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	public abstract String toString();
 
 	public abstract Serializable pack(MPIParam mp) throws MPIException;
+	
 
 	public abstract int unpack(MPIParam mp, Serializable buf) throws MPIException;
 
@@ -171,6 +172,9 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 //		}
 //		return sum;
 	}
+
+	//public abstract void check_m_and_storage_match(String s); //test method
+	//public abstract void same_agent_multiple_cells(String string); //test method
 
 	/**
 	 * @param size

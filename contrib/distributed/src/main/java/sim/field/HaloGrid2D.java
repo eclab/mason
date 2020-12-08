@@ -540,17 +540,38 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 	}
 
 	public void syncHalo() throws MPIException, RemoteException {
+		
+
+
+		
 		final Serializable[] sendObjs = new Serializable[numNeighbors];
-		for (int i = 0; i < numNeighbors; i++)
+		for (int i = 0; i < numNeighbors; i++) {
+
 			sendObjs[i] = localStorage.pack(neighbors.get(i).sendParam);
+		}
+		
+
 
 		final ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>neighborAllToAll(partition, sendObjs);
 
+
+
+		
 		for (int i = 0; i < numNeighbors; i++)
 			localStorage.unpack(neighbors.get(i).recvParam, recvObjs.get(i));
+		
 
-		for (final Pair<RemoteFulfillable, Serializable> pair : getQueue)
+
+
+		for (final Pair<RemoteFulfillable, Serializable> pair : getQueue) {
 			pair.a.fulfill(pair.b);
+			//System.out.println(pair);
+		}
+		
+
+
+
+
 		getQueue.clear();
 	}
 

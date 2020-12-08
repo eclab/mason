@@ -2,9 +2,11 @@ package sim.field.storage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import sim.app.dflockers.DFlocker;
 import sim.engine.DObject;
 import sim.field.partitioning.IntRect2D;
 import sim.util.*;
@@ -86,10 +88,11 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 				// Append the object's location relative to the rectangle
 //				objs.add(m.get(obj.getID()).rshift(shape.ul().toArray()).rshift(rect.ul().toArray()));
 
-				
 				//m.get(obj) is null?
 
 				objs.add(m.get(obj.getID()).subtract(shape.ul().toArray()).subtract(rect.ul().toArray()));
+				
+
 			}
 			ret.add(objs);
 		}
@@ -100,21 +103,30 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 	public int unpack(final MPIParam mp, final Serializable buf) {
 		final ArrayList<ArrayList<Serializable>> objs = (ArrayList<ArrayList<Serializable>>) buf;
 
+
 		// Remove any objects that are in the unpack area (overwrite the area)
 		// shift the rect with local coordinates back to global coordinates
 		for (final IntRect2D rect : mp.rects)
 			removeObjects(rect.shift(shape.ul().toArray()));
+		
+
 
 		for (int k = 0; k < mp.rects.size(); k++)
-			for (int i = 0; i < objs.get(k).size(); i += 2)
+			for (int i = 0; i < objs.get(k).size(); i += 2) 
 				addToLocation((T) objs.get(k).get(i), ((Double2D) objs.get(k).get(i + 1))
 						.add(mp.rects.get(k).ul().toArray()).add(shape.ul().toArray()));
+		
+
+				
+			
 
 //		return objs.stream().mapToInt(x -> x.size()).sum();
 		int sum = 0;
 		for (int i = 0; i < objs.size(); i++) {
 			sum += objs.get(i).size();
 		}
+		
+
 		return sum;
 	}
 
@@ -161,7 +173,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 			System.out.println("storage size : "+storage.length);
 			
 			System.out.println(e);
-			//System.exit(-1);
+			System.exit(-1);
 			
 		}
 		
@@ -387,6 +399,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 
 	// Put the object to the given point
 	public void addToLocation(final T obj, final Double2D p) {
+		//System.out.println("added called for "+obj+" at point "+p);
 		final Double2D old = m.put(obj.getID(), p);
 		if (old != null)
 			getCell(old).remove(obj);
@@ -394,6 +407,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 	}
 
 	public void removeObject(Double2D p, final T obj) {
+		//System.out.println("remove called for "+obj+" at point "+p);
 		getCell(m.remove(obj.getID())).remove(obj);
 	}
 
@@ -412,15 +426,47 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 
 	// Remove the object from the storage
 	public void removeObject(final T obj) {
-		getCell(m.remove(obj.getID())).remove(obj.getID());
+        if (m.get(obj.getID()) == null) {
+        	System.out.println("removeObject");
+        	System.out.println("ul : "+this.shape.ul());
+        	System.out.println("br : "+this.shape.br());
+        	System.out.println("obj : "+obj);
+        	System.out.println(((DFlocker)obj).loc);
+        	//System.exit(-1);
+        }
+        
+
+		
+		Double2D dd = m.remove(obj.getID());
+		HashMap a = getCell(dd);
+		
+		
+		if (!a.containsKey(obj.getID())) {
+			System.out.println("obj not in a!");
+			System.exit(-1);
+		}
+		
+		Object o = a.remove(obj.getID());  //this is the line
+		if (o == null) {
+			System.out.println("o is null");
+			System.exit(-1);
+		}
+		
+		//ArrayList b = this.getObjects(dd);
+		
+		
+
 	}
 
 	// Get all the objects at the given point
 	public ArrayList<T> getObjects(final Double2D p) {
 		final ArrayList<T> objects = new ArrayList<>();
+
+		if (getCell(p) != null) {
 		for (final T t : getCell(p).values()) {
 			if (m.get(t.getID()).equals(p))
 				objects.add(t);
+		}
 		}
 		return objects;
 	}
@@ -444,8 +490,8 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 		final ArrayList<T> objs = new ArrayList<T>();
 		int[] offset = { 1, 1 };
 
-		//final Int2D ul = discretize(r.ul()), br = discretize(r.br()).add(offset);
 		final Int2D ul = discretize(r.ul()), br = discretize(r.br()).add(offset);
+		//final Int2D ul = discretize(r.ul()), br = discretize(r.br());
 
 //		for (final Int2D dp : IntPointGenerator.getBlock(ul, br)) {
 // //			getCelldp(dp)
@@ -463,15 +509,147 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 
 		for (int x = ul.x; x < br.x; x++) {
 			for (int y = ul.y; y < br.y; y++) {
-				for (T obj : getCelldp(x, y).values()) { //need to offset/discretize!
+				
+				HashMap<Long, T> cell = getCelldp(x, y);
+				
+				if (cell != null) {
+					
+				
+				for (T obj : cell.values()) { //need to offset/discretize!
+					
+					if (m.get(obj.getID()) == null) {
+						System.out.println(this.shape);
+						System.out.println("r : "+r);
+						System.out.println("x : "+x);
+						System.out.println("y : "+y);
+						System.out.println("ul : "+ul);
+						System.out.println("br : "+br);
+						System.out.println("obj loc: "+this.getLocation(obj));
+						System.out.println("dflocker loc : "+((DFlocker)obj).loc);
+						System.out.println("dflocker disc loc : "+discretize(((DFlocker)obj).loc));
+						System.out.println("----");
+						System.out.println(obj);
+						System.out.println(m.keySet());
+						//System.exit(-1);
+						
+					}
+					
+					if (m.get(obj.getID()) == null){
+						System.out.println("-!!!!-");
+						System.out.println(this);
+					}
+					
 					if (r.contains(m.get(obj.getID()))) {
 						objs.add(obj);
 					}
+				}
 				}
 			}
 		}
 
 		return objs;
 	}
+	
+	/*
+	public void check_m_and_storage_match(String s) {
+		
+		for (long id : m.keySet()) {
+			Double2D d = m.get(id);
+		    if (this.getCell(d) == null) {
+		    	System.out.println(s);
+		    	System.out.println("Obj "+id+" in m NOT in storage");
+		    	System.exit(-1);
+		    }
+		}
+		
+		//for (Int2D i : this.shape.getPointList()) {			
+		//}
+		
+		int[] offset = { 1, 1 };
 
+		final Int2D ul = discretize(this.shape.ul()), br = discretize(this.shape.br()).add(offset);
+
+
+		for (int x = ul.x; x < br.x; x++) {
+			for (int y = ul.y; y < br.y; y++) {
+				Collection<T> obj_list = getCelldp(x, y).values();
+				Collection<T> obj_list2 = getCelldp(new Int2D(x, y)).values();
+				
+				
+				
+				for (T obj : obj_list) {
+					 if (!m.containsKey(obj.getID())) {
+					    System.out.println(s);
+					    System.out.println("Obj "+obj.getID()+" in storage NOT in m");
+					    System.out.println(x+" "+y);
+					    System.out.println("ul : "+ul);
+					    System.out.println("br : "+br);
+					    System.out.println(obj_list);
+					    System.out.println(obj_list2);
+					    System.exit(-1);						 
+					 }
+				}
+					
+				
+				}
+		}
+		
+		
+	}
+	*/
+	
+    /*
+	public void same_agent_multiple_cells(String s) {
+		
+		
+	    ArrayList full_agent_list = new ArrayList();
+	    ArrayList<String> loc_list = new ArrayList<String>();
+		int[] offset = { 1, 1 };
+
+		final Int2D ul = discretize(this.shape.ul()), br = discretize(this.shape.br()).add(offset);
+
+
+		for (int x = ul.x; x < br.x; x++) {
+			for (int y = ul.y; y < br.y; y++) {
+				Collection<T> obj_list = new ArrayList<T>();
+				
+				HashMap<Long, T> a = getCelldp(x, y);
+				if (a != null) {
+					obj_list = a.values();
+
+				}
+				
+				for (T obj : obj_list) {
+					if (full_agent_list.contains(obj.getID())){
+						System.out.println(s);
+						System.out.println("same agent in multiple cells!");
+						System.out.println(obj);
+						System.out.println(loc_list.get(full_agent_list.indexOf(obj.getID())));
+						System.out.println("new xy"+x+" "+y);
+						System.out.println(ul);
+						System.out.println(br);
+						System.exit(-1);
+					}
+					else
+					{
+						full_agent_list.add(obj.getID());
+						loc_list.add(x+" "+y);
+					}
+				}
+					
+					
+				   
+				   
+					
+				}
+			
+			}
+		
+	}
+	*/
+	
+	
+	
+	
+	
 }

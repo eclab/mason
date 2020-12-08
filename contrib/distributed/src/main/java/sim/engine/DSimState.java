@@ -201,6 +201,9 @@ public class DSimState extends SimState {
 		Timing.stop(Timing.LB_RUNTIME);
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
 
+		
+
+
 		try {
 			// Wait for all agents globally to stop moving
 			MPI.COMM_WORLD.barrier();
@@ -226,12 +229,18 @@ public class DSimState extends SimState {
 
 			// Stop the world and wait for the Visualizer to unlock
 //			MPI.COMM_WORLD.barrier();
+			
+
 
 			// Sync all the Remove and Add queues for RMI
 			syncRemoveAndAdd();
+			
+
 
 			transporter.sync();
 			// TODO: Load RMI queue
+			
+
 
 			if (withRegistry) {
 				// All nodes have finished the synchronization and can unregister exported
@@ -251,6 +260,8 @@ public class DSimState extends SimState {
 				DRegistry.getInstance().clearMigratedNames();
 
 				MPI.COMM_WORLD.barrier();
+				
+
 			}
 		} catch (ClassNotFoundException | MPIException | IOException e) {
 			e.printStackTrace();
@@ -261,10 +272,14 @@ public class DSimState extends SimState {
 			// objects on new nodes.
 			try {
 				MPI.COMM_WORLD.barrier();
+				
+
 			} catch (MPIException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			
 		}
 
 		for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
@@ -311,6 +326,8 @@ public class DSimState extends SimState {
 					schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
 				else
 					schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
+				
+
 			}
 		}
 		transporter.objectQueue.clear();
@@ -336,7 +353,12 @@ public class DSimState extends SimState {
 		
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
 		loadBalancing();
+		
+
 	}
+
+	
+
 
 	private void loadBalancing() {
 		if (schedule.getSteps() > 0 && (schedule.getSteps() % balanceInterval == 0)) {
@@ -438,7 +460,7 @@ public class DSimState extends SimState {
 		MPI.COMM_WORLD.barrier();
 		// System.out.println("pid "+partition.getPid()+"
 		// old_partitioning"+old_partition);
-		System.out.println("pid " + partition.getPid() + " new partition" + partition.getBounds());
+		//System.out.println("pid " + partition.getPid() + " new partition" + partition.getBounds());
 
 		for (Int2D p : old_partition.getPointList()) {
 			if (!partition.getBounds().contains(p)) {
@@ -450,7 +472,7 @@ public class DSimState extends SimState {
 
 						ContinuousStorage st = (ContinuousStorage) ((HaloGrid2D) field).getStorage();
 						Double2D doublep = new Double2D(p);
-						HashSet agents = (HashSet) st.getCell(doublep).clone(); // create a clone to avoid the
+						HashSet agents = new HashSet(((HashMap) st.getCell(doublep).clone()).values()); // create a clone to avoid the
 						// ConcurrentModificationException
 						for (Object a : agents) {
 							NumberND loc = st.getLocation((DObject) a);
@@ -480,15 +502,19 @@ public class DSimState extends SimState {
 											stopping,
 											iterativeRepeat.getTime(), iterativeRepeat.getInterval(),
 											iterativeRepeat.getOrdering());
-									transporter.migrateRepeatingAgent(distributedIterativeRepeat, toP, p,
-											((HaloGrid2D) field).fieldIndex);
+									
+									//transporter.migrateRepeatingAgent(distributedIterativeRepeat, toP, p,((HaloGrid2D) field).fieldIndex);
+									transporter.migrateRepeatingAgent(distributedIterativeRepeat, locToP, loc,((HaloGrid2D) field).fieldIndex);
+
 									iterativeRepeat.stop();
 								}
 
 								migratedAgents.add(a);
 								System.out.println("PID: " + partition.pid + " processor " + old_pid + " move " + a
-										+ " from " + loc + " (point " + p + ") to processor " + toP);
+										+ " from " + loc + " (point " + p + ") to processor " + toP); //agent not being removed from getCell here
 								st.removeObject((DObject) a);
+								//System.out.println(st);
+								//System.out.println("---");
 							}
 						}
 					} else if (haloGrid2D.getStorage() instanceof ObjectGridStorage) {
@@ -845,4 +871,17 @@ public class DSimState extends SimState {
 			return ret;
 		}
 	}
+	
+	//delete this!
+	/*
+	private void check_all_for_same_agents(String s) {
+		// TODO Auto-generated method stub
+		for (Synchronizable field : fieldRegistry) {
+			HaloGrid2D haloGrid2D = (HaloGrid2D) field;
+			ContinuousStorage store = (ContinuousStorage)(haloGrid2D.getStorage());
+		    store.same_agent_multiple_cells(s);
+		}
+		
+	}
+	*/
 }
