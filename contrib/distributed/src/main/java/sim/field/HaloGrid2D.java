@@ -22,6 +22,7 @@ import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.QuadTreePartition;
 import sim.field.storage.ContinuousStorage;
 import sim.field.storage.GridStorage;
+import sim.util.Double2D;
 import sim.util.GroupComm;
 import sim.util.Int2D;
 import sim.util.MPIParam;
@@ -653,15 +654,36 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 	}
 
 	public void removeLocal(NumberND p, long id) {
-		if (localStorage instanceof ContinuousStorage)
+		if (localStorage instanceof ContinuousStorage) {
+			int old_size = ((ContinuousStorage)localStorage).getCell((Double2D)p).size();
 			localStorage.removeObject(p, id);
-		else
+			if (old_size == ((ContinuousStorage)localStorage).getCell((Double2D)p).size())
+			{
+				System.out.println("remove not sucessful!");
+				System.out.println(p+" "+id);
+				System.exit(-1);
+			}
+		}
+		else {
+
 			localStorage.removeObject(toLocalPoint((Int2D) p), id);
+		}
 	}
 
 	public void removeAllLocal(NumberND p) {
-		if (localStorage instanceof ContinuousStorage)
+		if (localStorage instanceof ContinuousStorage) {
+			int old_size = ((ContinuousStorage)localStorage).getCell((Double2D)p).size();
+
 			localStorage.removeObjects(p);
+			
+			if (old_size == ((ContinuousStorage)localStorage).getCell((Double2D)p).size())
+			{
+				System.out.println("remove not sucessful!");
+				System.out.println(p);
+				System.exit(-1);
+			}
+		}
+		
 		else
 			localStorage.removeObjects(toLocalPoint((Int2D) p));
 	}

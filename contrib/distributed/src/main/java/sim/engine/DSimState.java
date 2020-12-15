@@ -208,6 +208,7 @@ public class DSimState extends SimState {
 			// Wait for all agents globally to stop moving
 			MPI.COMM_WORLD.barrier();
 
+
 			// give time for Visualizer
 			try {
 				// TODO: How to handle the exception here?
@@ -216,6 +217,8 @@ public class DSimState extends SimState {
 			} catch (RemoteException e1) {
 				throw new RuntimeException(e1);
 			}
+			
+			
 
 //			for (final HaloGrid2D<?, ?> haloField : fieldRegistry)
 //				for (final Pair<RemoteFulfillable, Serializable> pair : haloField.getQueue)
@@ -238,6 +241,8 @@ public class DSimState extends SimState {
 
 
 			transporter.sync();
+			
+
 			// TODO: Load RMI queue
 			
 
@@ -267,6 +272,8 @@ public class DSimState extends SimState {
 			e.printStackTrace();
 			System.exit(-1);
 		}
+		
+
 
 		if (withRegistry) {
 			// objects on new nodes.
@@ -329,6 +336,8 @@ public class DSimState extends SimState {
 				
 
 			}
+			
+
 		}
 		transporter.objectQueue.clear();
 
@@ -873,7 +882,7 @@ public class DSimState extends SimState {
 	}
 	
 	//delete this!
-	/*
+    /*
 	private void check_all_for_same_agents(String s) {
 		// TODO Auto-generated method stub
 		for (Synchronizable field : fieldRegistry) {
@@ -884,4 +893,5 @@ public class DSimState extends SimState {
 		
 	}
 	*/
+	
 }

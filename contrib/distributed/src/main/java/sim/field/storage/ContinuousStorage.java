@@ -402,7 +402,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 		//System.out.println("added called for "+obj+" at point "+p);
 		final Double2D old = m.put(obj.getID(), p);
 		if (old != null)
-			getCell(old).remove(obj);
+			getCell(old).remove(obj.getID());
 		getCell(p).put(obj.getID(), obj);
 	}
 
@@ -414,6 +414,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 	// Remove all the objects at the given point
 	public void removeObjects(final Double2D p) {
 //		getObjects(p).stream().forEach(obj -> removeObject(obj));
+		
 		for (T obj : getObjects(p)) {
 			removeObject(obj);
 		}
@@ -439,20 +440,13 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 		
 		Double2D dd = m.remove(obj.getID());
 		HashMap a = getCell(dd);
-		
-		
-		if (!a.containsKey(obj.getID())) {
-			System.out.println("obj not in a!");
-			System.exit(-1);
-		}
+
 		
 		Object o = a.remove(obj.getID());  //this is the line
-		if (o == null) {
-			System.out.println("o is null");
-			System.exit(-1);
-		}
+
 		
-		//ArrayList b = this.getObjects(dd);
+
+		
 		
 		
 
@@ -596,9 +590,9 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 		
 		
 	}
-	*/
 	
-    /*
+	
+    
 	public void same_agent_multiple_cells(String s) {
 		
 		
@@ -647,6 +641,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 		
 	}
 	*/
+	
 	
 	
 	
