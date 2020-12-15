@@ -468,7 +468,21 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
     public Bag getNearestNeighbors(Double2D position, int atLeastThisMany, final boolean toroidal, final boolean nonPointObjects, boolean radial, Bag result)
 
     {
-    if (toroidal) throw new InternalError("Toroidal not presently supported in getNearestNeighbors");
+    
+    //handles toroidal .  First, detoroidalize, Second, check if "real" point is within bounds
+    if (toroidal && (position.x >= width || position.y >= height || position.x < 0 || position.y < 0))
+    {
+        position = new Double2D(tx(position.x), ty(position.y));
+    }
+   
+   //Now, if position not in this partition, output error!
+    if (!storage.getShape().contains(position)) {
+    	throw new InternalError("Position "+position+" not in this partition ");
+    }
+    
+    
+    
+    
     if (result == null) result = new Bag(atLeastThisMany);
     else result.clear();
     int maxSearches = this.storage.m.size() / NEAREST_NEIGHBOR_GAIN;
@@ -685,10 +699,19 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
             {
             // push location to within legal boundaries
     	
+
     	
-    	    //Should toroidal apply within a partition?  I don't think so
-            //if (toroidal && (position.x >= width || position.y >= height || position.x < 0 || position.y < 0))
-            //   position = new Double2D(tx(position.x), ty(position.y));
+    	    //handles toroidal .  First, detoroidalize, Second, check if "real" point is within bounds
+            if (toroidal && (position.x >= width || position.y >= height || position.x < 0 || position.y < 0))
+            {
+                position = new Double2D(tx(position.x), ty(position.y));
+            }
+           
+           //Now, if position not in this partition, output error!
+            if (!storage.getShape().contains(position)) {
+            	throw new InternalError("Position "+position+" not in this partition ");
+            }
+    	
             
             double discDistance = distance / this.storage.getDiscretization();
             double discX = position.x / this.storage.getDiscretization();
@@ -710,108 +733,23 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
             ArrayList temp;
         
 
-            /*          
-            // do the loop
-            if( toroidal )
-                {
-                final int iWidth = (int)(StrictMath.ceil(width / this.storage.getDiscretization()));
-                final int iHeight = (int)(StrictMath.ceil(height / this.storage.getDiscretization()));
-
-                // we're using StrictMath.floor instead of Math.floor because
-                // Math.floor just calls StrictMath.floor, and so using the
-                // StrictMath version may help in the inlining (one function
-                // to inline, not two).  They should be identical in function anyway.
                 
-                int minX = (int) StrictMath.floor(discX - discDistance);
-                int maxX = (int) StrictMath.floor(discX + discDistance);
-                int minY = (int) StrictMath.floor(discY - discDistance);
-                int maxY = (int) StrictMath.floor(discY + discDistance);
+            int minX = (int) StrictMath.floor(discX - discDistance);
+            int maxX = (int) StrictMath.floor(discX + discDistance);
+            int minY = (int) StrictMath.floor(discY - discDistance);
+            int maxY = (int) StrictMath.floor(discY + discDistance);
+                
+            //control bounds to match storage
+            minX = Math.max(minX, this.storage.getShape().ul().x);
+            minY = Math.max(minY, this.storage.getShape().ul().y);
+            maxX = Math.min(maxX, this.storage.getShape().br().x);
+            maxY = Math.min(maxY, this.storage.getShape().br().y);
 
-                if (position.x + distance >= width && maxX == iWidth - 1)  // oops, need to recompute wrap-around if width is not a multiple of discretization
-                    maxX = 0;
 
-                if (position.y + distance >= height && maxY == iHeight - 1)  // oops, need to recompute wrap-around if height is not a multiple of discretization
-                    maxY = 0;
-
-
-
-                // we promote to longs so that maxX - minX can't totally wrap around by accident
-                if ((long)maxX - (long)minX >= iWidth)  // total wrap-around.
-                    { minX = 0; maxX = iWidth-1; }
-                if ((long)maxY - (long)minY >= iHeight) // similar
-                    { minY = 0; maxY = iHeight-1; }
-
-                // okay, now tx 'em.
-                final int tmaxX = toroidal(maxX,iWidth);
-                final int tmaxY = toroidal(maxY,iHeight);
-                final int tminX = toroidal(minX,iWidth);
-                final int tminY = toroidal(minY,iHeight);
-                            
-                int x = tminX ;
-                do
+            // for non-toroidal, it is easier to do the inclusive for-loops
+            for(int x = minX; x<= maxX; x++)
+                for(int y = minY ; y <= maxY; y++)
                     {
-                    int y = tminY;
-                    do
-                        {
-                        // grab location
-                        speedyMutableInt2D.x=x;
-                        speedyMutableInt2D.y=y;
-                        temp = getRawObjectsAtLocation(speedyMutableInt2D);
-                        if( temp != null && !temp.isEmpty())
-                            {
-                            // a little efficiency: add if we're 1, addAll if we're > 1, 
-                            // do nothing if we're <= 0 (we're empty)
-                            final int n = temp.numObjs;
-                            if (n==1) result.add(temp.objs[0]);
-                            else result.addAll(temp);
-                            }
-
-                        // update y
-                        if( y == tmaxY )
-                            break;
-                        else if( y == iHeight-1 )
-                            y = 0;
-                        else
-                            y++;
-                        }
-                    while(true);
-
-                    // update x
-                    if( x == tmaxX )
-                        break;
-                    else if( x == iWidth-1 )
-                        x = 0;
-                    else
-                        x++;
-                    }
-                while(true);
-                }
-            
-            */
-            
-           // else
-             //   {
-                // we're using StrictMath.floor instead of Math.floor because
-                // Math.floor just calls StrictMath.floor, and so using the
-                // StrictMath version may help in the inlining (one function
-                // to inline, not two).  They should be identical in function anyway.
-                
-                int minX = (int) StrictMath.floor(discX - discDistance);
-                int maxX = (int) StrictMath.floor(discX + discDistance);
-                int minY = (int) StrictMath.floor(discY - discDistance);
-                int maxY = (int) StrictMath.floor(discY + discDistance);
-                
-                //control bounds to match storage
-                minX = Math.max(minX, this.storage.getShape().ul().x);
-                minY = Math.max(minY, this.storage.getShape().ul().y);
-                maxX = Math.min(maxX, this.storage.getShape().br().x);
-                maxY = Math.min(maxY, this.storage.getShape().br().y);
-
-
-                // for non-toroidal, it is easier to do the inclusive for-loops
-                for(int x = minX; x<= maxX; x++)
-                    for(int y = minY ; y <= maxY; y++)
-                        {
 
                         
                         //inLocalAndHalo do we check this?

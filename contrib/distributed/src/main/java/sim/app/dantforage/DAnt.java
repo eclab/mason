@@ -11,6 +11,7 @@ import sim.util.*;
 import sim.engine.*;
 import java.awt.*;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 public class DAnt extends DSteppable implements Remote {
 	private static final long serialVersionUID = 1;
@@ -37,21 +38,21 @@ public class DAnt extends DSteppable implements Remote {
 		y = loc_y;
 	}
 
-	public void depositPheromone(final SimState state) {
+	public void depositPheromone(final SimState state) throws RemoteException {
 		final DAntsForage af = (DAntsForage) state;
 
 		if (DAntsForage.ALGORITHM == DAntsForage.ALGORITHM_VALUE_ITERATION) {
 			// test all around
 			if (hasFoodItem) // deposit food pheromone
 			{
-				double max = af.toFoodGrid.get(new Int2D(x, y));
+				double max = af.toFoodGrid.get(new Int2D(x, y)).getDouble();
 				for (int dx = -1; dx < 2; dx++)
 					for (int dy = -1; dy < 2; dy++) {
 						int _x = dx + x;
 						int _y = dy + y;
 						if (_x < 0 || _y < 0 || _x >= DAntsForage.GRID_WIDTH || _y >= DAntsForage.GRID_HEIGHT)
 							continue; // nothing to see here
-						double m = af.toFoodGrid.get(new Int2D(_x, _y)) *
+						double m = af.toFoodGrid.get(new Int2D(_x, _y)).getDouble() *
 								(dx * dy != 0 ? // diagonal corners
 										af.diagonalCutDown : af.updateCutDown)
 								+
@@ -59,9 +60,9 @@ public class DAnt extends DSteppable implements Remote {
 						if (m > max)
 							max = m;
 					}
-				af.toFoodGrid.add(new Int2D(x, y), max);
+				af.toFoodGrid.set(new Int2D(x, y), max);
 			} else {
-				double max = af.toHomeGrid.get(new Int2D(x, y));
+				double max = af.toHomeGrid.get(new Int2D(x, y)).getDouble();
 				for (int dx = -1; dx < 2; dx++)
 					for (int dy = -1; dy < 2; dy++) {
 						int _x = dx + x;
@@ -69,7 +70,7 @@ public class DAnt extends DSteppable implements Remote {
 						int _y = dy + y;
 						if (_x < 0 || _y < 0 || _x >= DAntsForage.GRID_WIDTH || _y >= DAntsForage.GRID_HEIGHT)
 							continue; // nothing to see here
-						double m = af.toHomeGrid.get(new Int2D(_x, _y)) *
+						double m = af.toHomeGrid.get(new Int2D(_x, _y)).getDouble() *
 								(dx * dy != 0 ? // diagonal corners
 										af.diagonalCutDown : af.updateCutDown)
 								+
@@ -77,13 +78,13 @@ public class DAnt extends DSteppable implements Remote {
 						if (m > max)
 							max = m;
 					}
-				af.toHomeGrid.add(new Int2D(x, y), max);
+				af.toHomeGrid.set(new Int2D(x, y), max);
 			}
 		}
 		reward = 0.0;
 	}
 
-	public void act(final SimState state) {
+	public void act(final SimState state) throws RemoteException {
 		final DAntsForage af = (DAntsForage) state;
 
 		if (hasFoodItem) // follow home pheromone
@@ -99,9 +100,9 @@ public class DAnt extends DSteppable implements Remote {
 					if ((dx == 0 && dy == 0) ||
 							_x < 0 || _y < 0 ||
 							_x >= DAntsForage.GRID_WIDTH || _y >= DAntsForage.GRID_HEIGHT ||
-							af.obstacles.get(new Int2D(_x, _y)) == 1)
+							af.obstacles.get(new Int2D(_x, _y)).getInt() == 1)
 						continue; // nothing to see here
-					double m = af.toHomeGrid.get(new Int2D(_x, _y));
+					double m = af.toHomeGrid.get(new Int2D(_x, _y)).getDouble();
 					if (m > max) {
 						count = 2;
 					}
@@ -121,7 +122,7 @@ public class DAnt extends DSteppable implements Remote {
 					int xm = x + (x - last.x);
 					int ym = y + (y - last.y);
 					if (xm >= 0 && xm < DAntsForage.GRID_WIDTH && ym >= 0 && ym < DAntsForage.GRID_HEIGHT
-							&& af.obstacles.get(new Int2D(xm, ym)) == 0) {
+							&& af.obstacles.get(new Int2D(xm, ym)).getInt() == 0) {
 						max_x = xm;
 						max_y = ym;
 					}
@@ -133,16 +134,16 @@ public class DAnt extends DSteppable implements Remote {
 				int xm = x + xd;
 				int ym = y + yd;
 				if (!(xd == 0 && yd == 0) && xm >= 0 && xm < DAntsForage.GRID_WIDTH && ym >= 0
-						&& ym < DAntsForage.GRID_HEIGHT && af.obstacles.get(new Int2D(xm, ym)) == 0) {
+						&& ym < DAntsForage.GRID_HEIGHT && af.obstacles.get(new Int2D(xm, ym)).getInt() == 0) {
 					max_x = xm;
 					max_y = ym;
 				}
 			}
-			af.buggrid.addAgent(new Int2D(max_x, max_y), this);
+			af.buggrid.add(new Int2D(max_x, max_y), this);
 			x = max_x;
 			y = max_y;
 			last = new Int2D(x, y);
-			if (af.sites.get(new Int2D(max_x, max_y)) == DAntsForage.HOME) // reward me next time! And change my status
+			if (af.sites.get(new Int2D(max_x, max_y)).getInt() == DAntsForage.HOME) // reward me next time! And change my status
 			{
 				reward = af.reward;
 				hasFoodItem = !hasFoodItem;
@@ -159,9 +160,9 @@ public class DAnt extends DSteppable implements Remote {
 					if ((dx == 0 && dy == 0) ||
 							_x < 0 || _y < 0 ||
 							_x >= DAntsForage.GRID_WIDTH || _y >= DAntsForage.GRID_HEIGHT ||
-							af.obstacles.get(new Int2D(_x, _y)) == 1)
+							af.obstacles.get(new Int2D(_x, _y)).getInt() == 1)
 						continue; // nothing to see here
-					double m = af.toFoodGrid.get(new Int2D(_x, _y));
+					double m = af.toFoodGrid.get(new Int2D(_x, _y)).getDouble();
 					{
 						count = 2;
 					}
@@ -181,7 +182,7 @@ public class DAnt extends DSteppable implements Remote {
 					int xm = x + (x - last.x);
 					int ym = y + (y - last.y);
 					if (xm >= 0 && xm < DAntsForage.GRID_WIDTH && ym >= 0 && ym < DAntsForage.GRID_HEIGHT
-							&& af.obstacles.get(new Int2D(xm, ym)) == 0) {
+							&& af.obstacles.get(new Int2D(xm, ym)).getInt() == 0) {
 						max_x = xm;
 						max_y = ym;
 					}
@@ -193,14 +194,14 @@ public class DAnt extends DSteppable implements Remote {
 				int xm = x + xd;
 				int ym = y + yd;
 				if (!(xd == 0 && yd == 0) && xm >= 0 && xm < DAntsForage.GRID_WIDTH && ym >= 0
-						&& ym < DAntsForage.GRID_HEIGHT && af.obstacles.get(new Int2D(xm, ym)) == 0) {
+						&& ym < DAntsForage.GRID_HEIGHT && af.obstacles.get(new Int2D(xm, ym)).getInt() == 0) {
 					max_x = xm;
 					max_y = ym;
 				}
 			}
-			af.buggrid.addAgent(new Int2D(max_x, max_y), this);
+			af.buggrid.add(new Int2D(max_x, max_y), this);
 			last = new Int2D(max_x, max_y);
-			if (af.sites.get(new Int2D(max_x, max_y)) == DAntsForage.FOOD) // reward me next time! And change my status
+			if (af.sites.get(new Int2D(max_x, max_y)).getInt() == DAntsForage.FOOD) // reward me next time! And change my status
 			{
 				reward = af.reward;
 				hasFoodItem = !hasFoodItem;
@@ -210,8 +211,14 @@ public class DAnt extends DSteppable implements Remote {
 	}
 
 	public void step(final SimState state) {
+		try{
 		depositPheromone(state);
 		act(state);
+		}
+		catch (Exception e) {
+			System.out.println(e);
+			System.exit(-1);
+		}
 	}
 
 	// a few tweaks by Sean
