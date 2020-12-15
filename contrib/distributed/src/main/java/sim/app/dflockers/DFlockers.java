@@ -46,16 +46,16 @@ public class DFlockers extends DSimState {
 
 	@Override
 	protected void startRoot() {
-		ArrayList<DFlocker> agents = new ArrayList<DFlocker>();
-		for (int x = 0; x < DFlockers.numFlockers; x++) {
-			final Double2D loc = new Double2D(random.nextDouble() * width, random.nextDouble() * height);
-			DFlocker flocker = new DFlocker(loc);
-			if (random.nextBoolean(deadFlockerProbability))
-				flocker.dead = true;
-			agents.add(flocker);
-		}
-
-		sendRootInfoToAll("agents", agents);
+//		ArrayList<DFlocker> agents = new ArrayList<DFlocker>();
+//		for (int x = 0; x < DFlockers.numFlockers; x++) {
+//			final Double2D loc = new Double2D(random.nextDouble() * width, random.nextDouble() * height);
+//			DFlocker flocker = new DFlocker(loc);
+//			if (random.nextBoolean(deadFlockerProbability))
+//				flocker.dead = true;
+//			agents.add(flocker);
+//		}
+//
+//		sendRootInfoToAll("agents", agents);
 	}
 
 	@Override
@@ -63,14 +63,14 @@ public class DFlockers extends DSimState {
 		// TODO Auto-generated method stub
 		super.start(); // do not forget this line
 
-		// ArrayList<DFlocker> agents = (ArrayList<DFlocker>) rootInfo.get("agents");
-		ArrayList<DFlocker> agents = (ArrayList<DFlocker>) getRootInfo("agents");
-
-		for (Object p : agents) {
-			DFlocker a = (DFlocker) p;
-			if (partition.getBounds().contains(a.loc))
-				flockers.addAndScheduleAgent(a.loc, a, 0, 0);
-		}
+//		// ArrayList<DFlocker> agents = (ArrayList<DFlocker>) rootInfo.get("agents");
+//		ArrayList<DFlocker> agents = (ArrayList<DFlocker>) getRootInfo("agents");
+//
+//		for (Object p : agents) {
+//			DFlocker a = (DFlocker) p;
+//			if (partition.getBounds().contains(a.loc))
+//				flockers.addAndScheduleAgent(a.loc, a, 0, 0);
+//		}
 
 	}
 

@@ -8,6 +8,8 @@
  * $Id: CampusWorldWithUI.java 846 2013-01-08 21:47:51Z mcoletti $
  */
 
+//package sim.app.geo.dcampusworld;
+
 package sim.app.geo.dcampusworld;
 
 import com.vividsolutions.jts.io.ParseException;
@@ -15,6 +17,10 @@ import java.awt.Color;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+
+import sim.app.geo.campusworld.BuildingLabelPortrayal;
+import sim.app.geo.campusworld.CampusWorld;
+import sim.app.geo.campusworld.CampusWorldWithUI;
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;
@@ -23,13 +29,8 @@ import sim.engine.SimState;
 import sim.portrayal.geo.GeomPortrayal;
 import sim.portrayal.geo.GeomVectorFieldPortrayal;
 
-
-/** MASON GUI wrapper for Campus World demo
- *
- */
 public class DCampusWorldWithUI extends GUIState
 {
-
     private Display2D display;
     private JFrame displayFrame;
 
@@ -53,7 +54,7 @@ public class DCampusWorldWithUI extends GUIState
     {
         super.init(controller);
 
-        display = new Display2D(DCampusWorld.WIDTH, DCampusWorld.HEIGHT, this);
+        display = new Display2D(CampusWorld.WIDTH, CampusWorld.HEIGHT, this);
 
         display.attach(walkwaysPortrayal, "Walkways", true);
         display.attach(buildingPortrayal, "Buildings", true);
@@ -75,7 +76,7 @@ public class DCampusWorldWithUI extends GUIState
 
     private void setupPortrayals()
     {
-        DCampusWorld world = (DCampusWorld)state;
+        CampusWorld world = (CampusWorld)state;
 
         walkwaysPortrayal.setField(world.walkways);
         walkwaysPortrayal.setPortrayalForAll(new GeomPortrayal(Color.CYAN,true));
@@ -99,19 +100,18 @@ public class DCampusWorldWithUI extends GUIState
 
     public static void main(String[] args)
     {
-        DCampusWorldWithUI worldGUI = null;
+        CampusWorldWithUI worldGUI = null;
 
         try
         {
-            worldGUI = new DCampusWorldWithUI();
+            worldGUI = new CampusWorldWithUI();
         }
         catch (ParseException ex)
         {
-            Logger.getLogger(DCampusWorldWithUI.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CampusWorldWithUI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         Console console = new Console(worldGUI);
         console.setVisible(true);
     }
-
 }

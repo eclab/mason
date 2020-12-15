@@ -49,7 +49,8 @@ public class DFlockersTest extends DSimState {
 		super(seed, DFlockersTest.width, DFlockersTest.height, DFlockersTest.neighborhood);
 
 		// final double[] discretizations = new double[] { DFlockersTest.neighborhood / 1.5, DFlockersTest.neighborhood / 1.5 };
-		flockers = new DContinuous2D<DFlocker>(getPartitioning(), aoi, DFlockersTest.neighborhood / 1.5, this);
+		flockers = null;
+//		flockers = new DContinuous2D<DFlocker>(getPartitioning(), aoi, DFlockersTest.neighborhood / 1.5, this);
 		//idAgents = new ArrayList<>();
 		idLocal = new ArrayList<>();
 	}
@@ -128,31 +129,31 @@ public class DFlockersTest extends DSimState {
 	}
 
 	protected void startRoot() {
-		ArrayList<DFlocker> agents = new ArrayList<DFlocker>();
-		for (int x = 0; x < DFlockersTest.numFlockers; x++) {
-			final Double2D loc = new Double2D(random.nextDouble() * width, random.nextDouble() * height);
-			DFlocker flocker = new DFlocker(loc);
-			//idAgents.add(flocker.getId());
-			if (random.nextBoolean(deadFlockerProbability))
-				flocker.dead = true;
-			agents.add(flocker);
-
-		}
-		// System.out.println(agents);
-		sendRootInfoToAll("agents", agents);
+//		ArrayList<DFlocker> agents = new ArrayList<DFlocker>();
+//		for (int x = 0; x < DFlockersTest.numFlockers; x++) {
+//			final Double2D loc = new Double2D(random.nextDouble() * width, random.nextDouble() * height);
+//			DFlocker flocker = new DFlocker(loc);
+//			//idAgents.add(flocker.getId());
+//			if (random.nextBoolean(deadFlockerProbability))
+//				flocker.dead = true;
+//			agents.add(flocker);
+//
+//		}
+//		// System.out.println(agents);
+//		sendRootInfoToAll("agents", agents);
 	}
 
 	public void start() {
 		// TODO Auto-generated method stub
 		super.start(); // do not forget this line
 
-		ArrayList<Object> agents = (ArrayList<Object>) getRootInfo("agents");
-
-		for (Object p : agents) {
-			DFlocker a = (DFlocker) p;
-			if (partition.getBounds().contains(a.loc))
-				flockers.addAgent(a.loc, a);
-		}
+//		ArrayList<Object> agents = (ArrayList<Object>) getRootInfo("agents");
+//
+//		for (Object p : agents) {
+//			DFlocker a = (DFlocker) p;
+//			if (partition.getBounds().contains(a.loc))
+//				flockers.addAgent(a.loc, a);
+//		}
 
 	}
 

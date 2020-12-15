@@ -132,71 +132,71 @@ public /* strictfp */ class DAntsForage extends DSimState {
 
 	public DAntsForage(long seed) {
 		super(seed, GRID_WIDTH, GRID_HEIGHT, 10);
-		sites = new DIntGrid2D(getPartitioning(), aoi, this);
-		toFoodGrid = new DDoubleGrid2D(getPartitioning(), aoi, this);
-		toHomeGrid = new DDoubleGrid2D(partition, aoi, this);
-		buggrid = new DDenseGrid2D<DAnt>(getPartitioning(), aoi, this);
-		obstacles = new DIntGrid2D(partition, aoi, this);
+//		sites = new DIntGrid2D(getPartitioning(), aoi, this);
+//		toFoodGrid = new DDoubleGrid2D(getPartitioning(), aoi, this);
+//		toHomeGrid = new DDoubleGrid2D(partition, aoi, this);
+//		buggrid = new DDenseGrid2D<DAnt>(getPartitioning(), aoi, this);
+//		obstacles = new DIntGrid2D(partition, aoi, this);
 	}
 
 	public void start() {
 		super.start(); // clear out the schedule
 
-		switch (OBSTACLES) {
-		case NO_OBSTACLES:
-			break;
-		case ONE_OBSTACLE:
-			for (int x = 0; x < GRID_WIDTH; x++)
-				for (int y = 0; y < GRID_HEIGHT; y++) {
-					obstacles.add(new Int2D(x, y), 0);
-					if (((x - 55) * 0.707 + (y - 35) * 0.707) * ((x - 55) * 0.707 + (y - 35) * 0.707) / 36 +
-							((x - 55) * 0.707 - (y - 35) * 0.707) * ((x - 55) * 0.707 - (y - 35) * 0.707) / 1024 <= 1)
-						obstacles.add(new Int2D(x, y), 1);
-
-				}
-			break;
-		case TWO_OBSTACLES:
-			for (int x = 0; x < GRID_WIDTH; x++)
-				for (int y = 0; y < GRID_HEIGHT; y++) {
-					obstacles.add(new Int2D(x, y), 0);
-					if (((x - 45) * 0.707 + (y - 25) * 0.707) * ((x - 45) * 0.707 + (y - 25) * 0.707) / 36 +
-							((x - 45) * 0.707 - (y - 25) * 0.707) * ((x - 45) * 0.707 - (y - 25) * 0.707) / 1024 <= 1)
-						obstacles.add(new Int2D(x, y), 1);
-
-					if (((x - 35) * 0.707 + (y - 70) * 0.707) * ((x - 35) * 0.707 + (y - 70) * 0.707) / 36 +
-							((x - 35) * 0.707 - (y - 70) * 0.707) * ((x - 35) * 0.707 - (y - 70) * 0.707) / 1024 <= 1)
-						obstacles.add(new Int2D(x, y), 1);
-				}
-			break;
-		case ONE_LONG_OBSTACLE:
-			for (int x = 0; x < GRID_WIDTH; x++)
-				for (int y = 0; y < GRID_HEIGHT; y++) {
-					obstacles.add(new Int2D(x, y), 0);
-					if ((x - 60) * (x - 60) / 1600 +
-							(y - 50) * (y - 50) / 25 <= 1)
-						obstacles.add(new Int2D(x, y), 1);
-				}
-			break;
-		}
-
-		// initialize the grid with the home and food sites
-		for (int x = HOME_XMIN; x <= HOME_XMAX; x++)
-			for (int y = HOME_YMIN; y <= HOME_YMAX; y++)
-				if (getPartitioning().getBounds().contains(new Int2D(x, y)))
-					sites.add(new Int2D(x, y), 1);
-		for (int x = FOOD_XMIN; x <= FOOD_XMAX; x++)
-			for (int y = FOOD_YMIN; y <= FOOD_YMAX; y++)
-				if (getPartitioning().getBounds().contains(new Int2D(x, y)))
-					sites.add(new Int2D(x, y), 2);
-
-		for (int x = 0; x < numAnts; x++) {
-			if (getPartitioning().getBounds()
-					.contains(new Int2D((HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2))) {
-				DAnt ant = new DAnt(reward, (HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2);
-				buggrid.addAgent(new Int2D((HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2), ant);
-				schedule.scheduleRepeating(Schedule.EPOCH + x, 0, ant, 1);
-			}
-		}
+//		switch (OBSTACLES) {
+//		case NO_OBSTACLES:
+//			break;
+//		case ONE_OBSTACLE:
+//			for (int x = 0; x < GRID_WIDTH; x++)
+//				for (int y = 0; y < GRID_HEIGHT; y++) {
+//					obstacles.add(new Int2D(x, y), 0);
+//					if (((x - 55) * 0.707 + (y - 35) * 0.707) * ((x - 55) * 0.707 + (y - 35) * 0.707) / 36 +
+//							((x - 55) * 0.707 - (y - 35) * 0.707) * ((x - 55) * 0.707 - (y - 35) * 0.707) / 1024 <= 1)
+//						obstacles.add(new Int2D(x, y), 1);
+//
+//				}
+//			break;
+//		case TWO_OBSTACLES:
+//			for (int x = 0; x < GRID_WIDTH; x++)
+//				for (int y = 0; y < GRID_HEIGHT; y++) {
+//					obstacles.add(new Int2D(x, y), 0);
+//					if (((x - 45) * 0.707 + (y - 25) * 0.707) * ((x - 45) * 0.707 + (y - 25) * 0.707) / 36 +
+//							((x - 45) * 0.707 - (y - 25) * 0.707) * ((x - 45) * 0.707 - (y - 25) * 0.707) / 1024 <= 1)
+//						obstacles.add(new Int2D(x, y), 1);
+//
+//					if (((x - 35) * 0.707 + (y - 70) * 0.707) * ((x - 35) * 0.707 + (y - 70) * 0.707) / 36 +
+//							((x - 35) * 0.707 - (y - 70) * 0.707) * ((x - 35) * 0.707 - (y - 70) * 0.707) / 1024 <= 1)
+//						obstacles.add(new Int2D(x, y), 1);
+//				}
+//			break;
+//		case ONE_LONG_OBSTACLE:
+//			for (int x = 0; x < GRID_WIDTH; x++)
+//				for (int y = 0; y < GRID_HEIGHT; y++) {
+//					obstacles.add(new Int2D(x, y), 0);
+//					if ((x - 60) * (x - 60) / 1600 +
+//							(y - 50) * (y - 50) / 25 <= 1)
+//						obstacles.add(new Int2D(x, y), 1);
+//				}
+//			break;
+//		}
+//
+//		// initialize the grid with the home and food sites
+//		for (int x = HOME_XMIN; x <= HOME_XMAX; x++)
+//			for (int y = HOME_YMIN; y <= HOME_YMAX; y++)
+//				if (getPartitioning().getBounds().contains(new Int2D(x, y)))
+//					sites.add(new Int2D(x, y), 1);
+//		for (int x = FOOD_XMIN; x <= FOOD_XMAX; x++)
+//			for (int y = FOOD_YMIN; y <= FOOD_YMAX; y++)
+//				if (getPartitioning().getBounds().contains(new Int2D(x, y)))
+//					sites.add(new Int2D(x, y), 2);
+//
+//		for (int x = 0; x < numAnts; x++) {
+//			if (getPartitioning().getBounds()
+//					.contains(new Int2D((HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2))) {
+//				DAnt ant = new DAnt(reward, (HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2);
+//				buggrid.addAgent(new Int2D((HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2), ant);
+//				schedule.scheduleRepeating(Schedule.EPOCH + x, 0, ant, 1);
+//			}
+//		}
 
 		// Schedule evaporation to happen after the ants move and update
 		schedule.scheduleRepeating(Schedule.EPOCH, 1, new DSteppable() {

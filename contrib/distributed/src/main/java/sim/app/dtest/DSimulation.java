@@ -38,7 +38,8 @@ public class DSimulation extends DSimState {
 		super(seed, DSimulation.width, DSimulation.height, DSimulation.neighborhood);
 
 		// final double[] discretizations = new double[] { DSimulation.neighborhood / 1.5, DSimulation.neighborhood / 1.5 };
-		field = new DContinuous2D<DAgent>(getPartitioning(), aoi, DSimulation.neighborhood / 1.5, this);
+		field = null;
+//		field = new DContinuous2D<DAgent>(getPartitioning(), aoi, DSimulation.neighborhood / 1.5, this);
 	}
 
 	@Override
@@ -68,10 +69,10 @@ public class DSimulation extends DSimState {
 			e.printStackTrace();
 		}
 
-		for (DAgent f : field.getAllObjects()) {
-//			out.println("agent " + f.getId() + " in position " + f.loc + " num neighbours: " + f.neighbours.size() + " neighbours " + f.neighbours);
-			out.println("agent " + f.getID() + " in position " + f.loc + " num neighbours: " + f.neighbours.size() + " neighbours " + f.neighbours);
-		}
+//		for (DAgent f : field.getAllObjects()) {
+////			out.println("agent " + f.getId() + " in position " + f.loc + " num neighbours: " + f.neighbours.size() + " neighbours " + f.neighbours);
+//			out.println("agent " + f.getID() + " in position " + f.loc + " num neighbours: " + f.neighbours.size() + " neighbours " + f.neighbours);
+//		}
 
 		out.close();
 		// }
@@ -80,18 +81,18 @@ public class DSimulation extends DSimState {
 
 	@Override
 	protected void startRoot() {
-		ArrayList<DAgent> agents = new ArrayList<DAgent>();
-//		int c = 0;
-		for (int i = 75; i < 600; i = i + 150) {
-			for (int j = 75; j < 600; j = j + 150) {
-				Double2D loc = new Double2D(i, j);
-//				int id = 100 * partition.toPartitionId(loc) + c;
-//				c++;
-				agents.add(new DAgent(loc));
-			}
-		}
-
-		sendRootInfoToAll("agents", agents);
+//		ArrayList<DAgent> agents = new ArrayList<DAgent>();
+////		int c = 0;
+//		for (int i = 75; i < 600; i = i + 150) {
+//			for (int j = 75; j < 600; j = j + 150) {
+//				Double2D loc = new Double2D(i, j);
+////				int id = 100 * partition.toPartitionId(loc) + c;
+////				c++;
+//				agents.add(new DAgent(loc));
+//			}
+//		}
+//
+//		sendRootInfoToAll("agents", agents);
 	}
 
 	@Override
@@ -101,13 +102,13 @@ public class DSimulation extends DSimState {
 
 		ArrayList<Object> agents = (ArrayList<Object>) getRootInfo("agents");
 
-		for (Object p : agents) {
-			DAgent a = (DAgent) p;
-			if (partition.getBounds().contains(a.loc)) {
-				field.addAgent(a.loc, a);
-				System.out.println("pid " + partition.getPid() + " add agent " + a);
-			}
-		}
+//		for (Object p : agents) {
+//			DAgent a = (DAgent) p;
+//			if (partition.getBounds().contains(a.loc)) {
+//				field.addAgent(a.loc, a);
+//				System.out.println("pid " + partition.getPid() + " add agent " + a);
+//			}
+//		}
 
 	}
 

@@ -38,8 +38,9 @@ public class DFlockersWithDRegistry extends DSimState {
 		// final double[] discretizations = new double[] {
 		// DFlockersWithDRegistry.neighborhood / 1.5,
 		// DFlockersWithDRegistry.neighborhood / 1.5 };
-		flockers = new DContinuous2D<DFlockerWithDRegistry>(getPartitioning(), aoi,
-				DFlockersWithDRegistry.neighborhood / 1.5, this);
+		flockers = null;
+//		flockers = new DContinuous2D<DFlockerWithDRegistry>(getPartitioning(), aoi,
+//				DFlockersWithDRegistry.neighborhood / 1.5, this);
 	}
 
 	public void start() {
@@ -54,7 +55,7 @@ public class DFlockersWithDRegistry extends DSimState {
 
 			final DFlockerWithDRegistry flocker = new DFlockerWithDRegistry(location);
 
-			flockers.addAgent(location, flocker);
+//			flockers.addAgent(location, flocker);
 
 			try {
 				if (x == 0 && MPI.COMM_WORLD.getRank() == 0)

@@ -315,7 +315,7 @@ public class ShapeFileImporter {
 			throw new IllegalArgumentException("masonGeometryClass not a MasonGeometry class or subclass");
 		}
 
-		try {
+//		try {
 			class FieldDirEntry {
 				public String name;
 				public int fieldSize;
@@ -543,13 +543,13 @@ public class ShapeFileImporter {
 			}
 			dbFileInputStream.close();
 			shpFileInputStream.close();
-		} catch (final IOException e) {
-			System.out.println("Error in ShapeFileImporter!!");
-			System.out.println("SHP filename: " + shpFile.getPath() + "; DB filename: " + dbFile.getPath());
-			// e.printStackTrace();
-
-			throw e;
-		}
+//		} catch (final IOException e) {
+//			System.out.println("Error in ShapeFileImporter!!");
+//			System.out.println("SHP filename: " + shpFile.getPath() + "; DB filename: " + dbFile.getPath());
+//			// e.printStackTrace();
+//
+//			throw e;
+//		}
 	}
 
 	/**
