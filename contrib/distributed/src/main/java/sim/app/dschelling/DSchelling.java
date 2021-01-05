@@ -1,5 +1,9 @@
 package sim.app.dschelling;
 
+import java.util.ArrayList;
+
+import sim.app.dflockers.DFlocker;
+import sim.app.dflockers.DFlockers;
 import sim.app.dheatbugs.DHeatBug;
 import sim.app.dheatbugs.DHeatBugs;
 import sim.app.schelling.Agent;
@@ -10,6 +14,7 @@ import sim.field.grid.DDoubleGrid2D;
 import sim.field.grid.DIntGrid2D;
 import sim.field.grid.IntGrid2D;
 import sim.util.Bag;
+import sim.util.Double2D;
 import sim.util.Int2D;
 import sim.util.Interval;
 
@@ -134,13 +139,19 @@ public class DSchelling extends DSimState{
         }
         }
     
+
+    
     /** Resets and starts a simulation */
     public void start()
         {
+    	
+    	System.out.println("hello");
+    	
         super.start();  // clear out the schedule
         
         // make new grids
         createGrids();
+        System.out.println("partition "+this.getPID()+" bounds "+gridWidth+" "+gridHeight);
         for(int x=0;x<gridWidth;x++)
             for(int y=0;y<gridHeight;y++)
                 {

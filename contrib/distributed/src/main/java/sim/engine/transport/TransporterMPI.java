@@ -210,12 +210,15 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
+	
+	/*
 	public void migrateAgent(final Stopping agent, final int dst) {
 
 		AgentWrapper wrapper = new AgentWrapper(agent);
 
 		migrateAgent(wrapper, dst);
 	}
+	*/
 
 	/**
 	 * Does not transport the Object, only migrates it
@@ -226,10 +229,13 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
+	
+	/*
 	public void migrateAgent(final int ordering, final Stopping agent, final int dst) {
 		AgentWrapper wrapper = new AgentWrapper(ordering, agent);
 		migrateAgent(wrapper, dst);
 	}
+	*/
 
 	/**
 	 * Does not transport the Object, only migrates it
@@ -241,10 +247,12 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
+	/*
 	public void migrateAgent(final int ordering, final double time, final Stopping agent, final int dst) {
 		AgentWrapper wrapper = new AgentWrapper(ordering, time, agent);
 		migrateAgent(wrapper, dst);
 	}
+	*/
 
 	/**
 	 * Internal method. Don't use AgentWrapper, use Stopping instead <br>
@@ -255,10 +263,15 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
+	
+	/*
 	public void migrateAgent(final AgentWrapper agentWrapper, final int dst) {
 		// If fieldIndex < 0 then the payload does not need to be transported
 		migrateAgent(agentWrapper, dst, null, -1);
 	}
+	*/
+    
+
 
 	/**
 	 * Transports the Object as well as migrates it
@@ -335,10 +348,15 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
+	
+	//don't use with DHeatBugs
+	/*
 	public void migrateRepeatingAgent(final DistributedIterativeRepeat iterativeRepeat, final int dst) {
 		// If fieldIndex < 0 then the payload does not need to be transported
 		migrateRepeatingAgent(iterativeRepeat, dst, null, -1);
 	}
+	*/
+	
 
 	/**
 	 * Transports the Object as well as migrates it. Does not stop() the repeating

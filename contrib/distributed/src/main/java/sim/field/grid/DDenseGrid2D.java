@@ -89,6 +89,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 			array[idx] = new ArrayList<T>();
 
 		array[idx].add(t);
+		//System.out.println(t+" added to point "+p);
 		}
 		
 		
@@ -499,6 +500,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 						time = time + interval;					// advance to next
 						}
 					removeLocal(from, agent);
+					//System.out.println(a+" addedAgent at"+ to+" (4)");
 					halo.addAgent(to, agent, ordering, time, interval);
 					}
 				else
@@ -509,6 +511,29 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 			}
 		else
 			{
+			System.out.println("storage shape : "+this.storage.getShape());
+			System.out.println("halo origPart : "+this.halo.origPart);
+			
+			//is this agent in local storage?
+			Boolean found = false;
+			for (ArrayList<T> li : this.storage.storage)
+			{   if (li != null) {
+				    for (T my_agent : li) {
+					    if (my_agent.equals(agent)){
+						    System.out.println("agent"+agent+"is in this storage at point "+from);
+						    found = true;
+						    //System.exit(-1);
+						    //throw new RuntimeException("exit this");
+
+					    }
+				    }}}
+			    if (found == false) {
+			    	System.out.println(agent+" not in storage at all");
+			    }
+				    
+			
+			
+			
 			throw new RuntimeException("Cannot move agent " + agent + " from " + from + " to " + to + " because <from> is not local.");
 			}
 		}

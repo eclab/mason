@@ -47,13 +47,14 @@ public class PayloadWrapper extends MigratableObject {
 		this.loc = loc;
 		this.fieldIndex = fieldIndex;
 	}
-
+    
 	public PayloadWrapper(final int dst, final Serializable payload) {
 		destination = dst;
 		this.payload = payload;
 		loc = null;
 		fieldIndex = -1;
 	}
+	
 
 	public String toString() {
 		return "PayloadWrapper [payload=" + payload + ", destination=" + destination + ", loc=" + loc + ", fieldIndex="

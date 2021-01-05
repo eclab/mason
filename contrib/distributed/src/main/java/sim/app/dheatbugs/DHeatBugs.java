@@ -46,7 +46,7 @@ public class DHeatBugs extends DSimState {
 	public DDenseGrid2D<DHeatBug> bugs; // Instead of SparseGrid2D
 
 	public DHeatBugs(final long seed) {
-		this(seed, 1000, 1000, 10000, 5);
+		this(seed, 100, 100, 1000, 5);
 	}
 
 	public DHeatBugs(final long seed, final int width, final int height, final int count, final int aoi) {
@@ -236,8 +236,11 @@ public class DHeatBugs extends DSimState {
 		HashMap<Int2D, ArrayList<DHeatBug>> agents = (HashMap<Int2D, ArrayList<DHeatBug>>) getRootInfo("agents");
 		for (Int2D p : agents.keySet()) {
 			for (DHeatBug a : agents.get(p)) {
-				if (partition.getBounds().contains(p))
+				if (partition.getBounds().contains(p)) {
 					bugs.addAndScheduleAgent(p, a, 0, 0, 1);
+				    System.out.println("start : "+a);
+				}
+
 			}
 		}
 		schedule.scheduleRepeating(Schedule.EPOCH, 1, new Diffuser(), 1);

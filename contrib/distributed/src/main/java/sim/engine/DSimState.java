@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -26,6 +27,7 @@ import java.util.logging.SocketHandler;
 import ec.util.MersenneTwisterFast;
 import mpi.MPI;
 import mpi.MPIException;
+import sim.app.dheatbugs.DHeatBug;
 import sim.engine.registry.DRegistry;
 import sim.engine.transport.AgentWrapper;
 import sim.engine.transport.PayloadWrapper;
@@ -301,9 +303,34 @@ public class DSimState extends SimState {
 			 * Improperly using the wrappers and/or fieldIndex will cause Class cast
 			 * exceptions to be thrown
 			 */
+			final DistributedIterativeRepeat rrr = (DistributedIterativeRepeat) payloadWrapper.payload;	
+			//System.out.println(rrr.getSteppable()+" 's field is "+payloadWrapper.fieldIndex);
+
+			
+
+
+			
+			
 			if (payloadWrapper.fieldIndex >= 0)
 				// add the object to the field
 				fieldRegistry.get(payloadWrapper.fieldIndex).syncObject(payloadWrapper);
+			
+			
+			/*
+			else { //added by Raj Patel, is fieldIndex -1 but agent has a location, figure out where it goes
+				
+				if (payloadWrapper.loc != null) {
+					for (HaloGrid2D my_field : fieldRegistry) {
+					
+						if (my_field.haloPart.contains(payloadWrapper.loc)) {
+							fieldRegistry.get(my_field.fieldIndex).syncObject(payloadWrapper);					}
+					
+					}
+				}
+				
+			}
+			*/
+			
 
 			if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
 				final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
@@ -361,6 +388,8 @@ public class DSimState extends SimState {
 
 		
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
+		
+		
 		loadBalancing();
 		
 
@@ -436,6 +465,8 @@ public class DSimState extends SimState {
 					MPI.COMM_WORLD.barrier();
 					syncFields();
 				} catch (MPIException e) {
+					System.out.println("MPI error here? 0");
+
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -444,6 +475,7 @@ public class DSimState extends SimState {
 
 			} catch (MPIException | RemoteException e) {
 				// TODO: handle exception
+				System.out.println("MPI error here? 1");
 				throw new RuntimeException(e);
 			}
 			if (balancerLevel != 0)
@@ -455,23 +487,30 @@ public class DSimState extends SimState {
 				MPI.COMM_WORLD.barrier();
 			} catch (MPIException e) {
 				// TODO Auto-generated catch block
+				System.out.println("MPI error here? 2");
 				e.printStackTrace();
 			}
 		}
 	}
 
 	private void balancePartitions(int level) throws MPIException {
+		
+
+		
 		final IntRect2D old_partition = partition.getBounds();
 		final int old_pid = partition.getPid();
 		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage();
 		Timing.start(Timing.LB_OVERHEAD);
 		((QuadTreePartition) partition).balance(runtime, level);
 		MPI.COMM_WORLD.barrier();
-		// System.out.println("pid "+partition.getPid()+"
-		// old_partitioning"+old_partition);
-		//System.out.println("pid " + partition.getPid() + " new partition" + partition.getBounds());
+	    System.out.println("pid "+partition.getPid()+" old_partitioning"+old_partition);
+		System.out.println("pid " + partition.getPid() + " new partition" + partition.getBounds());
 
 		for (Int2D p : old_partition.getPointList()) {
+			
+			//check_if_point_matches_heatbug_locs(p);
+			//print_all_agents(p);
+			
 			if (!partition.getBounds().contains(p)) {
 				final int toP = partition.toPartitionId(p);
 				for (Synchronizable field : fieldRegistry) {
@@ -577,10 +616,30 @@ public class DSimState extends SimState {
 						GridStorage st = ((HaloGrid2D) field).getStorage();
 						// System.out.println(st.getClass());
 						Serializable a_list = st.getObjects(haloGrid2D.toLocalPoint(p));
+						
+						
 
+						
+						
 						if (a_list != null) {
+							System.out.println(a_list);
+							
+							ArrayList<Serializable> a_list_copy = new ArrayList();			
 							for (int i = 0; i < ((ArrayList) a_list).size(); i++) {
 								Serializable a = ((ArrayList<Serializable>) a_list).get(i);
+								a_list_copy.add(a);
+							}
+
+							
+							//for (int i = 0; i < ((ArrayList) a_list).size(); i++) {	
+						
+							//	Serializable a = ((ArrayList<Serializable>) a_list).get(i);
+							
+							for (int i = 0; i< a_list_copy.size(); i++) {
+								
+								Serializable a = a_list_copy.get(i);
+								
+								System.out.println(a + " considered");
 
 								if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
 										&& old_partition.contains(p) && !partition.getBounds().contains(p)) {
@@ -610,6 +669,11 @@ public class DSimState extends SimState {
 											"PID: " + partition.pid + " processor " + old_pid + " move " + stopping
 													+ " from " + p + " (point " + p + ") to processor " + toP);
 									haloGrid2D.removeLocal(p, stopping.getID());
+									
+								}
+								
+								else {
+									System.out.println(a+" not moved over");
 								}
 							}
 						}
@@ -650,6 +714,8 @@ public class DSimState extends SimState {
 					}
 				}
 			}
+			
+
 		}
 
 		MPI.COMM_WORLD.barrier();
@@ -881,17 +947,65 @@ public class DSimState extends SimState {
 		}
 	}
 	
-	//delete this!
-    /*
-	private void check_all_for_same_agents(String s) {
-		// TODO Auto-generated method stub
+	private void check_if_point_matches_heatbug_locs(Int2D p) {
+		ArrayList<Object> not_match_list = new ArrayList<Object>();
 		for (Synchronizable field : fieldRegistry) {
+			//ArrayList<Object> migratedAgents = new ArrayList<>();
 			HaloGrid2D haloGrid2D = (HaloGrid2D) field;
-			ContinuousStorage store = (ContinuousStorage)(haloGrid2D.getStorage());
-		    store.same_agent_multiple_cells(s);
+			
+			if (haloGrid2D.getStorage() instanceof DenseGridStorage) {
+				//System.out.println("cat");
+				GridStorage st = ((HaloGrid2D) field).getStorage();
+				// System.out.println(st.getClass());
+				Serializable a_list = st.getObjects(haloGrid2D.toLocalPoint(p));
+
+				if (a_list != null) {
+					for (int i = 0; i < ((ArrayList) a_list).size(); i++) {
+						Serializable a = ((ArrayList<Serializable>) a_list).get(i);
+						
+						if (((DHeatBug) a).loc_x != p.x || ((DHeatBug) a).loc_y != p.y){
+							not_match_list.add(a);
+							System.out.println("a is at "+((DHeatBug) a).loc_x+" ,"+((DHeatBug) a).loc_y+" which is not "+p);
+						}
+					}
+				}
+			}
+		}
+		
+		if (not_match_list.size() > 0) {
+			System.exit(-1);
 		}
 		
 	}
-	*/
+	
+	private void print_all_agents(Int2D p) {
+		ArrayList<Object> not_match_list = new ArrayList<Object>();
+		for (Synchronizable field : fieldRegistry) {
+			//ArrayList<Object> migratedAgents = new ArrayList<>();
+			HaloGrid2D haloGrid2D = (HaloGrid2D) field;
+			
+			if (haloGrid2D.getStorage() instanceof DenseGridStorage) {
+				//System.out.println("cat");
+				GridStorage st = ((HaloGrid2D) field).getStorage();
+				// System.out.println(st.getClass());
+				Serializable a_list = st.getObjects(haloGrid2D.toLocalPoint(p));
+
+				if (a_list != null) {
+					for (int i = 0; i < ((ArrayList) a_list).size(); i++) {
+						Serializable a = ((ArrayList<Serializable>) a_list).get(i);
+						System.out.println(a);
+						
+
+					}
+				}
+			}
+		}
+		
+
+		
+	}
+
+		
+		
 	
 }

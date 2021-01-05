@@ -342,6 +342,7 @@ public class QuadTreePartition extends PartitionInterface {
 			sendData[1] = ctr.x * myRuntime;
 			sendData[2] = ctr.y * myRuntime;
 
+			
 			gc.comm.reduce(sendData, recvData, recvData.length, MPI.DOUBLE, MPI.SUM, gc.groupRoot);
 
 			if (isGroupMaster(gc)) {
@@ -356,6 +357,7 @@ public class QuadTreePartition extends PartitionInterface {
 						new Int2D(locVals)
 				};
 			}
+			
 		}
 
 		// broadcast to all nodes

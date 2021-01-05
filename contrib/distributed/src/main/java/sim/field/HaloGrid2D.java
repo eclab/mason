@@ -245,7 +245,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 
 			state.schedule.scheduleOnce(time, ordering, agent);
 		} else
-			state.getTransporter().migrateAgent(ordering, time, agent, partition.toPartitionId(p));
+			state.getTransporter().migrateAgent(ordering, time, agent, partition.toPartitionId(p), p, this.fieldIndex);
 		// TODO: Should we have remote here?
 		// TODO: add RMI case
 	}
@@ -266,7 +266,9 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		} else {
 			final DistributedIterativeRepeat iterativeRepeat = new DistributedIterativeRepeat(stopping, time, interval,
 					ordering);
-			state.getTransporter().migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(p));
+			//state.getTransporter().migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(p));
+			state.getTransporter().migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(p), p, this.fieldIndex);
+
 		}
 	}
 
@@ -579,6 +581,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 	public void syncObject(PayloadWrapper payloadWrapper) {
 		if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
 			final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
+			//System.out.println((T) iterativeRepeat.getSteppable()+" being synced");
 			addLocal((NumberND) payloadWrapper.loc, (T) iterativeRepeat.getSteppable());
 
 		} else if (payloadWrapper.payload instanceof AgentWrapper) {
@@ -636,7 +639,10 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		if (localStorage instanceof ContinuousStorage)
 			localStorage.addToLocation(t, p);
 		else
+		{
+			//System.out.println(t+" added to point "+p);
 			localStorage.addToLocation(t, toLocalPoint((Int2D) p));
+		}
 	}
 
 	public T getLocal(NumberND p) {
@@ -659,7 +665,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 			localStorage.removeObject(p, id);
 			if (old_size == ((ContinuousStorage)localStorage).getCell((Double2D)p).size())
 			{
-				System.out.println("remove not sucessful!");
+				System.out.println("remove not successful!");
 				System.out.println(p+" "+id);
 				System.exit(-1);
 			}
