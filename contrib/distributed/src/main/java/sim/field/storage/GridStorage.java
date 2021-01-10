@@ -81,16 +81,6 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 		return shape;
 	}
 
-	// Return a new instance of the subclass (IntStorage/DoubleStorage/etc...)
-	// public abstract GridStorage getNewStorage(IntRect2D shape);
-
-	public abstract String toString();
-
-	public abstract Serializable pack(MPIParam mp) throws MPIException;
-	
-
-	public abstract int unpack(MPIParam mp, Serializable buf) throws MPIException;
-
 	// Method that allocates an array of objects of desired type
 	// This method will be called after the new shape has been set
 	// protected abstract Object allocate(int size);
