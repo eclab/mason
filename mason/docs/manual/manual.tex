@@ -13908,11 +13908,12 @@ If you're running MASON already on a given machine, you had to do this step anyw
 If you're on Homebrew for the Mac, installation is pretty straightforward, but you'll need to modify your HomeBrew open-mpi formula so that it compiles with Java bindings. It's done like this:
 
 \begin{enumerate}
+	\item If you haven't already, install homebrew from \lstinline[style=Bash]{https://brew.sh/}
     	\item \lstinline[style=Bash]{brew edit openmpi}
 	\item When editing the formula, you want to look for line\\\\\lstinline[style=Bash]{--with-sge}\\\\and add just below it a new line that says\\\\\lstinline[style=Bash]{--enable-mpi-java}
-	\item Save the formula
+	\item Save the formula file
 	\item Next we need to install from source so Java is built from the formula.\\Do this: \lstinline[style=Bash]{brew install --build-from-source open-mpi}
-	\item You may need to force the links.\\Do this: \lstinline[style=Bash]{brew link --overwrite open-mpi}
+	\item You may need to force the links to be installed.\\Do this: \lstinline[style=Bash]{brew link --overwrite open-mpi}
 	\item Last, you need the freshly-built {\tt mpi.jar} file.  Copy the file {\tt /usr/local/lib/mpi.jar} (also known as {\tt /usr/local/Cellar/open-mpi/4.0.5/lib/mpi.jar}) to some location and put it in your CLASSPATH. 
 \end{enumerate}
 
