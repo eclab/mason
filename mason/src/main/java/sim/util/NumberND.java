@@ -213,10 +213,6 @@ public abstract class NumberND implements java.io.Serializable
 		else return null;
 		} 
 
-			return ((Double2D)this).add(dim, offset);
-		else return null;
-		} 
-
 	public NumberND add(int[] offset)
 		{
 		if (this instanceof Int2D)
