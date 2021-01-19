@@ -203,17 +203,20 @@ public abstract class NumberND implements java.io.Serializable
 
         }
 
-    //Are these needed? -------------------------------------
-	public NumberND add(int dim, int offset)
+
+	public NumberND add(int offset)
 		{
 		if (this instanceof Int2D)
-			return ((Int2D)this).add(dim, offset);
+			return ((Int2D)this).add(offset);
 		else if (this instanceof Double2D)
+			return ((Double2D)this).add(offset);
+		else return null;
+		} 
+
 			return ((Double2D)this).add(dim, offset);
 		else return null;
 		} 
 
-	// should be renamed "add"
 	public NumberND add(int[] offset)
 		{
 		if (this instanceof Int2D)
@@ -232,9 +235,7 @@ public abstract class NumberND implements java.io.Serializable
 		return ((Double2D)this).add((Double2D) other);
 	else return null;
 	} 	
-	
-	
-	// should be renamed "add"
+
 	public NumberND subtract(int[] offset)
 		{
 		if (this instanceof Int2D)
@@ -258,7 +259,4 @@ public abstract class NumberND implements java.io.Serializable
 				}
 			return ret;
 			}
-
-
-    }
-        
+    } 

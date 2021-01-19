@@ -46,9 +46,6 @@ public final class Int2D extends NumberND
     public String toCoordinates() { return "(" + x + ", " + y + ")"; }
 
 
-
-//	public int c(int i) { return (i == 0 ? x : y); }
-//	public int[] c() { return new int[] {x, y}; }
 	public int[] toArray() { return new int[] {x, y}; }
 	public double[] toArrayAsDouble() { return new double[] { x, y}; }
 
@@ -125,6 +122,18 @@ public final class Int2D extends NumberND
         else return false;
         }
 
+	/** Returns true I am equal to val */
+    public boolean equals(Int2D val)
+        {
+        return x == val.x && y == val.y;
+        }
+        
+	/** Returns true I am equal to val */
+    public boolean equals(Double2D val)
+        {
+        return x == val.x && y == val.y;
+        }
+    
 
     /** Returns the distance FROM this Int2D TO the specified point */
     public double distance(final double x, final double y)
@@ -230,8 +239,11 @@ public final class Int2D extends NumberND
         return Math.abs((long)this.x-p.x) + Math.abs((long)this.y-p.y);
         }
         
-	/// FOR DISTRIBUTED CODE 
-
+	/// FOR DISTRIBUTED CODE        
+    public Int2D add(int offset)
+		{
+		return new Int2D(x + offset, y + offset);
+		} 
 
 	public Int2D add(int dim, int offset)
 		{

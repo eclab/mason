@@ -51,9 +51,7 @@ public final class Double2D extends NumberND
     
     public java.awt.geom.Point2D.Double toPoint2D() { return new java.awt.geom.Point2D.Double(x,y); }
 
-    
-//	public double c(int i) { return (i == 0 ? x : y); }
-//	public double[] c() { return new double[] {x, y}; }
+
 	public double[] toArray() { return new double[] {x, y}; }
 	public double[] toArrayAsDouble() { return new double[] { x, y}; }
 
@@ -458,7 +456,10 @@ public final class Double2D extends NumberND
 		return new Double2D(Math.min(x, val.x), Math.min(y, val.y));
 		} 
 
-
+	public Double2D add(int offset)
+		{
+		return new Double2D(x + offset, y + offset);
+		} 
 
 	public Double2D add(int dim, int offset)
 		{
@@ -482,6 +483,11 @@ public final class Double2D extends NumberND
 		return new Double2D(x - offset[0], y - offset[1]);
 		} 
 
+	public double[] getOffsets(final Double2D that)
+		{
+		return new double[] { x - that.x, y - that.y };
+		}
+
 	public Double2D add(int dim, double offset)
 	{
 	if (dim == 0)
@@ -501,5 +507,5 @@ public final class Double2D extends NumberND
 	{
 	return new Double2D(x - offset[0], y - offset[1]);
 	} 	
-	
+
     }
