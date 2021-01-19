@@ -1,167 +1,118 @@
 package sim.field.grid;
 
-import java.rmi.RemoteException;
-
-import sim.engine.DSimState;
-import sim.engine.DistributedIterativeRepeat;
-import sim.field.DAbstractGrid2D;
-import sim.field.DGrid;
-import sim.field.HaloGrid2D;
-import sim.field.partitioning.IntPoint;
-import sim.field.partitioning.PartitionInterface;
-import sim.field.storage.DoubleGridStorage;
+import java.rmi.*;
+import sim.engine.*;
+import sim.field.*;
+import sim.field.partitioning.*;
+import sim.field.storage.*;
+import sim.util.*;
 
 /**
  * A grid that contains Doubles. Analogous to Mason's DoubleGrid2D
  * 
  */
-public class DDoubleGrid2D extends DAbstractGrid2D implements DGrid<Double, IntPoint> {
+ 
+public class DDoubleGrid2D extends DAbstractGrid2D
+	{
+	private static final long serialVersionUID = 1L;
 
-	private HaloGrid2D<Double, IntPoint, DoubleGridStorage<Double>> halo;
-	public final double initVal;
+	HaloGrid2D<Double, DoubleGridStorage> halo;
+	DoubleGridStorage storage;
+	
+	public DDoubleGrid2D(PartitionInterface ps, int aoi, DSimState state) 
+		{
+		super(ps, state);
+		storage = new DoubleGridStorage(ps.getBounds());
+		try 
+			{
+			halo = new HaloGrid2D<Double, DoubleGridStorage>(ps, aoi, storage, state);
+			} 
+		catch (RemoteException e) 
+			{
+			throw new RuntimeException(e);
+			}
+		}
 
-	public DDoubleGrid2D(final PartitionInterface ps, final int[] aoi, final double initVal, final DSimState state) {
-		super(ps);
-		if (ps.getNumDim() != 2)
-			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + ps.getNumDim());
+	/** Returns the underlying storage array for the DDoubleGrid2D.  This array
+		is a one-dimensional array, in row-major order, of all the cells in
+		the halo region. */
+	public double[] getStorageArray() { return storage.storage; }
 
-		halo = new HaloGrid2D<Double, IntPoint, DoubleGridStorage<Double>>(ps, aoi,
-				new DoubleGridStorage(ps.getPartition(), initVal), state);
+	/** Returns the data associated with the given point.  This point
+		must lie within the halo region or an exception will be thrown.  */
+	public double getLocal(Int2D p) 
+		{
+		if (!isHalo(p)) throwNotLocalException(p);
+		return storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))];
+		}
 
-		this.initVal = initVal;
-	}
+	/** Returns the data associated with the given point.  This point
+		must lie within the (non-halo) local region or an exception will be thrown.  */
+	public void setLocal(Int2D p, double t) 
+		{
+		if (!isLocal(p)) throwNotLocalException(p);
+		storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))] = t;
+		}
+	
+	/** Returns the local (non-halo) region.  */
+	public IntRect2D localBounds()  { return halo.origPart; }
 
-	public double[] getStorageArray() {
-		return (double[]) halo.localStorage.getStorage();
-	}
+	/** Returns the halo region.  */
+	public IntRect2D haloBounds()  { return halo.haloPart; }
 
-	public double getLocal(final IntPoint p) {
-		return getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))];
-	}
+	/** Returns true if the point is within the local (non-halo) region.  */
+	public boolean isLocal(Int2D p) { return halo.inLocal(p); }
 
-	public void addLocal(final IntPoint p, final double t) {
-		getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))] = t;
-	}
+	/** Returns true if the point is within the halo region.  */
+	public boolean isHalo(Int2D p) { return halo.inLocalAndHalo(p); }
 
-	public Double getRMI(final IntPoint p) {
-		return getLocal(p);
-	}
-
-	public void addLocal(final IntPoint p, final Double t) {
-		getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))] = t;
-	}
-
-	public void removeLocal(final IntPoint p, final Double t) {
-		removeLocal(p);
-	}
-
-	public void removeLocal(final IntPoint p) {
-		addLocal(p, initVal);
-	}
-
-	public double get(final IntPoint p) {
-		if (!halo.inLocalAndHalo(p)) {
-			System.out.println(String.format("PID %d get %s is out of local boundary, accessing remotely through RMI",
-					halo.partition.getPid(), p.toString()));
-			// TODO: Should this be (Double)?
-			return (double) halo.getFromRemote(p);
-		} else
-			return getLocal(p);
-	}
-
-	// Overloading to prevent AutoBoxing-UnBoxing
-	public void add(final IntPoint p, final double val) {
-		if (!halo.inLocal(p))
-			halo.addToRemote(p, val);
-		else
-			addLocal(p, val);
-	}
-
-	// Overloading to prevent AutoBoxing-UnBoxing
-	public void remove(final IntPoint p, final double t) {
-		halo.remove(p);
-	}
-
-	// Overloading to prevent AutoBoxing-UnBoxing
-	public void move(final IntPoint fromP, final IntPoint toP, final double t) {
-		final int fromPid = halo.partition.toPartitionId(fromP);
-		final int toPid = halo.partition.toPartitionId(fromP);
-
-		if (fromPid == toPid && fromPid != halo.partition.pid) {
-			// So that we make only a single RMI call instead of two
+	/** Returns a Promise which will eventually (immediately or within one timestep)
+		hold the data located at the given point.  This point can be outside
+		the loal and halo regions. */
+	public RemoteFulfillable get(Int2D p) 
+		{
+		if (isHalo(p))
 			try {
-				halo.proxy.getField(halo.partition.toPartitionId(fromP)).moveRMI(fromP, toP, t);
-			} catch (final RemoteException e) {
+				return new Promise(storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))]);
+			} catch (RemoteException e) {
 				throw new RuntimeException(e);
 			}
-		} else {
-			remove(fromP, t);
-			add(toP, t);
+		else return halo.getFromRemote(p);
 		}
-	}
 
-	public DDoubleGrid2D multiply(double byThisMuch) {
+	/** Sets the data located at the given point.  This point can be outside
+		the local and halo regions; if so, it will be set after the end of this timestep.  */
+	public void set(Int2D p, double val) 
+		{
+		if (isLocal(p))
+			storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))] = val;
+		else
+			halo.addToRemote(p, val);
+		}
+
+	/** Multiplies all elements in the local storage array byThisMuch */
+	public void multiply(double byThisMuch) {
+			if (byThisMuch != 1.0)
+				{			
+				double[] s = storage.storage;
+				for(int i = 0; i < s.length; i++)
+					{
+					s[i] *= byThisMuch;
+					}
+				}
+		}
+
+/*	
+public DDoubleGrid2D multiply(double byThisMuch) {
 		if (byThisMuch == 1.0)
 			return this;
 
-		for (IntPoint p : halo.partition.getPartition()) {
+		for (Int2D p : halo.partition.getBounds().getPointList()) {
 			Double obj = get(p);
 			removeLocal(p);
 			add(p, obj * byThisMuch);
 		}
 		return this;
 	}
-
-	public void add(IntPoint p, Double t) {
-		halo.add(p, t);
-	}
-
-	public void remove(IntPoint p, Double t) {
-		halo.remove(p, t);
-	}
-
-	public void remove(IntPoint p) {
-		halo.remove(p);
-	}
-
-	public void move(IntPoint fromP, IntPoint toP, Double t) {
-		halo.move(fromP, toP, t);
-	}
-
-	public void addAgent(IntPoint p, Double t) {
-		halo.addAgent(p, t);
-	}
-
-	public void addAgent(IntPoint p, Double t, int ordering, double time) {
-		halo.addAgent(p, t, ordering, time);
-	}
-
-	public void moveAgent(IntPoint fromP, IntPoint toP, Double t) {
-		halo.moveAgent(fromP, toP, t);
-	}
-
-	public void moveAgent(IntPoint fromP, IntPoint toP, Double t, int ordering, double time) {
-		halo.moveAgent(fromP, toP, t, ordering, time);
-	}
-
-	public void addRepeatingAgent(IntPoint p, Double t, double time, int ordering, double interval) {
-		halo.addRepeatingAgent(p, t, time, ordering, interval);
-	}
-
-	public void addRepeatingAgent(IntPoint p, Double t, int ordering, double interval) {
-		halo.addRepeatingAgent(p, t, ordering, interval);
-	}
-
-	public void removeAndStopRepeatingAgent(IntPoint p, Double t) {
-		halo.removeAndStopRepeatingAgent(p, t);
-	}
-
-	public void removeAndStopRepeatingAgent(IntPoint p, DistributedIterativeRepeat iterativeRepeat) {
-		halo.removeAndStopRepeatingAgent(p, iterativeRepeat);
-	}
-
-	public void moveRepeatingAgent(IntPoint fromP, IntPoint toP, Double t) {
-		halo.moveRepeatingAgent(fromP, toP, t);
-	}
-
+*/
 }

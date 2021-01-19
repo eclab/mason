@@ -7,33 +7,20 @@
 package sim.engine;
 
 /**
- * Changes constructor to set Stoppable. Overrides stop() to set Stoppable as
- * null
+ * Changes constructor to set Stoppable. Overrides stop() to set Stoppable as null
  */
-public class DistributedTentativeStep extends TentativeStep {
+ 
+ public class DistributedTentativeStep extends TentativeStep {
 	private static final long serialVersionUID = 1;
 
-	Schedule.Key key;
+    Schedule.Key key;
+    public int getOrdering() { return key.ordering; }
+    public double getTime() { return key.time; }
 
-	public int getOrdering() {
-		return key.ordering;
-	}
-
-	public double getTime() {
-		return key.time;
-	}
-
-	public Schedule.Key getKey() {
-		return key;
-	}
-
-	public DistributedTentativeStep(final Steppable step, final Schedule.Key key) {
+	public DistributedTentativeStep(final Stopping step, Schedule.Key key) {
 		super(step);
-
-		if (step instanceof Stopping) {
-			((Stopping) step).setStoppable(this);
-		} else
-			throw new RuntimeException("DistributedTentativeStep built on a non-Stopping Steppable");
+		step.setStoppable(this);
+    	this.key = key;
 	}
 
 	public void stop() {

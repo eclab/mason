@@ -4,17 +4,16 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import mpi.*;
+import sim.util.*;
 
 // Consumer is Raw Type because it's parameter is of type int
 /**
  * An interface for dividing the world into multiple partitions. Each partition
  * then gets assigned to a node.
- *
- * @param <P> Type of point
  */
 @SuppressWarnings("rawtypes")
-public abstract class PartitionInterface<P extends NdPoint> {
-	public int pid, numProcessors, numDimensions;
+public abstract class PartitionInterface {
+	public int pid, numProcessors;
 	public int[] size;
 	boolean isToroidal;
 	public Comm comm;
@@ -23,10 +22,11 @@ public abstract class PartitionInterface<P extends NdPoint> {
 	ArrayList<Consumer> preCallbacks, postCallbacks;
 
 	PartitionInterface(final int[] size, final boolean isToroidal, final int[] aoi) {
-		numDimensions = size.length;
-		this.size = Arrays.copyOf(size, numDimensions);
+		//numDimensions = size.length;
+		this.size = (int[])(size.clone());
+		this.size = Arrays.copyOf(size, 2);
 		this.isToroidal = isToroidal;
-		this.aoi = aoi;
+		this.aoi = (int[])(aoi.clone());
 
 		try {
 			pid = MPI.COMM_WORLD.getRank();
@@ -48,10 +48,6 @@ public abstract class PartitionInterface<P extends NdPoint> {
 		return numProcessors;
 	}
 
-	public int getNumDim() {
-		return numDimensions;
-	}
-
 	public boolean isToroidal() {
 		return isToroidal;
 	}
@@ -61,24 +57,28 @@ public abstract class PartitionInterface<P extends NdPoint> {
 	}
 
 	public int[] getFieldSize() {
-		return Arrays.copyOf(size, numDimensions);
+		return (int[])(size.clone());
 	}
 
-	public IntHyperRect createField() {
-		return new IntHyperRect(size);
+	public IntRect2D getWorldBounds() {
+		return new IntRect2D(size[0], size[1]);
 	}
 
 	/**
 	 * @return partition for the current node
 	 */
-	public abstract IntHyperRect getPartition();
+	public abstract IntRect2D getBounds();
 
 	/**
 	 * @param pid
 	 * @return partition for pid node
 	 */
-	public abstract IntHyperRect getPartition(int pid);
+	public abstract IntRect2D getBounds(int pid);
 
+	public abstract IntRect2D getHaloBounds();
+	
+	public abstract ArrayList<IntRect2D> getAllBounds();
+	
 	public abstract int getNumNeighbors();
 
 	public abstract int[] getNeighborIds();
@@ -88,7 +88,7 @@ public abstract class PartitionInterface<P extends NdPoint> {
 	 * @param p
 	 * @return partition id (pid) for the point p
 	 */
-	public abstract int toPartitionId(P p);
+	public abstract int toPartitionId(NumberND p);
 
 	/**
 	 * @param c point as an int array

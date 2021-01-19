@@ -11,8 +11,8 @@ import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
-import sim.field.partitioning.DoublePoint;
 import sim.util.Timing;
+import sim.util.*;
 
 public class DFlockersWithDRegistry extends DSimState {
 	private static final long serialVersionUID = 1;
@@ -34,25 +34,30 @@ public class DFlockersWithDRegistry extends DSimState {
 	/** Creates a Flockers simulation with the given random number seed. */
 	public DFlockersWithDRegistry(final long seed) {
 		super(seed, DFlockersWithDRegistry.width, DFlockersWithDRegistry.height, DFlockersWithDRegistry.neighborhood);
-
-		final double[] discretizations = new double[] { DFlockersWithDRegistry.neighborhood / 1.5, DFlockersWithDRegistry.neighborhood / 1.5 };
-		flockers = new DContinuous2D<DFlockerWithDRegistry>(getPartitioning(), aoi, discretizations, this);
+		enableRegistry(); // used to enable the object registry
+		// final double[] discretizations = new double[] {
+		// DFlockersWithDRegistry.neighborhood / 1.5,
+		// DFlockersWithDRegistry.neighborhood / 1.5 };
+		flockers = new DContinuous2D<DFlockerWithDRegistry>(getPartitioning(), aoi,
+				DFlockersWithDRegistry.neighborhood / 1.5, this);
 	}
 
 	public void start() {
 		super.start();
-		final int[] size = getPartitioning().getPartition().getSize();
+		final int[] size = getPartitioning().getBounds().getSizes();
 		for (int x = 0; x < DFlockersWithDRegistry.numFlockers / getPartitioning().numProcessors; x++) {
-			final double px = random.nextDouble() * size[0] + getPartitioning().getPartition().ul().getArray()[0];
-			final double py = random.nextDouble() * size[1] + getPartitioning().getPartition().ul().getArray()[1];
-			final DoublePoint location = new DoublePoint(px, py);
-			final DFlockerWithDRegistry flocker = new DFlockerWithDRegistry(location, 
-					(getPartitioning().pid * (DFlockersWithDRegistry.numFlockers / getPartitioning().numProcessors)) + x);
+			final double px = random.nextDouble() * size[0] + getPartitioning().getBounds().ul().toArray()[0];
+			final double py = random.nextDouble() * size[1] + getPartitioning().getBounds().ul().toArray()[1];
+			final Double2D location = new Double2D(px, py);
+//			final DFlockerWithDRegistry flocker = new DFlockerWithDRegistry(location, 
+//					(getPartitioning().pid * (DFlockersWithDRegistry.numFlockers / getPartitioning().numProcessors)) + x);
+
+			final DFlockerWithDRegistry flocker = new DFlockerWithDRegistry(location);
 
 			flockers.addAgent(location, flocker);
 
 			try {
-				if(x == 0 && MPI.COMM_WORLD.getRank()==0)
+				if (x == 0 && MPI.COMM_WORLD.getRank() == 0)
 					try {
 						flocker.amItheBoss = true;
 						this.getDRegistry().registerObject("cafebabe", flocker);
@@ -66,7 +71,7 @@ public class DFlockersWithDRegistry extends DSimState {
 			} catch (MPIException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} 
+			}
 		}
 
 		schedule.scheduleRepeating(Schedule.EPOCH, 2, new DSteppable() {
@@ -76,20 +81,18 @@ public class DFlockersWithDRegistry extends DSimState {
 			@Override
 			public void step(SimState state) {
 				try {
-					
-					MPI.COMM_WORLD.barrier();
-					
-					if(MPI.COMM_WORLD.getRank()==0)
-					{
-						DFlockerDummyRemote myfriend = (DFlockerDummyRemote) ((DFlockersWithDRegistry)state).getDRegistry().getObject("cafebabe");
-						int fval = myfriend.getVal();
-						
-						int update_val = (int) (DFlockersWithDRegistry.numFlockers * 
-									(((DFlockersWithDRegistry)state).schedule.getSteps()+1));
-						if(fval != update_val) {
 
-							System.err.println("Error in friend value for processor : "+MPI.COMM_WORLD.getRank()+" at step "+((DFlockersWithDRegistry)state).schedule.getSteps());
-							System.err.println(((DFlockersWithDRegistry)state).schedule.getSteps()+" "+fval+ " != "+ update_val );
+					MPI.COMM_WORLD.barrier();
+					if (MPI.COMM_WORLD.getRank() == 0) {
+						DFlockersWithDRegistry flockers = (DFlockersWithDRegistry) state;
+						DFlockerDummyRemote myfriend = flockers.getDRegistry().getObjectT("cafebabe");
+						int fval = myfriend.getVal();
+						int update_val = (int) (DFlockersWithDRegistry.numFlockers *
+								(flockers.schedule.getSteps() + 1));
+						if (fval != update_val) {
+							System.err.println("Error in friend value for processor : " + MPI.COMM_WORLD.getRank()
+									+ " at step " + flockers.schedule.getSteps());
+							System.err.println(flockers.schedule.getSteps() + " " + fval + " != " + update_val);
 							System.exit(-1);
 						}
 					}
@@ -107,10 +110,8 @@ public class DFlockersWithDRegistry extends DSimState {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 			}
 		});
-
 	}
 
 	public static void main(final String[] args) throws MPIException {

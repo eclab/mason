@@ -153,7 +153,7 @@ extends <a href="../../../sim/field/storage/GridStorage.html" title="class in si
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../sim/field/storage/ContStorage.html#ContStorage-sim.util.IntHyperRect-double:A-">ContStorage</a></span>(<a href="../../../sim/util/IntHyperRect.html" title="class in sim.util">IntHyperRect</a>&nbsp;shape,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../sim/field/storage/ContStorage.html#ContStorage-sim.util.IntRect2D-double:A-">ContStorage</a></span>(<a href="../../../sim/util/IntRect2D.html" title="class in sim.util">IntRect2D</a>&nbsp;shape,
            double[]&nbsp;discretizations)</code>&nbsp;</td>
 </tr>
 </table>
@@ -195,11 +195,11 @@ extends <a href="../../../sim/field/storage/GridStorage.html" title="class in si
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../../sim/field/storage/GridStorage.html" title="class in sim.field.storage">GridStorage</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../sim/field/storage/ContStorage.html#getNewStorage-sim.util.IntHyperRect-">getNewStorage</a></span>(<a href="../../../sim/util/IntHyperRect.html" title="class in sim.util">IntHyperRect</a>&nbsp;shape)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../sim/field/storage/ContStorage.html#getNewStorage-sim.util.IntRect2D-">getNewStorage</a></span>(<a href="../../../sim/util/IntRect2D.html" title="class in sim.util">IntRect2D</a>&nbsp;shape)</code>&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../sim/field/storage/ContStorage.html" title="type parameter in ContStorage">T</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../sim/field/storage/ContStorage.html#getObjects-sim.util.IntHyperRect-">getObjects</a></span>(<a href="../../../sim/util/IntHyperRect.html" title="class in sim.util">IntHyperRect</a>&nbsp;r)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../sim/field/storage/ContStorage.html#getObjects-sim.util.IntRect2D-">getObjects</a></span>(<a href="../../../sim/util/IntRect2D.html" title="class in sim.util">IntRect2D</a>&nbsp;r)</code>&nbsp;</td>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.util.ArrayList&lt;<a href="../../../sim/field/storage/ContStorage.html" title="type parameter in ContStorage">T</a>&gt;</code></td>
@@ -215,7 +215,7 @@ extends <a href="../../../sim/field/storage/GridStorage.html" title="class in si
 </tr>
 <tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../sim/field/storage/ContStorage.html#removeObjects-sim.util.IntHyperRect-">removeObjects</a></span>(<a href="../../../sim/util/IntHyperRect.html" title="class in sim.util">IntHyperRect</a>&nbsp;r)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../sim/field/storage/ContStorage.html#removeObjects-sim.util.IntRect2D-">removeObjects</a></span>(<a href="../../../sim/util/IntRect2D.html" title="class in sim.util">IntRect2D</a>&nbsp;r)</code>&nbsp;</td>
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -241,7 +241,7 @@ extends <a href="../../../sim/field/storage/GridStorage.html" title="class in si
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;sim.field.storage.<a href="../../../sim/field/storage/GridStorage.html" title="class in sim.field.storage">GridStorage</a></h3>
-<code><a href="../../../sim/field/storage/GridStorage.html#getFlatIdx-sim.util.IntPoint-">getFlatIdx</a>, <a href="../../../sim/field/storage/GridStorage.html#getFlatIdx-sim.util.IntPoint-int:A-">getFlatIdx</a>, <a href="../../../sim/field/storage/GridStorage.html#getMPIBaseType--">getMPIBaseType</a>, <a href="../../../sim/field/storage/GridStorage.html#getShape--">getShape</a>, <a href="../../../sim/field/storage/GridStorage.html#getStorage--">getStorage</a>, <a href="../../../sim/field/storage/GridStorage.html#reshape-sim.util.IntHyperRect-">reshape</a></code></li>
+<code><a href="../../../sim/field/storage/GridStorage.html#getFlatIdx-sim.util.IntPoint-">getFlatIdx</a>, <a href="../../../sim/field/storage/GridStorage.html#getFlatIdx-sim.util.IntPoint-int:A-">getFlatIdx</a>, <a href="../../../sim/field/storage/GridStorage.html#getMPIBaseType--">getMPIBaseType</a>, <a href="../../../sim/field/storage/GridStorage.html#getShape--">getShape</a>, <a href="../../../sim/field/storage/GridStorage.html#getStorage--">getStorage</a>, <a href="../../../sim/field/storage/GridStorage.html#reshape-sim.util.IntRect2D-">reshape</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -281,13 +281,13 @@ extends <a href="../../../sim/field/storage/GridStorage.html" title="class in si
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ContStorage-sim.util.IntHyperRect-double:A-">
+<a name="ContStorage-sim.util.IntRect2D-double:A-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ContStorage</h4>
-<pre>public&nbsp;ContStorage(<a href="../../../sim/util/IntHyperRect.html" title="class in sim.util">IntHyperRect</a>&nbsp;shape,
+<pre>public&nbsp;ContStorage(<a href="../../../sim/util/IntRect2D.html" title="class in sim.util">IntRect2D</a>&nbsp;shape,
                    double[]&nbsp;discretizations)</pre>
 </li>
 </ul>
@@ -299,16 +299,16 @@ extends <a href="../../../sim/field/storage/GridStorage.html" title="class in si
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getNewStorage-sim.util.IntHyperRect-">
+<a name="getNewStorage-sim.util.IntRect2D-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getNewStorage</h4>
-<pre>public&nbsp;<a href="../../../sim/field/storage/GridStorage.html" title="class in sim.field.storage">GridStorage</a>&nbsp;getNewStorage(<a href="../../../sim/util/IntHyperRect.html" title="class in sim.util">IntHyperRect</a>&nbsp;shape)</pre>
+<pre>public&nbsp;<a href="../../../sim/field/storage/GridStorage.html" title="class in sim.field.storage">GridStorage</a>&nbsp;getNewStorage(<a href="../../../sim/util/IntRect2D.html" title="class in sim.util">IntRect2D</a>&nbsp;shape)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../sim/field/storage/GridStorage.html#getNewStorage-sim.util.IntHyperRect-">getNewStorage</a></code>&nbsp;in class&nbsp;<code><a href="../../../sim/field/storage/GridStorage.html" title="class in sim.field.storage">GridStorage</a></code></dd>
+<dd><code><a href="../../../sim/field/storage/GridStorage.html#getNewStorage-sim.util.IntRect2D-">getNewStorage</a></code>&nbsp;in class&nbsp;<code><a href="../../../sim/field/storage/GridStorage.html" title="class in sim.field.storage">GridStorage</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -402,13 +402,13 @@ extends <a href="../../../sim/field/storage/GridStorage.html" title="class in si
 <pre>public&nbsp;java.util.ArrayList&lt;<a href="../../../sim/field/storage/ContStorage.html" title="type parameter in ContStorage">T</a>&gt;&nbsp;getObjects(<a href="../../../sim/util/NdPoint.html" title="class in sim.util">NdPoint</a>&nbsp;p)</pre>
 </li>
 </ul>
-<a name="getObjects-sim.util.IntHyperRect-">
+<a name="getObjects-sim.util.IntRect2D-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getObjects</h4>
-<pre>public&nbsp;java.util.List&lt;<a href="../../../sim/field/storage/ContStorage.html" title="type parameter in ContStorage">T</a>&gt;&nbsp;getObjects(<a href="../../../sim/util/IntHyperRect.html" title="class in sim.util">IntHyperRect</a>&nbsp;r)</pre>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../sim/field/storage/ContStorage.html" title="type parameter in ContStorage">T</a>&gt;&nbsp;getObjects(<a href="../../../sim/util/IntRect2D.html" title="class in sim.util">IntRect2D</a>&nbsp;r)</pre>
 </li>
 </ul>
 <a name="removeObject-java.io.Serializable-">
@@ -431,13 +431,13 @@ extends <a href="../../../sim/field/storage/GridStorage.html" title="class in si
 <pre>public&nbsp;void&nbsp;removeObjects(<a href="../../../sim/util/NdPoint.html" title="class in sim.util">NdPoint</a>&nbsp;p)</pre>
 </li>
 </ul>
-<a name="removeObjects-sim.util.IntHyperRect-">
+<a name="removeObjects-sim.util.IntRect2D-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>removeObjects</h4>
-<pre>public&nbsp;void&nbsp;removeObjects(<a href="../../../sim/util/IntHyperRect.html" title="class in sim.util">IntHyperRect</a>&nbsp;r)</pre>
+<pre>public&nbsp;void&nbsp;removeObjects(<a href="../../../sim/util/IntRect2D.html" title="class in sim.util">IntRect2D</a>&nbsp;r)</pre>
 </li>
 </ul>
 <a name="getNearestNeighbors-java.io.Serializable-int-">

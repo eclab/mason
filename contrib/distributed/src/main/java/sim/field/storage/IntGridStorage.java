@@ -1,85 +1,82 @@
 package sim.field.storage;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import mpi.*;
-import static mpi.MPI.slice;
 
-import sim.field.partitioning.IntHyperRect;
-import sim.field.partitioning.NdPoint;
-import sim.util.MPIParam;
+import sim.field.partitioning.IntRect2D;
+import sim.util.*;
 
-public class IntGridStorage<T extends Serializable> extends GridStorage<T> {
+public class IntGridStorage extends GridStorage<Integer, Int2D> {
 
-	public IntGridStorage(IntHyperRect shape, int initVal) {
+	public int[] storage;
+//	final int initVal;
+
+	public IntGridStorage(IntRect2D shape) {
 		super(shape);
 		baseType = MPI.INT;
-		storage = allocate(shape.getArea());
-		Arrays.fill((int[]) storage, initVal);
+		clear();
+//		storage = allocate(shape.getArea());
+//		this.initVal = initVal;
+//		Arrays.fill((int[]) storage, initVal);
 	}
 
-	public GridStorage getNewStorage(IntHyperRect shape) {
-		return new IntGridStorage(shape, 0);
-	}
+	/*
+	 * public GridStorage getNewStorage(IntRect2D shape) { return new
+	 * IntGridStorage(shape, 0); }
+	 */
 
 	public byte[] pack(MPIParam mp) throws MPIException {
 		byte[] buf = new byte[MPI.COMM_WORLD.packSize(mp.size, baseType)];
-		MPI.COMM_WORLD.pack(slice((int[]) storage, mp.idx), 1, mp.type, buf, 0);
+		MPI.COMM_WORLD.pack(MPI.slice((int[]) storage, mp.idx), 1, mp.type, buf, 0);
 		return buf;
 	}
 
 	public int unpack(MPIParam mp, Serializable buf) throws MPIException {
-		return MPI.COMM_WORLD.unpack((byte[]) buf, 0, slice((int[]) storage, mp.idx), 1, mp.type);
+		return MPI.COMM_WORLD.unpack((byte[]) buf, 0, MPI.slice((int[]) storage, mp.idx), 1, mp.type);
 	}
 
 	public String toString() {
-		int[] size = shape.getSize();
+		int[] size = shape.getSizes();
 		int[] array = (int[]) storage;
 		StringBuffer buf = new StringBuffer(String.format("IntGridStorage-%s\n", shape));
 
-		if (shape.getNd() == 2)
-			for (int i = 0; i < size[0]; i++) {
-				for (int j = 0; j < size[1]; j++)
-					buf.append(String.format(" %4d ", array[i * size[1] + j]));
-				buf.append("\n");
-			}
+		for (int i = 0; i < size[0]; i++) {
+			for (int j = 0; j < size[1]; j++)
+				buf.append(String.format(" %4d ", array[i * size[1] + j]));
+			buf.append("\n");
+		}
 
 		return buf.toString();
 	}
 
-	protected Object allocate(int size) {
-		return new int[size];
+	public void clear() {
+		storage = new int[shape.getArea()];
 	}
 
-	@Override
-	public void setLocation(T obj, NdPoint p) {
-		// TODO Auto-generated method stub
-
+	public void addToLocation(Integer t, Int2D p) {
+		storage[getFlatIdx((Int2D) p)] = t;
 	}
 
-	@Override
-	public NdPoint getLocation(T obj) {
-		// TODO Auto-generated method stub
-		return null;
+	public void addToLocation(int t, Int2D p) {
+		storage[getFlatIdx((Int2D) p)] = t;
 	}
 
-	@Override
-	public void removeObject(T obj) {
-		// TODO Auto-generated method stub
-
+	public void removeObject(Int2D p, Integer t) {
+		addToLocation(0, p);
 	}
 
-	@Override
-	public void removeObjects(NdPoint p) {
-		// TODO Auto-generated method stub
-
+	public void removeObject(int t, Int2D p) {
+		addToLocation(0, p);
 	}
 
-	@Override
-	public ArrayList<T> getObjects(NdPoint p) {
-		// TODO Auto-generated method stub
-		return null;
+	public void removeObjects(Int2D p) {
+		addToLocation(0, p);
 	}
+
+	public Serializable getObjects(Int2D p) {
+		return storage[getFlatIdx(p)];
+	}
+
 }

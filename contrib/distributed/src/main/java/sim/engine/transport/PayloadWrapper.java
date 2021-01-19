@@ -1,8 +1,7 @@
 package sim.engine.transport;
 
 import java.io.Serializable;
-
-import sim.field.partitioning.NdPoint;
+import sim.util.*;
 
 //This class is not supposed to be used by the modelers
 /**
@@ -32,7 +31,7 @@ public class PayloadWrapper extends MigratableObject {
 	 * <br>
 	 * Default: null
 	 */
-	public final NdPoint loc;
+	public final NumberND loc;
 
 	/**
 	 * Internal field, do not set it explicitly <br>
@@ -42,19 +41,20 @@ public class PayloadWrapper extends MigratableObject {
 	 */
 	public final int fieldIndex;
 
-	public PayloadWrapper(final int dst, final Serializable payload, final NdPoint loc, final int fieldIndex) {
+	public PayloadWrapper(final int dst, final Serializable payload, final NumberND loc, final int fieldIndex) {
 		destination = dst;
 		this.payload = payload;
 		this.loc = loc;
 		this.fieldIndex = fieldIndex;
 	}
-
+    
 	public PayloadWrapper(final int dst, final Serializable payload) {
 		destination = dst;
 		this.payload = payload;
 		loc = null;
 		fieldIndex = -1;
 	}
+	
 
 	public String toString() {
 		return "PayloadWrapper [payload=" + payload + ", destination=" + destination + ", loc=" + loc + ", fieldIndex="

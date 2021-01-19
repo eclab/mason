@@ -33,3 +33,5 @@ contrib/geomason/repository/jars/refugeeData.jar
 contrib/geomason/repository/jars/swiselib.jar
 kiberaData.jar
 mason/bin
+contrib/distributed-geomason/docs
+contrib/distributed-geomason/jar

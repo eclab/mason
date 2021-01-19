@@ -3,16 +3,16 @@ package sim.field;
 import java.io.Serializable;
 
 import sim.engine.DistributedIterativeRepeat;
-import sim.field.partitioning.NdPoint;
+import sim.util.*;
 
 /**
  * Functions for adding, removing, and moving objects/agents in fields in
  * Distributed MASON.
  *
- * @param <P> The Type of NdPoint to use
+ * @param <P> The Type of NumberND to use
  * @param <T> The Type of Object in the field
  */
-public interface DGrid<T extends Serializable, P extends NdPoint> {
+public interface DGrid<T extends Serializable, P extends NumberND>  {
 	// We did not declare get methods because fields may want to return
 	// T[], ArrayList<T>, T or even primitives like int and double
 
@@ -40,7 +40,7 @@ public interface DGrid<T extends Serializable, P extends NdPoint> {
 	 *
 	 * @param p location
 	 */
-	void remove(final P p);
+	void removeAllObjects(final P p);
 
 	/**
 	 * The location can be remote

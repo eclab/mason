@@ -7,19 +7,14 @@
 package sim.engine;
 
 /**
- * Changes constructor to set Stoppable. Overrides stop() to set Stoppable as
- * null
+ * Changes constructor to set Stoppable. Overrides stop() to set Stoppable as null
  */
 public class DistributedIterativeRepeat extends IterativeRepeat {
 	private static final long serialVersionUID = 1;
 
-	public DistributedIterativeRepeat(final Steppable step, final double time, final double interval,
-			final int ordering) {
+	public DistributedIterativeRepeat(final Stopping step, final double time, final double interval, final int ordering) {
 		super(step, time, interval, ordering);
-		if (step instanceof Stopping) {
-			((Stopping) step).setStoppable(this);
-		} else
-			throw new RuntimeException("DistributedIterativeRepeat built on a non-Stopping Steppable");
+		step.setStoppable(this);
 	}
 
 	public void stop() {
@@ -29,6 +24,10 @@ public class DistributedIterativeRepeat extends IterativeRepeat {
 			}
 			super.stop();
 		}
+	}
+
+	public Stopping getSteppable() {
+		return (Stopping) step;
 	}
 
 	public String toString() {

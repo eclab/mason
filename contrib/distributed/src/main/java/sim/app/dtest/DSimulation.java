@@ -10,25 +10,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Serializable;
-import java.rmi.AccessException;
-import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-
-//import mpi.MPI;
-import sim.app.flockers.Flocker;
-import sim.engine.DSteppable;
 import sim.engine.DSimState;
-import sim.engine.Schedule;
-import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
-import sim.field.partitioning.DoublePoint;
-import sim.field.partitioning.NdPoint;
 //import sim.util.MPIUtil;
 import sim.util.Timing;
+import sim.util.*;
 
 public class DSimulation extends DSimState {
 	private static final long serialVersionUID = 1;
@@ -48,78 +37,78 @@ public class DSimulation extends DSimState {
 	public DSimulation(final long seed) {
 		super(seed, DSimulation.width, DSimulation.height, DSimulation.neighborhood);
 
-		final double[] discretizations = new double[] { DSimulation.neighborhood / 1.5, DSimulation.neighborhood / 1.5 };
-		field = new DContinuous2D<DAgent>(getPartitioning(), aoi, discretizations, this);
+		// final double[] discretizations = new double[] { DSimulation.neighborhood / 1.5, DSimulation.neighborhood / 1.5 };
+		field = new DContinuous2D<DAgent>(getPartitioning(), aoi, DSimulation.neighborhood / 1.5, this);
 	}
 
 	@Override
 	public void preSchedule() {
 		super.preSchedule();
-		
-		if(schedule.getSteps() == 92) {
+
+		if (schedule.getSteps() == 92) {
 			System.exit(0);
 		}
 
-		//if (schedule.getSteps() % 10 == 0 ) {
-			String filename = dirname + File.separator +
-					getPartitioning().pid + "." + (schedule.getSteps());
+		// if (schedule.getSteps() % 10 == 0 ) {
+		String filename = dirname + File.separator +
+				getPartitioning().pid + "." + (schedule.getSteps());
 
-			File testdir = new File(dirname);
-			testdir.mkdir();
+		File testdir = new File(dirname);
+		testdir.mkdir();
 
-			File myfileagent = new File(filename);
-			System.out.println("Create file " + filename);
+		File myfileagent = new File(filename);
+		System.out.println("Create file " + filename);
 
-			PrintWriter out = null;
-			try {
-				myfileagent.createNewFile();
-				out = new PrintWriter(new FileOutputStream(myfileagent, false));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		PrintWriter out = null;
+		try {
+			myfileagent.createNewFile();
+			out = new PrintWriter(new FileOutputStream(myfileagent, false));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-			for (DAgent f : field.getAllObjects()) {
-				out.println("agent "+f.id+" in position "+f.loc+" num neighbours: "+f.neighbours.size()+" neighbours "+f.neighbours);
-			}
+		for (DAgent f : field.getAllObjects()) {
+//			out.println("agent " + f.getId() + " in position " + f.loc + " num neighbours: " + f.neighbours.size() + " neighbours " + f.neighbours);
+			out.println("agent " + f.getID() + " in position " + f.loc + " num neighbours: " + f.neighbours.size() + " neighbours " + f.neighbours);
+		}
 
-			out.close();
-		//}
+		out.close();
+		// }
 
 	}
-	
+
 	@Override
 	protected void startRoot() {
 		ArrayList<DAgent> agents = new ArrayList<DAgent>();
-		int c=0;
-		for(int i=75;i<600;i=i+150) {
-			for(int j=75;j<600;j=j+150) {
-				DoublePoint loc = new DoublePoint(i, j);
-				int id = 100*partition.toPartitionId(loc)+c;
-				c++;
-				agents.add(new DAgent(loc, id));
+//		int c = 0;
+		for (int i = 75; i < 600; i = i + 150) {
+			for (int j = 75; j < 600; j = j + 150) {
+				Double2D loc = new Double2D(i, j);
+//				int id = 100 * partition.toPartitionId(loc) + c;
+//				c++;
+				agents.add(new DAgent(loc));
 			}
 		}
-		
-		sendRootInfoToAll("agents",agents);
+
+		sendRootInfoToAll("agents", agents);
 	}
-	
-	
+
 	@Override
 	public void start() {
 		// TODO Auto-generated method stub
-		super.start(); //do not forget this line
-		
+		super.start(); // do not forget this line
+
 		ArrayList<Object> agents = (ArrayList<Object>) getRootInfo("agents");
-		
-		for(Object p : agents) {
+
+		for (Object p : agents) {
 			DAgent a = (DAgent) p;
-			if(partition.getPartition().contains(a.loc)) {
-				field.addAgent(a.loc, a );
-				System.out.println("pid "+partition.getPid()+" add agent "+a);
+			if (partition.getBounds().contains(a.loc)) {
+				field.addAgent(a.loc, a);
+				System.out.println("pid " + partition.getPid() + " add agent " + a);
 			}
 		}
-			
+
 	}
 
 	public static void main(final String[] args) {

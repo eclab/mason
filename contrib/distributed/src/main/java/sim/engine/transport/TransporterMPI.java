@@ -16,8 +16,8 @@ import mpi.MPIException;
 import sim.engine.DistributedIterativeRepeat;
 import sim.engine.Stopping;
 import sim.engine.registry.DRegistry;
-import sim.field.partitioning.NdPoint;
 import sim.field.partitioning.PartitionInterface;
+import sim.util.*;
 
 /**
  * This class contains the methods for moving objects and agents between
@@ -33,14 +33,14 @@ public class TransporterMPI {
 
 	HashMap<Integer, RemoteOutputStream> dstMap;
 
-	PartitionInterface<?> partition;
+	PartitionInterface partition;
 	int[] neighbors;
 
 	public ArrayList<PayloadWrapper> objectQueue;
 
 	protected boolean withRegistry;
 
-	public TransporterMPI(final PartitionInterface<?> partition) {
+	public TransporterMPI(final PartitionInterface partition) {
 		this.partition = partition;
 		this.withRegistry = false;
 		reload();
@@ -210,19 +210,15 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
+	
+	/*
 	public void migrateAgent(final Stopping agent, final int dst) {
 
 		AgentWrapper wrapper = new AgentWrapper(agent);
 
-		if (withRegistry) {
-			if (DRegistry.getInstance().isExported(agent)) {
-				wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
-				DRegistry.getInstance().addMigratedName(agent);
-			}
-		}
-
 		migrateAgent(wrapper, dst);
 	}
+	*/
 
 	/**
 	 * Does not transport the Object, only migrates it
@@ -233,18 +229,13 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
+	
+	/*
 	public void migrateAgent(final int ordering, final Stopping agent, final int dst) {
 		AgentWrapper wrapper = new AgentWrapper(ordering, agent);
-
-		if (withRegistry) {
-			if (DRegistry.getInstance().isExported(agent)) {
-				wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
-				DRegistry.getInstance().addMigratedName(agent);
-			}
-		}
-
 		migrateAgent(wrapper, dst);
 	}
+	*/
 
 	/**
 	 * Does not transport the Object, only migrates it
@@ -256,18 +247,12 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
+	/*
 	public void migrateAgent(final int ordering, final double time, final Stopping agent, final int dst) {
 		AgentWrapper wrapper = new AgentWrapper(ordering, time, agent);
-
-		if (withRegistry) {
-			if (DRegistry.getInstance().isExported(agent)) {
-				wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
-				DRegistry.getInstance().addMigratedName(agent);
-			}
-		}
-
 		migrateAgent(wrapper, dst);
 	}
+	*/
 
 	/**
 	 * Internal method. Don't use AgentWrapper, use Stopping instead <br>
@@ -278,10 +263,15 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
+	
+	/*
 	public void migrateAgent(final AgentWrapper agentWrapper, final int dst) {
 		// If fieldIndex < 0 then the payload does not need to be transported
 		migrateAgent(agentWrapper, dst, null, -1);
 	}
+	*/
+    
+
 
 	/**
 	 * Transports the Object as well as migrates it
@@ -293,17 +283,9 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void migrateAgent(final Stopping agent, final int dst, final NdPoint loc,
+	public void migrateAgent(final Stopping agent, final int dst, final NumberND loc,
 			final int fieldIndex) {
 		AgentWrapper wrapper = new AgentWrapper(agent);
-
-		if (withRegistry) {
-			if (DRegistry.getInstance().isExported(agent)) {
-				wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
-				DRegistry.getInstance().addMigratedName(agent);
-			}
-		}
-
 		migrateAgent(wrapper, dst, loc, fieldIndex);
 	}
 
@@ -318,17 +300,9 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void migrateAgent(final int ordering, final Stopping agent, final int dst, final NdPoint loc,
+	public void migrateAgent(final int ordering, final Stopping agent, final int dst, final NumberND loc,
 			final int fieldIndex) {
 		AgentWrapper wrapper = new AgentWrapper(ordering, agent);
-
-		if (withRegistry) {
-			if (DRegistry.getInstance().isExported(agent)) {
-				wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
-				DRegistry.getInstance().addMigratedName(agent);
-			}
-		}
-
 		migrateAgent(wrapper, dst, loc, fieldIndex);
 	}
 
@@ -345,16 +319,8 @@ public class TransporterMPI {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final int ordering, final double time, final Stopping agent, final int dst,
-			final NdPoint loc, final int fieldIndex) {
+			final NumberND loc, final int fieldIndex) {
 		AgentWrapper wrapper = new AgentWrapper(ordering, time, agent);
-
-		if (withRegistry) {
-			if (DRegistry.getInstance().isExported(agent)) {
-				wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
-				DRegistry.getInstance().addMigratedName(agent);
-			}
-		}
-
 		migrateAgent(wrapper, dst, loc, fieldIndex);
 	}
 
@@ -368,7 +334,7 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void migrateAgent(final AgentWrapper agentWrapper, final int dst, final NdPoint loc,
+	public void migrateAgent(final AgentWrapper agentWrapper, final int dst, final NumberND loc,
 			final int fieldIndex) {
 		// These methods differ in just the datatype of the WrappedObject
 		transportObject(agentWrapper, dst, loc, fieldIndex);
@@ -382,10 +348,15 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
+	
+	//don't use with DHeatBugs
+	/*
 	public void migrateRepeatingAgent(final DistributedIterativeRepeat iterativeRepeat, final int dst) {
 		// If fieldIndex < 0 then the payload does not need to be transported
 		migrateRepeatingAgent(iterativeRepeat, dst, null, -1);
 	}
+	*/
+	
 
 	/**
 	 * Transports the Object as well as migrates it. Does not stop() the repeating
@@ -399,7 +370,7 @@ public class TransporterMPI {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateRepeatingAgent(final DistributedIterativeRepeat iterativeRepeat, final int dst,
-			final NdPoint loc,
+			final NumberND loc,
 			final int fieldIndex) {
 
 		// TODO: do we need to synchronize something to ensure that the stoppable is
@@ -420,23 +391,21 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void transportObject(final Serializable obj, final int dst, final NdPoint loc,
+	public void transportObject(final Serializable obj, final int dst, final NumberND loc,
 			final int fieldIndex) {
 		if (partition.pid == dst)
 			throw new IllegalArgumentException("Destination cannot be local, must be remote");
 
-		System.out.println("transporting: " + obj); //added by Raj Patel (see email from rlather 7/31/2020)
-		
-		
+		// System.out.println("transporting: " + obj);
+
 		// Wrap the agent, this is important because we want to keep track of
 		// dst, which could be the diagonal processor
 		final PayloadWrapper wrapper = new PayloadWrapper(dst, obj, loc, fieldIndex);
 
 		if (withRegistry) {
-			if (DRegistry.getInstance().isExported(obj)) {
-				wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(obj));
-				DRegistry.getInstance().addMigratedName(obj);
-			}
+			String name = DRegistry.getInstance().ifExportedThenAddMigratedName(obj);
+			if (name != null)
+				wrapper.setExportedName(name);
 		}
 
 		assert dstMap.containsKey(dst);
@@ -514,7 +483,7 @@ public class TransporterMPI {
 //			e.printStackTrace();
 //		}
 //		// read in the data
-//		Transportee wrapper = new Transportee(dst, newAgent, new DoublePoint(x, y), migrate);
+//		Transportee wrapper = new Transportee(dst, newAgent, new Double2D(x, y), migrate);
 //		return wrapper;
 //	}
 

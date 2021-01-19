@@ -1,87 +1,81 @@
 package sim.field.storage;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import mpi.*;
-import static mpi.MPI.slice;
 
-import sim.field.partitioning.IntHyperRect;
-import sim.field.partitioning.NdPoint;
-import sim.util.MPIParam;
+import sim.field.partitioning.IntRect2D;
+import sim.util.*;
 
-public class DoubleGridStorage<T extends Serializable> extends GridStorage<T>{
-	
-	//TODO CHANGE HERE TO BE EQUAL TO THE ABSTRACT METHODS
-	@Override
-	public void setLocation(T obj, NdPoint p) {
-		// TODO Auto-generated method stub
-		
+public class DoubleGridStorage extends GridStorage<Double, Int2D> {
+	public double[] storage;
+
+	// final double initVal;
+
+	public DoubleGridStorage(IntRect2D shape) {
+		super(shape);
+		baseType = MPI.DOUBLE;
+		clear();
+		// storage = allocate(shape.getArea());
+		// this.initVal = initVal;
+		// Arrays.fill((double[]) storage, initVal);
 	}
 
-	@Override
-	public NdPoint getLocation(T obj) {
-		// TODO Auto-generated method stub
-		return null;
+	/*
+	 * public GridStorage<Double, Int2D> getNewStorage(IntRect2D shape) { return new
+	 * DoubleGridStorage(shape, 0); }
+	 */
+	public byte[] pack(MPIParam mp) throws MPIException {
+		byte[] buf = new byte[MPI.COMM_WORLD.packSize(mp.size, baseType)];
+		MPI.COMM_WORLD.pack(MPI.slice((double[]) storage, mp.idx), 1, mp.type, buf, 0);
+		return buf;
 	}
 
-	@Override
-	public void removeObject(T obj) {
-		// TODO Auto-generated method stub
-		
+	public int unpack(MPIParam mp, Serializable buf) throws MPIException {
+		return MPI.COMM_WORLD.unpack((byte[]) buf, 0, MPI.slice((double[]) storage, mp.idx), 1, mp.type);
 	}
 
-	@Override
-	public void removeObjects(NdPoint p) {
-		// TODO Auto-generated method stub
-		
+	public String toString() {
+		int[] size = shape.getSizes();
+		double[] array = (double[]) storage;
+		StringBuffer buf = new StringBuffer(String.format("DoubleGridStorage-%s\n", shape));
+
+		for (int i = 0; i < size[0]; i++) {
+			for (int j = 0; j < size[1]; j++)
+				buf.append(String.format(" %4.2f ", array[i * size[1] + j]));
+			buf.append("\n");
+		}
+
+		return buf.toString();
 	}
 
-	@Override
-	public ArrayList<T> getObjects(NdPoint p) {
-		// TODO Auto-generated method stub
-		return null;
+	public void clear() {
+		storage = new double[shape.getArea()];
 	}
 
-    public DoubleGridStorage(IntHyperRect shape, double initVal) {
-        super(shape);
-        baseType = MPI.DOUBLE;
-        storage = allocate(shape.getArea());
-        Arrays.fill((double[])storage, initVal);
-    }
+	public void addToLocation(Double t, Int2D p) {
+		storage[getFlatIdx((Int2D) p)] = t;
+	}
 
-    public GridStorage getNewStorage(IntHyperRect shape) {
-        return new DoubleGridStorage(shape, 0);
-    }
+	public void addToLocation(double t, Int2D p) {
+		storage[getFlatIdx((Int2D) p)] = t;
+	}
 
-    public byte[] pack(MPIParam mp) throws MPIException {
-        byte[] buf = new byte[MPI.COMM_WORLD.packSize(mp.size, baseType)];
-        MPI.COMM_WORLD.pack(slice((double[])storage, mp.idx), 1, mp.type, buf, 0);
-        return buf;
-    }
+	public void removeObject(Int2D p, Double t) {
+		addToLocation(0, p);
+	}
 
-    public int unpack(MPIParam mp, Serializable buf) throws MPIException {
-        return MPI.COMM_WORLD.unpack((byte[])buf, 0, slice((double[])storage, mp.idx), 1, mp.type);
-    }
+	public void removeObject(double t, Int2D p) {
+		addToLocation(0, p);
+	}
 
-    public String toString() {
-        int[] size = shape.getSize();
-        double[] array = (double[])storage;
-        StringBuffer buf = new StringBuffer(String.format("DoubleGridStorage-%s\n", shape));
+	public void removeObjects(Int2D p) {
+		addToLocation(0, p);
+	}
 
-        if (shape.getNd() == 2)
-            for (int i = 0; i < size[0]; i++) {
-                for (int j = 0; j < size[1]; j++)
-                    buf.append(String.format(" %4.2f ", array[i * size[1] + j]));
-                buf.append("\n");
-            }
-
-        return buf.toString();
-    }
-
-    protected Object allocate(int size) {
-        return new double[size];
-    }
+	public Serializable getObjects(Int2D p) {
+		return storage[getFlatIdx((Int2D) p)];
+	}
 
 }
