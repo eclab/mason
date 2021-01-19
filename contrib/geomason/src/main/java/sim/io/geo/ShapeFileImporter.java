@@ -546,8 +546,6 @@ public class ShapeFileImporter {
 		} catch (final IOException e) {
 			System.out.println("Error in ShapeFileImporter!!");
 			System.out.println("SHP filename: " + shpFile.getPath() + "; DB filename: " + dbFile.getPath());
-			// e.printStackTrace();
-
 			throw e;
 		}
 	}

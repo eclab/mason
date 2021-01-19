@@ -1,0 +1,97 @@
+print-params=true
+
+#this is a comment (it starts with #)
+# main.params
+#
+# default set of parameters for the OMOLAND simulation
+#
+# $Id: main.params 02 201-02-20 0Z Ates$
+
+##  Observer Parameters
+#################################
+writeStats = true
+writeGridTimerFrequency = 3600
+
+
+##  Global Parameters
+#################################
+InitialNumberOfHouseholds  = 50000
+experimentName = defualt
+
+
+##  Household Parameters
+#################################
+AdaptationIntentionThreshold = 0.4
+AdaptiveAgentLearningRate = 0.05
+cognitiveBiasAlpha = 0.3
+ConsumptionExp = 0.8
+adptationElasticity = 0.3
+CostOfCredit = 0.3
+MalAdptHouseholdRatio = 0.2
+MimimumExpenditurePerPerson = 2.5
+MinLaborManDay = 0.5
+MinimumLaborAge = 11
+PercentageInhertanceWedding = 0.2
+PersonBirthRate =   0.02
+PersonDeathRate = 0.007
+PovertyLineThreshold = 547
+ProRiskDeduction = 0.1
+RiskElasticity = 0.4 
+
+
+##  Herding Parameters
+#################################
+AverageHerdPrice  = 1600
+HerdDailyConsumptionRate =3.0
+HerdDestockingProportion = 0.1
+HerdGrowthRate = 0.0008
+HerdHealthConditionFactor = 0.5
+HerdLaborEfficiencyFactor = 0.95
+HerdMaxDailyDMIntake = 7.0
+HerdMaxFoodStored = 350
+HerdRestockingProportion = 0.1
+HerdSplitingThreshold = 0.3
+HerderMinVisionRange = 50
+HerderScoutingRange = 200
+ProportionLaborToTLU =5
+
+
+##  Farming Parameters
+#################################
+AverageInitialFarmingCost = 200
+FarmCobbDaglasCoeff = 0.5
+FarmInputCost = 200
+FarmLaborEfficiencyFactor = 1.1
+IrrigationFarmCost = 200
+IsIntesificationPossible = true
+MaxDaysPlantingAfterLandPrep = 30
+MinimumAnnualRainfall = 600
+ProportionLaborToAreaHa = 0.7
+WeedingMeanDay = 30
+
+##  Vegetation(Grass) Parameters
+#################################
+BaseGrowthRateContorler = 2.390
+averageRainfallGrowthCutOFF = 0.125
+MaxVegetationPerHectare = 4000.0
+MinVegetation = 50.0
+
+##  Climate Parameters
+#################################
+FirstDroughtYear = 5
+FirstWetYear = 5
+FrequencyOfDroughtYears = 5
+FrequencyOfWetYears = 5 
+isSteadyState = false
+IsDroughtYearsOn = false
+IsRandomizedRainYears = false
+IsWetYearsOn = false
+MinDaysOfMinimumrainfall = 3
+MinDaysofMERainPercetage = 15
+MinimimCessRainThreshold = 10
+MinimimEffectiveRainfall = 40
+MinimumOnsetRainThreshold = 10
+NumberOfDroughtYears = 1
+NumberOfWetYears = 5
+SeverityOfDrought = 0.5
+SeverityOfWet = 0.5

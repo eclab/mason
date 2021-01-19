@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
  * George Mason University Mason University Licensed under the Academic
  * Free License version 3.0
@@ -20,11 +20,11 @@ import sim.portrayal.geo.GeomPortrayal;
 import sim.portrayal.geo.GeomVectorFieldPortrayal;
 
 
-/** 
- *  MASON GUI wrapper for the NetworkWorld GeoMASON example.   The only addition to a standard MASON GUIState 
- *  is the addition of checking the minimum bounding rectangles (MBRs) for each portrayal.  This check ensures that 
+/**
+ *  MASON GUI wrapper for the NetworkWorld GeoMASON example.   The only addition to a standard MASON GUIState
+ *  is the addition of checking the minimum bounding rectangles (MBRs) for each portrayal.  This check ensures that
  *  the MBRs defining each field are matched, so that during display, all the fields line up (ie., you actually see
- *  the agent moving along the network).  
+ *  the agent moving along the network).
  */
 public class NetworkWorldWithUI extends GUIState
 {
@@ -32,15 +32,15 @@ public class NetworkWorldWithUI extends GUIState
     private Display2D display;
     private JFrame displayFrame;
 
-    private GeomVectorFieldPortrayal geometryPortrayal = new GeomVectorFieldPortrayal();
-    private GeomVectorFieldPortrayal intersectionPortrayal = new GeomVectorFieldPortrayal();
-    private GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
+    private final GeomVectorFieldPortrayal geometryPortrayal = new GeomVectorFieldPortrayal();
+    private final GeomVectorFieldPortrayal intersectionPortrayal = new GeomVectorFieldPortrayal();
+    private final GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
 
-    
-    public NetworkWorldWithUI(SimState state) { super(state); }
+
+    public NetworkWorldWithUI(final SimState state) { super(state); }
     public NetworkWorldWithUI()  { super(new NetworkWorld(System.currentTimeMillis())); }
-    
-    public void init(Controller controller)
+
+    public void init(final Controller controller)
     {
         super.init(controller);
 
@@ -62,7 +62,7 @@ public class NetworkWorldWithUI extends GUIState
 
     private void setupPortrayals()
     {
-        NetworkWorld world = (NetworkWorld)state;
+        final NetworkWorld world = (NetworkWorld)state;
 
         geometryPortrayal.setField(world.world);
 
@@ -70,7 +70,7 @@ public class NetworkWorldWithUI extends GUIState
         intersectionPortrayal.setPortrayalForAll(new GeomPortrayal(Color.LIGHT_GRAY, true));
 
         agentPortrayal.setField(world.agents);
-        agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED, true));
+        agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,20.0,true));
 
         display.reset();
         display.setBackdrop(Color.WHITE);
@@ -79,11 +79,11 @@ public class NetworkWorldWithUI extends GUIState
 
 
 
-    public static void main(String[] args)
+    public static void main(final String[] args)
     {
-        NetworkWorldWithUI worldGUI =  new NetworkWorldWithUI();
-        Console console = new Console(worldGUI);
+        final NetworkWorldWithUI worldGUI =  new NetworkWorldWithUI();
+        final Console console = new Console(worldGUI);
         console.setVisible(true);
     }
-    
+
 }

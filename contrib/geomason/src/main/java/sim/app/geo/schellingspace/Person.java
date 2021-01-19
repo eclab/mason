@@ -23,209 +23,173 @@ import sim.engine.Steppable;
 import sim.util.Bag;
 import sim.util.geo.MasonGeometry;
 
-
-
 /**
  * The mobile agent in the simulation.
- * 
+ *
  */
-//@SuppressWarnings("restriction")
-public class Person implements Steppable
-{
-    private static final long serialVersionUID = 1L;
+public class Person implements Steppable {
+	private static final long serialVersionUID = 1L;
 
-    /** What "class" the agent belongs to */
-    public enum Affiliation { RED, BLUE }
+	/** What "class" the agent belongs to */
+	public enum Affiliation {
+		RED, BLUE
+	}
 
-    private Affiliation affiliation;
+	private Affiliation affiliation;
 
+	// position information
+	MasonGeometry location;
+	SchellingGeometry region;
 
-    // position information
-    MasonGeometry location;
-    SchellingGeometry region;
+	// given parameters
+	double personalThreshold = .2;
+	double moveDist = 1000.;
+	double minDist = 100.;
 
-    // given parameters
-    double personalThreshold = .5;
-    double moveDist = 1000.;
-    double minDist = 100.;
+	// updated variables
+	int numMoves = 0;
 
-    // updated variables
-    int numMoves = 0;
+	/**
+	 * Constructor function
+	 */
+	public Person(final Affiliation a) {
+		affiliation = a;
+	}
 
+	public Affiliation getAffiliation() {
+		return affiliation;
+	}
 
-    /**
-     * Constructor function
-     */
-    public Person(Affiliation a)
-    {
-        affiliation = a;
-    }
+	public void setAffiliation(final Affiliation affiliation) {
+		this.affiliation = affiliation;
+	}
 
+	/**
+	 * @param world the SchellingSpace, which holds the GeomVectorFields
+	 * @return whether the location is acceptable for the Person, based on the
+	 *         Person's personalThreshold
+	 */
+	boolean acceptable(final SchellingSpace world) {
 
+		final Bag neighbors = world.agents.getObjectsWithinDistance(location, minDist);
 
-    public Affiliation getAffiliation()
-    {
-        return affiliation;
-    }
+		// calculate the proportion of unlike neighbors
+		double unlikeNeighbors = 0.;
+		for (final Object o : neighbors) {
+			final Person neighbor = (Person) ((MasonGeometry) o).getUserData();
+			if (!neighbor.getAffiliation().equals(affiliation)) {
+				unlikeNeighbors++;
+			}
+		}
 
+		// if the location is unacceptable, return false
+		if (unlikeNeighbors / neighbors.numObjs > personalThreshold) {
+			return false;
+		} else // if it is acceptable, return true
+		{
+			return true;
+		}
+	}
 
+	public MasonGeometry getGeometry() {
+		return location;
+	}
 
-    public void setAffiliation(Affiliation affiliation)
-    {
-        this.affiliation = affiliation;
-    }
+	/**
+	 * Moves the Person randomly in the space, updating the SchellingPolygons about
+	 * their contents as it goes
+	 *
+	 * @param world the SchellingSpace instance, which holds the GeomVectorFields
+	 */
+	public void moveRandomly(final SchellingSpace world) {
 
+		// the current location
+		final Coordinate coord = (Coordinate) location.geometry.getCoordinate().clone();
 
+		// find a new position
+		final Random rand = new Random();
+		double xinc = moveDist * (rand.nextDouble() - .5),
+				yinc = moveDist * (rand.nextDouble() - .5);
+		coord.x += xinc;
+		coord.y += yinc;
 
-    /**
-     * @param world the SchellingSpace, which holds the GeomVectorFields
-     * @return whether the location is acceptable for the Person,
-     * based on the Person's personalThreshold
-     */
-    boolean acceptable(SchellingSpace world)
-    {
+		// while the new position is not inside the space, keep trying
+		while (!world.world.isInsideUnion(coord)) {
+			coord.x -= xinc;
+			coord.y -= yinc;
+			xinc = moveDist * (rand.nextDouble() - .5);
+			yinc = moveDist * (rand.nextDouble() - .5);
+			coord.x += xinc;
+			coord.y += yinc;
+		}
 
-        Bag neighbors = world.agents.getObjectsWithinDistance(location, minDist);
+		// once the location works, move to the new location
+		location.geometry.apply(AffineTransformation.translationInstance(xinc, yinc));
 
-        // calculate the proportion of unlike neighbors
-        double unlikeNeighbors = 0.;
-        for (Object o : neighbors)
-        {
-            Person neighbor = (Person) ((MasonGeometry) o).getUserData();
-            if (! neighbor.getAffiliation().equals(affiliation))
-            {
-                unlikeNeighbors++;
-            }
-        }
+		// if the Person has moved to a different region, update the SchellingPolygons
+		// about their current contents
+		if (!region.geometry.contains(location.geometry)) {
+			region.residents.remove(this);
+			determineCurrentRegion(region);
+			region.residents.add(this);
+		}
 
-        // if the location is unacceptable, return false
-        if (unlikeNeighbors / neighbors.numObjs > personalThreshold)
-        {
-            return false;
-        } else // if it is acceptable, return true
-        {
-            return true;
-        }
-    }
+		// update the number of moves made
+		numMoves++;
+	}
 
+	/**
+	 * Determines whether the Person's current location is acceptable. If the
+	 * location is not acceptable, attempts to move the Person to a better location.
+	 */
+	@Override
+	public void step(final SimState state) {
+		System.out.println("Stepping");
+		final SchellingSpace world = (SchellingSpace) state;
 
+		// check to see if the number of neighbors exceeds a given tolerance
+		if (!acceptable(world)) {
+			moveRandomly(world); // if it does, move randomly
+		}
+	}
 
-    public MasonGeometry getGeometry()
-    {
-        return location;
-    }
+	/**
+	 * breadth first search on the polygons to determine current location relative
+	 * to SchellingPolygons
+	 *
+	 * @param poly the SchellingGeometry in which the Person last found himself
+	 */
+	void determineCurrentRegion(final SchellingGeometry poly) {
 
+		// keep track of which SchellingPolygons have been investigated and which
+		// are about to be investigated
+		final ArrayList<SchellingGeometry> checked = new ArrayList<SchellingGeometry>();
+		final ArrayList<SchellingGeometry> toCheck = new ArrayList<SchellingGeometry>();
 
+		checked.add(poly); // we know it's not where it was anymore!
+		toCheck.addAll(poly.neighbors); // first check the neighbors
 
-    /**
-     * Moves the Person randomly in the space, updating the SchellingPolygons
-     * about their contents as it goes
-     * @param world the SchellingSpace instance, which holds the GeomVectorFields
-     */
-    public void moveRandomly(SchellingSpace world)
-    {
+		// while there is a Polygon to investigate, keep running
+		while (toCheck.size() > 0) {
+			final SchellingGeometry p = toCheck.remove(0);
 
-        // the current location
-        Coordinate coord = (Coordinate) location.geometry.getCoordinate().clone();
+			if (p.geometry.contains(location.geometry)) { // ---successfully located!---
+				region = p;
+				return;
+			} else {
+				checked.add(p); // we have investigated this polygon
 
-        // find a new position
-        Random rand = new Random();
-        double xinc = moveDist * (rand.nextDouble() - .5),
-            yinc = moveDist * (rand.nextDouble() - .5);
-        coord.x += xinc;
-        coord.y += yinc;
+				// add all uninvestigated neighbors not already slated for investigation
+				for (final SchellingGeometry n : p.neighbors) {
+					if (!checked.contains(n) && !toCheck.contains(n)) {
+						toCheck.add(n);
+					}
+				}
+			}
+		}
 
-        // while the new position is not inside the space, keep trying
-        while (!world.world.isInsideUnion(coord))
-        {
-            coord.x -= xinc;
-            coord.y -= yinc;
-            xinc = moveDist * (rand.nextDouble() - .5);
-            yinc = moveDist * (rand.nextDouble() - .5);
-            coord.x += xinc;
-            coord.y += yinc;
-        }
-
-        // once the location works, move to the new location
-        location.geometry.apply(AffineTransformation.translationInstance(xinc, yinc));
-
-        // if the Person has moved to a different region, update the SchellingPolygons
-        // about their current contents
-        if (!region.geometry.contains(location.geometry))
-        {
-            region.residents.remove(this);
-            determineCurrentRegion(region);
-            region.residents.add(this);
-        }
-
-        // update the number of moves made
-        numMoves++;
-    }
-
-
-
-    /**
-     * Determines whether the Person's current location is acceptable.
-     * If the location is not acceptable, attempts to move the Person to
-     *  a better location.
-     */
-    @Override
-    public void step(SimState state)
-    {
-
-        SchellingSpace world = (SchellingSpace) state;
-
-        // check to see if the number of neighbors exceeds a given tolerance
-        if (!acceptable(world))
-        {
-            moveRandomly(world); // if it does, move randomly
-        }
-    }
-
-
-
-    /**
-     * breadth first search on the polygons to determine current location relative to
-     * SchellingPolygons
-     * @param poly the SchellingGeometry in which the Person last found himself
-     */
-    void determineCurrentRegion(SchellingGeometry poly)
-    {
-
-        // keep track of which SchellingPolygons have been investigated and which
-        // are about to be investigated
-        ArrayList<SchellingGeometry> checked = new ArrayList<SchellingGeometry>();
-        ArrayList<SchellingGeometry> toCheck = new ArrayList<SchellingGeometry>();
-
-        checked.add(poly); // we know it's not where it was anymore!
-        toCheck.addAll(poly.neighbors); // first check the neighbors
-
-        // while there is a Polygon to investigate, keep running
-        while (toCheck.size() > 0)
-        {
-            SchellingGeometry p = toCheck.remove(0);
-
-            if (p.geometry.contains(location.geometry))
-            { // ---successfully located!---
-                region = p;
-                return;
-            } else
-            {
-                checked.add(p); // we have investigated this polygon
-
-                // add all uninvestigated neighbors not already slated for investigation
-                for (SchellingGeometry n : p.neighbors)
-                {
-                    if (!checked.contains(n) && !toCheck.contains(n))
-                    {
-                        toCheck.add(n);
-                    }
-                }
-            }
-        }
-
-        // if it's not anywhere, throw an error
-        System.out.println("ERROR: Person is not located within any polygon");
-    }
+		// if it's not anywhere, throw an error
+		System.out.println("ERROR: Person is not located within any polygon");
+	}
 
 }

@@ -23,17 +23,37 @@
 			<id>repository</id>
 			<url>file:///${project.basedir}/repository/</url>
 		</repository>
+		<!-- <repository> <id>repository2</id> <url>http://download.osgeo.org/webdav/geotools/</url> 
+			</repository> -->
+		<!-- <repository> <id>repository4</id> <url>http://repo.boundlessgeo.com/main/</url> 
+			</repository> -->
+		<!-- <repository> <id>MavenJarStore</id> <url>http://raw.github.com/GMUEClab/MavenJarStore/repository</url> 
+			</repository> -->
 		<repository>
-			<id>repository2</id>
-			<url>http://download.osgeo.org/webdav/geotools/</url>
+			<id>osgeo</id>
+			<name>OSGeo Release Repository</name>
+			<url>https://repo.osgeo.org/repository/release/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</repository>
 		<repository>
 			<id>repository3</id>
 			<url>http://maven.geotoolkit.org/</url>
 		</repository>
 		<repository>
-			<id>repository4</id>
-			<url>http://repo.boundlessgeo.com/main/</url>
+			<id>osgeo-snapshot</id>
+			<name>OSGeo Snapshot Repository</name>
+			<url>https://repo.osgeo.org/repository/snapshot/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
 		</repository>
 	</repositories>
 
@@ -59,6 +79,13 @@
 			<version>4.0</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.locationtech.jts/jts-core -->
+		<dependency>
+			<groupId>org.locationtech.jts</groupId>
+			<artifactId>jts-core</artifactId>
+			<version>1.15.1</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/com.vividsolutions/jts -->
 		<dependency>
 			<groupId>com.vividsolutions</groupId>
@@ -168,6 +195,27 @@
 			<artifactId>kiberaData</artifactId>
 			<version>1.0</version>
 		</dependency>
-
+		<dependency>
+			<groupId>edu.gmu.eclab</groupId>
+			<artifactId>cityMigrationData</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.gmu.eclab</groupId>
+			<artifactId>riftlandData</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.gmu.eclab</groupId>
+			<artifactId>conflictDiamondsData</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.gmu.eclab</groupId>
+			<artifactId>omolandCAData</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<!-- <dependency> <groupId>cs.gmu.eclab.contrib.geomasondata</groupId> 
+			<artifactId>conflictDiamondsData</artifactId> <version>1.0</version> </dependency> -->
 	</dependencies>
 </project>

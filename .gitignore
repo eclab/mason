@@ -33,3 +33,10 @@ contrib/geomason/repository/jars/refugeeData.jar
 contrib/geomason/repository/jars/swiselib.jar
 kiberaData.jar
 mason/bin
+contrib/geomason/repository/jars/ConflictDiamondsData.jar
+contrib/geomason/repository/jars/RiftlandData.jar
+contrib/geomason/repository/jars/cityMigrationData.jar
+OmolandCAData.jar
+contrib/geomason/repository/jars/commons-math3-3.6.1.jar
+contrib/geomason/repository/jars/jts-1.13.jar
+contrib/geomason/repository/jars/socialnets-1.0.jar

@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
  * George Mason University Mason University Licensed under the Academic
  * Free License version 3.0
@@ -31,7 +31,7 @@ public class Agent implements Steppable
 
     private static final long serialVersionUID = -7060584745540577823L;
     // point that denotes agent's position
-    private Point location;
+    private final Point location;
     // How much to move the agent by in each step(); may become negative if
     // agent is moving from the end to the start of current line.
     private double moveRate = 0.01;
@@ -40,14 +40,14 @@ public class Agent implements Steppable
     double startIndex = 0.0; // start position of current line
     double endIndex = 0.0; // end position of current line
     double currentIndex = 0.0; // current location along line
-    // used to update location 
-    private PointMoveTo pointMoveTo = new PointMoveTo();
+    // used to update location
+    private final PointMoveTo pointMoveTo = new PointMoveTo();
 
 
 
     public Agent()
     {
-        GeometryFactory fact = new GeometryFactory();
+        final GeometryFactory fact = new GeometryFactory();
         location = fact.createPoint(new Coordinate(10, 10)); // magic numbers
     }
 
@@ -75,37 +75,37 @@ public class Agent implements Steppable
 
 
 
-    public void start(NetworkWorld state)
+    public void start(final NetworkWorld state)
     {
         // Find the first line segment and set our position over the start coordinate.
 
-        MasonGeometry line = (MasonGeometry) state.world.getGeometries().objs[0];
+        final MasonGeometry line = (MasonGeometry) state.world.getGeometries().objs[0];
         setNewRoute((LineString) line.geometry, true);
     }
 
 
     // randomly selects an adjacent route to traverse
-    private void findNewPath(NetworkWorld NetworkWorld)
+    private void findNewPath(final NetworkWorld NetworkWorld)
     {
         // find all the adjacent junctions
-        Node currentJunction = NetworkWorld.network.findNode(location.getCoordinate());
+        final Node currentJunction = NetworkWorld.network.findNode(location.getCoordinate());
 
         if (currentJunction != null)
         {
-            DirectedEdgeStar directedEdgeStar = currentJunction.getOutEdges();
-            Object[] edges = directedEdgeStar.getEdges().toArray();
+            final DirectedEdgeStar directedEdgeStar = currentJunction.getOutEdges();
+            final Object[] edges = directedEdgeStar.getEdges().toArray();
 
             if (edges.length > 0)
             {
                 // pick one randomly
-                int i = NetworkWorld.random.nextInt(edges.length);
-                GeomPlanarGraphDirectedEdge directedEdge = (GeomPlanarGraphDirectedEdge) edges[i];
-                GeomPlanarGraphEdge edge = (GeomPlanarGraphEdge) directedEdge.getEdge();
+                final int i = NetworkWorld.random.nextInt(edges.length);
+                final GeomPlanarGraphDirectedEdge directedEdge = (GeomPlanarGraphDirectedEdge) edges[i];
+                final GeomPlanarGraphEdge edge = (GeomPlanarGraphEdge) directedEdge.getEdge();
 
                 // and start moving along it
-                LineString newRoute = edge.getLine();
-                Point startPoint = newRoute.getStartPoint();
-                Point endPoint = newRoute.getEndPoint();
+                final LineString newRoute = edge.getLine();
+                final Point startPoint = newRoute.getStartPoint();
+                final Point endPoint = newRoute.getEndPoint();
 
                 if (startPoint.equals(location))
                 {
@@ -135,7 +135,7 @@ public class Agent implements Steppable
      * @param line defining new route
      * @param start true if agent at start of line else agent placed at end
      */
-    private void setNewRoute(LineString line, boolean start)
+    private void setNewRoute(final LineString line, final boolean start)
     {
         segment = new LengthIndexedLine(line);
 
@@ -161,7 +161,7 @@ public class Agent implements Steppable
     }
 
     // move the agent to the given coordinates
-    public void moveTo(Coordinate c)
+    public void moveTo(final Coordinate c)
     {
         pointMoveTo.setCoordinate(c);
         location.apply(pointMoveTo);
@@ -169,7 +169,7 @@ public class Agent implements Steppable
 
 
 
-    public void step(SimState state)
+    public void step(final SimState state)
     {
         // if we're not at a junction move along the current segment
         if (!arrived())
@@ -188,7 +188,7 @@ public class Agent implements Steppable
      *
      * @param currentIndex that's guaranteed to be on the current line
      */
-    private double clipCurrentIndex(double currentIndex)
+    private double clipCurrentIndex(final double currentIndex)
     {
         // If move rate is positive ensure we're not off the end of the line.
         if (moveRate > 0)
@@ -203,17 +203,17 @@ public class Agent implements Steppable
 
 
     // move agent along current line segment
-    private void moveAlongPath(NetworkWorld world)
+    private void moveAlongPath(final NetworkWorld world)
     {
         currentIndex += moveRate;
 
         currentIndex = clipCurrentIndex(currentIndex);
 
-        Coordinate currentPos = segment.extractPoint(currentIndex);
+        final Coordinate currentPos = segment.extractPoint(currentIndex);
         moveTo(currentPos);
 
         world.agents.clear();
-        world.agents.addGeometry(new MasonGeometry(this.location));
+        world.agents.addGeometry(new MasonGeometry(location));
     }
 
 }
