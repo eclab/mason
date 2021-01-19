@@ -480,7 +480,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 	}
 
 	// Get all the objects inside the given rectangle
-	List<T> getObjects(final IntRect2D r) {
+	public List<T> getObjects(final IntRect2D r) {
 		final ArrayList<T> objs = new ArrayList<T>();
 		int[] offset = { 1, 1 };
 

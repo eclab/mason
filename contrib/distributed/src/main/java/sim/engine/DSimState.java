@@ -503,8 +503,8 @@ public class DSimState extends SimState {
 		Timing.start(Timing.LB_OVERHEAD);
 		((QuadTreePartition) partition).balance(runtime, level);
 		MPI.COMM_WORLD.barrier();
-	    System.out.println("pid "+partition.getPid()+" old_partitioning"+old_partition);
-		System.out.println("pid " + partition.getPid() + " new partition" + partition.getBounds());
+	    //System.out.println("pid "+partition.getPid()+" old_partitioning"+old_partition);
+		//System.out.println("pid " + partition.getPid() + " new partition" + partition.getBounds());
 
 		for (Int2D p : old_partition.getPointList()) {
 			

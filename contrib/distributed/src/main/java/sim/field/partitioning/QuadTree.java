@@ -23,14 +23,14 @@ public class QuadTree {
 			if (np == POWERS_OF_FOUR[i]) { found = true; break; }
 			}
 			
-		if (!found)
-			throw new IllegalArgumentException("The given number of processors " + np + " must be a power of four");
+		// if (!found)
+		// 	throw new IllegalArgumentException("The given number of processors " + np + " must be a power of four");
 
 		int div = 4;			// 4 divisions
 		root = new QuadTreeNode(shape, null);
 		//availIds = IntStream.range(1, np / (div - 1) * div + 1).boxed().collect(Collectors.toList());		// FIXME -- What is this supposed to be?s
 		availIds = new ArrayList<Integer>();
-		for (int i = 1; i < np / (div - 1) * div + 1; i++) {
+		for (int i = 1; i < (np / (div - 1) * div + 1)+4; i++) {
 			availIds.add(i);
 		}
 		allNodes = new HashMap<Integer, QuadTreeNode>();
@@ -142,6 +142,13 @@ public class QuadTree {
 			}
 			depth = max;
 		}
+	}
+	
+	protected void delLeaf(final QuadTreeNode leaf){
+		final int id = leaf.getId();
+		allNodes.remove(id);
+		availIds.add(id);
+		leaf.getParent().children.remove(leaf);
 	}
 
 	public HashSet<QuadTreeNode> getNeighbors(final QuadTreeNode node, final int[] aoi, final boolean isToroidal) {
@@ -391,7 +398,7 @@ public class QuadTree {
 
 	private static void testFindNeighbor() {
 		final IntRect2D field = new IntRect2D(new Int2D(0, 0), new Int2D(100, 100));
-		final QuadTree qt = new QuadTree(field, 22);
+		final QuadTree qt = new QuadTree(field, 16);
 		final int[] aoi = new int[] { 1, 1 };
 
 		final Int2D[] splitPoints = new Int2D[] {
@@ -400,24 +407,26 @@ public class QuadTree {
 				new Int2D(25, 75),
 				new Int2D(75, 25),
 				new Int2D(75, 75),
-				new Int2D(35, 15),
-				new Int2D(40, 35),
+				//new Int2D(35, 15),
+				//new Int2D(40, 35),
 		};
 
 		final HashMap<Integer, int[]> tests = new HashMap<Integer, int[]>() {
 			{
-				put(22, new int[] { 5, 6, 21, 23, 24, 25 });
-				put(24, new int[] { 13, 14, 21, 22, 23, 25, 27 });
-				put(13, new int[] { 14, 15, 16, 23, 24, 27 });
-				put(15, new int[] { 13, 14, 16 });
-				put(20, new int[] { 17, 18, 19 });
-				put(10, new int[] { 9, 11, 12 });
-				put(5, new int[] { 6, 21, 22, 25 });
-				put(6, new int[] { 5, 9, 11, 22, 25, 26 });
-				put(26, new int[] { 6, 9, 11, 25, 27, 28 });
-				put(11, new int[] { 6, 9, 10, 12, 14, 17, 18, 26, 28 });
-				put(17, new int[] { 11, 12, 14, 16, 18, 19, 20, 28 });
-				put(10, new int[] { 9, 11, 12 });
+				// put(22, new int[] { 5, 6, 21, 23, 24, 25 });
+				// put(24, new int[] { 13, 14, 21, 22, 23, 25, 27 });
+				// put(13, new int[] { 14, 15, 16, 23, 24, 27 });
+				// put(15, new int[] { 13, 14, 16 });
+				// put(20, new int[] { 17, 18, 19 });
+				// put(10, new int[] { 9, 11, 12 });
+				// put(5, new int[] { 6, 21, 22, 25 });
+				// put(6, new int[] { 5, 9, 11, 22, 25, 26 });
+				// put(26, new int[] { 6, 9, 11, 25, 27, 28 });
+				// put(11, new int[] { 6, 9, 10, 12, 14, 17, 18, 26, 28 });
+				// put(17, new int[] { 11, 12, 14, 16, 18, 19, 20, 28 });
+				// put(10, new int[] { 9, 11, 12 });
+				put(8,new int[]{});
+				put(5,new int[]{});
 			}
 		};
 
@@ -428,7 +437,7 @@ public class QuadTree {
 
 		for (final Map.Entry<Integer, int[]> test : tests.entrySet()) {
 			final QuadTreeNode node = qt.getNode(test.getKey());
-			final int[] got = qt.getNeighborIds(node, aoi,false);
+			final int[] got = qt.getNeighborIds(node, aoi,true);
 			final int[] want = test.getValue();
 			final boolean isPass = Arrays.equals(want, got);
 			System.out.println(
@@ -443,44 +452,44 @@ public class QuadTree {
 	public static void main(final String[] args) {
 		final IntRect2D field = new IntRect2D(new Int2D(0, 0), new Int2D(100, 100));
 
-		final QuadTree qt = new QuadTree(field, 7);
+		final QuadTree qt = new QuadTree(field, 8);
 
 		qt.split(new Int2D(40, 60));
 		System.out.println(qt);
 
-		qt.split(new Int2D(10, 80));
-		System.out.println(qt);
+		// qt.split(new Int2D(10, 80));
+		// System.out.println(qt);
 
-		final Int2D p1 = new Int2D(50, 50);
-		System.out.println("Point " + p1 + " is in node " + qt.getLeafNode(p1));
+		// final Int2D p1 = new Int2D(50, 50);
+		// System.out.println("Point " + p1 + " is in node " + qt.getLeafNode(p1));
 
-		qt.moveOrigin(qt.getRoot(), new Int2D(60, 70));
-		System.out.println(qt);
+		// qt.moveOrigin(qt.getRoot(), new Int2D(60, 70));
+		// System.out.println(qt);
 
-		System.out.println("Point " + p1 + " is in node " + qt.getLeafNode(p1));
+		// System.out.println("Point " + p1 + " is in node " + qt.getLeafNode(p1));
 
-		System.out.println("------------");
-		System.out.println(qt.availIds);
-		for (final QuadTreeNode node : qt.allNodes.values())
-			System.out.println(node);
-		System.out.println(qt.depth);
+		// System.out.println("------------");
+		// System.out.println(qt.availIds);
+		// for (final QuadTreeNode node : qt.allNodes.values())
+		// 	System.out.println(node);
+		// System.out.println(qt.depth);
 
-		System.out.println("Merge one of root's children");
-		qt.merge(qt.getRoot().getChild(1));
-		System.out.println(qt.availIds);
-		for (final QuadTreeNode node : qt.getAllNodes())
-			System.out.println("Node " + node);
-		for (final QuadTreeNode node : qt.getAllLeaves())
-			System.out.println("Leaf " + node);
-		System.out.println(qt.depth);
+		// System.out.println("Merge one of root's children");
+		// qt.merge(qt.getRoot().getChild(1));
+		// System.out.println(qt.availIds);
+		// for (final QuadTreeNode node : qt.getAllNodes())
+		// 	System.out.println("Node " + node);
+		// for (final QuadTreeNode node : qt.getAllLeaves())
+		// 	System.out.println("Leaf " + node);
+		// System.out.println(qt.depth);
 
-		System.out.println("Merge root");
-		qt.merge(qt.getRoot());
-		System.out.println(qt.availIds);
-		for (final QuadTreeNode node : qt.getAllNodes())
-			System.out.println("Node " + node);
-		System.out.println(qt.depth);
+		// System.out.println("Merge root");
+		// qt.merge(qt.getRoot());
+		// System.out.println(qt.availIds);
+		// for (final QuadTreeNode node : qt.getAllNodes())
+		// 	System.out.println("Node " + node);
+		// System.out.println(qt.depth);
 
-		testFindNeighbor();
+		//testFindNeighbor();
 	}
 }

@@ -10,6 +10,9 @@ import sim.portrayal.simple.RectanglePortrayal2D;
 import sim.util.MutableDouble;
 import sim.util.gui.ColorMap;
 
+class HaitiFoodPortrayal{
+	
+}
 /*
 class RoadsPortrayal extends RectanglePortrayal2D {
 

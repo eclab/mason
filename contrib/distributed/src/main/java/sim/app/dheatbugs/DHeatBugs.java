@@ -7,6 +7,7 @@
 package sim.app.dheatbugs;
 
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import sim.engine.DSimState;
 import sim.engine.Schedule;
@@ -46,7 +47,7 @@ public class DHeatBugs extends DSimState {
 	public DDenseGrid2D<DHeatBug> bugs; // Instead of SparseGrid2D
 
 	public DHeatBugs(final long seed) {
-		this(seed, 100, 100, 1000, 5);
+		this(seed, 100, 100, 100, 5);
 	}
 
 	public DHeatBugs(final long seed, final int width, final int height, final int count, final int aoi) {

@@ -1,5 +1,6 @@
 package sim.field.partitioning;
 
+import java.awt.print.Printable;
 import java.util.ArrayList;
 import sim.util.*;
 
@@ -293,6 +294,14 @@ public class QuadTreeNode {
 			int x = mapd[i];
 			r = r << 1 | x;
 		}
-		return r;
+		
+		for(int i=0; i<children.size(); i++){
+			if(children.get(i).shape.contains(p)){
+				// System.out.println("*************p " + p + " is contained in " + children.get(i));
+				// System.out.println("*************r " + r);
+				return i;
+			}
+		}
+		return -1; //error
 	}
 }
