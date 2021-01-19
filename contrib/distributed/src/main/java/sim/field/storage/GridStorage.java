@@ -22,12 +22,17 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	int height; // this is the same as shape.getHeight(), pulled out just in case inlining
 				// doesn't work
 
+	// Return a new instance of the subclass (IntStorage/DoubleStorage/etc...)
+	// public abstract GridStorage getNewStorage(IntRect2D shape);
+
+	public abstract String toString();
+
+	public abstract Serializable pack(MPIParam mp) throws MPIException;
+
+	public abstract int unpack(MPIParam mp, Serializable buf) throws MPIException;
+
 	/* Abstract Method of generic storage based on N-dimensional Point */
 	public abstract void addToLocation(final T obj, final P p);
-
-//	public abstract P getLocation(final T obj);
-
-//	public abstract void removeObject(final T obj);
 
 	public abstract void removeObjects(final P p);
 
@@ -75,16 +80,6 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	public IntRect2D getShape() {
 		return shape;
 	}
-
-	// Return a new instance of the subclass (IntStorage/DoubleStorage/etc...)
-	// public abstract GridStorage getNewStorage(IntRect2D shape);
-
-	public abstract String toString();
-
-	public abstract Serializable pack(MPIParam mp) throws MPIException;
-	
-
-	public abstract int unpack(MPIParam mp, Serializable buf) throws MPIException;
 
 	// Method that allocates an array of objects of desired type
 	// This method will be called after the new shape has been set
