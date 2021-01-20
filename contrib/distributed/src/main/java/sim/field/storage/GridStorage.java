@@ -5,7 +5,6 @@ import java.io.Serializable;
 import mpi.Datatype;
 import mpi.MPI;
 import mpi.MPIException;
-import sim.field.partitioning.IntRect2D;
 import sim.util.*;
 
 /**
@@ -16,7 +15,6 @@ import sim.util.*;
 public abstract class GridStorage<T extends Serializable, P extends NumberND> implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 
-	// Object storage;
 	IntRect2D shape;
 	transient Datatype baseType = MPI.BYTE; // something by default
 	int height; // this is the same as shape.getHeight(), pulled out just in case inlining
@@ -61,18 +59,6 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 		height = shape.getHeight(); // getHeight(shape.getSizes());
 	}
 
-	/*
-	 * public GridStorage(final Object storage, final IntRect2D shape) {
-	 * this(shape); this.storage = storage; }
-	 * 
-	 * /* public GridStorage(final Object storage, final IntRect2D shape, final
-	 * Datatype baseType) { this(storage, shape); this.baseType = baseType; }
-	 */
-
-	/*
-	 * public Object getStorage() { return storage; }
-	 */
-
 	public Datatype getMPIBaseType() {
 		return baseType;
 	}
@@ -92,9 +78,8 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	 */
 	void reload(final IntRect2D newShape) {
 		shape = newShape;
-		height = newShape.getHeight(); // getHeight(newShape.getSizes());
+		height = newShape.getHeight();
 		clear();
-		// storage = allocate(newShape.getArea());
 	}
 
 	/**
@@ -135,11 +120,6 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	 */
 	public int getFlatIdx(final Int2D p) {
 		return p.x * height + p.y;
-//		int sum = 0;
-//		for (int i = 0; i < p.getNumDimensions(); i++) {
-//			sum += p.c(i) * height[i];
-//		}
-//		return sum;
 	}
 
 	/**
@@ -158,35 +138,7 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	 * @return flattened index with respect to the given height
 	 */
 	public static int getFlatIdx(final Int2D p, final int[] wrtSize) {
-		return p.x * wrtSize[1] + p.y; // [1] is height //return p.x * getHeight(wrtSize) + p.y;
+		return p.x * wrtSize[1] + p.y; // [1] is height
 
-//		final int s = getHeight(wrtSize);
-//		int sum = 0;
-//		for (int i = 0; i < p.getNumDimensions(); i++) {
-//			sum += p.c(i) * s[i];
-//		}
-//		return sum;
 	}
-
-	//public abstract void check_m_and_storage_match(String s); //test method
-	//public abstract void same_agent_multiple_cells(String string); //test method
-
-	/**
-	 * @param size
-	 * @return height
-	 */
-//	protected static int getHeight(final int[] size) {
-//		return size[1];
-//	}
-
-//	protected static int[] getHeight(final int[] size) {
-//	final int[] ret = new int[size.length];
-//
-//	ret[size.length - 1] = 1;
-//	for (int i = size.length - 2; i >= 0; i--)
-//		ret[i] = ret[i + 1] * size[i + 1];
-//
-//	return ret;
-//}
-
 }

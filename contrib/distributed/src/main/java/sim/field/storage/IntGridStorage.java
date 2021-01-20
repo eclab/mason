@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import mpi.*;
-
-import sim.field.partitioning.IntRect2D;
 import sim.util.*;
 
 public class IntGridStorage extends GridStorage<Integer, Int2D> {

@@ -233,12 +233,12 @@ public class QuadTree {
 		
 		//fieldsize
 		final IntRect2D rootShape = root.getShape();
-		final int width = rootShape.br.x - rootShape.ul.x ;
-		final int height = rootShape.br.y -rootShape.ul.y ;
+		final int width = rootShape.br().x - rootShape.ul().x ;
+		final int height = rootShape.br().y -rootShape.ul().y ;
 		
 		//IntRect2D point
-		final int[] ul = new int[] {myShape.ul.x,myShape.ul.y};
-		final int[] br = new int[] {myShape.br.x,myShape.br.y};
+		final int[] ul = new int[] {myShape.ul().x,myShape.ul().y};
+		final int[] br = new int[] {myShape.br().x,myShape.br().y};
 	
 		//TODO maybe I can use myShape.toToroidal() --- maybe not
 		//final List<IntRect2D> haloRegions = myShape.resize(aoi).toToroidal(myShape);

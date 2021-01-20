@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.function.IntFunction;
 
 import sim.engine.DObject;
-import sim.field.partitioning.IntRect2D;
 import sim.util.*;
 
 /**

@@ -318,9 +318,9 @@ public class QuadTreePartition extends Partition {
 		if (pid == 0)
 			System.out.println("REFINE PARTITION SELECTED MERGABLE "+firstNode+" --- "+ secondNode);
 		
-		Int2D maxul = firstNode.shape.ul.min(secondNode.shape.ul);
+		Int2D maxul = firstNode.shape.ul().min(secondNode.shape.ul());
 
-		Int2D minbr = firstNode.shape.br.max(secondNode.shape.br);
+		Int2D minbr = firstNode.shape.br().max(secondNode.shape.br());
 
 		IntRect2D newShape = new IntRect2D(maxul, minbr);
 

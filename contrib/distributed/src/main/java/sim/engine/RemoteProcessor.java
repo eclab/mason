@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sim.engine.registry.DRegistry;
-import sim.field.partitioning.IntRect2D;
 import sim.engine.transport.TransportRMIInterface;
 import sim.field.proxy.VisualizationProcessor;
 import sim.field.storage.GridStorage;
+
+import sim.util.*;
 
 public class RemoteProcessor extends UnicastRemoteObject implements VisualizationProcessor {
 	// public class RemoteProcessor implements VisualizationProcessor {

@@ -8,7 +8,6 @@ import java.util.List;
 
 import sim.app.dflockers.DFlocker;
 import sim.engine.DObject;
-import sim.field.partitioning.IntRect2D;
 import sim.util.*;
 
 public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2D> {

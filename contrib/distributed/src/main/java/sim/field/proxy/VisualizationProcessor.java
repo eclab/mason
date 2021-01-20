@@ -4,6 +4,7 @@ import sim.engine.Stat;
 import sim.engine.transport.TransportRMIInterface;
 import sim.field.partitioning.*;
 import sim.field.storage.*;
+import sim.util.*;
 
 import java.rmi.*;
 import java.util.ArrayList;

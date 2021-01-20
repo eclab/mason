@@ -17,18 +17,10 @@ import sim.engine.Stopping;
 import sim.engine.transport.AgentWrapper;
 import sim.engine.transport.PayloadWrapper;
 import sim.engine.transport.TransportRMIInterface;
-import sim.field.partitioning.IntRect2D;
-import sim.field.partitioning.Partition;
-import sim.field.partitioning.QuadTreePartition;
+import sim.field.partitioning.*;
 import sim.field.storage.ContinuousStorage;
 import sim.field.storage.GridStorage;
-import sim.util.Double2D;
-import sim.util.GroupComm;
-import sim.util.Int2D;
-import sim.util.MPIParam;
-import sim.util.MPIUtil;
-import sim.util.NumberND;
-import sim.util.Pair;
+import sim.util.*;
 
 /**
  * All fields in distributed MASON must contain this class. Stores

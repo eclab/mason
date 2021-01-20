@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import mpi.*;
-import sim.field.partitioning.IntRect2D;
 import sim.field.storage.GridStorage;
+import sim.util.*;
 
 // TODO need to use generic for other type of rectangles
 /**

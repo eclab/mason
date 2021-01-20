@@ -12,7 +12,6 @@ import sim.field.DAbstractGrid2D;
 import sim.field.HaloGrid2D;
 import sim.field.Promise;
 import sim.field.RemoteFulfillable;
-import sim.field.partitioning.IntRect2D;
 import sim.field.partitioning.Partition;
 import sim.field.storage.DenseGridStorage;
 import sim.util.*;

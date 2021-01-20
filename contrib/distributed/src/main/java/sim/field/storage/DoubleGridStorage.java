@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 import mpi.*;
 
-import sim.field.partitioning.IntRect2D;
 import sim.util.*;
 
 public class DoubleGridStorage extends GridStorage<Double, Int2D> {

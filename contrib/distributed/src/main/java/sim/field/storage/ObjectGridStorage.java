@@ -3,7 +3,6 @@ package sim.field.storage;
 import java.io.Serializable;
 import java.util.function.IntFunction;
 
-import sim.field.partitioning.IntRect2D;
 import sim.util.MPIParam;
 import sim.util.*;
 
