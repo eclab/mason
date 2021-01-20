@@ -13,7 +13,9 @@ import sim.util.*;
 public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2D> {
 	private static final long serialVersionUID = 1L;
 
-	int[] dsize;
+	int dWidth;
+	int dHeight;
+//	int[] dsize;
 	double discretization;
 	public HashMap<Long, Double2D> m;
 	public HashMap<Long, T>[] storage; // HashMap<Long, T>[]
@@ -31,25 +33,32 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 
 	public void clear() {
 		int size = shape.getArea();
-		this.dsize = new int[2]; // 2 = num dimensions
-		for (int i = 0; i < this.dsize.length; i++) {
+//		this.dsize = new int[2]; // 2 = num dimensions
+//		for (int i = 0; i < this.dsize.length; i++) {
+//
+//			this.dsize[i] = (int) Math.ceil(shape.getSizes()[i] / discretization) + 1;
+//		}
 
-			this.dsize[i] = (int) Math.ceil(shape.getSizes()[i] / discretization) + 1;
-		}
+		dWidth = (int) Math.ceil(shape.getSizes()[0] / discretization) + 1;
+		dHeight = (int) Math.ceil(shape.getSizes()[1] / discretization) + 1;
 
 		// Overwrite the original height with the new height of dsize;
 		// so that getFlatIdx() can correctly get the cell index of a discretized point
 		// TODO better approach?
-		height = dsize[1]; // getHeight(dsize);
+//		height = dsize[1]; // getHeight(dsize);
+		height = dHeight;
 		this.m = new HashMap<>();
 
-		int volume = 1;
-		for (int i = 0; i < this.dsize.length; i++) { // <- size of 2
-			volume *= this.dsize[i];
-		}
-		storage = new HashMap[volume];
-		for (int i = 0; i < volume; i++) {
+		//int volume = 1;
+		//for (int i = 0; i < this.dsize.length; i++) { // <- size of 2
+		//	volume *= this.dsize[i];
+		//}
+		//storage = new HashMap[volume];
+		storage = new HashMap[dWidth * dHeight];
+//		for (int i = 0; i < volume; i++) {
+		for (int i = 0; i < storage.length; i++) {
 			storage[i] = new HashMap<>();
+		
 		}
 	}
 
@@ -64,8 +73,10 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 //			if (getCelldp(dp).size() > 0)
 //				string.append("Cell " + dp + ":\t" + getCelldp(dp) + "\n");
 
-		for (int x = 0; x < dsize[0]; x++) {
-			for (int y = 0; y < dsize[1]; y++) {
+		//for (int x = 0; x < dsize[0]; x++) {
+		//	for (int y = 0; y < dsize[1]; y++) {
+		for (int x = 0; x < dWidth; x++) {
+			for (int y = 0; y < dHeight; y++) {
 				HashMap<Long, T> cell = getCelldp(x, y);
 				if (cell.size() > 0)
 					string.append("Cell (" + x + ", " + y + "):\t" + cell + "\n");
@@ -335,8 +346,11 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 		final Int2D ul = new Int2D(ansUl);
 
 		int[] ansBr = new int[2]; // 2 = num dimensions
-		ansBr[0] = Math.min(dloc.x + offsets[0] + 1, dsize[0]);
-		ansBr[1] = Math.min(dloc.y + offsets[1] + 1, dsize[1]);
+		//ansBr[0] = Math.min(dloc.x + offsets[0] + 1, dsize[0]);
+		//ansBr[1] = Math.min(dloc.y + offsets[1] + 1, dsize[1]);
+
+		ansBr[0] = Math.min(dloc.x + offsets[0] + 1, dWidth);
+		ansBr[1] = Math.min(dloc.y + offsets[1] + 1, dHeight);
 
 		final Int2D br = new Int2D(ansBr);
 
