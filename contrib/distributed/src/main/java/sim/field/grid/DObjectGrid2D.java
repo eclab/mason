@@ -22,7 +22,7 @@ public class DObjectGrid2D<T extends Serializable> extends DAbstractGrid2D
 	HaloGrid2D<T, ObjectGridStorage<T>> halo;
 	ObjectGridStorage<T> storage;
 
-	public DObjectGrid2D(PartitionInterface ps, int aoi, DSimState state, Class<T> clazz) 
+	public DObjectGrid2D(Partition ps, int aoi, DSimState state, Class<T> clazz) 
 		{
 		super(ps, state);
 		storage = new ObjectGridStorage<T>(ps.getBounds());

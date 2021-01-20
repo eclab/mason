@@ -16,7 +16,7 @@ import mpi.MPIException;
 import sim.engine.DistributedIterativeRepeat;
 import sim.engine.Stopping;
 import sim.engine.registry.DRegistry;
-import sim.field.partitioning.PartitionInterface;
+import sim.field.partitioning.Partition;
 import sim.util.*;
 
 /**
@@ -33,14 +33,14 @@ public class TransporterMPI {
 
 	HashMap<Integer, RemoteOutputStream> dstMap;
 
-	PartitionInterface partition;
+	Partition partition;
 	int[] neighbors;
 
 	public ArrayList<PayloadWrapper> objectQueue;
 
 	protected boolean withRegistry;
 
-	public TransporterMPI(final PartitionInterface partition) {
+	public TransporterMPI(final Partition partition) {
 		this.partition = partition;
 		this.withRegistry = false;
 		reload();

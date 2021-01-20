@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 
 import sim.engine.RemoteProcessor;
 import sim.engine.transport.TransportRMIInterface;
-import sim.field.partitioning.PartitionInterface;
+import sim.field.partitioning.Partition;
 import sim.util.NumberND;
 
 /**
@@ -21,7 +21,7 @@ public class RMIProxy<T extends Serializable, P extends NumberND> {
 	final TransportRMIInterface[] cache;
 	final int fieldId;
 
-	public RMIProxy(final PartitionInterface ps, HaloGrid2D haloGrid) {
+	public RMIProxy(final Partition ps, HaloGrid2D haloGrid) {
 		this.fieldId = haloGrid.fieldIndex;
 		this.cache = new TransportRMIInterface[ps.numProcessors];
 	}

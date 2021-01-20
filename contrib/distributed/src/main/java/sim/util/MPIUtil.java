@@ -16,7 +16,7 @@ import mpi.Datatype;
 import mpi.Intracomm;
 import mpi.MPI;
 import mpi.MPIException;
-import sim.field.partitioning.PartitionInterface;
+import sim.field.partitioning.Partition;
 
 // TODO: Reuse ByteBuffers to minimize allocate/de-allocate overhead
 // TODO: Use ByteBuffer-back output/input streams - need to dynamically adjust the size of backing buffer.
@@ -222,32 +222,32 @@ public class MPIUtil {
 	 * 
 	 * @param <T>                Type of object to broadcast
 	 * @param comm
-	 * @param partitionInterface
+	 * @param Partition
 	 * @param obj                to broadcast. Only roots object will be broadcast.
 	 * @param root
 	 * 
 	 * @return The broadcasted object (from root)
 	 * @throws MPIException
 	 */
-	public static <T extends Serializable> T bcast(final PartitionInterface partitionInterface, final T obj,
+	public static <T extends Serializable> T bcast(final Partition partition, final T obj,
 			final int root) throws MPIException {
-		return MPIUtil.<T>bcast(partitionInterface.getCommunicator(), obj, root);
+		return MPIUtil.<T>bcast(partition.getCommunicator(), obj, root);
 	}
 
 	/**
 	 * Broadcasts to everyone. In order to do this, all nodes must call bcast even
 	 * if they're not root.
 	 * 
-	 * @param partitionInterface
+	 * @param Partition
 	 * @param obj                to broadcast. Only roots object will be broadcast.
 	 * @param root
 	 * 
 	 * @return The broadcasted object (from root)
 	 * @throws MPIException
 	 */
-	public static Integer bcast(final PartitionInterface partitionInterface, final int obj, final int root)
+	public static Integer bcast(final Partition partition, final int obj, final int root)
 			throws MPIException {
-		return MPIUtil.<Integer>bcast(partitionInterface.getCommunicator(), obj, root);
+		return MPIUtil.<Integer>bcast(partition.getCommunicator(), obj, root);
 	}
 
 	/**
@@ -313,7 +313,7 @@ public class MPIUtil {
 	 * @return Object to nodes from root
 	 * @throws MPIException
 	 */
-	public static <T extends Serializable> T scatter(final PartitionInterface p, final T[] sendObjs, final int root)
+	public static <T extends Serializable> T scatter(final Partition p, final T[] sendObjs, final int root)
 			throws MPIException {
 		return MPIUtil.<T>scatter(p.getCommunicator(), sendObjs, root);
 	}
@@ -399,7 +399,7 @@ public class MPIUtil {
 	 * returned as an arraylist to the destination dst.
 	 * 
 	 * @param <T>                Type of object to send
-	 * @param partitionInterface
+	 * @param Partition
 	 * @param sendObj
 	 * @param dst
 	 * 
@@ -407,11 +407,11 @@ public class MPIUtil {
 	 *         others will return an empty ArrayList
 	 * @throws MPIException
 	 */
-	public static <T extends Serializable> ArrayList<T> gather(final PartitionInterface partitionInterface,
+	public static <T extends Serializable> ArrayList<T> gather(final Partition partition,
 			final T sendObj,
 			final int dst)
 			throws MPIException {
-		return MPIUtil.<T>gather(partitionInterface.getCommunicator(), sendObj, dst);
+		return MPIUtil.<T>gather(partition.getCommunicator(), sendObj, dst);
 	}
 
 	// Each LP contributes the sendObj
@@ -459,14 +459,14 @@ public class MPIUtil {
 	 * returned in the ArrayList.
 	 * 
 	 * @param <T>                Type of object to send
-	 * @param partitionInterface
+	 * @param partition
 	 * @param sendObj
 	 * 
 	 * @throws MPIException
 	 */
-	public static <T extends Serializable> ArrayList<T> allGather(final PartitionInterface partitionInterface,
+	public static <T extends Serializable> ArrayList<T> allGather(final Partition partition,
 			final T sendObj) throws MPIException {
-		return MPIUtil.<T>allGather(partitionInterface.getCommunicator(), sendObj);
+		return MPIUtil.<T>allGather(partition.getCommunicator(), sendObj);
 	}
 
 	/**
@@ -551,14 +551,14 @@ public class MPIUtil {
 	 * simultaneously.
 	 * 
 	 * @param <T>                Type of object to send
-	 * @param partitionInterface
+	 * @param partition
 	 * @param sendObjs
 	 * 
 	 * @throws MPIException
 	 */
-	public static <T extends Serializable> ArrayList<T> neighborAllToAll(final PartitionInterface partitionInterface,
+	public static <T extends Serializable> ArrayList<T> neighborAllToAll(final Partition partition,
 			final T[] sendObjs) throws MPIException {
-		return MPIUtil.<T>neighborAllToAll(partitionInterface.getCommunicator(), sendObjs);
+		return MPIUtil.<T>neighborAllToAll(partition.getCommunicator(), sendObjs);
 	}
 
 	//// SEAN QUESTION: Why is this different from the others? Why do we not have
@@ -574,15 +574,15 @@ public class MPIUtil {
 	 * receive a given node's message. neighborAllGather for primitive type data
 	 * (fixed length)
 	 * 
-	 * @param partitionInterface
+	 * @param partition
 	 * @param val
 	 * @param type
 	 * 
 	 * @throws MPIException
 	 */
-	public static Object neighborAllGather(final PartitionInterface partitionInterface, final Object val,
+	public static Object neighborAllGather(final Partition partition, final Object val,
 			final Datatype type) throws MPIException {
-		final int nc = partitionInterface.getNumNeighbors();
+		final int nc = partition.getNumNeighbors();
 		Object sendBuf, recvBuf;
 
 		// Use if-else since switch-case only accepts int
@@ -605,7 +605,7 @@ public class MPIUtil {
 			throw new UnsupportedOperationException(
 					"The given MPI Datatype " + type + " is invalid / not implemented yet");
 
-		partitionInterface.getCommunicator().neighborAllGather(sendBuf, 1, type, recvBuf, 1, type);
+		partition.getCommunicator().neighborAllGather(sendBuf, 1, type, recvBuf, 1, type);
 
 		return recvBuf;
 	}

@@ -224,7 +224,7 @@ static class MovingAverage {
  *
  *Internal Class used by Timing.java
  */
-static class TimingStat {
+public static class TimingStat {
 
     int cap;
     long cnt, conv, ts;
@@ -232,18 +232,18 @@ static class TimingStat {
     MovingAverage mav;
     TimeUnit u;
 
-    public TimingStat(int cap) {
+     TimingStat(int cap) {
         this.cap = cap;
         this.setUnit(TimeUnit.MILLISECONDS);
         reset();
     }
 
-    public void setUnit(TimeUnit u) {
+     void setUnit(TimeUnit u) {
         this.u = u;
         this.conv = TimeUnit.NANOSECONDS.convert(1L, u);
     }
 
-    public void add(double val) {
+     void add(double val) {
         last = val;
         min = Math.min(min, val);
         max = Math.max(max, val);
@@ -255,7 +255,7 @@ static class TimingStat {
         mav.next(val);
     }
 
-    public void reset() {
+     void reset() {
         mav = new MovingAverage(cap);
         cnt = 0;
         min = Double.MAX_VALUE;
@@ -265,7 +265,7 @@ static class TimingStat {
         ts = -1L;
     }
 
-    public void start(long curr) {
+     void start(long curr) {
         if (ts != -1L)
             throw new IllegalStateException("Timer is already started");
         ts = curr;
@@ -290,7 +290,7 @@ static class TimingStat {
      *
      */
     @Deprecated
-    public void stop(long curr) {
+     void stop(long curr) {
         /*if (ts == -1L)
             throw new IllegalStateException("Timer is not started"); */
         add((double)(curr - ts));

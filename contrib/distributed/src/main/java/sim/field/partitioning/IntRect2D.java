@@ -41,7 +41,7 @@ public class IntRect2D implements Serializable {
 	public Int2D br() {
 		return br;
 	}
-
+	
 	// Return the area of the hyper rectangle
 	public int getArea() {
 		return (br.x - ul.x) * (br.y - ul.y);

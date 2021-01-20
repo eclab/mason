@@ -20,7 +20,7 @@ import sim.field.HaloGrid2D;
 import sim.field.Promise;
 import sim.field.RemoteFulfillable;
 import sim.field.partitioning.IntRect2D;
-import sim.field.partitioning.PartitionInterface;
+import sim.field.partitioning.Partition;
 import sim.field.storage.ContinuousStorage;
 import sim.util.*;
 
@@ -38,7 +38,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	ContinuousStorage<T> storage;
 	boolean removeEmptyBags = false;
 	
-	public DContinuous2D(PartitionInterface ps, int aoi, double discretization, DSimState state) 
+	public DContinuous2D(Partition ps, int aoi, double discretization, DSimState state) 
 		{
 		super(ps, state);
 		storage = new ContinuousStorage<T>(ps.getBounds(), discretization);

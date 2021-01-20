@@ -13,7 +13,7 @@ import sim.field.HaloGrid2D;
 import sim.field.Promise;
 import sim.field.RemoteFulfillable;
 import sim.field.partitioning.IntRect2D;
-import sim.field.partitioning.PartitionInterface;
+import sim.field.partitioning.Partition;
 import sim.field.storage.DenseGridStorage;
 import sim.util.*;
 
@@ -30,7 +30,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	private HaloGrid2D<T, DenseGridStorage<T>> halo;
 	DenseGridStorage<T> storage;
 		
-	public DDenseGrid2D(PartitionInterface ps, int aoi, DSimState state) 
+	public DDenseGrid2D(Partition ps, int aoi, DSimState state) 
 		{
 		super(ps, state);
 		storage = new DenseGridStorage<T>(ps.getBounds());

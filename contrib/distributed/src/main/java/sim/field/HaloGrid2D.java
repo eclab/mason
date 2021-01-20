@@ -18,7 +18,7 @@ import sim.engine.transport.AgentWrapper;
 import sim.engine.transport.PayloadWrapper;
 import sim.engine.transport.TransportRMIInterface;
 import sim.field.partitioning.IntRect2D;
-import sim.field.partitioning.PartitionInterface;
+import sim.field.partitioning.Partition;
 import sim.field.partitioning.QuadTreePartition;
 import sim.field.storage.ContinuousStorage;
 import sim.field.storage.GridStorage;
@@ -109,7 +109,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 
 	protected List<Neighbor> neighbors; // pointer to the processors who's partitions neighbor me
 	public final S localStorage;
-	public PartitionInterface partition;
+	public Partition partition;
 	transient public Datatype MPIBaseType;
 
 	public final int fieldIndex;
@@ -119,7 +119,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 
 	private final Object lockRMI = new boolean[1];
 
-	public HaloGrid2D(final PartitionInterface ps, final int aoi, final S stor, final DSimState state)
+	public HaloGrid2D(final Partition ps, final int aoi, final S stor, final DSimState state)
 			throws RemoteException {
 		super();
 		this.partition = ps;
@@ -401,6 +401,21 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		return true;
 	}
 
+	public IntRect2D getLocalBounds()
+		{
+		return origPart;
+		}
+		
+	public IntRect2D getHaloBounds()
+		{
+		return haloPart;
+		}
+
+	public IntRect2D getPrivateBounds()
+		{
+		return privatePart;
+		}
+		
 	/**
 	 * @param point
 	 * @return true if point is local

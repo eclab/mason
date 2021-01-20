@@ -12,7 +12,7 @@ import sim.util.*;
  * then gets assigned to a node.
  */
 @SuppressWarnings("rawtypes")
-public abstract class PartitionInterface {
+public abstract class Partition {
 	public int pid, numProcessors;
 	public int[] size;
 	boolean isToroidal;
@@ -21,7 +21,7 @@ public abstract class PartitionInterface {
 
 	ArrayList<Consumer> preCallbacks, postCallbacks;
 
-	PartitionInterface(final int[] size, final boolean isToroidal, final int[] aoi) {
+	Partition(final int[] size, final boolean isToroidal, final int[] aoi) {
 		//numDimensions = size.length;
 		this.size = (int[])(size.clone());
 		this.size = Arrays.copyOf(size, 2);
