@@ -28,9 +28,9 @@ public class QuadTreePartition extends Partition {
 	Map<Integer, GroupComm> groups; // Map the level to its corresponding comm group
 	int treeDepth;
 
-	public QuadTreePartition(final int[] size, final boolean isToroidal, final int[] aoi) {
-		super(size, isToroidal, aoi);
-		qt = new QuadTree(new IntRect2D(size[0], size[1]), numProcessors);
+	public QuadTreePartition(int width, int height, boolean isToroidal, int aoi) {
+		super(width, height, isToroidal, aoi);
+		qt = new QuadTree(new IntRect2D(width, height), numProcessors);
 	}
 
 	public IntRect2D getBounds() {
@@ -70,21 +70,12 @@ public class QuadTreePartition extends Partition {
 	}
 
 	public int[] getNeighborIds() {
-		return qt.getNeighborPids(myLeafNode, aoi, isToroidal);
+		return qt.getNeighborPids(myLeafNode, aoi, toroidal);
 	}
 
 	public int toPartitionId(final NumberND p) {
 		return qt.getLeafNode(p).getProcessor();
 	}
-
-	public int toPartitionId(final int[] c) {
-		return toPartitionId(new Int2D(c));
-	}
-
-	public int toPartitionId(final double[] c) {
-		return toPartitionId(new Double2D(c));
-	}
-
 	/**
 	 * Creates the MPI comm world by defining the MPI topology as this quad tree.
 	 */
@@ -244,7 +235,7 @@ public class QuadTreePartition extends Partition {
 	protected boolean isSpaceSplittable(QuadTreeNode node) {
 		int x = node.getShape().getHeight();
 		int y = node.getShape().getWidth();
-		if ((x >= 2 * this.aoi[0]) && (y >= 2 * this.aoi[1]) && (node.level != 0)) {
+		if ((x >= 2 * this.aoi) && (y >= 2 * this.aoi) && (node.level != 0)) {
 			return true;
 		} else {
 			return false;
@@ -611,7 +602,7 @@ public class QuadTreePartition extends Partition {
 	private static void testBalance() throws MPIException {
 		MPITest.printOnlyIn(0, "Testing balance()......");
 
-		final QuadTreePartition p = new QuadTreePartition(new int[] { 100, 100 }, false, new int[] { 1, 1 });
+		final QuadTreePartition p = new QuadTreePartition(100, 100, false, 1);
 
 		final Int2D[] splitPoints = new Int2D[] { new Int2D(50, 50), new Int2D(25, 25), new Int2D(75, 75),
 				new Int2D(60, 90), new Int2D(10, 10) };
@@ -631,7 +622,7 @@ public class QuadTreePartition extends Partition {
 	private static void testInitWithPoints() throws MPIException {
 		MPITest.printOnlyIn(0, "Testing init with points......");
 
-		final QuadTreePartition p = new QuadTreePartition(new int[] { 100, 100 }, false, new int[] { 1, 1 });
+		final QuadTreePartition p = new QuadTreePartition(100, 100, false, 1);
 
 		final Int2D[] splitPoints = new Int2D[] { new Int2D(50, 50), new Int2D(25, 25), new Int2D(75, 75),
 				new Int2D(60, 90), new Int2D(10, 10) };
@@ -647,7 +638,7 @@ public class QuadTreePartition extends Partition {
 	private static void testInitUniformly() throws MPIException {
 		MPITest.printOnlyIn(0, "Testing init uniformly......");
 
-		final QuadTreePartition p = new QuadTreePartition(new int[] { 1000, 1000 }, false, new int[] { 1, 1 });
+		final QuadTreePartition p = new QuadTreePartition(1000, 1000, false, 1);
 		p.initUniformly();
 		if(p.pid==0)
 				System.out.println("-------availIds " + p.qt.availIds);
@@ -669,21 +660,20 @@ public class QuadTreePartition extends Partition {
 	}
 
 	private static void testNeighbors(){
-		final QuadTreePartition p = new QuadTreePartition(new int[] { 1000, 1000 }, false, new int[] { 1, 1 });
+		final QuadTreePartition p = new QuadTreePartition(1000, 1000, false, 1);
 		p.initUniformly();
 		if(p.pid==0){
 			System.out.println(p.qt);
 			List<QuadTreeNode> allNodes = p.qt.getAllNodes();
 			for(int i= 0; i<allNodes.size(); i++){
-				HashSet<QuadTreeNode> neighbors = p.qt.getNeighbors(allNodes.get(i), p.aoi, p.isToroidal);
-				System.out.println("pid "+p.getPid()+" node "+allNodes.get(i)+ " neighbors "+neighbors);
+				HashSet<QuadTreeNode> neighbors = p.qt.getNeighbors(allNodes.get(i), p.aoi, p.toroidal);
+				System.out.println("pid "+p.getPID()+" node "+allNodes.get(i)+ " neighbors "+neighbors);
 				System.out.println("-------availIds " + p.qt.availIds);
 			}
 		}
 	}
 
 	public String toString() {
-		return "DQuadTreePartition [qt=" + qt + ", myLeafNode=" + myLeafNode + ", groups=" + groups + ", aoi="
-				+ Arrays.toString(aoi) + "]";
+		return "DQuadTreePartition [qt=" + qt + ", myLeafNode=" + myLeafNode + ", groups=" + groups + ", aoi=" + aoi + "]";
 	}
 }

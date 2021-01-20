@@ -99,7 +99,6 @@ public class DSimState extends SimState {
 
 	protected QuadTreePartition partition;
 	protected TransporterMPI transporter;
-	public int[] aoi; // Area of Interest
 	HashMap<String, Object> rootInfo = null;
 	HashMap<String, Object>[] init = null;
 
@@ -122,10 +121,9 @@ public class DSimState extends SimState {
 	protected int balancerLevel;
 
 	protected DSimState(final long seed, final MersenneTwisterFast random, final DistributedSchedule schedule,
-			final int width, final int height, final int aoiSize) {
+			final int width, final int height, final int aoi) {
 		super(seed, random, schedule);
-		aoi = new int[] { aoiSize, aoiSize };
-		partition = new QuadTreePartition(new int[] { width, height }, true, aoi);
+		partition = new QuadTreePartition(width, height, true, aoi);
 		partition.initialize();
 		balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
 		transporter = new TransporterMPI(partition);
@@ -137,7 +135,6 @@ public class DSimState extends SimState {
 	protected DSimState(final long seed, final MersenneTwisterFast random, final DistributedSchedule schedule,
 			final QuadTreePartition partition) {
 		super(seed, random, schedule);
-		aoi = partition.aoi;
 		this.partition = partition;
 		partition.initialize();
 		balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
@@ -147,8 +144,8 @@ public class DSimState extends SimState {
 		withRegistry = false;
 	}
 
-	public DSimState(final long seed, final int width, final int height, final int aoiSize) {
-		this(seed, new MersenneTwisterFast(seed), new DistributedSchedule(), width, height, aoiSize);
+	public DSimState(final long seed, final int width, final int height, int aoi) {
+		this(seed, new MersenneTwisterFast(seed), new DistributedSchedule(), width, height, aoi);
 	}
 
 	protected DSimState(final long seed, final DistributedSchedule schedule) {
@@ -497,13 +494,11 @@ public class DSimState extends SimState {
 
 		
 		final IntRect2D old_partition = partition.getBounds();
-		final int old_pid = partition.getPid();
+		final int old_pid = partition.getPID();
 		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage();
 		Timing.start(Timing.LB_OVERHEAD);
 		((QuadTreePartition) partition).balance(runtime, level);
 		MPI.COMM_WORLD.barrier();
-	    //System.out.println("pid "+partition.getPid()+" old_partitioning"+old_partition);
-		//System.out.println("pid " + partition.getPid() + " new partition" + partition.getBounds());
 
 		for (Int2D p : old_partition.getPointList()) {
 			
@@ -533,12 +528,8 @@ public class DSimState extends SimState {
 									try {
 										stopping.getStoppable().stop();
 									} catch (Exception e) {
-										System.out.println("PID: " + partition.pid + " exception on " + a);
+										System.out.println("PID: " + partition.getPID() + " exception on " + a);
 									}
-//								final int locToP = partition.toPartitionId(loc);
-//								transporter.migrateAgent((Stopping) a, locToP, loc, ((HaloGrid2D) field).fieldIndex);
-//								transporter.migrateAgent((Stopping) a, toP, loc, ((HaloGrid2D) field).fieldIndex);
-//=======
 									transporter.migrateAgent((Stopping) a, locToP, loc,
 											((HaloGrid2D) field).fieldIndex);
 								}
@@ -557,7 +548,7 @@ public class DSimState extends SimState {
 								}
 
 								migratedAgents.add(a);
-								System.out.println("PID: " + partition.pid + " processor " + old_pid + " move " + a
+								System.out.println("PID: " + partition.getPID() + " processor " + old_pid + " move " + a
 										+ " from " + loc + " (point " + p + ") to processor " + toP); //agent not being removed from getCell here
 								st.removeObject((DObject) a);
 								//System.out.println(st);
@@ -570,10 +561,6 @@ public class DSimState extends SimState {
 						Serializable a = st.getObjects(haloGrid2D.toLocalPoint(p));
 						if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
 								&& old_partition.contains(p) && !partition.getBounds().contains(p)) {
-//							DSteppable stopping = ((DSteppable) a);
-//							stopping.getStoppable().stop();
-//							transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).fieldIndex);
-//=======
 							DSteppable stopping = ((DSteppable) a);
 
 							if (stopping.getStoppable() instanceof TentativeStep) {
@@ -593,7 +580,7 @@ public class DSimState extends SimState {
 							}
 
 							migratedAgents.add(stopping);
-							System.out.println("PID: " + partition.pid + " processor " + old_pid + " move " + stopping
+							System.out.println("PID: " + partition.getPID() + " processor " + old_pid + " move " + stopping
 									+ " from " + p + " (point " + p + ") to processor " + toP);
 							haloGrid2D.removeLocal(p, stopping.getID());
 						}
@@ -665,7 +652,7 @@ public class DSimState extends SimState {
 									// int dst,final NumberND loc,final int fieldIndex)
 									migratedAgents.add(stopping);
 									System.out.println(
-											"PID: " + partition.pid + " processor " + old_pid + " move " + stopping
+											"PID: " + partition.getPID() + " processor " + old_pid + " move " + stopping
 													+ " from " + p + " (point " + p + ") to processor " + toP);
 									haloGrid2D.removeLocal(p, stopping.getID());
 									
@@ -705,7 +692,7 @@ public class DSimState extends SimState {
 							}
 
 							migratedAgents.add(stopping);
-							System.out.println("PID: " + partition.pid + " processor " + old_pid + " move " + stopping
+							System.out.println("PID: " + partition.getPID() + " processor " + old_pid + " move " + stopping
 									+ " from " + p + " (point " + p + ") to processor " + toP);
 							haloGrid2D.removeLocal(p, stopping.getID());
 						}
@@ -827,14 +814,14 @@ public class DSimState extends SimState {
 				haloField.initRemote();
 
 			if (partition.isGlobalMaster()) {
-				init = new HashMap[partition.numProcessors];
-				for (int i = 0; i < partition.getNumProc(); i++)
+				init = new HashMap[partition.getNumProcessors()];
+				for (int i = 0; i < init.length; i++)
 					init[i] = new HashMap<String, Object>();
 				// startRoot(init);
 				startRoot();
 			}
 			// synchronize using one to many communication
-			rootInfo = MPIUtil.scatter(partition.comm, init, 0);
+			rootInfo = MPIUtil.scatter(partition.getCommunicator(), init, 0);
 
 			// schedule a zombie agent to prevent that a processor with no agent is stopped
 			// when the simulation is still going on
@@ -875,12 +862,12 @@ public class DSimState extends SimState {
 	/**
 	 * @return the partition
 	 */
-	public QuadTreePartition getPartitioning() {
+	public QuadTreePartition getPartition() {
 		return partition;
 	}
 
 	public boolean isMasterProcess() {
-		return partition.pid == 0;
+		return partition.getPID() == 0;
 	}
 
 	/**
@@ -888,7 +875,6 @@ public class DSimState extends SimState {
 	 */
 	public void setPartition(final QuadTreePartition partition) {
 		this.partition = partition;
-		aoi = partition.aoi;
 		partition.initialize();
 		transporter = new TransporterMPI(partition);
 	}
@@ -901,7 +887,7 @@ public class DSimState extends SimState {
 	}
 
 	public void sendRootInfoToAll(String key, Object sendObj) {
-		for (int i = 0; i < partition.getNumProc(); i++) {
+		for (int i = 0; i < partition.getNumProcessors(); i++) {
 			init[i].put(key, sendObj);
 		}
 	}

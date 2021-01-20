@@ -133,11 +133,11 @@ public /* strictfp */ class DAntsForage extends DSimState {
 
 	public DAntsForage(long seed) {
 		super(seed, GRID_WIDTH, GRID_HEIGHT, 10);
-		sites = new DIntGrid2D(getPartitioning(), aoi[0], this);
-		toFoodGrid = new DDoubleGrid2D(getPartitioning(), aoi[0], this);
-		toHomeGrid = new DDoubleGrid2D(partition, aoi[0], this);
-		buggrid = new DDenseGrid2D<DAnt>(getPartitioning(), aoi[0], this);
-		obstacles = new DIntGrid2D(partition, aoi[0], this);
+		sites = new DIntGrid2D(getPartition(), this);
+		toFoodGrid = new DDoubleGrid2D(getPartition(), this);
+		toHomeGrid = new DDoubleGrid2D(partition, this);
+		buggrid = new DDenseGrid2D<DAnt>(getPartition(), this);
+		obstacles = new DIntGrid2D(partition, this);
 	}
 
 	public void start() {
@@ -183,15 +183,15 @@ public /* strictfp */ class DAntsForage extends DSimState {
 		// initialize the grid with the home and food sites
 		for (int x = HOME_XMIN; x <= HOME_XMAX; x++)
 			for (int y = HOME_YMIN; y <= HOME_YMAX; y++)
-				if (getPartitioning().getBounds().contains(new Int2D(x, y)))
+				if (getPartition().getBounds().contains(new Int2D(x, y)))
 					sites.set(new Int2D(x, y), 1);
 		for (int x = FOOD_XMIN; x <= FOOD_XMAX; x++)
 			for (int y = FOOD_YMIN; y <= FOOD_YMAX; y++)
-				if (getPartitioning().getBounds().contains(new Int2D(x, y)))
+				if (getPartition().getBounds().contains(new Int2D(x, y)))
 					sites.set(new Int2D(x, y), 2);
 
 		for (int x = 0; x < numAnts; x++) {
-			if (getPartitioning().getBounds()
+			if (getPartition().getBounds()
 					.contains(new Int2D((HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2))) {
 				DAnt ant = new DAnt(reward, (HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2);
 				buggrid.add(new Int2D((HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2), ant);

@@ -48,7 +48,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 
 		public Neighbor(final IntRect2D neighborPart) {
 			// pid = neighborPart.getId();
-			final ArrayList<IntRect2D> sendOverlaps = generateOverlaps(origPart, neighborPart.resize(aoi));
+			final ArrayList<IntRect2D> sendOverlaps = generateOverlaps(origPart, neighborPart.resize(partition.getAOI()));
 			final ArrayList<IntRect2D> recvOverlaps = generateOverlaps(haloPart, neighborPart);
 
 			assert sendOverlaps.size() == recvOverlaps.size();
@@ -94,7 +94,6 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 	}
 
 	protected int numNeighbors;
-	protected int aoi;
 	protected int[] fieldSize, haloSize;
 
 	public IntRect2D world, haloPart, origPart, privatePart;
@@ -111,11 +110,10 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 
 	private final Object lockRMI = new boolean[1];
 
-	public HaloGrid2D(final Partition ps, final int aoi, final S stor, final DSimState state)
+	public HaloGrid2D(final Partition ps, final S stor, final DSimState state)
 			throws RemoteException {
 		super();
 		this.partition = ps;
-		this.aoi = aoi;
 		localStorage = stor;
 		this.state = state;
 		// init variables that don't change with the partition scheme
@@ -175,14 +173,13 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		origPart = partition.getBounds();
 		// Get the partition representing halo and local area by expanding the original
 		// partition by aoi at each dimension
-		haloPart = origPart.resize(aoi);
+		haloPart = origPart.resize(partition.getAOI());
 		haloSize = haloPart.getSizes();
 		localStorage.reshape(haloPart);
 		// Get the partition representing private area by shrinking the original
 		// partition by aoi at each dimension
 
-		privatePart = origPart.resize(-aoi); // Negative aoi
-		// privatePart = origPart.resize(Arrays.stream(aoi).map(x -> -x).toArray()());
+		privatePart = origPart.resize(0 - partition.getAOI()); // Negative aoi
 		// Get the neighbors and create Neighbor objects
 		neighbors = new ArrayList<Neighbor>();
 		for (int id : partition.getNeighborIds()) {
@@ -462,8 +459,8 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 
 		final ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>gather(partition, sendObj, dst);
 
-		if (partition.getPid() == dst)
-			for (int i = 0; i < partition.getNumProc(); i++)
+		if (partition.getPID() == dst)
+			for (int i = 0; i < partition.getNumProcessors(); i++)
 				fullField.unpack(new MPIParam(partition.getBounds(i), world, MPIBaseType), recvObjs.get(i));
 	}
 
@@ -720,7 +717,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 	}
 
 	public String toString() {
-		return String.format("PID %d Storage %s", partition.getPid(), localStorage);
+		return String.format("PID %d Storage %s", partition.getPID(), localStorage);
 	}
 
 }

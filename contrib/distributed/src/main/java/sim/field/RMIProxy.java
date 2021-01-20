@@ -23,7 +23,7 @@ public class RMIProxy<T extends Serializable, P extends NumberND> {
 
 	public RMIProxy(final Partition ps, HaloGrid2D haloGrid) {
 		this.fieldId = haloGrid.fieldIndex;
-		this.cache = new TransportRMIInterface[ps.numProcessors];
+		this.cache = new TransportRMIInterface[ps.getNumProcessors()];
 	}
 
 	@SuppressWarnings("unchecked")

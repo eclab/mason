@@ -148,7 +148,7 @@ public class TransporterMPI {
 			while (true) {
 				try {
 					final PayloadWrapper wrapper = (PayloadWrapper) inputStream.readObject();
-					if (partition.pid != wrapper.destination) {
+					if (partition.getPID() != wrapper.destination) {
 						System.err.println("This is not the correct processor");
 						throw new RuntimeException("This is not the correct processor");
 //						assert dstMap.containsKey(wrapper.destination);
@@ -393,7 +393,7 @@ public class TransporterMPI {
 	 */
 	public void transportObject(final Serializable obj, final int dst, final NumberND loc,
 			final int fieldIndex) {
-		if (partition.pid == dst)
+		if (partition.getPID() == dst)
 			throw new IllegalArgumentException("Destination cannot be local, must be remote");
 
 		// System.out.println("transporting: " + obj);

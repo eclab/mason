@@ -164,7 +164,7 @@ public class DFlocker extends DSteppable implements Remote, Oriented2D {
 		
 		
 //		}catch (Exception e) {
-//			System.out.println("SIMULATION ERROR: agent "+this+ " on pid"+dFlockers.getPartitioning().getPid());
+//			System.out.println("SIMULATION ERROR: agent "+this+ " on pid"+dFlockers.getPartition().getPid());
 //		}
 
 		final Double2D avoid = avoidance(b, dFlockers.flockers);
@@ -192,7 +192,7 @@ public class DFlocker extends DSteppable implements Remote, Oriented2D {
 			dFlockers.flockers.moveAgent(loc, this);
 		} catch (Exception e) {
 			System.err.println("error on agent " + this + " in step " + dFlockers.schedule.getSteps() + "on pid "
-					+ dFlockers.getPartitioning().pid);
+					+ dFlockers.getPartition().getPID());
 			throw new RuntimeException(e);
 		}
 	}

@@ -151,14 +151,14 @@ public class QuadTree {
 		leaf.getParent().children.remove(leaf);
 	}
 
-	public HashSet<QuadTreeNode> getNeighbors(final QuadTreeNode node, final int[] aoi, final boolean isToroidal) {
+	public HashSet<QuadTreeNode> getNeighbors(final QuadTreeNode node, int aoi, final boolean isToroidal) {
 		if(isToroidal)
 			return getNeighborsToroidal(node, aoi);
 		else 
 			return getNeighborsNoToroidal(node, aoi);
 	}
 	
-	public HashSet<QuadTreeNode> getNeighborsNoToroidal(final QuadTreeNode node, final int[] aoi){
+	public HashSet<QuadTreeNode> getNeighborsNoToroidal(final QuadTreeNode node, int aoi){
 		// Root node has no neighbors
 		if (node.isRoot())
 			return new HashSet<QuadTreeNode>();
@@ -222,7 +222,7 @@ public class QuadTree {
 		return ret;
 	}
 	
-	public HashSet<QuadTreeNode> getNeighborsToroidal(final QuadTreeNode node, final int[] aoi){
+	public HashSet<QuadTreeNode> getNeighborsToroidal(final QuadTreeNode node, int aoi){
 		// Root node has no neighbors
 		if (node.isRoot())
 			return new HashSet<QuadTreeNode>();
@@ -246,7 +246,7 @@ public class QuadTree {
 		
 		//north
 		try {
-		haloRegions.add(new IntRect2D(new Int2D((ul[0]+width)%width,(ul[1]-aoi[1]+height)%height),
+		haloRegions.add(new IntRect2D(new Int2D((ul[0]+width)%width,(ul[1]-aoi+height)%height),
 				new Int2D((br[0]+width)%width==0?width:(br[0]+width)%width,(ul[1]+height)%height==0?height:(ul[1]+height)%height)));
 		}catch (Exception e) {
 			System.out.println("error in north of "+ myShape + "heigth "+height+" width "+width );
@@ -256,7 +256,7 @@ public class QuadTree {
 		//south
 		try {
 		haloRegions.add(new IntRect2D(new Int2D((ul[0]+width)%width,(br[1]+height)%height),
-				new Int2D((br[0]+width)%width==0?width:(br[0]+width)%width,(br[1]+aoi[1]+height)%height==0?height:(br[1]+aoi[1]+height)%height)));
+				new Int2D((br[0]+width)%width==0?width:(br[0]+width)%width,(br[1]+aoi+height)%height==0?height:(br[1]+aoi+height)%height)));
 		}catch (Exception e) {
 			System.out.println("error in south of "+ myShape);
 			e.printStackTrace();
@@ -264,7 +264,7 @@ public class QuadTree {
 		}
 		//west
 		try {
-		haloRegions.add(new IntRect2D(new Int2D((ul[0]-aoi[0]+width)%width,(ul[1]+height)%height),
+		haloRegions.add(new IntRect2D(new Int2D((ul[0]-aoi+width)%width,(ul[1]+height)%height),
 				new Int2D((ul[0]+width)%width==0?width:(ul[0]+width)%width,(br[1]+height)%height==0?height:(br[1]+height)%height)));
 		}catch (Exception e) {
 			// TODO: handle exception
@@ -275,7 +275,7 @@ public class QuadTree {
 		//east
 		try {
 		haloRegions.add(new IntRect2D(new Int2D((br[0]+width)%width,(ul[1]+height)%height),
-				new Int2D((br[0]+aoi[0]+width)%width==0?width:(br[0]+aoi[0]+width)%width,(br[1]+height)%height==0?height:(br[1]+height)%height)));
+				new Int2D((br[0]+aoi+width)%width==0?width:(br[0]+aoi+width)%width,(br[1]+height)%height==0?height:(br[1]+height)%height)));
 		}catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("error in east of "+ myShape);
@@ -284,7 +284,7 @@ public class QuadTree {
 		}
 		//north-west
 		try {
-		haloRegions.add(new IntRect2D(new Int2D((ul[0]-aoi[0]+width)%width,(ul[1]-aoi[1]+height)%height),
+		haloRegions.add(new IntRect2D(new Int2D((ul[0]-aoi+width)%width,(ul[1]-aoi+height)%height),
 				new Int2D((ul[0]+width)%width==0?width:(ul[0]+width)%width,(ul[1]+height)%height==0?height:(ul[1]+height)%height)));
 		}catch (Exception e) {
 			// TODO: handle exception
@@ -294,8 +294,8 @@ public class QuadTree {
 		}
 		//north-east
 		try {
-		haloRegions.add(new IntRect2D(new Int2D((br[0]+width)%width,(ul[1]-aoi[1]+height)%height),
-				new Int2D((br[0]+aoi[0]+width)%width==0?width:(br[0]+aoi[0]+width)%width,(ul[1]+height)%height==0?height:(ul[1]+height)%height)));
+		haloRegions.add(new IntRect2D(new Int2D((br[0]+width)%width,(ul[1]-aoi+height)%height),
+				new Int2D((br[0]+aoi+width)%width==0?width:(br[0]+aoi+width)%width,(ul[1]+height)%height==0?height:(ul[1]+height)%height)));
 		}catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("error in north-east of "+ myShape);
@@ -304,8 +304,8 @@ public class QuadTree {
 		}
 		//south-west
 		try {
-		haloRegions.add(new IntRect2D(new Int2D((ul[0]-aoi[0]+width)%width,(br[1]+height)%height),
-				new Int2D((ul[0]+width)%width==0?width:(ul[0]+width)%width,(br[1]+aoi[1]+height)%height==0?height:(br[1]+aoi[1]+height)%height)));
+		haloRegions.add(new IntRect2D(new Int2D((ul[0]-aoi+width)%width,(br[1]+height)%height),
+				new Int2D((ul[0]+width)%width==0?width:(ul[0]+width)%width,(br[1]+aoi+height)%height==0?height:(br[1]+aoi+height)%height)));
 		}catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("error in south-west of "+ myShape);
@@ -315,7 +315,7 @@ public class QuadTree {
 		//south-east
 		try {
 		haloRegions.add(new IntRect2D(new Int2D((br[0]+width)%width,(br[1]+height)%height),
-				new Int2D((br[0]+aoi[0]+width)%width==0?width:(br[0]+aoi[0]+width)%width,(br[1]+aoi[1]+height)%height==0?height:(br[1]+aoi[1]+height)%height)));
+				new Int2D((br[0]+aoi+width)%width==0?width:(br[0]+aoi+width)%width,(br[1]+aoi+height)%height==0?height:(br[1]+aoi+height)%height)));
 		}catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("error in south-east of "+ myShape);
@@ -370,7 +370,7 @@ public class QuadTree {
 		return ret;
 	}
 
-	public int[] getNeighborIds(final QuadTreeNode node, final int[] aoi,final boolean isToroidal) {
+	public int[] getNeighborIds(final QuadTreeNode node, int aoi,final boolean isToroidal) {
 		//return getNeighbors(node, aoi,isToroidal).stream().mapToInt(x -> x.getId()).sorted().toArray();
 		List<QuadTreeNode> neighbors = new ArrayList<QuadTreeNode>();
 		neighbors.addAll(getNeighbors(node, aoi,isToroidal));
@@ -383,7 +383,7 @@ public class QuadTree {
 		return ids;
 	}
 
-	public int[] getNeighborPids(final QuadTreeNode node, final int[] aoi,final boolean isToroidal) {
+	public int[] getNeighborPids(final QuadTreeNode node, int aoi,final boolean isToroidal) {
 		//return getNeighbors(node, aoi,isToroidal).stream().mapToInt(x -> x.getProcessor()).sorted().toArray();
 		List<QuadTreeNode> neighbors = new ArrayList<QuadTreeNode>();
 		neighbors.addAll(getNeighbors(node, aoi,isToroidal));
@@ -399,7 +399,7 @@ public class QuadTree {
 	private static void testFindNeighbor() {
 		final IntRect2D field = new IntRect2D(new Int2D(0, 0), new Int2D(100, 100));
 		final QuadTree qt = new QuadTree(field, 16);
-		final int[] aoi = new int[] { 1, 1 };
+		final int aoi = 1;
 
 		final Int2D[] splitPoints = new Int2D[] {
 				new Int2D(50, 50),

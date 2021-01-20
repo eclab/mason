@@ -18,13 +18,13 @@ public class DIntGrid2D extends DAbstractGrid2D
 	HaloGrid2D<Integer, IntGridStorage> halo;
 	IntGridStorage storage;
 	
-	public DIntGrid2D(Partition ps, int aoi, DSimState state) 
+	public DIntGrid2D(Partition ps, DSimState state) 
 		{
 		super(ps, state);
 		storage = new IntGridStorage(ps.getBounds());
 		try 
 			{
-			halo = new HaloGrid2D<Integer, IntGridStorage>(ps, aoi, storage, state);
+			halo = new HaloGrid2D<Integer, IntGridStorage>(ps, storage, state);
 			} 
 		catch (RemoteException e) 
 			{

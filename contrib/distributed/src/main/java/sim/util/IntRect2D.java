@@ -219,14 +219,4 @@ public class IntRect2D implements Serializable {
 	public IntRect2D rshift(int[] offsets) {
 		return new IntRect2D(ul.subtract(offsets), br.subtract(offsets));
 	}
-
-	/*
-	 * public Int2D getInt2DCenter() { //return new Double2D((br.x - ul.x + 1) /
-	 * 2.0, (br.y - ul.y + 1) / 2.0); Double2D d = this.getCenter(); return new
-	 * Int2D((int)d.x, (int)d.y);
-	 * 
-	 * //return new Int2D(IntStream.range(0, getNd()).map(i -> (br.c(i) - ul.c(i)) /
-	 * 2 + ul.c(i)).toArray()); }
-	 */
-
 }

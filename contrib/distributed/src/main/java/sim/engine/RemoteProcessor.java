@@ -57,7 +57,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	}
 
 	public IntRect2D getStorageBounds() throws RemoteException {
-		return dSimState.getPartitioning().getHaloBounds();
+		return dSimState.getPartition().getHaloBounds();
 	}
 
 	public GridStorage getStorage(int fieldId) throws RemoteException {
@@ -69,11 +69,11 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	}
 
 	public int getNumProcessors() throws RemoteException {
-		return dSimState.getPartitioning().numProcessors;
+		return dSimState.getPartition().getNumProcessors();
 	}
 
 	public IntRect2D getWorldBounds() throws RemoteException {
-		return dSimState.getPartitioning().getWorldBounds();
+		return dSimState.getPartition().getWorldBounds();
 	}
 
 	public long getSteps() throws RemoteException {
@@ -85,7 +85,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	}
 
 	public ArrayList<IntRect2D> getAllLocalBounds() throws RemoteException {
-		return dSimState.getPartitioning().getAllBounds();
+		return dSimState.getPartition().getAllBounds();
 	}
 
 	public static VisualizationProcessor getProcessor(final int pid) {
@@ -118,8 +118,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	}
 
 	public int getAOI() throws RemoteException {
-		// TODO: aoi is multi dimentional
-		return dSimState.partition.aoi[0];
+		return dSimState.partition.getAOI();
 	}
 
 	public int getProcessorLevels() throws RemoteException {

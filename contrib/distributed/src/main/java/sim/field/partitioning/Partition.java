@@ -6,27 +6,28 @@ import java.util.function.Consumer;
 import mpi.*;
 import sim.util.*;
 
-// Consumer is Raw Type because it's parameter is of type int
 /**
  * An interface for dividing the world into multiple partitions. Each partition
  * then gets assigned to a node.
  */
-@SuppressWarnings("rawtypes")
+// Consumer is Raw Type because its parameter is of type int
+//@SuppressWarnings("rawtypes")
 public abstract class Partition {
-	public int pid, numProcessors;
-	public int[] size;
-	boolean isToroidal;
-	public Comm comm;
-	public int[] aoi;
+ 	int pid;
+	int numProcessors;
+	int width;
+	int height;
+	boolean toroidal;
+	protected Comm comm;
+	protected int aoi;
 
 	ArrayList<Consumer> preCallbacks, postCallbacks;
 
-	Partition(final int[] size, final boolean isToroidal, final int[] aoi) {
-		//numDimensions = size.length;
-		this.size = (int[])(size.clone());
-		this.size = Arrays.copyOf(size, 2);
-		this.isToroidal = isToroidal;
-		this.aoi = (int[])(aoi.clone());
+	Partition(int width, int height, boolean toroidal, int aoi) {
+		this.width = width;
+		this.height = height;
+		this.toroidal = toroidal;
+		this.aoi = aoi;
 
 		try {
 			pid = MPI.COMM_WORLD.getRank();
@@ -40,16 +41,16 @@ public abstract class Partition {
 		postCallbacks = new ArrayList<Consumer>();
 	}
 
-	public int getPid() {
+	public int getPID() {
 		return pid;
 	}
 
-	public int getNumProc() {
+	public int getNumProcessors() {
 		return numProcessors;
 	}
 
 	public boolean isToroidal() {
-		return isToroidal;
+		return toroidal;
 	}
 
 	public Comm getCommunicator() {
@@ -57,11 +58,11 @@ public abstract class Partition {
 	}
 
 	public int[] getFieldSize() {
-		return (int[])(size.clone());
+		return new int[] { width, height };
 	}
 
 	public IntRect2D getWorldBounds() {
-		return new IntRect2D(size[0], size[1]);
+		return new IntRect2D(width, height);
 	}
 
 	/**
@@ -82,25 +83,14 @@ public abstract class Partition {
 	public abstract int getNumNeighbors();
 
 	public abstract int[] getNeighborIds();
-	// public abstract int[][] getNeighborIdsInOrder();
+	
+	public int getAOI() { return aoi; }
 
 	/**
 	 * @param p
 	 * @return partition id (pid) for the point p
 	 */
 	public abstract int toPartitionId(NumberND p);
-
-	/**
-	 * @param c point as an int array
-	 * @return partition id (pid) for the point c[]
-	 */
-	public abstract int toPartitionId(int[] c);
-
-	/**
-	 * @param c point as an double array
-	 * @return partition id (pid) for the point c[]
-	 */
-	public abstract int toPartitionId(double[] c);
 
 	/**
 	 *
@@ -127,9 +117,4 @@ public abstract class Partition {
 	public void registerPostCommit(final Consumer r) {
 		postCallbacks.add(r);
 	}
-
-	/**
-	 * Initialize partition
-	 */
-	public abstract void initialize(); // How to initialize the partition
 }
