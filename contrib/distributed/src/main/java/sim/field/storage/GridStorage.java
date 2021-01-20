@@ -1,10 +1,7 @@
 package sim.field.storage;
 
 import java.io.Serializable;
-
-import mpi.Datatype;
-import mpi.MPI;
-import mpi.MPIException;
+import mpi.*;
 import sim.util.*;
 
 /**
@@ -17,11 +14,7 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 
 	IntRect2D shape;
 	transient Datatype baseType = MPI.BYTE; // something by default
-	int height; // this is the same as shape.getHeight(), pulled out just in case inlining
-				// doesn't work
-
-	// Return a new instance of the subclass (IntStorage/DoubleStorage/etc...)
-	// public abstract GridStorage getNewStorage(IntRect2D shape);
+	int height; // this is the same as shape.getHeight(), to save a bit of computation
 
 	public abstract String toString();
 
@@ -139,6 +132,5 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	 */
 	public static int getFlatIdx(final Int2D p, final int[] wrtSize) {
 		return p.x * wrtSize[1] + p.y; // [1] is height
-
 	}
 }
