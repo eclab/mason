@@ -10928,7 +10928,7 @@ There are several kinds of Simple Portrayals in 3D, many of which are similar to
 \item {\bf Value Simple Portrayals} portray numbers as if they were simple shapes (typically cubes) of various colors, using a \class{sim.util.gui.ColorMap} to translate between numerical values and colors.  These are designed primarily to work with \class{sim.portrayal3d.grid.ValueGridPortrayal3D}.
 \item {\bf Quad Portrayals} portray numbers as if they were squares or points in a mesh, of various colors, using a \class{sim.util.gui.ColorMap} to translate between numerical values and colors.  These are designed primarily to work with \class{sim.portrayal3d.grid.Value2DGridPortrayal3D}.  Quad Portrayals were discussed in Section \ref{sim.portrayal3d.grid.quad.QuadPortrayal}.
 \item {\bf Edge Simple Portrayals} draw edges in networks.  These are designed to work with \method{sim.portrayal3d.network.NetworkPortrayal3D}.
-\item {\bf Wrapper Simple Portrayals}  ``wrap'' around subsidiary Simple Portrayals to add additional gizmos  to them. For example. to add a label, or to circle an object when itÕs selected, simply create a wrapper portrayal around your basic portrayal and submit the wrapper portrayal as the Simple Portrayal to the Field Portrayal. Wrapper portrayals can wrap other wrapper portrayals, creating a sequence of ``wraps'' around a basic portrayal. 
+\item {\bf Wrapper Simple Portrayals}  ``wrap'' around subsidiary Simple Portrayals to add additional gizmos  to them. For example. to add a label, or to circle an object when itï¿½s selected, simply create a wrapper portrayal around your basic portrayal and submit the wrapper portrayal as the Simple Portrayal to the Field Portrayal. Wrapper portrayals can wrap other wrapper portrayals, creating a sequence of ``wraps'' around a basic portrayal. 
 \end{itemize}
 
 
@@ -13924,6 +13924,9 @@ If you're on Homebrew for the Mac, installation is pretty straightforward, but y
     \item Ensure that you have the following tools installed: Automake, Autoconf, Pandoc, and Libtool.
     
     On OSX you can do this by doing: \lstinline[style=Bash]{brew install automake autoconf libtool pandoc}
+    
+    On Ubuntu Linux you can do this by doing: \lstinline[style=Bash]{sudo apt install automake autoconf libtool}
+
         
     \item \lstinline[style=Bash]{git clone https://github.com/open-mpi/ompi.git --recursive}
 
@@ -13940,6 +13943,30 @@ If you're on Homebrew for the Mac, installation is pretty straightforward, but y
     \item Choose a configuration option \begin{enumerate}
         \item Do this: \lstinline[style=Bash]{./configure --enable-mpi-java}\qquad (this will take quite a while)
         
+        \item An example configure on linux: 
+        {
+        \small
+        \begin{verbatim}
+        ./configure --prefix=/usr \
+            --sysconfdir=/etc/${pkgname} \
+            --enable-mpi-fortran=all \
+            --libdir=/usr/lib/${pkgname} \
+            --enable-builtin-atomics \
+            --enable-mpi-cxx \
+            --with-valgrind \
+            --enable-memchecker \
+            --enable-pretty-print-stacktrace \
+            --without-slurm \
+            --with-hwloc=/usr \
+            --with-libltdl=/usr  \
+            --enable-mpi-java \
+            --with-jdk-dir=/lib/jvm/java-8-openjdk  \
+            FC=/usr/bin/gfortran \
+            LDFLAGS="${LDFLAGS} -Wl,-z,noexecstack"
+            
+        \end{verbatim}
+        }
+        
         \item Read these if you wish to choose your own configuration command:
         
         \begin{itemize}
@@ -13950,7 +13977,10 @@ If you're on Homebrew for the Mac, installation is pretty straightforward, but y
         
     \end{enumerate}
     
-    \item \lstinline[style=Bash]{make all}\qquad (this will take quite a while)
+    \item \lstinline[style=Bash]{make all -j 8}\qquad (this will take quite a while)
+    
+    
+    To build openmpi locally you'll require the following dependancies, if the make command fails it's likely that one of these are missing 'glibc' 'libltdl' 'hwloc' 'openssh' 'zlib' 'libnl' 'perl'
 
     \item \lstinline[style=Bash]{sudo make install}
 
@@ -13964,7 +13994,10 @@ Distributed depends on MASON, so we must install that first.  You can grab the M
 
 \begin{enumerate}
     \item \lstinline[style=Bash]{cd [MASON root dir]}
+    \item Ensure you have git LFS installed, you can do this by running:  \lstinline[style=Bash]{git lfs install}
     \item \lstinline[style=Bash]{git clone https://github.com/eclab/mason}
+    \item \lstinline[style=Bash]{Download the required libraries from the mason website https://cs.gmu.edu/~eclab/projects/mason/ and place in a "libraries" folder inside of the root project}
+
     \item \lstinline[style=Bash]{mvn clean install}
 \end{enumerate}
 
@@ -14894,7 +14927,6 @@ Get the List of the agent's keys on the registry.
 \printindex
 
 \end{document}
-
 
 
 
