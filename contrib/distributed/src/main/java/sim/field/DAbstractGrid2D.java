@@ -4,8 +4,7 @@ import sim.engine.DSimState;
 import sim.field.grid.*;
 
 import sim.field.partitioning.Partition;
-import sim.util.Int2D;
-import sim.util.NumberND;
+import sim.util.*;
 
 /**
  * A abstract distributed grid 2d. It wraps all methods of distributed grid.
@@ -15,11 +14,9 @@ import sim.util.NumberND;
 
 public abstract class DAbstractGrid2D extends AbstractGrid2D {
 
-	// protected int[] fieldSize;
-	final protected DSimState state;
+	protected DSimState state;
 
 	public DAbstractGrid2D(final Partition ps, DSimState state) {
-		// fieldSize = ps.getFieldSize();
 		int[] fieldSize = ps.getFieldSize();
 		width = fieldSize[0];
 		height = fieldSize[1];
@@ -30,81 +27,59 @@ public abstract class DAbstractGrid2D extends AbstractGrid2D {
 		throw new RuntimeException("Point: " + p + ", is Not Local");
 	}
 
-	/* UTILS METHODS */
+	/** Returns the local (non-halo) region.  */
+	public abstract IntRect2D getLocalBounds();
+	
+	/** Returns the halo region.  */
+	public abstract IntRect2D getHaloBounds();
+	
+	/** Returns true if the point is within the local (non-halo) region.  */
+	public abstract boolean isLocal(Int2D p);
+	
+	/** Returns true if the point is within the halo region.  */
+	public abstract boolean isHalo(Int2D p);
+	
+/*
+	public abstract RemoteFulfillable get(Int2D p);
 
-	/// **
-	// * Wraps around a toroidal field
-	// *
-	// * @param x
-	// * @param dim
-	// * @return wrapped around value for value x in this field for dimention dim.
-	// */
-	// public int toToroidal(final int x, final int dim) {
-	// final int s = fieldSize[dim];
-	// if (x >= s)
-	// return x - s;
-	// else if (x < 0)
-	// return x + s;
-	// return x;
-	// }
+	public abstract RemoteFulfillable get(Int2D p, T t);
 
-	/// **
-	// * Wraps around a toroidal field
-	// *
-	// * @param x
-	// * @param dim
-	// * @return wrapped around value for value x in this field for dimention dim.
-	// */
-	// public double toToroidal(final double x, final int dim) {
-	// final int s = fieldSize[dim];
-	// if (x >= s)
-	// return x - s;
-	// else if (x < 0)
-	// return x + s;
-	// return x;
-	// }
+	public void add(Int2D p, T t) 
 
-	/// **
-	// * Difference in a toroidal field
-	// *
-	// * @param x1
-	// * @param x2
-	// * @param dim
-	// * @return difference between two value x1 and x2 in this field for dimention
-	// * dim.
-	// */
-	// public double toToroidalDiff(final double x1, final double x2, final int dim)
-	/// {
-	// final int s = fieldSize[dim];
-	// if (Math.abs(x1 - x2) <= s / 2)
-	// return x1 - x2; // no wraparounds -- quick and dirty check
-	//
-	// final double dx = toToroidal(x1, dim) - toToroidal(x2, dim);
-	// if (dx * 2 > s)
-	// return dx - s;
-	// if (dx * 2 < -s)
-	// return dx + s;
-	// return dx;
-	// }
+	public void remove(Int2D p, T t) 
 
-	/*
-	 * public int stx(final int x) { return toToroidal(x, 0); }
-	 * 
-	 * public int sty(final int y) { return toToroidal(y, 1); }
-	 * 
-	 * public double stx(final double x) { return toToroidal(x, 0); }
-	 * 
-	 * public double sty(final double y) { return toToroidal(y, 1); }
-	 * 
-	 * public double tdx(final double x1, final double x2) { return
-	 * toToroidalDiff(x1, x2, 0); }
-	 * 
-	 * public double tdy(final double y1, final double y2) { return
-	 * toToroidalDiff(y1, y2, 1); }
-	 * 
-	 * public int getWidth() { return fieldSize[0]; }
-	 * 
-	 * public int getHeight() { return fieldSize[1]; }
-	 */
+	public boolean removeAllLocal(Int2D p) 
+
+	public boolean removeMultiplyLocal(Int2D p, T t) 
+
+	public boolean removeLocal(Int2D p, T t) 
+
+	public void addLocal(Int2D p, T t) 
+
+	public void setLocal(Int2D p, ArrayList<T> t) 
+
+	public ArrayList<T> getLocal(Int2D p) 
+
+	public boolean containsLocal(Int2D p, T t) 
+
+	public void removeAll(Int2D p) 
+
+	public void addAgent(Int2D p, T agent, double time, int ordering) 
+
+	public void addAgent(Int2D p, T agent, double time, int ordering, double interval) 
+
+	public void removeAgent(Int2D p, T agent) 
+
+	public void removeAllAgentsAndObjects(Int2D p) 
+
+	public void moveAgent(Int2D from, Int2D to, T agent) 
+
+	public int getLocal(Int2D p) 
+	public void setLocal(Int2D p, int t) 
+
+	public void set(Int2D p, int val) 
+*/
+
+
 
 }

@@ -117,7 +117,6 @@ public class DSimState extends SimState {
 	protected boolean withRegistry;
 
 	protected int balanceInterval = 100;
-
 	protected int balancerLevel;
 
 	protected DSimState(final long seed, final MersenneTwisterFast random, final DistributedSchedule schedule,
@@ -386,7 +385,7 @@ public class DSimState extends SimState {
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
 		
 		
-		loadBalancing();
+		loadBalance();
 		
 
 	}
@@ -394,7 +393,7 @@ public class DSimState extends SimState {
 	
 
 
-	private void loadBalancing() {
+	void loadBalance() {
 		if (schedule.getSteps() > 0 && (schedule.getSteps() % balanceInterval == 0)) {
 			try {
 				balancePartitions(balancerLevel);

@@ -34,20 +34,19 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		implements TransportRMIInterface<T, NumberND>, Synchronizable {
 	private static final long serialVersionUID = 1L;
 
-	public final ArrayList<Pair<RemoteFulfillable, Serializable>> getQueue = new ArrayList<>();
-	public final ArrayList<Pair<NumberND, T>> inQueue = new ArrayList<>();
-	public final ArrayList<Pair<NumberND, Long>> removeQueue = new ArrayList<>();
-	public final ArrayList<NumberND> removeAllQueue = new ArrayList<>();
+	 final ArrayList<Pair<RemoteFulfillable, Serializable>> getQueue = new ArrayList<>();
+	 final ArrayList<Pair<NumberND, T>> inQueue = new ArrayList<>();
+	 final ArrayList<Pair<NumberND, Long>> removeQueue = new ArrayList<>();
+	 final ArrayList<NumberND> removeAllQueue = new ArrayList<>();
 
 	/**
 	 * Helper class to organize neighbor-related data structures and methods
 	 */
 	class Neighbor {
-		// final int pid;
-		MPIParam sendParam, recvParam;
+		MPIParam sendParam;
+		MPIParam recvParam;
 
 		public Neighbor(final IntRect2D neighborPart) {
-			// pid = neighborPart.getId();
 			final ArrayList<IntRect2D> sendOverlaps = generateOverlaps(origPart, neighborPart.resize(partition.getAOI()));
 			final ArrayList<IntRect2D> recvOverlaps = generateOverlaps(haloPart, neighborPart);
 
@@ -78,7 +77,6 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 						new Int2D(xLen, 0),
 						new Int2D(xLen, yLen),
 						new Int2D(0, 0),
-//						new Int2D(-2 * xLen, -2 * yLen) // This is probably a bug
 				};
 
 				for (final Int2D p : shifts) {
@@ -93,10 +91,13 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		}
 	}
 
-	protected int numNeighbors;
-	protected int[] fieldSize, haloSize;
+	private int[] fieldSize;
+	private int[] haloSize;
 
-	public IntRect2D world, haloPart, origPart, privatePart;
+	private IntRect2D world;
+	private IntRect2D haloPart;
+	private IntRect2D origPart;
+	private IntRect2D privatePart;
 
 	protected List<Neighbor> neighbors; // pointer to the processors who's partitions neighbor me
 	public final S localStorage;
@@ -131,37 +132,10 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		final List<GridStorage> tempStor = new ArrayList<GridStorage>();
 		final QuadTreePartition q = (QuadTreePartition) partition;
 		partition.registerPreCommit(new Consumer() {
-			public void accept(Object arg) {
-//			final int level = (int) arg;
-//			GridStorage s = null;
-//
-//			if (q.isGroupMaster(level))
-//				s = localStorage.getNewStorage(q.getNodeShapeAtLevel(level));
-//
-//			try { collectGroup(level, s); } catch (final Exception e) {
-//				e.printStackTrace();
-//				System.exit(-1);
-//			}
-//			if (q.isGroupMaster(level)) tempStor.add(s);
-			}
+			public void accept(Object arg) { }
 		});
 		partition.registerPostCommit(new Consumer() {
-			public void accept(Object t) {
-//			final int level = (int) arg;
-//			GridStorage s = null;
-
-				reload();
-
-//			if (q.isGroupMaster(level))
-//				s = tempStor.remove(0);
-//
-//			try {
-//				distributeGroup(level, s);
-//			} catch (final Exception e) {
-//				e.printStackTrace();
-//				System.exit(-1);
-//			}
-			}
+			public void accept(Object t) { reload(); }
 		});
 
 	}
@@ -185,7 +159,6 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		for (int id : partition.getNeighborIds()) {
 			neighbors.add(new Neighbor(partition.getBounds(id)));
 		}
-		numNeighbors = neighbors.size();
 	}
 
 	/**
@@ -375,7 +348,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		return localStorage;
 	}
 
-	// Various stabbing queries
+	// Various point queries
 	/**
 	 * @param point
 	 * @return true if point is within the global grid
@@ -547,38 +520,23 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 	}
 
 	public void syncHalo() throws MPIException, RemoteException {
-		
-
-
-		
-		final Serializable[] sendObjs = new Serializable[numNeighbors];
+				
+		int numNeighbors = neighbors.size();
+		Serializable[] sendObjs = new Serializable[numNeighbors];
 		for (int i = 0; i < numNeighbors; i++) {
 
 			sendObjs[i] = localStorage.pack(neighbors.get(i).sendParam);
 		}
 		
-
-
-		final ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>neighborAllToAll(partition, sendObjs);
-
-
-
+		ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>neighborAllToAll(partition, sendObjs);
 		
 		for (int i = 0; i < numNeighbors; i++)
 			localStorage.unpack(neighbors.get(i).recvParam, recvObjs.get(i));
-		
-
-
 
 		for (final Pair<RemoteFulfillable, Serializable> pair : getQueue) {
 			pair.a.fulfill(pair.b);
 			//System.out.println(pair);
 		}
-		
-
-
-
-
 		getQueue.clear();
 	}
 

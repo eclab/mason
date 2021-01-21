@@ -53,16 +53,9 @@ public class DIntGrid2D extends DAbstractGrid2D
 		storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))] = t;
 		}
 	
-	/** Returns the local (non-halo) region.  */
-	public IntRect2D localBounds()  { return halo.origPart; }
-
-	/** Returns the halo region.  */
-	public IntRect2D haloBounds()  { return halo.haloPart; }
-
-	/** Returns true if the point is within the local (non-halo) region.  */
+	public IntRect2D getLocalBounds()  { return halo.getLocalBounds(); }
+	public IntRect2D getHaloBounds()  { return halo.getHaloBounds(); }
 	public boolean isLocal(Int2D p) { return halo.inLocal(p); }
-
-	/** Returns true if the point is within the halo region.  */
 	public boolean isHalo(Int2D p) { return halo.inLocalAndHalo(p); }
 
 	/** Returns a Promise which will eventually (immediately or within one timestep)

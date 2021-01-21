@@ -12,8 +12,8 @@ import sim.field.partitioning.QuadTreeNode;
 public class GroupComm {
 	public QuadTreeNode master;
 	public ArrayList<QuadTreeNode> leaves;
-
-	public Comm comm, interComm;
+	public Comm comm;
+	public Comm interComm;
 	public int groupRoot;
 
 	/**

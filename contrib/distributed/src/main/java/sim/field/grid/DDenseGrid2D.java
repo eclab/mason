@@ -182,16 +182,9 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
  		else return false;
 		}
 
-	/** Returns the local (non-halo) region.  */
-	public IntRect2D localBounds()  { return halo.origPart; }
-
-	/** Returns the halo region.  */
-	public IntRect2D haloBounds()  { return halo.haloPart; }
-
-	/** Returns true if the point is within the local (non-halo) region.  */
+	public IntRect2D getLocalBounds()  { return halo.getLocalBounds(); }
+	public IntRect2D getHaloBounds()  { return halo.getHaloBounds(); }
 	public boolean isLocal(Int2D p) { return halo.inLocal(p); }
-
-	/** Returns true if the point is within the halo region.  */
 	public boolean isHalo(Int2D p) { return halo.inLocalAndHalo(p); }
 
 	/** Returns a Promise which will eventually (immediately or within one timestep)
@@ -273,7 +266,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 
 	/** Adds an agent to the given point and schedules it.  This point can be outside
 		the local and halo regions; if so, it will be set after the end of this timestep.  */
-	public void addAndScheduleAgent(Int2D p, T agent, double time, int ordering) 
+	public void addAgent(Int2D p, T agent, double time, int ordering) 
 		{
 		if (agent == null)
 			{
@@ -293,7 +286,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 		
 	/** Adds an agent to the given point and schedules it repeating.  This point can be outside
 		the local and halo regions; if so, it will be set after the end of this timestep.  */
-	public void addAndScheduleAgent(Int2D p, T agent, double time, int ordering, double interval) 
+	public void addAgent(Int2D p, T agent, double time, int ordering, double interval) 
 		{
 		if (agent == null)
 			{
@@ -510,8 +503,8 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 			}
 		else
 			{
-			System.out.println("storage shape : "+this.storage.getShape());
-			System.out.println("halo origPart : "+this.halo.origPart);
+			System.out.println("storage shape : "+ this.storage.getShape());
+			System.out.println("halo origPart : "+ getHaloBounds());
 			
 			//is this agent in local storage?
 			Boolean found = false;

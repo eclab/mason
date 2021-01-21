@@ -15,7 +15,6 @@ import sim.engine.DistributedTentativeStep;
 import sim.engine.Stoppable;
 import sim.engine.Stopping;
 import sim.field.DAbstractGrid2D;
-import sim.field.DGrid;
 import sim.field.HaloGrid2D;
 import sim.field.Promise;
 import sim.field.RemoteFulfillable;
@@ -219,16 +218,22 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		}
 		
 	/** Returns the local (non-halo) region.  */
-	public IntRect2D localBounds()  { return halo.origPart; }
+	public IntRect2D getLocalBounds()  { return halo.getLocalBounds(); }
 
 	/** Returns the halo region.  */
-	public IntRect2D haloBounds()  { return halo.haloPart; }
+	public IntRect2D getHaloBounds()  { return halo.getHaloBounds(); }
 
-	/** Returns true if the point is within the local (non-halo) region.  */
+	/** Returns true if the real-valued point is within the local (non-halo) region.  */
 	public boolean isLocal(Double2D p) { return halo.inLocal(p); }
 
-	/** Returns true if the point is within the halo region.  */
+	/** Returns true if the real-valued point is within the halo region.  */
 	public boolean isHalo(Double2D p) { return halo.inLocalAndHalo(p); }
+
+	/** Returns true if the integer point is within the local (non-halo) region.  */
+	public boolean isLocal(Int2D p) { return halo.inLocal(p); }
+
+	/** Returns true if the integer point is within the halo region.  */
+	public boolean isHalo(Int2D p) { return halo.inLocalAndHalo(p); }
 		
 		
 	/** Returns a Promise which will eventually (immediately or within one timestep)
@@ -280,7 +285,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 
 	/** Adds an agent to the given point and schedules it.  This point can be outside
 		the local and halo regions; if so, it will be set after the end of this timestep.  */
-	public void addAndScheduleAgent(Double2D p, T agent, double time, int ordering) 
+	public void addAgent(Double2D p, T agent, double time, int ordering) 
 		{
 		if (agent == null)
 			{
@@ -300,7 +305,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		
 	/** Adds an agent to the given point and schedules it repeating.  This point can be outside
 		the local and halo regions; if so, it will be set after the end of this timestep.  */
-	public void addAndScheduleAgent(Double2D p, T agent, double time, int ordering, double interval) 
+	public void addAgent(Double2D p, T agent, double time, int ordering, double interval) 
 		{
 		if (agent == null)
 			{

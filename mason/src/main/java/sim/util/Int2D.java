@@ -271,6 +271,17 @@ public final class Int2D extends NumberND
 		return new Int2D(x - offset[0], y - offset[1]);
 		} 
 
+    public boolean equals(Int2D val)
+        {
+        return x == val.x && y == val.y;
+        }
+        
+
+	/** Returns true I am equal to val */
+    public boolean equals(Double2D val)
+        {
+        return x == val.x && y == val.y;
+        }
     
 	public Int2D max(Int2D val)
 		{

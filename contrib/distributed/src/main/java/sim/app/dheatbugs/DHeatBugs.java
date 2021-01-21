@@ -238,7 +238,7 @@ public class DHeatBugs extends DSimState {
 		for (Int2D p : agents.keySet()) {
 			for (DHeatBug a : agents.get(p)) {
 				if (partition.getBounds().contains(p)) {
-					bugs.addAndScheduleAgent(p, a, 0, 0, 1);
+					bugs.addAgent(p, a, 0, 0, 1);
 				    System.out.println("start : "+a);
 				}
 
