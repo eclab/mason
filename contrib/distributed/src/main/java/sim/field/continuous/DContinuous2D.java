@@ -36,14 +36,14 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	ContinuousStorage<T> storage;
 	boolean removeEmptyBags = false;
 	
-	public DContinuous2D(Partition ps, double discretization, DSimState state) 
+	public DContinuous2D(double discretization, DSimState state) 
 		{
-		super(ps, state);
-		storage = new ContinuousStorage<T>(ps.getBounds(), discretization);
+		super(state);
+		storage = new ContinuousStorage<T>(state.getPartition().getBounds(), discretization);
 		
 		try 
 		{
-			halo = new HaloGrid2D<>(ps, storage, state);
+			halo = new HaloGrid2D<>(storage, state);
 		} 
 		catch (RemoteException e) 
 		{

@@ -115,7 +115,7 @@ public class DSchelling extends DSimState{
         {
         emptySpaces.clear();
         //neighbors = new IntGrid2D(gridWidth, gridHeight,0);
-        neighbors = new DIntGrid2D(getPartition(), this);
+        neighbors = new DIntGrid2D(this);
         for(int x=0;x<gridWidth;x++)
         {
             for(int y=0;y<gridHeight;y++)

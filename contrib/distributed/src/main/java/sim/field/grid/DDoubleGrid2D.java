@@ -19,13 +19,13 @@ public class DDoubleGrid2D extends DAbstractGrid2D
 	HaloGrid2D<Double, DoubleGridStorage> halo;
 	DoubleGridStorage storage;
 	
-	public DDoubleGrid2D(Partition ps, DSimState state) 
+	public DDoubleGrid2D(DSimState state) 
 		{
-		super(ps, state);
-		storage = new DoubleGridStorage(ps.getBounds());
+		super(state);
+		storage = new DoubleGridStorage(state.getPartition().getBounds());
 		try 
 			{
-			halo = new HaloGrid2D<Double, DoubleGridStorage>(ps, storage, state);
+			halo = new HaloGrid2D<Double, DoubleGridStorage>(storage, state);
 			} 
 		catch (RemoteException e) 
 			{

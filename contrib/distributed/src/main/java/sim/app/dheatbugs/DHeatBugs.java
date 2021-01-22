@@ -57,9 +57,9 @@ public class DHeatBugs extends DSimState {
 		bugCount = count;
 		privBugCount = bugCount / getPartition().getNumProcessors();
 		try {
-			valgrid = new DDoubleGrid2D(getPartition(), this);
-			valgrid2 = new DDoubleGrid2D(getPartition(), this);
-			bugs = new DDenseGrid2D<DHeatBug>(getPartition(), this);
+			valgrid = new DDoubleGrid2D(this);
+			valgrid2 = new DDoubleGrid2D(this);
+			bugs = new DDenseGrid2D<DHeatBug>(this);
 		} catch (final Exception e) {
 			e.printStackTrace();
 			System.exit(-1);

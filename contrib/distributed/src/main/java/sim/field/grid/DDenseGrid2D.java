@@ -29,14 +29,14 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	private HaloGrid2D<T, DenseGridStorage<T>> halo;
 	DenseGridStorage<T> storage;
 		
-	public DDenseGrid2D(Partition ps, DSimState state) 
+	public DDenseGrid2D(DSimState state) 
 		{
-		super(ps, state);
-		storage = new DenseGridStorage<T>(ps.getBounds());
+		super(state);
+		storage = new DenseGridStorage<T>(state.getPartition().getBounds());
 		
 		try 
 		{
-			halo = new HaloGrid2D<>(ps, storage, state);
+			halo = new HaloGrid2D<>(storage, state);
 		} catch (RemoteException e) 
 		{
 			throw new RuntimeException(e);

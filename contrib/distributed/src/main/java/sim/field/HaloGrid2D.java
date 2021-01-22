@@ -111,15 +111,14 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 
 	private final Object lockRMI = new boolean[1];
 
-	public HaloGrid2D(final Partition ps, final S stor, final DSimState state)
-			throws RemoteException {
+	public HaloGrid2D(S storage, DSimState state) throws RemoteException {
 		super();
-		this.partition = ps;
-		localStorage = stor;
+		partition = state.getPartition();
+		localStorage = storage;
 		this.state = state;
 		// init variables that don't change with the partition scheme
-		world = ps.getWorldBounds();
-		fieldSize = ps.getFieldSize();
+		world = partition.getWorldBounds();
+		fieldSize = partition.getFieldSize();
 		MPIBaseType = localStorage.getMPIBaseType();
 		registerCallbacks();
 		// init variables that may change with the partition scheme

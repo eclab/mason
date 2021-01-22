@@ -16,8 +16,8 @@ public abstract class DAbstractGrid2D extends AbstractGrid2D {
 
 	protected DSimState state;
 
-	public DAbstractGrid2D(final Partition ps, DSimState state) {
-		int[] fieldSize = ps.getFieldSize();
+	public DAbstractGrid2D(DSimState state) {
+		int[] fieldSize = state.getPartition().getFieldSize();
 		width = fieldSize[0];
 		height = fieldSize[1];
 		this.state = state;

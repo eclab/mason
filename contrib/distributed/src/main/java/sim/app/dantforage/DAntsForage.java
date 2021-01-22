@@ -133,11 +133,11 @@ public /* strictfp */ class DAntsForage extends DSimState {
 
 	public DAntsForage(long seed) {
 		super(seed, GRID_WIDTH, GRID_HEIGHT, 10);
-		sites = new DIntGrid2D(getPartition(), this);
-		toFoodGrid = new DDoubleGrid2D(getPartition(), this);
-		toHomeGrid = new DDoubleGrid2D(partition, this);
-		buggrid = new DDenseGrid2D<DAnt>(getPartition(), this);
-		obstacles = new DIntGrid2D(partition, this);
+		sites = new DIntGrid2D(this);
+		toFoodGrid = new DDoubleGrid2D(this);
+		toHomeGrid = new DDoubleGrid2D(this);
+		buggrid = new DDenseGrid2D<DAnt>(this);
+		obstacles = new DIntGrid2D(this);
 	}
 
 	public void start() {
