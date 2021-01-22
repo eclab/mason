@@ -26,18 +26,13 @@ public abstract class DAbstractGrid2D extends AbstractGrid2D {
 	protected void throwNotLocalException(NumberND p) {
 		throw new RuntimeException("Point: " + p + ", is Not Local");
 	}
+	
+	public abstract HaloGrid2D getHaloGrid();
 
-	/** Returns the local (non-halo) region.  */
-	public abstract IntRect2D getLocalBounds();
-	
-	/** Returns the halo region.  */
-	public abstract IntRect2D getHaloBounds();
-	
-	/** Returns true if the point is within the local (non-halo) region.  */
-	public abstract boolean isLocal(Int2D p);
-	
-	/** Returns true if the point is within the halo region.  */
-	public abstract boolean isHalo(Int2D p);
+	public IntRect2D getLocalBounds()  { return getHaloGrid().getLocalBounds(); }
+	public IntRect2D getHaloBounds()  { return getHaloGrid().getHaloBounds(); }
+	public boolean isLocal(Int2D p) { return getHaloGrid().inLocal(p); }
+	public boolean isHalo(Int2D p) { return getHaloGrid().inLocalAndHalo(p); }
 	
 /*
 	public abstract RemoteFulfillable get(Int2D p);

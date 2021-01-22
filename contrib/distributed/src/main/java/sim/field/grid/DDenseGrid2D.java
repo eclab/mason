@@ -182,10 +182,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
  		else return false;
 		}
 
-	public IntRect2D getLocalBounds()  { return halo.getLocalBounds(); }
-	public IntRect2D getHaloBounds()  { return halo.getHaloBounds(); }
-	public boolean isLocal(Int2D p) { return halo.inLocal(p); }
-	public boolean isHalo(Int2D p) { return halo.inLocalAndHalo(p); }
+	public HaloGrid2D getHaloGrid() { return halo; }
 
 	/** Returns a Promise which will eventually (immediately or within one timestep)
 		hold the data (the ENTIRE ArrayList) located at the given point.  This point can be outside

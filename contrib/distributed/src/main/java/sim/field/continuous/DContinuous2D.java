@@ -217,24 +217,13 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			}
 		}
 		
-	/** Returns the local (non-halo) region.  */
-	public IntRect2D getLocalBounds()  { return halo.getLocalBounds(); }
-
-	/** Returns the halo region.  */
-	public IntRect2D getHaloBounds()  { return halo.getHaloBounds(); }
-
 	/** Returns true if the real-valued point is within the local (non-halo) region.  */
 	public boolean isLocal(Double2D p) { return halo.inLocal(p); }
 
 	/** Returns true if the real-valued point is within the halo region.  */
 	public boolean isHalo(Double2D p) { return halo.inLocalAndHalo(p); }
 
-	/** Returns true if the integer point is within the local (non-halo) region.  */
-	public boolean isLocal(Int2D p) { return halo.inLocal(p); }
-
-	/** Returns true if the integer point is within the halo region.  */
-	public boolean isHalo(Int2D p) { return halo.inLocalAndHalo(p); }
-		
+	public HaloGrid2D getHaloGrid() { return halo; }
 		
 	/** Returns a Promise which will eventually (immediately or within one timestep)
 		hold the data (which must be a DObject) requested if it is located, else null.  This point can be outside
