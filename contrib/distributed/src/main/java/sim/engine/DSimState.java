@@ -60,19 +60,35 @@ public class DSimState extends SimState {
 		return multiThreaded;
 	}
 
+	static int pid = -1;
+	
+	static void loadPID()
+		{
+		try 
+			{
+			pid = MPI.COMM_WORLD.getRank();
+			} 
+		catch (MPIException ex) 
+			{
+			ex.printStackTrace();
+			System.exit(-1);
+			}
+		}
+		
 	/**
 	 * Only call this method after COMM_WORLD has been setup. </br>
 	 * It's safe to call it in the start method and after.
 	 * 
 	 * @return Current pid
 	 */
-	public static int getPID() {
-		try {
-			return MPI.COMM_WORLD.getRank();
-		} catch (MPIException ex) {
-			throw new RuntimeException(ex);
+	public static final int getPID() 
+		{
+		if (pid == -1) 
+			{
+			loadPID();
+			}
+		return pid;
 		}
-	}
 
 	/**
 	 * Set multiThreaded as true if any processing node (e.g. pid = 0) uses more

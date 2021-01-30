@@ -3,6 +3,7 @@ package sim.field.partitioning;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.function.Consumer;
+import sim.engine.*;
 import mpi.*;
 import sim.util.*;
 
@@ -13,7 +14,7 @@ import sim.util.*;
 // Consumer is Raw Type because its parameter is of type int
 //@SuppressWarnings("rawtypes")
 public abstract class Partition {
- 	int pid;
+	int pid;
 	int numProcessors;
 	int width;
 	int height;
@@ -29,21 +30,25 @@ public abstract class Partition {
 		this.toroidal = toroidal;
 		this.aoi = aoi;
 
-		try {
-			pid = MPI.COMM_WORLD.getRank();
+		try 
+			{
+			pid = DSimState.getPID();
 			numProcessors = MPI.COMM_WORLD.getSize();
-		} catch (final MPIException e) {
+			} 
+		catch (MPIException e) 
+			{
 			e.printStackTrace();
 			System.exit(-1);
-		}
+			}
 
 		preCallbacks = new ArrayList<Consumer>();
 		postCallbacks = new ArrayList<Consumer>();
 	}
 
-	public int getPID() {
+	public int getPID() 
+		{
 		return pid;
-	}
+		}
 
 	public int getNumProcessors() {
 		return numProcessors;
