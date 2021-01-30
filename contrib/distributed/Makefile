@@ -20,7 +20,6 @@ sim/app/dflockers/*.java \
 sim/app/dheatbugs/*.java \
 sim/app/dschelling/*.java \
 sim/engine/*.java \
-sim/engine/registry/*.java \
 sim/engine/transport/*.java \
 sim/field/*.java \
 sim/field/continuous/*.java \

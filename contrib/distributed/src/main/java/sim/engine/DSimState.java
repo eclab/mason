@@ -28,7 +28,6 @@ import ec.util.MersenneTwisterFast;
 import mpi.MPI;
 import mpi.MPIException;
 import sim.app.dheatbugs.DHeatBug;
-import sim.engine.registry.DRegistry;
 import sim.engine.transport.AgentWrapper;
 import sim.engine.transport.PayloadWrapper;
 import sim.engine.transport.TransporterMPI;
@@ -505,7 +504,7 @@ public class DSimState extends SimState {
 			//print_all_agents(p);
 			
 			if (!partition.getBounds().contains(p)) {
-				final int toP = partition.toPartitionId(p);
+				final int toP = partition.toPartitionPID(p);
 				for (Synchronizable field : fieldRegistry) {
 					ArrayList<Object> migratedAgents = new ArrayList<>();
 					HaloGrid2D haloGrid2D = (HaloGrid2D) field;
@@ -517,7 +516,7 @@ public class DSimState extends SimState {
 						// ConcurrentModificationException
 						for (Object a : agents) {
 							NumberND loc = st.getLocation((DObject) a);
-							final int locToP = partition.toPartitionId(loc);
+							final int locToP = partition.toPartitionPID(loc);
 							if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
 									&& !partition.getBounds().contains(loc)) {
 
@@ -812,7 +811,7 @@ public class DSimState extends SimState {
 			for (final Synchronizable haloField : fieldRegistry)
 				haloField.initRemote();
 
-			if (partition.isGlobalMaster()) {
+			if (partition.isRootProcessor()) {
 				init = new HashMap[partition.getNumProcessors()];
 				for (int i = 0; i < init.length; i++)
 					init[i] = new HashMap<String, Object>();
@@ -839,10 +838,6 @@ public class DSimState extends SimState {
 		}
 	}
 
-	public boolean isDistributed() {
-		return true;
-	}
-
 	/**
 	 * Use MPI_allReduce to get the current minimum timestamp in the schedule of all
 	 * the LPs
@@ -865,18 +860,14 @@ public class DSimState extends SimState {
 		return partition;
 	}
 
-	public boolean isMasterProcess() {
-		return partition.getPID() == 0;
-	}
-
-	/**
+	/*
 	 * @param partition the partition to set
 	 */
-	public void setPartition(final QuadTreePartition partition) {
-		this.partition = partition;
-		partition.initialize();
-		transporter = new TransporterMPI(partition);
-	}
+//	public void setPartition(final QuadTreePartition partition) {
+//		this.partition = partition;
+//		partition.initialize();
+//		transporter = new TransporterMPI(partition);
+//	}
 
 	/**
 	 * @return the transporter
@@ -891,7 +882,7 @@ public class DSimState extends SimState {
 		}
 	}
 
-	public void sendRootInfoToProc(int pid, String key, Object sendObj) {
+	public void sendRootInfoToProcessor(int pid, String key, Object sendObj) {
 		init[pid].put(key, sendObj);
 	}
 
@@ -989,6 +980,18 @@ public class DSimState extends SimState {
 		
 	}
 
+class Pair<A, B> implements Serializable 
+{
+	private static final long serialVersionUID = 1L;
+
+	public final A a;
+	public final B b;
+
+	public Pair(A a, B b) {
+		this.a = a;
+		this.b = b;
+	}
+}
 		
 		
 	

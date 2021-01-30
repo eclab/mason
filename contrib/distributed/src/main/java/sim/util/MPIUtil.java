@@ -618,7 +618,7 @@ public class MPIUtil {
 	 * sim.field.DNonUniformPartition.getPartitionScheme(new int[] {10, 10}, true,
 	 * new int[] {1, 1}); p.initUniformly(null); p.commit();
 	 *
-	 * int[] nids = p.getNeighborIds(); Integer[] t = new Integer[nids.length]; for
+	 * int[] nids = p.getNeighborPIDs(); Integer[] t = new Integer[nids.length]; for
 	 * (int i = 0; i < nids.length; i++) t[i] = p.getPid() * 10 + nids[i]; final int
 	 * dst = 0;
 	 *

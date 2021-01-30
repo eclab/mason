@@ -370,7 +370,7 @@ public class QuadTree {
 		return ret;
 	}
 
-	public int[] getNeighborIds(final QuadTreeNode node, int aoi,final boolean isToroidal) {
+	public int[] getNeighborPIDs(final QuadTreeNode node, int aoi,final boolean isToroidal) {
 		//return getNeighbors(node, aoi,isToroidal).stream().mapToInt(x -> x.getId()).sorted().toArray();
 		List<QuadTreeNode> neighbors = new ArrayList<QuadTreeNode>();
 		neighbors.addAll(getNeighbors(node, aoi,isToroidal));
@@ -437,7 +437,7 @@ public class QuadTree {
 
 		for (final Map.Entry<Integer, int[]> test : tests.entrySet()) {
 			final QuadTreeNode node = qt.getNode(test.getKey());
-			final int[] got = qt.getNeighborIds(node, aoi,true);
+			final int[] got = qt.getNeighborPIDs(node, aoi,true);
 			final int[] want = test.getValue();
 			final boolean isPass = Arrays.equals(want, got);
 			System.out.println(

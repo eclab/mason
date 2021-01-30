@@ -1,17 +1,13 @@
 package sim.engine;
 
-import java.rmi.NotBoundException;
-
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
+import java.rmi.*;
+import java.rmi.server.*;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sim.engine.registry.DRegistry;
-import sim.engine.transport.TransportRMIInterface;
-import sim.field.proxy.VisualizationProcessor;
-import sim.field.storage.GridStorage;
-
+import sim.engine.transport.*;
+import sim.field.proxy.*;
+import sim.field.storage.*;
 import sim.util.*;
 
 public class RemoteProcessor extends UnicastRemoteObject implements VisualizationProcessor {

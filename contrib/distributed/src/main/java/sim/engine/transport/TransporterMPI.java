@@ -15,7 +15,6 @@ import mpi.MPI;
 import mpi.MPIException;
 import sim.engine.DistributedIterativeRepeat;
 import sim.engine.Stopping;
-import sim.engine.registry.DRegistry;
 import sim.field.partitioning.Partition;
 import sim.util.*;
 
@@ -67,7 +66,7 @@ public class TransporterMPI {
 
 	public void reload() {
 		// TODO cannot work with one node?
-		neighbors = partition.getNeighborIds();
+		neighbors = partition.getNeighborPIDs();
 		numNeighbors = neighbors.length;
 
 		objectQueue = new ArrayList<>();

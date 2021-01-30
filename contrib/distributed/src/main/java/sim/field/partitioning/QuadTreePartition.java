@@ -66,21 +66,21 @@ public class QuadTreePartition extends Partition {
 	}
 
 	public int getNumNeighbors() {
-		return getNeighborIds().length;
+		return getNeighborPIDs().length;
 	}
 
-	public int[] getNeighborIds() {
+	public int[] getNeighborPIDs() {
 		return qt.getNeighborPids(myLeafNode, aoi, toroidal);
 	}
 
-	public int toPartitionId(final NumberND p) {
+	public int toPartitionPID(final NumberND p) {
 		return qt.getLeafNode(p).getProcessor();
 	}
 	/**
 	 * Creates the MPI comm world by defining the MPI topology as this quad tree.
 	 */
 	protected void createMPITopo() {
-		final int[] ns = getNeighborIds();
+		final int[] ns = getNeighborPIDs();
 
 		try {
 			// Create a unweighted & undirected graph for neighbor communication
@@ -460,7 +460,7 @@ public class QuadTreePartition extends Partition {
 		return isGroupMaster(getGroupComm(level));
 	}
 
-	public boolean isGlobalMaster() {
+	public boolean isRootProcessor() {
 		// The Global Master of Quad Tree is global root for MPI as well
 		return isGroupMaster(0);
 	}

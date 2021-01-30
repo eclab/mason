@@ -61,7 +61,7 @@ public abstract class DObject implements java.io.Serializable {
 	}
 
 	/** Returns a unique system-wideID to this object. */
-	public long getID() {
+	public final long getID() {
 		return (((long) firstpid) << 32) | localid;
 	}
 

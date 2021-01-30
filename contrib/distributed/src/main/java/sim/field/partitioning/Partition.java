@@ -56,10 +56,9 @@ public abstract class Partition {
 	public Comm getCommunicator() {
 		return comm;
 	}
-
-	public int[] getFieldSize() {
-		return new int[] { width, height };
-	}
+	
+	public int getWorldWidth() { return width; }
+	public int getWorldHeight() { return height; }
 
 	public IntRect2D getWorldBounds() {
 		return new IntRect2D(width, height);
@@ -82,7 +81,7 @@ public abstract class Partition {
 	
 	public abstract int getNumNeighbors();
 
-	public abstract int[] getNeighborIds();
+	public abstract int[] getNeighborPIDs();
 	
 	public int getAOI() { return aoi; }
 
@@ -90,13 +89,13 @@ public abstract class Partition {
 	 * @param p
 	 * @return partition id (pid) for the point p
 	 */
-	public abstract int toPartitionId(NumberND p);
+	public abstract int toPartitionPID(NumberND p);
 
 	/**
 	 *
 	 * @return true if calling pid is the global root
 	 */
-	public abstract boolean isGlobalMaster();
+	public abstract boolean isRootProcessor();
 
 	// TODO let other classes who depend on the partition scheme to register proper
 	// actions when partiton changes

@@ -182,7 +182,7 @@ public class DFlocker extends DSteppable implements Remote {
 		}
 
 //		try {
-//			final int dst = dFlockers.partition.toPartitionId(new double[] { loc.c(0), loc.c(1) });
+//			final int dst = dFlockers.partition.toPartitionPID(new double[] { loc.c(0), loc.c(1) });
 //			if (dst != dFlockers.partition.getPid()) {
 //				// Need to migrate to other partition,
 //				// remove from current partition

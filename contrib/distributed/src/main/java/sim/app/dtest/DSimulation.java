@@ -85,7 +85,7 @@ public class DSimulation extends DSimState {
 		for (int i = 75; i < 600; i = i + 150) {
 			for (int j = 75; j < 600; j = j + 150) {
 				Double2D loc = new Double2D(i, j);
-//				int id = 100 * partition.toPartitionId(loc) + c;
+//				int id = 100 * partition.toPartitionPID(loc) + c;
 //				c++;
 				agents.add(new DAgent(loc));
 			}

@@ -18,7 +18,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 //	int[] dsize;
 	double discretization;
 	public HashMap<Long, Double2D> m;
-	public HashMap<Long, T>[] storage; // HashMap<Long, T>[]
+	public HashMap<Long, T>[] storage;
 
 	public ContinuousStorage(final IntRect2D shape, final double discretization) {
 		super(shape);
