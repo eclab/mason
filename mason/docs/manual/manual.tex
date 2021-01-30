@@ -13914,8 +13914,10 @@ If you're on Homebrew for the Mac, installation is pretty straightforward, but y
 	\item Save the formula file
 	\item Next we need to install from source so Java is built from the formula.\\Do this: \lstinline[style=Bash]{brew install --build-from-source open-mpi}
 	\item You may need to force the links to be installed.\\Do this: \lstinline[style=Bash]{brew link --overwrite open-mpi}
-	\item Last, you need the freshly-built {\tt mpi.jar} file.  Copy the file {\tt /usr/local/lib/mpi.jar} (also known as {\tt /usr/local/Cellar/open-mpi/4.0.5/lib/mpi.jar}) to some location and put it in your CLASSPATH. 
+	\item Last, you need the freshly-built {\tt mpi.jar} file.  Copy the file {\tt /usr/local/lib/mpi.jar} (also known as {\tt /usr/local/Cellar/open-mpi/4.0.5/lib/mpi.jar}) to some location and put it in your CLASSPATH.   An obvious place would be to put it into {\tt /Library/Java/Extensions/} which is already in the system-level CLASSPATH.
 \end{enumerate}
+
+\paragraph{Note} If you have previously built and installed openmpi from scratch, you may not be able to reinstall from homebrew.  This is because openmpi installed from scratch is installed as root in various places in {\sf /usr/local/}, so homebrew (which does not install as root) cannot overwrite them.  Homebrew will let you know which files it cannot move; you'll need to go into those subdirectories and either remove the old ones or (more easily) change everything to be owned by yourself rather than root (as I might do with {\sf sudo chown -R sean /usr/local/lib/}).  Make sure you know what you're doing.
 
 \subsubsection{Building from Scratch}
 
@@ -13985,7 +13987,8 @@ If you're on Homebrew for the Mac, installation is pretty straightforward, but y
 
     \item (Enter your password)
     
-    \item Place the JAR file \lstinline[style=Bash]{ompi/mpi/java/java/mpi.jar} in your Java CLASSPATH.
+    \item Place the JAR file \lstinline[style=Bash]{ompi/mpi/java/java/mpi.jar} in your Java CLASSPATH.  If you're on a Mac,  an obvious place would be to put it into {\tt /Library/Java/Extensions/} which is already in the system-level CLASSPATH.
+
 \end{enumerate}
 
 \subsection{Install MASON}
@@ -14389,28 +14392,162 @@ mpirun -hostfile mpi_hostfile -n 4 java -jar DHeatbugs.jar
 The script is located in \lstinline[style=bash]{distributed//script/aws-teardown.sh}
 The script will tell AWS to shutdown and destroy your instances. {\bf If you don't do this, it will cost you money.}  For the sake of your income, we'd strongly recommend not forgetting to do this.
 
+\section{Package and Class Overview}
+
+Distributed MASON was co-designed by ISISLAB-UNISA (University of Salerno) and George Mason University, and is inspired loosely on the earlier D-MASON architecture developed at Salerno (https:/!/isislab-unisa.github.io/dmason/). Distributed MASON consists of the following packages:
+
+\begin{itemize}
+	\item \package{sim.engine}
+	\item \package{sim.engine.transport} subpackage
+	\item \package{sim.field}
+	\item \package{sim.field.continuous} subpackage
+	\item \package{sim.field.grid} subpackage
+	\item \package{sim.field.storage} subpackage
+	\item \package{sim.field.partitioning} subpackage
+	\item \package{sim.field.proxy} subpackage
+	\item \package{sim.util}
+\end{itemize}
+
+\paragraph{The sim.engine package} contains top-level versions of Distributed MASON's SimState, Schedule, and various agents and objects.  It consists of the following classes:
+
+\begin{itemize}
+    \item \Class{sim.engine.DSimState}: the distributed version of SimState.
+    \item \Class{sim.engine.DistributedSchedule}: the distributed version of Schedule.
+    \item \Class{sim.engine.DObject}: a distributed Object.
+    \item \Class{sim.engine.Stopping}: an object which can hold a Stoppable.
+    \item \Class{sim.engine.DSteppable}: a distributed Steppable.
+    \item \Class{sim.engine.DistributedTentaiveStep}: distributed version of the TentativeStep class.  This is used internally by the Schedule.
+    \item \Class{sim.engine.DistributedIterativeRepeat}: distributed version of the  IterativeRepeat class.    This is used internally by the Schedule.
+    \item \Class{sim.engine.RemoteProcessor}: an interface for remote visualization and statistics tools to access the distributed model at runtime.
+ 	\item \Class{sim.engine.Stat}: statistics data provided by the RemoteProcessor.
+\end{itemize}
+
+\paragraph{The sim.engine.transport package} holds code which handles moving objects and agents from processor to processor. It contains the following classes:
+
+{\bf\color{red} I need to fill this out.  Don't understand this code yet. }
+
+\paragraph{The sim.field package} holds new fields and related objects.  It contains the following classes:
+
+\begin{itemize}
+    \item \Class{sim.field.DAbstractGrid2D}: the distributed version of AbstractGrid2D.
+    \item \Class{sim.field.HaloGrid2D}: manages interactions between field partitions among different processors.  Each grid and continuous field has a HaloGrid2D.
+    \item \Class{sim.field.RMIProxy}: a Java RMI object for accessing the a processor's fields from another processor.
+    \item \Class{sim.field.Promise}: an object provided which holds information that will be filled out in the future.
+    \item \Class{sim.field.RemotePromise}: a Java RMI version of Promise.
+\end{itemize}
+
+\paragraph{The sim.field.grid package} holds Distributed MASON's new grid fields.  It contains the following classes:
+
+\begin{itemize}
+    \item \Class{sim.field.grid.DIntGrid2D}: the distributed version of IntGrid2D.
+    \item \Class{sim.field.grid.DDoubleGrid2D}: the distributed version of DoubleGrid2D.
+    \item \Class{sim.field.grid.DObjectGrid2D}: the distributed version of ObjectGrid2D.
+    \item \Class{sim.field.grid.DDenseGrid2D}: the distributed version of DenseGrid2D.
+\end{itemize}
+
+\paragraph{The sim.field.continuous package} holds Distributed MASON's new continuous field.  It contains the following class:
+
+\begin{itemize}
+    \item \Class{sim.field.continuous.DContinuous2D}: the distributed version of Continuous2D.
+\end{itemize}
+
+\paragraph{The sim.field.storage package} holds local storage for each of the fields.  It contains the following classes:
+
+\begin{itemize}
+    \item \Class{sim.field.storage.GridStorage}: top-level superclass.
+    \item \Class{sim.field.storage.IntGridStorage}: stores information local to DIntGrid2D for this processor.
+    \item \Class{sim.field.storage.DoubleGridStorage}: stores information local to DDoubleGrid2D for this processor.
+    \item \Class{sim.field.storage.ObjectGridStorage}: stores information local to DObjectGrid2D for this processor.
+    \item \Class{sim.field.storage.DenseGridStorage}: stores information local to DDenseGrid2D for this processor.
+    \item \Class{sim.field.storage.ContinuousStorage}: stores information local to DContinuous2D for this processor.
+\end{itemize}
 
 
-\section{Developing a Distributed MASON Application}
+\paragraph{The sim.field.partitioning package} holds classes which manage the boundaries of the fields for each processor and handle load-balancing.  It contains the following classes:
 
-First a word about assumptions made about Distributed Computing.  Distributed systems use multiple processors to act as a single system. However, realistically this presents only an illusion of a single system: to get reasonable efficiency out of the system, it is necessary to know {\it some} of the low-level details of the distributed facility.  This is known as a {\it brittle abstraction}. Factors like geolocation and physical limitations of the machines in question will have a major impact.
+\begin{itemize}
+    \item \Class{sim.field.partitioning.Partition}: handles field partitioning information for this processor.
+    \item \Class{sim.field.partitioning.QuadTreePartition}: a Partition managed via a Quad Tree.
+    \item \Class{sim.field.partitioning.QuadTree}: Quad Tree object for load balancing.
+    \item \Class{sim.field.partitioning.QuadTreeNote}: a node in the Quad Tree.
+\end{itemize}
+
+
+\paragraph{The sim.field.proxy package} handles remote visualization of the model.  It contains the following classes:
+
+\begin{itemize}
+    \item \Class{sim.field.proxy.SimStateProxy}: is a special SimState which represents a remote DSimState for purposes of visualization.
+    \item \Class{sim.field.proxy.UpdatableProxy}: a field which represents a remote distributed field for purposes of visualization.
+    \item \Class{sim.field.proxy.IntGrid2DProxy}: is an IntGrid2D which represents a remote DIntGrid2D for purposes of visualization.
+    \item \Class{sim.field.proxy.DoubleGrid2DProxy}: is an DoubleGrid2D which represents a remote DDoubleGrid2D for purposes of visualization.
+    \item \Class{sim.field.proxy.ObjectGrid2DProxy}: is an ObjectGrid2D which represents a remote DObjectGrid2D for purposes of visualization.
+    \item \Class{sim.field.proxy.DenseGrid2DProxy}: is an DenseGrid2D which represents a remote DDenseGrid2D for purposes of visualization.
+    \item \Class{sim.field.proxy.Continuous2DProxy}: is an Continuous2D which represents a remote DContinuous2D for purposes of visualization.
+    \item \Class{sim.field.proxy.Overview}: a simple GUI widget for displaying an overview of the entire model world.
+    \item \Class{sim.field.proxy.VisualizationProcessor}: an interface for remotely accessing a Distributed MASON processor node.
+ \end{itemize}
+
+\paragraph{The sim.field.util package} contains the following classes:
+
+\begin{itemize}
+    \item \Class{sim.field.util.IntRect2D}: a 2D integer rectangle, consisting of two Int2D objects.
+    \item \Class{sim.field.util.DRegistry}: a mechanism for registering global information for the model.
+    \item \Class{sim.field.util.GroupComm}: MPI communication topology information.
+    \item \Class{sim.field.util.MPIParam}: MPI parameter data wrapper.
+    \item \Class{sim.field.util.MPIUtil}: MPI utility methods.
+ \end{itemize}
+
+
+\section{Developing in Distributed MASON}
+
+First a word about assumptions made about distributed computing.  Distributed systems use multiple processors to act as a single system. However, realistically this presents only an illusion of a single system: to get reasonable efficiency out of the system, it is necessary to know {\it some} of the low-level details of the distributed facility.  This is known as a {\it brittle abstraction}. Factors like geolocation and physical limitations of the machines in question will have a major impact.
 
 We have tried to shield you from knowing as much of the distributed system's functionality, but you still need to understand some of it.  So here we go!
 
-\subsection{Converting an existing MASON application to Distributed MASON}
-Only a few changes are needed to convert a MASON simulation into its distributed version.
+\begin{figure}[t]
+\begin{center}\includegraphics[width=2.5in]{distributed/pids}\end{center}
+\caption{Field divided up into a 4\(\times\)4 grid of 16 Distributed MASON processors.  Processor 0 is the ``Root Processor'', but do not assume that it is the top left processor.}
+\label{DistributedPID}
+\end{figure}
 
-First, you'll need import the MPI libraries:
+\subsection{Multiple Processors}
+MASON runs on a single processor (such as your laptop).  But Distributed MASON runs on multiple {\bf processors} (distributed MASON processes, often running on different CPUs or even different computers), and distributes the model workload spatially.   That is, your fields are broken into regions known as {\bf partitions}, and each partition is owned by a different processor.   Distributed MASON is currently optimized for the models that have a ``flat'' 2-D topology where agents interact primarily with nearby agents/data.
 
-\begin{verbatim}
-import sim.util.Timing.*;
-import sim.util.MPITest.*;
-import mpi.*;
-\end{verbatim}
+If the number of processors is exactly a power of 4, such as 1, 4, 16, 64, 256, and on, then the partitions exactly form a square grid as shown in Figure~\ref{DistributedPID}.  One processor is the {\bf root processor}: in addition to its normal duties as a processor, it is also in charge of managing any global information and handling synchronization.  Because of this structure, Distributed MASON at present permits bounded and toroidal fields, but does not permit unbounded fields nor (presently) networks.  
 
-Second, you'll not be subclassing \Class{sim.util.SimState} any more, but rather \Class{sim.util.DSimState}.  This class doesn't use \Class{sim.util.Schedule}, but rather \Class{sim.util.DistributedSchedule} (though you probably won't notice that fact).
+Each processor has a unique {\bf processor ID} (or {\bf PID}).  If you have \(N\) processors, then their PIDs will be numbered 0...\(N-1\).   Processor 0 is the root processor.
 
-Third, there are new fields.  Below is a table showing MASON fields with their distributed counterparts.
+Processors communicate with one another using two Java packages.  First, processors do bulk synchronous communication using the {\bf Message Passing Interface} (or {\bf MPI}), which MASON does via the {\bf Java OpenMPI} library.  For example, after every timestep, Distributed MASON fields trade notes about which agents or objects have changed location or status in a large, intricate dance.  That's done with MPI.  Second, more fine-grained processor-to-processor communication is done with Java's {\bf Remote Method Interface} or {\bf RMI}.  For example, if an agent in processor 1 needs to know something about another agent in distant processor 10, it'd communicate with that processor via RMI.
+
+Each processor has its own special subclasses of SimState and its own Schedule called \class{sim.engine.DSimState} and \class{sim.engine.DistributedSchedule} respectively.  These manage much of the hard work of maintaining a distributed model. DistributedSchedule has no special methods different from Schedule (though it has reimplemented several of Schedule's methods).  But DSimState has many new methods.  The important ones to be aware of for now are:
+
+\begin{methods}{\class{sim.engine.DSimState}}
+\mthd{public static int getPID() }
+Returns the PID of the process in charge of this DSimState.
+\mthd{QuadTreePartition getPartition()}
+Returns the Partition object in charge of this DSimState.
+\mthd{static void doLoopDistributed(final Class<?> c, final String[] args) }
+Replaces doLoop()
+\end{methods}
+
+The method \method{getPID()} should be self-explanatory.  The method \method{getPartition()} returns a special object which manages the partition of your fields which this processor is in charge of: and it has a number of useful methods.  We'll discuss this later.  
+
+Finally, \method{doLoopDistributed} replaces the standard \method{doLoop()} method, and is used in exactly the same way:
+
+{\footnotesize \begin{alltt}
+    public static void main(String[] args) 
+        \{
+        doLoopDistributed(MyModel.class, args);
+        System.exit(0);
+        \}
+\end{alltt}
+}
+
+
+\subsection{Distributed Fields and Partitions}
+
+Because MASON's fields are distributed among multiple processors, MASON must use new field classes:
+
 
 \begin{center}
 \begin{tabular}{@{}ll@{}}
@@ -14419,18 +14556,113 @@ IntGrid2D & \Class{sim.util.DIntGrid2D}\\
 DoubleGrid2D & \Class{sim.util.DDoubleGrid2D}\\
 DenseGrid2D & \Class{sim.util.DDenseGrid2D}\\
 Continuous2D& \Class{sim.util.DContinuous2D}\\
+SparseGrid2D& No equivalent. Instead, use \Class{sim.util.DDenseGrid2D}\\
 \end{tabular}%
 \end{center}
 
-Fourth, another simple, but essential, change is to replace the \method{doLoop} method call with the \method{doLoopMPI} method call in the main simulation method. {\bf\color{red} This method throws an \Class{mpi.MPIException}: we'll be changing this further to clean this up.}
+We have tried hard to make these feel much like the original MASON field classes, but as you might imagine, there must be some significant differences.    We discuss these fields in detail later, for now, it's worth discussing how field partitions interact.
 
-The changes we have described so far are syntax-level. But converting from a MASON simulation into its distributed counterpart will also require a slight conceptual shift, which results in you writing a small portion of code that deals with how the simulation is started.  Specifically, you'll need to get all the distributed nodes up and running, with each node knowing what part of the simulation space it's responsible for, and which agents are (initially) under its control.  You can start a distributed simulation in two different ways: {\bf fully distributed} or {\bf partially centralized}.   We discuss both here.
+In Distributed MASON all fields are the same size, and overlap on top of one another precisely.  A field is divided into several regions. Each processor is in charge of a region (called the processor's {\bf partition}, and manages all the objects and agents associated with that region of the fields.  Now, in order to do their work, an agent typically needs to have access to the objects in the immediate neighborhood around it: but if an agent is currently right at the edge of a processor's partition, then this neighborhood will spill over into another processor's partition, and accessing that data can be very costly.  
 
-\paragraph{Distributed Initialization} This initialization is the simplest, but it's only appropriate for the rare case when processors don't need to be told {\it anything special}, nor know {\it anything} about their neighbors or location in the space, in order to get themselves up and running.  For example, if you were creating a simulation where each processor started with exactly 15 agents and could set itself up on its own, then Distributed Initialization would be appropriate.
+MASON handles this by endowing every processor not only with its partition region, but with a buffer zone of cached information immediately around the processor called the processor's {\bf halo region}.  Agents can access this data without having to go to another processor to fetch it.   The size of the halo region is determined by an integer called the partition's {\bf Area of Interest} (or {\bf AOI}).  You specify the AOI when you set up the fields in the first place: in general, the AOI should be large enough to encompass the area around any agent that it needs to read to do its work: and thus the buffer size will generally be large enough for agents on the edge of a partition.  Information cached in the Halo area needs to be synchronized when any changes are made in its source processor node. Such an operation is called ``Halo Exchange'' and it is performed after each model step.
 
-Here, the modeler performs distributed initialization simply by overriding the \method{start()} method just as was the case for regular MASON models. During the implementation of the \method{start()} method, the modeler must take into account the fact that each processor is in charge of a certain portion of the space of the simulation field, rather than (as before) being in charge of the entire simulation. Therefore all the objects and agents that he will add must be only those that are part of the field's portion managed by the processor (we call this the processor's {\bf partition}).   To do this in a {\it distributed} fashion, each processor will take charge of initializing its own fields without the need for communication or synchronization between the various processors.
+\begin{figure}[t]
+\begin{center}\includegraphics[width=2.5in]{distributed/HaloGrid}\end{center}
+\caption{Nine partitions with Areas of Interest.  {\bf Black} lines are the actual {\it local bounds} of the partitions of the various processors.  {\color{red}\bf Red dotted} lines show the {\it halo regions} of each processor formed by extending their partitions out by the Areas of Interest, whose width is shown. The {\color{red}\bf bold red dotted rectangle} shows the halo region specifically for Processor 5.  The {\color{green}\bf bold green dotted rectangle} shows the {\it private region} of Processor 5, that is, the region that it must share with no other processor's halo region because it is outside their areas of interest.}
+\label{halogridpic}
+\end{figure}
 
-For example, suppose that you were starting the {\bf Flockers} simulation in a distributed fashion.  You need to seed the agents throughout the space initially.  One (not uniformly distributed) way to do this would be to have each processor create \(N\) flockers at random in its own space entirely independent of the other processors.  The processors don't need to coordinate to do this: it's fully distributed.
+Thus each processor really has three rectangular regions of interest, as shown in Figure~\ref{halogridpic}:
+
+\begin{itemize}
+\item The {\bf local bounds} of the partition.  This is the actual region under the control of the processors.  Agents can write to fields locally within these bounds.
+\item The {\bf halo region} of the partition.  This is the larger bounds outside of the partition, which includes the Area of Interest.    Agents can efficiently read from fields within these bounds, but are not permitted to write to the halo region areas outside the local bounds.
+\item The {\bf private region} of the partition.  This is the portion of the local bounds that is not within the Area of Interest of any other processor.  This is rarely useful to know about, but there you go.
+\end{itemize}
+
+The \class{sim.field.partitioning.Partition} object can be queried to give you useful information here.  You can get this object by calling  \method{getPartition()} on your DSimState.   Here are some of its methods:
+
+\begin{methods}{\class{sim.field.partitioning.Partition}}
+\mthd{public int getPID()}
+Returns your current processor's PID.
+\mthd{public boolean isRootProcessor()}
+Am I the root processor?
+\mthd{public int getNumProcessors()}
+Returns the total number of processors.
+\mthd{public boolean isToroidal()}
+Should the fields be considered toroidal?
+\mthd{public int getWorldWidth()}
+Returns the width of the entire bounds of the world (all the partitions combined).
+\mthd{public int getWorldHeight()}
+Returns the height of the entire bounds of the world (all the partitions combined).
+\mthd{public IntRect2D getWorldBounds()}
+Returns the entire bounds of the world (all the partitions combined).
+\mthd{public IntRect2D getBounds()}
+Returns the bounds your local partition.
+\mthd{public IntRect2D getHaloBounds()}
+Returns the bounds your local partition, plus the additional Area of Interest.
+\mthd{public int getAOI()}
+Returns the Area of Interest.
+\mthd{public int getNumNeighbors()}
+Returns the number of neighbors whose areas of interest overlap with your partition.
+\mthd{public int[] getNeighborPIDs()}
+Returns the number of neighbors whose areas of interest overlap with your partition.
+\mthd{public ArrayList\(<\)IntRect2D\(>\) getAllBounds()}
+Returns a list of all partition bounds for all processors.
+\mthd{public int toPartitionPID(NumberND p)}
+Returns the PID of the processor in charge of the partition which encompasses the given point.
+\end{methods}
+
+Note the use of the class \class{sim.field.IntRect2D}, which is nothing more than two Int2D objects, one representing an upper left corner, and one representing a lower right corner, in order to form a rectangle.
+
+
+\subsection{Objects}
+
+Unlike in MASON, you can no longer reliably refer to an object in a field by its reference (its pointer), because if it has been moved to another processor, or moved back, it will have a different reference.  Thus any objects in MASON that could possibly be moved from one location to another must subclass from the \class{sim.engine.DObject} class.  This class provides a unique and permanent ID (a long) for the object created when it is constructed.   This ID is a combination of the processor ID on which the object was originally created (an instance variable called \variable{firstpid}) and a unique counter on that processor (an instance variable called \variable{localid}).  Various standard Object methods are provided so you can compare and hash this object by its ID.
+
+\begin{methods}{\class{sim.engine.DObject}}
+\mthd{public long getID() }
+Returns the object's unique ID.
+\mthd{public boolean equals(Object other) }
+Compares the object for equality against another: if they are both DObjects, then the ID is used to compare.
+\mthd{public final int hashCode()}
+Returns a hashcode for the object based on its unique id.
+\mthd{public final String getIDString() }
+Returns the unique ID as a pretty string.
+\mthd{public String toString() }
+By default returns a string for the object in the form classname : ID : current processor ID. 
+\end{methods}
+
+\subsection{Agents}
+
+Agents are likely to migrate from processor to processor as they wander to different partitions of your field.  This means that they must be DObjects, but it also means that not only must migrate from one processor's field partition to another processor's field partition, but must {\it also} be moved from one processor's schedule to another processor's schedule.  This in turn means that we must be able to \method{stop()} all agents.  Thus all agents in Distributed MASON must implement the \class{sim.field.Stopping} interface.
+
+The Stopping interface is very simple: it stores and retrieves a \class{sim.field.Stoppable} object.  Why is this necessary?  As usual, all agents are either scheduled repeating or one-shot.  Normally whenever a MASON agent is scheduled repeating, it is stored on the schedule wrapped in a \class{sim.engine.IterativeRepeat} object, but when it is scheduled one-shot, it is just stuck on the schedule.  In Distributed MASON this is somewhat different: when an agent is scheduled repeating, it is placed in a special wrapper called \class{sim.engine.DistributedIterativeRepeat}, and when it is scheduled one-shot, it is placed in a special wrapper called \class{sim.engine.DistributedTentativeStep}.  These special wrappers are Stoppable, and in turn tell your object (because it is Stopping) who they are.  Thus when your object must be migrated to another processor, your schedule can efficiently figure out who to stop by just querying your agent.  Note that this means that {\bf at present you should not use Sequence or other wrappers.}
+
+\begin{methods}{\class{sim.engine.Stopping} interface }
+\mthd{public setStoppable(Stoppable stop)}
+Sets the stored Stoppable.
+\mthd{public Stoppable getStoppable() }
+Returns the stored Stoppable.
+\mthd{public boolean isStopped() }
+Returns true if the agent is stopped (it Stoppable is null).
+\end{methods}
+
+Your agent can subclass from DObject and implement the Stopping interface itself, or it can simply subclass from a convenience class called \class{sim.engine.DSteppable} which handles all of this for you.  That's what I would do.
+
+
+\subsection{Initialization}  In ordinary MASON, you initialize your model\,---\,set up various global variables, initialize the fields, load agents into the schedule, and so on\,---\, in the \method{start()} method.  But in Distributed MASON, these tasks must be done, often in concert, by a number of processors in parallel.  This can be somewhat complex to do.
+
+There are two basic ways you could initialize a Distributed MASON model.  First, you could do {\bf fully distributed initialization}.  Here, each processor just sets up its own global variables, makes its own agents, and loads up its own partitions of the fields without consulting with or negotiating with any other processor.  This is the easiest approach, but most models will not be able to do it.  Second, you might do {\bf partially centralized initialization}, where the root processor instructs the other processors what they should create and do.  The root processor might even build agents and migrate them to the other processors, rather than have them build the agents themselves.  Partially centralized initialization is much more common.
+
+We discuss both strategies below.
+
+\paragraph{Distributed Initialization}
+This initialization is the simplest, but it's only appropriate for the rare case when processors don't need to be told {\it anything special}, nor know {\it anything} about their neighbor processors or what part of the model space they're in charge of, in order to get themselves up and running.  For example, if you were creating a simulation where each processor started with exactly 15 agents and could set itself up on its own, then Distributed Initialization would be appropriate.
+
+Here, the modeler performs distributed initialization simply by overriding the \method{start()} method just as was the case for regular MASON models. During the implementation of the \method{start()} method, the modeler must take into account the fact that each processor is only in charge its partition, rather than (as before) being in charge of the entire simulation world. Therefore all the objects and agents that he will add must be only those that are part of the field's partition.  To do this in a {\it distributed} fashion, each processor will take charge of initializing its own fields without the need for communication or synchronization between the various processors.
+
+For example, suppose that you were starting the {\bf Flockers} simulation in a distributed fashion.  You need to seed the agents throughout the space initially.  One (not very uniformly distributed) way to do this would be to have each processor create \(N\) flockers at random in its own space entirely independent of the other processors.  The processors don't need to coordinate to do this: it's fully distributed.
 
 The following code shows how to perform the distributed initialization.
 
@@ -14439,126 +14671,84 @@ The following code shows how to perform the distributed initialization.
 \begin{verbatim}
 public void start() {
     super.start();
-    final int[] size = partition.getPartition().getSize();
+    
+    sim.field.IntRect2D rect = getPartitioning().getBounds();
+    sim.util.Int2D origin = rect.ul();
     for (int x = 0; x < DFlockers.numFlockers / partition.numProcessors; x++) {
-        final double px = random.nextDouble() * size[0] + partition.getPartition().ul().getArray()[0];
-        final double py = random.nextDouble() * size[1] + partition.getPartition().ul().getArray()[1];
-        final DoublePoint location = new DoublePoint(px, py);
-        final DFlocker agent = new DFlocker(location,1);
-        field.addAgent(location, agent);
-        schedule.scheduleOnce(agent, 1);
+        final double px = random.nextDouble() * rect.getWidth() + origin.x;
+        final double py = random.nextDouble() * rect.getHeight() + origin.x;
+        final Double2D location = new Double2D(px, py);
+        final DFlocker agent = new DFlocker(location);
+        field.addAndScheduleAgent(location, agent, 0, 0);
         }
     }
 \end{verbatim}
 %\end{lstlisting}
 }
 
-Notice the use of \textbf{DoublePoint}.  This is similar to Double2D.  {\bf\color{red} We'll be replacing DoublePoint with Double2D soon.}  In the previous code you can notice the variable \variable{partition}, this variable holds all the information about the partitioning scheme used to distribute the simulation, and we will discuss this at length in Section~\ref{sec:partitioning}.  For now it's useful to see that you can extract the size of the node's region with \method{getSize()}, and \method{ul(()} returns the upper left-hand corner of the partition region.  {\bf\color{red} These are generating arrays right now: we'll be returning more comfortable stuff in a little while.}
+Here we're accessing the processor's {\bf partition} via the method \method{partition()}, and from their extracting the bounds of the partition.  Now that we know the region of the world we're in charge of, we populate it randomly with new Flockers.    
 
-\paragraph{Partially Centralized Initialization} This is the more common case, when processors need to be given per-processor information to set themselves up initially.  Here one processor, called the {\bf root processor}, will send information to the other processors to assist them in setting themselves up.  After that, all the processors will set themselves up in a distributed fashion as before. 
+Notice that our flockers are now of the class \class{DFlocker}.  This is a new Flocker class I made up because we're subclassing from DSteppable now.
 
-Each processor has a {\bf Processor ID} (or {\bf PID}) which uniquely identifies it.  The root processor has PID 0.  The modeler does centralized initialization by overwriting {\it two} ``start'' methods, \method{startRoot()} and \method{start()}. Only the root processor will have its \method{startRoot()} method called. 
+Also note the very last line: this is curious: a {\bf field is scheduling an agent?}  Isn't that the job of a Schedule?  You can certainly schedule the agent on the Schedule as before, and you can add it to the field as before; but it is often the case (though not in this situation) that you may be adding the agent or moving it to a location in the field which is {\it outside} the bounds controlled by this processor.  In this case the processor will need to {\it migrate} the agent to a different processor and schedule it on that schedule.  Thus because this is a distributed system, the {\it placement} of an agent a specific location is tied to the particular schedule it must be scheduled on.  For this reason, fields have convenience methods to make sure you get things right: just call \method{addAndScheduleAgent(...)} and it'll be added to the field and scheduled on the right schedule, either locally or elsewhere.
 
-In \method{startRoot()}, the modeler specifies the information (objects, agents, or any other information he deems useful) he wants to share with other processors.  To send this data, the root node has two methods available: \method{sendRootInfoToAll(String key, Object sendObj)} and  \method{sendRootInfoToProc(int pid, String key, Object sendObj)}.  The first one sends the same information to every single processor.  The second one sends information to a specific processor (indicated by the PID).  The information is tagged with a {\it key} of your choosing.  You can call these methods multiple times, with different keys, to build up a collection of information to send to the processors.
+We'll discuss distributed fields later, as well as scheduling methods that they have.
 
-After this information has been distributed, then all processors (including the root processor) execute their \method{start()} methods. In the \method{start()} method, a processor can call \method{getRootInfo(String key)} to retrieve an object sent to and associated with the given key.
+\paragraph{Partially Centralized Initialization} This is the more common case, when processors need to be given per-processor information to set themselves up initially.  Here the root processor will send information to the other processors to assist them in setting themselves up.  After that, all the processors will set themselves up in a distributed fashion as before.  To do this there are several DSimState methods:
+
+\begin{methods}{\class{sim.engine.DSimState}}
+\mthd{public void start()}
+Called on each processor at the start of the model, just like in standard MASON.
+\mthd{public void startRoot()}
+Called on thee root processor prior to \method{start()} being called on all the processors.  This gives the root a chance to set up information for them.
+\mthd{public void sendRootInfoToAll(String key, Object sendObj)}
+Sends an object, associated with the given key, to all processors.  This should only be called during the \method{startRoot()} method.
+\mthd{public void sendRootInfoToProcessor(int pid, String key, Object sendObj) }
+Sends an object, associated with the given key, to a specific processor.  This should only be called during the \method{startRoot()} method.
+\mthd{public Object getRootInfo(String key)}
+Retrieves an object associated, with the given key, that was sent to this processor by the root during its \method{startRoot()} method.  This should only be called during the \method{start()} method.
+\end{methods}
+
+The modeler does centralized initialization by overwriting {\it two} ``start'' methods, \method{startRoot()} and \method{start()}. Only the root processor will have its \method{startRoot()} method called. 
+
+In \method{startRoot()}, the modeler specifies the information (objects, agents, or any other information he deems useful) he wants to share with other processors.  To send this data, the root node has two methods available:\method{sendRootInfoToAll(String key, Object sendObj)} and  \method{sendRootInfoToProc(int pid, String key, Object sendObj)}.  The first one sends the same information to every single processor.  The second one sends information to a specific processor (indicated by the PID).  The information is tagged with a {\it key} of your choosing.  You can call these methods multiple times, with different keys, to build up a collection of information to send to the processors.
+
+After this information has been distributed, all processors (including the root processor) execute their \method{start()} methods. In the \method{start()} method, a processor can call \method{getRootInfo(String key)} to retrieve an object sent to and associated with the given key.
 
 The following code shows an example of a centralized initialization, where the root builds all the DFlockers and sends them to the remote processors to populate themselves with.  In this example, since every processor is receiving every agent (not efficient, we admit), each processor must first determine if the agent belongs to him.  It does this be examining the location of the agent, and seeing if it falls within the processor's partition.
 
 {\small
-%\begin{lstlisting}[style=CustomJava]
 \begin{verbatim}
 protected void startRoot() {
+    sim.field.IntRect2D rect = getPartition().getWorldBounds();
     ArrayList<DFlocker> agents = new ArrayList<DFlocker>();
     for (int x = 0; x < DFlockers.numFlockers; x++) {
-        final DoublePoint loc = new DoublePoint(random.nextDouble() * width, random.nextDouble() * height);
-        DFlocker flocker = new DFlocker(loc, x);
-        idAgents.add(x);
-        if (random.nextBoolean(deadFlockerProbability))
-            flocker.dead = true;
+        Double2D loc = new Double2D(random.nextDouble() * rect.getWidth(),
+                                    random.nextDouble() * rect.getHeight());
+        DFlocker flocker = new DFlocker(loc);
         agents.add(flocker);
         }
     sendRootInfoToAll("agents", agents);
     }
 
 public void start() {
-    super.start(); // do not forget this line
-    ArrayList<DFlocker> agents= (ArrayList<DFlocker>)getRootInfo("agents")	
-    for (Object p : agents) {
-        DFlocker a = (DFlocker) p;
-        if (partition.getPartition().contains(a.loc))
-            flockers.addAgent(a.loc, a);
+    super.start();
+
+    sim.field.IntRect2D rect = getPartition().getBounds();
+    ArrayList<DFlocker> agents = (ArrayList<DFlocker>)getRootInfo("agents");	
+    for (Object agent : agents) {
+        DFlocker flocker = (DFlocker) agent;
+        if (rect.contains(flocker.loc))
+            addAndScheduleAgent(location.add(origin), flocker, 0, 0);
         }
     }
 \end{verbatim}
-%\end{lstlisting}
 }
 
-This is for demonstration only: Obviously a much better thing to do would be for the Root to determine {\it how many} flockers each node should generate, then tell each node its value.  Then each node would create its own flockers and populate them randomly in its space.
-
-\begin{methods}{\class{sim.engine.DSimState}}
-\mthd{public void startRoot()}
-Called on the root PID node before \method{start()} is called on any node, so the root can send information to the other nodes.
-\mthd{public void sendRootInfoToProc(int pid, String key, Object sendObj) }
-This method may only be called from within \method{startRoot()}.  This method allows you to send an object, associated with a given key, to a node of a given pid.  The method may be called multiple times to send multiple objects (each with a different key).  This data may be retrieved by \method{getRootInfo()}.
-\mthd{public void sendRootInfoToAll(String key, Object sendObj}
-This method may only be called from within \method{startRoot()}.  This method allows you to send an object, associated with a given key, to all nodes.  The method may be called multiple times to send multiple objects (each with a different key).  This data may be retrieved by \method{getRootInfo()}.
-\mthd{public void start() }
-Called on all nodes after \method{startRoot()} was called on the root PID node.  In this method you may set up your node's information and agents.  Be sure to call \method{super.start()} first.
-\mthd{public Object getRootInfo(String key) }
-This method may only be called from within \method{start()}.  The data returns the object send to this node and keyed with the given key.  If there was no such data sent, this method returns null.
-\end{methods}
+This is for demonstration only: Obviously a much better thing to do would be for the root processor to determine {\it how many} flockers each node should generate, then simply tell each node its value.  Then each node would create its own DFlockers and populate them randomly in its space.  That way we would reduce the amount of network traffic between the nodes at startup: we'd just send a number to each processor rather than an array of DFlocker objects.
 
 
-\paragraph{Other Model Changes} {\bf\color{red} This section has not yet been written.  In short:  you shouldn't need to make a whole lot of other changes for basic models, except for changing your field data structures (and understanding how).  But one big item we've not talked about is establishing the AOI of your agents.}
-
-
-\section{Packages and Classes}
-
-Distributed MASON was co-designed by ISISLAB-UNISA (University of Salerno) and George Mason University, and is inspired loosely on the earlier D-MASON architecture developed at Salerno (https:/!/isislab-unisa.github.io/dmason/)
-
-%\todo{Distributed MASON architecture and a description of all classes}
-
-Distributed MASON consists of extensions to three main packages:
-
-\begin{itemize}
-	\item \package{sim.engine}
-	\item \package{sim.engine.registry} subpackage
-	\item \package{sim.engine.transport} subpackage
-	\item \package{sim.field}
-	\item \package{sim.field.storage} subpackage
-	\item \package{sim.util}
-\end{itemize}
-
-\paragraph{The sim.engine package} contains the following classes:
-
-\begin{itemize}
-    \item \Class{sim.engine.DSimState}: represents the state of the simulation in a distributed environment.
-    \item \Class{sim.engine.DistributedSchedule}: represents the time of distributed simulation and allows the self-synchronization between successive simulation steps.
-    \item \Class{sim.engine.DSteppable}: which represents the abstraction of a distributed object Steppable.
-    \item \Class{sim.engine.DistributedTentaiveStep}: distributed version of the TentativeStep class.  This is largely used internally.
-    \item \Class{sim.engine.DistributedIterativeRepeat}: distributed version of the  IterativeRepeat class.    This is largely used internally.
-    \item \Class{sim.engine.DStopping}: distributed version of the Stopping interface. {\bf\color{red} Se'll need to discuss Stopping as well}.
-\end{itemize}
-
-In addition to these objects it also contains two other \package{sim.engine.registry} and \package{sim.engine.transport} packages which will be discussed in detail later in this document.  In short: \package{sim.engine.registry} provides facilities for registering agents to be discovered by other agents on other nodes; and \package{sim.engine.transport} provides (largely internal-use) classes for migrating agents and objects from node to node.
-
-\paragraph{The sim.field package} Contains the distributed version of several MASON fields.  The top-level item in the distributed field hierarchy is the interface \Class{sim.field.DGrid}, of which there is a \class{sim.field.DAbstractGrid2D} implementing class.  All fields implement these two.  
-
-Each field contains an inner object called \class{sim.field.HaloGrid2D}, which holds information about how the field is distributed among the various nodes.   Fields also each store a \textbf{storage} class which contains the actual portion of the field held by a given node.  {\bf\color{red} We will be heavily modifying all of this in the near future.}  These classes are stored in \package{sim.field.storage} and are:
-
-\begin{itemize}
-    \item \Class{sim.field.storge.GridStorage}: top-level superclass.
-    \item \Class{sim.field.storge.IntGridStorage}: storage for int grid fields.
-    \item \Class{sim.field.storge.DoubleGridStorage}: storage for double grid fields.
-    \item \Class{sim.field.storge.ObjectGridStorage}: storage for object grid and dense fields.
-    \item \Class{sim.field.storge.ContStorage}: storage for continuous fields.
-\end{itemize}
-
-\paragraph{The sim.util package} contains various utility classes for managing timing statistics and communication via MPI.  {\bf\color{red} We'll document this more when it's more settled down}.
-
-
-%Distributed MASON overhauls the fields and scheduling mechanisms of MASON. Since the scheduling and moving mechanisms must happen together for repeating agents thus we have tightly coupled the two here. %As such, every field must extend the HaloField class and every schedule repeating agent must be registered to iterativeRepeatRegistry within DSimState. %TODO: check the comment text
+\section{Fields}
 
 \subsection{Field Partitioning}
 
