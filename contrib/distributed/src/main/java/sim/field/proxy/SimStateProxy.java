@@ -12,6 +12,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import ec.util.MersenneTwisterFast;
+
 /**
 	A subclass of SimState designed to visualize remote distributed models.
 	
@@ -218,15 +220,13 @@ public class SimStateProxy extends SimState
 									}
 								vp.unlock();
 
-								// Grab Stats & Debug >>>>>
-								// Determine if any stats are registered (on any processor)
+								// === Stats & Debug === //
+								// Determine if any stats are registered (on *any* processor)
 								boolean statsExist = false; // flag for if any stats are registered
 								ArrayList<ArrayList<Stat>> allStats = new ArrayList<>();
 								for (int p = 0; p < numProcessors; p++) {
 									VisualizationProcessor vp1 = visualizationProcessor(p);
 									ArrayList<Stat> statList = vp1.getStatList();
-									// TODO ^ Question: isn't each VisualizationProcessor's stat list the same size?
-									//	...so could just pull the first one to determine statsExist, no?
 									allStats.add(statList);
 									if (!statsExist && !statList.isEmpty())
 										statsExist = true;
@@ -280,11 +280,9 @@ public class SimStateProxy extends SimState
 	
 										int currIndex = 0; // index of incoming stats
 										while (currIndex < stats.size()) {
-	//									for (/* index of incoming stats */ int currIndex = 0; currIndex < stats.size(); currIndex++) {
 											// Fill in any skipped steps
-											//TODO OPTIMIZE THIS (the idea is not to add the multiple duplicate indicies)
 											while (currStep < stats.get(currIndex).steps) {
-												System.out.println("off steps: " + currStep + " and " + stats.get(currIndex).steps);
+//												System.out.println("off steps: " + currStep + " and " + stats.get(currIndex).steps);
 												long lastStep = getStep(p, queue.size() - 1, minStep);
 												queue.add(lastStep);
 												currStep++;
@@ -304,20 +302,34 @@ public class SimStateProxy extends SimState
 										}
 									}
 	
-									// Debug
+									// Test:
 									ArrayList<Serializable> stats = getStats(maxStep);
 									System.out.println();
 									System.out.println("***************************************");
 									System.out.println("*** Stats dumped for timestep " + maxStep);
 									String header = "";
 									for (int p = 0; p < numProcessors; p++) {
-										header += "P" + p + ",";
+										header += "P" + p + " | ";
 									}
-									System.out.println(header);
+									System.out.println(header.substring(0, header.length() - " | ".length()));
 									
 									for (int i = 0; i < maxStep - 1; i++) {
-										System.out.println("step-" + i + ": " + getStatsAsCSV(i));
+										System.out.println(getStatsAsCSV(i));
 									}
+									
+									System.out.println("***************************************");
+									MersenneTwisterFast random = new MersenneTwisterFast();
+									long randStart = Math.abs(random.nextLong()) % (maxStep - minStep);
+									long randEnd = Math.abs(random.nextLong()) % (maxStep - minStep);
+									if (randStart > randEnd) { // swap if necessary
+										long tmp = randStart;
+										randStart = randEnd;
+										randEnd = tmp;
+									}
+									System.out.println("*** Stats dumped for timesteps [" + randStart + "," + randEnd + ")");
+									System.out.println(header.substring(0, header.length() - " | ".length()));
+									
+									System.out.println(getStatsAsCSV(randStart, randEnd));
 	
 									//TODO Do the same for Debug
 									// <<<<<<Stats & Debug
@@ -357,31 +369,34 @@ public class SimStateProxy extends SimState
 			throw new IndexOutOfBoundsException(); //TODO
 		}
 		ArrayList<Object> queue = statQueues.get(pid);
-		System.out.println(queue.stream()
-			.map(new Function<Object,String>() {
-				public String apply(Object obj) {
-					if (obj instanceof Long) {
-						return "__" + (long) obj + "__"; //TODO just comma
-					}
-					else {
-						// Elements are either Stat objects or a placeholder as a long value holding the current timestep
-						if (!(obj instanceof ArrayList)) {
-							throw new IllegalStateException();
-							//TODO CHECK INNER TYPE (ArrayList<Stat>)
-						}
-						ArrayList<Stat> stats = (ArrayList<Stat>) obj;
-						String str = "";
-						for (int j = 0; j < stats.size(); j++) {
-							Stat stat = stats.get(j);
-							str += ((Stat) stat).data + " (" + ((Stat) stat).steps + ")" + " | ";
-						}
-						str = str.substring(0, str.length() - " | ".length());
-						str += ",";
-						return str;
-					}
-				}
-			})
-			.collect(Collectors.toList()));
+		
+		//DEBUG:
+//		System.out.println(queue.stream()
+//			.map(new Function<Object,String>() {
+//				public String apply(Object obj) {
+//					if (obj instanceof Long) {
+//						return "__" + (long) obj + "__"; //TODO just comma
+//					}
+//					else {
+//						// Elements are either Stat objects or a placeholder as a long value holding the current timestep
+//						if (!(obj instanceof ArrayList)) {
+//							throw new IllegalStateException();
+//							//TODO CHECK INNER TYPE (ArrayList<Stat>)
+//						}
+//						ArrayList<Stat> stats = (ArrayList<Stat>) obj;
+//						String str = "";
+//						for (int j = 0; j < stats.size(); j++) {
+//							Stat stat = stats.get(j);
+//							str += ((Stat) stat).data + " (" + ((Stat) stat).steps + ")" + ", ";
+////							str += ((Stat) stat).data + ", ";
+//						}
+//						str = str.substring(0, str.length() - ", ".length());
+////						str += ",";
+//						return str;
+//					}
+//				}
+//			})
+//			.collect(Collectors.toList()));
 		
 		if (index < 0 || index > queue.size()) {
 			throw new IllegalArgumentException();//TODO
@@ -451,13 +466,24 @@ public class SimStateProxy extends SimState
 				ArrayList<Stat> stats = (ArrayList<Stat>) obj;
 				for (int j = 0; j < stats.size(); j++) {
 					Stat stat = stats.get(j);
-					str += ((Stat) stat).data + " | ";
+					str += ((Stat) stat).data + ", ";
 				}
-				str = str.substring(0, str.length() - " | ".length());
-				str += ",";
+				str = str.substring(0, str.length() - ", ".length());
+				str += " | ";
 			}
 		}
 		
+		return "step-" + step + ": " + str;
+	}
+	
+	/**
+	 * Retrieve stats from a time interval [start, end)
+	 */
+	public String getStatsAsCSV(long start, long end) {
+		String str = "";
+		for (long index = start; index < end; index++) {
+			str += getStatsAsCSV(index) + "\n";
+		}
 		return str;
 	}
 	
