@@ -1,10 +1,15 @@
-package sim.field;
+package sim.engine.rmi;
 
-import java.io.Serializable;
+import java.io.*;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 
-public class RemotePromise extends UnicastRemoteObject implements Serializable, RemoteFulfillable {
+/**
+ * This class eventually provides data in the future (usually one MASON timestep
+ * away). It is in many ways like a simplified and easier to use version of
+ * java.util.concurrent.Future.
+ */
+
+public class Promise implements Serializable, RemoteFulfillable {
 	private static final long serialVersionUID = 1L;
 
 	boolean ready = false;
@@ -53,8 +58,7 @@ public class RemotePromise extends UnicastRemoteObject implements Serializable, 
 	 * 
 	 * @throws RemoteException
 	 */
-	public RemotePromise() throws RemoteException {
-		super();
+	public Promise() throws RemoteException {
 	}
 
 	/**
@@ -62,8 +66,7 @@ public class RemotePromise extends UnicastRemoteObject implements Serializable, 
 	 * 
 	 * @throws RemoteException
 	 */
-	public RemotePromise(Serializable object) throws RemoteException {
-		super();
+	public Promise(Serializable object) throws RemoteException {
 		this.object = object;
 		ready = true;
 	}
@@ -73,8 +76,7 @@ public class RemotePromise extends UnicastRemoteObject implements Serializable, 
 	 * 
 	 * @throws RemoteException
 	 */
-	public RemotePromise(int value) throws RemoteException {
-		super();
+	public Promise(int value) throws RemoteException {
 		this.object = Integer.valueOf(value);
 		ready = true;
 	}
@@ -84,8 +86,7 @@ public class RemotePromise extends UnicastRemoteObject implements Serializable, 
 	 * 
 	 * @throws RemoteException
 	 */
-	public RemotePromise(double value) throws RemoteException {
-		super();
+	public Promise(double value) throws RemoteException {
 		this.object = Double.valueOf(value);
 		ready = true;
 	}

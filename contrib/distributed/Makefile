@@ -27,12 +27,9 @@ sim/field/grid/*.java \
 sim/field/partitioning/*.java \
 sim/field/storage/*.java \
 sim/util/*.java \
-
-
-VISUALIZATION = \
-sim/field/proxy/*.java \
-sim/app/dflockers/visualization/*.java \
-sim/app/dheatbugs/visualization/*.java \
+sim/display/*.java \
+sim/app/dflockers/display/*.java \
+sim/app/dheatbugs/display/*.java \
 
 
 RSRCROOT=src/main/resources/

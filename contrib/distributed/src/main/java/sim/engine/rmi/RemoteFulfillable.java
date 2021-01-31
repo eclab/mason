@@ -1,8 +1,8 @@
-package sim.field;
+package sim.engine.rmi;
 
 import java.io.Serializable;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
+import java.rmi.*;
+import sim.engine.*;
 
 public interface RemoteFulfillable extends Remote {
 	

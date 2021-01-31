@@ -9,7 +9,7 @@ package sim.app.dheatbugs.visualization;
 import sim.engine.*;
 import sim.field.grid.*;
 import sim.util.*;
-import sim.field.proxy.*;
+import sim.display.*;
 
 public class HeatBugsProxy extends SimStateProxy
     {

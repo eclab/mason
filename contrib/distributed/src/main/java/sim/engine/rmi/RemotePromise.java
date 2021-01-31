@@ -1,15 +1,11 @@
-package sim.field;
+package sim.engine.rmi;
 
-import java.io.*;
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import sim.engine.*;
 
-/**
- * This class eventually provides data in the future (usually one MASON timestep
- * away). It is in many ways like a simplified and easier to use version of
- * java.util.concurrent.Future.
- */
-
-public class Promise implements Serializable, RemoteFulfillable {
+public class RemotePromise extends UnicastRemoteObject implements Serializable, RemoteFulfillable {
 	private static final long serialVersionUID = 1L;
 
 	boolean ready = false;
@@ -49,8 +45,8 @@ public class Promise implements Serializable, RemoteFulfillable {
 
 	/** Copies the data and readiness from another promise. */
 	public void setTo(Promise promise) {
-		ready = promise.ready;
-		object = promise.object;
+		ready = promise.isReady();
+		object = promise.get();
 	}
 
 	/**
@@ -58,7 +54,8 @@ public class Promise implements Serializable, RemoteFulfillable {
 	 * 
 	 * @throws RemoteException
 	 */
-	public Promise() throws RemoteException {
+	public RemotePromise() throws RemoteException {
+		super();
 	}
 
 	/**
@@ -66,7 +63,8 @@ public class Promise implements Serializable, RemoteFulfillable {
 	 * 
 	 * @throws RemoteException
 	 */
-	public Promise(Serializable object) throws RemoteException {
+	public RemotePromise(Serializable object) throws RemoteException {
+		super();
 		this.object = object;
 		ready = true;
 	}
@@ -76,7 +74,8 @@ public class Promise implements Serializable, RemoteFulfillable {
 	 * 
 	 * @throws RemoteException
 	 */
-	public Promise(int value) throws RemoteException {
+	public RemotePromise(int value) throws RemoteException {
+		super();
 		this.object = Integer.valueOf(value);
 		ready = true;
 	}
@@ -86,7 +85,8 @@ public class Promise implements Serializable, RemoteFulfillable {
 	 * 
 	 * @throws RemoteException
 	 */
-	public Promise(double value) throws RemoteException {
+	public RemotePromise(double value) throws RemoteException {
+		super();
 		this.object = Double.valueOf(value);
 		ready = true;
 	}

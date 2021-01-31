@@ -10,7 +10,6 @@ import java.rmi.RemoteException;
 
 import sim.engine.DSteppable;
 import sim.engine.SimState;
-import sim.field.RemoteFulfillable;
 import sim.field.grid.DDoubleGrid2D;
 import sim.util.Int2D;
 

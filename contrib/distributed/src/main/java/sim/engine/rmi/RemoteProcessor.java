@@ -1,4 +1,4 @@
-package sim.engine;
+package sim.engine.rmi;
 
 import java.rmi.*;
 import java.rmi.server.*;
@@ -6,9 +6,10 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sim.engine.transport.*;
-import sim.field.proxy.*;
+import sim.display.*;
 import sim.field.storage.*;
 import sim.util.*;
+import sim.engine.*;
 
 public class RemoteProcessor extends UnicastRemoteObject implements VisualizationProcessor {
 	// public class RemoteProcessor implements VisualizationProcessor {
@@ -57,11 +58,11 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	}
 
 	public GridStorage getStorage(int fieldId) throws RemoteException {
-		return dSimState.fieldRegistry.get(fieldId).localStorage;
+		return dSimState.getFieldRegistry().get(fieldId).localStorage;
 	}
 
 	public TransportRMIInterface getTransportRMI(int fieldId) throws RemoteException {
-		return dSimState.fieldRegistry.get(fieldId);
+		return dSimState.getFieldRegistry().get(fieldId);
 	}
 
 	public int getNumProcessors() throws RemoteException {
@@ -114,15 +115,15 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	}
 
 	public int getAOI() throws RemoteException {
-		return dSimState.partition.getAOI();
+		return dSimState.getPartition().getAOI();
 	}
 
 	public int getProcessorLevels() throws RemoteException {
-		return dSimState.partition.getTreeDepth();
+		return dSimState.getPartition().getTreeDepth();
 	}
 
 	public int[] getProcessorNeighborhood(int level) throws RemoteException {
-		return dSimState.partition.getProcessorNeighborhood(level);
+		return dSimState.getPartition().getProcessorNeighborhood(level);
 	}
 
 	public ArrayList<Stat> getStatList() throws RemoteException {

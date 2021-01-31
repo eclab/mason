@@ -6,40 +6,20 @@
 
 package sim.engine;
 
-import java.io.IOException;
-
-import java.io.Serializable;
-import java.rmi.NotBoundException;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-import java.util.logging.SocketHandler;
-
-import ec.util.MersenneTwisterFast;
-import mpi.MPI;
-import mpi.MPIException;
-import sim.app.dheatbugs.DHeatBug;
-import sim.engine.transport.AgentWrapper;
-import sim.engine.transport.PayloadWrapper;
-import sim.engine.transport.TransporterMPI;
-import sim.field.HaloGrid2D;
-import sim.field.Synchronizable;
+import java.io.*;
+import java.rmi.*;
+import java.text.*;
+import java.util.*;
+import java.util.logging.*;
+import ec.util.*;
+import mpi.*;
+import sim.engine.transport.*;
+import sim.field.*;
 import sim.field.partitioning.*;
-import sim.field.storage.ContinuousStorage;
-import sim.field.storage.DenseGridStorage;
-import sim.field.storage.DoubleGridStorage;
-import sim.field.storage.GridStorage;
-import sim.field.storage.ObjectGridStorage;
+import sim.field.storage.*;
 import sim.util.*;
+import sim.engine.rmi.*;
+import sim.display.*;
 
 /**
  * Analogous to Mason's SimState. This class represents the entire distributed
@@ -126,7 +106,7 @@ public class DSimState extends SimState {
 
 	// A list of all fields in the Model.
 	// Any HaloField that is created will register itself here
-	protected final ArrayList<HaloGrid2D> fieldRegistry;
+	ArrayList<HaloGrid2D> fieldRegistry;
 
 	protected DRegistry registry;
 	protected boolean withRegistry;
@@ -876,6 +856,13 @@ public class DSimState extends SimState {
 		return partition;
 	}
 
+	/**
+	 * @return an arraylist of all the HaloGrid2Ds registered with the SimState
+	 */
+	public ArrayList<HaloGrid2D>  getFieldRegistry() {
+		return fieldRegistry;
+	}
+
 	/*
 	 * @param partition the partition to set
 	 */
@@ -922,7 +909,7 @@ public class DSimState extends SimState {
 		}
 	}
 
-	ArrayList<Stat> getStatList() {
+	public ArrayList<Stat> getStatList() {
 		synchronized (statLock) {
 			ArrayList<Stat> ret = statList;
 			statList = new ArrayList<>();
@@ -930,13 +917,14 @@ public class DSimState extends SimState {
 		}
 	}
 
-	ArrayList<Stat> getDebugList() {
+	public ArrayList<Stat> getDebugList() {
 		synchronized (debugStatLock) {
 			ArrayList<Stat> ret = debugList;
 			debugList = new ArrayList<>();
 			return ret;
 		}
 	}
+	/*
 	
 	private void check_if_point_matches_heatbug_locs(Int2D p) {
 		ArrayList<Object> not_match_list = new ArrayList<Object>();
@@ -991,9 +979,8 @@ public class DSimState extends SimState {
 				}
 			}
 		}
-		
-
-		
 	}
+		*/
 
+		
 }

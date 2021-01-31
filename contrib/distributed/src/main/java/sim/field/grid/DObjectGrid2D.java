@@ -9,6 +9,7 @@ import sim.field.*;
 import sim.field.partitioning.*;
 import sim.field.storage.*;
 import sim.util.*;
+import sim.engine.rmi.*;
 
 /**
  * A grid that contains objects of type T. Analogous to Mason's ObjectGrid2D

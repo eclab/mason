@@ -1,4 +1,4 @@
-package sim.field.proxy;
+package sim.display;
 import java.rmi.*;
 
 

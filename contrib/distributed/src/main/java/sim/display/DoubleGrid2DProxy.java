@@ -1,13 +1,14 @@
-package sim.field.proxy;
+package sim.display;
 import sim.field.grid.*;
 import sim.engine.*;
 import sim.field.storage.*;
 import sim.field.partitioning.*;
 import java.rmi.*;
+import sim.util.*;
 
-public class IntGrid2DProxy extends IntGrid2D implements UpdatableProxy
+public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
 	{
-	public IntGrid2DProxy(int width, int height) { super(width, height); }
+	public DoubleGrid2DProxy(int width, int height) { super(width, height); }
 
 	public void update(SimStateProxy stateProxy, int proxyIndex) throws RemoteException, NotBoundException
 		{
@@ -20,14 +21,15 @@ public class IntGrid2DProxy extends IntGrid2D implements UpdatableProxy
 			reshape(width, height);
 		
 		// load storage
-		IntGridStorage storage = (IntGridStorage)(stateProxy.storage(proxyIndex));
-		int[] data = (int[])(storage.storage);	
+		DoubleGridStorage storage = (DoubleGridStorage)(stateProxy.storage(proxyIndex));
+		double[] data = (double[])(storage.storage);	
 		for(int x = 0; x < width; x++)
 			{
-			int[] fieldx = field[x];
+			double[] fieldx = field[x];
 			for(int y = 0; y < height; y++)
 				{
 				fieldx[y] = data[x * height + y];
+//				System.err.println("" + x + " " + y + " " + fieldx[y]);
 				}
 			}		
 		}

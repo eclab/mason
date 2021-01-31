@@ -1,4 +1,4 @@
-package sim.engine;
+package sim.display;
 
 import java.io.Serializable;
 

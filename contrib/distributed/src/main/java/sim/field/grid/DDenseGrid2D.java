@@ -2,19 +2,12 @@ package sim.field.grid;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import sim.engine.DObject;
-import sim.engine.DSimState;
-import sim.engine.DistributedIterativeRepeat;
-import sim.engine.DistributedTentativeStep;
-import sim.engine.Stoppable;
-import sim.engine.Stopping;
-import sim.field.DAbstractGrid2D;
-import sim.field.HaloGrid2D;
-import sim.field.Promise;
-import sim.field.RemoteFulfillable;
-import sim.field.partitioning.Partition;
+import sim.engine.*;
+import sim.field.*;
+import sim.field.partitioning.*;
 import sim.field.storage.DenseGridStorage;
 import sim.util.*;
+import sim.engine.rmi.*;
 
 /**
  * A grid that contains lists of objects of type T. Analogous to Mason's
@@ -418,6 +411,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 		else
 			halo.removeAllAgentsAndObjects(p);
 		}
+
 
 	/** Moves an agent from one location to another, possibly rescheduling it if the new location is remote.
 	  	The [from] location must be local, but the [to] location can be outside

@@ -1,4 +1,4 @@
-package sim.field.proxy;
+package sim.display;
 import sim.field.grid.*;
 import sim.engine.*;
 import sim.field.storage.*;

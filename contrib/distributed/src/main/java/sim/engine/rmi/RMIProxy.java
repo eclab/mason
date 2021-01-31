@@ -1,11 +1,9 @@
-package sim.field;
+package sim.engine.rmi;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-
-import sim.engine.RemoteProcessor;
-import sim.engine.transport.TransportRMIInterface;
-import sim.field.partitioning.Partition;
+import sim.field.*;
+import sim.field.partitioning.*;
 import sim.util.NumberND;
 
 /**

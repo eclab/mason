@@ -8,7 +8,7 @@ package sim.app.dflockers.visualization;
 import sim.engine.*;
 import sim.util.*;
 import sim.field.continuous.*;
-import sim.field.proxy.*;
+import sim.display.*;
 
 public class FlockersProxy extends SimStateProxy
     {

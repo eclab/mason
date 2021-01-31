@@ -1,10 +1,10 @@
-package sim.field.proxy;
+package sim.display;
 
-import sim.engine.Stat;
-import sim.engine.transport.TransportRMIInterface;
+import sim.engine.rmi.*;
 import sim.field.partitioning.*;
 import sim.field.storage.*;
 import sim.util.*;
+import sim.display.*;
 
 import java.rmi.*;
 import java.util.ArrayList;

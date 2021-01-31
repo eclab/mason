@@ -1,9 +1,10 @@
-package sim.field.proxy;
+package sim.display;
 import sim.field.grid.*;
 import sim.engine.*;
 import sim.field.storage.*;
 import sim.field.partitioning.*;
 import java.rmi.*;
+import sim.util.*;
 
 public class ObjectGrid2DProxy extends ObjectGrid2D implements UpdatableProxy
 	{

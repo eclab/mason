@@ -1,4 +1,4 @@
-package sim.field.proxy;
+package sim.display;
 import sim.engine.*;
 import sim.field.*;
 import sim.engine.*;
@@ -7,6 +7,8 @@ import sim.field.partitioning.*;
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.util.*;
+import sim.util.*;
+import sim.engine.rmi.*;
 
 /**
 	A subclass of SimState designed to visualize remote distributed models.

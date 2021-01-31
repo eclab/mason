@@ -1,4 +1,4 @@
-package sim.field.proxy;
+package sim.display;
 import sim.field.partitioning.*;
 import javax.swing.*;
 import java.awt.*;
