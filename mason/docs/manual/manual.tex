@@ -14589,7 +14589,7 @@ Thus each processor really has three rectangular regions of interest, as shown i
 \begin{itemize}
 \item The {\bf local bounds} of the partition.  This is the actual region under the control of the processors.  Agents can write to fields locally within these bounds.
 \item The {\bf halo region} of the partition.  This is the larger bounds outside of the partition, which includes the Area of Interest.    Agents can efficiently read from fields within these bounds, but are not permitted to write to the halo region areas outside the local bounds.
-\item The {\bf private region} of the partition.  This is the portion of the local bounds that is not within the Area of Interest of any other processor.  This is rarely useful to know about, but there you go.
+\item The {\bf private region} of the partition.  This is the portion of the local bounds that is not within the Area of Interest of any other processor.  This is rarely useful to know about, and there are no methods which compute it for you, but there you go.
 \end{itemize}
 
 The \class{sim.field.partitioning.Partition} object can be queried to give you useful information here.  You can get this object by calling  \method{getPartition()} on your DSimState.   Here are some of its methods:
@@ -14713,11 +14713,11 @@ We'll discuss distributed fields later, as well as scheduling methods that they 
 Called on each processor at the start of the model, just like in standard MASON.
 \mthd{public void startRoot()}
 Called on thee root processor prior to \method{start()} being called on all the processors.  This gives the root a chance to set up information for them.
-\mthd{public void sendRootInfoToAll(String key, Object sendObj)}
+\mthd{public void sendRootInfoToAll(String key, java.io.Serializable sendObj)}
 Sends an object, associated with the given key, to all processors.  This should only be called during the \method{startRoot()} method.
-\mthd{public void sendRootInfoToProcessor(int pid, String key, Object sendObj) }
+\mthd{public void sendRootInfoToProcessor(int pid, String key, java.io.Serializable sendObj) }
 Sends an object, associated with the given key, to a specific processor.  This should only be called during the \method{startRoot()} method.
-\mthd{public Object getRootInfo(String key)}
+\mthd{public java.io.Serializable getRootInfo(String key)}
 Retrieves an object associated, with the given key, that was sent to this processor by the root during its \method{startRoot()} method.  This should only be called during the \method{start()} method.
 \end{methods}
 
@@ -14815,7 +14815,7 @@ One oddity you'll find is that many fields have options to add, move, or remove 
 
 You can always schedule an agent on your Schedule just like in MASON.  If the agent is disembodied\,---\,that is, it's not part of any field and will always stay with your process, then you're done, it's just like MASON.  You can also always schedule an agent and also stick it in your local partition manually: but there are convenience methods in your field to do this properly so you don't mess up doing it by hand.  Finally, if you remove an agent, or move it, etc., and there's a {\it chance} that it might move to a different partition, you should do so using the field's special rescheduling methods so as not to mess things up.
 
-\subsubsection{Integer and Double Grids}
+\subsection{Integer and Double Grids}
 
 The integer grid class is \class{sim.field.grid.DIntGrid2D}.  It contains the following methods:
 
@@ -14828,7 +14828,7 @@ Sets a value local to your partition.
 Returns a Promised value for the given point, which can be any point in the model, and which will be fulfilled by next timestep.  Remember that this is costly unless the point happens to be in your local or halo region.
 \mthd{public void set(Int2D p, int val)}
 Sets a value for the given point, which can be any point in the model, by next timestep.  Remember that this is costly unless the point happens to be in your local or halo region.
-\mthd{public int[] getStorageArray()}
+\mthd{public int[\ ] getStorageArray()}
 Returns the local storage array for the grid, in row-major order including the halo region.  Be careful with this.  You probably shouldn't play with this if you don't know what it does.
 \end{methods}
 
@@ -14844,11 +14844,11 @@ Sets a value local to your partition.
 Returns a Promised value for the given point, which can be any point in the model, and which will be fulfilled by next timestep.  Remember that this is costly unless the point happens to be in your local or halo region.
 \mthd{public void set(Int2D p, double val)}
 Sets a value for the given point, which can be any point in the model, by next timestep.  Remember that this is costly unless the point happens to be in your local or halo region.
-\mthd{public double[] getStorageArray()}
+\mthd{public double[\ ] getStorageArray()}
 Returns the local storage array for the grid, in row-major order including the halo region.  Be careful with this.  You probably shouldn't play with this if you don't know what it does.
 \end{methods}
 
-\subsubsection{Object Grids}
+\subsection{Object Grids}
 
 These are simply grids of objects, one Object (or null) per grid square.  The Object grid class is \class{sim.field.grid.DObjectGrid2D}.  Note that this class contains methods for manipulating agents (Steppable): but this is dangerous because if you set a grid square to some object, it might overwrite an agent which used to be there; but the agent is still on the Schedule.  You need to be careful to avoid creating bugs in your model this way.
 
@@ -14876,12 +14876,12 @@ Sets an agent for the given point, which can be any point in the model, by next 
 Removes an agent from the given point, which can be any point in the model, by next timestep.  Also removes it (locally or remotely) from the schedule.  Remember that this is costly unless the point happens to be in your local region.  There is no equivalent remove(...) method for objects at present.  Local objects can be ``removed'' simply by setting their squares to null.
 \mthd{public void moveAgent(Int2D from, Int2D to, T agent)}
 Moves an agent from one point to the other, by next timestep.  The {\it from} point must be local to this partition, but the {\it to} point can be any point in the model.  Also moves it (locally or remotely) to the appropriate processor's schedule.  Remember that this is costly unless the {\it to} point also happens to be in your local region.  There is no equivalent move(...) method for objects at present.  Local objects can be ``moved'' simply by changing their square values.
-\mthd{public T[] getStorageArray()}
+\mthd{public T[\ ] getStorageArray()}
 Returns the local storage array for the grid, containing objects of the class {\it T}, in row-major order including the halo region.  Be careful with this.  You probably shouldn't play with this if you don't know what it does.
 \end{methods}
 
 
-\subsubsection{Dense Grids}
+\subsection{Dense Grids}
 
 These are grids of ArrayLists of objects, and are approximately the same as DenseGrid2D in ordinary MASON.  There is no equivalent to SparseGrid2D: you'll need to use dense grids.  The Dense grid class is \class{sim.field.grid.DDenseGrid2D}.  Note that this class contains methods for manipulating agents (Steppable).
 
@@ -14927,12 +14927,12 @@ Removes an agent from the given point, which can be any point in the model, by n
 Removes all objects from the given point, which can be any point in the model, by next timestep.  If any objects are also agents (Steppable), then removes them (locally or remotely) from their schedules.  Remember that this is costly unless the point happens to be in your local region. 
 \mthd{public void moveAgent(Int2D from, Int2D to, T agent)}
 Moves an agent from one point to the other, by next timestep.  The {\it from} point must be local to this partition, but the {\it to} point can be any point in the model.  Also moves it (locally or remotely) to the appropriate processor's schedule.  Remember that this is costly unless the {\it to} point also happens to be in your local region.
-\mthd{public ArrayList\(<\)T\(>\)[] getStorageArray()}
+\mthd{public ArrayList\(<\)T\(>\)[\ ] getStorageArray()}
 Returns the local storage array for the grid, containing objects of the class {\it T}, in row-major order including the halo region.  Be careful with this.  You probably shouldn't play with this if you don't know what it does.
 \end{methods}
 
 
-\subsubsection{Continuous Fields}
+\subsection{Continuous Fields}
 
 The Continuous field class is \class{sim.field.grid.DContinuous2D}.  Whereas the Continuous2D class in regular MASON is a sparse field, DContinuous2D is not, because you can't implement sparse fields efficiently in a distributed fashion.  Instead, this field stores objects in a grid much like DDenseGrid2D, but associates each one with a real-valued coordinate location.
 
@@ -14997,6 +14997,11 @@ Returns the entire storage object.
 \end{methods}
 
 
+\section{Visualization and Statistics}
+
+To be written...
+
+\section{Underneath}
 \subsection{Halo Grids}
 
 \begin{methods}{\class{sim.field.HaloGrid2D} Halo Exchange}
@@ -15125,7 +15130,7 @@ Return the number field's dimensions.
 Return true if the field is toroidal.
 \mthd{public Comm getCommunicator()}
 Return the MPI communicator.
-\mthd{public int[] getFieldSize()}
+\mthd{public int[\ ] getFieldSize()}
 Return an array thath contains the height and width of the field.
 \mthd{public IntHyperRect getField()}
 Return a rectangle that represents the field.
@@ -15135,13 +15140,13 @@ Return a rectangle that represents the partiton of the current processor.
 Return a rectangle that represents the partiton of the processor with PID pid.
 \mthd{public abstract int getNumNeighbors()}
 Return the number of neighbors of the current processors.
-\mthd{public abstract int[] getNeighborIds()}
+\mthd{public abstract int[\ ] getNeighborIds()}
 Return  an array that contains the ids of the neighbors of the current processors.
 \mthd{public abstract int toPartitionId(P p)}
 Return the processor id that contains the position p.
-\mthd{public abstract int toPartitionId(int[] c)}
+\mthd{public abstract int toPartitionId(int[\ ] c)}
 Return the processor id that contains the position c represented by [x,y] integer coordinates.
-\mthd{public abstract int toPartitionId(double[] c)}
+\mthd{public abstract int toPartitionId(double[\ ] c)}
 Return the processor id that contains the position c represented by [x,y] double coordinates.
 \mthd{public abstract boolean isGlobalMaster()}
 Return true if the current processor have PID 0.
