@@ -94,8 +94,8 @@ public class DSimState extends SimState {
 
 	protected QuadTreePartition partition;
 	protected TransporterMPI transporter;
-	HashMap<String, Object> rootInfo = null;
-	HashMap<String, Object>[] init = null;
+	HashMap<String, Serializable> rootInfo = null;
+	HashMap<String, Serializable>[] init = null;
 
 	final Object statLock = new Object[0];
 	final Object debugStatLock = new Object[0];
@@ -810,12 +810,12 @@ public class DSimState extends SimState {
 			if (partition.isRootProcessor()) {
 				init = new HashMap[partition.getNumProcessors()];
 				for (int i = 0; i < init.length; i++)
-					init[i] = new HashMap<String, Object>();
+					init[i] = new HashMap<String, Serializable>();
 				// startRoot(init);
 				startRoot();
 			}
 			// synchronize using one to many communication
-			rootInfo = MPIUtil.scatter(partition.getCommunicator(), init, 0);
+			rootInfo = (HashMap<String, Serializable>) MPIUtil.scatter(partition.getCommunicator(), init, 0);
 
 			// schedule a zombie agent to prevent that a processor with no agent is stopped
 			// when the simulation is still going on
@@ -879,17 +879,17 @@ public class DSimState extends SimState {
 		return transporter;
 	}
 
-	public void sendRootInfoToAll(String key, Object sendObj) {
+	public void sendRootInfoToAll(String key, Serializable sendObj) {
 		for (int i = 0; i < partition.getNumProcessors(); i++) {
 			init[i].put(key, sendObj);
 		}
 	}
 
-	public void sendRootInfoToProcessor(int pid, String key, Object sendObj) {
+	public void sendRootInfoToProcessor(int pid, String key, Serializable sendObj) {
 		init[pid].put(key, sendObj);
 	}
 
-	public Object getRootInfo(String key) {
+	public Serializable getRootInfo(String key) {
 		return rootInfo.get(key);
 	}
 
