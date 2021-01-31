@@ -23,10 +23,10 @@ public class DObjectGrid2D<T extends Serializable> extends DAbstractGrid2D
 	HaloGrid2D<T, ObjectGridStorage<T>> halo;
 	ObjectGridStorage<T> storage;
 
-	public DObjectGrid2D(DSimState state, Class<T> clazz) 
+	public DObjectGrid2D(DSimState state) 
 		{
 		super(state);
-		storage = new ObjectGridStorage<T>(state.getPartition().getBounds());
+		storage = new ObjectGridStorage<T>(state.getPartition().getLocalBounds());
 		try 
 			{
 			halo = new HaloGrid2D<>(storage, state);
@@ -63,7 +63,7 @@ public class DObjectGrid2D<T extends Serializable> extends DAbstractGrid2D
 	/** Returns a Promise which will eventually (immediately or within one timestep)
 		hold the data located at the given point.  This point can be outside
 		the loal and halo regions. */
-	public RemoteFulfillable get(Int2D p) 
+	public Promised get(Int2D p) 
 		{
 		if (isHalo(p))
 			try {

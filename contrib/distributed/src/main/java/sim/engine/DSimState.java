@@ -487,7 +487,7 @@ public class DSimState extends SimState {
 		
 
 		
-		final IntRect2D old_partition = partition.getBounds();
+		final IntRect2D old_partition = partition.getLocalBounds();
 		final int old_pid = partition.getPID();
 		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage();
 		Timing.start(Timing.LB_OVERHEAD);
@@ -499,7 +499,7 @@ public class DSimState extends SimState {
 			//check_if_point_matches_heatbug_locs(p);
 			//print_all_agents(p);
 			
-			if (!partition.getBounds().contains(p)) {
+			if (!partition.getLocalBounds().contains(p)) {
 				final int toP = partition.toPartitionPID(p);
 				for (Synchronizable field : fieldRegistry) {
 					ArrayList<Object> migratedAgents = new ArrayList<>();
@@ -514,7 +514,7 @@ public class DSimState extends SimState {
 							NumberND loc = st.getLocation((DObject) a);
 							final int locToP = partition.toPartitionPID(loc);
 							if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
-									&& !partition.getBounds().contains(loc)) {
+									&& !partition.getLocalBounds().contains(loc)) {
 
 								Stopping stopping = ((Stopping) a);
 								if (stopping.getStoppable() instanceof TentativeStep) {
@@ -554,7 +554,7 @@ public class DSimState extends SimState {
 						ObjectGridStorage st = (ObjectGridStorage) ((HaloGrid2D) field).getStorage();
 						Serializable a = st.getObjects(haloGrid2D.toLocalPoint(p));
 						if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
-								&& old_partition.contains(p) && !partition.getBounds().contains(p)) {
+								&& old_partition.contains(p) && !partition.getLocalBounds().contains(p)) {
 							DSteppable stopping = ((DSteppable) a);
 
 							if (stopping.getStoppable() instanceof TentativeStep) {
@@ -622,7 +622,7 @@ public class DSimState extends SimState {
 								System.out.println(a + " considered");
 
 								if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
-										&& old_partition.contains(p) && !partition.getBounds().contains(p)) {
+										&& old_partition.contains(p) && !partition.getLocalBounds().contains(p)) {
 									DSteppable stopping = ((DSteppable) a);
 
 									if (stopping.getStoppable() instanceof TentativeStep) {
@@ -653,7 +653,7 @@ public class DSimState extends SimState {
 								}
 								
 								else {
-									System.out.println(a+" not moved over");
+									System.out.println(a + " not moved over");
 								}
 							}
 						}
@@ -665,7 +665,7 @@ public class DSimState extends SimState {
 						Serializable a = st.getObjects(haloGrid2D.toLocalPoint(p));
 
 						if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
-								&& old_partition.contains(p) && !partition.getBounds().contains(p)) {
+								&& old_partition.contains(p) && !partition.getLocalBounds().contains(p)) {
 							DSteppable stopping = ((DSteppable) a);
 
 							if (stopping.getStoppable() instanceof TentativeStep) {

@@ -25,7 +25,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	public DDenseGrid2D(DSimState state) 
 		{
 		super(state);
-		storage = new DenseGridStorage<T>(state.getPartition().getBounds());
+		storage = new DenseGridStorage<T>(state.getPartition().getLocalBounds());
 		
 		try 
 		{
@@ -180,7 +180,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	/** Returns a Promise which will eventually (immediately or within one timestep)
 		hold the data (the ENTIRE ArrayList) located at the given point.  This point can be outside
 		the local and halo regions. */
-	public RemoteFulfillable get(Int2D p) 
+	public Promised get(Int2D p) 
 		{
 		if (isHalo(p))
 			try {
@@ -195,7 +195,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	/** Returns a Promise which will eventually (immediately or within one timestep)
 		hold the data (which must be a DObject) requested if it is located, else null.  This point can be outside
 		the local and halo regions. */
-	public RemoteFulfillable get(Int2D p, T t) 
+	public Promised get(Int2D p, T t) 
 		{
 		DObject obj = (DObject) t;		// this may throw a runtime exception
 		if (isHalo(p))

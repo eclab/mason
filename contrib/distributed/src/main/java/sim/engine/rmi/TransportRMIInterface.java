@@ -28,9 +28,9 @@ public interface TransportRMIInterface<T extends Serializable, P> extends Remote
 	 * @throws RemoteException If the point requested is not local to the remote
 	 *                         field
 	 */
-	public abstract void getRMI(P p, RemoteFulfillable promise) throws RemoteException;
+	public abstract void getRMI(P p, Promised promise) throws RemoteException;
 
-	public abstract void getRMI(NumberND p, long id, RemoteFulfillable promise) throws RemoteException;
+	public abstract void getRMI(NumberND p, long id, Promised promise) throws RemoteException;
 
 	/**
 	 * Used internally for RMI

@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
  * java.util.concurrent.Future.
  */
 
-public class Promise implements Serializable, RemoteFulfillable {
+public class Promise implements Serializable, Promised {
 	private static final long serialVersionUID = 1L;
 
 	boolean ready = false;

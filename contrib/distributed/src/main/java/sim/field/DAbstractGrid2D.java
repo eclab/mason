@@ -27,11 +27,10 @@ public abstract class DAbstractGrid2D extends AbstractGrid2D {
 	}
 	
 	public abstract HaloGrid2D getHaloGrid();
-
 	public IntRect2D getLocalBounds()  { return getHaloGrid().getLocalBounds(); }
 	public IntRect2D getHaloBounds()  { return getHaloGrid().getHaloBounds(); }
 	public boolean isLocal(Int2D p) { return getHaloGrid().inLocal(p); }
-	public boolean isHalo(Int2D p) { return getHaloGrid().inLocalAndHalo(p); }
+	public boolean isHalo(Int2D p) { return getHaloGrid().inHalo(p); }
 	
 /*
 	public abstract RemoteFulfillable get(Int2D p);

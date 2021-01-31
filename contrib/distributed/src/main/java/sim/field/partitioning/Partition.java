@@ -72,13 +72,13 @@ public abstract class Partition {
 	/**
 	 * @return partition for the current node
 	 */
-	public abstract IntRect2D getBounds();
+	public abstract IntRect2D getLocalBounds();
 
 	/**
 	 * @param pid
 	 * @return partition for pid node
 	 */
-	public abstract IntRect2D getBounds(int pid);
+	public abstract IntRect2D getLocalBounds(int pid);
 
 	public abstract IntRect2D getHaloBounds();
 	

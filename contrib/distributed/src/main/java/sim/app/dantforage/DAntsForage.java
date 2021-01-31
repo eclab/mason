@@ -183,15 +183,15 @@ public /* strictfp */ class DAntsForage extends DSimState {
 		// initialize the grid with the home and food sites
 		for (int x = HOME_XMIN; x <= HOME_XMAX; x++)
 			for (int y = HOME_YMIN; y <= HOME_YMAX; y++)
-				if (getPartition().getBounds().contains(new Int2D(x, y)))
+				if (getPartition().getLocalBounds().contains(new Int2D(x, y)))
 					sites.set(new Int2D(x, y), 1);
 		for (int x = FOOD_XMIN; x <= FOOD_XMAX; x++)
 			for (int y = FOOD_YMIN; y <= FOOD_YMAX; y++)
-				if (getPartition().getBounds().contains(new Int2D(x, y)))
+				if (getPartition().getLocalBounds().contains(new Int2D(x, y)))
 					sites.set(new Int2D(x, y), 2);
 
 		for (int x = 0; x < numAnts; x++) {
-			if (getPartition().getBounds()
+			if (getPartition().getLocalBounds()
 					.contains(new Int2D((HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2))) {
 				DAnt ant = new DAnt(reward, (HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2);
 				buggrid.add(new Int2D((HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2), ant);

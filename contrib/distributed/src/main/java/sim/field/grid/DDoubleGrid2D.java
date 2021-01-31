@@ -23,7 +23,7 @@ public class DDoubleGrid2D extends DAbstractGrid2D
 	public DDoubleGrid2D(DSimState state) 
 		{
 		super(state);
-		storage = new DoubleGridStorage(state.getPartition().getBounds());
+		storage = new DoubleGridStorage(state.getPartition().getLocalBounds());
 		try 
 			{
 			halo = new HaloGrid2D<Double, DoubleGridStorage>(storage, state);
@@ -60,7 +60,7 @@ public class DDoubleGrid2D extends DAbstractGrid2D
 	/** Returns a Promise which will eventually (immediately or within one timestep)
 		hold the data located at the given point.  This point can be outside
 		the loal and halo regions. */
-	public RemoteFulfillable get(Int2D p) 
+	public Promised get(Int2D p) 
 		{
 		if (isHalo(p))
 			try {
@@ -98,7 +98,7 @@ public DDoubleGrid2D multiply(double byThisMuch) {
 		if (byThisMuch == 1.0)
 			return this;
 
-		for (Int2D p : halo.partition.getBounds().getPointList()) {
+		for (Int2D p : halo.partition.getLocalBounds().getPointList()) {
 			Double obj = get(p);
 			removeLocal(p);
 			add(p, obj * byThisMuch);

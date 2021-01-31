@@ -26,7 +26,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		implements TransportRMIInterface<T, NumberND>, Synchronizable {
 	private static final long serialVersionUID = 1L;
 
-	 final ArrayList<Pair<RemoteFulfillable, Serializable>> getQueue = new ArrayList<>();
+	 final ArrayList<Pair<Promised, Serializable>> getQueue = new ArrayList<>();
 	 final ArrayList<Pair<NumberND, T>> inQueue = new ArrayList<>();
 	 final ArrayList<Pair<NumberND, Long>> removeQueue = new ArrayList<>();
 	 final ArrayList<NumberND> removeAllQueue = new ArrayList<>();
@@ -39,7 +39,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		MPIParam recvParam;
 
 		public Neighbor(final IntRect2D neighborPart) {
-			final ArrayList<IntRect2D> sendOverlaps = generateOverlaps(origPart, neighborPart.resize(partition.getAOI()));
+			final ArrayList<IntRect2D> sendOverlaps = generateOverlaps(localPart, neighborPart.resize(partition.getAOI()));
 			final ArrayList<IntRect2D> recvOverlaps = generateOverlaps(haloPart, neighborPart);
 
 			assert sendOverlaps.size() == recvOverlaps.size();
@@ -87,8 +87,8 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 	 int worldHeight;
 	 IntRect2D world;
 	 IntRect2D haloPart;
-	 IntRect2D origPart;
-	 IntRect2D privatePart;
+	 IntRect2D localPart;
+	// IntRect2D privatePart;
 
 	protected List<Neighbor> neighbors; // pointer to the processors who's partitions neighbor me
 	public final S localStorage;
@@ -135,19 +135,19 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 	 * Resizes partition and halo. Also sets up the neighbors
 	 */
 	public void reload() {
-		origPart = partition.getBounds();
+		localPart = partition.getLocalBounds();
 		// Get the partition representing halo and local area by expanding the original
 		// partition by aoi at each dimension
-		haloPart = origPart.resize(partition.getAOI());
+		haloPart = localPart.resize(partition.getAOI());
 		localStorage.reshape(haloPart);
 		// Get the partition representing private area by shrinking the original
 		// partition by aoi at each dimension
 
-		privatePart = origPart.resize(0 - partition.getAOI()); // Negative aoi
+		//privatePart = localPart.resize(0 - partition.getAOI()); // Negative aoi
 		// Get the neighbors and create Neighbor objects
 		neighbors = new ArrayList<Neighbor>();
 		for (int id : partition.getNeighborPIDs()) {
-			neighbors.add(new Neighbor(partition.getBounds(id)));
+			neighbors.add(new Neighbor(partition.getLocalBounds(id)));
 		}
 	}
 
@@ -250,7 +250,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 	 * 
 	 * @param p point to get from
 	 */
-	public RemoteFulfillable getFromRemote(final NumberND p) {
+	public Promised getFromRemote(final NumberND p) {
 		try {
 			RemotePromise remotePromise = new RemotePromise();
 			// Make promise remote
@@ -269,7 +269,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 	 * 
 	 * @param p point to get from
 	 */
-	public RemoteFulfillable getFromRemote(final NumberND p, long id) {
+	public Promised getFromRemote(final NumberND p, long id) {
 		try {
 			RemotePromise remotePromise = new RemotePromise();
 			// Make promise remote
@@ -354,7 +354,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 
 	public IntRect2D getLocalBounds()
 		{
-		return origPart;
+		return localPart;
 		}
 		
 	public IntRect2D getHaloBounds()
@@ -362,32 +362,33 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		return haloPart;
 		}
 
-	public IntRect2D getPrivateBounds()
-		{
-		return privatePart;
-		}
+//	public IntRect2D getPrivateBounds()
+//		{
+//		return privatePart;
+//		}
 		
 	/**
 	 * @param point
 	 * @return true if point is local
 	 */
 	public boolean inLocal(final NumberND point) {
-		return origPart.contains(point);
+		return localPart.contains(point);
 	}
 
 	/**
 	 * @param point
 	 * @return true if point is local and not in the halo
 	 */
-	public boolean inPrivate(final NumberND point) {
-		return privatePart.contains(point);
-	}
+//	public boolean inPrivate(final NumberND point) {
+//		return privatePart.contains(point);
+//	}
 
 	/**
 	 * @param point
 	 * @return true if point is local or in the halo
 	 */
-	public boolean inLocalAndHalo(final NumberND point) {
+	 // this used to be called inLocalAndHalo
+	public boolean inHalo(final NumberND point) {
 		return haloPart.contains(point);
 	}
 
@@ -395,17 +396,17 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 	 * @param point
 	 * @return true if point p is local and in the halo
 	 */
-	public boolean inShared(final NumberND point) {
-		return inLocal(point) && !inPrivate(point);
-	}
+//	public boolean inShared(final NumberND point) {
+//		return inLocal(point) && !inPrivate(point);
+//	}
 
 	/**
 	 * @param point
 	 * @return true if point p is in the halo (and not local)
 	 */
-	public boolean inHalo(final NumberND point) {
-		return inLocalAndHalo(point) && !inLocal(point);
-	}
+//	public boolean inHalo(final NumberND point) {
+//		return inLocalAndHalo(point) && !inLocal(point);
+//	}
 
 	/**
 	 * Sends the local storage to the destination dst. All nodes will call this
@@ -417,13 +418,13 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 	 * @throws MPIException
 	 */
 	public void collect(final int dst, final GridStorage fullField) throws MPIException {
-		final Serializable sendObj = localStorage.pack(new MPIParam(origPart, haloPart, MPIBaseType));
+		final Serializable sendObj = localStorage.pack(new MPIParam(localPart, haloPart, MPIBaseType));
 
 		final ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>gather(partition, sendObj, dst);
 
 		if (partition.getPID() == dst)
 			for (int i = 0; i < partition.getNumProcessors(); i++)
-				fullField.unpack(new MPIParam(partition.getBounds(i), world, MPIBaseType), recvObjs.get(i));
+				fullField.unpack(new MPIParam(partition.getLocalBounds(i), world, MPIBaseType), recvObjs.get(i));
 	}
 
 	/**
@@ -443,7 +444,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		final GroupComm gc = qt.getGroupComm(level);
 
 		if (gc != null) {
-			final Serializable sendObj = localStorage.pack(new MPIParam(origPart, haloPart, MPIBaseType));
+			final Serializable sendObj = localStorage.pack(new MPIParam(localPart, haloPart, MPIBaseType));
 
 			final ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>gather(gc.comm, sendObj, gc.groupRoot);
 
@@ -483,7 +484,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 			}
 			final Serializable recvObj = MPIUtil.<Serializable>scatter(gc.comm, sendObjs, gc.groupRoot);
 
-			localStorage.unpack(new MPIParam(origPart, haloPart, MPIBaseType), recvObj);
+			localStorage.unpack(new MPIParam(localPart, haloPart, MPIBaseType), recvObj);
 		}
 		syncHalo();
 	}
@@ -522,7 +523,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		for (int i = 0; i < numNeighbors; i++)
 			localStorage.unpack(neighbors.get(i).recvParam, recvObjs.get(i));
 
-		for (final Pair<RemoteFulfillable, Serializable> pair : getQueue) {
+		for (final Pair<Promised, Serializable> pair : getQueue) {
 			pair.a.fulfill(pair.b);
 			//System.out.println(pair);
 		}
@@ -557,7 +558,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		removeAllQueue.add(p);
 	}
 
-	public void getRMI(NumberND p, RemoteFulfillable promise) throws RemoteException {
+	public void getRMI(NumberND p, Promised promise) throws RemoteException {
 		// Make promise remote
 		// update promise remotely
 		// Must happen asynchronously
@@ -566,7 +567,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		getQueue.add(new Pair<>(promise, getLocal(p)));
 	}
 
-	public void getRMI(NumberND p, long id, RemoteFulfillable promise) throws RemoteException {
+	public void getRMI(NumberND p, long id, Promised promise) throws RemoteException {
 		// Make promise remote
 		// update promise remotely
 		// Must happen asynchronously

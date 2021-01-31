@@ -24,7 +24,7 @@ public class Diffuser extends DSteppable {
 		final DHeatBugs heatbugs = (DHeatBugs) state;
 		
 		sim.field.partitioning.Partition partition = heatbugs.getPartition();
-		int[] sizes = partition.getBounds().getSizes();
+		int[] sizes = partition.getLocalBounds().getSizes();
 		final int aoi = partition.getAOI();
 
 		// locals are faster than instance variables

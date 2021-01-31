@@ -33,12 +33,11 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 
 	private HaloGrid2D<T, ContinuousStorage<T>> halo;
 	ContinuousStorage<T> storage;
-	boolean removeEmptyBags = false;
 	
 	public DContinuous2D(double discretization, DSimState state) 
 		{
 		super(state);
-		storage = new ContinuousStorage<T>(state.getPartition().getBounds(), discretization);
+		storage = new ContinuousStorage<T>(state.getPartition().getLocalBounds(), discretization);
 		
 		try 
 		{
@@ -59,8 +58,9 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	/** Returns the local location of the given object, if any, else null.*/
 	public Double2D getObjectLocationLocal(T t)
 		{
-		HashMap<Long, Double2D> map = storage.getStorageMap();
-		return map.get(t.getID());
+//		HashMap<Long, Double2D> map = storage.getStorageMap();
+//		return map.get(t.getID());
+		return getObjectLocationLocal(t.getID());
 		}
 	
 	/** Returns the local location of the given object, if any, else null.*/
@@ -88,6 +88,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		must lie within the halo region or an exception will be thrown.  */
 	public boolean containsLocal(Double2D p, long id) 
 		{
+		if (!isHalo(p)) throwNotLocalException(p);
 		return (getLocal(id) != null); // uses hashmap
 		}
 
@@ -101,15 +102,15 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 
 	/** Returns all the local data located <i>exactly</i> at the given point.  This point
 		must lie within the local region or an exception will be thrown.  */
-	public HashMap<Long, T> getLocal(Double2D p) 
+	public ArrayList<T> getLocal(Double2D p) 
 		{
 		HashMap<Long, T> cell = getCellLocal(p);
-		HashMap<Long, T> reduced = new HashMap<>();
+		ArrayList<T> reduced = new ArrayList<>();
 		if (cell == null) return reduced;
 		for(T t : cell.values())
 			 {
 			 if (p.equals(getObjectLocationLocal(t)))
-			 	reduced.put(t.getID(),t);
+			 	reduced.add(t);
 			 }
 		return reduced;
 		}
@@ -152,7 +153,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 				if (oldCell != null)
 					{
 					oldCell.remove(t);
-					if (oldCell.isEmpty() && removeEmptyBags)
+					if (oldCell.isEmpty() && storage.removeEmptyBags)
 						storage.setCell(oldLoc, null);
 					}
 				if (newCell == null)
@@ -193,7 +194,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			HashMap<Long, T> cell = getCellLocal(loc);
 			if (cell != null)
 				cell.remove(t.getID());
-			if (cell.isEmpty() && removeEmptyBags)
+			if (cell.isEmpty() && storage.removeEmptyBags)
 				storage.setCell(loc, null);
 			return true;
 			}
@@ -210,7 +211,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			{
 			if (cell != null)
 				cell.remove(t.getID());
-			if (cell.isEmpty() && removeEmptyBags)
+			if (cell.isEmpty() && storage.removeEmptyBags)
 				storage.setCell(p, null);
 			return true;
 			}
@@ -220,14 +221,14 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	public boolean isLocal(Double2D p) { return halo.inLocal(p); }
 
 	/** Returns true if the real-valued point is within the halo region.  */
-	public boolean isHalo(Double2D p) { return halo.inLocalAndHalo(p); }
+	public boolean isHalo(Double2D p) { return halo.inHalo(p); }
 
 	public HaloGrid2D getHaloGrid() { return halo; }
 		
 	/** Returns a Promise which will eventually (immediately or within one timestep)
 		hold the data (which must be a DObject) requested if it is located, else null.  This point can be outside
 		the local and halo regions. */
-	public RemoteFulfillable get(Double2D p, long id) 
+	public Promised get(Double2D p, long id) 
 		{
 //		DObject obj = (DObject) t;		// this may throw a runtime exception
 		if (isHalo(p))
@@ -254,9 +255,8 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 
 	/** Removes the data (which must be a DObject) from the given point.  This point can be outside
 		the local and halo regions. */
-	public void remove(long id) 
+	public void remove(Double2D p, long id) 
 		{
-		Double2D p = getObjectLocationLocal(id);
 		if (isLocal(p))
 			removeLocal(id);
 		else
@@ -265,9 +265,9 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 
 	/** Removes the data (which must be a DObject) from the given point.  This point can be outside
 		the local and halo regions. */
-	public void remove(T t) 
+	public void remove(Double2D p, T t) 
 		{
-		remove(((DObject) t).getID());
+		remove(p, ((DObject) t).getID());
 		}
 
 
@@ -315,11 +315,9 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		the local and halo regions; if so, it will be set after the end of this timestep.  
 		The agent must be a DObject and a Stopping: realistically this means it should
 		be a DSteppable. */ 
-	public void removeAgent(T agent) 
+	public void removeAgent(Double2D p, T agent) 
 		{
 		if (agent == null) return;
-		
-		Double2D p = getObjectLocationLocal(agent);
 		
 		// will this work or is Java too smart?
 		Stopping b = (Stopping) agent;		// may generate a runtime error
@@ -347,7 +345,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			}
 		else
 			{
-			halo.removeAgent(null, agent.getID());
+			halo.removeAgent(p, agent.getID());
 			}
 		}
 		

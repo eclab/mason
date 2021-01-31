@@ -22,7 +22,7 @@ public class DIntGrid2D extends DAbstractGrid2D
 	public DIntGrid2D(DSimState state) 
 		{
 		super(state);
-		storage = new IntGridStorage(state.getPartition().getBounds());
+		storage = new IntGridStorage(state.getPartition().getLocalBounds());
 		try 
 			{
 			halo = new HaloGrid2D<Integer, IntGridStorage>(storage, state);
@@ -59,7 +59,7 @@ public class DIntGrid2D extends DAbstractGrid2D
 	/** Returns a Promise which will eventually (immediately or within one timestep)
 		hold the data located at the given point.  This point can be outside
 		the local and halo regions. */
-	public RemoteFulfillable get(Int2D p) 
+	public Promised get(Int2D p) 
 		{
 		if (isHalo(p))
 			try {

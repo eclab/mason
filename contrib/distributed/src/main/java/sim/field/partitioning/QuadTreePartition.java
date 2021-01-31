@@ -33,11 +33,11 @@ public class QuadTreePartition extends Partition {
 		qt = new QuadTree(new IntRect2D(width, height), numProcessors);
 	}
 
-	public IntRect2D getBounds() {
+	public IntRect2D getLocalBounds() {
 		return myLeafNode.getShape();
 	}
 
-	public IntRect2D getBounds(final int pid) {
+	public IntRect2D getLocalBounds(final int pid) {
 		for (final QuadTreeNode node : qt.getAllLeaves())
 			if (node.getProcessor() == pid)
 				return node.getShape();

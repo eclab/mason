@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import sim.engine.*;
 
-public class RemotePromise extends UnicastRemoteObject implements Serializable, RemoteFulfillable {
+public class RemotePromise extends UnicastRemoteObject implements Serializable, Promised {
 	private static final long serialVersionUID = 1L;
 
 	boolean ready = false;
