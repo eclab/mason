@@ -13860,13 +13860,13 @@ Distributed MASON allows you to create large MASON models which run over a poten
 To use Distributed MASON, you'll need to understand how to use or set up cloud computing services or your own servers (we'll show how to get running locally on your laptop, and also with Amazon Web Services).  It's also helpful to understand some basic concepts in distributed computing.  Let's go over those now.
 
 
-\paragraph{MPI and RMI} Distributed MASON is run over some \(N\) {\bf processors} (computers) which are all connected over a network.  These processors use two well known distributed computing facilities: a Java version of the venerable {\bf Message Passing Interface (MPI)} and Java's {\bf Remote Method Invocation (RMI)} API.  MPI is synchronous: it keeps all your processors working in sync in an elaborate dance.  RMI is asynchronous: it allows arbitrary processors to communicate with arbitrary processors as necessary.  We use MPI whenever possible, and fall back to RMI for a variety of important custodial functions.
+\paragraph{MPI and RMI} Distributed MASON is run over some \(N\) {\bf processors} (computers) which are all connected over a network.  These processors use two well known distributed computing facilities: a Java version of the venerable {\bf Message Passing Interface (MPI)} and Java's {\bf Remote Method Invocation (RMI)} API.  MPI is synchronous: it keeps all your processors working in sync in an elaborate dance.  RMI is asynchronous: it allows arbitrary processors to communicate with arbitrary processors as necessary.  We use MPI whenever possible, and fall back to RMI for a variety of less common functions.
 
 In MPI, your \(N\) nodes are organized in some kind of lattice or other structure, such that each of them has \(M\) neighbors.  MASON's lattice is simple: the nodes are laid out in a grid and so each has 4 neighbors (north/south/east/west).  The grid is toroidal\,---\,for example, each far-west node has as its westerly neighbor a far-east node.  As you likely have a 2D spatial environment in your model, MASON will take your model and cut it up into a grid, handing one grid region to each of the nodes.  The boundaries of the region that a node controls are not fixed: if a certain node is overwhelmed with work, its region (and thus some of its agents) may be shrunk and part of it given to other nodes, and so ultimately the grid will be distorted, with some nodes in control of large spaces and other nodes in control of small, but congested areas.  This process is known as {\bf load balancing}, and it is important in order to keep things efficient.  Internally we manage this using a {\bf QuadTree} structure.
 
-\paragraph{Shared and Halo Areas} It's very common for nodes to need to know about the goings on in other nodes: for example, if you have an agent in node A which lies on the boundary between nodes A and B, its actions may depend on values (heat? rainfall?) that happen to lie in B.  To get this information, A must contact B, which is very, very, {\it very} costly because it involves communication over your network.  To minimize this, Distributed MASON sets things up so that A has stored a cache of information it knows regarding a thin region of B near to its border.  Indeed all of B's neighbors have caches like this.  The combined regions in B that have been cached by its neighbors is called B's {\bf Shared Area}.  The combined regions in A which it has cached from its neighbors are known as A's {\bf Halo Area}.
+\paragraph{Shared and Halo Areas} It's very common for nodes to need to know about the goings on in other nodes: for example, if you have an agent in node A which lies on the boundary between nodes A and B, its actions may depend on values (heat? rainfall?) that happen to lie in B.  To get this information, A must contact B, which is very, very, {\it very} costly because it involves communication over your network.  To minimize this, Distributed MASON sets things up so that A has stored a cache of information it knows regarding a thin region of B near to its border.  Indeed A has caches of all its neighbors.  The combined regions in A which it has cached from its neighbors are known as A's {\bf Halo Region}.
 
-Obviously if B modifies information in these regions, Distributed MASON must notify B's neighbors so they can update their caches.  Thus you'd like this incursion into B's territory to be as small as possible: but if you have a model where agents must access information in a wide neighborhood around them, so be it.  The region around an agent which it must know about in order to do its work is known as the agent's {\bf Area of Interest (AOI)} and it will determine the size of the Shared and Halo areas. 
+Obviously if B modifies information in these regions, Distributed MASON must notify B's neighbors so they can update their caches.  Thus you'd like this incursion into B's territory to be as small as possible: but if you have a model where agents must access information in a wide neighborhood around them, so be it.  The region around an agent which it must know about in order to do its work is known as the agent's {\bf Area of Interest (AOI)} and it will determine the size of the halo regions. 
 
 \paragraph{What's Easy and What's Not}  Computational nodes in Distributed MASON are organized in a 2D space in order to match the 2D spaces common in a great many agent-based models.  In models like these, agents typically only communicate with other agents near to them, or gather or change information in the environment near to them.  It's well understood how to use this organization to do distributed computing relatively efficiently.  
 
@@ -14528,7 +14528,7 @@ If the number of processors is exactly a power of 4, such as 1, 4, 16, 64, 256, 
 
 Each processor has a unique {\bf processor ID} (or {\bf PID}).  If you have \(N\) processors, then their PIDs will be numbered 0...\(N-1\).   Processor 0 is the root processor.
 
-Processors communicate with one another using two Java packages.  First, processors do bulk synchronous communication using the {\bf Message Passing Interface} (or {\bf MPI}), which MASON does via the {\bf Java OpenMPI} library.  For example, after every timestep, Distributed MASON fields trade notes about which agents or objects have changed location or status in a large, intricate dance.  That's done with MPI.  Second, more fine-grained processor-to-processor communication is done with Java's {\bf Remote Method Interface} or {\bf RMI}.  For example, if an agent in processor 1 needs to know something about another agent in distant processor 10, it'd communicate with that processor via RMI.
+Processors communicate with one another using two Java packages.  First, processors do bulk synchronous communication using the {\bf Message Passing Interface} (or {\bf MPI}), which MASON does via the {\bf Java OpenMPI} library.  For example, after every timestep, Distributed MASON fields trade notes about which agents or objects have changed location or status in a large, intricate dance.  That's done with MPI.  Second, more fine-grained processor-to-processor communication is done with Java's {\bf Remote Method Invocation} or {\bf RMI}.  For example, if an agent in processor 1 needs to know something about another agent in distant processor 10, it'd communicate with that processor via RMI.
 
 Each processor has its own special subclasses of SimState and its own Schedule called \class{sim.engine.DSimState} and \class{sim.engine.DistributedSchedule} respectively.  These manage much of the hard work of maintaining a distributed model. DistributedSchedule has no special methods different from Schedule (though it has reimplemented several of Schedule's methods).  But DSimState has many new methods.  The important ones to be aware of for now are:
 
@@ -14792,7 +14792,7 @@ Returns the field's HaloGrid2D if for some reason you needed that.
 
 \paragraph{Setting and Getting Data}
 
-Setting and getting data is different from how it's done in the standard MASON fields.  You'll need to call a function to set, get, add, remove, or move any data.  There are often two versions of this function.  One version sets, moves, adds, removes, or queries {\bf locally}: and will only work if the data is in fact local; or if you're doing a query and it's within the halo region.    The second version is more general\,---\,you can make remote queries, and move objects to remove fields, for example.  However this is much more expensive because it will have to ask another processor to fullfill the request.
+Setting and getting data is different from how it's done in the standard MASON fields, though in many cases it'll feel familiar.  You'll generally need to call a function to set, get, add, remove, or move any data.  There are often two versions of this function.  One version sets, moves, adds, removes, or queries {\bf locally}: and will only work if the data is in fact local; or if you're doing a query and it's within the halo region.    The second version is more general\,---\,you can make remote queries, and move objects to remove fields, for example.  However this is much more expensive because it will have to ask another processor to fullfill the request.
 
 If your general request is to {\it change} something outside of the local region, then the remote processor will perform the request by the next timestep.  For example if you ask to move a rock from a local partition to a remote partition, it'll be deleted from your local partition immediately, but added to the remote partition by the next timestep.  Note that you cannot do the opposite: you can't move a rock from a remote partition to your local partition.  That operation has to be done by an agent on the remote processor.
 
@@ -14819,6 +14819,11 @@ You can always schedule an agent on your Schedule just like in MASON.  If the ag
 
 The integer grid class is \class{sim.field.grid.DIntGrid2D}.  It contains the following methods:
 
+\begin{methods}{\class{sim.field.grid.DIntGrid2D} constructor}
+\mthd{public DIntGrid2D(DSimState state)}
+Creates a DIntGrid2D with all slots initialized to 0.
+\end{methods}
+
 \begin{methods}{\class{sim.field.grid.DIntGrid2D}}
 \mthd{public int getLocal(Int2D p)}
 Returns a value local to your partition, or to your halo region.
@@ -14833,7 +14838,12 @@ Returns the local storage array for the grid, in row-major order including the h
 \end{methods}
 
 
-The double grid class is \class{sim.field.grid.DDoubleGrid2D}.  It contains the following methods, nearly identical to DIntGrid2D
+The double grid class is \class{sim.field.grid.DDoubleGrid2D}.  It contains the following methods, nearly identical to DIntGrid2D:
+
+\begin{methods}{\class{sim.field.grid.DDoubleGrid2D} constructor}
+\mthd{public DDoubleGrid2D(DSimState state)}
+Creates a DDoubleGrid2D with all slots initialized to 0.
+\end{methods}
 
 \begin{methods}{\class{sim.field.grid.DIntGrid2D}}
 \mthd{public double getLocal(Int2D p)}
@@ -14856,7 +14866,7 @@ All objects stored in a DObjectGrid2D must be DObjects.
 
 \begin{methods}{\class{sim.field.grid.DObjectGrid2D} constructor}
 \mthd{public DObjectGrid2D(DSimState state)}
-Creates a DObjectGrid2D which holds objects of the given class {\it T}.
+Creates a DObjectGrid2D which holds objects of the given class {\it T}  with all slots initialized to null.
 \end{methods}
 
 \begin{methods}{\class{sim.field.grid.DObjectGrid2D}}
@@ -14897,7 +14907,7 @@ Creates a DDenseGrid2D which holds objects of the given class {\it T}.
 Returns whether ArrayList< given object is located at the given position.
 \mthd{public ArrayList\(<\)T\(>\) getLocal(Int2D p)}
 Returns all the elements located at the given point, or null.
-\mthd{public void setLocal(Int2D p, ArrayList\(<\)T\(>\) )}
+\mthd{public void setLocal(Int2D p, ArrayList\(<\)T\(>\))}
 Sets all the elements at a point local to your partition.  You can pass in null to clear the elements.
 \mthd{public void addLocal(Int2D p, T val)}
 Adds an element to the given local point.
@@ -14950,6 +14960,10 @@ Creates a DContinuous2D which holds objects of the given class {\it T}, using th
 \end{methods}
 
 \begin{methods}{\class{sim.field.grid.DContinuous2D}}
+\mthd{public boolean isLocal(Double2D p)}
+Returns true if the given point lies within the local bounds. This the Double2D version of the same Int2D method found in DAbstractGrid2D.
+\mthd{public boolean isHalo(Double2D p)}
+Returns true if the given point lies within the halo region or local bounds. This the Double2D version of the same Int2D method found in DAbstractGrid2D.
 \mthd{public Double2D getObjectLocal(T val)}
 Returns the local location of the given object, else null if there is none.
 \mthd{public Double2D getObjectLocal(long id)}
