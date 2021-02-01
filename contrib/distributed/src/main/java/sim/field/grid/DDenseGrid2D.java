@@ -183,11 +183,11 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	public Promised get(Int2D p) 
 		{
 		if (isHalo(p))
-			try {
+//			try {
 				return new Promise(storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))]);
-			} catch (RemoteException e) {
-				throw new RuntimeException(e);
-			}
+//			} catch (RemoteException e) {
+//				throw new RuntimeException(e);
+//			}
 		else
 			return halo.getFromRemote(p);
 		}
@@ -200,14 +200,14 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 		DObject obj = (DObject) t;		// this may throw a runtime exception
 		if (isHalo(p))
 			{
-			try {
+//			try {
 				if (containsLocal(p, t)) 
 					return new Promise(obj);
 				else
 					return new Promise(null);
-			} catch (RemoteException e) {
-				throw new RuntimeException(e);
-				}
+//			} catch (RemoteException e) {
+//				throw new RuntimeException(e);
+//				}
 			}
 		else
 			return halo.getFromRemote(p, obj.getID());

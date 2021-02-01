@@ -63,11 +63,11 @@ public class DDoubleGrid2D extends DAbstractGrid2D
 	public Promised get(Int2D p) 
 		{
 		if (isHalo(p))
-			try {
+//			try {
 				return new Promise(storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))]);
-			} catch (RemoteException e) {
-				throw new RuntimeException(e);
-			}
+//			} catch (RemoteException e) {
+//				throw new RuntimeException(e);
+//			}
 		else return halo.getFromRemote(p);
 		}
 

@@ -16,7 +16,7 @@ import sim.engine.Stoppable;
 import sim.engine.Stopping;
 import sim.field.DAbstractGrid2D;
 import sim.field.HaloGrid2D;
-import sim.engine.rmi.*;
+import sim.engine.*;
 import sim.field.partitioning.Partition;
 import sim.field.storage.ContinuousStorage;
 import sim.util.*;
@@ -233,11 +233,11 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 //		DObject obj = (DObject) t;		// this may throw a runtime exception
 		if (isHalo(p))
 			{
-				try {
+//				try {
 					return new Promise(getLocal(p, id));
-				} catch (RemoteException e) {
-					throw new RuntimeException(e);
-				}
+//				} catch (RemoteException e) {
+//					throw new RuntimeException(e);
+//				}
 			}
 		else
 			return halo.getFromRemote(p, id);

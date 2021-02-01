@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import sim.engine.rmi.*;
+import sim.engine.*;
 import sim.util.NumberND;
 
 /**

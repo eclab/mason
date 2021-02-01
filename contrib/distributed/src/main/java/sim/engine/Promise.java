@@ -1,7 +1,6 @@
-package sim.engine.rmi;
+package sim.engine;
 
 import java.io.*;
-import java.rmi.RemoteException;
 
 /**
  * This class eventually provides data in the future (usually one MASON timestep
@@ -55,38 +54,30 @@ public class Promise implements Serializable, Promised {
 
 	/**
 	 * Constructs an unfulfilled promise
-	 * 
-	 * @throws RemoteException
 	 */
-	public Promise() throws RemoteException {
+	public Promise() {
 	}
 
 	/**
 	 * Constructs an already fulfilled promise
-	 * 
-	 * @throws RemoteException
 	 */
-	public Promise(Serializable object) throws RemoteException {
+	public Promise(Serializable object) {
 		this.object = object;
 		ready = true;
 	}
 
 	/**
 	 * Constructs an already fulfilled promise
-	 * 
-	 * @throws RemoteException
 	 */
-	public Promise(int value) throws RemoteException {
+	public Promise(int value) {
 		this.object = Integer.valueOf(value);
 		ready = true;
 	}
 
 	/**
 	 * Constructs an already fulfilled promise
-	 * 
-	 * @throws RemoteException
 	 */
-	public Promise(double value) throws RemoteException {
+	public Promise(double value) {
 		this.object = Double.valueOf(value);
 		ready = true;
 	}
