@@ -168,8 +168,12 @@
 		</dependency>
 
 
-		<!-- <dependency> <groupId>edu.gmu.eclab</groupId> <artifactId>acequiasData</artifactId> 
-			<version>1.0</version> </dependency> -->
+		<dependency>
+			<groupId>edu.gmu.eclab</groupId>
+			<artifactId>acequiasData</artifactId>
+			<version>1.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>edu.gmu.eclab</groupId>
 			<artifactId>ebolaData</artifactId>

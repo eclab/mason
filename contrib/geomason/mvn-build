@@ -13,7 +13,7 @@ squeaky_clean: clean
 	mvn clean
 
 # data: cityMigrationData conflictDiamondsData OmolandCAData ebola acequias dadaab csv4j psh swiselib toolsui hotspots refugee kibera
-data: cityMigrationData conflictDiamondsData omolandCAData riftland ebola dadaab csv4j swiselib hotspots refugee kibera
+data: cityMigrationData conflictDiamondsData omolandCAData riftland ebola acequias dadaab csv4j swiselib hotspots refugee kibera
 
 cityMigrationData:
 	rm -rf repository/edu/gmu/eclab/cityMigrationData/
@@ -45,11 +45,11 @@ ebola:
 	mkdir -p repository/edu/gmu/eclab/ebolaData/
 	cp repository/jars/ebolaData.jar repository/edu/gmu/eclab/ebolaData/
 
-# acequias:
-# 	rm -rf repository/edu/gmu/eclab/acequiasData/
-# 	mvn install:install-file -Dfile=repository/jars/acequiasData.jar -DgroupId=edu.gmu.eclab -DartifactId=acequiasData -Dversion=1.0 -Dpackaging=jar -DlocalRepositoryPath:repository/
-# 	mkdir -p repository/edu/gmu/eclab/acequiasData/
-# 	cp repository/jars/acequiasData.jar repository/edu/gmu/eclab/acequiasData
+acequias:
+	rm -rf repository/edu/gmu/eclab/acequiasData/
+	mvn install:install-file -Dfile=repository/jars/acequiasData.jar -DgroupId=edu.gmu.eclab -DartifactId=acequiasData -Dversion=1.0 -Dpackaging=jar -DlocalRepositoryPath:repository/
+	mkdir -p repository/edu/gmu/eclab/acequiasData/
+	cp repository/jars/acequiasData.jar repository/edu/gmu/eclab/acequiasData
 
 dadaab:
 	rm -rf repository/edu/gmu/eclab/dadaabData/
