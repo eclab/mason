@@ -8,7 +8,7 @@ import java.io.*;
  * java.util.concurrent.Future.
  */
 
-public class Promise implements Serializable, Promised {
+public class Promise implements Promised {
 	private static final long serialVersionUID = 1L;
 
 	boolean ready = false;
