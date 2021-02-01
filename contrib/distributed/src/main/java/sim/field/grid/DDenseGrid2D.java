@@ -7,7 +7,6 @@ import sim.field.*;
 import sim.field.partitioning.*;
 import sim.field.storage.DenseGridStorage;
 import sim.util.*;
-import sim.engine.rmi.*;
 
 /**
  * A grid that contains lists of objects of type T. Analogous to Mason's

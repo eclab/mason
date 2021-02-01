@@ -2,7 +2,7 @@ package sim.field.continuous;
 
 import java.io.Serializable;
 
-import java.rmi.RemoteException;
+import java.rmi.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;

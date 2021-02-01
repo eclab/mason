@@ -3,13 +3,11 @@ package sim.field.grid;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.rmi.RemoteException;
-import java.rmi.*;
 import sim.engine.*;
 import sim.field.*;
 import sim.field.partitioning.*;
 import sim.field.storage.*;
 import sim.util.*;
-import sim.engine.rmi.*;
 
 /**
  * A grid that contains objects of type T. Analogous to Mason's ObjectGrid2D

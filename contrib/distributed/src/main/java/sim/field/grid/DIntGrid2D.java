@@ -6,7 +6,6 @@ import sim.field.*;
 import sim.field.partitioning.*;
 import sim.field.storage.*;
 import sim.util.*;
-import sim.engine.rmi.*;
 
 /**
  * A grid that contains integers. Analogous to Mason's IntGrid2D
