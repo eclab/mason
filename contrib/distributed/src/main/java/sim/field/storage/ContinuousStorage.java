@@ -19,7 +19,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 	double discretization;
 	public HashMap<Long, Double2D> m;
 	public HashMap<Long, T>[] storage;
-	public boolean removeEmptyBags = false;
+	public boolean removeEmptyBags = true;
 
 	public ContinuousStorage(final IntRect2D shape, final double discretization) {
 		super(shape);
