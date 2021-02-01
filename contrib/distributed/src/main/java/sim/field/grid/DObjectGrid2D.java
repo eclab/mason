@@ -153,7 +153,7 @@ public class DObjectGrid2D<T extends Serializable> extends DAbstractGrid2D
 			}
 		else
 			{
-			halo.removeAgent(p, a.getID());
+			halo.removeAgent(p, a.ID());
 			}
 		}
 		

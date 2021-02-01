@@ -39,8 +39,16 @@ public class DDoubleGrid2D extends DAbstractGrid2D
 	public double[] getStorageArray() { return storage.storage; }
 
 	/** Returns the data associated with the given point.  This point
-		must lie within the halo region or an exception will be thrown.  */
+		must lie within the local region or an exception will be thrown.  */
 	public double getLocal(Int2D p) 
+		{
+		if (!isHalo(p)) throwNotLocalException(p);
+		return storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))];
+		}
+
+	/** Returns the data associated with the given point.  This point
+		must lie within the halo region or an exception will be thrown.  */
+	public double getHalo(Int2D p) 
 		{
 		if (!isHalo(p)) throwNotLocalException(p);
 		return storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))];

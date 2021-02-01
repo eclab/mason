@@ -133,7 +133,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 			for (int i = 0; i < array[idx].size(); i++) 
 				{
 				T t = array[idx].get(i);
-				if (t.getID() == id) 
+				if (t.ID() == id) 
 					{
 					removeFast(array[idx], i);
 					if (array[idx].size() == 0 && removeEmptyBags)
@@ -166,7 +166,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 		if (ts == null)
 			return null;
 		for (T t : ts)
-			if (t.getID() == id)
+			if (t.ID() == id)
 				return t;
 		return null;
 	}

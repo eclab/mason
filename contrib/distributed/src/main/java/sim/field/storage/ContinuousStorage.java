@@ -93,7 +93,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 			for (final T obj : getObjects(rect.shift(shape.ul().toArray()))) {
 				objs.add(obj);
 				// Append the object's location relative to the rectangle
-				objs.add(m.get(obj.getID()).subtract(shape.ul().toArray()).subtract(rect.ul().toArray()));
+				objs.add(m.get(obj.ID()).subtract(shape.ul().toArray()).subtract(rect.ul().toArray()));
 			}
 			ret.add(objs);
 		}
@@ -189,7 +189,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 	public List<T> getNeighborsWithin(final T obj, final double radius) {
 		Double2D tmp = null;
 		try {
-			tmp = m.get(obj.getID());
+			tmp = m.get(obj.ID());
 		} catch (Exception e) {
 			System.exit(-1);
 		}
@@ -226,7 +226,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 		for (int x = ul.x; x < br.x; x++) {
 			for (int y = ul.y; y < br.y; y++) {
 				for (T foo : getCelldp(x, y).values()) {
-					if (foo != obj && m.get(foo.getID()).distanceSq(loc) <= radius * radius) {
+					if (foo != obj && m.get(foo.ID()).distanceSq(loc) <= radius * radius) {
 					}
 				}
 			}
@@ -245,7 +245,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 
 	// Get the location of the given location
 	public Double2D getLocation(final T obj) {
-		return m.get(obj.getID());
+		return m.get(obj.ID());
 	}
 
 	// Get the location of the given location
@@ -257,14 +257,14 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 
 	// Put the object to the given point
 	public void addToLocation(final T obj, final Double2D p) {
-		final Double2D old = m.put(obj.getID(), p);
+		final Double2D old = m.put(obj.ID(), p);
 		if (old != null)
-			getCell(old).remove(obj.getID());
-		getCell(p).put(obj.getID(), obj);
+			getCell(old).remove(obj.ID());
+		getCell(p).put(obj.ID(), obj);
 	}
 
 	public void removeObject(Double2D p, final T obj) {
-		getCell(m.remove(obj.getID())).remove(obj);
+		getCell(m.remove(obj.ID())).remove(obj);
 	}
 
 	// Remove all the objects at the given point
@@ -281,7 +281,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 
 	// Remove the object from the storage
 	public void removeObject(final T obj) {
-        if (m.get(obj.getID()) == null) {
+        if (m.get(obj.ID()) == null) {
         	System.out.println("removeObject");
         	System.out.println("ul : "+this.shape.ul());
         	System.out.println("br : "+this.shape.br());
@@ -291,10 +291,10 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
         
 
 		
-		Double2D dd = m.remove(obj.getID());
+		Double2D dd = m.remove(obj.ID());
 		HashMap a = getCell(dd);
 		
-		Object o = a.remove(obj.getID());
+		Object o = a.remove(obj.ID());
 	}
 
 	// Get all the objects at the given point
@@ -303,7 +303,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 
 		if (getCell(p) != null) {
 		for (final T t : getCell(p).values()) {
-			if (m.get(t.getID()).equals(p))
+			if (m.get(t.ID()).equals(p))
 				objects.add(t);
 		}
 		}
@@ -342,7 +342,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 				
 				for (T obj : cell.values()) { //need to offset/discretize!
 					
-					if (m.get(obj.getID()) == null) {
+					if (m.get(obj.ID()) == null) {
 						System.out.println(this.shape);
 						System.out.println("r : "+r);
 						System.out.println("x : "+x);
@@ -359,12 +359,12 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 						
 					}
 					
-					if (m.get(obj.getID()) == null){
+					if (m.get(obj.ID()) == null){
 						System.out.println("-!!!!-");
 						System.out.println(this);
 					}
 					
-					if (r.contains(m.get(obj.getID()))) {
+					if (r.contains(m.get(obj.ID()))) {
 						objs.add(obj);
 					}
 				}

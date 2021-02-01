@@ -40,14 +40,28 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 		the halo region.  Each cell is either null or is an arraylist of objects. */
 	public ArrayList<T>[] getStorageArray() { return storage.storage; }
 
-	/** Returns true if the data is located at the given point.  This point
-		must lie within the halo region or an exception will be thrown.  */
+	/** Returns true if the data is located at the given point, which must be within the halo region.  */
 	public boolean containsLocal(Int2D p, T t) 
 		{
-		if (!isHalo(p)) throwNotLocalException(p);
 		ArrayList<T> list = storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))];
 		if (list == null) return false;
 		else return (list.contains(t));
+		}
+
+	/** Returns true if the data is located at the given point, which must be within the halo region.  */
+	public boolean containsLocal(Int2D p, long id) 
+		{
+		ArrayList<T> list = storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))];
+		if (list == null) return false;
+		else 
+			{
+			for(T elt : list)
+				{
+				if (elt.ID() == id)
+					return true;
+				}
+			return false;
+			}
 		}
 
 	/** Returns the data associated with the given point.  This point
@@ -209,7 +223,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 //				}
 			}
 		else
-			return halo.getFromRemote(p, obj.getID());
+			return halo.getFromRemote(p, obj.ID());
 		}
 
 	/** Adds the data to the given point.  This point can be outside
@@ -230,7 +244,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 		if (isLocal(p))
 			removeLocal(p, t);
 		else
-			halo.removeFromRemote(p, obj.getID());
+			halo.removeFromRemote(p, obj.ID());
 		}
 		
 //	/** Removes the data (which must be a DObject) from the given point.  This point can be outside
@@ -241,7 +255,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 //		if (isLocal(p))
 //			removeMultiplyLocal(p, t);
 //		else
-//			halo.removeFromRemote(p, obj.getID(), true);
+//			halo.removeFromRemote(p, obj.ID(), true);
 //		}
 
 	/** Removes all data from the given point. This point can be outside the local and halo regions. */
@@ -328,7 +342,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 			}
 		else
 			{
-			halo.removeAgent(p, a.getID());
+			halo.removeAgent(p, a.ID());
 			}
 		}
 		
@@ -367,7 +381,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 //			}
 //		else
 //			{
-//			halo.removeAgent(p, a.getID(), true);
+//			halo.removeAgent(p, a.ID(), true);
 //			}
 //		}
 

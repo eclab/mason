@@ -55,45 +55,53 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		return storage;
 	}
 	
-	/** Returns the local location of the given object, if any, else null.*/
-	public Double2D getObjectLocationLocal(T t)
-		{
-//		HashMap<Long, Double2D> map = storage.getStorageMap();
-//		return map.get(t.getID());
-		return getObjectLocationLocal(t.getID());
-		}
-	
-	/** Returns the local location of the given object, if any, else null.*/
+	public HaloGrid2D getHaloGrid() { return halo; }
+		
+	/** Returns true if the real-valued point is within the local (non-halo) region.  */
+	public boolean isLocal(Double2D p) { return halo.inLocal(p); }
+
+	/** Returns true if the real-valued point is within the halo region.  */
+	public boolean isHalo(Double2D p) { return halo.inHalo(p); }
+
+	/** Returns the local (including halo region) location object with the given id, if any, else null.*/
 	public Double2D getObjectLocationLocal(long id)
 		{
 		HashMap<Long, Double2D> map = storage.getStorageMap();
 		return map.get(id);
 		}
 
-	/** Returns true if the data is located locally.  */
+	/** Returns the local (including halo region) location of the given object, if any, else null.*/
+	public Double2D getObjectLocationLocal(T t)
+		{
+		return getObjectLocationLocal(t.ID());
+		}
+
+	/** Returns true if the object is located locally, including in the halo region.  */
 	public boolean containsLocal(T t) 
 		{
 		return (getObjectLocationLocal(t) != null);
 		}
 
-	/** Returns true if the data is located at the given point.  This point
-		must lie within the local region or an exception will be thrown.  */
-	public boolean containsLocal(Double2D p, T t) 
+	/** Returns true if the object is located locally, including in the halo region.  */
+	public boolean containsLocal(long id) 
 		{
-		if (!isHalo(p)) throwNotLocalException(p);
-		return (p.equals(getObjectLocationLocal(t)));
+		return (getObjectLocationLocal(id) != null);
 		}
 
-	/** Returns true if the data is located at the given point.  This point
-		must lie within the halo region or an exception will be thrown.  */
+	/** Returns true if the object if the given id is located exactly at the given point locally, including the halo region.  */
 	public boolean containsLocal(Double2D p, long id) 
 		{
-		if (!isHalo(p)) throwNotLocalException(p);
-		return (getLocal(id) != null); // uses hashmap
+		return (p.equals(getObjectLocationLocal(id)));
+		}
+
+	/** Returns true if the object is located exactly at the given point locally, including the halo region. */
+	public boolean containsLocal(Double2D p, T t) 
+		{
+		return containsLocal(p, t.ID());
 		}
 
 	/** Returns all the local data located in discretized cell in the <i>vicinity</i> of the given point.  This point
-		must lie within the local region or an exception will be thrown.  */
+		must lie within the halo region or an exception will be thrown.  */
 	public HashMap<Long, T> getCellLocal(Double2D p) 
 		{
 		if (!isHalo(p)) throwNotLocalException(p);
@@ -101,7 +109,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		}
 
 	/** Returns all the local data located <i>exactly</i> at the given point.  This point
-		must lie within the local region or an exception will be thrown.  */
+		must lie within the halo region or an exception will be thrown.  */
 	public ArrayList<T> getLocal(Double2D p) 
 		{
 		HashMap<Long, T> cell = getCellLocal(p);
@@ -114,26 +122,27 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			 }
 		return reduced;
 		}
-
-	/** Returns all the local data located <i>exactly</i> at the given point.  This point
-		must lie within the local region or an exception will be thrown.  */
-	public DObject getLocal(long id) 
-		{
-		Double2D p = getObjectLocationLocal(id);
-		return getCellLocal(p).get(id);
-		}
-	
-	/** Returns all the local data located <i>exactly</i> at the given point.  This point
-	must lie within the local region or an exception will be thrown.  */
-	public DObject getLocal(Double2D p, long id) 
-		{
-		return getCellLocal(p).get(id);
-		}
-
 		
-	/** Sets or moves the given object, which must be currently local or not set. */
-	// this could be done by just calling removeLocal but I'm
-	// trying to avoid some unnecessary hash lookups, copies, and hashset deletion
+	/** Returns the object associated with the given ID if it stored within the halo region, else null. */
+	public T getLocal(long id)
+		{
+		Double2D loc = getObjectLocationLocal(id);
+		if (loc != null)
+			return storage.getCell(loc).get(id);
+		else return null;
+		}
+
+	/** Returns the object associated with the given ID only if it stored within the halo region at exactly the given point p, else null. */
+	public T getLocal(Double2D p, long id)
+		{
+		Double2D loc = getObjectLocationLocal(id);
+		if (p.equals(loc))
+			return storage.getCell(loc).get(id);
+		else return null;
+		}
+			
+	/** Sets or moves the given object.  The given point must be local.  If the object
+		exists at another local point, it will be removed from that point and moved to the new point. */
 	public void addLocal(Double2D p, T t) 
 		{
 		if (!isLocal(p)) throwNotLocalException(p);	
@@ -141,9 +150,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		HashMap<Long, T> newCell = getCellLocal(p);
 		if (oldLoc != null)
 			{
-			HashMap<Long, T> oldCell = getCellLocal(oldLoc);
-			
-			
+			HashMap<Long, T> oldCell = getCellLocal(oldLoc);			
 			if (oldCell == newCell)
 				{
 				// don't mess with them
@@ -161,7 +168,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 					newCell = new HashMap<>();
 					storage.setCell(p, newCell);
 					}
-				newCell.put(t.getID(), t);
+				newCell.put(t.ID(), t);
 				}
 			}
 		else
@@ -171,13 +178,14 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 				newCell = new HashMap<>();
 				storage.setCell(p, newCell);
 				}
-			newCell.put(t.getID(), t);
+			newCell.put(t.ID(), t);
 			}
 
 		HashMap<Long, Double2D> map = storage.getStorageMap();
-		map.put(t.getID(), p);
+		map.put(t.ID(), p);
 		}
 	
+	/** Removes the object of the given id, which must be local.  If it does not exist locally, this method returns FALSE. */
 	public boolean removeLocal(long id)
 		{
 		return removeLocal(storage.getLocation(id), id);
@@ -193,52 +201,44 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			{
 			HashMap<Long, T> cell = getCellLocal(loc);
 			if (cell != null)
-				cell.remove(t.getID());
+				cell.remove(t.ID());
 			if (cell.isEmpty() && storage.removeEmptyBags)
 				storage.setCell(loc, null);
 			return true;
 			}
 		}
 	
-	/** Removes the object, which must be local.  If it doesn't exist, returns FALSE. */
+	/** Removes the object of the given id, which must be local and exactly at the given location.  If it doesn't exist, returns FALSE. */
 	public boolean removeLocal(Double2D p, long id)
 		{
-		// TODO: global vs local coordinates?
+		if (!p.equals(getObjectLocationLocal(id)))
+			return false;
 		HashMap<Long, T> cell = getCellLocal(p);
 		T t = cell.get(id);
 		if (t == null) return false;
 		else
 			{
 			if (cell != null)
-				cell.remove(t.getID());
+				cell.remove(t.ID());
 			if (cell.isEmpty() && storage.removeEmptyBags)
 				storage.setCell(p, null);
 			return true;
 			}
 		}
-		
-	/** Returns true if the real-valued point is within the local (non-halo) region.  */
-	public boolean isLocal(Double2D p) { return halo.inLocal(p); }
 
-	/** Returns true if the real-valued point is within the halo region.  */
-	public boolean isHalo(Double2D p) { return halo.inHalo(p); }
-
-	public HaloGrid2D getHaloGrid() { return halo; }
+	/** Removes the object, which must be local and exactly at the given location.  If it doesn't exist, returns FALSE. */
+	public boolean removeLocal(Double2D p, T t)
+		{
+		return removeLocal(t.ID());
+		}
 		
 	/** Returns a Promise which will eventually (immediately or within one timestep)
-		hold the data (which must be a DObject) requested if it is located, else null.  This point can be outside
+		hold the data (which must be a DObject) requested if it is located, else will hold null.  This point can be outside
 		the local and halo regions. */
 	public Promised get(Double2D p, long id) 
 		{
-//		DObject obj = (DObject) t;		// this may throw a runtime exception
 		if (isHalo(p))
-			{
-//				try {
-					return new Promise(getLocal(p, id));
-//				} catch (RemoteException e) {
-//					throw new RuntimeException(e);
-//				}
-			}
+			return new Promise(getLocal(p, id));
 		else
 			return halo.getFromRemote(p, id);
 		}
@@ -267,7 +267,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		the local and halo regions. */
 	public void remove(Double2D p, T t) 
 		{
-		remove(p, ((DObject) t).getID());
+		remove(p, ((DObject) t).ID());
 		}
 
 
@@ -345,7 +345,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			}
 		else
 			{
-			halo.removeAgent(p, agent.getID());
+			halo.removeAgent(p, agent.ID());
 			}
 		}
 		

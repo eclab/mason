@@ -61,7 +61,7 @@ public abstract class DObject implements java.io.Serializable {
 	}
 
 	/** Returns a unique system-wideID to this object. */
-	public final long getID() {
+	public final long ID() {
 		return (((long) firstpid) << 32) | localid;
 	}
 
@@ -69,7 +69,7 @@ public abstract class DObject implements java.io.Serializable {
 	 * Returns a string consisting of the original pid, followed by the unique local
 	 * id of the object. Together these form a unique, permanent systemwide id.
 	 */
-	public final String getIDString() {
+	public final String toIDString() {
 		return firstpid + "/" + localid;
 	}
 
@@ -83,6 +83,6 @@ public abstract class DObject implements java.io.Serializable {
 			// if its running on the remote visualizer its not going have a pid
 		}
 
-		return this.getClass().getName() + ":" + getIDString() + "@" + pid;
+		return this.getClass().getName() + ":" + toIDString() + "@" + pid;
 	}
 }

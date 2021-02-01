@@ -576,7 +576,7 @@ public class DSimState extends SimState {
 							migratedAgents.add(stopping);
 							System.out.println("PID: " + partition.getPID() + " processor " + old_pid + " move " + stopping
 									+ " from " + p + " (point " + p + ") to processor " + toP);
-							haloGrid2D.removeLocal(p, stopping.getID());
+							haloGrid2D.removeLocal(p, stopping.ID());
 						}
 					}
 
@@ -648,7 +648,7 @@ public class DSimState extends SimState {
 									System.out.println(
 											"PID: " + partition.getPID() + " processor " + old_pid + " move " + stopping
 													+ " from " + p + " (point " + p + ") to processor " + toP);
-									haloGrid2D.removeLocal(p, stopping.getID());
+									haloGrid2D.removeLocal(p, stopping.ID());
 									
 								}
 								
@@ -688,7 +688,7 @@ public class DSimState extends SimState {
 							migratedAgents.add(stopping);
 							System.out.println("PID: " + partition.getPID() + " processor " + old_pid + " move " + stopping
 									+ " from " + p + " (point " + p + ") to processor " + toP);
-							haloGrid2D.removeLocal(p, stopping.getID());
+							haloGrid2D.removeLocal(p, stopping.ID());
 						}
 
 					}
