@@ -13,6 +13,8 @@ import sim.util.*;
  * @param <T> Type of objects to store
  */
 public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
+	private static final long serialVersionUID = 1L;
+
 	public ArrayList<T>[] storage;
 
 	/// SEAN -- for the time being we're just doing removeEmptyBags, not

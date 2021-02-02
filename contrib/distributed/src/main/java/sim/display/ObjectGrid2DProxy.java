@@ -8,6 +8,8 @@ import sim.util.*;
 
 public class ObjectGrid2DProxy extends ObjectGrid2D implements UpdatableProxy
 	{
+	private static final long serialVersionUID = 1L;
+
 	public ObjectGrid2DProxy(int width, int height) { super(width, height); }
 
 	public void update(SimStateProxy stateProxy, int proxyIndex) throws RemoteException, NotBoundException

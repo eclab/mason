@@ -11,6 +11,8 @@ import java.util.Arrays;
  */
 public class Timing 
 	{
+	private static final long serialVersionUID = 1L;
+
 	public static final String LB_RUNTIME = "_MASON_LOAD_BALANCING_RUNTIME";
 	public static final String LB_OVERHEAD = "_MASON_LOAD_BALANCING_OVERHEAD";
 	public static final String MPI_SYNC_OVERHEAD = "_MASON_MPI_SYNC_OVERHEAD";

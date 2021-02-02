@@ -28,6 +28,8 @@ import sim.field.partitioning.Partition;
  * MPI methods.
  */
 public class MPIUtil {
+	private static final long serialVersionUID = 1L;
+
 	// static final int MAX_SIZE = 1 << 30; // 1024MBytes
 	static final int MAX_SIZE = 134217728; // 128 MB
 

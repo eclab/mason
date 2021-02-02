@@ -8,6 +8,8 @@ import sim.util.*;
 
 public class Overview extends JComponent
 	{
+	private static final long serialVersionUID = 1L;
+
 	public static final double SIZE_SCALING = 0.125;
 	IntRect2D[] bounds = new IntRect2D[0];
 	int outerX;

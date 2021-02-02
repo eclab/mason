@@ -44,6 +44,8 @@ import sim.engine.rmi.*;
 
 public class SimStateProxy extends SimState
 	{
+	private static final long serialVersionUID = 1L;
+
 	String host = "localhost";
 	/** Returns the IP address of the distributed RMI registry.  You need to set this before start() is called. */
 	public String registryHost() { return host; }

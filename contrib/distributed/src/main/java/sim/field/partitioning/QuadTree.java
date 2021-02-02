@@ -4,6 +4,8 @@ import java.util.*;
 import sim.util.*;
 
 public class QuadTree {
+	private static final long serialVersionUID = 1L;
+
 	int depth = 0;
 
 	QuadTreeNode root;

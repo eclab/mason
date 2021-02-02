@@ -12,6 +12,8 @@ import sim.util.*;
  * @param <T> Type of objects to store
  */
 public class ObjectGridStorage<T extends Serializable> extends GridStorage<T, Int2D> {
+	private static final long serialVersionUID = 1L;
+
 
 	public T[] storage;
 

@@ -7,6 +7,8 @@ import mpi.*;
 import sim.util.*;
 
 public class IntGridStorage extends GridStorage<Integer, Int2D> {
+	private static final long serialVersionUID = 1L;
+
 
 	public int[] storage;
 //	final int initVal;

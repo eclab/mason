@@ -10,6 +10,8 @@ import sim.util.*;
  *
  */
 public class QuadTreeNode {
+	private static final long serialVersionUID = 1L;
+
 	/** level in the tree the node is in */
 	int level;
 	/** its node id */

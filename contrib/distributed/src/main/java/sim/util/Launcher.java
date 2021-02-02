@@ -8,6 +8,8 @@ import java.io.*;
 import java.net.InetAddress;
 
 public class Launcher {
+	private static final long serialVersionUID = 1L;
+
 
     List<String> mpiDefaultArgs = Arrays.asList("-Djava.library.path=/usr/local/lib", "-cp", ".:/usr/local/lib/mpi.jar");
 

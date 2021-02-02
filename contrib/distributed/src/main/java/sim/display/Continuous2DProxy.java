@@ -12,6 +12,8 @@ import sim.util.*;
 
 @SuppressWarnings("rawtypes")
 public class Continuous2DProxy extends Continuous2D implements UpdatableProxy {
+	private static final long serialVersionUID = 1L;
+
 	public Continuous2DProxy(double discretization, double width, double height) {
 		super(discretization, width, height);
 	}

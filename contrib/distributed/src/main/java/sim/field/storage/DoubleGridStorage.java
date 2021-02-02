@@ -8,6 +8,8 @@ import mpi.*;
 import sim.util.*;
 
 public class DoubleGridStorage extends GridStorage<Double, Int2D> {
+	private static final long serialVersionUID = 1L;
+
 	public double[] storage;
 
 	// final double initVal;

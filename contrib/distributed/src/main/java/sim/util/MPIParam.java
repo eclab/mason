@@ -14,6 +14,8 @@ import sim.util.*;
  *
  */
 public class MPIParam {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Nd subarray MPI datatype
 	 * 

@@ -23,6 +23,8 @@ import sim.util.*;
  * @param <P> Type of point
  */
 public class QuadTreePartition extends Partition {
+	private static final long serialVersionUID = 1L;
+
 	QuadTree qt;
 	QuadTreeNode myLeafNode; // the leaf node that this pid is mapped to
 	Map<Integer, GroupComm> groups; // Map the level to its corresponding comm group

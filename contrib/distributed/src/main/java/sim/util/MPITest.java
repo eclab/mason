@@ -11,6 +11,8 @@ import mpi.*;
  *
  */
 public class MPITest {
+	private static final long serialVersionUID = 1L;
+
 
 	private static final Comm comm = MPI.COMM_WORLD;
 

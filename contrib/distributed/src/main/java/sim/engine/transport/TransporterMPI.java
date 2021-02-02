@@ -26,6 +26,8 @@ import sim.util.*;
  * transportation and transporting agents is called migration.
  */
 public class TransporterMPI {
+	private static final long serialVersionUID = 1L;
+
 
 	int numNeighbors; // number of direct neighbors
 	int[] src_count, src_displ, dst_count, dst_displ;

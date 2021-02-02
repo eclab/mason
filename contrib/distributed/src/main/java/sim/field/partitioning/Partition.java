@@ -14,6 +14,8 @@ import sim.util.*;
 // Consumer is Raw Type because its parameter is of type int
 //@SuppressWarnings("rawtypes")
 public abstract class Partition {
+	private static final long serialVersionUID = 1L;
+
 	int pid;
 	int numProcessors;
 	int width;

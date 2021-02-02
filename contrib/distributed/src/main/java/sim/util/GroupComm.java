@@ -10,6 +10,8 @@ import sim.field.partitioning.QuadTreeNode;
  *
  */
 public class GroupComm {
+	private static final long serialVersionUID = 1L;
+
 	public QuadTreeNode master;
 	public ArrayList<QuadTreeNode> leaves;
 	public Comm comm;

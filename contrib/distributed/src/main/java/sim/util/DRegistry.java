@@ -32,6 +32,8 @@ import sim.util.MPIUtil;
  * the information he wishes.
  */
 public class DRegistry {
+	private static final long serialVersionUID = 1L;
+
 	public static Logger logger;
 
 	private static DRegistry instance;

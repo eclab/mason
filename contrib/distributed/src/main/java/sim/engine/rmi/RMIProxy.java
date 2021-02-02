@@ -16,6 +16,8 @@ import sim.util.NumberND;
 @SuppressWarnings("rawtypes")
 public class RMIProxy<T extends Serializable, P extends NumberND> {
 
+	private static final long serialVersionUID = 1L;
+
 	final TransportRMIInterface[] cache;
 	final int fieldId;
 

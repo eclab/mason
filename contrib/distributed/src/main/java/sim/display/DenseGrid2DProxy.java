@@ -9,6 +9,8 @@ import sim.util.*;
 
 public class DenseGrid2DProxy extends DenseGrid2D implements UpdatableProxy
 	{
+	private static final long serialVersionUID = 1L;
+
 	public DenseGrid2DProxy(int width, int height) { super(width, height); }
 	
 	public void update(SimStateProxy stateProxy, int proxyIndex) throws RemoteException, NotBoundException
