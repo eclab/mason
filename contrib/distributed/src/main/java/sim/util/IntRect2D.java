@@ -56,6 +56,18 @@ public class IntRect2D implements Serializable {
 		return br.x - ul.x;
 	}
 
+	// Return whether the rect contains the given <x, y> point.
+	// Noted that the rect is treated as half-inclusive (ul) and half-exclusive (br)
+	public boolean contains(int x, int y) {
+		return (ul.x <= x && ul.y <= y && br.x > x && br.y > y);
+	}
+
+	// Return whether the rect contains the given <x, y> point.
+	// Noted that the rect is treated as half-inclusive (ul) and half-exclusive (br)
+	public boolean contains(double x, double y) {
+		return (ul.x <= x && ul.y <= y && br.x > x && br.y > y);
+	}
+
 	// Return whether the rect contains p
 	// Noted that the rect is treated as half-inclusive (ul) and half-exclusive (br)
 	public boolean contains(Int2D p) {
