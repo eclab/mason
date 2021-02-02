@@ -11,6 +11,7 @@ import sim.util.*;
  * A grid that contains integers. Analogous to Mason's IntGrid2D
  * 
  */
+ 
 public class DIntGrid2D extends DAbstractGrid2D
 	{
 	private static final long serialVersionUID = 1L;
@@ -61,11 +62,7 @@ public class DIntGrid2D extends DAbstractGrid2D
 	public Promised get(Int2D p) 
 		{
 		if (isHalo(p))
-//			try {
-				return new Promise(storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))]);
-//			} catch (RemoteException e) {
-//				throw new RuntimeException(e);
-//			}
+			return new Promise(storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))]);
 		else return halo.getFromRemote(p);
 		}
 

@@ -387,10 +387,247 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 	 * @param point
 	 * @return true if point is local or in the halo
 	 */
-	 // this used to be called inLocalAndHalo
 	public boolean inHalo(final NumberND point) {
 		return haloPart.contains(point);
 	}
+
+
+	/**
+	 * @param point
+	 * @return a point wrapped around considering the toroidal halo region, if possible.  If out of the halo region, returns null.
+	 */
+	public Double2D toHaloToroidal(final Double2D point) 
+		{
+		if (inHalo(point)) return point;
+		double x = point.x;
+		double y = point.y;
+		double aoi = partition.getAOI();
+		double height = worldHeight;
+		double width = worldWidth;
+		
+		double lowx = (x - width);
+		if (lowx >= 0 - aoi)
+			{
+			double lowy = (y - height);
+			if (lowy >= 0 - aoi)
+				{
+				if (haloPart.contains(lowx, lowy))
+					return new Double2D(lowx, lowy);
+				else return null;
+				}
+			double highy = (y + height);
+			if (highy < height + aoi)
+				{
+				if (haloPart.contains(lowx, highy))
+					return new Double2D(lowx, highy);
+				else return null;
+				}
+			else
+				{
+				if (haloPart.contains(lowx, y))
+					return new Double2D(lowx, y);
+				else return null;
+				}
+			}
+
+		double highx = (x + width);
+		if (highx < width + aoi)
+			{
+			double lowy = (y - height);
+			if (lowy >= 0 - aoi)
+				{
+				if (haloPart.contains(highx, lowy))
+					return new Double2D(highx, lowy);
+				else return null;
+				}
+			double highy = (y + height);
+			if (highy < height + aoi)
+				{
+				if (haloPart.contains(highx, highy))
+					return new Double2D(highx, highy);
+				else return null;
+				}
+			else
+				{
+				if (haloPart.contains(highx, y))
+					return new Double2D(highx, y);
+				else return null;
+				}
+			}
+
+		double lowy = (y - height);
+		if (lowy >= 0 - aoi)
+			{
+			if (haloPart.contains(x, lowy))
+				return new Double2D(x, lowy);
+				else return null;
+			}
+			
+		double highy = (y + height);
+		if (highy < height + aoi)
+			{
+			if (haloPart.contains(x, highy))
+				return new Double2D(x, highy);
+				else return null;
+			}
+		
+		return null;
+		}
+
+
+	/**
+	 * @param point
+	 * @return a point wrapped around considering the toroidal halo region, if possible.  If out of the halo region, returns null.
+	 */
+	public Int2D toHaloToroidal(final Int2D point) 
+		{
+		if (inHalo(point)) return point;  // easy
+		int x = point.x;
+		int y = point.y;
+		int aoi = partition.getAOI();
+		int height = worldHeight;
+		int width = worldWidth;
+		
+		int lowx = (x - width);
+		if (lowx >= 0 - aoi)
+			{
+			int lowy = (y - height);
+			if (lowy >= 0 - aoi)
+				{
+				if (haloPart.contains(lowx, lowy))
+					return new Int2D(lowx, lowy);
+				else return null;
+				}
+			int highy = (y + height);
+			if (highy < height + aoi)
+				{
+				if (haloPart.contains(lowx, highy))
+					return new Int2D(lowx, highy);
+				else return null;
+				}
+			else
+				{
+				if (haloPart.contains(lowx, y))
+					return new Int2D(lowx, y);
+				else return null;
+				}
+			}
+
+		int highx = (x + width);
+		if (highx < width + aoi)
+			{
+			int lowy = (y - height);
+			if (lowy >= 0 - aoi)
+				{
+				if (haloPart.contains(highx, lowy))
+					return new Int2D(highx, lowy);
+				else return null;
+				}
+			int highy = (y + height);
+			if (highy < height + aoi)
+				{
+				if (haloPart.contains(highx, highy))
+					return new Int2D(highx, highy);
+				else return null;
+				}
+			else
+				{
+				if (haloPart.contains(highx, y))
+					return new Int2D(highx, y);
+				else return null;
+				}
+			}
+
+		int lowy = (y - height);
+		if (lowy >= 0 - aoi)
+			{
+			if (haloPart.contains(x, lowy))
+				return new Int2D(x, lowy);
+				else return null;
+			}
+			
+		int highy = (y + height);
+		if (highy < height + aoi)
+			{
+			if (haloPart.contains(x, highy))
+				return new Int2D(x, highy);
+				else return null;
+			}
+		
+		return null;
+		}
+		
+	/**
+	 * @param point
+	 * @return true if point is local or in the halo considering toroidal wrap-around
+	 */
+	public boolean inHaloToroidal(NumberND point) 
+		{
+		double[] p = point.toArrayAsDouble();
+		return inHaloToroidal(p[0], p[1]);
+		}
+		
+
+	public boolean inHaloToroidal(double x, double y) 
+		{
+		if (haloPart.contains(x, y)) return true;
+		
+		double aoi = partition.getAOI();
+		double height = worldHeight;
+		double width = worldWidth;
+		
+		double lowx = (x - width);
+		if (lowx >= 0 - aoi)
+			{
+			double lowy = (y - height);
+			if (lowy >= 0 - aoi)
+				{
+				return (haloPart.contains(lowx, lowy));
+				}
+			double highy = (y + height);
+			if (highy < height + aoi)
+				{
+				return (haloPart.contains(lowx, highy));
+				}
+			else
+				{
+				return (haloPart.contains(lowx, y));
+				}
+			}
+
+		double highx = (x + width);
+		if (highx < width + aoi)
+			{
+			double lowy = (y - height);
+			if (lowy >= 0 - aoi)
+				{
+				return (haloPart.contains(highx, lowy));
+				}
+			double highy = (y + height);
+			if (highy < height + aoi)
+				{
+				return (haloPart.contains(highx, highy));
+				}
+			else
+				{
+				return (haloPart.contains(highx, y));
+				}
+			}
+
+		double lowy = (y - height);
+		if (lowy >= 0 - aoi)
+			{
+			return (haloPart.contains(x, lowy));
+			}
+			
+		double highy = (y + height);
+		if (highy < height + aoi)
+			{
+			return (haloPart.contains(x, highy));
+			}
+		
+		return false;
+		}
 
 	/**
 	 * @param point
@@ -586,6 +823,12 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 //				localStorage.addToLocation(t, toLocalPoint((Int2D) p));
 //		}
 //	}
+
+
+
+	///// REMOTE FIELD METHODS
+	///// These methods are how 
+
 
 	public void addLocal(final NumberND p, final T t) {
 		if (localStorage instanceof ContinuousStorage)

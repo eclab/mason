@@ -79,7 +79,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	/** Returns true if the object is located locally, including in the halo region.  */
 	public boolean containsLocal(T t) 
 		{
-		return (getObjectLocationLocal(t) != null);
+		return (getObjectLocationLocal(t.ID()) != null);
 		}
 
 	/** Returns true if the object is located locally, including in the halo region.  */
@@ -108,9 +108,10 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		return storage.getCell(p);
 		}
 
-	/** Returns all the local data located <i>exactly</i> at the given point.  This point
+	/* Returns all the local data located <i>exactly</i> at the given point.  This point
 		must lie within the halo region or an exception will be thrown.  */
-	public ArrayList<T> getLocal(Double2D p) 
+/*
+	public ArrayList<T> getAllLocal(Double2D p) 
 		{
 		HashMap<Long, T> cell = getCellLocal(p);
 		ArrayList<T> reduced = new ArrayList<>();
@@ -122,6 +123,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			 }
 		return reduced;
 		}
+*/
 		
 	/** Returns the object associated with the given ID if it stored within the halo region, else null. */
 	public T getLocal(long id)
@@ -267,7 +269,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		the local and halo regions. */
 	public void remove(Double2D p, T t) 
 		{
-		remove(p, ((DObject) t).ID());
+		remove(p, t.ID());
 		}
 
 
@@ -366,17 +368,8 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			Double2D p = getObjectLocationLocal(agent);
 			if (isLocal(to))
 				{
-				//System.out.println(agent);
-				//HashMap a = storage.getCell(p);
-				//HashMap b = storage.getCell(to);
 				removeLocal(agent);
-				//HashMap c = storage.getCell(p);
-				//HashMap d = storage.getCell(to);
 				addLocal(to, agent);
-				//HashMap e = storage.getCell(p);
-				//HashMap f = storage.getCell(to);
-				//storage.same_agent_multiple_cells("dolphin1 a :"+a+" b: "+b+" c: "+c+" d: "+d+" e: "+e+" f: "+f+" agent "+agent+" to "+to+" p "+p);
-
 				}
 			else
 				{
@@ -686,100 +679,93 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
             }
 	
     public Bag getNeighborsWithinDistance( Double2D position, final double distance, final boolean toroidal, final boolean nonPointObjects, Bag result)
-            {
-            // push location to within legal boundaries
-    	
+		{
+		// push location to within legal boundaries
+	
+		//handles toroidal .  First, detoroidalize, Second, check if "real" point is within bounds
+		if (toroidal && (position.x >= width || position.y >= height || position.x < 0 || position.y < 0))
+		{
+			position = new Double2D(tx(position.x), ty(position.y));
+		}
+	   
+	   //Now, if position not in this partition, output error!
+		if (!storage.getShape().contains(position)) {
+			throw new InternalError("Position "+position+" not in this partition ");
+		}
+	
+		
+		double discDistance = distance / this.storage.getDiscretization();
+		double discX = position.x / this.storage.getDiscretization();
+		double discY = position.y / this.storage.getDiscretization();
+		
+		if (nonPointObjects)
+			{
+			// We assume that the discretization is larger than the bounding
+			// box width or height for the object in question.  In this case, then
+			// we can just increase the range by 1 in each direction and we are
+			// guaranteed to have the location of the object in our collection.
+			discDistance++;
+			}
 
-    	
-    	    //handles toroidal .  First, detoroidalize, Second, check if "real" point is within bounds
-            if (toroidal && (position.x >= width || position.y >= height || position.x < 0 || position.y < 0))
-            {
-                position = new Double2D(tx(position.x), ty(position.y));
-            }
-           
-           //Now, if position not in this partition, output error!
-            if (!storage.getShape().contains(position)) {
-            	throw new InternalError("Position "+position+" not in this partition ");
-            }
-    	
-            
-            double discDistance = distance / this.storage.getDiscretization();
-            double discX = position.x / this.storage.getDiscretization();
-            double discY = position.y / this.storage.getDiscretization();
-            
-            if (nonPointObjects)
-                {
-                // We assume that the discretization is larger than the bounding
-                // box width or height for the object in question.  In this case, then
-                // we can just increase the range by 1 in each direction and we are
-                // guaranteed to have the location of the object in our collection.
-                discDistance++;
-                }
-
-            final int expectedBagSize = 1;  // in the future, pick a smarter bag size?
-            if (result!=null) result.clear();
-            else result = new Bag(expectedBagSize);
-            
-            ArrayList temp;
-        
-
-                
-            int minX = (int) StrictMath.floor(discX - discDistance);
-            int maxX = (int) StrictMath.floor(discX + discDistance);
-            int minY = (int) StrictMath.floor(discY - discDistance);
-            int maxY = (int) StrictMath.floor(discY + discDistance);
-                
-            //control bounds to match storage
-            minX = Math.max(minX, this.storage.getShape().ul().x);
-            minY = Math.max(minY, this.storage.getShape().ul().y);
-            maxX = Math.min(maxX, this.storage.getShape().br().x);
-            maxY = Math.min(maxY, this.storage.getShape().br().y);
-
-
-            // for non-toroidal, it is easier to do the inclusive for-loops
-            for(int x = minX; x<= maxX; x++)
-                for(int y = minY ; y <= maxY; y++)
-                    {
-
-                        
-                        //inLocalAndHalo do we check this?
-                    	Double2D pt = new Double2D(x, y);
-                        temp = this.storage.getObjects(pt);  //control for range here!
-                        
-                        if( temp != null && !temp.isEmpty())
-                            {
-                            // a little efficiency: add if we're 1, addAll if we're > 1, 
-                            // do nothing if we're <= 0 (we're empty)
-                            final int n = temp.size();
-                            if (n==1) result.add(temp.get(0));
-                            else result.addAll(temp);
-                            }
-                        }
-               // }
-
-            return result;
-            }
-    
-    public Bag getNeighborsExactlyWithinDistance(final Double2D position, final double distance)
-    {
-    return getNeighborsExactlyWithinDistance(position, distance, false, true, true, null);
-    }
-
-    public Bag getNeighborsExactlyWithinDistance(final Double2D position, final double distance, final boolean toroidal)
-
-    {
-    return getNeighborsExactlyWithinDistance(position, distance, toroidal, true, true, null);
-    }
-
-    
+		final int expectedBagSize = 1;  // in the future, pick a smarter bag size?
+		if (result!=null) result.clear();
+		else result = new Bag(expectedBagSize);
+		
+		ArrayList temp;
 	
 
-	//// FIXME SEAN:
-	//// Width and height are ints :-(
+			
+		int minX = (int) StrictMath.floor(discX - discDistance);
+		int maxX = (int) StrictMath.floor(discX + discDistance);
+		int minY = (int) StrictMath.floor(discY - discDistance);
+		int maxY = (int) StrictMath.floor(discY + discDistance);
+			
+		//control bounds to match storage
+		minX = Math.max(minX, this.storage.getShape().ul().x);
+		minY = Math.max(minY, this.storage.getShape().ul().y);
+		maxX = Math.min(maxX, this.storage.getShape().br().x);
+		maxY = Math.min(maxY, this.storage.getShape().br().y);
 
+
+		// for non-toroidal, it is easier to do the inclusive for-loops
+		for(int x = minX; x<= maxX; x++)
+			for(int y = minY ; y <= maxY; y++)
+				{
+
+					
+					//inLocalAndHalo do we check this?
+					Double2D pt = new Double2D(x, y);
+					temp = this.storage.getObjects(pt);  //control for range here!
+					
+					if( temp != null && !temp.isEmpty())
+						{
+						// a little efficiency: add if we're 1, addAll if we're > 1, 
+						// do nothing if we're <= 0 (we're empty)
+						final int n = temp.size();
+						if (n==1) result.add(temp.get(0));
+						else result.addAll(temp);
+						}
+					}
+		   // }
+
+		return result;
+		}
+    
+    public Bag getNeighborsExactlyWithinDistance(final Double2D position, final double distance)
+		{
+		return getNeighborsExactlyWithinDistance(position, distance, false, true, true, null);
+		}
+
+    public Bag getNeighborsExactlyWithinDistance(final Double2D position, final double distance, final boolean toroidal)
+		{
+		return getNeighborsExactlyWithinDistance(position, distance, toroidal, true, true, null);
+		}
+
+    
 	/** Toroidal x */
 	// slight revision for more efficiency
-	public double tx(double x) {
+	public double tx(double x) 
+	{
 		double width = this.width;
 		if (x >= 0 && x < width)
 			return x; // do clearest case first
@@ -791,7 +777,8 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 
 	/** Toroidal y */
 	// slight revision for more efficiency
-	public double ty(double y) {
+	public double ty(double y) 
+	{
 		double height = this.height;
 		if (y >= 0 && y < height)
 			return y; // do clearest case first
@@ -812,7 +799,8 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	 * However removing the double width = this.width; is likely to be a little
 	 * faster if most objects are within the toroidal region.
 	 */
-	public double stx(double x) {
+	public double stx(double x) 
+	{
 		if (x >= 0) {
 			if (x < width)
 				return x;
@@ -832,8 +820,10 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	 * However removing the double height = this.height; is likely to be a little
 	 * faster if most objects are within the toroidal region.
 	 */
-	public double sty(double y) {
-		if (y >= 0) {
+	public double sty(double y) 
+	{
+		if (y >= 0) 
+		{
 			if (y < height)
 				return y;
 			return y - height;
@@ -842,8 +832,10 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	}
 
 	// some efficiency to avoid width lookups
-	double _stx(double x, double width) {
-		if (x >= 0) {
+	double _stx(double x, double width) 
+	{
+		if (x >= 0) 
+		{
 			if (x < width)
 				return x;
 			return x - width;
@@ -852,7 +844,8 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	}
 
 	/** Minimum toroidal difference between two values in the X dimension. */
-	public double tdx(double x1, double x2) {
+	public double tdx(double x1, double x2) 
+	{
 		double width = this.width;
 		if (Math.abs(x1 - x2) <= width / 2)
 			return x1 - x2; // no wraparounds -- quick and dirty check
@@ -866,8 +859,10 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	}
 
 	// some efficiency to avoid height lookups
-	double _sty(double y, double height) {
-		if (y >= 0) {
+	double _sty(double y, double height) 
+	{
+		if (y >= 0) 
+		{
 			if (y < height)
 				return y;
 			return y - height;
@@ -876,7 +871,8 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	}
 
 	/** Minimum toroidal difference between two values in the Y dimension. */
-	public double tdy(double y1, double y2) {
+	public double tdy(double y1, double y2) 
+	{
 		double height = this.height;
 		if (Math.abs(y1 - y2) <= height / 2)
 			return y1 - y2; // no wraparounds -- quick and dirty check
@@ -894,7 +890,8 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	 * "shortest" (squared) distance between two points, considering wrap-around
 	 * possibilities as well.
 	 */
-	public double tds(Double2D d1, Double2D d2) {
+	public double tds(Double2D d1, Double2D d2) 
+	{
 		double dx = tdx(d1.x, d2.x);
 		double dy = tdy(d1.y, d2.y);
 		return (dx * dx + dy * dy);
@@ -905,8 +902,14 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	 * second point from the first and produces the minimum-length such subtractive
 	 * vector, considering wrap-around possibilities as well
 	 */
-	public Double2D tv(Double2D d1, Double2D d2) {
+	public Double2D tv(Double2D d1, Double2D d2) 
+	{
 		return new Double2D(tdx(d1.x, d2.x), tdy(d1.y, d2.y));
 	}
+
+
+
+
+
 
 }

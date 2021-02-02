@@ -39,16 +39,8 @@ public class DDoubleGrid2D extends DAbstractGrid2D
 	public double[] getStorageArray() { return storage.storage; }
 
 	/** Returns the data associated with the given point.  This point
-		must lie within the local region or an exception will be thrown.  */
-	public double getLocal(Int2D p) 
-		{
-		if (!isHalo(p)) throwNotLocalException(p);
-		return storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))];
-		}
-
-	/** Returns the data associated with the given point.  This point
 		must lie within the halo region or an exception will be thrown.  */
-	public double getHalo(Int2D p) 
+	public double getLocal(Int2D p) 
 		{
 		if (!isHalo(p)) throwNotLocalException(p);
 		return storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))];
@@ -70,11 +62,7 @@ public class DDoubleGrid2D extends DAbstractGrid2D
 	public Promised get(Int2D p) 
 		{
 		if (isHalo(p))
-//			try {
-				return new Promise(storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))]);
-//			} catch (RemoteException e) {
-//				throw new RuntimeException(e);
-//			}
+			return new Promise(storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))]);
 		else return halo.getFromRemote(p);
 		}
 
@@ -88,6 +76,9 @@ public class DDoubleGrid2D extends DAbstractGrid2D
 			halo.addToRemote(p, val);
 		}
 
+
+	//// FIXME -- this should be replaced with a proper set of methods
+
 	/** Multiplies all elements in the local storage array byThisMuch */
 	public void multiply(double byThisMuch) {
 			if (byThisMuch != 1.0)
@@ -99,18 +90,4 @@ public class DDoubleGrid2D extends DAbstractGrid2D
 					}
 				}
 		}
-
-/*	
-public DDoubleGrid2D multiply(double byThisMuch) {
-		if (byThisMuch == 1.0)
-			return this;
-
-		for (Int2D p : halo.partition.getLocalBounds().getPointList()) {
-			Double obj = get(p);
-			removeLocal(p);
-			add(p, obj * byThisMuch);
-		}
-		return this;
 	}
-*/
-}
