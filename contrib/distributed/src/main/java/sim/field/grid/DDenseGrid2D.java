@@ -541,26 +541,19 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
      * is equivalent to the so-called "Moore Neighborhood" (the eight neighbors surrounding (X,Y)), plus (X,Y) itself.
      * Places each x and y value of these locations in the provided IntBags xPos and yPos, clearing the bags first.
      *
-     * <p>Then places into the result ArrayList any Objects which fall on one of these <x,y> locations, clearning it first.
-     * <b>Note that the order and size of the result ArrayList may not correspond to the X and Y bags.</b>  If you want
+     * <p>Then places into the resulting ArrayList any Objects which fall on one of these <x,y> locations, clearning it first.
+     * <b>Note that the order and size of the resulting ArrayList may not correspond to the X and Y bags.</b>  If you want
      * all three bags to correspond (x, y, object) then use getNeighborsAndCorrespondingPositionsMaxDistance(...)
-     * Returns the result ArrayList.
+     * Returns the resulting ArrayList.
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
      *
-     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
-     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
-     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
-     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
-     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
-     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
-     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
-     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
-     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     * <p>The distance (dist) may be no larger than the Area of Interest (AOI), else an exception will be thrown.
+     * The neighbors may leak out into the halo region of your partition.
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public ArrayList<T> getMooreNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos )
+    public ArrayList<T> getMooreNeighbors( final int x, final int y, final int dist, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos )
         {
         if (dist > halo.partition.getAOI()) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.partition.getAOI());
 
@@ -569,7 +562,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
         if( yPos == null )
             yPos = new IntBag();
 
-        getMooreLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getMooreLocations( x, y, dist, UNBOUNDED, includeOrigin, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
 
@@ -580,27 +573,20 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
      * is equivalent to the so-called "Moore Neighborhood" (the eight neighbors surrounding (X,Y)), plus (X,Y) itself.
      *
      * <p>For each Object which falls within this distance, adds the X position, Y position, and Object into the
-     * xPos, yPos, and result ArrayList, clearing them first.  
+     * xPos, yPos, and resulting ArrayList, clearing them first.  
      * Some <X,Y> positions may not appear
      * and that others may appear multiply if multiple objects share that positions.  Compare this function
      * with getNeighborsMaxDistance(...).
-     * Returns the result ArrayList.
+     * Returns the resulting ArrayList.
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
      *
-     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
-     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
-     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
-     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
-     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
-     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
-     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
-     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
-     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     * <p>The distance (dist) may be no larger than the Area of Interest (AOI), else an exception will be thrown.
+     * The neighbors may leak out into the halo region of your partition.
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public ArrayList<T> getMooreNeighborsAndLocations(final int x, final int y, final int dist, int mode, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos)
+    public ArrayList<T> getMooreNeighborsAndLocations(final int x, final int y, final int dist, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos)
         {
         if (dist > halo.partition.getAOI()) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.partition.getAOI());
 
@@ -609,7 +595,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
         if( yPos == null )
             yPos = new IntBag();
 
-        getMooreLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getMooreLocations( x, y, dist, UNBOUNDED, includeOrigin, xPos, yPos );
         reduceObjectsAtLocations( xPos,  yPos,  result);
         return result;
         }
@@ -623,26 +609,19 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
      * plus (X,Y) itself.
      *
      * <p>Places each x and y value of these locations in the provided IntBags xPos and yPos, clearing the bags first.
-     * Then places into the result ArrayList any Objects which fall on one of these <x,y> locations, clearning it first.
-     * Note that the order and size of the result ArrayList may not correspond to the X and Y bags.  If you want
+     * Then places into the resulting ArrayList any Objects which fall on one of these <x,y> locations, clearning it first.
+     * Note that the order and size of the resulting ArrayList may not correspond to the X and Y bags.  If you want
      * all three bags to correspond (x, y, object) then use getNeighborsAndCorrespondingPositionsHamiltonianDistance(...)
-     * Returns the result ArrayList (constructing one if null had been passed in).
+     * Returns the resulting ArrayList (constructing one if null had been passed in).
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
      *
-     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
-     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
-     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
-     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
-     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
-     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
-     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
-     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
-     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     * <p>The distance (dist) may be no larger than the Area of Interest (AOI), else an exception will be thrown.
+     * The neighbors may leak out into the halo region of your partition.
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public ArrayList<T> getVonNeumannNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos )
+    public ArrayList<T> getVonNeumannNeighbors( final int x, final int y, final int dist, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos )
         {
         if (dist > halo.partition.getAOI()) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.partition.getAOI());
 
@@ -651,7 +630,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
         if( yPos == null )
             yPos = new IntBag();
 
-        getVonNeumannLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getVonNeumannLocations( x, y, dist, UNBOUNDED, includeOrigin, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
 
@@ -664,27 +643,20 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
      * plus (X,Y) itself.
      *
      * <p>For each Object which falls within this distance, adds the X position, Y position, and Object into the
-     * xPos, yPos, and result ArrayList, clearing them first.  
+     * xPos, yPos, and resulting ArrayList, clearing them first.  
      * Some <X,Y> positions may not appear
      * and that others may appear multiply if multiple objects share that positions.  Compare this function
      * with getNeighborsMaxDistance(...).
-     * Returns the result ArrayList.
+     * Returns the resulting ArrayList.
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
      *
-     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
-     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
-     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
-     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
-     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
-     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
-     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
-     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
-     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     * <p>The distance (dist) may be no larger than the Area of Interest (AOI), else an exception will be thrown.
+     * The neighbors may leak out into the halo region of your partition.
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public ArrayList<T> getVonNeumannNeighborsAndLocations(final int x, final int y, final int dist, int mode, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos)
+    public ArrayList<T> getVonNeumannNeighborsAndLocations(final int x, final int y, final int dist, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos)
         {
         if (dist > halo.partition.getAOI()) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.partition.getAOI());
 
@@ -693,7 +665,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
         if( yPos == null )
             yPos = new IntBag();
 
-        getVonNeumannLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getVonNeumannLocations( x, y, dist, UNBOUNDED, includeOrigin, xPos, yPos );
         reduceObjectsAtLocations( xPos,  yPos,  result);
         return result;
         }
@@ -707,26 +679,19 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
      * plus (X,Y) itself.
      *
      * <p>Places each x and y value of these locations in the provided IntBags xPos and yPos, clearing the bags first.
-     * Then places into the result ArrayList any Objects which fall on one of these <x,y> locations, clearning it first.
-     * Note that the order and size of the result ArrayList may not correspond to the X and Y bags.  If you want
+     * Then places into the resulting ArrayList any Objects which fall on one of these <x,y> locations, clearning it first.
+     * Note that the order and size of the resulting ArrayList may not correspond to the X and Y bags.  If you want
      * all three bags to correspond (x, y, object) then use getNeighborsAndCorrespondingPositionsHamiltonianDistance(...)
-     * Returns the result ArrayList (constructing one if null had been passed in).
+     * Returns the resulting ArrayList (constructing one if null had been passed in).
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
      *
-     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
-     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
-     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
-     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
-     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
-     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
-     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
-     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
-     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     * <p>The distance (dist) may be no larger than the Area of Interest (AOI), else an exception will be thrown.
+     * The neighbors may leak out into the halo region of your partition.
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public ArrayList<T> getHexagonalNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos )
+    public ArrayList<T> getHexagonalNeighbors( final int x, final int y, final int dist, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos )
         {
         if (dist > halo.partition.getAOI()) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.partition.getAOI());
 
@@ -735,7 +700,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
         if( yPos == null )
             yPos = new IntBag();
 
-        getHexagonalLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getHexagonalLocations( x, y, dist, UNBOUNDED, includeOrigin, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
                 
@@ -747,27 +712,20 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
      * plus (X,Y) itself.
      *
      * <p>For each Object which falls within this distance, adds the X position, Y position, and Object into the
-     * xPos, yPos, and result ArrayList, clearing them first.  
+     * xPos, yPos, and resulting ArrayList, clearing them first.  
      * Some <X,Y> positions may not appear
      * and that others may appear multiply if multiple objects share that positions.  Compare this function
      * with getNeighborsMaxDistance(...).
-     * Returns the result ArrayList.
+     * Returns the resulting ArrayList.
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
      *
-     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
-     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
-     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
-     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
-     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
-     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
-     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
-     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
-     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     * <p>The distance (dist) may be no larger than the Area of Interest (AOI), else an exception will be thrown.
+     * The neighbors may leak out into the halo region of your partition.
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public ArrayList<T> getHexagonalNeighborsAndLocations(final int x, final int y, final int dist, int mode, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos)
+    public ArrayList<T> getHexagonalNeighborsAndLocations(final int x, final int y, final int dist, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos)
         {
         if (dist > halo.partition.getAOI()) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.partition.getAOI());
 
@@ -776,26 +734,26 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
         if( yPos == null )
             yPos = new IntBag();
 
-        getHexagonalLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getHexagonalLocations( x, y, dist, UNBOUNDED, includeOrigin, xPos, yPos );
         reduceObjectsAtLocations( xPos,  yPos,  result);
         return result;
         }
 
 
 
-    public ArrayList<T> getRadialNeighbors( final int x, final int y, final double dist, int mode, boolean includeOrigin,  ArrayList<T> result, IntBag xPos, IntBag yPos )
+    public ArrayList<T> getRadialNeighbors( final int x, final int y, final double dist, boolean includeOrigin,  ArrayList<T> result, IntBag xPos, IntBag yPos )
         {
-        return getRadialNeighbors(x, y, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos);
+        return getRadialNeighbors(x, y, dist, includeOrigin, Grid2D.ANY, true, result, xPos, yPos);
         }
 
 
-    public ArrayList<T> getRadialNeighborsAndLocations( final int x, final int y, final double dist, int mode, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos )
+    public ArrayList<T> getRadialNeighborsAndLocations( final int x, final int y, final double dist, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos )
         {
-        return getRadialNeighborsAndLocations(x, y, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos);
+        return getRadialNeighborsAndLocations(x, y, dist, includeOrigin, Grid2D.ANY, true, result, xPos, yPos);
         }
 
 
-    public ArrayList<T> getRadialNeighbors( final int x, final int y, final double dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  ArrayList<T> result, IntBag xPos, IntBag yPos )
+    public ArrayList<T> getRadialNeighbors( final int x, final int y, final double dist, boolean includeOrigin,  int measurementRule, boolean closed,  ArrayList<T> result, IntBag xPos, IntBag yPos )
         {
         if (dist > halo.partition.getAOI()) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.partition.getAOI());
 
@@ -804,12 +762,12 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
         if( yPos == null )
             yPos = new IntBag();
 
-        getRadialLocations( x, y, dist, mode, includeOrigin, measurementRule, closed, xPos, yPos );
+        getRadialLocations( x, y, dist, UNBOUNDED, includeOrigin, measurementRule, closed, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
                 
 
-    public ArrayList<T> getRadialNeighborsAndLocations( final int x, final int y, final double dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  ArrayList<T> result, IntBag xPos, IntBag yPos )
+    public ArrayList<T> getRadialNeighborsAndLocations( final int x, final int y, final double dist, boolean includeOrigin,  int measurementRule, boolean closed,  ArrayList<T> result, IntBag xPos, IntBag yPos )
         {
         if (dist > halo.partition.getAOI()) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.partition.getAOI());
 
@@ -818,7 +776,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
         if( yPos == null )
             yPos = new IntBag();
 
-        getRadialLocations( x, y, dist, mode, includeOrigin, measurementRule, closed, xPos, yPos );
+        getRadialLocations( x, y, dist, UNBOUNDED, includeOrigin, measurementRule, closed, xPos, yPos );
         reduceObjectsAtLocations( xPos,  yPos,  result);
         return getObjectsAtLocations(xPos,yPos,result);
         }
@@ -894,19 +852,13 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
      * is equivalent to the so-called "Moore Neighborhood" (the eight neighbors surrounding (X,Y)), plus (X,Y) itself.
      * <p>Then returns, as a ArrayList, any Objects which fall on one of these <x,y> locations.
      *
-     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
-     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
-     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
-     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
-     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
-     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
-     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
-     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
-     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     * <p>The distance (dist) may be no larger than the Area of Interest (AOI), else an exception will be thrown.
+     * The neighbors may leak out into the halo region of your partition.
+     *
      */
-    public ArrayList<T> getMooreNeighbors( int x, int y, int dist, int mode, boolean includeOrigin )
+    public ArrayList<T> getMooreNeighbors( int x, int y, int dist, boolean includeOrigin )
         {
-        return getMooreNeighbors(x, y, dist, mode, includeOrigin, null, null, null);
+        return getMooreNeighbors(x, y, dist, includeOrigin, null, null, null);
         }
 
 
@@ -918,19 +870,13 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
      * plus (X,Y) itself.
      * <p>Then returns, as a ArrayList, any Objects which fall on one of these <x,y> locations.
      *
-     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
-     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
-     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
-     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
-     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
-     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
-     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
-     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
-     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     * <p>The distance (dist) may be no larger than the Area of Interest (AOI), else an exception will be thrown.
+     * The neighbors may leak out into the halo region of your partition.
+     *
      */
-    public ArrayList<T> getVonNeumannNeighbors( int x, int y, int dist, int mode, boolean includeOrigin )
+    public ArrayList<T> getVonNeumannNeighbors( int x, int y, int dist, boolean includeOrigin )
         {
-        return getVonNeumannNeighbors(x, y, dist, mode, includeOrigin, null, null, null);
+        return getVonNeumannNeighbors(x, y, dist, includeOrigin, null, null, null);
         }
 
 
@@ -943,25 +889,19 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
      * plus (X,Y) itself.
      * <p>Then returns, as a ArrayList, any Objects which fall on one of these <x,y> locations.
      *
-     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
-     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
-     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
-     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
-     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
-     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
-     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
-     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
-     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     * <p>The distance (dist) may be no larger than the Area of Interest (AOI), else an exception will be thrown.
+     * The neighbors may leak out into the halo region of your partition.
+     *
      */
-    public ArrayList<T> getHexagonalNeighbors( int x, int y, int dist, int mode, boolean includeOrigin )
+    public ArrayList<T> getHexagonalNeighbors( int x, int y, int dist, boolean includeOrigin )
         {
-        return getHexagonalNeighbors(x, y, dist, mode, includeOrigin, null, null, null);
+        return getHexagonalNeighbors(x, y, dist, includeOrigin, null, null, null);
         }
 
 
-    public ArrayList<T> getRadialNeighbors( final int x, final int y, final double dist, int mode, boolean includeOrigin)
+    public ArrayList<T> getRadialNeighbors( final int x, final int y, final double dist, boolean includeOrigin)
         {
-        return getRadialNeighbors(x, y, dist, mode, includeOrigin, null, null, null);
+        return getRadialNeighbors(x, y, dist, includeOrigin, null, null, null);
         }
 
 	}
