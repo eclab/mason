@@ -17,10 +17,6 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 
 	public ArrayList<T>[] storage;
 
-	/// SEAN -- for the time being we're just doing removeEmptyBags, not
-	/// replaceLargeBags, though we really oughta do that too...
-	/// See DenseGrid2D
-
 	/**
 	 * Should we remove bags in the field if they have been emptied, and let them
 	 * GC, or should we keep them around?
@@ -30,17 +26,6 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 	public DenseGridStorage(final IntRect2D shape) {
 		super(shape);
 		clear();
-		// storage = allocate(shape.getArea());
-	}
-
-	/*
-	 * public GridStorage<T, Int2D> getNewStorage(final IntRect2D shape) { return
-	 * new DenseGridStorage<T>(shape); }
-	 */
-
-	public void clear() {
-// We don't really need this to compile:    @SuppressWarnings("unchecked") 	
-		storage = new ArrayList[shape.getArea()]; // alloc.apply(size);
 	}
 
 	public String toString() {
@@ -71,7 +56,6 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 	}
 
 	public int unpack(final MPIParam mp, final Serializable buf) {
-//		System.out.println(buf);
 		final ArrayList<T>[] stor = (ArrayList<T>[]) storage;
 		final ArrayList<T>[] objs = (ArrayList<T>[]) buf;
 		int curr = 0;
@@ -87,14 +71,29 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 
 	///// GRIDSTORAGE GUNK
 
-	public void addToLocation(T obj, Int2D p) {
+	public void addObject(Int2D p, T t) {
 		final ArrayList<T>[] array = storage;
 		final int idx = getFlatIdx(p);
 
 		if (array[idx] == null)
 			array[idx] = new ArrayList<T>();
 
-		array[idx].add(obj);
+		array[idx].add(t);
+	}
+
+	public T getObject(Int2D p, long id) {
+		ArrayList<T> ts = storage[getFlatIdx(p)];
+		if (ts != null)
+			{
+			for (T t : ts)
+				if (t.ID() == id)
+					return t;
+			}
+		return null;
+	}
+
+	public ArrayList<T> getAllObjects(Int2D p) {
+		return storage[getFlatIdx(p)];
 	}
 
 	boolean removeFast(ArrayList<T> list, int pos)
@@ -105,6 +104,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 		return list.remove(top) != null;
 		}
 
+/*
 	boolean removeFast(ArrayList<T> list, T t)
 		{
 		int pos = list.indexOf(t);
@@ -112,24 +112,13 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 			return removeFast(list, pos);
 		else return (pos >= 0);
 		}
+*/
 
-
-	public void removeObject(Int2D p, T obj) {
+	public boolean removeObject(Int2D p, long id) {
 		final ArrayList<T>[] array = storage;
 		final int idx = getFlatIdx(p);
+		boolean result = false;
 
-		if (array[idx] != null) {
-			removeFast(array[idx], obj);
-			if (array[idx].size() == 0 && removeEmptyBags)
-				array[idx] = null;
-		}
-	}
-
-	public void removeObject(Int2D p, long id) {
-		// TODO: this may throw a null pointer if object is not there
-		final ArrayList<T>[] array = storage;
-		final int idx = getFlatIdx(p);
-		
 		if (array[idx] != null)
 			{
 			for (int i = 0; i < array[idx].size(); i++) 
@@ -137,16 +126,17 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 				T t = array[idx].get(i);
 				if (t.ID() == id) 
 					{
-					removeFast(array[idx], i);
+					result = removeFast(array[idx], i);
 					if (array[idx].size() == 0 && removeEmptyBags)
 						array[idx] = null;
 					break;
 					}
 				}
 			}
+		return result;
 	}
 
-	public void removeObjects(Int2D p) {
+	public void clear(Int2D p) {
 		final ArrayList<T>[] array = storage;
 		final int idx = getFlatIdx(p);
 
@@ -158,21 +148,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
 		}
 	}
 
-	public ArrayList<T> getObjects(Int2D p) {
-		return storage[getFlatIdx(p)];
+	public void clear() {
+		storage = new ArrayList[shape.getArea()];
 	}
-
-	public T getObjects(Int2D p, long id) {
-		// TODO: is this right??
-		ArrayList<T> ts = storage[getFlatIdx(p)];
-		if (ts == null)
-			return null;
-		for (T t : ts)
-			if (t.ID() == id)
-				return t;
-		return null;
-	}
-	
-
-
 }

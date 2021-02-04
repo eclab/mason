@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * @param <T> Type of object stored in the grid
  */
 
-public class DObjectGrid2D<T extends Serializable> extends DAbstractGrid2D 
+public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D 
 	{
 	private static final long serialVersionUID = 1L;
 

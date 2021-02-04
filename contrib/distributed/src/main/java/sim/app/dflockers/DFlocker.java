@@ -15,6 +15,7 @@ import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
 import sim.portrayal.Oriented2D;
 import sim.util.*;
+import java.util.*;
 
 public class DFlocker extends DSteppable implements Remote, Oriented2D {
 
@@ -152,10 +153,11 @@ public class DFlocker extends DSteppable implements Remote, Oriented2D {
 
 		//this is the newest version
 		
-		Bag b_bag = dFlockers.flockers.getNeighborsWithinDistance(this.loc, (double)DFlockers.neighborhood, true, true, null);
-		for(int i=0; i<b_bag.numObjs; i++)
+		//Bag b_bag = dFlockers.flockers.getNeighborsWithinDistance(this.loc, (double)DFlockers.neighborhood, true, true, null);
+		ArrayList b_bag = dFlockers.flockers.getNeighborsWithinDistance(this.loc, (double)DFlockers.neighborhood, true, null);
+		for(int i=0; i<b_bag.size(); i++)
 		{
-			b.add((DFlocker)b_bag.objs[i]);
+			b.add((DFlocker)b_bag.get(i));
 		}
 		
 		

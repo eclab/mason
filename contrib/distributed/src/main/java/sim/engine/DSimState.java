@@ -511,7 +511,7 @@ public class DSimState extends SimState {
 						HashSet agents = new HashSet(((HashMap) st.getCell(doublep).clone()).values()); // create a clone to avoid the
 						// ConcurrentModificationException
 						for (Object a : agents) {
-							NumberND loc = st.getLocation((DObject) a);
+							NumberND loc = st.getObjectLocation((DObject) a);
 							final int locToP = partition.toPartitionPID(loc);
 							if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
 									&& !partition.getLocalBounds().contains(loc)) {
@@ -544,7 +544,7 @@ public class DSimState extends SimState {
 								migratedAgents.add(a);
 								System.out.println("PID: " + partition.getPID() + " processor " + old_pid + " move " + a
 										+ " from " + loc + " (point " + p + ") to processor " + toP); //agent not being removed from getCell here
-								st.removeObject((DObject) a);
+								st.removeObject(loc, ((DObject) a).ID());
 								//System.out.println(st);
 								//System.out.println("---");
 							}
@@ -552,7 +552,9 @@ public class DSimState extends SimState {
 					} else if (haloGrid2D.getStorage() instanceof ObjectGridStorage) {
 
 						ObjectGridStorage st = (ObjectGridStorage) ((HaloGrid2D) field).getStorage();
-						Serializable a = st.getObjects(haloGrid2D.toLocalPoint(p));
+						
+						//// FIXME: verify this.  I'm passing in -1 for the ID, since ObjectGridStorage ignores it.
+						Serializable a = st.getObject(haloGrid2D.toLocalPoint(p), -1);
 						if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
 								&& old_partition.contains(p) && !partition.getLocalBounds().contains(p)) {
 							DSteppable stopping = ((DSteppable) a);
@@ -597,7 +599,7 @@ public class DSimState extends SimState {
 					else if (haloGrid2D.getStorage() instanceof DenseGridStorage) {
 						GridStorage st = ((HaloGrid2D) field).getStorage();
 						// System.out.println(st.getClass());
-						Serializable a_list = st.getObjects(haloGrid2D.toLocalPoint(p));
+						Serializable a_list = st.getAllObjects(haloGrid2D.toLocalPoint(p));
 						
 						
 
@@ -664,7 +666,7 @@ public class DSimState extends SimState {
 
 					else {// other GridStorage types, NOT tested!
 						GridStorage st = ((HaloGrid2D) field).getStorage();
-						Serializable a = st.getObjects(haloGrid2D.toLocalPoint(p));
+						Serializable a = st.getAllObjects(haloGrid2D.toLocalPoint(p));
 
 						if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
 								&& old_partition.contains(p) && !partition.getLocalBounds().contains(p)) {

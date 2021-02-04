@@ -1,10 +1,8 @@
 package sim.field.storage;
 
 import java.io.Serializable;
-import java.util.Arrays;
-
+import java.util.*;
 import mpi.*;
-
 import sim.util.*;
 
 public class DoubleGridStorage extends GridStorage<Double, Int2D> {
@@ -12,21 +10,12 @@ public class DoubleGridStorage extends GridStorage<Double, Int2D> {
 
 	public double[] storage;
 
-	// final double initVal;
-
 	public DoubleGridStorage(IntRect2D shape) {
 		super(shape);
 		baseType = MPI.DOUBLE;
 		clear();
-		// storage = allocate(shape.getArea());
-		// this.initVal = initVal;
-		// Arrays.fill((double[]) storage, initVal);
 	}
 
-	/*
-	 * public GridStorage<Double, Int2D> getNewStorage(IntRect2D shape) { return new
-	 * DoubleGridStorage(shape, 0); }
-	 */
 	public byte[] pack(MPIParam mp) throws MPIException {
 		byte[] buf = new byte[MPI.COMM_WORLD.packSize(mp.size, baseType)];
 		MPI.COMM_WORLD.pack(MPI.slice((double[]) storage, mp.idx), 1, mp.type, buf, 0);
@@ -51,32 +40,35 @@ public class DoubleGridStorage extends GridStorage<Double, Int2D> {
 		return buf.toString();
 	}
 
-	public void clear() {
-		storage = new double[shape.getArea()];
-	}
-
-	public void addToLocation(Double t, Int2D p) {
+	public void set(Int2D p, double t) {
 		storage[getFlatIdx((Int2D) p)] = t;
 	}
 
-	public void addToLocation(double t, Int2D p) {
-		storage[getFlatIdx((Int2D) p)] = t;
+	public void addObject(Int2D p, Double t) {
+		set(p, t);
 	}
 
-	public void removeObject(Int2D p, Double t) {
-		addToLocation(0, p);
-	}
-
-	public void removeObject(double t, Int2D p) {
-		addToLocation(0, p);
-	}
-
-	public void removeObjects(Int2D p) {
-		addToLocation(0, p);
-	}
-
-	public Serializable getObjects(Int2D p) {
+	public Double getObject(Int2D p, long id) {
 		return storage[getFlatIdx((Int2D) p)];
 	}
 
+	// Don't call this method, it'd be foolish
+	public ArrayList<Double> getAllObjects(Int2D p) {
+		ArrayList<Double> list = new ArrayList<Double>();
+		list.add(storage[getFlatIdx(p)]);
+		return list;
+	}
+
+	public boolean removeObject(Int2D p, long id) {
+		set(p, 0);
+		return true;
+	}
+
+	public void clear(Int2D p) {
+		set(p, 0);
+	}
+
+	public void clear() {
+		storage = new double[shape.getArea()];
+	}
 }

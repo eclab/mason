@@ -13,67 +13,32 @@ import sim.util.*;
 public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2D> {
 	private static final long serialVersionUID = 1L;
 
-	int dWidth;
-	int dHeight;
-//	int[] dsize;
-	double discretization;
+	// note that this is the DISCRETIZED WIDTH (and the DISCRETIZED HEIGHT is height in GridStorage)
+	int width;	
+	int discretization;
 	public HashMap<Long, Double2D> m;
 	public HashMap<Long, T>[] storage;
 	public boolean removeEmptyBags = true;
 
-	public ContinuousStorage(final IntRect2D shape, final double discretization) {
+	public ContinuousStorage(final IntRect2D shape, int discretization) {
 		super(shape);
 		this.discretization = discretization;
 		clear();
 	}
 
-	/*
-	 * public GridStorage getNewStorage(final IntRect2D shape) { return new
-	 * ContinuousStorage<>(shape, discretization); }
-	 */
+	public HashMap<Long, Double2D> getStorageMap() {
+		return m;
+	}
 
-	public void clear() {
-		int size = shape.getArea();
-//		this.dsize = new int[2]; // 2 = num dimensions
-//		for (int i = 0; i < this.dsize.length; i++) {
-//
-//			this.dsize[i] = (int) Math.ceil(shape.getSizes()[i] / discretization) + 1;
-//		}
-
-		dWidth = (int) Math.ceil(shape.getSizes()[0] / discretization) + 1;
-		dHeight = (int) Math.ceil(shape.getSizes()[1] / discretization) + 1;
-
-		// Overwrite the original height with the new height of dsize;
-		// so that getFlatIdx() can correctly get the cell index of a discretized point
-		// TODO better approach?
-//		height = dsize[1]; // getHeight(dsize);
-		height = dHeight;
-		this.m = new HashMap<>();
-
-		//int volume = 1;
-		//for (int i = 0; i < this.dsize.length; i++) { // <- size of 2
-		//	volume *= this.dsize[i];
-		//}
-		//storage = new HashMap[volume];
-		storage = new HashMap[dWidth * dHeight];
-//		for (int i = 0; i < volume; i++) {
-		for (int i = 0; i < storage.length; i++) {
-			storage[i] = new HashMap<>();
-		
-		}
+	public int getDiscretization() {
+		return discretization;
 	}
 
 	public String toString() {
 		final StringBuffer string = new StringBuffer(String.format("ContStorage-%s\n", shape));
 
-//		TODO: Should we use StringBuilder here?
-//		StringBuffer uses synchronization and is generally slower than StringBuilder
-//		final StringBuilder string = new StringBuilder(String.format("ContStorage-%s\n", shape));
-
-		//for (int x = 0; x < dsize[0]; x++) {
-		//	for (int y = 0; y < dsize[1]; y++) {
-		for (int x = 0; x < dWidth; x++) {
-			for (int y = 0; y < dHeight; y++) {
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
 				HashMap<Long, T> cell = getCelldp(x, y);
 				if (cell.size() > 0)
 					string.append("Cell (" + x + ", " + y + "):\t" + cell + "\n");
@@ -81,6 +46,178 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 		}
 
 		return string.toString();
+	}
+
+	/** Discretizes the given point, in world coordinates, into the cell
+	   which holds the point.  Warning: does not check to see if the point is inside the local boundary. */
+	public Int2D discretize(final Double2D p) {
+
+		final double[] offsets = shape.ul().getOffsets(p);
+
+		int[] ans = new int[2];
+		for (int i = 0; i < offsets.length; i++) {
+			ans[i] =  0 - (int) (offsets[i] / (double)discretization);
+		}
+		return new Int2D(ans);
+	}
+
+	void setCelldp(final Int2D p, HashMap<Long, T> cell) {
+		storage[getFlatIdx(p.x, p.y)] = cell;
+	}
+
+	/** Sets the given discretized cell. */
+	void setCelldp(int x, int y, HashMap<Long, T> cell) {
+		storage[getFlatIdx(x, y)] = cell;
+	}
+
+	/** Sets the cell which contains the given world point.  Does not check to see if the point is out of bounds. */
+	public void setCell(final Double2D p, HashMap<Long, T> cell) {
+		setCelldp(discretize(p), cell);
+	}
+
+	/** Returns the given discretized cell. */
+	HashMap<Long, T> getCelldp(final Int2D p) {
+
+		return storage[getFlatIdx(p.x, p.y)];
+	}
+
+	/** Returns the given discretized cell. */
+	public HashMap<Long, T> getCelldp(int x, int y) {
+		return storage[getFlatIdx(x, y)];
+	}
+
+	/** Returns the cell which contains the given world point.  Does not check to see if the point is out of bounds. */
+	public HashMap<Long, T> getCell(final Double2D p) {
+		return getCelldp(discretize(p));
+	}
+
+	/** Returns the location of the given object. */
+	public Double2D getObjectLocation(final T obj) {
+		return m.get(obj.ID());
+	}
+
+	/** Returns the location of the object with the given ID. */
+	public Double2D getObjectLocation(final long id) {
+		return m.get(id);
+	}
+
+
+
+
+	///// GRIDSTORAGE METHODS
+
+	// Put the object to the given point
+	public void addObject(Double2D p, T obj) {
+		final Double2D old = m.put(obj.ID(), p);
+		if (old != null)
+			getCell(old).remove(obj);
+		getCell(p).put(obj.ID(), obj);
+	}
+	
+	public T getObject(Double2D p, long id) 
+		{
+		HashMap<Long, T> cell = getCell(p);
+		if (cell == null) return null;
+		else return cell.get(id);
+		}
+
+	// Get all the objects at exactly the given point
+	public ArrayList<T> getAllObjects(final Double2D p) {
+		final ArrayList<T> objects = new ArrayList<>();
+		HashMap<Long, T> cell = getCell(p);
+
+		if (cell != null) {
+		for (final T t : cell.values()) {
+			if (m.get(t.ID()).equals(p))
+				objects.add(t);
+			}
+		}
+		return objects;
+	}
+
+	public boolean removeObject(Double2D p, long id) {
+		// p is ignored.
+		Double2D loc = m.remove(id);
+		if (loc == null) return false;
+		getCell(loc).remove(id);
+		return true;
+	}
+
+	// Get all the objects at the given point
+	ArrayList<T> getObjects(Double2D p) {
+		final ArrayList<T> objects = new ArrayList<>();
+
+		if (getCell(p) != null) {
+		for (final T t : getCell(p).values()) {
+			if (m.get(t.ID()).equals(p))
+				objects.add(t);
+		}
+		}
+		return objects;
+	}
+
+	// Remove all the objects at the given point
+	public void clear(Double2D p) {
+		HashMap<Long, T> cell = getCell(p);
+		for (T obj : cell.values()) {
+			if (m.get(obj.ID()).equals(p))
+				cell.remove(obj);
+		}
+	}
+
+	public void clear() {
+		width = (int) Math.ceil(shape.getSizes()[0] / (double)discretization) + 1;
+		height = (int) Math.ceil(shape.getSizes()[1] / (double)discretization) + 1;
+		this.m = new HashMap<>();
+
+		storage = new HashMap[width * height];
+		for (int i = 0; i < storage.length; i++) {
+			storage[i] = new HashMap<>();
+		
+		}
+	}
+
+
+	/// METHODS FOR PACKING AND UNPACKING
+
+	void removeObject(long id) {
+		getCell(m.remove(id)).remove(id);
+	}
+
+	// Remove all the objects inside the given rectangle
+	void removeObjects(final IntRect2D r) {
+		for (T obj : getObjects(r)) {
+			removeObject(obj.ID());
+		}
+	}
+
+	// Get all the objects inside the given rectangle
+	ArrayList<T> getObjects(final IntRect2D r) {
+		final ArrayList<T> objs = new ArrayList<T>();
+		int[] offset = { 1, 1 };
+
+		final Int2D ul = discretize(new Double2D(r.ul()));
+		final Int2D br = discretize(new Double2D(r.br())).add(offset);
+
+	// I believe this code is just doing:
+
+		for (int x = ul.x; x < br.x; x++) {
+			for (int y = ul.y; y < br.y; y++) {
+				
+				HashMap<Long, T> cell = getCelldp(x, y);
+				
+				if (cell != null) {
+					
+				for (T obj : cell.values()) { //need to offset/discretize!
+					if (r.contains(m.get(obj.ID()))) {
+						objs.add(obj);
+					}
+				}
+				}
+			}
+		}
+
+		return objs;
 	}
 
 	// This returns a list of a list of dissimilar Objects
@@ -104,275 +241,25 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 	public int unpack(final MPIParam mp, final Serializable buf) {
 		final ArrayList<ArrayList<Serializable>> objs = (ArrayList<ArrayList<Serializable>>) buf;
 
-
 		// Remove any objects that are in the unpack area (overwrite the area)
 		// shift the rect with local coordinates back to global coordinates
 		for (final IntRect2D rect : mp.rects)
 			removeObjects(rect.shift(shape.ul().toArray()));
 		
-
-
 		for (int k = 0; k < mp.rects.size(); k++)
 			for (int i = 0; i < objs.get(k).size(); i += 2) 
-				addToLocation((T) objs.get(k).get(i), 
-					((Double2D) objs.get(k).get(i + 1)).add(mp.rects.get(k).ul().toArray()).add(shape.ul().toArray()));
+				addObject( 
+					//// FIXME: This looks VERY inefficient, with lots of array allocations
+					((Double2D) objs.get(k).get(i + 1)).add(mp.rects.get(k).ul().toArray()).add(shape.ul().toArray()),
+					(T) objs.get(k).get(i));
 		
 		int sum = 0;
 		for (int i = 0; i < objs.size(); i++) {
 			sum += objs.get(i).size();
 		}
-		
 
 		return sum;
 	}
 
-	public Int2D discretize(final NumberND p) {
 
-		final double[] offsets = shape.ul().getOffsets(p);
-
-		int[] ans = new int[2];
-		for (int i = 0; i < offsets.length; i++) {
-			ans[i] = -(int) (offsets[i] / discretization);
-		}
-		return new Int2D(ans);
-	}
-
-	public void setCell(final Double2D p, HashMap<Long, T> cell) {
-		setCelldp(discretize(p), cell);
-	}
-
-	public void setCelldp(final Int2D p, HashMap<Long, T> cell) {
-		storage[getFlatIdx(p)] = cell;
-	}
-
-	public void setCelldp(int x, int y, HashMap<Long, T> cell) {
-		storage[getFlatIdx(x, y)] = cell;
-	}
-
-	// Get the corresponding cell given a continuous point
-	public HashMap<Long, T> getCell(final Double2D p) {
-		
-		try {
-			storage[getFlatIdx(discretize(p))] = storage[getFlatIdx(discretize(p))]; //check for null pointer
-			
-		}
-		
-		catch(Exception e) {
-			System.out.println("shape.ul : "+shape.ul());
-			System.out.println("shape.br : "+shape.br());
-
-			System.out.println("getCell p : "+p);
-			System.out.println("getCell discretize(p) : "+discretize(p));
-			System.out.println("getFlatIdx(discretize(p)) : "+getFlatIdx(discretize(p)));
-			System.out.println("storage size : "+storage.length);
-			
-			System.out.println(e);
-			System.exit(-1);
-			
-		}
-		
-
-		return getCelldp(discretize(p));
-	}
-
-	// Get the corresponding cell given a discretized point
-	public HashMap<Long, T> getCelldp(final Int2D p) {
-
-		return storage[getFlatIdx(p)];
-	}
-
-	public HashMap<Long, T> getCelldp(int x, int y) {
-		return storage[getFlatIdx(x, y)];
-	}
-
-	// Return a list of neighbors of the given object within the given radius
-	public List<T> getNeighborsWithin(final T obj, final double radius) {
-		Double2D tmp = null;
-		try {
-			tmp = m.get(obj.ID());
-		} catch (Exception e) {
-			System.exit(-1);
-		}
-		final Double2D loc = tmp;
-		Int2D tmp2 = null;
-		try {
-			tmp2 = discretize(loc);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		final Int2D dloc = tmp2;
-		final ArrayList<T> objs = new ArrayList<T>();
-
-		// Calculate how many discretized cells we need to search
-		final int[] offsets = new int[2];
-		for (int i = 0; i < offsets.length; i++) {
-			offsets[i] = (int) Math.ceil(radius / discretization);
-		}
-
-		// Generate the start/end point subject to the boundaries
-		int[] ansUl = new int[2]; // 2 = num dimensions
-		ansUl[0] = Math.max(dloc.x - offsets[0], 0);
-		ansUl[1] = Math.max(dloc.y - offsets[1], 0);
-		final Int2D ul = new Int2D(ansUl);
-
-		int[] ansBr = new int[2]; // 2 = num dimensions
-		//ansBr[0] = Math.min(dloc.x + offsets[0] + 1, dsize[0]);
-		//ansBr[1] = Math.min(dloc.y + offsets[1] + 1, dsize[1]);
-
-		ansBr[0] = Math.min(dloc.x + offsets[0] + 1, dWidth);
-		ansBr[1] = Math.min(dloc.y + offsets[1] + 1, dHeight);
-
-		final Int2D br = new Int2D(ansBr);
-		for (int x = ul.x; x < br.x; x++) {
-			for (int y = ul.y; y < br.y; y++) {
-				for (T foo : getCelldp(x, y).values()) {
-					if (foo != obj && m.get(foo.ID()).distanceSq(loc) <= radius * radius) {
-					}
-				}
-			}
-		}
-
-		return objs;
-	}
-
-	public HashMap<Long, Double2D> getStorageMap() {
-		return m;
-	}
-
-	public double getDiscretization() {
-		return discretization;
-	}
-
-	// Get the location of the given location
-	public Double2D getLocation(final T obj) {
-		return m.get(obj.ID());
-	}
-
-	// Get the location of the given location
-	public Double2D getLocation(final long id) {
-		return m.get(id);
-	}
-
-	///// GRIDSTORAGE GUNK
-
-	// Put the object to the given point
-	public void addToLocation(final T obj, final Double2D p) {
-		final Double2D old = m.put(obj.ID(), p);
-		if (old != null)
-			getCell(old).remove(obj.ID());
-		getCell(p).put(obj.ID(), obj);
-	}
-
-	public void removeObject(Double2D p, final T obj) {
-		getCell(m.remove(obj.ID())).remove(obj);
-	}
-
-	// Remove all the objects at the given point
-	public void removeObjects(final Double2D p) {
-		for (T obj : getObjects(p)) {
-			removeObject(obj);
-		}
-	}
-
-	public void removeObject(Double2D p, long id) {
-		// TODO: this may throw a null pointer if object is not there
-		removeObject(getCell(p).get(id));
-	}
-
-	// Remove the object from the storage
-	public void removeObject(final T obj) {
-        if (m.get(obj.ID()) == null) {
-        	System.out.println("removeObject");
-        	System.out.println("ul : "+this.shape.ul());
-        	System.out.println("br : "+this.shape.br());
-        	System.out.println("obj : "+obj);
-        	System.out.println(((DFlocker)obj).loc);
-        }
-        
-
-		
-		Double2D dd = m.remove(obj.ID());
-		HashMap a = getCell(dd);
-		
-		Object o = a.remove(obj.ID());
-	}
-
-	// Get all the objects at the given point
-	public ArrayList<T> getObjects(final Double2D p) {
-		final ArrayList<T> objects = new ArrayList<>();
-
-		if (getCell(p) != null) {
-		for (final T t : getCell(p).values()) {
-			if (m.get(t.ID()).equals(p))
-				objects.add(t);
-		}
-		}
-		return objects;
-	}
-
-	public T getObjects(Double2D p, long id) {
-		return getCell(p).get(id);
-	}
-
-	/// INTERNAL METHODS FOR PACKING AND UNPACKING
-
-	// Remove all the objects inside the given rectangle
-	void removeObjects(final IntRect2D r) {
-		for (T obj : getObjects(r)) {
-			removeObject(obj);
-		}
-	}
-
-	// Get all the objects inside the given rectangle
-	public List<T> getObjects(final IntRect2D r) {
-		final ArrayList<T> objs = new ArrayList<T>();
-		int[] offset = { 1, 1 };
-
-		final Int2D ul = discretize(r.ul()), br = discretize(r.br()).add(offset);
-
-	// I believe this code is just doing:
-
-		for (int x = ul.x; x < br.x; x++) {
-			for (int y = ul.y; y < br.y; y++) {
-				
-				HashMap<Long, T> cell = getCelldp(x, y);
-				
-				if (cell != null) {
-					
-				
-				for (T obj : cell.values()) { //need to offset/discretize!
-					
-					if (m.get(obj.ID()) == null) {
-						System.out.println(this.shape);
-						System.out.println("r : "+r);
-						System.out.println("x : "+x);
-						System.out.println("y : "+y);
-						System.out.println("ul : "+ul);
-						System.out.println("br : "+br);
-						System.out.println("obj loc: "+this.getLocation(obj));
-						System.out.println("dflocker loc : "+((DFlocker)obj).loc);
-						System.out.println("dflocker disc loc : "+discretize(((DFlocker)obj).loc));
-						System.out.println("----");
-						System.out.println(obj);
-						System.out.println(m.keySet());
-						//System.exit(-1);
-						
-					}
-					
-					if (m.get(obj.ID()) == null){
-						System.out.println("-!!!!-");
-						System.out.println(this);
-					}
-					
-					if (r.contains(m.get(obj.ID()))) {
-						objs.add(obj);
-					}
-				}
-				}
-			}
-		}
-
-		return objs;
-	}
-	
 }

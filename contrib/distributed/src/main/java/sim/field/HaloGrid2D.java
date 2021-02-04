@@ -161,24 +161,24 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		return p.subtract(haloPart.ul().toArray());
 	}
 
-	/**
+	/*
 	 * Wraps point around to give location on the local partition
 	 * 
 	 * @param p
 	 * @return location in a toroidal plane
 	 */
-	public Int2D toToroidal(final Int2D p) {
-		return world.toToroidal(p);
-	}
+	//public Int2D toToroidal(final Int2D p) {
+//		return world.toToroidal(p);
+//	}
 
 	public void removeAllAgentsAndObjects(final NumberND p) {
 		if (!inLocal(p))
 			removeFromRemote(p);
 		else {
 			if (localStorage instanceof ContinuousStorage)
-				localStorage.removeObjects(p);
+				localStorage.clear(p);
 			else
-				localStorage.removeObjects(toLocalPoint((Int2D) p));
+				localStorage.clear(toLocalPoint((Int2D) p));
 		}
 	}
 
@@ -832,28 +832,32 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 
 	public void addLocal(final NumberND p, final T t) {
 		if (localStorage instanceof ContinuousStorage)
-			localStorage.addToLocation(t, p);
+			localStorage.addObject(p, t);
 		else
-		{
-			//System.out.println(t+" added to point "+p);
-			localStorage.addToLocation(t, toLocalPoint((Int2D) p));
-		}
+			localStorage.addObject(toLocalPoint((Int2D) p), t);
 	}
+
+	
+	//// FIXME -- this method definitely looks wrong
 
 	public T getLocal(NumberND p) {
 		if (localStorage instanceof ContinuousStorage)
-			return (T) localStorage.getObjects(p);
+			return (T) localStorage.getAllObjects(p);
 		else
-			return (T) localStorage.getObjects(toLocalPoint((Int2D) p));
+			return (T) localStorage.getAllObjects(toLocalPoint((Int2D) p));
 	}
+
+	//// FIXME -- this method definitely looks wrong
 
 	public T getLocal(NumberND p, long id) {
 		if (localStorage instanceof ContinuousStorage)
-			return (T) localStorage.getObjects(p, id);
+			return (T) localStorage.getObject(p, id);
 		else
-			return (T) localStorage.getObjects(toLocalPoint((Int2D) p), id);
+			return (T) localStorage.getObject(toLocalPoint((Int2D) p), id);
 	}
 
+	/** Removes the object with the given ID from the local storage at the given point.
+		Note that this does not work for DIntGrid2D nor DDoubleGrid2D, which will throw exceptions. */
 	public void removeLocal(NumberND p, long id) {
 		if (localStorage instanceof ContinuousStorage) {
 			int old_size = ((ContinuousStorage)localStorage).getCell((Double2D)p).size();
@@ -871,11 +875,12 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		}
 	}
 
+	/** Clears all objects from the local storage at the given point. */
 	public void removeAllLocal(NumberND p) {
 		if (localStorage instanceof ContinuousStorage) {
 			int old_size = ((ContinuousStorage)localStorage).getCell((Double2D)p).size();
 
-			localStorage.removeObjects(p);
+			localStorage.clear(p);
 			
 			if (old_size == ((ContinuousStorage)localStorage).getCell((Double2D)p).size())
 			{
@@ -886,7 +891,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage>
 		}
 		
 		else
-			localStorage.removeObjects(toLocalPoint((Int2D) p));
+			localStorage.clear(toLocalPoint((Int2D) p));
 	}
 
 //	public void remove(final NumberND p, final T t) {

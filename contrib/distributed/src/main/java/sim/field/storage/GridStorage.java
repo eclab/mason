@@ -3,6 +3,7 @@ package sim.field.storage;
 import java.io.Serializable;
 import mpi.*;
 import sim.util.*;
+import java.util.*;
 
 /**
  * internal local storage for distributed grids.
@@ -16,38 +17,9 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	transient Datatype baseType = MPI.BYTE; // something by default
 	int height; // this is the same as shape.getHeight(), to save a bit of computation
 
-	public abstract String toString();
-
-	public abstract Serializable pack(MPIParam mp) throws MPIException;
-
-	public abstract int unpack(MPIParam mp, Serializable buf) throws MPIException;
-
-	/* Abstract Method of generic storage based on N-dimensional Point */
-	public abstract void addToLocation(final T obj, final P p);
-
-	public abstract void removeObjects(final P p);
-
-	public abstract void removeObject(P p, final T obj);
-
-	public void removeObject(P p, long id) {
-		// TODO: what to do for int grid storage etc?
-		throw new UnsupportedOperationException(
-				"A getObjects method which searches for an id is not implemented for this storage");
-	}
-
-	public abstract Serializable getObjects(final P p);
-
-	public T getObjects(final P p, long id) {
-		// TODO: what to do for int grid storage etc?
-		throw new UnsupportedOperationException(
-				"A getObjects method which searches for an id is not implemented for this storage");
-	}
-
-	public abstract void clear();
-
 	//// NOTE: Subclasses are responsible for allocating the storage
 	//// and setting the base type
-	public GridStorage(final IntRect2D shape) {
+	public GridStorage(IntRect2D shape) {
 		this.shape = shape;
 		height = shape.getHeight(); // getHeight(shape.getSizes());
 	}
@@ -59,6 +31,36 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	public IntRect2D getShape() {
 		return shape;
 	}
+
+
+	public abstract String toString();
+	public abstract Serializable pack(MPIParam mp) throws MPIException;
+	public abstract int unpack(MPIParam mp, Serializable buf) throws MPIException;
+
+	/** Adds or sets the given object at the given point.  
+		Dense and Continuous storage add the object.  Int, Object, and Double grid storage set it.  */
+	public abstract void addObject(final P p, final T obj);
+	/** Object, Int, and Double grid storage ignore the id and return whatever is currently present. */
+	public abstract T getObject(final P p, long id);
+	/** Returns an ArrayList consisting of all the elements at a given location.  */
+	public abstract ArrayList<T> getAllObjects(final P p);
+	/** Returns true if the object is at this location and was removed.
+		Continuous storage ignores the location and simply removes the object, returning
+		true if the object was successfully remeoved.
+		Int and Double grid storage ignore the id and set the value to 0, always returning true. 
+		Object grid storage sets the value to null, always returning true. */
+	public abstract boolean removeObject(P p, long id);
+	/** Clears all objects at the given point.
+		Int and Double grid storage set all values to 0.
+		Object grid storage sets all values to null.
+		*/
+	public abstract void clear(P p);
+	/** Clears all objects from the storage entirely.
+		Int and Double grid storage set all values to 0.
+		Object grid storage sets all values to null.
+		*/
+	public abstract void clear();
+
 
 	// Method that allocates an array of objects of desired type
 	// This method will be called after the new shape has been set
@@ -112,7 +114,7 @@ public abstract class GridStorage<T extends Serializable, P extends NumberND> im
 	 * @return flattened index
 	 */
 	public int getFlatIdx(final Int2D p) {
-		return p.x * height + p.y;
+		return getFlatIdx(p.x, p.y);
 	}
 
 	/**

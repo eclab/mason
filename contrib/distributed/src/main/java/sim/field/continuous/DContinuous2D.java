@@ -34,7 +34,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	private HaloGrid2D<T, ContinuousStorage<T>> halo;
 	ContinuousStorage<T> storage;
 	
-	public DContinuous2D(double discretization, DSimState state) 
+	public DContinuous2D(int discretization, DSimState state) 
 		{
 		super(state);
 		storage = new ContinuousStorage<T>(state.getPartition().getLocalBounds(), discretization);
@@ -190,7 +190,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	/** Removes the object of the given id, which must be local.  If it does not exist locally, this method returns FALSE. */
 	public boolean removeLocal(long id)
 		{
-		return removeLocal(storage.getLocation(id), id);
+		return removeLocal(storage.getObjectLocation(id), id);
 		}
 		
 	/** Removes the object, which must be local.  If it doesn't exist, returns FALSE. */
@@ -440,327 +440,6 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 
 
 
-
-	//// FIXME SEAN:
-	//// We can't getNeighborsWithinDistance any more very easily
-	//// But we need to figure out how to do something like that (see
-	//// Continuous2D.java)
-	
-    final static double SQRT_2_MINUS_1_DIV_2 = (Math.sqrt(2.0) - 1) * 0.5;  // about 0.20710678118654757, yeesh, I hope my math's right.
-    final static int NEAREST_NEIGHBOR_GAIN = 10;  // the ratio of searches before we give up and just hand back the entire allObjects bag.
-    public Bag getNearestNeighbors(Double2D position, int atLeastThisMany, final boolean toroidal, final boolean nonPointObjects, boolean radial, Bag result)
-
-    {
-    
-    //handles toroidal .  First, detoroidalize, Second, check if "real" point is within bounds
-    if (toroidal && (position.x >= width || position.y >= height || position.x < 0 || position.y < 0))
-    {
-        position = new Double2D(tx(position.x), ty(position.y));
-    }
-   
-   //Now, if position not in this partition, output error!
-    if (!storage.getShape().contains(position)) {
-    	throw new InternalError("Position "+position+" not in this partition ");
-    }
-    
-    
-    
-    
-    if (result == null) result = new Bag(atLeastThisMany);
-    else result.clear();
-    int maxSearches = this.storage.m.size() / NEAREST_NEIGHBOR_GAIN;
-    
-
-    if (atLeastThisMany >= this.storage.m.size())  { result.clear(); result.addAll(this.storage.m.keySet()); return result; }
-
-    Int2D d = this.storage.discretize(position);
-    int x1 = d.x;
-    int x2 = d.x;
-    int y1 = d.y;
-    int y2 = d.y;
-    int searches = 0;
-    
-    //MutableInt2D speedyMutableInt2D = new MutableInt2D();
-
-
-    // grab the first box
-        
-    if (searches >= maxSearches) { result.clear(); result.addAll(this.storage.m.keySet()); return result; }
-    searches++;
-    //speedyMutableInt2D.x = x1; speedyMutableInt2D.y = y1;
-    //Bag temp = getRawObjectsAtLocation(speedyMutableInt2D);
-	Double2D pt = new Double2D(x1, y1);
-    ArrayList temp = this.storage.getObjects(pt);
-    
-    if (temp!= null) result.addAll(temp);
-    
-    boolean nonPointOneMoreTime = false;
-    // grab onion layers
-    while(true)
-        {
-        if (result.numObjs >= atLeastThisMany)
-            {
-            if (nonPointObjects && !nonPointOneMoreTime)  // need to go out one more onion layer
-                nonPointOneMoreTime = true;
-            else break;
-            }
-            
-        x1--; y1--; x2++; y2++;
-        // do top onion layer
-        //speedyMutableInt2D.y = y1;
-        pt = new Double2D(pt.x, y1);
-        
-        for(int x = x1 ; x <= x2 /* yes, <= */ ; x++)
-            {
-            if (searches >= maxSearches) { result.clear(); result.addAll(this.storage.m.keySet()); return result; }
-            searches++;
-            //speedyMutableInt2D.x = x;
-            //pt.x = x;
-            pt = new Double2D(x, pt.y);
-
-            temp = this.storage.getObjects(pt);
-            if (temp!=null) result.addAll(temp);
-            }
-
-        // do bottom onion layer
-        //pt.y = y2;
-        pt = new Double2D(pt.x, y2);
-
-        for(int x = x1 ; x <= x2 /* yes, <= */ ; x++)
-            {
-            if (searches >= maxSearches) { result.clear(); result.addAll(this.storage.m.keySet()); return result; }
-            searches++;
-            //pt.x = x;
-            pt = new Double2D(x, pt.y);
-
-            temp = this.storage.getObjects(pt);
-            if (temp!=null) result.addAll(temp);
-            }
-            
-        // do left onion layer not including corners
-        //pt.x = x1;
-        pt = new Double2D(x1, pt.y);
-
-        for(int y = y1 + 1 ; y <= y2 - 1 /* yes, <= */ ; y++)
-            {
-            if (searches >= maxSearches) { result.clear(); result.addAll(this.storage.m.keySet()); return result; }
-            searches++;
-            //pt.y = y;
-            pt = new Double2D(pt.x, y);
-
-            temp = this.storage.getObjects(pt);
-            if (temp!=null) result.addAll(temp);
-            }
-
-        // do right onion layer not including corners
-        //pt.x = x2;
-        pt = new Double2D(x2, pt.y);
-
-        for(int y = y1 + 1 ; y <= y2 - 1 /* yes, <= */ ; y++)
-            {
-            if (searches >= maxSearches) { result.clear(); result.addAll(this.storage.m.keySet()); return result; }
-            searches++;
-            //pt.y = y;
-            pt = new Double2D(pt.x, y);
-
-            temp = this.storage.getObjects(pt);
-            if (temp!=null) result.addAll(temp);
-            }
-        }
-        
-    if (!radial) return result;
-    
-    // Now grab some more layers, in a "+" form around the box.  We need enough extension that it includes
-    // the circle which encompasses the box.  To do this we need to compute 'm', the maximum extent of the
-    // extension.  Let 'n' be the width of the box.
-    //
-    // m = sqrt(n^2 + n^2)
-    //
-    // Now we need to subtract m from n, divide by 2, take the floor, and add 1 for good measure.  That's the size of
-    // the extension in any direction:
-    //
-    // e = floor(m-n) + 1
-    // 
-    // this comes to:
-    //
-    // e = floor(n * (sqrt(2) - 1)/2 ) + 1
-    //
-    
-    int n = (x2 - x1 + 1);  // always an odd number
-    int e = (int)(Math.floor(n * SQRT_2_MINUS_1_DIV_2)) + 1;
-    
-    // first determine: is it worth it?
-    int numAdditionalSearches = (x2 - x1 + 1) * e * 4;
-    if (searches + numAdditionalSearches >= maxSearches) { result.clear(); result.addAll(this.storage.m.keySet()); return result; }
-    
-    // okay, let's do the additional searches
-    for(int x = 0 ; x < x2 - x1 + 1 /* yes, <= */ ; x++)
-        {
-        for(int y = 0 ; y < e; y++)
-            {
-            // top
-            //pt.x = x1 + x ;
-            //pt.y = y1 - e - 1 ;
-            pt = new Double2D(x1 + x, y1 - e - 1);
-
-            temp = this.storage.getObjects(pt);
-            if (temp!=null) result.addAll(temp);
-
-            // bottom
-           // pt.x = x1 + x ;
-            //pt.y = y2 + e + 1 ;
-            pt = new Double2D(x1 + x , y2 + e + 1);
-
-            temp = this.storage.getObjects(pt);
-            if (temp!=null) result.addAll(temp);
-
-            // left
-            //pt.x = x1 - e - 1 ;
-            //pt.y = y1 + x;
-            pt = new Double2D(x1 - e - 1, y1 + x);
-            
-            temp = this.storage.getObjects(pt);
-            if (temp!=null) result.addAll(temp);
-
-            // right
-            //pt.x = x2 + e + 1 ;
-            //pt.y = y1 + x;
-            pt = new Double2D(x2 + e + 1, y1 + x);
-
-            temp = this.storage.getObjects(pt);
-            if (temp!=null) result.addAll(temp);
-            }
-        }
-        
-    // it better have it now!
-    return result;
-    }
-	
-    //test this!
-    public Bag getNeighborsExactlyWithinDistance(final Double2D position, final double distance, final boolean toroidal, final boolean radial, final boolean inclusive, Bag result)
-            {
-            result = getNeighborsWithinDistance(position, distance, toroidal, false, result);
-            int numObjs = result.numObjs;
-            Object[] objs = result.objs;
-            double distsq = distance*distance;
-            if (radial) 
-                for(int i=0;i<numObjs;i++)
-                    {
-                    double d = 0;
-                    Double2D loc = this.storage.getLocation((T)objs[i]);
-                    if (toroidal) d = tds(position, loc);
-                    else d = position.distanceSq(loc);
-                    if (d > distsq || (!inclusive && d >= distsq)) 
-                        { result.remove(i); i--; numObjs--; }
-                    }
-            else 
-                for(int i=0;i<numObjs;i++)
-                    {
-                    Double2D loc = this.storage.getLocation((T)objs[i]);
-                    double minx = 0;
-                    double miny = 0;
-                    if (toroidal)
-                        {
-                        minx = tdx(loc.x, position.x);
-                        miny = tdy(loc.y, position.y);
-                        }
-                    else
-                        {
-                        minx = loc.x - position.x;
-                        miny = loc.y - position.y;
-                        }
-                    if (minx < 0) minx = -minx;
-                    if (miny < 0) miny = -miny;
-                    if ((minx > distance || miny > distance) ||
-                        (!inclusive && ( minx >= distance || miny >= distance)))
-                        { result.remove(i); i--;  numObjs--; }
-                    }
-            return result;
-            }
-	
-    public Bag getNeighborsWithinDistance( Double2D position, final double distance, final boolean toroidal, final boolean nonPointObjects, Bag result)
-		{
-		// push location to within legal boundaries
-	
-		//handles toroidal .  First, detoroidalize, Second, check if "real" point is within bounds
-		if (toroidal && (position.x >= width || position.y >= height || position.x < 0 || position.y < 0))
-		{
-			position = new Double2D(tx(position.x), ty(position.y));
-		}
-	   
-	   //Now, if position not in this partition, output error!
-		if (!storage.getShape().contains(position)) {
-			throw new InternalError("Position "+position+" not in this partition ");
-		}
-	
-		
-		double discDistance = distance / this.storage.getDiscretization();
-		double discX = position.x / this.storage.getDiscretization();
-		double discY = position.y / this.storage.getDiscretization();
-		
-		if (nonPointObjects)
-			{
-			// We assume that the discretization is larger than the bounding
-			// box width or height for the object in question.  In this case, then
-			// we can just increase the range by 1 in each direction and we are
-			// guaranteed to have the location of the object in our collection.
-			discDistance++;
-			}
-
-		final int expectedBagSize = 1;  // in the future, pick a smarter bag size?
-		if (result!=null) result.clear();
-		else result = new Bag(expectedBagSize);
-		
-		ArrayList temp;
-	
-
-			
-		int minX = (int) StrictMath.floor(discX - discDistance);
-		int maxX = (int) StrictMath.floor(discX + discDistance);
-		int minY = (int) StrictMath.floor(discY - discDistance);
-		int maxY = (int) StrictMath.floor(discY + discDistance);
-			
-		//control bounds to match storage
-		minX = Math.max(minX, this.storage.getShape().ul().x);
-		minY = Math.max(minY, this.storage.getShape().ul().y);
-		maxX = Math.min(maxX, this.storage.getShape().br().x);
-		maxY = Math.min(maxY, this.storage.getShape().br().y);
-
-
-		// for non-toroidal, it is easier to do the inclusive for-loops
-		for(int x = minX; x<= maxX; x++)
-			for(int y = minY ; y <= maxY; y++)
-				{
-
-					
-					//inLocalAndHalo do we check this?
-					Double2D pt = new Double2D(x, y);
-					temp = this.storage.getObjects(pt);  //control for range here!
-					
-					if( temp != null && !temp.isEmpty())
-						{
-						// a little efficiency: add if we're 1, addAll if we're > 1, 
-						// do nothing if we're <= 0 (we're empty)
-						final int n = temp.size();
-						if (n==1) result.add(temp.get(0));
-						else result.addAll(temp);
-						}
-					}
-		   // }
-
-		return result;
-		}
-    
-    public Bag getNeighborsExactlyWithinDistance(final Double2D position, final double distance)
-		{
-		return getNeighborsExactlyWithinDistance(position, distance, false, true, true, null);
-		}
-
-    public Bag getNeighborsExactlyWithinDistance(final Double2D position, final double distance, final boolean toroidal)
-		{
-		return getNeighborsExactlyWithinDistance(position, distance, toroidal, true, true, null);
-		}
-
     
 	/** Toroidal x */
 	// slight revision for more efficiency
@@ -910,6 +589,264 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 
 
 
+    /** Returns a ArrayList containing EXACTLY those objects within a certain distance of a given position, or equal to that distance, measuring
+        using a circle of radius 'distance' around the given position.  Assumes non-toroidal point objects. 
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+        to within the boundaries before computation.
+        @deprecated
+    */
+
+    public ArrayList<T> getObjectsExactlyWithinDistance(final Double2D position, final double distance)
+        {
+        return getObjectsExactlyWithinDistance(position, distance, true, true, null);
+        }
+
+    /** Returns a ArrayList containing EXACTLY those objects within a certain distance of a given position.  If 'radial' is true,
+        then the distance is measured using a circle around the position, else the distance is meaured using a square around
+        the position (that is, it's the maximum of the x and y distances).   If 'inclusive' is true, then objects that are
+        exactly the given distance away are included as well, else they are discarded.  If 'toroidal' is true, then the
+        distance is measured assuming the environment is toroidal.  If the ArrayList 'result' is provided, it will be cleared and objects
+        placed in it and it will be returned, else if it is null, then this method will create a new ArrayList and use that instead. 
+        Assumes point objects. 
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+        to within the boundaries before computation.
+        @deprecated
+    */
+
+    public ArrayList<T> getObjectsExactlyWithinDistance(final Double2D position, final double distance, 
+        final boolean radial, final boolean inclusive, ArrayList<T> result)
+        {
+        return getNeighborsExactlyWithinDistance(position, distance, radial, inclusive, result);
+        }
+        
+
+    /** Returns a ArrayList containing EXACTLY those objects within a certain distance of a given position, or equal to that distance, measuring
+        using a circle of radius 'distance' around the given position.  Assumes non-toroidal point objects. 
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+        to within the boundaries before computation.
+    */
+
+    public ArrayList<T> getNeighborsExactlyWithinDistance(final Double2D position, final double distance)
+        {
+        return getNeighborsExactlyWithinDistance(position, distance, true, true, null);
+        }
 
 
+    /** Returns a ArrayList containing EXACTLY those objects within a certain distance of a given position.  If 'radial' is true,
+        then the distance is measured using a circle around the position, else the distance is meaured using a square around
+        the position (that is, it's the maximum of the x and y distances).   If 'inclusive' is true, then objects that are
+        exactly the given distance away are included as well, else they are discarded.  If 'toroidal' is true, then the
+        distance is measured assuming the environment is toroidal.  If the ArrayList 'result' is provided, it will be cleared and objects
+        placed in it and it will be returned, else if it is null, then this method will create a new ArrayList and use that instead. 
+        Assumes point objects. 
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+        to within the boundaries before computation.
+    */
+
+    public ArrayList<T> getNeighborsExactlyWithinDistance(final Double2D position, final double distance, 
+    	final boolean radial, final boolean inclusive, ArrayList<T> result)
+        {
+        if (distance > halo.partition.getAOI()) throw new RuntimeException("Distance " + distance + " is larger than AOI " + halo.partition.getAOI());
+
+        final int expectedBagSize = 1;  // in the future, pick a smarter bag size?
+
+		ArrayList<T> objs = getNeighborsWithinDistance(position, distance, false, null);
+		if (result == null) result = new ArrayList<T>(expectedBagSize);
+		else result.clear();
+		
+        double distsq = distance*distance;
+        if (radial) 
+            for(T obj : objs)
+                {
+                double d = 0;
+                Double2D loc = storage.getObjectLocation(obj);
+                d = position.distanceSq(loc);
+                if (!(d > distsq || (!inclusive && d >= distsq)))
+                    result.add(obj);
+                }
+        else 
+            for(T obj : objs)
+                {
+                Double2D loc = storage.getObjectLocation(obj);
+                double minx = 0;
+                double miny = 0;
+                    minx = loc.x - position.x;
+                    miny = loc.y - position.y;
+                if (minx < 0) minx = -minx;
+                if (miny < 0) miny = -miny;
+                if (!((minx > distance || miny > distance) || (!inclusive && ( minx >= distance || miny >= distance))))
+                    result.add(obj);
+                }
+        return result;
+        }
+
+    /** Returns a bag containing AT LEAST those objects within the bounding box surrounding the
+        specified distance of the specified position.  The bag could include other objects than this.
+        In this case we include the object if
+        any part of the bounding box could overlap into the desired region.  To do this, if nonPointObjects is
+        true, we extend the search space by one extra discretization in all directions.  For small distances within
+        a single bucket, this returns nine bucket's worth rather than 1, so if you know you only care about the
+        actual x/y points stored, rather than possible object overlap into the distance sphere you specified,
+        you'd want to set nonPointObjects to FALSE. [assumes non-toroidal, point objects] 
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+        to within the boundaries before computation.
+        @deprecated
+    */
+    public ArrayList<T> getObjectsWithinDistance( final Double2D position, final double distance)
+        { return getObjectsWithinDistance(position,distance,false, null); }
+
+    /** Returns a bag containing AT LEAST those objects within the bounding box surrounding the
+        specified distance of the specified position.  The bag could include other objects than this.
+        If toroidal, then wrap-around possibilities are also considered.
+        If nonPointObjects, then it is presumed that
+        the object isn't just a point in space, but in fact fills an area in space where the x/y point location
+        could be at the extreme corner of a bounding box of the object.  In this case we include the object if
+        any part of the bounding box could overlap into the desired region.  To do this, if nonPointObjects is
+        true, we extend the search space by one extra discretization in all directions.  For small distances within
+        a single bucket, this returns nine bucket's worth rather than 1, so if you know you only care about the
+        actual x/y points stored, rather than possible object overlap into the distance sphere you specified,
+        you'd want to set nonPointObjects to FALSE. 
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+        to within the boundaries before computation.
+        @deprecated
+    */
+        
+    public ArrayList<T> getObjectsWithinDistance( final Double2D position, final double distance, 
+        final boolean nonPointObjects)
+        { return getObjectsWithinDistance(position, distance, nonPointObjects, null); }
+    
+    /** Puts into the result ArrayList (and returns it) AT LEAST those objects within the bounding box surrounding the
+        specified distance of the specified position.  If the result ArrayList is null, then a ArrayList is created.
+        
+        <p>The bag could include other objects than this.
+        If toroidal, then wrap-around possibilities are also considered.
+        If nonPointObjects, then it is presumed that
+        the object isn't just a point in space, but in fact fills an area in space where the x/y point location
+        could be at the extreme corner of a bounding box of the object.  In this case we include the object if
+        any part of the bounding box could overlap into the desired region.  To do this, if nonPointObjects is
+        true, we extend the search space by one extra discretization in all directions.  For small distances within
+        a single bucket, this returns nine bucket's worth rather than 1, so if you know you only care about the
+        actual x/y points stored, rather than possible object overlap into the distance sphere you specified,
+        you'd want to set nonPointObjects to FALSE. 
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+        to within the boundaries before computation.
+        @deprecated
+    */
+    
+    public ArrayList<T> getObjectsWithinDistance( Double2D position, final double distance, 
+        final boolean nonPointObjects, ArrayList<T> result)
+        {
+        return getNeighborsWithinDistance(position, distance, nonPointObjects, result);
+        }
+
+
+
+    /** Returns a bag containing AT LEAST those objects within the bounding box surrounding the
+        specified distance of the specified position.  The bag could include other objects than this.
+        In this case we include the object if
+        any part of the bounding box could overlap into the desired region.  To do this, if nonPointObjects is
+        true, we extend the search space by one extra discretization in all directions.  For small distances within
+        a single bucket, this returns nine bucket's worth rather than 1, so if you know you only care about the
+        actual x/y points stored, rather than possible object overlap into the distance sphere you specified,
+        you'd want to set nonPointObjects to FALSE. [assumes non-toroidal, point objects] 
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+        to within the boundaries before computation.
+    */
+    public ArrayList<T> getNeighborsWithinDistance( final Double2D position, final double distance)
+        { return getNeighborsWithinDistance(position,distance,false, null); }
+
+    /** Returns a bag containing AT LEAST those objects within the bounding box surrounding the
+        specified distance of the specified position.  The bag could include other objects than this.
+        If toroidal, then wrap-around possibilities are also considered.
+        If nonPointObjects, then it is presumed that
+        the object isn't just a point in space, but in fact fills an area in space where the x/y point location
+        could be at the extreme corner of a bounding box of the object.  In this case we include the object if
+        any part of the bounding box could overlap into the desired region.  To do this, if nonPointObjects is
+        true, we extend the search space by one extra discretization in all directions.  For small distances within
+        a single bucket, this returns nine bucket's worth rather than 1, so if you know you only care about the
+        actual x/y points stored, rather than possible object overlap into the distance sphere you specified,
+        you'd want to set nonPointObjects to FALSE. 
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+        to within the boundaries before computation.
+    */
+        
+    public ArrayList<T> getNeighborsWithinDistance( final Double2D position, final double distance,
+        final boolean nonPointObjects)
+        { return getNeighborsWithinDistance(position, distance, nonPointObjects, null); }
+    
+    /** Puts into the result ArrayList (and returns it) AT LEAST those objects within the bounding box surrounding the
+        specified distance of the specified position.  If the result ArrayList is null, then a ArrayList is created.
+        
+        <p>The bag could include other objects than this.
+        If toroidal, then wrap-around possibilities are also considered.
+        If nonPointObjects, then it is presumed that
+        the object isn't just a point in space, but in fact fills an area in space where the x/y point location
+        could be at the extreme corner of a bounding box of the object.  In this case we include the object if
+        any part of the bounding box could overlap into the desired region.  To do this, if nonPointObjects is
+        true, we extend the search space by one extra discretization in all directions.  For small distances within
+        a single bucket, this returns nine bucket's worth rather than 1, so if you know you only care about the
+        actual x/y points stored, rather than possible object overlap into the distance sphere you specified,
+        you'd want to set nonPointObjects to FALSE. 
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+        to within the boundaries before computation.
+    */
+    
+    public ArrayList<T> getNeighborsWithinDistance( Double2D position, final double distance,
+        final boolean nonPointObjects, ArrayList<T> result)
+        {
+        if (distance > halo.partition.getAOI()) throw new RuntimeException("Distance " + distance + " is larger than AOI " + halo.partition.getAOI());
+
+        double discretization = storage.getDiscretization();
+        double discDistance = distance / discretization;
+        double discX = position.x / discretization;
+        double discY = position.y / discretization;
+        
+        if (nonPointObjects)
+            {
+            // We assume that the discretization is larger than the bounding
+            // box width or height for the object in question.  In this case, then
+            // we can just increase the range by 1 in each direction and we are
+            // guaranteed to have the location of the object in our collection.
+            discDistance++;
+            }
+
+	/// FIXME: This is wrong, discDistance is discretized distance not low-level real-valued distance
+	
+        if (discDistance > halo.partition.getAOI()) throw new RuntimeException("To permit non-point objects, the distance must be enlarged (to " + discDistance + "), and this is larger than AOI " + halo.partition.getAOI());
+
+        final int expectedBagSize = 1;  // in the future, pick a smarter bag size?
+        if (result!=null) result.clear();
+        else result = new ArrayList<T>(expectedBagSize);
+        ArrayList<T> temp;
+    
+    	Int2D min = storage.discretize(new Double2D(discX - discDistance, discY - discDistance));
+    	Int2D max = storage.discretize(new Double2D(discX + discDistance, discY + discDistance));
+    	int minX = min.x;
+    	int maxX = max.x;
+    	int minY = min.y;
+    	int maxY = max.y;
+    
+		// for non-toroidal, it is easier to do the inclusive for-loops
+		for(int x = minX; x<= maxX; x++)
+			for(int y = minY ; y <= maxY; y++)
+				{
+				HashMap<Long, T> cell = storage.getCelldp(x, y);
+				for(T t : cell.values())
+					{
+					result.add(t);
+					}
+				}
+
+        return result;
+        }
 }

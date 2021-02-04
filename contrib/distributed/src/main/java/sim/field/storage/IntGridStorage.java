@@ -1,31 +1,20 @@
 package sim.field.storage;
 
 import java.io.Serializable;
-import java.util.Arrays;
-
+import java.util.*;
 import mpi.*;
 import sim.util.*;
 
 public class IntGridStorage extends GridStorage<Integer, Int2D> {
 	private static final long serialVersionUID = 1L;
 
-
 	public int[] storage;
-//	final int initVal;
 
 	public IntGridStorage(IntRect2D shape) {
 		super(shape);
 		baseType = MPI.INT;
 		clear();
-//		storage = allocate(shape.getArea());
-//		this.initVal = initVal;
-//		Arrays.fill((int[]) storage, initVal);
 	}
-
-	/*
-	 * public GridStorage getNewStorage(IntRect2D shape) { return new
-	 * IntGridStorage(shape, 0); }
-	 */
 
 	public byte[] pack(MPIParam mp) throws MPIException {
 		byte[] buf = new byte[MPI.COMM_WORLD.packSize(mp.size, baseType)];
@@ -51,32 +40,38 @@ public class IntGridStorage extends GridStorage<Integer, Int2D> {
 		return buf.toString();
 	}
 
+
+
+
+	public void set(Int2D p, int t) {
+		storage[getFlatIdx((Int2D) p)] = t;
+	}
+
+	public void addObject(Int2D p, Integer t) {
+		set(p, t);
+	}
+
+	public Integer getObject(Int2D p, long id) {
+		return storage[getFlatIdx((Int2D) p)];
+	}
+
+	// Don't call this method, it'd be foolish
+	public ArrayList<Integer> getAllObjects(Int2D p) {
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		list.add(storage[getFlatIdx(p)]);
+		return list;
+	}
+
+	public boolean removeObject(Int2D p, long id) {
+		set(p, 0);
+		return true;
+	}
+
+	public void clear(Int2D p) {
+		set(p, 0);
+	}
+
 	public void clear() {
 		storage = new int[shape.getArea()];
 	}
-
-	public void addToLocation(Integer t, Int2D p) {
-		storage[getFlatIdx((Int2D) p)] = t;
-	}
-
-	public void addToLocation(int t, Int2D p) {
-		storage[getFlatIdx((Int2D) p)] = t;
-	}
-
-	public void removeObject(Int2D p, Integer t) {
-		addToLocation(0, p);
-	}
-
-	public void removeObject(int t, Int2D p) {
-		addToLocation(0, p);
-	}
-
-	public void removeObjects(Int2D p) {
-		addToLocation(0, p);
-	}
-
-	public Serializable getObjects(Int2D p) {
-		return storage[getFlatIdx(p)];
-	}
-
 }
