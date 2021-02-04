@@ -580,6 +580,7 @@ public class DSimState extends SimState {
 						}
 					}
 
+/*
 					// is this needed?
 					else if (haloGrid2D.getStorage() instanceof DoubleGridStorage) {
 
@@ -591,6 +592,7 @@ public class DSimState extends SimState {
 						// Do I need to do anything here!?!!!
 
 					}
+*/
 
 					else if (haloGrid2D.getStorage() instanceof DenseGridStorage) {
 						GridStorage st = ((HaloGrid2D) field).getStorage();
