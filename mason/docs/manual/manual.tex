@@ -14419,18 +14419,18 @@ Distributed MASON was co-designed by ISISLAB-UNISA (University of Salerno) and G
     \item \Class{sim.engine.DSteppable}: a distributed Steppable.
     \item \Class{sim.engine.DistributedTentaiveStep}: distributed version of the TentativeStep class.  This is used internally by the Schedule.
     \item \Class{sim.engine.DistributedIterativeRepeat}: distributed version of the  IterativeRepeat class.    This is used internally by the Schedule.
+    \item \Class{sim.engine.Promised}: an interface for objects which hold information that will be filled out and provided in the future. 
+    \item \Class{sim.engine.Promise}: a basic implementation of Promised.
 \end{itemize}
 
 
-\paragraph{The sim.engine package} contains code for moving data from processor to processor, or from a processor to a remote visualization process, using Java RMI.  It contains the following classes:
+\paragraph{The sim.engine.rmi package} contains code for moving data from processor to processor, or from a processor to a remote visualization process, using Java RMI.  It contains the following classes:
 
 
 \begin{itemize}
     \item \Class{sim.engine.rmi.RemoteProcessor}: an interface for remote visualization and statistics tools to access the distributed model at runtime.
     \item \Class{sim.engine.rmi.RMIProxy}: a Java RMI object for accessing the a processor's fields from another processor.
-    \item \Class{sim.engine.rmi.Promise}: an object provided which holds information that will be filled out in the future.
-    \item \Class{sim.engine.rmi.RemotePromise}: a Java RMI object which does the same thing as Promise.
-    \item \Class{sim.engine.rmi.RemoteFulfillable}: the interface both Promise and RemotePromise jointly implement.
+    \item \Class{sim.engine.rmi.RemotePromise}: a Java RMI object which implements the \class{sim.engine.Promised} interface.
     \item \Class{sim.engine.rmi.TransportRMIInterface}: the interface both Promise and RemotePromise jointly implement.
 \end{itemize}
 
@@ -14569,6 +14569,7 @@ DoubleGrid2D & \Class{sim.util.DDoubleGrid2D}\\
 DenseGrid2D & \Class{sim.util.DDenseGrid2D}\\
 Continuous2D& \Class{sim.util.DContinuous2D}\\
 SparseGrid2D& No equivalent. Instead, use \Class{sim.util.DDenseGrid2D}\\
+Network&No equivalent for now.
 \end{tabular}%
 \end{center}
 
@@ -14580,17 +14581,18 @@ MASON handles this by endowing every processor not only with its partition regio
 
 \begin{figure}[t]
 \begin{center}\includegraphics[width=2.5in]{distributed/HaloGrid}\end{center}
-\caption{Nine partitions with Areas of Interest.  {\bf Black} lines are the actual {\it local bounds} of the partitions of the various processors.  {\color{red} Thin red dotted rectangles} show the {\it halo regions} of each processor formed by extending their partitions out by the Areas of Interest, whose width is shown. The {\color{red}\bf bold red dotted rectangle} shows the halo region specifically for Processor 5.  The {\color{green}\bf bold green dotted rectangle} shows the {\it private region} of Processor 5, that is, the region under its control that overlaps with no other processor's halo region because it is outside their areas of interest.}
+\caption{Nine partitions with Areas of Interest.  {\bf Black} lines are the actual {\it local bounds} of the partitions of the various processors.  {\color{red} Thin red dotted rectangles} show the {\it halo regions} of each processor formed by extending their partitions out by the Areas of Interest, whose width is shown. The {\color{red}\bf bold red dotted rectangle} shows the halo region specifically for Processor 5.  The {\color{green}\bf bold green dotted rectangle} shows the {\it private region} of Processor 5, that is, the region under its control that overlaps with no other processor's halo region because it is outside their areas of interest.   The border region between the private region and the halo region of Processor 5 is its {\it shared region}.} 
 \label{halogridpic}
 \end{figure}
 
-Thus each processor really has three rectangular regions of interest, as shown in Figure~\ref{halogridpic}:
+Thus each processor has two rectangular regions of interest, as shown in Figure~\ref{halogridpic}:
 
 \begin{itemize}
 \item The {\bf local bounds} of the partition.  This is the actual region under the control of the processors.  Agents can write to fields locally within these bounds.
-\item The {\bf halo region} of the partition.  This is the larger bounds outside of the partition, which includes the Area of Interest.    Agents can efficiently read from fields within these bounds, but are not permitted to write to the halo region areas outside the local bounds.
-\item The {\bf private region} of the partition.  This is the portion of the local bounds that is not within the Area of Interest of any other processor.  This is rarely useful to know about, and there are no methods which compute it for you, but there you go.
+\item The {\bf halo region} of the partition.  This is the larger bounds outside of the partition, which includes the Area of Interest.    Agents can efficiently read from fields within these bounds, but are not permitted to write to the halo region areas outside the local bounds.  
 \end{itemize}
+
+There are a variety of methods regarding these two regions.  You might be interested in knowing that we call the portion of a partition's local bounds which appears in no other processor's halo region the  {\bf private region} of the partition. And the {\it shared region} is the portion of the local bounds that is not the private region.  But this is just terminology: it's not part of the API.
 
 The \class{sim.field.partitioning.Partition} object can be queried to give you useful information here.  You can get this object by calling  \method{getPartition()} on your DSimState.   Here are some of its methods:
 
@@ -14762,20 +14764,35 @@ This is for demonstration only: Obviously a much better thing to do would be for
 
 \section{Using Fields}
 
+Once again, Distributed MASON's available fields are:
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\textbf{MASON Field} & \textbf{Distributed MASON Equivalent}\\
+IntGrid2D & \Class{sim.util.DIntGrid2D}\\
+DoubleGrid2D & \Class{sim.util.DDoubleGrid2D}\\
+DenseGrid2D & \Class{sim.util.DDenseGrid2D}\\
+Continuous2D& \Class{sim.util.DContinuous2D}\\
+SparseGrid2D& No equivalent. Instead, use \Class{sim.util.DDenseGrid2D}\\
+Network&No equivalent for now.
+\end{tabular}%
+\end{center}
+
 As explained earlier in Section~\ref{distributedfieldsandpartitions}, in Distributed MASON a field is divided into several regions called {\bf partitions}, and each partition is owned by one processor.  Processors store partitions locally, and each processor also stores a local cache of part the neighboring partitions right along the boundary of the processor's partition: the amount of that neighboring region is determined by the {\bf Area of Interest} or {\bf AOI}.   This cache, called the {\bf halo region}, is updated every timestep as neighbors trade notes.  Agents can directly read and write to their local partitions: and they can directly read from, but not write to, the halo region.  As a reminder, see Figure~\ref{halogridpic}.
 
 Now, this isn't exactly true: agents can in fact read and write to anything, but to do so they must use costly calls which aren't fulfilled immediately.  We'll discuss those later.
 
-Each field class in DistributedMASON\,---\,even the continuous field\,---\,is a subclass of \class{sim.field.DAbstractGrid2D}, which is in turn a subclass of \class{sim.field.AbstractGrid2D}.   This means that these field classes contain all the standard toroidal and neighborhood lookup functions available in MASON.  DAbstractGrid2D contains a few useful methods for you:
-
-Internally, each field also contains two special objects:
+Each field class in Distributed MASON\,---\,both grids and continuous space\,---\,is a subclass of \class{sim.field.DAbstractGrid2D}, which is in turn a subclass of the standard MASON \class{sim.field.AbstractGrid2D}.   This means that these field classes contain all the standard toroidal and neighborhood lookup functions available in MASON.  Internally, each field also contains two special objects:
 
 \begin{itemize}
 \item A \class{sim.field.HaloGrid2D}.  This object manages all the remote transfer of information, objects, and agents, between fields.  It is so named because originally it primarily managed the {\bf halo exchange}, whereby neighboring processors traded notes each timestep regarding their cached halo regions. 
 \item A \class{sim.field.storage.GridStorage} subclass object.  This object holds the local data for the processor's partition of this field, plus the locally cached halo region. 
 \end{itemize}
 
-In general you shouldn't need to know much about these classes: you'll just be using the field classes directly.  But you should know how they work overall.
+In general you shouldn't need to know much about these classes: you'll just be using the field classes directly.  But you should know how they work overall.  
+
+
+Here are some important DAbstractGrid2D methods, shared among all fields:
 
 \begin{methods}{\class{sim.field.DAbstractGrid2D}}
 \mthd{public IntRect2D getLocalBounds()}
@@ -14786,17 +14803,31 @@ Returns the bounds of the halo region surrounding this partition (including the 
 Returns true if the given point lies within the local bounds. There is a special version with Double2D for the Continuous field: be sure to check that out.
 \mthd{public boolean isHalo(Int2D p)}
 Returns true if the given point lies within the halo region bounds. There is a special version with Double2D for the Continuous field: be sure to check that out.
+\mthd{public boolean isHaloToroidal(NumberND p)}
+Returns true if the halo region, when wrapped toroidally, would contain the given point.  For example, if the width was 100, and the AOI was 5, and we were in the top-left (0,0) partition, and we had the point (98, 6), because 98 wraps around to -2 and is thus in the halo region of the top-left partition, we would return true.
+\mthd{public boolean isHaloToroidal(double x, double y, double distance)}
+Returns true if the halo region, when wrapped toroidally, would contain the entire square centered at \(\langle x, y\rangle\) and {\it distance\(\times 2\)} in both width and height, 
+\mthd{public Double2D toHaloToroidal(Double2D p)}
+Returns the point in the halo region which is toroidally-equivalent to the given point.  If there is no such point, then null is returned.
+\mthd{public Int2D toHaloToroidal(Int2D p)}
+Returns the point in the halo region which is toroidally-equivalent to the given point.  If there is no such point, then null is returned.
 \mthd{public HaloGrid2D getHaloGrid()}
 Returns the field's HaloGrid2D if for some reason you needed that.
 \end{methods}
 
 \paragraph{Setting and Getting Data}
 
-Setting and getting data is different from how it's done in the standard MASON fields, though in many cases it'll feel familiar.  You'll generally need to call a function to set, get, add, remove, or move any data.  There are often two versions of this function.  One version sets, moves, adds, removes, or queries {\bf locally}: and will only work if the data is in fact local; or if you're doing a query and it's within the halo region.    The second version is more general\,---\,you can make remote queries, and move objects to remove fields, for example.  However this is much more expensive because it will have to ask another processor to fullfill the request.
+Setting and getting data is different from how it's done in the standard MASON fields, though in many cases it'll feel familiar.  You'll generally need to call a function to set, get, add, remove, or move any data.  There are often two versions of this function.  
+
+\begin{itemize} 
+\item The first version sets, moves, adds, removes, or queries {\bf local data}.  If it is modifying the data, ``local'' in this context means within the local region.  If it is retrieving or querying data, ``local'' means within the halo region.  These methods have the word \method{Local} added to the end.
+
+\item The second version is more general\,---\,you can make either local or remote queries, and move objects to remove fields, for example.  However if you're dealing with remote elements, this is much more expensive because it will have to ask another processor to fulfill the request.
 
 If your general request is to {\it change} something outside of the local region, then the remote processor will perform the request by the next timestep.  For example if you ask to move a rock from a local partition to a remote partition, it'll be deleted from your local partition immediately, but added to the remote partition by the next timestep.  Note that you cannot do the opposite: you can't move a rock from a remote partition to your local partition.  That operation has to be done by an agent on the remote processor.
 
 If the request is the {\it query} something outside of the halo region, then you will be given a \class{sim.engine.rmi.Promised} object.  This is an object which will ultimately (normally at the next timestep) be filled with the data you asked for: but it won't be immediately available.  It's a promise!
+\end{itemize}
 
 \begin{methods}{\class{sim.engine.rmi.Promised}}
 \mthd{public boolean isReady()}
@@ -14814,6 +14845,10 @@ Returns the data as an double.  If the data is not an double, this will throw an
 One oddity you'll find is that many fields have options to add, move, or remove agents (Steppable objects).  Why isn't this being handled by the Schedule?  Because when you move an agent which is stored in a field to some other partition, it needs to be rescheduled on that remote partition's schedule as well, and this is a complicated process.
 
 You can always schedule an agent on your Schedule just like in MASON.  If the agent is disembodied\,---\,that is, it's not part of any field and will always stay with your process, then you're done, it's just like MASON.  You can also always schedule an agent and also stick it in your local partition manually: but there are convenience methods in your field to do this properly so you don't mess up doing it by hand.  Finally, if you remove an agent, or move it, etc., and there's a {\it chance} that it might move to a different partition, you should do so using the field's special rescheduling methods so as not to mess things up.
+
+\paragraph{Using Standard MASON Fields}
+
+There's nothing to prevent a processor from using a standard MASON field to its heart's content.  Go right ahead!  But understand that this field isn't shared with or distributed across any other processors.  Still, it's often useful: for example, if you have a read-only Network that you want every processor to have access to, you could achieve this simply by having every processor build its own identical copy of the Network: or have the root processor build the Network and then send it to the other processors at \method{startRoot()} time.  
 
 \subsection{Integer and Double Grids}
 
@@ -14862,7 +14897,7 @@ Returns the local storage array for the grid, in row-major order including the h
 
 These are simply grids of objects, one Object (or null) per grid square.  The Object grid class is \class{sim.field.grid.DObjectGrid2D}.  Note that this class contains methods for manipulating agents (Steppable): but this is dangerous because if you set a grid square to some object, it might overwrite an agent which used to be there; but the agent is still on the Schedule.  You need to be careful to avoid creating bugs in your model this way.
 
-All objects stored in a DObjectGrid2D must be DObjects.
+All objects stored in a DObjectGrid2D must be of the class DObject.
 
 \begin{methods}{\class{sim.field.grid.DObjectGrid2D} constructor}
 \mthd{public DObjectGrid2D(DSimState state)}
@@ -14895,7 +14930,7 @@ Returns the local storage array for the grid, containing objects of the class {\
 
 These are grids of ArrayLists of objects, and are approximately the same as DenseGrid2D in ordinary MASON.  There is no equivalent to SparseGrid2D: you'll need to use dense grids.  The Dense grid class is \class{sim.field.grid.DDenseGrid2D}.  Note that this class contains methods for manipulating agents (Steppable).
 
-All objects stored in a DDenseGrid2D must be DObjects.
+All objects stored in a DObjectGrid2D must be of the class DObject.
 
 \begin{methods}{\class{sim.field.grid.DDenseGrid2D} constructor}
 \mthd{public DDenseGrid2D(DSimState state)}
@@ -14905,9 +14940,9 @@ Creates a DDenseGrid2D which holds objects of the given class {\it T}.
 \begin{methods}{\class{sim.field.grid.DDenseGrid2D}}
 \mthd{public boolean containsLocal(Int2D p, T val)}
 Returns whether ArrayList< given object is located at the given position.
-\mthd{public ArrayList\(<\)T\(>\) getLocal(Int2D p)}
+\mthd{public ArrayList\(<\)T\(>\) getAllLocal(Int2D p)}
 Returns all the elements located at the given point, or null.
-\mthd{public void setLocal(Int2D p, ArrayList\(<\)T\(>\))}
+\mthd{public void setAllLocal(Int2D p, ArrayList\(<\)T\(>\))}
 Sets all the elements at a point local to your partition.  You can pass in null to clear the elements.
 \mthd{public void addLocal(Int2D p, T val)}
 Adds an element to the given local point.
@@ -14917,7 +14952,7 @@ Removes an element from the given local point.  Returns true if the object actua
 Removes an element entirely from the given local point, even if it is stored there multiple times.  Returns true if the object actually existed at the point.
 \mthd{public boolean removeAllLocal(Int2D p)}
 Removes all elements from the given local point.  Returns true if any objects actually existed at the point.  If some of the objects are agents, and you need to remove them from the schedule as well, consider calling removeAllAgentsAndObjects(...) instead.
-\mthd{public Promised get(Int2D p)}
+\mthd{public Promised getAll(Int2D p)}
 Returns a Promised value for the given point, which can be any point in the model, and which will be fulfilled by next timestep.  This value will be the entire ArrayList (or null) containing all the objects at the point.  Remember that this is costly unless the point happens to be in your local or halo region.
 \mthd{public Promised get(Int2D p, T t)}
 Returns a Promised value for the given point, which can be any point in the model, and which will be fulfilled by next timestep.  This value will be a single object at the point.  Remember that this is costly unless the point happens to be in your local or halo region.
@@ -14950,7 +14985,7 @@ Much like Continuous2D, DContinuous2D is created with a {\it discretization}: ev
 
 Whereas DDenseGrid2D stores objects at a given grid square in an ArrayList, DContinuous2D stores them as a HashMap; and also maintains a mapping of local locations to objects.    This means that an object can only be stored once in a DContinuous2D object. In theory you could store the same object in two different partitions, but this is a very bad idea.
 
-All objects stored in a DContinuous2D must be DObjects.
+All objects stored in a DObjectGrid2D must be of the class DObject.
 
 {\bf Not listed below are all the neighborhood lookup and toroidal computation methods} available in Continuous2D, which are available in exactly the same form in DContinuous2D.
 
@@ -14964,11 +14999,13 @@ Creates a DContinuous2D which holds objects of the given class {\it T}, using th
 Returns true if the given point lies within the local bounds. This the Double2D version of the same Int2D method found in DAbstractGrid2D.
 \mthd{public boolean isHalo(Double2D p)}
 Returns true if the given point lies within the halo region or local bounds. This the Double2D version of the same Int2D method found in DAbstractGrid2D.
-\mthd{public Double2D getObjectLocal(T val)}
+\mthd{public Double2D getObjectLocationLocal(T val)}
 Returns the local location of the given object, else null if there is none.
-\mthd{public Double2D getObjectLocal(long id)}
+\mthd{public Double2D getObjectLocationLocal(long id)}
 Returns the local location of the object with the given ID, else null if there is none.
 \mthd{public boolean containsLocal(T val)}
+Returns whether the given object is located locally.
+\mthd{public boolean containsLocal(long id)}
 Returns whether the given object is located locally.
 \mthd{public boolean containsLocal(Double2D p, T val)}
 Returns whether the given object is located at the given location.
@@ -14976,8 +15013,8 @@ Returns whether the given object is located at the given location.
 Returns whether the given object is located at the given location.
 \mthd{public HashMap\(<\)Long, T\(>\) getCellLocal(Double2D p)}
 Returns a HashMap (of IDs to objects) of all elements located in the discretized cell at the given location.
-\mthd{public ArrayList\(<\)T\(>\) getLocal(Double2D p)}
-Returns all the elements located exactly at the given point, or null.
+%\mthd{public ArrayList\(<\)T\(>\) getLocal(Double2D p)}
+%Returns all the elements located exactly at the given point, or null.
 \mthd{public DObject getLocal(long id)}
 Returns an object stored locally with the given id, or null if there is none.
 \mthd{public DObject getLocal(Double2D p, long id)}
@@ -14990,6 +15027,8 @@ Removes an object locally with the given id.  Returns false if there was no such
 Removes the given object locally.  Returns false if there was no such element.
 \mthd{public boolean removeLocal(Double2D p, long id)}
 Removes an object locally at the given point and with the given id.  Returns false if there was no such element.
+\mthd{public boolean removeLocal(Double2D p, T t)}
+Removes an object locally at the given point.  Returns false if there was no such element.
 \mthd{public Promised get(Double2D p, T t)}
 Returns a Promised value for the given point, which can be any point in the model, and which will be fulfilled by next timestep.  This value will be a single object at the point.  Remember that this is costly unless the point happens to be in your local or halo region.
 \mthd{public void add(Double2D p, T t)}
@@ -15010,6 +15049,9 @@ Moves an agent remotely to a new location, by next timestep.  The agent must be 
 Returns the entire storage object.
 \end{methods}
 
+\section{Neighborhood Lookup in Distributed Fields}
+
+To be written...
 
 \section{Visualization and Statistics}
 

@@ -889,6 +889,8 @@ public class ObjectGrid2D extends AbstractGrid2D
         }
                 
 
+//// FIXME -- probably it's wrong to getObjectsAtLocations after reduceObjectsAtLocations
+
     public Bag getRadialNeighborsAndLocations( final int x, final int y, final double dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  Bag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
