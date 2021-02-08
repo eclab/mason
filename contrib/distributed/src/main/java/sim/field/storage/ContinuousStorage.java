@@ -180,9 +180,13 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 
 	/// METHODS FOR PACKING AND UNPACKING
 
+	
 	void removeObject(long id) {
 		getCell(m.remove(id)).remove(id);
 	}
+	
+	
+
 
 	// Remove all the objects inside the given rectangle
 	void removeObjects(final IntRect2D r) {
@@ -259,6 +263,19 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 		}
 
 		return sum;
+	}
+	
+	public boolean checkNull() {
+		
+		for (int i = 0; i < storage.length; i++) {
+			if (storage[i] == null) {
+				System.out.println(i+" is null");
+				return false;
+			}
+		
+		}
+		
+		return true;
 	}
 
 

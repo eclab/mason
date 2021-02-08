@@ -163,7 +163,10 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 					{
 					oldCell.remove(t);
 					if (oldCell.isEmpty() && storage.removeEmptyBags)
-						storage.setCell(oldLoc, null);
+					{
+						//storage.setCell(oldLoc, null);
+						storage.setCell(oldLoc, new HashMap<Long, T>());
+					}
 					}
 				if (newCell == null)
 					{
@@ -204,8 +207,11 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			HashMap<Long, T> cell = getCellLocal(loc);
 			if (cell != null)
 				cell.remove(t.ID());
-			if (cell.isEmpty() && storage.removeEmptyBags)
-				storage.setCell(loc, null);
+			if (cell.isEmpty() && storage.removeEmptyBags) {
+				//storage.setCell(loc, null);
+				storage.setCell(loc, new HashMap<Long, T>());
+			}
+
 			return true;
 			}
 		}
@@ -222,8 +228,11 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			{
 			if (cell != null)
 				cell.remove(t.ID());
-			if (cell.isEmpty() && storage.removeEmptyBags)
-				storage.setCell(p, null);
+			if (cell.isEmpty() && storage.removeEmptyBags) {
+				//storage.setCell(p, null);
+     			storage.setCell(p, new HashMap<Long, T>());
+			}
+
 			return true;
 			}
 		}
@@ -806,10 +815,12 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
         {
         if (distance > halo.partition.getAOI()) throw new RuntimeException("Distance " + distance + " is larger than AOI " + halo.partition.getAOI());
 
+        /*
         double discretization = storage.getDiscretization();
         double discDistance = distance / discretization;
         double discX = position.x / discretization;
         double discY = position.y / discretization;
+        
         
         if (nonPointObjects)
             {
@@ -819,6 +830,13 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
             // guaranteed to have the location of the object in our collection.
             discDistance++;
             }
+        */
+        
+
+        double discDistance = distance;
+        double discX = position.x;
+        double discY = position.y;        
+        
 
 	/// FIXME: This is wrong, discDistance is discretized distance not low-level real-valued distance
 	
@@ -841,6 +859,8 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			for(int y = minY ; y <= maxY; y++)
 				{
 				HashMap<Long, T> cell = storage.getCelldp(x, y);
+
+
 				for(T t : cell.values())
 					{
 					result.add(t);

@@ -145,7 +145,8 @@ public class DFlocker extends DSteppable implements Remote, Oriented2D {
 
 		if (dead)
 			return;
-		List<DFlocker> b = null;
+		//List<DFlocker> b = null;
+		List<DFlocker> b = new ArrayList<DFlocker>();
 
 		// try {
 		//b = dFlockers.flockers.getNeighborsWithin(this, DFlockers.neighborhood);

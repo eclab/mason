@@ -511,7 +511,7 @@ public class DSimState extends SimState {
 						HashSet agents = new HashSet(((HashMap) st.getCell(doublep).clone()).values()); // create a clone to avoid the
 						// ConcurrentModificationException
 						for (Object a : agents) {
-							NumberND loc = st.getObjectLocation((DObject) a);
+							Double2D loc = st.getObjectLocation((DObject) a);
 							final int locToP = partition.toPartitionPID(loc);
 							if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
 									&& !partition.getLocalBounds().contains(loc)) {
