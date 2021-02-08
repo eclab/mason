@@ -5,6 +5,10 @@ import sim.engine.*;
 import sim.field.storage.*;
 import sim.field.partitioning.*;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.*;
 import java.rmi.registry.*;
@@ -158,6 +162,24 @@ public class SimStateProxy extends SimState
 		return visualizationProcessor().getStorageBounds();
 		}
 		
+//	static String statsFileName;
+//	static boolean isStats = false;
+//	static boolean isVis = false;
+//	//TODO THIS HAS TO BE CALLED INSTEAD OF SimState.doLoop(c, args) though....
+//	public static void doLoop(final Class c, String[] args) {
+//		if (keyExists("-dvis", args))
+//        {
+//			isVis = true;
+//        }
+//		String stats_s = SimState.argumentForKey("-dstats", args);
+//		if (stats_s != null) {
+//			isStats = true;
+//			statsFileName = stats_s;
+//		}
+//		
+//		SimState.doLoop(c, args);//TODO WILL THIS BREAK THINGS?
+//	}
+	
 	public void start()
 		{
 		super.start();
@@ -221,6 +243,8 @@ public class SimStateProxy extends SimState
 								vp.unlock();
 
 								// === Stats & Debug === //
+								// Did modeler decide to turn on stats (TODO this seems unnecessary. just check if stats are loaded, no?)
+//								if (isStats) {
 								// Determine if any stats are registered (on *any* processor)
 								boolean statsExist = false; // flag for if any stats are registered
 								ArrayList<ArrayList<Stat>> allStats = new ArrayList<>();
@@ -231,16 +255,6 @@ public class SimStateProxy extends SimState
 									if (!statsExist && !statList.isEmpty())
 										statsExist = true;
 								}
-								
-								// Simulate the nulls:
-//								// Even
-//								if (pid % 2 == 0 && steps % 2 == 0) {
-//									// 
-//								}
-//								// Odd
-//								if (pid % 2 != 0 && steps % 2 != 0) {
-//									
-//								}
 								
 								if (statsExist) {
 									// Find minimum step over all processor stats
@@ -301,9 +315,9 @@ public class SimStateProxy extends SimState
 											// <- currStep == last stat.steps + 1
 										}
 									}
-	
+									
 									// Test:
-									ArrayList<Serializable> stats = getStats(maxStep);
+//										ArrayList<Serializable> stats = getStats(maxStep);
 									System.out.println();
 									System.out.println("***************************************");
 									System.out.println("*** Stats dumped for timestep " + maxStep);
@@ -330,10 +344,29 @@ public class SimStateProxy extends SimState
 									System.out.println(header.substring(0, header.length() - " | ".length()));
 									
 									System.out.println(getStatsAsCSV(randStart, randEnd));
-	
+									
+//										// === Write to File === //
+//										// TODO this will not work for jars, right? Need a zip file tracer
+//										File statsFile = new File(statsFileName);
+//										// Create the file if it doesn't exist
+//										if (!statsFile.exists()) {
+//											statsFile.mkdirs();
+//										}
+//										
+//										BufferedWriter writer;
+//										try {
+//											writer = new BufferedWriter(new FileWriter(statsFileName, true));
+//										    writer.append(getStatsAsCSV(minStep, maxStep));									    
+//											writer.close();
+//										} catch (IOException e1) {
+//											// TODO Auto-generated catch block
+//											e1.printStackTrace();
+//										}
+									
 									//TODO Do the same for Debug
 									// <<<<<<Stats & Debug
 									}
+//									}
 								}
 							lastSteps = steps;
 							}
@@ -424,16 +457,16 @@ public class SimStateProxy extends SimState
 		return lastStep;
 	}
 	
-	/**
-	 * Returns the stats (for all processors) at a particular timestep
-	 */
-	public ArrayList<Serializable> getStats(long step) {
-		ArrayList<Serializable> list = new ArrayList<Serializable>();
-		for (int i = 0; i < statQueues.size(); i++) {
-			list.add(statQueues.get(i));
-		}
-		return list;
-	}
+//	/**
+//	 * Returns the stats (for all processors) at a particular timestep
+//	 */
+//	public ArrayList<Serializable> getStats(long step) {
+//		ArrayList<Serializable> list = new ArrayList<Serializable>();
+//		for (int i = 0; i < statQueues.size(); i++) {
+//			list.add(statQueues.get(i));
+//		}
+//		return list;
+//	}
 	
 	//TODO no checks
 	public String getStatsAsCSV(long step) {
