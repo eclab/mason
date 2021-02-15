@@ -32,25 +32,21 @@ public abstract class Partition {
 		this.toroidal = toroidal;
 		this.aoi = aoi;
 
-		try 
-			{
+		try {
 			pid = DSimState.getPID();
 			numProcessors = MPI.COMM_WORLD.getSize();
-			} 
-		catch (MPIException e) 
-			{
+		} catch (MPIException e) {
 			e.printStackTrace();
 			System.exit(-1);
-			}
+		}
 
 		preCallbacks = new ArrayList<Consumer>();
 		postCallbacks = new ArrayList<Consumer>();
 	}
 
-	public int getPID() 
-		{
+	public int getPID() {
 		return pid;
-		}
+	}
 
 	public int getNumProcessors() {
 		return numProcessors;
@@ -63,9 +59,14 @@ public abstract class Partition {
 	public Comm getCommunicator() {
 		return comm;
 	}
-	
-	public int getWorldWidth() { return width; }
-	public int getWorldHeight() { return height; }
+
+	public int getWorldWidth() {
+		return width;
+	}
+
+	public int getWorldHeight() {
+		return height;
+	}
 
 	public IntRect2D getWorldBounds() {
 		return new IntRect2D(width, height);
@@ -83,14 +84,16 @@ public abstract class Partition {
 	public abstract IntRect2D getLocalBounds(int pid);
 
 	public abstract IntRect2D getHaloBounds();
-	
+
 	public abstract ArrayList<IntRect2D> getAllBounds();
-	
+
 	public abstract int getNumNeighbors();
 
 	public abstract int[] getNeighborPIDs();
-	
-	public int getAOI() { return aoi; }
+
+	public int getAOI() {
+		return aoi;
+	}
 
 	/**
 	 * @param p

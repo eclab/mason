@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 import mpi.MPI;
 import mpi.MPIException;
 import sim.engine.DSteppable;
+import sim.app.dflockers.DFlockers;
 import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.engine.SimState;
@@ -26,35 +27,34 @@ public class DFlockersWithDRegistry extends DSimState {
 	public final static double consistency = 1.0;
 	public final static double momentum = 1.0;
 	public final static double deadFlockerProbability = 0;
-	public final static int neighborhood = 6; // aoi
+	public final static double neighborhood = 6; // aoi
 	public final static double jump = 0.7; // how far do we move in a time step?
 
 	public final DContinuous2D<DFlockerWithDRegistry> flockers;
 
 	/** Creates a Flockers simulation with the given random number seed. */
 	public DFlockersWithDRegistry(final long seed) {
-		super(seed, DFlockersWithDRegistry.width, DFlockersWithDRegistry.height, DFlockersWithDRegistry.neighborhood);
+		super(seed, DFlockersWithDRegistry.width, DFlockersWithDRegistry.height, (int) DFlockersWithDRegistry.neighborhood);
 		enableRegistry(); // used to enable the object registry
 		// final double[] discretizations = new double[] {
 		// DFlockersWithDRegistry.neighborhood / 1.5,
 		// DFlockersWithDRegistry.neighborhood / 1.5 };
-		flockers = new DContinuous2D<DFlockerWithDRegistry>(getPartitioning(), aoi,
-				DFlockersWithDRegistry.neighborhood / 1.5, this);
+		flockers = new DContinuous2D<>((int) (neighborhood / 1.5), this);
 	}
 
 	public void start() {
 		super.start();
-		final int[] size = getPartitioning().getBounds().getSizes();
-		for (int x = 0; x < DFlockersWithDRegistry.numFlockers / getPartitioning().numProcessors; x++) {
-			final double px = random.nextDouble() * size[0] + getPartitioning().getBounds().ul().toArray()[0];
-			final double py = random.nextDouble() * size[1] + getPartitioning().getBounds().ul().toArray()[1];
+		final int[] size = getPartition().getLocalBounds().getSizes();
+		for (int x = 0; x < DFlockersWithDRegistry.numFlockers / getPartition().getNumProcessors(); x++) {
+			final double px = random.nextDouble() * size[0] + getPartition().getLocalBounds().ul().toArray()[0];
+			final double py = random.nextDouble() * size[1] + getPartition().getLocalBounds().ul().toArray()[1];
 			final Double2D location = new Double2D(px, py);
 //			final DFlockerWithDRegistry flocker = new DFlockerWithDRegistry(location, 
 //					(getPartitioning().pid * (DFlockersWithDRegistry.numFlockers / getPartitioning().numProcessors)) + x);
 
 			final DFlockerWithDRegistry flocker = new DFlockerWithDRegistry(location);
 
-			flockers.addAgent(location, flocker);
+			flockers.addAgent(location, flocker, 0, 0);
 
 			try {
 				if (x == 0 && MPI.COMM_WORLD.getRank() == 0)

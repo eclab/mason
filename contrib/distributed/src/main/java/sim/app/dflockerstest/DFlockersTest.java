@@ -15,6 +15,7 @@ import java.util.stream.IntStream;
 
 import mpi.MPI;
 import mpi.MPIException;
+import sim.app.dflockers.DFlockers;
 import sim.engine.DSimState;
 import sim.field.continuous.DContinuous2D;
 import sim.util.Timing;
@@ -37,7 +38,7 @@ public class DFlockersTest extends DSimState {
 
 	public final DContinuous2D<DFlocker> flockers;
 
-	//public ArrayList<Long> idAgents;
+	// public ArrayList<Long> idAgents;
 	public ArrayList<Long> idLocal;
 
 	final SimpleDateFormat format = new SimpleDateFormat("ss-mm-HH-yyyy-MM-dd");
@@ -48,9 +49,10 @@ public class DFlockersTest extends DSimState {
 	public DFlockersTest(final long seed) {
 		super(seed, DFlockersTest.width, DFlockersTest.height, DFlockersTest.neighborhood);
 
-		// final double[] discretizations = new double[] { DFlockersTest.neighborhood / 1.5, DFlockersTest.neighborhood / 1.5 };
-		flockers = new DContinuous2D<DFlocker>(getPartitioning(), aoi, DFlockersTest.neighborhood / 1.5, this);
-		//idAgents = new ArrayList<>();
+		// final double[] discretizations = new double[] { DFlockersTest.neighborhood /
+		// 1.5, DFlockersTest.neighborhood / 1.5 };
+		flockers = new DContinuous2D<>((int) (neighborhood / 1.5), this);
+		// idAgents = new ArrayList<>();
 		idLocal = new ArrayList<>();
 	}
 
@@ -64,8 +66,8 @@ public class DFlockersTest extends DSimState {
 			e2.printStackTrace();
 		}
 		if (schedule.getSteps() > 0) {
-			int[] dstDispl = new int[partition.numProcessors];
-			final int[] dstCount = new int[partition.numProcessors];
+			int[] dstDispl = new int[partition.getNumProcessors()];
+			final int[] dstCount = new int[partition.getNumProcessors()];
 			long[] recv = new long[numFlockers];
 
 //			int[] ids = new int[idLocal.size()];
@@ -95,7 +97,7 @@ public class DFlockersTest extends DSimState {
 				e1.printStackTrace();
 			}
 
-			if (partition.getPid() == 0) {
+			if (partition.getPID() == 0) {
 				System.out.println("STEP " + schedule.getSteps() + " count ");
 				for (int i = 0; i < dstCount.length; i++) {
 					System.out.print(dstCount[i] + " ");
@@ -114,14 +116,10 @@ public class DFlockersTest extends DSimState {
 				}
 				Arrays.sort(recv);
 				/*
-				for (int i = 0; i < idAgents.size(); i++) {
-					if (idAgents.get(i) != recv[i]) {
-						System.err.println("ERROR: something wrong happens --> idAgents.get(i) " + idAgents.get(i)
-								+ " recv[i] " + recv[i]);
-						System.exit(1);
-					}
-				}
-				*/
+				 * for (int i = 0; i < idAgents.size(); i++) { if (idAgents.get(i) != recv[i]) {
+				 * System.err.println("ERROR: something wrong happens --> idAgents.get(i) " +
+				 * idAgents.get(i) + " recv[i] " + recv[i]); System.exit(1); } }
+				 */
 			}
 			idLocal.clear();
 		}
@@ -132,7 +130,7 @@ public class DFlockersTest extends DSimState {
 		for (int x = 0; x < DFlockersTest.numFlockers; x++) {
 			final Double2D loc = new Double2D(random.nextDouble() * width, random.nextDouble() * height);
 			DFlocker flocker = new DFlocker(loc);
-			//idAgents.add(flocker.getId());
+			// idAgents.add(flocker.getId());
 			if (random.nextBoolean(deadFlockerProbability))
 				flocker.dead = true;
 			agents.add(flocker);
@@ -150,8 +148,8 @@ public class DFlockersTest extends DSimState {
 
 		for (Object p : agents) {
 			DFlocker a = (DFlocker) p;
-			if (partition.getBounds().contains(a.loc))
-				flockers.addAgent(a.loc, a);
+			if (partition.getLocalBounds().contains(a.loc))
+				flockers.addAgent(a.loc, a, 0, 0);
 		}
 
 	}

@@ -174,10 +174,10 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 		final DFlockersWithDRegistry dFlockers = (DFlockersWithDRegistry) state;
 
 		final Double2D oldloc = loc;
-		loc = (Double2D) dFlockers.flockers.getLocation(this);
+		loc = (Double2D) dFlockers.flockers.getObjectLocationLocal(this);
 
 		if (loc == null) {
-			System.out.printf("pid %d oldx %g oldy %g", dFlockers.getPartitioning().pid, oldloc.x, oldloc.y);
+			System.out.printf("pid %d oldx %g oldy %g", dFlockers.getPartition().getPID(), oldloc.x, oldloc.y);
 			Thread.dumpStack();
 			System.exit(-1);
 		}
@@ -185,7 +185,7 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 		if (dead)
 			return;
 
-		final List<DFlockerWithDRegistry> b = dFlockers.flockers.getNeighborsWithin(this,
+		final List<DFlockerWithDRegistry> b = dFlockers.flockers.getNeighborsWithinDistance(loc,
 				DFlockersWithDRegistry.neighborhood);
 
 		final Double2D avoid = avoidance(b, dFlockers.flockers);
@@ -226,7 +226,6 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 			e.printStackTrace();
 		}
 
-		dFlockers.flockers.moveAgent(old, loc, this);
-
+		dFlockers.flockers.moveAgent(loc, this);
 	}
 }

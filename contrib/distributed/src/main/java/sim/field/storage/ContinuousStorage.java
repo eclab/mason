@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import sim.app.dflockers.DFlocker;
 import sim.engine.DObject;
 import sim.util.*;
 
@@ -196,7 +195,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T, Double2
 	}
 
 	// Get all the objects inside the given rectangle
-	ArrayList<T> getObjects(final IntRect2D r) {
+	public ArrayList<T> getObjects(final IntRect2D r) {
 		final ArrayList<T> objs = new ArrayList<T>();
 		int[] offset = { 1, 1 };
 

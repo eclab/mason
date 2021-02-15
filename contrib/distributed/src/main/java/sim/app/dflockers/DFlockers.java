@@ -40,7 +40,7 @@ public class DFlockers extends DSimState {
 	public DFlockers(final long seed) {
 		super(seed, DFlockers.width, DFlockers.height, DFlockers.neighborhood);
 
-		flockers = new DContinuous2D<>((int)(DFlockers.neighborhood / 1.5), this);
+		flockers = new DContinuous2D<>((int) (DFlockers.neighborhood / 1.5), this);
 	}
 
 	@Override

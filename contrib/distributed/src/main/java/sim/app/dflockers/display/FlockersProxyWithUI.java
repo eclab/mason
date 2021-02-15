@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package sim.app.dflockers.visualization;
+package sim.app.dflockers.display;
 import sim.engine.*;
 import sim.display.*;
 import sim.portrayal.continuous.*;

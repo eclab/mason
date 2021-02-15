@@ -147,9 +147,9 @@ public class DFlocker extends DSteppable implements Remote {
 		List<DFlocker> b = null;
 
 		try {
-			b = dFlockers.flockers.getNeighborsWithin(this, DFlockersTest.neighborhood);
+			b = dFlockers.flockers.getNeighborsWithinDistance(loc, DFlockersTest.neighborhood);
 		} catch (Exception e) {
-			System.out.println(dFlockers.getPartitioning().getPid());
+			System.out.println(dFlockers.getPartition().getPID());
 		}
 
 		final Double2D avoid = avoidance(b, dFlockers.flockers);
@@ -174,10 +174,10 @@ public class DFlocker extends DSteppable implements Remote {
 		lastd = new Double2D(dx, dy);
 		loc = new Double2D(dFlockers.flockers.stx(loc.x + dx), dFlockers.flockers.sty(loc.y + dy));
 		try {
-			dFlockers.flockers.moveAgent(oldloc, loc, this);
+			dFlockers.flockers.moveAgent(loc, this);
 		} catch (Exception e) {
 			System.err.println("error on agent " + this + " in step " + dFlockers.schedule.getSteps() + "on pid "
-					+ dFlockers.getPartitioning().pid);
+					+ dFlockers.getPartition().getPID());
 			System.exit(1);
 		}
 

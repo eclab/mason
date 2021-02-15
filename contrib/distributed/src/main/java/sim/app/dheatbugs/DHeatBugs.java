@@ -239,7 +239,7 @@ public class DHeatBugs extends DSimState {
 			for (DHeatBug a : agents.get(p)) {
 				if (partition.getLocalBounds().contains(p)) {
 					bugs.addAgent(p, a, 0, 0, 1);
-				    System.out.println("start : "+a);
+					System.out.println("start : " + a);
 				}
 
 			}

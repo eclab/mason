@@ -13,8 +13,11 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import sim.app.dflockers.DFlockers;
 import sim.engine.DSimState;
 import sim.field.continuous.DContinuous2D;
+import sim.field.storage.ContinuousStorage;
 //import sim.util.MPIUtil;
 import sim.util.Timing;
 import sim.util.*;
@@ -37,8 +40,9 @@ public class DSimulation extends DSimState {
 	public DSimulation(final long seed) {
 		super(seed, DSimulation.width, DSimulation.height, DSimulation.neighborhood);
 
-		// final double[] discretizations = new double[] { DSimulation.neighborhood / 1.5, DSimulation.neighborhood / 1.5 };
-		field = new DContinuous2D<DAgent>(getPartitioning(), aoi, DSimulation.neighborhood / 1.5, this);
+		// final double[] discretizations = new double[] { DSimulation.neighborhood /
+		// 1.5, DSimulation.neighborhood / 1.5 };
+		field = new DContinuous2D<>((int) (DSimulation.neighborhood / 1.5), this);
 	}
 
 	@Override
@@ -51,7 +55,7 @@ public class DSimulation extends DSimState {
 
 		// if (schedule.getSteps() % 10 == 0 ) {
 		String filename = dirname + File.separator +
-				getPartitioning().pid + "." + (schedule.getSteps());
+				getPartition().getPID() + "." + (schedule.getSteps());
 
 		File testdir = new File(dirname);
 		testdir.mkdir();
@@ -68,9 +72,11 @@ public class DSimulation extends DSimState {
 			e.printStackTrace();
 		}
 
-		for (DAgent f : field.getAllObjects()) {
+		for (DAgent f : ((ContinuousStorage<DAgent>) field.getHaloGrid().localStorage)
+				.getObjects(field.getHaloGrid().localStorage.getShape())) {
 //			out.println("agent " + f.getId() + " in position " + f.loc + " num neighbours: " + f.neighbours.size() + " neighbours " + f.neighbours);
-			out.println("agent " + f.getID() + " in position " + f.loc + " num neighbours: " + f.neighbours.size() + " neighbours " + f.neighbours);
+			out.println("agent " + f.ID() + " in position " + f.loc + " num neighbours: " + f.neighbours.size()
+					+ " neighbours " + f.neighbours);
 		}
 
 		out.close();
@@ -103,9 +109,9 @@ public class DSimulation extends DSimState {
 
 		for (Object p : agents) {
 			DAgent a = (DAgent) p;
-			if (partition.getBounds().contains(a.loc)) {
-				field.addAgent(a.loc, a);
-				System.out.println("pid " + partition.getPid() + " add agent " + a);
+			if (partition.getLocalBounds().contains(a.loc)) {
+				field.addAgent(a.loc, a, 0, 0);
+				System.out.println("pid " + partition.getPID() + " add agent " + a);
 			}
 		}
 

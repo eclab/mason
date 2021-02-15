@@ -57,17 +57,17 @@ public class DAgent extends DSteppable implements Remote {
 				new_y -= 5;
 			}
 		}
-		List<DAgent> tmp = dSimstate.field.getNeighborsWithin(this, dSimstate.neighborhood);
+		List<DAgent> tmp = dSimstate.field.getNeighborsWithinDistance(loc, dSimstate.neighborhood);
 		for (DAgent a : tmp) {
-			if (!neighbours.contains(a.getID())) {
-				neighbours.add(a.getID());
-			//if (!neighbours.contains(a.getId())) {
-			//	neighbours.add(a.getId());
+			if (!neighbours.contains(a.ID())) {
+				neighbours.add(a.ID());
+				// if (!neighbours.contains(a.getId())) {
+				// neighbours.add(a.getId());
 			}
 		}
 		Double2D new_loc = new Double2D(new_x, new_y);
 		loc = new_loc;
-		dSimstate.field.moveAgent(curr_loc, new_loc, this);
+		dSimstate.field.moveAgent(new_loc, this);
 
 	}
 }
