@@ -303,7 +303,7 @@ public class DSimState extends SimState {
 			
 			if (payloadWrapper.fieldIndex >= 0)
 				// add the object to the field
-				fieldRegistry.get(payloadWrapper.fieldIndex).syncObject(payloadWrapper);
+				fieldRegistry.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
 			
 			
 			/*
@@ -415,7 +415,7 @@ public class DSimState extends SimState {
 
 					if (payloadWrapper.fieldIndex >= 0)
 						// add the object to the field
-						fieldRegistry.get(payloadWrapper.fieldIndex).syncObject(payloadWrapper);
+						fieldRegistry.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
 
 					if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
 						final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;

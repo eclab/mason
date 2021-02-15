@@ -26,9 +26,6 @@ import sim.util.*;
  * transportation and transporting agents is called migration.
  */
 public class TransporterMPI {
-	private static final long serialVersionUID = 1L;
-
-
 	int numNeighbors; // number of direct neighbors
 	int[] src_count, src_displ, dst_count, dst_displ;
 
@@ -66,6 +63,12 @@ public class TransporterMPI {
 		});
 	}
 
+	/**
+	 * Initializes the objectQueue, sets variables like number of neighbors, source
+	 * counts, destination counts etc. and creates the destination map for the
+	 * neighbors.
+	 * 
+	 */
 	public void reload() {
 		// TODO cannot work with one node?
 		neighbors = partition.getNeighborPIDs();
@@ -160,119 +163,13 @@ public class TransporterMPI {
 					break;
 				}
 			}
-//			while (true) {
-//			try {
-//				Transportee<? extends Object> wrapper = null;
-//				Object object = is.readObject();
-//				if (object instanceof String) {
-//					String className = (String) object;
-//					// return the wrapper with header information filled in
-//					wrapper = readHeader(is, className);
-//					((SelfStreamedAgent) wrapper.wrappedObject).readStream(is);
-//				} else {
-//				wrapper = (Transportee) object;
-//				}
 		}
-
-		// System.out.println("PID "+MPI.COMM_WORLD.getRank()+" objectQueue
-		// "+objectQueue);
 
 		// Clear previous queues
 		for (int i : neighbors)
 			dstMap.get(i).reset();
 
-		// Handling the agent in bufferList
-//		for (final PayloadWrapper wrapper : bufferList)
-//			dstMap.get(wrapper.destination).write(wrapper);
-//		bufferList.clear();
-
-//		for (int i = 0; i < bufferList.size(); ++i) {
-//			Transportee<? extends Object> wrapper = bufferList.get(i);
-//			int dst = wrapper.destination;
-//			if (wrapper.wrappedObject instanceof SelfStreamedAgent) {
-//				// write header information, all agent has this info
-//				writeHeader(dstMap.get(dst), wrapper);
-//				// write agent
-//				((SelfStreamedAgent) wrapper.wrappedObject).writeStream(dstMap.get(dst));
-//				// have to flush the data, in case user forget this step
-//				dstMap.get(dst).os.flush();
-//			} else {
-//			dstMap.get(dst).write(wrapper);
-//			}
-//		}
-//		bufferList.clear();
 	}
-
-	/**
-	 * Does not transport the Object, only migrates it
-	 *
-	 * @param agent
-	 * @param dst   destination pId
-	 *
-	 * @throws IllegalArgumentException if destination (pid) is local
-	 */
-	
-	/*
-	public void migrateAgent(final Stopping agent, final int dst) {
-
-		AgentWrapper wrapper = new AgentWrapper(agent);
-
-		migrateAgent(wrapper, dst);
-	}
-	*/
-
-	/**
-	 * Does not transport the Object, only migrates it
-	 *
-	 * @param ordering
-	 * @param agent
-	 * @param dst      destination pId
-	 *
-	 * @throws IllegalArgumentException if destination (pid) is local
-	 */
-	
-	/*
-	public void migrateAgent(final int ordering, final Stopping agent, final int dst) {
-		AgentWrapper wrapper = new AgentWrapper(ordering, agent);
-		migrateAgent(wrapper, dst);
-	}
-	*/
-
-	/**
-	 * Does not transport the Object, only migrates it
-	 *
-	 * @param ordering
-	 * @param time
-	 * @param agent
-	 * @param dst      destination pId
-	 *
-	 * @throws IllegalArgumentException if destination (pid) is local
-	 */
-	/*
-	public void migrateAgent(final int ordering, final double time, final Stopping agent, final int dst) {
-		AgentWrapper wrapper = new AgentWrapper(ordering, time, agent);
-		migrateAgent(wrapper, dst);
-	}
-	*/
-
-	/**
-	 * Internal method. Don't use AgentWrapper, use Stopping instead <br>
-	 * Does not transport the Object, only migrates it
-	 *
-	 * @param agentWrapper
-	 * @param dst          destination pId
-	 *
-	 * @throws IllegalArgumentException if destination (pid) is local
-	 */
-	
-	/*
-	public void migrateAgent(final AgentWrapper agentWrapper, final int dst) {
-		// If fieldIndex < 0 then the payload does not need to be transported
-		migrateAgent(agentWrapper, dst, null, -1);
-	}
-	*/
-    
-
 
 	/**
 	 * Transports the Object as well as migrates it
@@ -340,24 +237,6 @@ public class TransporterMPI {
 		// These methods differ in just the datatype of the WrappedObject
 		transportObject(agentWrapper, dst, loc, fieldIndex);
 	}
-
-	/**
-	 * Does not transport the Object, only migrates it
-	 *
-	 * @param iterativeRepeat
-	 * @param dst             destination pId
-	 *
-	 * @throws IllegalArgumentException if destination (pid) is local
-	 */
-	
-	//don't use with DHeatBugs
-	/*
-	public void migrateRepeatingAgent(final DistributedIterativeRepeat iterativeRepeat, final int dst) {
-		// If fieldIndex < 0 then the payload does not need to be transported
-		migrateRepeatingAgent(iterativeRepeat, dst, null, -1);
-	}
-	*/
-	
 
 	/**
 	 * Transports the Object as well as migrates it. Does not stop() the repeating
@@ -458,34 +337,4 @@ public class TransporterMPI {
 			obj.clear();
 		}
 	}
-
-//	public void writeHeader(RemoteOutputStream aos, Transportee wrapper) throws IOException {
-//		String className = wrapper.wrappedObject.getClass().getName();
-//		aos.os.writeObject(className);
-//		aos.os.writeInt(wrapper.destination);
-//		aos.os.writeBoolean(wrapper.migrate);
-//		aos.os.writeDouble(wrapper.loc.c[0]);
-//		aos.os.writeDouble(wrapper.loc.c[1]);
-//		aos.os.flush();
-//	}
-//
-//	public Transportee readHeader(ObjectInputStream is, String className) throws IOException {
-//		// read destination
-//		int dst = is.readInt();
-//		// read Wrapper data
-//		boolean migrate = is.readBoolean();
-//		double x = is.readDouble();
-//		double y = is.readDouble();
-//		// create the new agent
-//		SelfStreamedAgent newAgent = null;
-//		try {
-//			newAgent = (SelfStreamedAgent) Class.forName(className).newInstance();
-//		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-//			e.printStackTrace();
-//		}
-//		// read in the data
-//		Transportee wrapper = new Transportee(dst, newAgent, new Double2D(x, y), migrate);
-//		return wrapper;
-//	}
-
 }

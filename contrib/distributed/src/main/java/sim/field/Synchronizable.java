@@ -33,6 +33,6 @@ public interface Synchronizable {
 	 * 
 	 * @param payloadWrapper
 	 */
-	public void syncObject(PayloadWrapper payloadWrapper);
+	public void addPayload(PayloadWrapper payloadWrapper);
 
 }
