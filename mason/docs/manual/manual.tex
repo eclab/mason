@@ -14592,7 +14592,7 @@ Thus each processor has two rectangular regions of interest, as shown in Figure~
 \item The {\bf halo region} of the partition.  This is the larger bounds outside of the partition, which includes the Area of Interest.    Agents can efficiently read from fields within these bounds, but are not permitted to write to the halo region areas outside the local bounds.  
 \end{itemize}
 
-There are a variety of methods regarding these two regions.  You might be interested in knowing that we call the portion of a partition's local bounds which appears in no other processor's halo region the  {\bf private region} of the partition. And the {\it shared region} is the portion of the local bounds that is not the private region.  But this is just terminology: it's not part of the API.
+There are a variety of methods regarding these two regions.  You might be interested in knowing that we call the portion of a partition's local bounds which appears in no other processor's halo region the  {\bf private region} of the partition. And the {\bf shared region} is the portion of the local bounds that is not the private region.  But this is just terminology: it's not part of the API.
 
 The \class{sim.field.partitioning.Partition} object can be queried to give you useful information here.  You can get this object by calling  \method{getPartition()} on your DSimState.   Here are some of its methods:
 
@@ -14826,7 +14826,7 @@ Setting and getting data is different from how it's done in the standard MASON f
 
 If your general request is to {\it change} something outside of the local region, then the remote processor will perform the request by the next timestep.  For example if you ask to move a rock from a local partition to a remote partition, it'll be deleted from your local partition immediately, but added to the remote partition by the next timestep.  Note that you cannot do the opposite: you can't move a rock from a remote partition to your local partition.  That operation has to be done by an agent on the remote processor.
 
-If the request is the {\it query} something outside of the halo region, then you will be given a \class{sim.engine.rmi.Promised} object.  This is an object which will ultimately (normally at the next timestep) be filled with the data you asked for: but it won't be immediately available.  It's a promise!
+If the request is the {\it query}, then you will be given a \class{sim.engine.rmi.Promised} object.  This is an object which will ultimately (normally at the next timestep) be filled with the data you asked for: but it won't be immediately available.  It's a promise!  (If you queried an object which so happened to be inside the halo region, the Promised object's data will be available immediately).
 \end{itemize}
 
 \begin{methods}{\class{sim.engine.rmi.Promised}}
