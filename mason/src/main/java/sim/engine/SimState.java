@@ -351,18 +351,8 @@ public class SimState implements java.io.Serializable
 
     /** Calls doLoop(MakesSimState,args), passing in a MakesSimState which creates
         SimStates of the provided Class c, using the constructor new <simState>(<random seed>). */
-    public static void doLoop(final Class c, String[] args) {
-        // Map that helps boxing (primitive type to its wrapper class)
-        Map<Class<?>, Class<?>> map = new HashMap<Class<?>, Class<?>>();
-        map.put(boolean.class, Boolean.class);
-        map.put(byte.class, Byte.class);
-        map.put(short.class, Short.class);
-        map.put(char.class, Character.class);
-        map.put(int.class, Integer.class);
-        map.put(long.class, Long.class);
-        map.put(float.class, Float.class);
-        map.put(double.class, Double.class);
-
+    public static void doLoop(final Class c, String[] args) 
+    	{
         doLoop(new MakesSimState() 
         	{
 			public SimState newInstance(long seed, String[] args) 
