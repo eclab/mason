@@ -85,6 +85,10 @@ public class QuadTreePartition extends Partition {
 		final int[] ns = getNeighborPIDs();
 
 		try {
+			if(comm != null) {
+				comm.free();
+				//MPI.COMM_WORLD.barrier(); not sure if needed
+			}
 			// Create a unweighted & undirected graph for neighbor communication
 			comm = MPI.COMM_WORLD.createDistGraphAdjacent(ns, ns, new Info(), false);
 

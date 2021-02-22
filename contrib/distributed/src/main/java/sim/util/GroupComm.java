@@ -33,6 +33,11 @@ public class GroupComm {
 				.mapToInt(leaf -> leaf.getProcessor())
 				.toArray());
 
+		//added by Raj
+        if(comm != null) {
+        	comm.free();
+			//MPI.COMM_WORLD.barrier(); not sure if needed
+        }
 		comm = MPI.COMM_WORLD.createGroup(group, 0);
 		groupRoot = Group.translateRanks(world, new int[] { master.getProcessor() }, group)[0];
 	}
@@ -49,7 +54,12 @@ public class GroupComm {
 				.filter(node -> !node.isLeaf())
 				.mapToInt(node -> node.getProcessor())
 				.toArray());
-
+		//added by Raj
+        if(interComm != null) {
+        	interComm.free();
+			//MPI.COMM_WORLD.barrier(); not sure if needed
+        }
+        
 		interComm = MPI.COMM_WORLD.createGroup(group, 0);
 	}
 }
