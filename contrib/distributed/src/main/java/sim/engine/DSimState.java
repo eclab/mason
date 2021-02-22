@@ -114,20 +114,10 @@ public class DSimState extends SimState {
 	protected int balanceInterval = 100;
 	protected int balancerLevel;
 
-	protected DSimState(final long seed, final MersenneTwisterFast random, final DistributedSchedule schedule,
-			final int width, final int height, final int aoi) {
-		super(seed, random, schedule);
-		partition = new QuadTreePartition(width, height, true, aoi);
-		partition.initialize();
-		balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
-		transporter = new TransporterMPI(partition);
-		fieldRegistry = new ArrayList<>();
-		rootInfo = new HashMap<>();
-		withRegistry = false;
-	}
-
-	protected DSimState(final long seed, final MersenneTwisterFast random, final DistributedSchedule schedule,
-			final QuadTreePartition partition) {
+	public DSimState(final long seed, final MersenneTwisterFast random, 
+			final DistributedSchedule schedule,
+			final QuadTreePartition partition) 
+		{
 		super(seed, random, schedule);
 		this.partition = partition;
 		partition.initialize();
@@ -136,28 +126,15 @@ public class DSimState extends SimState {
 		fieldRegistry = new ArrayList<>();
 		rootInfo = new HashMap<>();
 		withRegistry = false;
-	}
+		}
 
-	public DSimState(final long seed, final int width, final int height, int aoi) {
-		this(seed, new MersenneTwisterFast(seed), new DistributedSchedule(), width, height, aoi);
-	}
-
-	protected DSimState(final long seed, final DistributedSchedule schedule) {
-		this(seed, new MersenneTwisterFast(seed), schedule, 1000, 1000, 5);
-	}
-
-	public DSimState(final long seed) {
-		this(seed, new MersenneTwisterFast(seed), new DistributedSchedule(), 1000, 1000, 5);
-	}
-
-	protected DSimState(final MersenneTwisterFast random, final DistributedSchedule schedule) {
-		this(0, random, schedule, 1000, 1000, 5);// 0 is a bogus value. In fact, MT can't have 0 as its seed
-	}
-
-	protected DSimState(final MersenneTwisterFast random) {
-		this(0, random, new DistributedSchedule(), 1000, 1000, 5);// 0 is a bogus value. In fact, MT can't have 0 as its
-		// seed
-	}
+	public DSimState(final long seed, final int width, final int height, int aoi) 
+		{
+		this(seed, 
+			new MersenneTwisterFast(seed), 
+			new DistributedSchedule(), 
+			new QuadTreePartition(width, height, true, aoi));
+		}
 
 	/**
 	 * All HaloFields register themselves here.<br>
@@ -824,8 +801,11 @@ public class DSimState extends SimState {
 		DSimState.logger.addHandler(handler);
 	}
 
+
+	public static final int DEFAULT_TIMING_WINDOW = 20;
+	
 	public static void doLoopDistributed(final Class<?> c, final String[] args) {
-		doLoopDistributed(c, args, 20);
+		doLoopDistributed(c, args, DEFAULT_TIMING_WINDOW);
 	}
 
 	public static void doLoopDistributed(final Class<?> c, final String[] args, final int window) {
@@ -848,7 +828,7 @@ public class DSimState extends SimState {
 			else
 				initLocalLogger(loggerName);
 
-			doLoop(c, args);
+			SimState.doLoop(c, args);
 			MPI.Finalize();
 		} catch (MPIException ex) {
 			throw new RuntimeException(ex);

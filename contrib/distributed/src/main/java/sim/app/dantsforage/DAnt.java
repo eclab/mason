@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package sim.app.dantforage;
+package sim.app.dantsforage;
 
 import sim.portrayal.*;
 import sim.util.*;

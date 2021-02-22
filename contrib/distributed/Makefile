@@ -5,7 +5,7 @@
 #### To see all your make options:  type   make help
 #### To add flags (like -O) to javac:  change the FLAGS variable below
 
-JAVAC = mpijavac ${JAVACFLAGS}
+JAVAC = javac ${JAVACFLAGS}
 
 CLASSROOT = target/classes
 JAVACFLAGS = -target 1.8 -source 1.8 ${FLAGS} -nowarn -d ${CLASSROOT}
@@ -15,7 +15,7 @@ VERSION = 1
 
 # Main java files, not including the 3D stuff
 SRCS = \
-sim/app/dantforage/*.java \
+sim/app/dantsforage/*.java \
 sim/app/dflockers/*.java \
 sim/app/dheatbugs/*.java \
 sim/app/dschelling/*.java \
