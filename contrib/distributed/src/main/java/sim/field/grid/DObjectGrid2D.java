@@ -272,7 +272,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
      */
     public ArrayList<T> getMooreNeighbors( final int x, final int y, final int dist, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos )
         {
-        if (!isHaloToroidal(x, y, dist)) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.partition.getAOI());
+        if (!isHaloToroidal(x, y, dist)) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.getPartition().getAOI());
 
         if( xPos == null )
             xPos = new IntBag();
@@ -305,7 +305,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
      */
     public ArrayList<T> getMooreNeighborsAndLocations(final int x, final int y, final int dist, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos)
         {
-        if (!isHaloToroidal(x, y, dist)) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.partition.getAOI());
+        if (!isHaloToroidal(x, y, dist)) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.getPartition().getAOI());
 
         if( xPos == null )
             xPos = new IntBag();
@@ -340,7 +340,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
      */
     public ArrayList<T> getVonNeumannNeighbors( final int x, final int y, final int dist, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos )
         {
-        if (!isHaloToroidal(x, y, dist)) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.partition.getAOI());
+        if (!isHaloToroidal(x, y, dist)) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.getPartition().getAOI());
 
         if( xPos == null )
             xPos = new IntBag();
@@ -375,7 +375,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
      */
     public ArrayList<T> getVonNeumannNeighborsAndLocations(final int x, final int y, final int dist, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos)
         {
-        if (!isHaloToroidal(x, y, dist)) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.partition.getAOI());
+        if (!isHaloToroidal(x, y, dist)) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.getPartition().getAOI());
 
         if( xPos == null )
             xPos = new IntBag();
@@ -410,7 +410,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
      */
     public ArrayList<T> getHexagonalNeighbors( final int x, final int y, final int dist, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos )
         {
-        if (!isHaloToroidal(x, y, dist)) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.partition.getAOI());
+        if (!isHaloToroidal(x, y, dist)) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.getPartition().getAOI());
 
         if( xPos == null )
             xPos = new IntBag();
@@ -444,7 +444,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
      */
     public ArrayList<T> getHexagonalNeighborsAndLocations(final int x, final int y, final int dist, boolean includeOrigin, ArrayList<T> result, IntBag xPos, IntBag yPos)
         {
-        if (!isHaloToroidal(x, y, dist)) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.partition.getAOI());
+        if (!isHaloToroidal(x, y, dist)) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.getPartition().getAOI());
 
         if( xPos == null )
             xPos = new IntBag();
@@ -472,7 +472,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 
     public ArrayList<T> getRadialNeighbors( final int x, final int y, final double dist, boolean includeOrigin,  int measurementRule, boolean closed,  ArrayList<T> result, IntBag xPos, IntBag yPos )
         {
-        if (!isHaloToroidal(x, y, dist)) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.partition.getAOI());
+        if (!isHaloToroidal(x, y, dist)) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.getPartition().getAOI());
 
         if( xPos == null )
             xPos = new IntBag();
@@ -486,7 +486,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 
     public ArrayList<T> getRadialNeighborsAndLocations( final int x, final int y, final double dist, boolean includeOrigin,  int measurementRule, boolean closed,  ArrayList<T> result, IntBag xPos, IntBag yPos )
         {
-        if (!isHaloToroidal(x, y, dist)) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.partition.getAOI());
+        if (!isHaloToroidal(x, y, dist)) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.getPartition().getAOI());
 
         if( xPos == null )
             xPos = new IntBag();

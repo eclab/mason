@@ -509,7 +509,7 @@ public class DSimState extends SimState {
 										System.out.println("PID: " + partition.getPID() + " exception on " + a);
 									}
 									transporter.migrateAgent((Stopping) a, locToP, loc,
-											((HaloGrid2D) field).fieldIndex);
+											((HaloGrid2D) field).getFieldIndex());
 								}
 
 								if (stopping.getStoppable() instanceof IterativeRepeat) {
@@ -519,8 +519,8 @@ public class DSimState extends SimState {
 											iterativeRepeat.getTime(), iterativeRepeat.getInterval(),
 											iterativeRepeat.getOrdering());
 									
-									//transporter.migrateRepeatingAgent(distributedIterativeRepeat, toP, p,((HaloGrid2D) field).fieldIndex);
-									transporter.migrateRepeatingAgent(distributedIterativeRepeat, locToP, loc,((HaloGrid2D) field).fieldIndex);
+									//transporter.migrateRepeatingAgent(distributedIterativeRepeat, toP, p,((HaloGrid2D) field).getFieldIndex());
+									transporter.migrateRepeatingAgent(distributedIterativeRepeat, locToP, loc,((HaloGrid2D) field).getFieldIndex());
 
 									iterativeRepeat.stop();
 								}
@@ -535,7 +535,7 @@ public class DSimState extends SimState {
 							
 							//not stoppable (transport a double or something)  transporter call transportObject?
 							else if (old_partition.contains(loc) && !partition.getLocalBounds().contains(loc)) {
-								transporter.transportObject((Serializable)a, locToP, loc, ((HaloGrid2D) field).fieldIndex);
+								transporter.transportObject((Serializable)a, locToP, loc, ((HaloGrid2D) field).getFieldIndex());
 							}
 						}
 					}
@@ -568,14 +568,14 @@ public class DSimState extends SimState {
 
 									if (stopping.getStoppable() instanceof TentativeStep) {
 										stopping.getStoppable().stop();
-										transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).fieldIndex);
+										transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).getFieldIndex());
 									}
 
 									if (stopping.getStoppable() instanceof IterativeRepeat) {
 										final IterativeRepeat iterativeRepeat = (IterativeRepeat) stopping.getStoppable();
 										final DistributedIterativeRepeat distributedIterativeRepeat = new DistributedIterativeRepeat(
 											stopping, iterativeRepeat.getTime(), iterativeRepeat.getInterval(),iterativeRepeat.getOrdering());
-										transporter.migrateRepeatingAgent(distributedIterativeRepeat, toP, p, ((HaloGrid2D) field).fieldIndex);
+										transporter.migrateRepeatingAgent(distributedIterativeRepeat, toP, p, ((HaloGrid2D) field).getFieldIndex());
 										iterativeRepeat.stop();
 									}
 
@@ -591,7 +591,7 @@ public class DSimState extends SimState {
 								
 								//not stoppable (transport a double or something)  transporter call transportObject?
 								else if (old_partition.contains(p) && !partition.getLocalBounds().contains(p)) {
-									transporter.transportObject((Serializable)a, toP, p, ((HaloGrid2D) field).fieldIndex);
+									transporter.transportObject((Serializable)a, toP, p, ((HaloGrid2D) field).getFieldIndex());
 								}
 							
 								else {
@@ -616,7 +616,7 @@ public class DSimState extends SimState {
 
 							if (stopping.getStoppable() instanceof TentativeStep) {
 								stopping.getStoppable().stop();
-								transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).fieldIndex);
+								transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).getFieldIndex());
 							}
 
 							else if (stopping.getStoppable() instanceof IterativeRepeat) {
@@ -626,7 +626,7 @@ public class DSimState extends SimState {
 										iterativeRepeat.getTime(), iterativeRepeat.getInterval(),
 										iterativeRepeat.getOrdering());
 								transporter.migrateRepeatingAgent(distributedIterativeRepeat, toP, p,
-										((HaloGrid2D) field).fieldIndex);
+										((HaloGrid2D) field).getFieldIndex());
 								iterativeRepeat.stop();
 							}
 
@@ -687,7 +687,7 @@ public class DSimState extends SimState {
 
 									if (stopping.getStoppable() instanceof TentativeStep) {
 										stopping.getStoppable().stop();
-										transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).fieldIndex);
+										transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).getFieldIndex());
 									}
 
 									if (stopping.getStoppable() instanceof IterativeRepeat) {
@@ -698,7 +698,7 @@ public class DSimState extends SimState {
 												iterativeRepeat.getTime(), iterativeRepeat.getInterval(),
 												iterativeRepeat.getOrdering());
 										transporter.migrateRepeatingAgent(distributedIterativeRepeat, toP, p,
-												((HaloGrid2D) field).fieldIndex);
+												((HaloGrid2D) field).getFieldIndex());
 										iterativeRepeat.stop();
 									}
 
@@ -734,7 +734,7 @@ public class DSimState extends SimState {
 							if (stopping.getStoppable() instanceof TentativeStep) {
 								stopping.getStoppable().stop();
 								System.out.println("migrating!");
-								transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).fieldIndex);
+								transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).getFieldIndex());
 							}
 
 							if (stopping.getStoppable() instanceof IterativeRepeat) {
@@ -744,7 +744,7 @@ public class DSimState extends SimState {
 										iterativeRepeat.getTime(), iterativeRepeat.getInterval(),
 										iterativeRepeat.getOrdering());
 								transporter.migrateRepeatingAgent(distributedIterativeRepeat, toP, p,
-										((HaloGrid2D) field).fieldIndex);
+										((HaloGrid2D) field).getFieldIndex());
 								iterativeRepeat.stop();
 							}
 

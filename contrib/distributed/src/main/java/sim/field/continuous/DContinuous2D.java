@@ -659,7 +659,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
     public ArrayList<T> getNeighborsExactlyWithinDistance(final Double2D position, final double distance, 
     	final boolean radial, final boolean inclusive, ArrayList<T> result)
         {
-        if (distance > halo.partition.getAOI()) throw new RuntimeException("Distance " + distance + " is larger than AOI " + halo.partition.getAOI());
+        if (distance > halo.getPartition().getAOI()) throw new RuntimeException("Distance " + distance + " is larger than AOI " + halo.getPartition().getAOI());
 
         final int expectedBagSize = 1;  // in the future, pick a smarter bag size?
 
@@ -813,7 +813,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
     public ArrayList<T> getNeighborsWithinDistance( Double2D position, final double distance,
         final boolean nonPointObjects, ArrayList<T> result)
         {
-        if (distance > halo.partition.getAOI()) throw new RuntimeException("Distance " + distance + " is larger than AOI " + halo.partition.getAOI());
+        if (distance > halo.getPartition().getAOI()) throw new RuntimeException("Distance " + distance + " is larger than AOI " + halo.getPartition().getAOI());
 
         /*
         double discretization = storage.getDiscretization();
@@ -840,7 +840,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 
 	/// FIXME: This is wrong, discDistance is discretized distance not low-level real-valued distance
 	
-        if (discDistance > halo.partition.getAOI()) throw new RuntimeException("To permit non-point objects, the distance must be enlarged (to " + discDistance + "), and this is larger than AOI " + halo.partition.getAOI());
+        if (discDistance > halo.getPartition().getAOI()) throw new RuntimeException("To permit non-point objects, the distance must be enlarged (to " + discDistance + "), and this is larger than AOI " + halo.getPartition().getAOI());
 
         final int expectedBagSize = 1;  // in the future, pick a smarter bag size?
         if (result!=null) result.clear();
