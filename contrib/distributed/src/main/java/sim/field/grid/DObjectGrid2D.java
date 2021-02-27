@@ -93,7 +93,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 			}
 		else
 			{
-			halo.addAgent(p, agent, ordering, time);
+			halo.addAgentToRemote(p, agent, ordering, time);
 			}
 		}
 
@@ -109,7 +109,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 			}
 		else
 			{
-			halo.addAgent(p, agent, ordering, time, interval);
+			halo.addAgentToRemote(p, agent, ordering, time, interval);
 			}
 		}
 
@@ -200,7 +200,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 					_stop.stop();
 					if (time > state.schedule.getTime())  // scheduled in the future
 						{
-						halo.addAgent(to, agent, ordering, time);
+						halo.addAgentToRemote(to, agent, ordering, time);
 						if (storage.storage[fromidx] == agent) storage.storage[fromidx] = null;
 						}
 					else	// this could theoretically happen because TentativeStep doesn't null out its agent after step()
@@ -229,7 +229,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 						{
 						time = time + interval;					// advance to next
 						}
-					halo.addAgent(to, agent, ordering, time, interval);
+					halo.addAgentToRemote(to, agent, ordering, time, interval);
 					if (storage.storage[fromidx] == agent) storage.storage[fromidx] = null;
 					}
 				else

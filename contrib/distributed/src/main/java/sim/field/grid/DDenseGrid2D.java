@@ -277,7 +277,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 			}
 		else
 			{
-			halo.addAgent(p, agent, ordering, time);
+			halo.addAgentToRemote(p, agent, ordering, time);
 			}
 		}
 		
@@ -297,7 +297,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 			}
 		else
 			{
-			halo.addAgent(p, agent, ordering, time, interval);
+			halo.addAgentToRemote(p, agent, ordering, time, interval);
 			}
 		}
 
@@ -416,7 +416,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 			removeAllLocal(p);
 			}
 		else
-			halo.removeAllAgentsAndObjects(p);
+			halo.removeAllAgentsAndObjectsFromRemote(p);
 		}
 
 
@@ -461,7 +461,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 					if (time > state.schedule.getTime())  // scheduled in the future
 						{
 						removeLocal(from, agent);
-						halo.addAgent(to, agent, ordering, time);
+						halo.addAgentToRemote(to, agent, ordering, time);
 						}
 					else	// this could theoretically happen because TentativeStep doesn't null out its agent after step()
 						{
@@ -491,7 +491,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 						}
 					removeLocal(from, agent);
 					//System.out.println(a+" addedAgent at"+ to+" (4)");
-					halo.addAgent(to, agent, ordering, time, interval);
+					halo.addAgentToRemote(to, agent, ordering, time, interval);
 					}
 				else
 					{

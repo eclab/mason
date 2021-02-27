@@ -298,7 +298,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			}
 		else
 			{
-			halo.addAgent(p, agent, ordering, time);
+			halo.addAgentToRemote(p, agent, ordering, time);
 			}
 		}
 		
@@ -318,7 +318,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			}
 		else
 			{
-			halo.addAgent(p, agent, ordering, time, interval);
+			halo.addAgentToRemote(p, agent, ordering, time, interval);
 			}
 		}
 
@@ -400,7 +400,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 					if (time > state.schedule.getTime())  // scheduled in the future
 						{
 						removeLocal(agent);
-						halo.addAgent(to, agent, ordering, time);
+						halo.addAgentToRemote(to, agent, ordering, time);
 						}
 					else	// this could theoretically happen because TentativeStep doesn't null out its agent after step()
 						{
@@ -429,7 +429,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 						time = time + interval;					// advance to next
 						}
 					removeLocal(agent);
-					halo.addAgent(to, agent, ordering, time, interval);
+					halo.addAgentToRemote(to, agent, ordering, time, interval);
 					}
 				else
 					{
