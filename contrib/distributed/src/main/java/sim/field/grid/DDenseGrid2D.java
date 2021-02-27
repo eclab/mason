@@ -258,7 +258,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 		if (isLocal(p))
 			removeAllLocal(p);
 		else
-			halo.removeFromRemote(p);
+			halo.removeAllFromRemote(p);
 		}
 
 	/** Adds an agent to the given point and schedules it.  This point can be outside

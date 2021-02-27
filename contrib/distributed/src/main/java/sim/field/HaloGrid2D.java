@@ -419,7 +419,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 	 * Removes all Objects and Agents from the non-local point p.  Called by DDenseGrid2D.  Don't call this directly.
 	 */
   public void removeAllAgentsAndObjectsFromRemote(final NumberND p) {
-		removeFromRemote(p);
+		removeAllFromRemote(p);
 	}
 
 	/**
@@ -502,9 +502,9 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 	/**
 	 * Removes all objects from a remote location.  Called by various fields.  Don't call this directly.
 	 */
-	public void removeFromRemote(final NumberND p) {
+	public void removeAllFromRemote(final NumberND p) {
 		try {
-			proxy.getField(partition.toPartitionPID(p)).removeRMI(p);
+			proxy.getField(partition.toPartitionPID(p)).removeAllRMI(p);
 		} catch (final NullPointerException e) {
 			throw new IllegalArgumentException("Remote Proxy is not initialized");
 		} catch (final RemoteException e) {
@@ -648,7 +648,6 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 
 		for (final Pair<Promised, Serializable> pair : getQueue) {
 			pair.a.fulfill(pair.b);
-			// System.out.println(pair);
 		}
 		getQueue.clear();
 	}
@@ -674,8 +673,8 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 
 	/* RMI METHODS */
 	/**
-	 * This method queues an object t at a point p to be added at the end of the
-	 * time step.  This is called remotely via RMI, and is part of the TransportRMIInterface.  Don't call this directly.
+	 * This method queues an object t to be set at or added to point p at end of the
+	 * time step, via addLocal().  This is called remotely via RMI, and is part of the TransportRMIInterface.  Don't call this directly.
 	 */
 	public void addRMI(NumberND p, T t) throws RemoteException {
 		addQueue.add(new Pair<>(p, t));
@@ -683,7 +682,9 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 
 	/**
 	 * This method queues an object at a point p with the given id to be removed at
-	 * the end of the time step. This is called remotely via RMI, and is part of the TransportRMIInterface.  Don't call this directly.
+	 * the end of the time step via removeLocal().  For DObjectGrid2D the object is replaced with null.
+	 * For DIntGrid2D and DDoubleGrid2D the object is replaced with 0.
+	 * This is called remotely via RMI, and is part of the TransportRMIInterface.  Don't call this directly.
 	 */
 	public void removeRMI(NumberND p, long id) throws RemoteException {
 		removeQueue.add(new Pair<>(p, id));
@@ -691,14 +692,14 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 
 	/**
 	 * This method queues all objects at a point p to be removed at the end of the
-	 * time step.  This is called remotely via RMI, and is part of the TransportRMIInterface.  Don't call this directly.
+	 * time step.  This is only used by DDenseGrid2D.  This is called remotely via RMI, and is part of the TransportRMIInterface.  Don't call this directly.
 	 */
-	public void removeRMI(final NumberND p) throws RemoteException {
+	public void removeAllRMI(final NumberND p) throws RemoteException {
 		removeAllQueue.add(p);
 	}
 
 	/**
-	 * This method entertains the get requests via RMI. From the Perspective of the
+	 * This method queues the get requests via RMI. From the Perspective of the
 	 * requesting node this grid is remote, it will add the result to a queue and
 	 * return all the objects in the queue after the current time step.
 	 * This is called remotely via RMI, and is part of the TransportRMIInterface.  Don't call this directly.
@@ -732,9 +733,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 
 
 	/**
-	 * This method only works locally, it uses the global coordinates of an Object
-	 * for ContinuousStorage and local coordinates for everything else.
-	 * 
+	 * Adds or sets an object in local storage at the given (global) point p.
 	 * 
 	 * @param p location
 	 * @param t Object to add
@@ -798,7 +797,6 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 				System.exit(-1);
 			}
 		} else {
-
 			localStorage.removeObject(toLocalPoint((Int2D) p), id);
 		}
 	}
