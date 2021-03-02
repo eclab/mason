@@ -405,6 +405,7 @@ public class QuadTreePartition extends Partition {
 	 * @throws MPIException
 	 */
 	protected void createGroups() throws MPIException {
+		freeResources();
 		int currDepth = 0;
 		groups = new HashMap<Integer, GroupComm>();
 
@@ -652,6 +653,37 @@ public class QuadTreePartition extends Partition {
 		// p.testIntraGroupComm(i);
 		// p.testInterGroupComm(i);
 		// }
+	}
+	
+	//iterates through groups and calls free
+	public void freeResources() {
+		
+		if (groups != null) {
+		
+			for (GroupComm gc : groups.values()) {
+			
+				try {
+					if (gc != null) {
+						if (gc.comm != null) {
+							gc.comm.free();
+						}
+						else if (gc.interComm != null){
+							gc.interComm.free();
+
+						}
+					}
+				
+				
+				} 
+			
+			catch (MPIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		}
+		
 	}
 
 	public static void main(final String[] args) throws MPIException {
