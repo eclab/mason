@@ -603,39 +603,6 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
         to within the boundaries before computation.
-        @deprecated
-    */
-
-    public ArrayList<T> getObjectsExactlyWithinDistance(final Double2D position, final double distance)
-        {
-        return getObjectsExactlyWithinDistance(position, distance, true, true, null);
-        }
-
-    /** Returns a ArrayList containing EXACTLY those objects within a certain distance of a given position.  If 'radial' is true,
-        then the distance is measured using a circle around the position, else the distance is meaured using a square around
-        the position (that is, it's the maximum of the x and y distances).   If 'inclusive' is true, then objects that are
-        exactly the given distance away are included as well, else they are discarded.  If 'toroidal' is true, then the
-        distance is measured assuming the environment is toroidal.  If the ArrayList 'result' is provided, it will be cleared and objects
-        placed in it and it will be returned, else if it is null, then this method will create a new ArrayList and use that instead. 
-        Assumes point objects. 
-        
-        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-        to within the boundaries before computation.
-        @deprecated
-    */
-
-    public ArrayList<T> getObjectsExactlyWithinDistance(final Double2D position, final double distance, 
-        final boolean radial, final boolean inclusive, ArrayList<T> result)
-        {
-        return getNeighborsExactlyWithinDistance(position, distance, radial, inclusive, result);
-        }
-        
-
-    /** Returns a ArrayList containing EXACTLY those objects within a certain distance of a given position, or equal to that distance, measuring
-        using a circle of radius 'distance' around the given position.  Assumes non-toroidal point objects. 
-        
-        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-        to within the boundaries before computation.
     */
 
     public ArrayList<T> getNeighborsExactlyWithinDistance(final Double2D position, final double distance)
@@ -645,7 +612,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 
 
     /** Returns a ArrayList containing EXACTLY those objects within a certain distance of a given position.  If 'radial' is true,
-        then the distance is measured using a circle around the position, else the distance is meaured using a square around
+        then the distance is measured using a circle around the position, else the distance is measured using a square around
         the position (that is, it's the maximum of the x and y distances).   If 'inclusive' is true, then objects that are
         exactly the given distance away are included as well, else they are discarded.  If 'toroidal' is true, then the
         distance is measured assuming the environment is toroidal.  If the ArrayList 'result' is provided, it will be cleared and objects
@@ -663,7 +630,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 
         final int expectedBagSize = 1;  // in the future, pick a smarter bag size?
 
-		ArrayList<T> objs = getNeighborsWithinDistance(position, distance, false, null);
+		ArrayList<T> objs = getNeighborsWithinDistance(position, distance, null);
 		if (result == null) result = new ArrayList<T>(expectedBagSize);
 		else result.clear();
 		
@@ -704,94 +671,10 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
         to within the boundaries before computation.
-        @deprecated
-    */
-    public ArrayList<T> getObjectsWithinDistance( final Double2D position, final double distance)
-        { return getObjectsWithinDistance(position,distance,false, null); }
-
-    /** Returns a bag containing AT LEAST those objects within the bounding box surrounding the
-        specified distance of the specified position.  The bag could include other objects than this.
-        If toroidal, then wrap-around possibilities are also considered.
-        If nonPointObjects, then it is presumed that
-        the object isn't just a point in space, but in fact fills an area in space where the x/y point location
-        could be at the extreme corner of a bounding box of the object.  In this case we include the object if
-        any part of the bounding box could overlap into the desired region.  To do this, if nonPointObjects is
-        true, we extend the search space by one extra discretization in all directions.  For small distances within
-        a single bucket, this returns nine bucket's worth rather than 1, so if you know you only care about the
-        actual x/y points stored, rather than possible object overlap into the distance sphere you specified,
-        you'd want to set nonPointObjects to FALSE. 
-        
-        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-        to within the boundaries before computation.
-        @deprecated
-    */
-        
-    public ArrayList<T> getObjectsWithinDistance( final Double2D position, final double distance, 
-        final boolean nonPointObjects)
-        { return getObjectsWithinDistance(position, distance, nonPointObjects, null); }
-    
-    /** Puts into the result ArrayList (and returns it) AT LEAST those objects within the bounding box surrounding the
-        specified distance of the specified position.  If the result ArrayList is null, then a ArrayList is created.
-        
-        <p>The bag could include other objects than this.
-        If toroidal, then wrap-around possibilities are also considered.
-        If nonPointObjects, then it is presumed that
-        the object isn't just a point in space, but in fact fills an area in space where the x/y point location
-        could be at the extreme corner of a bounding box of the object.  In this case we include the object if
-        any part of the bounding box could overlap into the desired region.  To do this, if nonPointObjects is
-        true, we extend the search space by one extra discretization in all directions.  For small distances within
-        a single bucket, this returns nine bucket's worth rather than 1, so if you know you only care about the
-        actual x/y points stored, rather than possible object overlap into the distance sphere you specified,
-        you'd want to set nonPointObjects to FALSE. 
-        
-        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-        to within the boundaries before computation.
-        @deprecated
-    */
-    
-    public ArrayList<T> getObjectsWithinDistance( Double2D position, final double distance, 
-        final boolean nonPointObjects, ArrayList<T> result)
-        {
-        return getNeighborsWithinDistance(position, distance, nonPointObjects, result);
-        }
-
-
-
-    /** Returns a bag containing AT LEAST those objects within the bounding box surrounding the
-        specified distance of the specified position.  The bag could include other objects than this.
-        In this case we include the object if
-        any part of the bounding box could overlap into the desired region.  To do this, if nonPointObjects is
-        true, we extend the search space by one extra discretization in all directions.  For small distances within
-        a single bucket, this returns nine bucket's worth rather than 1, so if you know you only care about the
-        actual x/y points stored, rather than possible object overlap into the distance sphere you specified,
-        you'd want to set nonPointObjects to FALSE. [assumes non-toroidal, point objects] 
-        
-        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-        to within the boundaries before computation.
     */
     public ArrayList<T> getNeighborsWithinDistance( final Double2D position, final double distance)
-        { return getNeighborsWithinDistance(position,distance,false, null); }
+        { return getNeighborsWithinDistance(position,distance, null); }
 
-    /** Returns a bag containing AT LEAST those objects within the bounding box surrounding the
-        specified distance of the specified position.  The bag could include other objects than this.
-        If toroidal, then wrap-around possibilities are also considered.
-        If nonPointObjects, then it is presumed that
-        the object isn't just a point in space, but in fact fills an area in space where the x/y point location
-        could be at the extreme corner of a bounding box of the object.  In this case we include the object if
-        any part of the bounding box could overlap into the desired region.  To do this, if nonPointObjects is
-        true, we extend the search space by one extra discretization in all directions.  For small distances within
-        a single bucket, this returns nine bucket's worth rather than 1, so if you know you only care about the
-        actual x/y points stored, rather than possible object overlap into the distance sphere you specified,
-        you'd want to set nonPointObjects to FALSE. 
-        
-        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-        to within the boundaries before computation.
-    */
-        
-    public ArrayList<T> getNeighborsWithinDistance( final Double2D position, final double distance,
-        final boolean nonPointObjects)
-        { return getNeighborsWithinDistance(position, distance, nonPointObjects, null); }
-    
     /** Puts into the result ArrayList (and returns it) AT LEAST those objects within the bounding box surrounding the
         specified distance of the specified position.  If the result ArrayList is null, then a ArrayList is created.
         
@@ -810,28 +693,9 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
         to within the boundaries before computation.
     */
     
-    public ArrayList<T> getNeighborsWithinDistance( Double2D position, final double distance,
-        final boolean nonPointObjects, ArrayList<T> result)
+    public ArrayList<T> getNeighborsWithinDistance( Double2D position, final double distance, ArrayList<T> result)
         {
         if (distance > halo.getPartition().getAOI()) throw new RuntimeException("Distance " + distance + " is larger than AOI " + halo.getPartition().getAOI());
-
-        /*
-        double discretization = storage.getDiscretization();
-        double discDistance = distance / discretization;
-        double discX = position.x / discretization;
-        double discY = position.y / discretization;
-        
-        
-        if (nonPointObjects)
-            {
-            // We assume that the discretization is larger than the bounding
-            // box width or height for the object in question.  In this case, then
-            // we can just increase the range by 1 in each direction and we are
-            // guaranteed to have the location of the object in our collection.
-            discDistance++;
-            }
-        */
-        
 
         double discDistance = distance;
         double discX = position.x;

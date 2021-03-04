@@ -138,6 +138,11 @@ public class DFlocker extends DSteppable implements Remote, Oriented2D {
 		return new Double2D(0.05 * x / l, 0.05 * y / l);
 	}
 
+    public ArrayList<DFlocker> getNeighbors(DFlockers dFlockers)
+        {
+        return dFlockers.flockers.getNeighborsExactlyWithinDistance(loc, (double)DFlockers.neighborhood);
+        }
+
 	public void step(final SimState state) {
 		final DFlockers dFlockers = (DFlockers) state;
 
@@ -146,7 +151,7 @@ public class DFlocker extends DSteppable implements Remote, Oriented2D {
 		if (dead)
 			return;
 		//List<DFlocker> b = null;
-		List<DFlocker> b = new ArrayList<DFlocker>();
+		//List<DFlocker> b = new ArrayList<DFlocker>();
 
 		// try {
 		//b = dFlockers.flockers.getNeighborsWithin(this, DFlockers.neighborhood);
@@ -155,11 +160,12 @@ public class DFlocker extends DSteppable implements Remote, Oriented2D {
 		//this is the newest version
 		
 		//Bag b_bag = dFlockers.flockers.getNeighborsWithinDistance(this.loc, (double)DFlockers.neighborhood, true, true, null);
-		ArrayList b_bag = dFlockers.flockers.getNeighborsWithinDistance(this.loc, (double)DFlockers.neighborhood, true, null);
-		for(int i=0; i<b_bag.size(); i++)
-		{
-			b.add((DFlocker)b_bag.get(i));
-		}
+		//ArrayList b_bag = dFlockers.flockers.getNeighborsWithinDistance(this.loc, (double)DFlockers.neighborhood, null);
+		//for(int i=0; i<b_bag.size(); i++)
+		//{
+		//	b.add((DFlocker)b_bag.get(i));
+		//}
+		ArrayList<DFlocker> b = getNeighbors(dFlockers);
 		
 		
 		
