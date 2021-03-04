@@ -22,6 +22,8 @@ import sim.util.geo.PointMoveTo;
 
 import sim.engine.DSteppable;
 
+//TODO rm JTS dependencies
+
 public class DAgent extends DSteppable {
 
     private static final long serialVersionUID = -1113018274619047013L;
@@ -38,6 +40,7 @@ public class DAgent extends DSteppable {
     double endIndex = 0.0; // end position of current line
     double currentIndex = 0.0; // current location along line
     PointMoveTo pointMoveTo = new PointMoveTo();
+    //TODO transient fields?
 
     static private GeometryFactory fact = new GeometryFactory();
 
@@ -184,7 +187,7 @@ public class DAgent extends DSteppable {
     }
 
     // move the agent to the given coordinates
-
+    // TODO reimplement w/o jts dependencies
 
     public void moveTo(Coordinate c)
     {

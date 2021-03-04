@@ -164,6 +164,11 @@ public class DHeatBugs extends DSimState {
 
 		sendRootInfoToAll("agents", agents);
 
+		
+		schedule.scheduleRepeating(new DSteppable() {
+			public void step(SimState state) {
+				
+			}}, 10, 1);
 	}
 
 	// @Override

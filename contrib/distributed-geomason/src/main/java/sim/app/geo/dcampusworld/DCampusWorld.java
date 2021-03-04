@@ -1,13 +1,6 @@
 package sim.app.geo.dcampusworld;
 
-import java.io.IOException;
-import java.io.Serializable;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,28 +8,21 @@ import java.util.logging.Logger;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.planargraph.Node;
 
-import mpi.MPIException;
-import sim.app.geo.dcampusworld.DAgent;
 import sim.app.geo.dcampusworld.data.DCampusWorldData;
 import sim.engine.DSimState;
-import sim.engine.Schedule;
-import sim.engine.SimState;
-import sim.engine.Steppable;
+import sim.field.continuous.DContinuous2D;
 import sim.field.geo.GeomVectorField;
 import sim.io.geo.ShapeFileExporter;
 import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
-import sim.util.MPIUtil;
-import sim.util.Timing;
 import sim.util.geo.GeomPlanarGraph;
 import sim.util.geo.MasonGeometry;
 
 public class DCampusWorld extends DSimState {
-    private static final long serialVersionUID = -4554882816749973618L;
+    private static final long serialVersionUID = 1;
 
     public static final int WIDTH = 300;
     public static final int HEIGHT = 300;
@@ -52,7 +38,11 @@ public class DCampusWorld extends DSimState {
     // where all the agents live
     public GeomVectorField agents = new GeomVectorField(DCampusWorld.WIDTH, DCampusWorld.HEIGHT);
 
-
+    public double discretization;
+    /** Distributed locations of each agent across all partitions **/
+    public DContinuous2D<DMasonPoint> agentLocations;
+    // serializable ^
+    
     // Stores the walkway network connections.  We represent the walkways as a PlanarGraph, which allows
     // easy selection of new waypoints for the agents.
     public GeomPlanarGraph network = new GeomPlanarGraph();
@@ -63,7 +53,49 @@ public class DCampusWorld extends DSimState {
     public DCampusWorld(final long seed)
     {
         super(seed);
+    }
 
+
+    public int getNumAgents() { return numAgents; }
+    public void setNumAgents(final int n) { if (n > 0) numAgents = n; }
+
+    /**
+     * Add agents to the simulation and to the agent GeomVectorField. Note that
+     * each agent does not have any attributes.
+     */
+    void addAgents()
+    {
+        for (int i = 0; i < numAgents; i++)
+        {
+            final DAgent a = new DAgent(this);
+
+            agents.addGeometry(a.getGeometry());
+
+            schedule.scheduleRepeating(a);
+
+            // we can set the userData field of any MasonGeometry.  If the userData is inspectable,
+            // then the inspector will show this information
+            //if (i == 10)
+            //	buildings.getGeometry("CODE", "JC").setUserData(a);
+        }
+    }
+
+    @Override
+    public void finish()
+    {
+        super.finish();
+
+        // Save the agents layer, which has no corresponding originating
+        // shape file.
+        ShapeFileExporter.write("agents", agents);
+    }
+
+    
+//    protected void startRoot() {        
+//    	sendRootInfoToAll("agents", agentLocations);
+//    }
+
+    void loadStatic() {
         try
         {
             System.out.println("reading buildings layer");
@@ -113,64 +145,61 @@ public class DCampusWorld extends DSimState {
             network.createFromGeomField(walkways);
 
             addIntersectionNodes(network.nodeIterator(), junctions);
-
+            
+            
+            // Distributed locations
+            //TODO how many subdivisions?
+            discretization = 6;
+            agentLocations = new DContinuous2D<DMasonPoint>(getPartitioning(), aoi[0], discretization, this);
         } catch (final Exception ex)
         {
             Logger.getLogger(DCampusWorld.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
-
-
-    public int getNumAgents() { return numAgents; }
-    public void setNumAgents(final int n) { if (n > 0) numAgents = n; }
-
-    /**
-     * Add agents to the simulation and to the agent GeomVectorField. Note that
-     * each agent does not have any attributes.
-     */
-    void addAgents()
-    {
-        for (int i = 0; i < numAgents; i++)
-        {
-            final DAgent a = new DAgent(this);
-
-            agents.addGeometry(a.getGeometry());
-
-            schedule.scheduleRepeating(a);
-
-            // we can set the userData field of any MasonGeometry.  If the userData is inspectable,
-            // then the inspector will show this information
-            //if (i == 10)
-            //	buildings.getGeometry("CODE", "JC").setUserData(a);
-        }
-    }
-
-
-
-    @Override
-    public void finish()
-    {
-        super.finish();
-
-        // Save the agents layer, which has no corresponding originating
-        // shape file.
-        ShapeFileExporter.write("agents", agents);
-    }
-
-
+    
     @Override
     public void start()
     {
         super.start();
-
-        agents.clear(); // clear any existing agents from previous runs
-        addAgents();
-        agents.setMBR(buildings.getMBR());
-
+        
+        // dump static info to each partition here at start of sim instead of in constructor
+        loadStatic();
+        
+        //TODO???
+//        // add agents
+//        agents.clear(); // clear any existing agents from previous runs
+//        addAgents();
+//        agents.setMBR(buildings.getMBR());
+ 
+//        for (Object geom : agents.getGeometries()) {
+//        	MasonGeometry masonGeom = (MasonGeometry) geom;
+////        	Point centroid = agents.getGeometryLocation(masonGeom);
+//        	Point centroid = masonGeom.geometry.getCentroid();
+//        	Coordinate[] coords = centroid.getCoordinates();
+//        	assert(coords.length == 1); // only 1 point
+//            Double2D location = new Double2D(coords[0].x, coords[0].y);
+//            
+//            // Get all local agents, move them and schedule them
+//            if (partition.getBounds().contains(location)) {
+//            	//TODO agentLocations.addLocal(location, masonGeom);
+//            }
+//
+//            // TODO unhook AGENTS from old schedule and reschedule to new processor
+//        }
+        
+        //TODO distributed hashmap? Carmine et al
+        
         // Ensure that the spatial index is made aware of the new agent
         // positions.  Scheduled to guaranteed to run after all agents moved.
         schedule.scheduleRepeating( agents.scheduleSpatialIndexUpdater(), Integer.MAX_VALUE, 1.0);
+
+//      for(int x=0;x<size;x++)
+//          {
+//          Double2D location = new Double2D(_,_);
+//          DAgent agent = new DAgent(location);
+//          agent.setObjectLocation(agent, location);
+//          schedule.scheduleRepeating(agent);
+//          }
     }
 
 
