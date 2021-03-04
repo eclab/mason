@@ -249,7 +249,7 @@ George Mason University}
 \noindent {\Large\bf Copyright }  2010--2019 by Sean Luke.
 
 \vspace{0.25in}
-\noindent {\Large\bf Thanks to } Claudio Cioffi Revilla and Carlotta Domeniconi.
+\noindent {\Large\bf Thanks to } Claudio Cioffi Revilla, Matteo D'Auria, Ryan Moffatt, and Carlotta Domeniconi.
 
 \vspace{0.25in}
 
@@ -4913,6 +4913,8 @@ int upperLeftToroidalX = tx(ulx(x,y));
 
 
 \subsection{Neighborhood Lookup}
+\label{neighborhoodlookup}
+
 To remove some drudgery from you, grids have various neighborhood lookup facilities which gather all the coordinate locations (not their values) in the grid lying within some region a distance away from a provided point.  Grid2D provides five such methods for lookups in rectangular grids, and one for lookups in hexagonal grids:
 
 \begin{methods}{\class{sim.field.grid.Grid2D} Utility}
@@ -14577,7 +14579,14 @@ We have tried hard to make these feel much like the original MASON field classes
 
 In Distributed MASON all fields are the same size, and overlap on top of one another precisely.  A field is divided into several regions. Each processor is in charge of a region (called the processor's {\bf partition}, and manages all the objects and agents associated with that region of the fields.  Now, in order to do their work, an agent typically needs to have access to the objects in the immediate neighborhood around it: but if an agent is currently right at the edge of a processor's partition, then this neighborhood will spill over into another processor's partition, and accessing that data can be very costly.  
 
-MASON handles this by endowing every processor not only with its partition region, but with a buffer zone of cached information immediately around the processor called the processor's {\bf halo region}.  Agents can access this data without having to go to another processor to fetch it.   The size of the halo region is determined by an integer called the partition's {\bf Area of Interest} (or {\bf AOI}).  You specify the AOI when you set up the fields in the first place: in general, the AOI should be large enough to encompass the area around any agent that it needs to read to do its work: and thus the buffer size will generally be large enough for agents on the edge of a partition.  Information cached in the Halo area needs to be synchronized when any changes are made in its source processor node. Such an operation is called ``Halo Exchange'' and it is performed after each model step.
+MASON handles this by endowing every processor not only with its partition region, but with a buffer zone of cached information immediately around the processor called the processor's {\bf halo region}.  Agents can access this data without having to go to another processor to fetch it.   The size of the halo region is determined by an integer called the partition's {\bf Area of Interest} (or {\bf AOI}).  You specify the AOI when you set up the DSimState:
+
+\begin{methods}{\class{sim.engine.DSimState} Constructor}
+\mthd{public DSimState(long seed, int width, int height, int aoi)}
+Builds a DSimState with the given random number seed, model width, model height, and AOI. 
+\end{methods}
+
+In general, the AOI should be large enough to encompass the area around any agent that it needs to read to do its work: and thus the buffer size will generally be large enough for agents on the edge of a partition.  Information cached in the Halo area needs to be synchronized when any changes are made in its source processor node. Such an operation is called ``Halo Exchange'' and it is performed after each model step.
 
 \begin{figure}[t]
 \begin{center}\includegraphics[width=2.5in]{distributed/HaloGrid}\end{center}
@@ -14646,6 +14655,24 @@ Returns the unique ID as a pretty string.
 \mthd{public String toString() }
 By default returns a string for the object in the form classname : ID : current processor ID. 
 \end{methods}
+
+\paragraph{DObjects and Threads}
+
+Because they can cause unforeseen problems, we strongly suggest that your individual processors don't implement models using multiple threads.  However there are certain very rare scenarios where you might need them (you're on your own!).  In this case, you need to inform MASON that you might be allocating DObjects in a multithreaded environment, so it can prepare its object ID allocator to work (less efficiently) in multithreaded mode.  To do this, simply add the following line to your DSimState subclass:
+
+\begin{verbatim}
+static { DSimState.setMultiThreaded(true); }
+\end{verbatim}
+
+This calls the following method:
+
+\begin{methods}{\class{sim.engine.DSimState}}
+\mthd{public static setMultiThreaded(boolean val) }
+Informs the DSimState that you may be allocating DObjects in multiple threads.  In general, you should avoid multiple threads, but if you have to, be sure to call this before allocating any such DObjects.    By default this is false.  You can only call this method {\bf once}, else it will throw an exception.
+\mthd{public static boolean isMultiThreaded() }
+Returns whether the DSimState is assuming that you could be allocating DObjects in multiple threads.  By default this is false.
+\end{methods}
+
 
 \subsection{Agents}
 
@@ -14833,9 +14860,9 @@ If the request is the {\it query}, then you will be given a \class{sim.engine.rm
 \mthd{public boolean isReady()}
 Returns true if the data has been fulfilled and is ready to be accessed.
 \mthd{public Serializable get()}
-Returns the data.
+Returns the data.  If the data is an int, a \class{java.lang.Integer} will be returned.  If the data is a double, a \class{java.lang.Double} will be returned.  Otherwise a copy of the data object itself will be returned.
 \mthd{public int getInt()}
-Returns the data as an integer.  If the data is not an integer, this will throw an exception.
+Returns the data as an int.  If the data is not an int, this will throw an exception.
 \mthd{public int getDouble()}
 Returns the data as an double.  If the data is not an double, this will throw an exception.
 \end{methods}
@@ -14893,14 +14920,17 @@ Sets a value for the given point, which can be any point in the model, by next t
 Returns the local storage array for the grid, in row-major order including the halo region.  Be careful with this.  You probably shouldn't play with this if you don't know what it does.
 \end{methods}
 
+{\bf Omitted are all the neighborhood lookup and toroidal computation methods} available in IntGrid2D and DoubleGrid2D, which are available in exactly the same form in DIntGrid2D and DDoubleGrid2D respectively.
+
+
 \subsection{Object Grids}
 
-These are simply grids of objects, one Object (or null) per grid square.  The Object grid class is \class{sim.field.grid.DObjectGrid2D}.  Note that this class contains methods for manipulating agents (Steppable): but this is dangerous because if you set a grid square to some object, it might overwrite an agent which used to be there; but the agent is still on the Schedule.  You need to be careful to avoid creating bugs in your model this way.
+These are simply grids of objects, one object (or null) per grid square.  The Object grid class is \class{sim.field.grid.DObjectGrid2D}.  Unlike the MASON version of this method (\class{sim.field.grid.ObjectGrid2D}, this version uses Java generics and is parameterized so that each object must be of some class \(T\), which must in turn be a subclass of \class{sim.engine.DObject}.  Note that this class contains methods for manipulating agents (Steppable): but this is dangerous because if you set a grid square to some object, it might overwrite an agent which used to be there; but the agent is still on the Schedule.  You need to be careful to avoid creating bugs in your model this way.
 
-All objects stored in a DObjectGrid2D must be of the class DObject.
+{\bf Not listed below are all the neighborhood lookup and toroidal computation methods} available in ObjectGrid2D, which are available in exactly the same form in DObjectGrid2D.
 
 \begin{methods}{\class{sim.field.grid.DObjectGrid2D} constructor}
-\mthd{public DObjectGrid2D(DSimState state)}
+\mthd{public DObjectGrid2D\(\langle\)T extends DObject\(\rangle\)(DSimState state)}
 Creates a DObjectGrid2D which holds objects of the given class {\it T}  with all slots initialized to null.
 \end{methods}
 
@@ -14928,12 +14958,12 @@ Returns the local storage array for the grid, containing objects of the class {\
 
 \subsection{Dense Grids}
 
-These are grids of ArrayLists of objects, and are approximately the same as DenseGrid2D in ordinary MASON.  There is no equivalent to SparseGrid2D: you'll need to use dense grids.  The Dense grid class is \class{sim.field.grid.DDenseGrid2D}.  Note that this class contains methods for manipulating agents (Steppable).
+These are grids of ArrayLists of objects, and are approximately the same as DenseGrid2D in ordinary MASON.  There is no equivalent to SparseGrid2D: you'll need to use dense grids.  The Dense grid class is \class{sim.field.grid.DDenseGrid2D}.   Unlike the MASON version of this method (\class{sim.field.grid.DenseGrid2D}, this version uses Java generics and is parameterized so that each object must be of some class \(T\), which must in turn be a subclass of \class{sim.engine.DObject}.  Note that this class contains methods for manipulating agents (Steppable).
 
-All objects stored in a DObjectGrid2D must be of the class DObject.
+{\bf Not listed below are all the neighborhood lookup and toroidal computation methods} available in DenseGrid2D, which are available in exactly the same form in DDenseGrid2D.
 
 \begin{methods}{\class{sim.field.grid.DDenseGrid2D} constructor}
-\mthd{public DDenseGrid2D(DSimState state)}
+\mthd{public DDenseGrid2D\(\langle\)T extends DObject\(\rangle\)(DSimState state)}
 Creates a DDenseGrid2D which holds objects of the given class {\it T}.
 \end{methods}
 
@@ -14979,22 +15009,20 @@ Returns the local storage array for the grid, containing objects of the class {\
 
 \subsection{Continuous Fields}
 
-The Continuous field class is \class{sim.field.grid.DContinuous2D}.  Whereas the Continuous2D class in regular MASON is a sparse field, DContinuous2D is not, because you can't implement sparse fields efficiently in a distributed fashion.  Instead, this field stores objects in a grid much like DDenseGrid2D, but associates each one with a real-valued coordinate location.
+The Continuous field class is \class{sim.field.continuous.DContinuous2D}.  Unlike the MASON version of this method (\class{sim.field.continuous.Continuous2D}, this version uses Java generics and is parameterized so that each object must be of some class \(T\), which must in turn be a subclass of \class{sim.engine.DObject}.   Whereas the Continuous2D class in regular MASON is a sparse field, DContinuous2D is not, because you can't implement sparse fields efficiently in a distributed fashion.  Instead, this field stores objects in a grid much like DDenseGrid2D, but associates each one with a real-valued coordinate location.
 
 Much like Continuous2D, DContinuous2D is created with a {\it discretization}: every processor must use the same discretization or bad things will happen.
 
 Whereas DDenseGrid2D stores objects at a given grid square in an ArrayList, DContinuous2D stores them as a HashMap; and also maintains a mapping of local locations to objects.    This means that an object can only be stored once in a DContinuous2D object. In theory you could store the same object in two different partitions, but this is a very bad idea.
 
-All objects stored in a DObjectGrid2D must be of the class DObject.
-
 {\bf Not listed below are all the neighborhood lookup and toroidal computation methods} available in Continuous2D, which are available in exactly the same form in DContinuous2D.
 
-\begin{methods}{\class{sim.field.grid.DContinuous2D} Constructor}
-\mthd{public DContinuous2D(double discretization, DSimState state)}
+\begin{methods}{\class{sim.field.continuous.DContinuous2D} Constructor}
+\mthd{public DContinuous2D\(\langle\)T extends DObject\(\rangle\)(double discretization, DSimState state)}
 Creates a DContinuous2D which holds objects of the given class {\it T}, using the given cell discretization.
 \end{methods}
 
-\begin{methods}{\class{sim.field.grid.DContinuous2D}}
+\begin{methods}{\class{sim.field.continuous.DContinuous2D}}
 \mthd{public boolean isLocal(Double2D p)}
 Returns true if the given point lies within the local bounds. This the Double2D version of the same Int2D method found in DAbstractGrid2D.
 \mthd{public boolean isHalo(Double2D p)}
@@ -15051,7 +15079,92 @@ Returns the entire storage object.
 
 \section{Neighborhood Lookup in Distributed Fields}
 
-To be written...
+Neighborhood lookup in Distributed MASON fields is by and large quite similar to standard MASON fields.  But there are some big and important differences that you should be made aware of.  Before we discussed them, first note that there are {\bf two kinds of neighborhood lookup functions}: 
+
+\begin{itemize} 
+\item Functions which return all the {\it neighboring locations} surrounding a given location.  These use the term ``Locations'' in their name.
+\item Functions which return all the {\it neighboring objects} surrounding a given location.  These use the term ``Neighbors'' in their name.
+\end{itemize}
+
+
+Here are the main differences between the distributed and the standard MASON fields when it comes to neighborhood lookup:
+
+\begin{itemize}
+\item All distributed fields are subclasses of \class{sim.field.DAbstractGrid2D}, which is in turn a subclass of the standard MASON class \class{sim.field.AbstractGrid2D}.  This means that all distributed fields have the exact same neighborhood lookup functions: these are listed in Section~\ref{neighborhoodlookup}. 
+\item Because DContinuous2D is (in Distributed MASON) a DAbstractGrid2D, and thus an AbstractGrid2D, it too has the same grid-style location-lookup functions as standard grids, though that's not particularly useful.  Standard Continuous2D of course does not have these functions at all.
+\item Like their standard MASON counterparts, DIntGrid2D and DDoubleGrid2D have no neighbor-lookup functions (since the ``neighbors'' are integers and doubles).
+\item Distributed grids have similar neighbor-lookup functions as standard grids, but they use typed ArrayLists rather than Bags.  
+\item DContinuous2D has similar neighborhood-lookup functions as Continuous2D, but it uses typed ArrayLists rather than Bags.
+\item {\bf The critical difference: } all distributed neighbor-lookup functions cannot lookup regions whose borders are further than the Area of Interest (AOI) away from the central point.  This restriction guarantees that distributed neighbor-lookup functions cannot look up objects outside of the halo region of a given partition.  This is because, for obvious reasons, it's very costly to look up objects outside one's partition.
+\end{itemize}
+
+Here are the revised neighbor lookup functions for DObjectGrid2D and DDenseGrid2D.  Compare them to those in Section~\ref{neighborhoodlookup}.
+
+\begin{methods}{\class{sim.field.grid.DObjectGrid2D\(\langle\)T\(\rangle\)} and \class{sim.field.grid.DObjectGrid2D\(\langle\)T\(\rangle\)}}
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getMooreNeighbors( int x, int y, int dist, boolean includeOrigin,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  ArrayList\(\langle\)T\(\rangle\) result, IntBag xPos, IntBag yPos )}\\
+Returns all the neighbors in the square surrounding the point \(x,y\) whose sides are at most {\it dist} away from the point.  If {\it includeOrigin} is false, then objects at \(x,y\) itself are not included.   You can pass in an ArrayList and IntBags to allow this method to reuse them internally.  
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getMooreNeighborsAndLocations(int x, int y, int dist, boolean includeOrigin,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  ArrayList\(\langle\)T\(\rangle\) result, IntBag xPos, IntBag yPos)}\\
+Returns all the neighbors in the square surrounding the point \(x,y\) whose sides are at most {\it dist} away from the point.  If {\it includeOrigin} is false, then objects at \(x,y\) itself are not included.   You can pass in an ArrayList and IntBags to allow this method to reuse them internally.  The IntBags will be modified to correspond to the locations of each of the objects in the result.
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getMooreNeighbors( int x, int y, int dist, boolean includeOrigin )}
+Returns all the neighbors in the square surrounding the point \(x,y\) whose sides are at most {\it dist} away from the point.  If {\it includeOrigin} is false, then objects at \(x,y\) itself are not included. 
+
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getVonNeumannNeighbors( int x, int y, int dist, boolean includeOrigin,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  ArrayList\(\langle\)T\(\rangle\) result, IntBag xPos, IntBag yPos )}\\
+Returns all the neighbors in the diamond surrounding the point \(x,y\) whose corners are at most {\it dist} away from the point.  If {\it includeOrigin} is false, then objects at \(x,y\) itself are not included.   You can pass in an ArrayList and IntBags to allow this method to reuse them internally.  
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getVonNeumannNeighborsAndLocations(int x, int y, int dist, boolean includeOrigin,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  ArrayList\(\langle\)T\(\rangle\) result, IntBag xPos, IntBag yPos)}\\
+Returns all the neighbors in the diamond surrounding the point \(x,y\) whose corners are at most {\it dist} away from the point.    If {\it includeOrigin} is false, then objects at \(x,y\) itself are not included.   You can pass in an ArrayList and IntBags to allow this method to reuse them internally.  The IntBags will be modified to correspond to the locations of each of the objects in the result.
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getVonNeumannNeighbors( int x, int y, int dist, boolean includeOrigin )}
+Returns all the neighbors in the diamond surrounding the point \(x,y\) whose corners are at most {\it dist} away from the point.   If {\it includeOrigin} is false, then objects at \(x,y\) itself are not included. 
+
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getHexagonalNeighbors( int x, int y, int dist, boolean includeOrigin,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  ArrayList\(\langle\)T\(\rangle\) result, IntBag xPos, IntBag yPos )}\\
+Returns all the neighbors in the hexagon surrounding the point \(x,y\) whose corners are at most {\it dist} away from the point.  If {\it includeOrigin} is false, then objects at \(x,y\) itself are not included.   You can pass in an ArrayList and IntBags to allow this method to reuse them internally.  
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getHexagonalNeighborsAndLocations(int x, int y, int dist, boolean includeOrigin,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  ArrayList\(\langle\)T\(\rangle\) result, IntBag xPos, IntBag yPos)}\\
+Returns all the neighbors in the hexagon surrounding the point \(x,y\) whose corners are at most {\it dist} away from the point.    If {\it includeOrigin} is false, then objects at \(x,y\) itself are not included.   You can pass in an ArrayList and IntBags to allow this method to reuse them internally.  The IntBags will be modified to correspond to the locations of each of the objects in the result.
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getHexagonalNeighbors( int x, int y, int dist, boolean includeOrigin )}
+Returns all the neighbors in the hexagon surrounding the point \(x,y\) whose corners are at most {\it dist} away from the point.   If {\it includeOrigin} is false, then objects at \(x,y\) itself are not included. 
+
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getRadialNeighbors( int x, int y, double dist, boolean includeOrigin,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  int measurementRule, boolean closed,  ArrayList\(\langle\)T\(\rangle\) result, IntBag xPos, IntBag yPos )}\\
+Returns all the neighbors in the circle surrounding the point \(x,y\) whose outer boundary is most {\it dist} away from the point.   If {\it includeOrigin} is false, then objects at \(x,y\) itself are not included.   You can pass in an ArrayList and IntBags to allow this method to reuse them internally.  {\it measurementRule} determines whether grid squares should be included depending on their overlap with the outer boundary.  It can be any of \variable{Grid2D.ALL}, \variable{Grid2D.CENTER}, or \variable{Grid2D.ANY}.  See Section~\ref{neighborhoodlookup} for a discussion of measurement rules.  
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getRadialNeighbors( int x, int y, double dist, boolean includeOrigin,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf ArrayList\(\langle\)T\(\rangle\) result, IntBag xPos, IntBag yPos )}\\
+Returns all the neighbors in the circle surrounding the point \(x,y\) whose outer boundary is most {\it dist} away from the point.  If {\it includeOrigin} is false, then objects at \(x,y\) itself are not included.   You can pass in an ArrayList and IntBags to allow this method to reuse them internally.  The IntBags will be modified to correspond to the locations of each of the objects in the result. The measurement rule used is \variable{Grid2D.ANY}.  See Section~\ref{neighborhoodlookup} for a discussion of measurement rules.
+
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getRadialNeighborsAndLocations( int x, int y, double dist, boolean includeOrigin,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf int measurementRule, boolean closed,  ArrayList\(\langle\)T\(\rangle\) result, IntBag xPos, IntBag yPos )}\\
+Returns all the neighbors in the circle surrounding the point \(x,y\) whose outer boundary is most {\it dist} away from the point.   If {\it includeOrigin} is false, then objects at \(x,y\) itself are not included. You can pass in an ArrayList and IntBags to allow this method to reuse them internally.  {\it measurementRule} determines whether grid squares should be included depending on their overlap with the outer boundary.  It can be any of \variable{Grid2D.ALL}, \variable{Grid2D.CENTER}, or \variable{Grid2D.ANY}.  See Section~\ref{neighborhoodlookup} for a discussion of measurement rules.
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getRadialNeighborsAndLocations( int x, int y, double dist, boolean includeOrigin,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf ArrayList\(\langle\)T\(\rangle\) result, IntBag xPos, IntBag yPos )}\\
+Returns all the neighbors in the circle surrounding the point \(x,y\) whose outer boundary is most {\it dist} away from the point.  If {\it includeOrigin} is false, then objects at \(x,y\) itself are not included.   You can pass in an ArrayList and IntBags to allow this method to reuse them internally.  The IntBags will be modified to correspond to the locations of each of the objects in the result.  The measurement rule used is \variable{Grid2D.ANY}.  See Section~\ref{neighborhoodlookup} for a discussion of measurement rules.
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getRadialNeighbors( int x, int y, double dist, boolean includeOrigin)}
+Returns all the neighbors in the circle surrounding the point \(x,y\) whose outer boundary is most {\it dist} away from the point.  If {\it includeOrigin} is false, then objects at \(x,y\) itself are not included.   The measurement rule used is \variable{Grid2D.ANY}.  See Section~\ref{neighborhoodlookup} for a discussion of measurement rules.
+\end{methods}
+
+
+
+Here are the revised neighbor lookup functions for DContinuous2D.  Compare them to those in Section~\ref{neighborhoodlookup}.
+
+\begin{methods}{\class{sim.field.continuous.DContinuous2D\(\langle\)T\(\rangle\)}}
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getNeighborsExactlyWithinDistance(Double2D position, double distance)}
+Returns only those neighbors at or within the given radial distance from the given position.
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getNeighborsExactlyWithinDistance(Double2D position, double distance, boolean radial,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  boolean inclusive, ArrayList\(\langle\)T\(\rangle\) result)}\\
+Returns only those neighbors within, or (if {\it inclusive} is true) at the given radial distance from the given position.  If {\it radial} is false, then rather than radial (circular) distance, objects at or within a square centered the position are returned.  You can pass in an ArrayList to be reused rather than produce a new one.
+
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getNeighborsWithinDistance( Double2D position, double distance)}
+Returns a collection of neighbors, including those at or within the given radial distance from the given position, plus some other neighbors you probably don't care about.
+
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getNeighborsWithinDistance( Double2D position, double distance, ArrayList\(\langle\)T\(\rangle\) result)}
+Returns only those neighbors within, or (if {\it inclusive} is true) at the given radial distance from the given position.  If {\it radial} is false, then rather than radial (circular) distance, objects at or within a square centered the position are returned.  You can pass in an ArrayList to be reused rather than produce a new one.  Also returned are some other neighbors you probably don't care about.  
+\end{methods}
+
+
+
 
 \section{Visualization and Statistics}
 
@@ -15075,79 +15188,79 @@ Schedule the object contained in PayloadWrapper.
 The \textit{sim.field.HaloGrid2D} provides methods to add/remove/get and move agents and object on the distributed field.
 
 \begin{methods}{\class{sim.field.HaloGrid2D} Field}
-\mthd{public void add(final P p, final T t)}
+\mthd{public void add(P p, T t)}
 Adds the object t to the local or remote location p.
-\mthd{public void remove(final P p, final T t)}
+\mthd{public void remove(P p, T t)}
 Remove the object t from the local or remote location p.
-\mthd{public void remove(final P p)}
+\mthd{public void remove(P p)}
 Remove all the objects from the local or remote location p.
-\mthd{public void move(final P fromP, final P toP, final T t)}
+\mthd{public void move(P fromP, P toP, T t)}
 Move an object t form the fromP location to the toP location. toP can be a remote location.
-\mthd{public void addAgent(final P p, final T t) }
+\mthd{public void addAgent(P p, T t) }
 Adds and schedules the agent t in a location p. If the location is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
-\mthd{public void addAgent(final P p, final T t, final int ordering, final double time)}
+\mthd{public void addAgent(P p, T t, int ordering, double time)}
 Adds and schedules the agent t in a location p with a certain time with a certain ordering. If the location is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
-\mthd{public void moveAgent(final P fromP, final P toP, final T t)}
+\mthd{public void moveAgent(P fromP, P toP, T t)}
 Moves and schedules the agent t from the location fromP to the location toP. If the location toP is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
-\mthd{public void moveAgent(final P fromP, final P toP, final T t, final int ordering, final double time)}
+\mthd{public void moveAgent(P fromP, P toP, T t, int ordering, double time)}
 Moves and schedules the agent t from the location fromP to the location toP with a certain time with a certain ordering. If the location toP is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
-\mthd{public void addRepeatingAgent(final P p, final T t, final double time, final int ordering, final double interval)}
+\mthd{public void addRepeatingAgent(P p, T t, double time, int ordering, double interval)}
 Adds and schedules the repeating agent t in a location p with a certain time, with a certain ordering and a certain interval. If the location is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
-\mthd{public void addRepeatingAgent(final P p, final T t, final int ordering, final double interval)}
+\mthd{public void addRepeatingAgent(P p, T t, int ordering, double interval)}
 Adds and schedules the repeating agent t in a location p with a certain ordering and a certain interval. If the location is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
-\mthd{public void removeAndStopRepeatingAgent(final P p, final T t)}
+\mthd{public void removeAndStopRepeatingAgent(P p, T t)}
 Remove and stops the agent t from the local or remote location p.
-\mthd{public void removeAndStopRepeatingAgent(final P p, final DistributedIterativeRepeat iterativeRepeat)}
+\mthd{public void removeAndStopRepeatingAgent(P p, DistributedIterativeRepeat iterativeRepeat)}
 Remove and stops the DistributedIterativeRepeat iterativeRepeat object from the local or remote location p.
-\mthd{public void moveRepeatingAgent(final P fromP, final P toP, final T t)}
+\mthd{public void moveRepeatingAgent(P fromP, P toP, T t)}
 Moves and schedules a repeating agent t from the location fromP to the location toP with a certain time with a certain ordering. If the location toP is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
-\mthd{public void moveLocal(final P fromP, final P toP, final T t)}
+\mthd{public void moveLocal(P fromP, P toP, T t)}
 Move an object t form the fromP location to the toP location. toP must be local.
 \end{methods}
 
 The \textit{sim.field.HaloGrid2D} provides  methods to enable data collection or distribution to/from one node.
 
 \begin{methods}{\class{sim.field.HaloGrid2D} Data collection/distribution}
-\mthd{public void collect(final int dst, final GridStorage fullField) throws MPIException}
+\mthd{public void collect(int dst, GridStorage fullField) throws MPIException}
 Collect the objects from all the other processors.
-\mthd{public void collectGroup(final int level, final GridStorage groupField)) throws MPIException}
+\mthd{public void collectGroup(int level, GridStorage groupField)) throws MPIException}
 The master processor of a specific Communicator Group collect the objects from all the other processors of that group.
-\mthd{public void distributeGroup(final int level, final GridStorage groupField) throws MPIException}
+\mthd{public void distributeGroup(int level, GridStorage groupField) throws MPIException}
 The master processor of a specific Communicator Group send the objects to all the other processors of that group.
 \end{methods}
 
 The \textit{sim.field.HaloGrid2D} also provides various stabbing queries of determining which area the given point is.
 
 \begin{methods}{\class{sim.field.HaloGrid2D} stabbing queries}
-\mthd{public boolean inGlobal(final IntPoint p)} 
+\mthd{public boolean inGlobal(IntPoint p)} 
 Return true if the location p belongs to the field.
-\mthd{public boolean inLocal(final P p)}
+\mthd{public boolean inLocal(P p)}
 Return true if the location p belongs to the Private and Shared Area of the processor's partition.
-\mthd{public boolean inPrivate(final P p)}
+\mthd{public boolean inPrivate(P p)}
 Return true if the location p belongs to the Private Area of the processor's partition.
-\mthd{public boolean inLocalAndHalo(final P p)}
+\mthd{public boolean inLocalAndHalo(P p)}
 Return true if the location p belongs to the Private, Shared and Halo of the processor's partition.
-\mthd{public boolean inShared(final P p)}
+\mthd{public boolean inShared(P p)}
 Return true if the location p belongs to the Shared Area of the processor's partition.
-\mthd{public boolean inHalo(final P p)}
+\mthd{public boolean inHalo(P p)}
 Return true if the location p belongs to the Halo Area of the processor's partition.
 \end{methods}
 
 \begin{methods}{\class{sim.field.HaloGrid2D} Remote field access }
-\mthd{public void addToRemote(final P p, final T t)}
+\mthd{public void addToRemote(P p, T t)}
 Add an object t to a remote location p.
-\mthd{public void removeFromRemote(final P p, final T t} 
+\mthd{public void removeFromRemote(P p, T t} 
 Remove an object t from a remote location p.
-\mthd{public void removeFromRemote(final P p)}
+\mthd{public void removeFromRemote(P p)}
 Remove all the objects from a remote location p.
-\mthd{public Serializable getFromRemote(final P p)}
+\mthd{public Serializable getFromRemote(P p)}
 Get all the objects from a remote location p.
 \end{methods}
 
 The inner class sim.field.HaloGrid2D\$Neighbor contains the information about which part of my region should be sent out to which neighbor and where I should put the received data from my neighbors into my halo area.
 
 \begin{methods}{\class{sim.field.HaloGrid2D\$Neighbor}}
-\mthd{private ArrayList\(<\)IntHyperRect\(>\) generateOverlaps(final IntHyperRect p1, final IntHyperRect p2)}
+\mthd{private ArrayList\(<\)IntHyperRect\(>\) generateOverlaps(IntHyperRect p1, IntHyperRect p2)}
 Generate the Halo Area.
 \end{methods}
 
@@ -15215,15 +15328,15 @@ The class \textit{sim.field.partitioning.QuadTreePartition}  is in charge of div
 \begin{methods}{\class{sim.field.partitioning.QuadTreePartition} Additional}
 \mthd{public QuadTree getQt()}
 Return the QuadTree that represents the partition scheme.
-\mthd{public boolean isGroupMaster(final GroupComm gc)}
+\mthd{public boolean isGroupMaster(GroupComm gc)}
 Return true if the current processor is the master of the MPI group communicator gc.
-\mthd{public boolean isGroupMaster(final int level)}
+\mthd{public boolean isGroupMaster(int level)}
 Return true if the current processor is the master of the specified Quadtree level.
-\mthd{public GroupComm getGroupComm(final int level)}
+\mthd{public GroupComm getGroupComm(int level)}
 Return the MPI group communicator of the specified Quadtree level.
-\mthd{public IntHyperRect getNodeShapeAtLevel(final int level)}
+\mthd{public IntHyperRect getNodeShapeAtLevel(int level)}
 Return a rectangle that represents the partition at the specified level of the Quadtree
-\mthd{public void balance(final double myRt, final int level) throws MPIException}
+\mthd{public void balance(double myRt, int level) throws MPIException}
 Rebalance the QuadTreePartion in order to keep balanced the workload of all processors in the simulation.
 \end{methods}
 
@@ -15246,17 +15359,17 @@ When an agent sets its location in a field to somewhere outside its current proc
 Reload the dstMap in case the field partitions changes. 
 \mthd{public void sync() throws MPIException, IOException, ClassNotFoundException}
 Exchange the migrating agents with neighbors.
-\mthd{public void migrateAgent(final Stopping agent, final int dst, final NdPoint loc, final int fieldIndex)}
+\mthd{public void migrateAgent(Stopping agent, int dst, NdPoint loc, int fieldIndex)}
 Transports the Object as well as migrates it.
-\mthd{public void migrateAgent(final int ordering, final Stopping agent, final int dst, final NdPoint loc,final int fieldIndex)}
+\mthd{public void migrateAgent(int ordering, Stopping agent, int dst, NdPoint loc,int fieldIndex)}
 Transports the Object as well as migrates it.
-\mthd{public void migrateAgent(final int ordering, final double time, final Stopping agent, final int dst,final NdPoint loc, final int fieldIndex)}
+\mthd{public void migrateAgent(int ordering, double time, Stopping agent, int dst,NdPoint loc, int fieldIndex)}
 Transports the Object as well as migrates it.
-\mthd{public void migrateAgent(final AgentWrapper agentWrapper, final int dst, final NdPoint loc, final int fieldIndex)}
+\mthd{public void migrateAgent(AgentWrapper agentWrapper, int dst, NdPoint loc, int fieldIndex)}
 Transports the Object as well as migrates it.
-\mthd{public void migrateRepeatingAgent(final DistributedIterativeRepeat iterativeRepeat, final int dst,final NdPoint loc, final int fieldIndex)}
+\mthd{public void migrateRepeatingAgent(DistributedIterativeRepeat iterativeRepeat, int dst,NdPoint loc, int fieldIndex)}
 Transports the Object as well as migrates it. Does not stop() the repeating object. Thus, call stop on iterativeRepeat after calling this function
-\mthd{public void transportObject(final Serializable obj, final int dst, final NdPoint loc, final int fieldIndex)}
+\mthd{public void transportObject(Serializable obj, int dst, NdPoint loc, int fieldIndex)}
 Transports the Object but doesn't schedule it. Does not stop() the repeating object. Thus, call stop on iterativeRepeat after calling this function
 \end{methods}
 
