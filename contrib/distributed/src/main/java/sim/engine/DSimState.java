@@ -111,7 +111,7 @@ public class DSimState extends SimState {
 	protected DRegistry registry;
 	protected boolean withRegistry;
 
-	protected int balanceInterval = 50; //100;
+	protected int balanceInterval = 100;
 	protected int balancerLevel;
 
 	public DSimState(final long seed, final MersenneTwisterFast random, 
@@ -528,7 +528,7 @@ public class DSimState extends SimState {
 								migratedAgents.add(a);
 								System.out.println("PID: " + partition.getPID() + " processor " + old_pid + " move " + a
 										+ " from " + loc + " (point " + p + ") to processor " + toP); //agent not being removed from getCell here
-								st.removeObject(loc, ((DObject) a).ID());
+								st.removeObjectUsingGlobalLoc(loc, ((DObject) a).ID());
 								//System.out.println(st);
 								//System.out.println("---");
 							}
@@ -841,113 +841,7 @@ public class DSimState extends SimState {
 		}
 	}
 	
-	/*
-	//field -> instance var
-	//for global values, MPI.MIN_LOC and MPI_MAX_LOC may be good ops here for reduce!
-	//corresponding fields refer to the loc for the best value
-	//For example, in DPSO, look for global best val (bestVal), with a corresponding x and y associated with it
-	public void syncGlobalBestValue(String evalfieldName, String[] correspondingFields) {
-		
-		//TODO
-		//a) combine  gather and bcast calls to make more efficient (I assume)
-		//b) generalize typing, note that above may matter
-		//c) pass function
-		//d) double check barrier calls
-		//e) pass function instead of just max?
-		
-		try {
-		Class clazz = this.getClass();
-		
-		//1) Gather
-		
-		Field f = clazz.getDeclaredField(evalfieldName); //look up getField vs getDeclaredFiled max = null;
-		
-		double eachEvalFieldVal = (double) f.get(this);
-		
-		double[] val_list = new double[partition.numProcessors]; 
-		
-		MPI.COMM_WORLD.barrier();
-		partition.getCommunicator().gather(new double[] { eachEvalFieldVal }, 1, MPI.DOUBLE, val_list, 1, MPI.DOUBLE, 0);
-		//partition.getCommunicator().reduce(Object buf, int count, Datatype type, MPI.MAXLOC, 0); //Need to figure out maxloc
-		
-		ArrayList<double[]> correspondingFieldsList = new ArrayList<double[]>(); //define type here, perhaps Object[]
-		//now, gather each correspondingField
-		for (int i=0; i<correspondingFields.length; i++) {
-			Field corr_f = clazz.getDeclaredField(correspondingFields[i]);
-			double corr_val = (double) f.get(this);
-			double[] corr_val_list = new double[partition.numProcessors]; 
-			MPI.COMM_WORLD.barrier();
-			partition.getCommunicator().gather(new double[] { corr_val }, 1, MPI.DOUBLE, corr_val_list, 1, MPI.DOUBLE, 0);
-			correspondingFieldsList.add(corr_val_list);
-		}
-		
-		//2) Apply operation (max)
-		double chosen_val = 0.0;
-		int chosen_ind = 0;
-		
-		if (partition.getPid() == 0) {
-			chosen_val = val_list[0];
-		
-			for (int j=0; j<val_list.length; j++) {
-				if (val_list[j] > chosen_val) {
-					chosen_val = val_list[j];
-					chosen_ind = j;
-				}
-			}		
-		}
-		
-		//3) Broadcast 
-		
-		double[] chosen_val_holder = new double[] {chosen_val};
-		MPI.COMM_WORLD.barrier();
-		partition.getCommunicator().bcast(chosen_val_holder, 1, MPI.DOUBLE, 0);
-		f.set(this, chosen_val_holder[0]);
-		//System.out.println("partition "+this.getPID()+" : chosen_val "+chosen_val_holder[0]);
-		
-		for (int i=0; i<correspondingFields.length; i++) {
-			Field corr_f = clazz.getDeclaredField(correspondingFields[i]);
-			double chosen_corresponding_val = correspondingFieldsList.get(i)[chosen_ind]; //chosen val
-			double[] chosen_corresponding_val_holder = new double[] {chosen_val};
-			MPI.COMM_WORLD.barrier();
-			partition.getCommunicator().bcast(chosen_corresponding_val_holder, 1, MPI.DOUBLE, 0);
-			corr_f.set(this, chosen_corresponding_val_holder[0]);	
-			
-			
-		}
 
-
-		
-		System.exit(-1);
-		
-		}
-		catch(Exception e) {
-			System.out.println(e);
-			System.out.println("ssyncGlobalValue ran into an exception");
-			System.exit(-1);
-		}
-		
-		// MPI Gather this info:  f.get(this);
-		//calculate best_val
-		//MPI Broadcast using f.set(this, best_val);
-		
-		
-		
-		//bcast example
-		 // if (world_rank == 0) {
-		//	    data = 100;
-		//	    printf("Process 0 broadcasting data %d\n", data);
-		//	    my_bcast(&data, 1, MPI_INT, 0, MPI_COMM_WORLD);
-		//	  } else {
-		//	    my_bcast(&data, 1, MPI_INT, 0, MPI_COMM_WORLD);
-		//	    printf("Process %d received data %d from root process\n", world_rank, data);
-		//	  }
-		
-
-		
-       //f.setAccessible(flag);  Look into this if field is private!
-				
-	}
-	*/
 	
 	protected void updateGlobal() {
 		Object[][] gg = gatherGlobals();
@@ -1054,63 +948,6 @@ public class DSimState extends SimState {
 	
 	
 	
-	/*
-	
-	private void check_if_point_matches_heatbug_locs(Int2D p) {
-		ArrayList<Object> not_match_list = new ArrayList<Object>();
-		for (Synchronizable field : fieldRegistry) {
-			//ArrayList<Object> migratedAgents = new ArrayList<>();
-			HaloGrid2D haloGrid2D = (HaloGrid2D) field;
-			
-			if (haloGrid2D.getStorage() instanceof DenseGridStorage) {
-				//System.out.println("cat");
-				GridStorage st = ((HaloGrid2D) field).getStorage();
-				// System.out.println(st.getClass());
-				Serializable a_list = st.getObjects(haloGrid2D.toLocalPoint(p));
-
-				if (a_list != null) {
-					for (int i = 0; i < ((ArrayList) a_list).size(); i++) {
-						Serializable a = ((ArrayList<Serializable>) a_list).get(i);
-						
-						if (((DHeatBug) a).loc_x != p.x || ((DHeatBug) a).loc_y != p.y){
-							not_match_list.add(a);
-							System.out.println("a is at "+((DHeatBug) a).loc_x+" ,"+((DHeatBug) a).loc_y+" which is not "+p);
-						}
-					}
-				}
-			}
-		}
-		
-		if (not_match_list.size() > 0) {
-			System.exit(-1);
-		}
-		
-	}
-	
-	private void print_all_agents(Int2D p) {
-		ArrayList<Object> not_match_list = new ArrayList<Object>();
-		for (Synchronizable field : fieldRegistry) {
-			//ArrayList<Object> migratedAgents = new ArrayList<>();
-			HaloGrid2D haloGrid2D = (HaloGrid2D) field;
-			
-			if (haloGrid2D.getStorage() instanceof DenseGridStorage) {
-				//System.out.println("cat");
-				GridStorage st = ((HaloGrid2D) field).getStorage();
-				// System.out.println(st.getClass());
-				Serializable a_list = st.getObjects(haloGrid2D.toLocalPoint(p));
-
-				if (a_list != null) {
-					for (int i = 0; i < ((ArrayList) a_list).size(); i++) {
-						Serializable a = ((ArrayList<Serializable>) a_list).get(i);
-						System.out.println(a);
-						
-
-					}
-				}
-			}
-		}
-	}
-		*/
 
 		
 }

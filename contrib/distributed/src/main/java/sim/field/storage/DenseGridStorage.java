@@ -12,7 +12,7 @@ import sim.util.*;
  *
  * @param <T> Type of objects to store
  */
-public class DenseGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
+public class DenseGridStorage<T extends DObject> extends GridStorage<T> {
 	private static final long serialVersionUID = 1L;
 
 	public ArrayList<T>[] storage;

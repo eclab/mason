@@ -10,7 +10,7 @@ import sim.util.*;
  *
  * @param <T> Type of objects to store
  */
-public class ObjectGridStorage<T extends DObject> extends GridStorage<T, Int2D> {
+public class ObjectGridStorage<T extends DObject> extends GridStorage<T> {
 	private static final long serialVersionUID = 1L;
 
 	public T[] storage;

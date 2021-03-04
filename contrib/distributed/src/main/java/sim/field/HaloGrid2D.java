@@ -740,7 +740,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 	 */
 	 void addLocal(final NumberND p, final T t) {
 		if (localStorage instanceof ContinuousStorage)
-			localStorage.addObject(p, t);
+			((ContinuousStorage)localStorage).addObjectUsingGlobalLoc((Double2D)p, (DObject) t);
 		else
 			localStorage.addObject(toLocalPoint((Int2D) p), t);
 	}
@@ -753,10 +753,11 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 	 * 
 	 * @param p location
 	 * @return All objects at p
+	 * @throws Exception 
 	 */
 	 T getLocal(NumberND p) {
 		if (localStorage instanceof ContinuousStorage)
-			return (T) localStorage.getAllObjects(p);
+			return (T) ((ContinuousStorage)localStorage).getAllObjectsUsingGlobalLoc((Double2D)p);
 		else
 			return (T) localStorage.getAllObjects(toLocalPoint((Int2D) p));
 	}
@@ -773,7 +774,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 	 */
 	 T getLocal(NumberND p, long id) {
 		if (localStorage instanceof ContinuousStorage)
-			return (T) localStorage.getObject(p, id);
+			return (T) ((ContinuousStorage)localStorage).getObjectUsingGlobalLoc((Double2D) p, id);
 		else
 			return (T) localStorage.getObject(toLocalPoint((Int2D) p), id);
 	}
@@ -790,7 +791,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 	 public void removeLocal(NumberND p, long id) {
 		if (localStorage instanceof ContinuousStorage) {
 			int old_size = ((ContinuousStorage) localStorage).getCell((Double2D) p).size();
-			localStorage.removeObject(p, id);
+			((ContinuousStorage)localStorage).removeObjectUsingGlobalLoc((Double2D)p, id);
 			if (old_size == ((ContinuousStorage) localStorage).getCell((Double2D) p).size()) {
 				System.out.println("remove not successful!");
 				System.out.println(p + " " + id);
@@ -806,7 +807,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 		if (localStorage instanceof ContinuousStorage) {
 			int old_size = ((ContinuousStorage) localStorage).getCell((Double2D) p).size();
 
-			localStorage.clear(p);
+			((ContinuousStorage)localStorage).clearUsingGlobalLoc((Double2D)p);
 
 			if (old_size == ((ContinuousStorage) localStorage).getCell((Double2D) p).size()) {
 				System.out.println("remove not sucessful!");

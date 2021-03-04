@@ -5,7 +5,7 @@ import java.util.*;
 import mpi.*;
 import sim.util.*;
 
-public class IntGridStorage extends GridStorage<Integer, Int2D> {
+public class IntGridStorage extends GridStorage<Integer> {
 	private static final long serialVersionUID = 1L;
 
 	public int[] storage;

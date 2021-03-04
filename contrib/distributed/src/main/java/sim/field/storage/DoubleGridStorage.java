@@ -5,7 +5,7 @@ import java.util.*;
 import mpi.*;
 import sim.util.*;
 
-public class DoubleGridStorage extends GridStorage<Double, Int2D> {
+public class DoubleGridStorage extends GridStorage<Double> {
 	private static final long serialVersionUID = 1L;
 
 	public double[] storage;
