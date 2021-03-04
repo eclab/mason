@@ -33,15 +33,84 @@ import sim.display.*;
 public class DSimState extends SimState {
 	private static final long serialVersionUID = 1L;
 
-	private static boolean multiThreaded = false;
-	private static boolean multiThreadedSet = false;
-
-	public static boolean isMultiThreaded() {
-		return multiThreaded;
-	}
-
+	// Our PID
 	static int pid = -1;
+
+	// Is the model runing in multithreaded mode?  This is used to allocate DObject IDs efficiently.
+	 static boolean multiThreaded = false;
+	// Have we set up the multiThreaded variable yet?
+	 static boolean multiThreadedSet = false;
+
+	// Logger for debugging
+	static Logger logger;
+
+	/** The Partition of the DSimState */
+	protected QuadTreePartition partition;
+	/** The DSimState's TransporterMPI interface */
+	protected TransporterMPI transporter;
+	HashMap<String, Serializable> rootInfo = null;
+	HashMap<String, Serializable>[] init = null;
+
+	// The statistics queue lock
+	final Object statLock = new Object[0];
+	// The statistics queue
+	ArrayList<Stat> statList = new ArrayList<>();
+	// The debug queue lock
+	final Object debugStatLock = new Object[0];
+	// The debug queue
+	ArrayList<Stat> debugList = new ArrayList<>();
+
+	// The RemoteProcessor interface for communicating via RMI
+	RemoteProcessor processor;
 	
+	// A list of all fields in the Model.  Any HaloField that is created will register itself here.
+	// Not to be confused with the DRegistry.
+	ArrayList<HaloGrid2D> fieldRegistry;
+
+	// The RMI registry
+	protected DRegistry registry;
+	
+	// FIXME: what is this for?
+	protected boolean withRegistry;
+
+	// The number of steps between load balances
+	int balanceInterval = 100;
+	// The current balance level		FIXME: This looks primitive, and also requires that be properly in sync 
+	int balancerLevel;
+
+
+	/** Builds a new DSimState with the given random number SEED,
+		the WIDTH and HEIGIHT of the entire model (not just the partition),
+		and the AREA OF INTEREST (AOI) for the halo field */
+	public DSimState(long seed, int width, int height, int aoi) 
+		{
+		super(seed, new MersenneTwisterFast(seed), new DistributedSchedule());
+		this.partition = new QuadTreePartition(width, height, true, aoi);
+		partition.initialize();
+		balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
+		transporter = new TransporterMPI(partition);
+		fieldRegistry = new ArrayList<>();
+		rootInfo = new HashMap<>();
+		withRegistry = false;
+		}
+
+
+
+	/** Sets the rate at which load balancing occurs (in steps). */
+	public void setBalanceInterval(int val)
+		{
+		balanceInterval = val;
+		}
+		
+	/** Returns the rate at which load balancing occurs (in steps). */
+	public int getBalanceInterval()
+		{
+		return balanceInterval;
+		}
+
+	
+	// loads and stores the pid.
+	// Only call this after COMM_WORLD has been set up.
 	static void loadPID()
 		{
 		try 
@@ -70,12 +139,19 @@ public class DSimState extends SimState {
 		return pid;
 		}
 
+	/** Returns whether the DSimState is assuming that you may be allocating
+		DObjects in a multithreaded environment.  In general you should try to
+		run in single-threaded mode, it will cause far fewer headaches.
+		*/
+	public static boolean isMultiThreaded() {
+		return multiThreaded;
+	}
 	/**
-	 * Set multiThreaded as true if any processing node (e.g. pid = 0) uses more
-	 * than one thread. This must be set in a static block and before any DObjects
-	 * have been created. </br>
+	 * Sets whether the DSimState is assuming that you may be allocating
+	 * DObjects in a multithreaded environment.  In general you should try to
+	 * run in single-threaded mode, it will cause far fewer headaches.
 	 * </br>
-	 * To set multiThreaded add the followings line to the top of your simulation -
+	 * To set multiThreaded add the following line to the top of your simulation -
 	 * </br>
 	 * 
 	 * static { DSimState.setMultiThreaded(true); }
@@ -87,54 +163,8 @@ public class DSimState extends SimState {
 			multiThreaded = multi;
 			multiThreadedSet = true;
 		} else
-			throw new RuntimeException("multiThreaded can only be set once");
+			throw new RuntimeException("multiThreaded(...) may only be called once.");
 	}
-
-	public static Logger logger;
-
-	protected QuadTreePartition partition;
-	protected TransporterMPI transporter;
-	HashMap<String, Serializable> rootInfo = null;
-	HashMap<String, Serializable>[] init = null;
-
-	final Object statLock = new Object[0];
-	final Object debugStatLock = new Object[0];
-	ArrayList<Stat> statList = new ArrayList<>();
-	ArrayList<Stat> debugList = new ArrayList<>();
-
-	RemoteProcessor processor;
-
-	// A list of all fields in the Model.
-	// Any HaloField that is created will register itself here
-	ArrayList<HaloGrid2D> fieldRegistry;
-
-	protected DRegistry registry;
-	protected boolean withRegistry;
-
-	protected int balanceInterval = 100;
-	protected int balancerLevel;
-
-	public DSimState(final long seed, final MersenneTwisterFast random, 
-			final DistributedSchedule schedule,
-			final QuadTreePartition partition) 
-		{
-		super(seed, random, schedule);
-		this.partition = partition;
-		partition.initialize();
-		balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
-		transporter = new TransporterMPI(partition);
-		fieldRegistry = new ArrayList<>();
-		rootInfo = new HashMap<>();
-		withRegistry = false;
-		}
-
-	public DSimState(final long seed, final int width, final int height, int aoi) 
-		{
-		this(seed, 
-			new MersenneTwisterFast(seed), 
-			new DistributedSchedule(), 
-			new QuadTreePartition(width, height, true, aoi));
-		}
 
 	/**
 	 * All HaloFields register themselves here.<br>
@@ -156,21 +186,32 @@ public class DSimState extends SimState {
 	 * @throws MPIException
 	 * @throws RemoteException
 	 */
-	protected void syncFields() throws MPIException, RemoteException {
+	void syncFields() throws MPIException, RemoteException {
 		for (final Synchronizable haloField : fieldRegistry)
 			haloField.syncHalo();
 	}
 
-	protected void syncRemoveAndAdd() throws MPIException, RemoteException {
+	void syncRemoveAndAdd() throws MPIException, RemoteException {
 		for (final HaloGrid2D<?, ?> haloField : fieldRegistry)
 			haloField.syncRemoveAndAdd();
 	}
 
+
+	/** This method is called immediately before after the schedule.  At present it is empty. 
+		Nonetheless, if you override this
+		method, you absolutely need to call super.postSchedule() first.*/
+    public void postSchedule()
+        {
+        // does nothing
+        }
+
+
+	/** This method is called immediately before stepping the schedule, and it handles all the
+		partition-to-partition transfer and communication between steps.   If you override this
+		method, you absolutely need to call super.preSchedule() first. */
 	public void preSchedule() {
 		Timing.stop(Timing.LB_RUNTIME);
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
-
-		
 
 
 		try {
@@ -449,7 +490,6 @@ public class DSimState extends SimState {
 				balancerLevel--;
 			else
 				balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
-
 			try {
 				MPI.COMM_WORLD.barrier();
 			} catch (MPIException e) {
@@ -459,11 +499,10 @@ public class DSimState extends SimState {
 			}
 		}
 	}
+	
+	
 
-	private void balancePartitions(int level) throws MPIException {
-		
-
-		
+	void balancePartitions(int level) throws MPIException {
 		final IntRect2D old_partition = partition.getLocalBounds();
 		final int old_pid = partition.getPID();
 		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage();
@@ -481,11 +520,6 @@ public class DSimState extends SimState {
 				for (Synchronizable field : fieldRegistry) {
 					ArrayList<Object> migratedAgents = new ArrayList<>();
 					HaloGrid2D haloGrid2D = (HaloGrid2D) field;
-					
-					
-
-
-
 					
 					
 					if (haloGrid2D.getStorage() instanceof ContinuousStorage) {
@@ -597,25 +631,18 @@ public class DSimState extends SimState {
 								else {
 									System.out.println(a + " not moved over");
 								}
+							}
 						}
 					}
-
-
-					}
-					
-
-					
 				}
 			}
-			
-
 		}
 
 		MPI.COMM_WORLD.barrier();
 		Timing.stop(Timing.LB_OVERHEAD);
 	}
 
-	private static void initRemoteLogger(final String loggerName, final String logServAddr, final int logServPort)
+	static void initRemoteLogger(final String loggerName, final String logServAddr, final int logServPort)
 			throws IOException {
 		final SocketHandler sh = new SocketHandler(logServAddr, logServPort);
 		sh.setLevel(Level.ALL);
@@ -633,7 +660,7 @@ public class DSimState extends SimState {
 		DSimState.logger.addHandler(sh);
 	}
 
-	private static void initLocalLogger(final String loggerName) {
+	static void initLocalLogger(final String loggerName) {
 		DSimState.logger = Logger.getLogger(loggerName);
 		DSimState.logger.setLevel(Level.ALL);
 		DSimState.logger.setUseParentHandlers(false);
@@ -750,10 +777,11 @@ public class DSimState extends SimState {
 		}
 	}
 
-	/**
+	/*
 	 * Use MPI_allReduce to get the current minimum timestamp in the schedule of all
 	 * the LPs
 	 */
+	 /*
 	protected double reviseTime(final double localTime) {
 		final double[] buf = new double[] { localTime };
 		try {
@@ -764,6 +792,7 @@ public class DSimState extends SimState {
 		}
 		return buf[0];
 	}
+	*/
 
 	/**
 	 * @return the partition
@@ -775,36 +804,35 @@ public class DSimState extends SimState {
 	/**
 	 * @return an arraylist of all the HaloGrid2Ds registered with the SimState
 	 */
-	public ArrayList<HaloGrid2D>  getFieldRegistry() {
+	public ArrayList<HaloGrid2D> getFieldRegistry() {
 		return fieldRegistry;
 	}
 
 	/*
-	 * @param partition the partition to set
-	 */
-//	public void setPartition(final QuadTreePartition partition) {
-//		this.partition = partition;
-//		partition.initialize();
-//		transporter = new TransporterMPI(partition);
-//	}
-
-	/**
-	 * @return the transporter
+	 * @return the Transporter
 	 */
 	public TransporterMPI getTransporter() {
 		return transporter;
 	}
 
+	/** Distribute the following keyed information from the root to all the nodes. 
+		This may be called inside startRoot(). */
 	public void sendRootInfoToAll(String key, Serializable sendObj) {
 		for (int i = 0; i < partition.getNumProcessors(); i++) {
 			init[i].put(key, sendObj);
 		}
 	}
 
+	/** Distribute the following keyed information from the root to a specific node (given by the pid). 
+		This may be called inside startRoot(). 
+	*/
 	public void sendRootInfoToProcessor(int pid, String key, Serializable sendObj) {
 		init[pid].put(key, sendObj);
 	}
 
+	/** Extract information set to a processor by the root.
+	This may be called inside start(). 
+	 */
 	public Serializable getRootInfo(String key) {
 		return rootInfo.get(key);
 	}
@@ -813,18 +841,21 @@ public class DSimState extends SimState {
 		withRegistry = true;
 	}
 
+	/** Log statistics data for this timestep.  This data will then be sent to a remote statistics computer. */
 	public void addStat(Serializable data) {
 		synchronized (statLock) {
 			statList.add(new Stat(data, schedule.getSteps()));
 		}
 	}
 
+	/** Log debug statistics data for this timestep.  This data will then be sent to a remote statistics computer. */
 	public void addDebug(Serializable data) {
 		synchronized (debugStatLock) {
 			debugList.add(new Stat(data, schedule.getSteps()));
 		}
 	}
 
+	/** Return the current list of logged statistics data and clear it. */
 	public ArrayList<Stat> getStatList() {
 		synchronized (statLock) {
 			ArrayList<Stat> ret = statList;
@@ -833,6 +864,7 @@ public class DSimState extends SimState {
 		}
 	}
 
+	/** Return the current list of logged debug statistics data and clear it. */
 	public ArrayList<Stat> getDebugList() {
 		synchronized (debugStatLock) {
 			ArrayList<Stat> ret = debugList;
@@ -841,6 +873,9 @@ public class DSimState extends SimState {
 		}
 	}
 	
+
+
+
 
 	
 	protected void updateGlobal() {
@@ -905,24 +940,14 @@ public class DSimState extends SimState {
     	
     	//need to do typing
     	try {
-    		
-    		
-    		
     		partition.getCommunicator().bcast(global, 1, MPI.DOUBLE, 0);
 
     	    setGlobals(global);
-    	
-    	
-    	
-    	
     	}
     	
     	catch(Exception e) {
     		
     	}
-    	
-
-    	
     }
      
 
@@ -946,8 +971,5 @@ public class DSimState extends SimState {
     	
     }	
 	
-	
-	
-
 		
 }

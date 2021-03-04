@@ -69,7 +69,7 @@ public class DHeatBugs extends DSimState {
 			System.exit(-1);
 		}
 
-		balanceInterval = 100000;
+		setBalanceInterval(100000);
 	}
 
 	// Same getters and setters as HeatBugs
