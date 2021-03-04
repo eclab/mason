@@ -13,6 +13,7 @@ import sim.util.gui.ColorMap;
 class HaitiFoodPortrayal{
 	
 }
+
 /*
 class RoadsPortrayal extends RectanglePortrayal2D {
 

@@ -171,62 +171,62 @@ public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRe
 			e1.printStackTrace();
 		}
 
-		final DFlockersWithDRegistry dFlockers = (DFlockersWithDRegistry) state;
-
-		final Double2D oldloc = loc;
-		loc = (Double2D) dFlockers.flockers.getLocation(this);
-
-		if (loc == null) {
-			System.out.printf("pid %d oldx %g oldy %g", dFlockers.getPartitioning().pid, oldloc.x, oldloc.y);
-			Thread.dumpStack();
-			System.exit(-1);
-		}
-
-		if (dead)
-			return;
-
-		final List<DFlockerWithDRegistry> b = dFlockers.flockers.getNeighborsWithin(this,
-				DFlockersWithDRegistry.neighborhood);
-
-		final Double2D avoid = avoidance(b, dFlockers.flockers);
-		final Double2D cohe = cohesion(b, dFlockers.flockers);
-		final Double2D rand = randomness(dFlockers.random);
-		final Double2D cons = consistency(b, dFlockers.flockers);
-		final Double2D mome = momentum();
-
-		double dx = DFlockersWithDRegistry.cohesion * cohe.x + DFlockersWithDRegistry.avoidance * avoid.x
-				+ DFlockersWithDRegistry.consistency * cons.x
-				+ DFlockersWithDRegistry.randomness * rand.x + DFlockersWithDRegistry.momentum * mome.x;
-		double dy = DFlockersWithDRegistry.cohesion * cohe.y + DFlockersWithDRegistry.avoidance * avoid.y
-				+ DFlockersWithDRegistry.consistency * cons.y
-				+ DFlockersWithDRegistry.randomness * rand.y + DFlockersWithDRegistry.momentum * mome.y;
-
-		// re-normalize to the given step size
-		final double dis = Math.sqrt(dx * dx + dy * dy);
-		if (dis > 0) {
-			dx = dx / dis * DFlockersWithDRegistry.jump;
-			dy = dy / dis * DFlockersWithDRegistry.jump;
-		}
-
-		final Double2D old = loc;
-		loc = new Double2D(dFlockers.flockers.stx(loc.x + dx), dFlockers.flockers.sty(loc.y + dy));
-
-		try {
-			DFlockerDummyRemote myfriend = dFlockers.getDRegistry().getObjectT("cafebabe");
-			myfriend.addAndGetVal();
-
-		} catch (AccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NotBoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		dFlockers.flockers.moveAgent(old, loc, this);
+//		final DFlockersWithDRegistry dFlockers = (DFlockersWithDRegistry) state;
+//
+//		final Double2D oldloc = loc;
+//		loc = (Double2D) dFlockers.flockers.getLocation(this);
+//
+//		if (loc == null) {
+//			System.out.printf("pid %d oldx %g oldy %g", dFlockers.getPartitioning().pid, oldloc.x, oldloc.y);
+//			Thread.dumpStack();
+//			System.exit(-1);
+//		}
+//
+//		if (dead)
+//			return;
+//
+//		final List<DFlockerWithDRegistry> b = dFlockers.flockers.getNeighborsWithin(this,
+//				DFlockersWithDRegistry.neighborhood);
+//
+//		final Double2D avoid = avoidance(b, dFlockers.flockers);
+//		final Double2D cohe = cohesion(b, dFlockers.flockers);
+//		final Double2D rand = randomness(dFlockers.random);
+//		final Double2D cons = consistency(b, dFlockers.flockers);
+//		final Double2D mome = momentum();
+//
+//		double dx = DFlockersWithDRegistry.cohesion * cohe.x + DFlockersWithDRegistry.avoidance * avoid.x
+//				+ DFlockersWithDRegistry.consistency * cons.x
+//				+ DFlockersWithDRegistry.randomness * rand.x + DFlockersWithDRegistry.momentum * mome.x;
+//		double dy = DFlockersWithDRegistry.cohesion * cohe.y + DFlockersWithDRegistry.avoidance * avoid.y
+//				+ DFlockersWithDRegistry.consistency * cons.y
+//				+ DFlockersWithDRegistry.randomness * rand.y + DFlockersWithDRegistry.momentum * mome.y;
+//
+//		// re-normalize to the given step size
+//		final double dis = Math.sqrt(dx * dx + dy * dy);
+//		if (dis > 0) {
+//			dx = dx / dis * DFlockersWithDRegistry.jump;
+//			dy = dy / dis * DFlockersWithDRegistry.jump;
+//		}
+//
+//		final Double2D old = loc;
+//		loc = new Double2D(dFlockers.flockers.stx(loc.x + dx), dFlockers.flockers.sty(loc.y + dy));
+//
+//		try {
+//			DFlockerDummyRemote myfriend = dFlockers.getDRegistry().getObjectT("cafebabe");
+//			myfriend.addAndGetVal();
+//
+//		} catch (AccessException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (RemoteException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (NotBoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//		dFlockers.flockers.moveAgent(old, loc, this);
 
 	}
 }
