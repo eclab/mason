@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 import sim.engine.SimState;
 import sim.engine.Steppable;
+import sim.engine.Stoppable;
+import sim.engine.Stopping;
 import sim.portrayal.DrawInfo2D;
 import sim.util.Bag;
 import sim.util.geo.AttributeValue;
@@ -590,14 +592,38 @@ public class GeomVectorField extends GeomField
      */
     public Steppable scheduleSpatialIndexUpdater()
     {
-        return new Steppable()
-        {
-            public void step(SimState state)
-            {
-                updateSpatialIndex();
-            }
+//        return new Steppable()
+//        {
+//            public void step(SimState state)
+//            {
+//                updateSpatialIndex();
+//            }
+//
+//        };
+    	
+    	return new Stopping() {
+    		Stoppable stop = null;
 
-        };
+			@Override
+			public void step(SimState state) {
+				updateSpatialIndex();
+			}
+
+			@Override
+			public Stoppable getStoppable() {
+				return stop;
+			}
+
+			@Override
+			public boolean isStopped() {
+				return stop == null;
+			}
+
+			@Override
+			public void setStoppable(Stoppable stop) {
+				this.stop = stop;
+			}
+    	};
     }
 
 

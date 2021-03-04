@@ -6,11 +6,15 @@
 
 package sim.app.dheatbugs;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import java.util.HashMap;
 import sim.engine.DSimState;
+import sim.engine.DSteppable;
 import sim.engine.Schedule;
+import sim.engine.SimState;
+import sim.engine.Steppable;
 import sim.field.grid.DDenseGrid2D;
 import sim.field.grid.DDoubleGrid2D;
 import sim.util.Interval;
@@ -161,6 +165,11 @@ public class DHeatBugs extends DSimState {
 
 		sendRootInfoToAll("agents", agents);
 
+		
+		schedule.scheduleRepeating(new DSteppable() {
+			public void step(SimState state) {
+				
+			}}, 10, 1);
 	}
 
 	// @Override
@@ -245,6 +254,22 @@ public class DHeatBugs extends DSimState {
 			}
 		}
 		schedule.scheduleRepeating(Schedule.EPOCH, 1, new Diffuser(), 1);
+		
+//		// Stats Example:
+//		schedule.scheduleRepeating(new DSteppable() {
+//			public void step(SimState state) {
+//				int count = 0;
+//				for (Int2D p : agents.keySet()) {
+//					for (DHeatBug a : agents.get(p)) {
+//						if (partition.getLocalBounds().contains(p)) {
+//							count++;
+//						}
+//					}
+//				}
+//				addStat("hello");
+//				addStat(count);
+//				addStat(null);
+//			}}, 10, 1);
 	}
 
 	public static void main(final String[] args) {
