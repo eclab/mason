@@ -130,8 +130,16 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 		return dSimState.getStatList();
 	}
 
+	public void initStat() throws RemoteException {
+		dSimState.recordStats = true;
+	}
+
 	public ArrayList<Stat> getDebugList() throws RemoteException {
 		return dSimState.getDebugList();
+	}
+
+	public void initDebug() throws RemoteException {
+		dSimState.recordDebug = true;
 	}
 
 //	// TODO: do we extend this to other Remote objects?

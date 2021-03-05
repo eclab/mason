@@ -67,6 +67,10 @@ public interface VisualizationProcessor extends Remote {
 	public int[] getProcessorNeighborhood(int level) throws RemoteException;
 
 	public ArrayList<Stat> getStatList() throws RemoteException;
+	
+	public void initStat() throws RemoteException;
+	
+	public void initDebug() throws RemoteException;
 
 	public ArrayList<Stat> getDebugList() throws RemoteException;
 

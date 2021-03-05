@@ -36,10 +36,11 @@ public class DSimState extends SimState {
 	// Our PID
 	static int pid = -1;
 
-	// Is the model runing in multithreaded mode?  This is used to allocate DObject IDs efficiently.
-	 static boolean multiThreaded = false;
+	// Is the model runing in multithreaded mode? This is used to allocate DObject
+	// IDs efficiently.
+	static boolean multiThreaded = false;
 	// Have we set up the multiThreaded variable yet?
-	 static boolean multiThreadedSet = false;
+	static boolean multiThreadedSet = false;
 
 	// Logger for debugging
 	static Logger logger;
@@ -55,35 +56,40 @@ public class DSimState extends SimState {
 	final Object statLock = new Object[0];
 	// The statistics queue
 	ArrayList<Stat> statList = new ArrayList<>();
+	public boolean recordStats = false;
+
 	// The debug queue lock
 	final Object debugStatLock = new Object[0];
 	// The debug queue
 	ArrayList<Stat> debugList = new ArrayList<>();
+	public boolean recordDebug = false;
 
 	// The RemoteProcessor interface for communicating via RMI
 	RemoteProcessor processor;
-	
-	// A list of all fields in the Model.  Any HaloField that is created will register itself here.
+
+	// A list of all fields in the Model. Any HaloField that is created will
+	// register itself here.
 	// Not to be confused with the DRegistry.
 	ArrayList<HaloGrid2D> fieldRegistry;
 
 	// The RMI registry
 	protected DRegistry registry;
-	
+
 	// FIXME: what is this for?
 	protected boolean withRegistry;
 
 	// The number of steps between load balances
 	int balanceInterval = 100;
-	// The current balance level		FIXME: This looks primitive, and also requires that be properly in sync 
+	// The current balance level FIXME: This looks primitive, and also requires that
+	// be properly in sync
 	int balancerLevel;
 
-
-	/** Builds a new DSimState with the given random number SEED,
-		the WIDTH and HEIGIHT of the entire model (not just the partition),
-		and the AREA OF INTEREST (AOI) for the halo field */
-	public DSimState(long seed, int width, int height, int aoi) 
-		{
+	/**
+	 * Builds a new DSimState with the given random number SEED, the WIDTH and
+	 * HEIGIHT of the entire model (not just the partition), and the AREA OF
+	 * INTEREST (AOI) for the halo field
+	 */
+	public DSimState(long seed, int width, int height, int aoi) {
 		super(seed, new MersenneTwisterFast(seed), new DistributedSchedule());
 		this.partition = new QuadTreePartition(width, height, true, aoi);
 		partition.initialize();
@@ -92,65 +98,55 @@ public class DSimState extends SimState {
 		fieldRegistry = new ArrayList<>();
 		rootInfo = new HashMap<>();
 		withRegistry = false;
-		}
-
-
+	}
 
 	/** Sets the rate at which load balancing occurs (in steps). */
-	public void setBalanceInterval(int val)
-		{
+	public void setBalanceInterval(int val) {
 		balanceInterval = val;
-		}
-		
-	/** Returns the rate at which load balancing occurs (in steps). */
-	public int getBalanceInterval()
-		{
-		return balanceInterval;
-		}
+	}
 
-	
+	/** Returns the rate at which load balancing occurs (in steps). */
+	public int getBalanceInterval() {
+		return balanceInterval;
+	}
+
 	// loads and stores the pid.
 	// Only call this after COMM_WORLD has been set up.
-	static void loadPID()
-		{
-		try 
-			{
+	static void loadPID() {
+		try {
 			pid = MPI.COMM_WORLD.getRank();
-			} 
-		catch (MPIException ex) 
-			{
+		} catch (MPIException ex) {
 			ex.printStackTrace();
 			System.exit(-1);
-			}
 		}
-		
+	}
+
 	/**
 	 * Only call this method after COMM_WORLD has been setup. </br>
 	 * It's safe to call it in the start method and after.
 	 * 
 	 * @return Current pid
 	 */
-	public static final int getPID() 
-		{
-		if (pid == -1) 
-			{
+	public static final int getPID() {
+		if (pid == -1) {
 			loadPID();
-			}
-		return pid;
 		}
+		return pid;
+	}
 
-	/** Returns whether the DSimState is assuming that you may be allocating
-		DObjects in a multithreaded environment.  In general you should try to
-		run in single-threaded mode, it will cause far fewer headaches.
-		*/
+	/**
+	 * Returns whether the DSimState is assuming that you may be allocating DObjects
+	 * in a multithreaded environment. In general you should try to run in
+	 * single-threaded mode, it will cause far fewer headaches.
+	 */
 	public static boolean isMultiThreaded() {
 		return multiThreaded;
 	}
+
 	/**
-	 * Sets whether the DSimState is assuming that you may be allocating
-	 * DObjects in a multithreaded environment.  In general you should try to
-	 * run in single-threaded mode, it will cause far fewer headaches.
-	 * </br>
+	 * Sets whether the DSimState is assuming that you may be allocating DObjects in
+	 * a multithreaded environment. In general you should try to run in
+	 * single-threaded mode, it will cause far fewer headaches. </br>
 	 * To set multiThreaded add the following line to the top of your simulation -
 	 * </br>
 	 * 
@@ -196,66 +192,39 @@ public class DSimState extends SimState {
 			haloField.syncRemoveAndAdd();
 	}
 
+	/**
+	 * This method is called immediately before after the schedule. At present it is
+	 * empty. Nonetheless, if you override this method, you absolutely need to call
+	 * super.postSchedule() first.
+	 */
+	public void postSchedule() {
+		// does nothing
+	}
 
-	/** This method is called immediately before after the schedule.  At present it is empty. 
-		Nonetheless, if you override this
-		method, you absolutely need to call super.postSchedule() first.*/
-    public void postSchedule()
-        {
-        // does nothing
-        }
-
-
-	/** This method is called immediately before stepping the schedule, and it handles all the
-		partition-to-partition transfer and communication between steps.   If you override this
-		method, you absolutely need to call super.preSchedule() first. */
+	/**
+	 * This method is called immediately before stepping the schedule, and it
+	 * handles all the partition-to-partition transfer and communication between
+	 * steps. If you override this method, you absolutely need to call
+	 * super.preSchedule() first.
+	 */
 	public void preSchedule() {
 		Timing.stop(Timing.LB_RUNTIME);
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
-
-
 		try {
 			// Wait for all agents globally to stop moving
 			MPI.COMM_WORLD.barrier();
 
-
 			// give time for Visualizer
 			try {
-				// TODO: How to handle the exception here?
 				processor.unlock();
 				processor.lock();
 			} catch (RemoteException e1) {
 				throw new RuntimeException(e1);
 			}
-			
-			
-
-//			for (final HaloGrid2D<?, ?> haloField : fieldRegistry)
-//				for (final Pair<RemoteFulfillable, Serializable> pair : haloField.getQueue)
-//					pair.getA().fulfill(pair.getB());
-//			
-//			for (final HaloGrid2D<?, ?> haloField : fieldRegistry)
-//				for (final Pair<NumberND, ? extends Serializable> pair : haloField.inQueue)
-//					haloField.addLocal(pair.getA(), pair.getB());
-
-			// TODO inQueue and outQueue
-
-			// Stop the world and wait for the Visualizer to unlock
-//			MPI.COMM_WORLD.barrier();
-			
-
 
 			// Sync all the Remove and Add queues for RMI
 			syncRemoveAndAdd();
-			
-
-
 			transporter.sync();
-			
-
-			// TODO: Load RMI queue
-			
-
 
 			if (withRegistry) {
 				// All nodes have finished the synchronization and can unregister exported
@@ -271,32 +240,11 @@ public class DSimState extends SimState {
 						e.printStackTrace();
 					}
 				}
-
 				DRegistry.getInstance().clearMigratedNames();
-
 				MPI.COMM_WORLD.barrier();
-				
-
 			}
 		} catch (ClassNotFoundException | MPIException | IOException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		
-
-
-		if (withRegistry) {
-			// objects on new nodes.
-			try {
-				MPI.COMM_WORLD.barrier();
-				
-
-			} catch (MPIException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			
+			throw new RuntimeException(e);
 		}
 
 		for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
@@ -311,34 +259,10 @@ public class DSimState extends SimState {
 			 * Improperly using the wrappers and/or fieldIndex will cause Class cast
 			 * exceptions to be thrown
 			 */
-			final DistributedIterativeRepeat rrr = (DistributedIterativeRepeat) payloadWrapper.payload;	
-			//System.out.println(rrr.getSteppable()+" 's field is "+payloadWrapper.fieldIndex);
 
-			
-
-
-			
-			
 			if (payloadWrapper.fieldIndex >= 0)
 				// add the object to the field
 				fieldRegistry.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
-			
-			
-			/*
-			else { //added by Raj Patel, is fieldIndex -1 but agent has a location, figure out where it goes
-				
-				if (payloadWrapper.loc != null) {
-					for (HaloGrid2D my_field : fieldRegistry) {
-					
-						if (my_field.haloPart.contains(payloadWrapper.loc)) {
-							fieldRegistry.get(my_field.fieldIndex).syncObject(payloadWrapper);					}
-					
-					}
-				}
-				
-			}
-			*/
-			
 
 			if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
 				final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
@@ -359,7 +283,6 @@ public class DSimState extends SimState {
 							DRegistry.getInstance().registerObject(agentWrapper.getExportedName(),
 									(Remote) agentWrapper.agent);
 						} catch (RemoteException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -368,11 +291,7 @@ public class DSimState extends SimState {
 					schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
 				else
 					schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
-				
-
 			}
-			
-
 		}
 		transporter.objectQueue.clear();
 
@@ -382,29 +301,12 @@ public class DSimState extends SimState {
 			MPI.COMM_WORLD.barrier();
 			syncFields();
 		} catch (MPIException | RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-//		if (withRegistry)
-//			try {
-//				MPI.COMM_WORLD.barrier();
-//			} catch (MPIException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-
-		
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
-		
-		
 		loadBalance();
-		
-
 	}
-
-	
-
 
 	void loadBalance() {
 		if (schedule.getSteps() > 0 && (schedule.getSteps() % balanceInterval == 0)) {
@@ -499,8 +401,6 @@ public class DSimState extends SimState {
 			}
 		}
 	}
-	
-	
 
 	void balancePartitions(int level) throws MPIException {
 		final IntRect2D old_partition = partition.getLocalBounds();
@@ -511,22 +411,23 @@ public class DSimState extends SimState {
 		MPI.COMM_WORLD.barrier();
 
 		for (Int2D p : old_partition.getPointList()) {
-			
-			//check_if_point_matches_heatbug_locs(p);
-			//print_all_agents(p);
-			
+
+			// check_if_point_matches_heatbug_locs(p);
+			// print_all_agents(p);
+
 			if (!partition.getLocalBounds().contains(p)) {
 				final int toP = partition.toPartitionPID(p);
 				for (Synchronizable field : fieldRegistry) {
 					ArrayList<Object> migratedAgents = new ArrayList<>();
 					HaloGrid2D haloGrid2D = (HaloGrid2D) field;
-					
-					
+
 					if (haloGrid2D.getStorage() instanceof ContinuousStorage) {
 
 						ContinuousStorage st = (ContinuousStorage) ((HaloGrid2D) field).getStorage();
 						Double2D doublep = new Double2D(p);
-						HashSet agents = new HashSet(((HashMap) st.getCell(doublep).clone()).values()); // create a clone to avoid the
+						HashSet agents = new HashSet(((HashMap) st.getCell(doublep).clone()).values()); // create a
+																										// clone to
+																										// avoid the
 						// ConcurrentModificationException
 						for (Object a : agents) {
 							Double2D loc = st.getObjectLocation((DObject) a);
@@ -552,64 +453,72 @@ public class DSimState extends SimState {
 											stopping,
 											iterativeRepeat.getTime(), iterativeRepeat.getInterval(),
 											iterativeRepeat.getOrdering());
-									
-									//transporter.migrateRepeatingAgent(distributedIterativeRepeat, toP, p,((HaloGrid2D) field).getFieldIndex());
-									transporter.migrateRepeatingAgent(distributedIterativeRepeat, locToP, loc,((HaloGrid2D) field).getFieldIndex());
+
+									// transporter.migrateRepeatingAgent(distributedIterativeRepeat, toP,
+									// p,((HaloGrid2D) field).getFieldIndex());
+									transporter.migrateRepeatingAgent(distributedIterativeRepeat, locToP, loc,
+											((HaloGrid2D) field).getFieldIndex());
 
 									iterativeRepeat.stop();
 								}
 
 								migratedAgents.add(a);
 								System.out.println("PID: " + partition.getPID() + " processor " + old_pid + " move " + a
-										+ " from " + loc + " (point " + p + ") to processor " + toP); //agent not being removed from getCell here
+										+ " from " + loc + " (point " + p + ") to processor " + toP); // agent not being
+																										// removed from
+																										// getCell here
 								st.removeObjectUsingGlobalLoc(loc, ((DObject) a).ID());
-								//System.out.println(st);
-								//System.out.println("---");
+								// System.out.println(st);
+								// System.out.println("---");
 							}
-							
-							//not stoppable (transport a double or something)  transporter call transportObject?
+
+							// not stoppable (transport a double or something) transporter call
+							// transportObject?
 							else if (old_partition.contains(loc) && !partition.getLocalBounds().contains(loc)) {
-								transporter.transportObject((Serializable)a, locToP, loc, ((HaloGrid2D) field).getFieldIndex());
+								transporter.transportObject((Serializable) a, locToP, loc,
+										((HaloGrid2D) field).getFieldIndex());
 							}
 						}
 					}
-					
-					
-					else { //Note that IntStorage and DoubleStorage don't move anything here because their a is not Stoppable (int or double)
+
+					else { // Note that IntStorage and DoubleStorage don't move anything here because their
+							// a is not Stoppable (int or double)
 						GridStorage st = ((HaloGrid2D) field).getStorage();
 						Serializable a_list = st.getAllObjects(haloGrid2D.toLocalPoint(p));
-						
+
 						if (a_list != null) {
 							System.out.println(a_list);
-							
-							ArrayList<Serializable> a_list_copy = new ArrayList();			
+
+							ArrayList<Serializable> a_list_copy = new ArrayList();
 							for (int i = 0; i < ((ArrayList) a_list).size(); i++) {
 								Serializable a = ((ArrayList<Serializable>) a_list).get(i);
 								a_list_copy.add(a);
 							}
-							
-						
-						
-							for (int i = 0; i< a_list_copy.size(); i++) {
-								
+
+							for (int i = 0; i < a_list_copy.size(); i++) {
+
 								Serializable a = a_list_copy.get(i);
-							
+
 								System.out.println(a + " considered");
 
 								if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
-									&& old_partition.contains(p) && !partition.getLocalBounds().contains(p)) {
+										&& old_partition.contains(p) && !partition.getLocalBounds().contains(p)) {
 									DSteppable stopping = ((DSteppable) a);
 
 									if (stopping.getStoppable() instanceof TentativeStep) {
 										stopping.getStoppable().stop();
-										transporter.migrateAgent(stopping, toP, p, ((HaloGrid2D) field).getFieldIndex());
+										transporter.migrateAgent(stopping, toP, p,
+												((HaloGrid2D) field).getFieldIndex());
 									}
 
 									if (stopping.getStoppable() instanceof IterativeRepeat) {
-										final IterativeRepeat iterativeRepeat = (IterativeRepeat) stopping.getStoppable();
+										final IterativeRepeat iterativeRepeat = (IterativeRepeat) stopping
+												.getStoppable();
 										final DistributedIterativeRepeat distributedIterativeRepeat = new DistributedIterativeRepeat(
-											stopping, iterativeRepeat.getTime(), iterativeRepeat.getInterval(),iterativeRepeat.getOrdering());
-										transporter.migrateRepeatingAgent(distributedIterativeRepeat, toP, p, ((HaloGrid2D) field).getFieldIndex());
+												stopping, iterativeRepeat.getTime(), iterativeRepeat.getInterval(),
+												iterativeRepeat.getOrdering());
+										transporter.migrateRepeatingAgent(distributedIterativeRepeat, toP, p,
+												((HaloGrid2D) field).getFieldIndex());
 										iterativeRepeat.stop();
 									}
 
@@ -617,17 +526,19 @@ public class DSimState extends SimState {
 									// int dst,final NumberND loc,final int fieldIndex)
 									migratedAgents.add(stopping);
 									System.out.println(
-										"PID: " + partition.getPID() + " processor " + old_pid + " move " + stopping
-												+ " from " + p + " (point " + p + ") to processor " + toP);
+											"PID: " + partition.getPID() + " processor " + old_pid + " move " + stopping
+													+ " from " + p + " (point " + p + ") to processor " + toP);
 									haloGrid2D.removeLocal(p, stopping.ID());
-								
-							}
-								
-								//not stoppable (transport a double or something)  transporter call transportObject?
-								else if (old_partition.contains(p) && !partition.getLocalBounds().contains(p)) {
-									transporter.transportObject((Serializable)a, toP, p, ((HaloGrid2D) field).getFieldIndex());
+
 								}
-							
+
+								// not stoppable (transport a double or something) transporter call
+								// transportObject?
+								else if (old_partition.contains(p) && !partition.getLocalBounds().contains(p)) {
+									transporter.transportObject((Serializable) a, toP, p,
+											((HaloGrid2D) field).getFieldIndex());
+								}
+
 								else {
 									System.out.println(a + " not moved over");
 								}
@@ -676,9 +587,8 @@ public class DSimState extends SimState {
 		DSimState.logger.addHandler(handler);
 	}
 
-
 	public static final int DEFAULT_TIMING_WINDOW = 20;
-	
+
 	public static void doLoopDistributed(final Class<?> c, final String[] args) {
 		doLoopDistributed(c, args, DEFAULT_TIMING_WINDOW);
 	}
@@ -781,18 +691,12 @@ public class DSimState extends SimState {
 	 * Use MPI_allReduce to get the current minimum timestamp in the schedule of all
 	 * the LPs
 	 */
-	 /*
-	protected double reviseTime(final double localTime) {
-		final double[] buf = new double[] { localTime };
-		try {
-			MPI.COMM_WORLD.allReduce(buf, 1, MPI.DOUBLE, MPI.MIN);
-		} catch (final Exception e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		return buf[0];
-	}
-	*/
+	/*
+	 * protected double reviseTime(final double localTime) { final double[] buf =
+	 * new double[] { localTime }; try { MPI.COMM_WORLD.allReduce(buf, 1,
+	 * MPI.DOUBLE, MPI.MIN); } catch (final Exception e) { e.printStackTrace();
+	 * System.exit(-1); } return buf[0]; }
+	 */
 
 	/**
 	 * @return the partition
@@ -815,23 +719,27 @@ public class DSimState extends SimState {
 		return transporter;
 	}
 
-	/** Distribute the following keyed information from the root to all the nodes. 
-		This may be called inside startRoot(). */
+	/**
+	 * Distribute the following keyed information from the root to all the nodes.
+	 * This may be called inside startRoot().
+	 */
 	public void sendRootInfoToAll(String key, Serializable sendObj) {
 		for (int i = 0; i < partition.getNumProcessors(); i++) {
 			init[i].put(key, sendObj);
 		}
 	}
 
-	/** Distribute the following keyed information from the root to a specific node (given by the pid). 
-		This may be called inside startRoot(). 
-	*/
+	/**
+	 * Distribute the following keyed information from the root to a specific node
+	 * (given by the pid). This may be called inside startRoot().
+	 */
 	public void sendRootInfoToProcessor(int pid, String key, Serializable sendObj) {
 		init[pid].put(key, sendObj);
 	}
 
-	/** Extract information set to a processor by the root.
-	This may be called inside start(). 
+	/**
+	 * Extract information set to a processor by the root. This may be called inside
+	 * start().
 	 */
 	public Serializable getRootInfo(String key) {
 		return rootInfo.get(key);
@@ -841,17 +749,25 @@ public class DSimState extends SimState {
 		withRegistry = true;
 	}
 
-	/** Log statistics data for this timestep.  This data will then be sent to a remote statistics computer. */
+	/**
+	 * Log statistics data for this timestep. This data will then be sent to a
+	 * remote statistics computer.
+	 */
 	public void addStat(Serializable data) {
 		synchronized (statLock) {
-			statList.add(new Stat(data, schedule.getSteps()));
+			if (recordStats)
+				statList.add(new Stat(data, schedule.getSteps()));
 		}
 	}
 
-	/** Log debug statistics data for this timestep.  This data will then be sent to a remote statistics computer. */
+	/**
+	 * Log debug statistics data for this timestep. This data will then be sent to a
+	 * remote statistics computer.
+	 */
 	public void addDebug(Serializable data) {
 		synchronized (debugStatLock) {
-			debugList.add(new Stat(data, schedule.getSteps()));
+			if (recordDebug)
+				debugList.add(new Stat(data, schedule.getSteps()));
 		}
 	}
 
@@ -872,104 +788,89 @@ public class DSimState extends SimState {
 			return ret;
 		}
 	}
-	
 
-
-
-
-	
 	protected void updateGlobal() {
 		Object[][] gg = gatherGlobals();
 		Object[] g = arbitrateGlobal(gg);
 		distributeGlobals(g);
-		
+
 	}
 
-	//should be overwritten in subclass
-	//this version picks based on the highest value of index 0
+	// should be overwritten in subclass
+	// this version picks based on the highest value of index 0
 	Object[] arbitrateGlobal(Object[][] gg) {
-		
+
 		int chosen_index = 0;
 		Object chosen_item = gg[0][0];
-		
-		double best_val = (double) chosen_item; //make type invariant
-		
-		for (int i = 0; i<partition.getNumProcessors(); i++) {
-			if ((double)gg[i][0] > best_val) {
-				best_val = (double)gg[i][0];
+
+		double best_val = (double) chosen_item; // make type invariant
+
+		for (int i = 0; i < partition.getNumProcessors(); i++) {
+			if ((double) gg[i][0] > best_val) {
+				best_val = (double) gg[i][0];
 				chosen_index = i;
 			}
 		}
-		
+
 		return gg[chosen_index];
-		
-		
-		
-		
+
 	}
-	
-	
+
 	Object[][] gatherGlobals() {
-		
-		
+
 		try {
-		//call getGlobals()  for each partition
-		Object[] g = this.getGlobals();
-		
-		Object[][] gg = new Object[partition.getNumProcessors()][g.length];
-		
-		partition.getCommunicator().gather(g, 1, MPI.DOUBLE, gg, 1, MPI.DOUBLE, 0); //fix type!
-		
-		return gg;
+			// call getGlobals() for each partition
+			Object[] g = this.getGlobals();
+
+			Object[][] gg = new Object[partition.getNumProcessors()][g.length];
+
+			partition.getCommunicator().gather(g, 1, MPI.DOUBLE, gg, 1, MPI.DOUBLE, 0); // fix type!
+
+			return gg;
 		}
-		
+
 		catch (Exception e) {
-			
+
 			System.out.println("error in gatherGlobals");
 			System.out.println(e);
 			System.exit(-1);
-			
+
 		}
-		
+
 		return null;
 
-		
 	}
 
-    void distributeGlobals(Object[] global) {
-    	
-    	//need to do typing
-    	try {
-    		partition.getCommunicator().bcast(global, 1, MPI.DOUBLE, 0);
+	void distributeGlobals(Object[] global) {
 
-    	    setGlobals(global);
-    	}
-    	
-    	catch(Exception e) {
-    		
-    	}
-    }
-     
+		// need to do typing
+		try {
+			partition.getCommunicator().bcast(global, 1, MPI.DOUBLE, 0);
 
-	
-	//implement in subclass
-    protected Object[] getGlobals() {
-    	
-        System.out.println("getGlobals() should be implemented in subclass");
-        System.exit(-1);
-    	return null;
-    	
-    }
+			setGlobals(global);
+		}
 
-    
-    //implement in subclass
-    protected void setGlobals(Object[] o) {
-    	
-    	//does nothing (subclass inheritance)
-        System.out.println("setGlobals() should be implemented in subclass");
-        System.exit(-1);
-    	
-    }	
-	
-		
+		catch (Exception e) {
+
+		}
+	}
+
+	// implement in subclass
+	protected Object[] getGlobals() {
+
+		System.out.println("getGlobals() should be implemented in subclass");
+		System.exit(-1);
+		return null;
+
+	}
+
+	// implement in subclass
+	protected void setGlobals(Object[] o) {
+
+		// does nothing (subclass inheritance)
+		System.out.println("setGlobals() should be implemented in subclass");
+		System.exit(-1);
+
+	}
+
 }
