@@ -32,19 +32,21 @@ import sim.util.MPIUtil;
  * the information he wishes.
  */
 public class DRegistry {
-	private static final long serialVersionUID = 1L;
+	 static final long serialVersionUID = 1L;
 
+	public static final int PORT = 5000;
+	
 	public static Logger logger;
 
-	private static DRegistry instance;
+	 static DRegistry instance;
 
-	private static int port;
-	private static int rank;
+	 static int port;
+	 static int rank;
 
-	private static Registry registry;
-	private static HashMap<String, Remote> exported_names = new HashMap<>();
-	private static HashMap<Remote, String> exported_objects = new HashMap<>();
-	private static ArrayList<String> migrated_names = new ArrayList<>();
+	 static Registry registry;
+	 static HashMap<String, Remote> exported_names = new HashMap<>();
+	 static HashMap<Remote, String> exported_objects = new HashMap<>();
+	 static ArrayList<String> migrated_names = new ArrayList<>();
 
 	/**
 	 * Clear the list of the registered agent’s keys on the registry
@@ -78,7 +80,7 @@ public class DRegistry {
 		return name;
 	}
 
-	private static void initLocalLogger(final String loggerName) {
+	 static void initLocalLogger(final String loggerName) {
 		DRegistry.logger = Logger.getLogger(DRegistry.class.getName());
 		DRegistry.logger.setLevel(Level.ALL);
 		DRegistry.logger.setUseParentHandlers(false);
@@ -94,7 +96,7 @@ public class DRegistry {
 		DRegistry.logger.addHandler(handler);
 	}
 
-	private DRegistry() throws NumberFormatException, Exception {
+	 DRegistry() throws NumberFormatException, Exception {
 
 		if (instance != null) {
 			throw new RuntimeException(
@@ -103,9 +105,9 @@ public class DRegistry {
 		rank = MPI.COMM_WORLD.getRank();
 		initLocalLogger(String.format("MPI-Job-%d", rank));
 
-		// TODO: hard codding the port for now
+		// TODO: hard coding the port for now
 		// port = getAvailablePort();
-		port = 5000;
+		port = PORT;
 		String myip = InetAddress.getLocalHost().getHostAddress();
 
 		if (rank == 0) {
@@ -123,7 +125,7 @@ public class DRegistry {
 
 	}
 
-	private void startLocalRegistry(String master_ip, int master_port) {
+	 void startLocalRegistry(String master_ip, int master_port) {
 
 		try {
 			registry = rank == 0 ? LocateRegistry.createRegistry(port)
@@ -154,12 +156,14 @@ public class DRegistry {
 		}
 	}
 
-	private static Integer getAvailablePort() throws IOException {
+/*
+	 static Integer getAvailablePort() throws IOException {
 
 		try (ServerSocket socket = new ServerSocket(0);) {
 			return socket.getLocalPort();
 		}
 	}
+*/
 
 	/**
 	 * Register an object obj with key name on the registry

@@ -19,7 +19,7 @@ public class HeatBugsProxy extends SimStateProxy
         {
         super(seed);
 		setRegistryHost("localhost");
-		setRegistryPort(5000);
+		//setRegistryPort(5000);
         }
         
 	DoubleGrid2DProxy valgrid = new DoubleGrid2DProxy(1,1);	// width and height don't matter, they'll be changed

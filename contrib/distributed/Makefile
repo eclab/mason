@@ -17,7 +17,9 @@ VERSION = 1
 SRCS = \
 sim/app/dantsforage/*.java \
 sim/app/dflockers/*.java \
+sim/app/dflockers/display/*.java \
 sim/app/dheatbugs/*.java \
+sim/app/dheatbugs/display/*.java \
 sim/app/dschelling/*.java \
 sim/engine/*.java \
 sim/engine/transport/*.java \

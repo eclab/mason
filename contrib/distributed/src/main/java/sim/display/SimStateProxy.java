@@ -56,17 +56,17 @@ public class SimStateProxy extends SimState
 	/** Sets the IP address of the distributed RMI registry.  You need to set this before start() is called. */
 	public void setRegistryHost(String host) { this.host = host; }
 	
-	int port = 5000;
+	int port = sim.util.DRegistry.PORT;
 	/** Returns the IP address of the distributed RMI registry.  You need to set this before start() is called. */
 	public int registryPort() { return port; }
 	/** Sets the IP address of the distributed RMI registry.  You need to set this before start() is called. */
 	public void setRegistryPort(int port) { this.port = port; }
 	
 	/** Returns the string by which the visualization root (a VisualizationRoot instance) is registered with the Registry. */
-	public final String visualizationRootString() { return visualizationProcessorString(visualizationRootPId()); }						
+	public final String visualizationRootString() { return visualizationProcessorString(visualizationRootPID()); }						
 	
 	/** Returns the pid by which the visualization root (a VisualizationRoot instance) is registered with the Registry. */
-	public final int visualizationRootPId() { return 0; }						
+	public final int visualizationRootPID() { return 0; }						
 	
 	/** Returns the string by which a given visualization processor (a VisualizationProcessor instance) is registered with the Registry. */
 	public final String visualizationProcessorString(int pid) { return RemoteProcessor.getProcessorName(pid); }		
@@ -103,7 +103,7 @@ public class SimStateProxy extends SimState
 	
 	/** Ordered stat data (or placeholder if no data) for each processor from the earliest timestep saved in the queues {@link SimStateProxy#statsSmallestTimestep} to the current one
 	<p> TODO WELL atm, it's really this: ArrayList&ltArrayList&ltInteger | Stat&gt&gt */
-ArrayList<ArrayList<Object>> statQueues;
+	ArrayList<ArrayList<Object>> statQueues;
 	
 	/** Registers a field proxy with the SimState.  Each timestep or whatnot the proxy will get updated,
 		which causes it to go out and load information remotely.  The order in which the fields are registered
