@@ -15168,7 +15168,85 @@ Returns only those neighbors within, or (if {\it inclusive} is true) at the give
 
 \section{Visualization and Statistics}
 
-To be written...
+Though Distributed MASON is running on remote distributed machines, you can still visualize it and gather statistics from it.  This is done by running a special version of MASON on (say) your laptop, and connecting that special version to the root processor (PID 0) in the distributed collection.  From there, you can transfer some or all of the current distributed MASON model and visualize it as if it were a single MASON model on your laptop.  You can also access a streams of statistics information from all the processors, and output the results as you see fit.
+
+\subsection{Visualization}
+
+The most straightforward way to visualize a Distributed MASON process is to build a MASON model around special version of SimState called \class{sim.display.SimStateProxy}.  Here's the idea.  SimStateProxy looks like a ``regular'' MASON model (a SimState subclass), but it is not.  Instead of holding various fields, it holds special {\it proxy} subclasses of those fields: for example, IntGrid2DProxy is a subclass of IntGrid2D, and ObjectGrid2DProxy is a subclass of ObjectGrid2D.  SimStateProxy also holds but a single Steppable in its Schedule.  When that Steppable is stepped, it contacts the proxy fields and has them communicate with the remote distributed model to extract the latest values and locations of objects and copy this data to the proxies.  Then when these proxy fields are visualized, they're holding the latest data.  There's no real model going on: the proxy objects are just copying data so the visualization tools can see it.
+
+\paragraph{Example} This works surprisingly well.  Let's take DHeatBugs, for example.   We begin by subclassing from SimStateProxy and creating a constructor which attaches to the root processor (you'll have to set its hostname) at the default port (5000):
+
+\begin{verbatim}
+public class HeatBugsProxy extends SimStateProxy {
+    private static final long serialVersionUID = 1;
+
+    public static final String REGISTRY_HOSTNAME = "localhost";  // or wherever your root PID is found
+    public HeatBugsProxy(long seed)
+        {
+        super(seed);
+        setRegistryHost(REGISTRY_HOSTNAME);
+        }
+    }
+\end{verbatim}    
+
+Now we need to set up fields, and in the right order.  Much like regular HeatBugs, each distributed DHeatBugs partition has three grids: 
+
+\begin{verbatim}
+    public DDoubleGrid2D valgrid;
+    public DDoubleGrid2D valgrid2;   // a temporary grid
+    public DDenseGrid2D<DHeatBug> bugs;
+\end{verbatim}
+
+\noindent In the DHeatBugs constructor, these grids are allocated in the following order:
+
+\begin{verbatim}
+    valgrid = new DDoubleGrid2D(this);
+    valgrid2 = new DDoubleGrid2D(this);
+    bugs = new DDenseGrid2D<DHeatBug>(this);
+\end{verbatim}
+
+This order matters: when distributed fields are created, they register their HaloGrid2D objects with the SimState and receive a ``field ID'', starting at 0, in the order in which they were created.  Thus \variable{valgrid}, or more properly its underlying HaloGrid2D, was assigned ID 0, \variable{valgrid2} was assigned ID 1, and \variable{bugs} was assigned ID 2.  Fields do this by calling the method \method{registerField()}:
+
+\begin{methods}{\class{sim.engine.DSimState}}
+\mthd{public int registerField(final HaloGrid2D halo) }
+Registers a HaloGrid2D corresponding to a field, and returns its unique ID.
+\mthd{public ArrayList\(\langle\)HaloGrid2D\(\rangle\)getFieldRegistry()}
+Returns the registry of HaloGrid2Ds.
+\end{methods}
+
+In order to visualize these fields, we will create some {\it field proxy} objects, and will manually assign them to the ID numbers of the distributed fields we want them to proxy.  In our example, we need to create some field proxy objects which correspond to the two grids we want to visualize: \variable{valgrid} and \variable{bugs}.   To do this, we add two proxy objects to our HeatBugsProxy object: 
+
+\begin{verbatim}
+    DoubleGrid2DProxy valgridproxy = new DoubleGrid2DProxy(1,1);
+    DenseGrid2DProxy buggridproxy = new DenseGrid2DProxy(1,1);
+\end{verbatim}
+
+Notice that these have a width and height of 1 (or whatever): this doesn't matter, as the widths and heights will be automatically changed later.  Now we'll {\it register} these field proxies.  Recall that \variable{valgrid} was assigned ID 0, and \variable{buggrid} was assigned ID 2.  So we'll assign their proxies the same in our HeatBugsProxy start method:
+
+\begin{verbatim}
+    public void start() {
+        super.start();
+        registerFieldProxy(valgrid, 0);
+        registerFieldProxy(buggrid, 2);
+        }
+    }
+\end{verbatim}
+
+\begin{wrapfigure}{r}[0in]{2in}
+\vspace{-10em}\hfill\includegraphics[width=2in]{HeatBugsProxyConsole.png}\\
+\includegraphics[width=2in]{HeatBugsProxyDisplay.png}\vspace{-3em}\end{wrapfigure}
+
+Now all we have to do is make a \class{HeatBugsProxyWithUI} class, just like we would have made a HeatBugsWithUI.  In fact, it can be {\it identical} to HeatBugsWithUI, except that it uses HeatBugsProxy instead of HeatBugs, and attaches portrayals to our two proxy fields rather than to the standard valgrid and buggrid.
+
+When we run HeatBugsProxyWithUI in Java, the Console will have an additional tab (added by the SimStateProxy) labelled {\bf Overview}.  This will show the distributed processors in question: in this example, there are 4.  If you click on a processor, the Display will load and display the fields corresponding to the current partition of that processor, also shown at right.  Press the Play button to start visualization.
+
+The rate at which the proxy objects refresh their data is determined by a method called \method{setRate(...)} (in milliseconds). The default is 1 second: because it's costly to slosh all that data over to the visualizer.
+
+\paragraph{What doesn't work}  All this is doing is hijacking MASON's visualization facility to visualize the current state of each partition.  But you can't {\it change} the current state of the partitions: it's one-way.  For example, although the HeatBug Simple Portrayals are Movable, moving them won't change the underlying model, and they'll be reset the next time.  Likewise, you can't change the heat values, or the bug properties, etc.  It's all effectively read-only (for the time being).  
+
+Additionally, the Play/Pause/Stop buttons do not at present {\bf not control the simulation}: it runs at its own pace.  They simply start and stop the underlying visualizer as it grabs the latest data.
+
+Do not expect inspection to work: each time a HeatBug is reloaded from the partition, it's a copy of a {\it different HeatBug}.  Perhaps in the future we will be able to get this to work (sort of), but not now.  Similarly, don't expect much charting to work at present.
 
 \section{Underneath}
 \subsection{Halo Grids}
@@ -15177,7 +15255,7 @@ To be written...
 
 \mthd{public void syncHalo() throws MPIException}
 Exchange his Halo area with neighbors and receive halo areas from his neighbors.
-\mthd{public void syncObject(PayloadWrapper payloadWrapper)}
+\mthd{opublic void syncObject(PayloadWrapper payloadWrapper)}
 Schedule the object contained in PayloadWrapper.
 \mthd{public void initRemote()}
  Generate the RMIProxy.
