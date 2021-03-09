@@ -70,7 +70,7 @@ public class DSimState extends SimState {
 	// A list of all fields in the Model. Any HaloField that is created will
 	// register itself here.
 	// Not to be confused with the DRegistry.
-	ArrayList<HaloGrid2D> fieldRegistry;
+	ArrayList<HaloGrid2D<?, ?>> fieldRegistry;
 
 	// The RMI registry
 	protected DRegistry registry;
@@ -116,8 +116,7 @@ public class DSimState extends SimState {
 		try {
 			pid = MPI.COMM_WORLD.getRank();
 		} catch (MPIException ex) {
-			ex.printStackTrace();
-			System.exit(-1);
+			throw new RuntimeException(ex);
 		}
 	}
 
@@ -169,7 +168,7 @@ public class DSimState extends SimState {
 	 * @param haloField
 	 * @return index of the field
 	 */
-	public int registerField(final HaloGrid2D halo) {
+	public int registerField(final HaloGrid2D<?, ?> halo) {
 		// Must be called in a deterministic manner
 		final int index = fieldRegistry.size();
 		fieldRegistry.add(halo);
@@ -315,8 +314,7 @@ public class DSimState extends SimState {
 				try {
 					transporter.sync();
 				} catch (ClassNotFoundException | IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					throw new RuntimeException(e1);
 				}
 
 				for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
@@ -376,15 +374,12 @@ public class DSimState extends SimState {
 					syncFields();
 				} catch (MPIException e) {
 					System.out.println("MPI error here? 0");
-
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					throw new RuntimeException(e);
 				}
 
 				transporter.objectQueue.clear();
 
 			} catch (MPIException | RemoteException e) {
-				// TODO: handle exception
 				System.out.println("MPI error here? 1");
 				throw new RuntimeException(e);
 			}
@@ -395,9 +390,8 @@ public class DSimState extends SimState {
 			try {
 				MPI.COMM_WORLD.barrier();
 			} catch (MPIException e) {
-				// TODO Auto-generated catch block
 				System.out.println("MPI error here? 2");
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 		}
 	}
@@ -624,9 +618,7 @@ public class DSimState extends SimState {
 	 * Modelers must override this method if they want to add any logic that is
 	 * unique to the root processor
 	 */
-	// protected void startRoot(HashMap<String, Object>[] maps) {
 	protected void startRoot() {
-
 	}
 
 	/**
@@ -673,10 +665,7 @@ public class DSimState extends SimState {
 			// schedule a zombie agent to prevent that a processor with no agent is stopped
 			// when the simulation is still going on
 			schedule.scheduleRepeating(new DSteppable() {
-				@Override
-				public void step(SimState state) {
-
-				}
+				public void step(SimState state) {}
 			});
 
 			// On all processors, wait for the start to finish
@@ -708,7 +697,7 @@ public class DSimState extends SimState {
 	/**
 	 * @return an arraylist of all the HaloGrid2Ds registered with the SimState
 	 */
-	public ArrayList<HaloGrid2D> getFieldRegistry() {
+	public ArrayList<HaloGrid2D<?, ?>> getFieldRegistry() {
 		return fieldRegistry;
 	}
 
