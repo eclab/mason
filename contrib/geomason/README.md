@@ -43,7 +43,7 @@ java sim.app.geo.nearbyworld.NearbyWorldWithUI
 java sim.app.geo.networkworld.NetworkWorldWithUI
 java sim.app.geo.omolandCA.LandscapeGUI
 java sim.app.geo.refugee.MigrationWithUI
-java sim.app.geo.riftland.WorldGUI.java
+java sim.app.geo.riftland.WorldGUI
 java sim.app.geo.schellingpolygon.PolySchellingWithUI
 java sim.app.geo.schellingspace.SchellingSpaceWithUI
 java sim.app.geo.sickStudents.SickStudentsModelWithUI
@@ -51,7 +51,7 @@ java sim.app.geo.sillypeds.SillyPedsWithUI
 java sim.app.geo.sleuth.SleuthWorldWithUI
 java sim.app.geo.touchingworld.TouchingWorldWithUI
 java sim.app.geo.turkana.TurkanaSouthModelWithUI
-java sim.app.geo.walkThisWay.WalkThisWayWithUI.java
+java sim.app.geo.walkThisWay.WalkThisWayWithUI
 java sim.app.geo.waterworld.WaterWorldWithUI
 ```
 
