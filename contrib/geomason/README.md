@@ -27,17 +27,23 @@ that it is included in your class path, too.
 Included with GeoMason are several example models which you can run as:
 
 ```
+java sim.app.geo.acequias.AcequiaWorldWithUI
 java sim.app.geo.campusworld.CampusWorldWithUI
+java sim.app.geo.cityMigration.CityMigrationModelWithGUI
 java sim.app.geo.colorworld.ColorWorldWithUI
+java sim.app.geo.conflictDiamonds.ConflictDiamondsUI 
 java sim.app.geo.dadaab.DadaabGUI
 java sim.app.geo.ebola.EbolaWithUI
 java sim.app.geo.gridlock.GridlockWithUI
 java sim.app.geo.haiti.HaitiFoodWithUI
 java sim.app.geo.hotspots.HotspotsWithUI
 java sim.app.geo.kibera.KiberaWithUI
+java sim.app.geo.masonCSC.gui.StackedAreaChartDemo.java 
 java sim.app.geo.nearbyworld.NearbyWorldWithUI
 java sim.app.geo.networkworld.NetworkWorldWithUI
+java sim.app.geo.omolandCA.LandscapeGUI
 java sim.app.geo.refugee.MigrationWithUI
+java sim.app.geo.riftland.WorldGUI.java
 java sim.app.geo.schellingpolygon.PolySchellingWithUI
 java sim.app.geo.schellingspace.SchellingSpaceWithUI
 java sim.app.geo.sickStudents.SickStudentsModelWithUI
@@ -45,6 +51,7 @@ java sim.app.geo.sillypeds.SillyPedsWithUI
 java sim.app.geo.sleuth.SleuthWorldWithUI
 java sim.app.geo.touchingworld.TouchingWorldWithUI
 java sim.app.geo.turkana.TurkanaSouthModelWithUI
+java sim.app.geo.walkThisWay.WalkThisWayWithUI.java
 java sim.app.geo.waterworld.WaterWorldWithUI
 ```
 
