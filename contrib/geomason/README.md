@@ -38,7 +38,7 @@ java sim.app.geo.gridlock.GridlockWithUI
 java sim.app.geo.haiti.HaitiFoodWithUI
 java sim.app.geo.hotspots.HotspotsWithUI
 java sim.app.geo.kibera.KiberaWithUI
-java sim.app.geo.masonCSC.gui.StackedAreaChartDemo.java 
+java sim.app.geo.masonCSC.gui.StackedAreaChartDemo 
 java sim.app.geo.nearbyworld.NearbyWorldWithUI
 java sim.app.geo.networkworld.NetworkWorldWithUI
 java sim.app.geo.omolandCA.LandscapeGUI
