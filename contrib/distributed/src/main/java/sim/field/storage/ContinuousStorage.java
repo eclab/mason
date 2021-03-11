@@ -106,36 +106,42 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	///// GRIDSTORAGE METHODS
 
 	// Put the object to the given point
-	public void addObjectUsingGlobalLoc(Double2D p, T obj) {
-		final Double2D old = m.put(obj.ID(), p);
+	public void addObject(NumberND p, T obj) {
+		Double2D p_double = (Double2D)p;
+		final Double2D old = m.put(obj.ID(), p_double);
 		if (old != null)
 			getCell(old).remove(obj);
-		getCell(p).put(obj.ID(), obj);
+		getCell(p_double).put(obj.ID(), obj);
 	}
 	
-	public T getObjectUsingGlobalLoc(Double2D p, long id) 
+	public T getObject(NumberND p, long id) 
 		{
-		HashMap<Long, T> cell = getCell(p);
+		Double2D p_double = (Double2D)p;
+
+		HashMap<Long, T> cell = getCell(p_double);
 		if (cell == null) return null;
 		else return cell.get(id);
 		}
 
 	// Get all the objects at exactly the given point
-	public ArrayList<T> getAllObjectsUsingGlobalLoc(final Double2D p) {
+	public ArrayList<T> getAllObjects(final NumberND p) {
+		Double2D p_double = (Double2D)p;
 		final ArrayList<T> objects = new ArrayList<>();
-		HashMap<Long, T> cell = getCell(p);
+		HashMap<Long, T> cell = getCell(p_double);
 
 		if (cell != null) {
 		for (final T t : cell.values()) {
-			if (m.get(t.ID()).equals(p))
+			if (m.get(t.ID()).equals(p_double))
 				objects.add(t);
 			}
 		}
 		return objects;
 	}
 
-	public boolean removeObjectUsingGlobalLoc(Double2D p, long id) {
+	public boolean removeObject(NumberND p, long id) {
 		// p is ignored.
+		Double2D p_double = (Double2D)p;
+
 		Double2D loc = m.remove(id);
 		if (loc == null) return false;
 		getCell(loc).remove(id);
@@ -143,12 +149,14 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	}
 
 	// Get all the objects at the given point
-	ArrayList<T> getObjectsUsingGlobalLoc(Double2D p) {
+	ArrayList<T> getObjects(NumberND p) {
+		Double2D p_double = (Double2D)p;
+
 		final ArrayList<T> objects = new ArrayList<>();
 
-		if (getCell(p) != null) {
-		for (final T t : getCell(p).values()) {
-			if (m.get(t.ID()).equals(p))
+		if (getCell(p_double) != null) {
+		for (final T t : getCell(p_double).values()) {
+			if (m.get(t.ID()).equals(p_double))
 				objects.add(t);
 		}
 		}
@@ -156,10 +164,12 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	}
 
 	// Remove all the objects at the given point
-	public void clearUsingGlobalLoc(Double2D p) {
-		HashMap<Long, T> cell = getCell(p);
+	public void clear(NumberND p) {
+		Double2D p_double = (Double2D)p;
+
+		HashMap<Long, T> cell = getCell(p_double);
 		for (T obj : cell.values()) {
-			if (m.get(obj.ID()).equals(p))
+			if (m.get(obj.ID()).equals(p_double))
 				cell.remove(obj);
 		}
 	}
@@ -251,7 +261,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 		
 		for (int k = 0; k < mp.rects.size(); k++)
 			for (int i = 0; i < objs.get(k).size(); i += 2) 
-				addObjectUsingGlobalLoc( 
+				addObject( 
 					//// FIXME: This looks VERY inefficient, with lots of array allocations
 					((Double2D) objs.get(k).get(i + 1)).add(mp.rects.get(k).ul().toArray()).add(shape.ul().toArray()),
 					(T) objs.get(k).get(i));

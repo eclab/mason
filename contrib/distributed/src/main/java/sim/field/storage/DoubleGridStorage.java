@@ -44,28 +44,37 @@ public class DoubleGridStorage extends GridStorage<Double> {
 		storage[getFlatIdx((Int2D) p)] = t;
 	}
 
-	public void addObject(Int2D p, Double t) {
-		set(p, t);
+	public void addObject(NumberND p, Double t) {
+		Int2D local_p = toLocalPoint((Int2D) p);
+		set(local_p, t);
 	}
 
-	public Double getObject(Int2D p, long id) {
-		return storage[getFlatIdx((Int2D) p)];
+	public Double getObject(NumberND p, long id) {
+		Int2D local_p = toLocalPoint((Int2D) p);
+
+		return storage[getFlatIdx(local_p)];
 	}
 
 	// Don't call this method, it'd be foolish
-	public ArrayList<Double> getAllObjects(Int2D p) {
+	public ArrayList<Double> getAllObjects(NumberND p) {
+		Int2D local_p = toLocalPoint((Int2D) p);
+
 		ArrayList<Double> list = new ArrayList<Double>();
-		list.add(storage[getFlatIdx(p)]);
+		list.add(storage[getFlatIdx(local_p)]);
 		return list;
 	}
 
-	public boolean removeObject(Int2D p, long id) {
-		set(p, 0);
+	public boolean removeObject(NumberND p, long id) {
+		Int2D local_p = toLocalPoint((Int2D) p);
+
+		set(local_p, 0);
 		return true;
 	}
 
-	public void clear(Int2D p) {
-		set(p, 0);
+	public void clear(NumberND p) {
+		Int2D local_p = toLocalPoint((Int2D) p);
+
+		set(local_p, 0);
 	}
 
 	public void clear() {

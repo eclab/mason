@@ -476,7 +476,7 @@ public class DSimState extends SimState {
 								
 								// here the agent is removed from the old location 
 								// TOCHECK!!!
-								st.removeObjectUsingGlobalLoc(loc, ((DObject) a).ID());
+								st.removeObject(loc, ((DObject) a).ID());
 							}
 
 							// not stoppable (transport a double or something) transporter call
@@ -491,7 +491,7 @@ public class DSimState extends SimState {
 					else { // Note that IntStorage and DoubleStorage don't move anything here because their
 							// a is not Stoppable (int or double)
 						GridStorage st = ((HaloGrid2D) field).getStorage();
-						Serializable a_list = st.getAllObjects(haloGrid2D.toLocalPoint(p));
+						Serializable a_list = st.getAllObjects(p);
 
 						if (a_list != null) {
 							System.out.println(a_list);

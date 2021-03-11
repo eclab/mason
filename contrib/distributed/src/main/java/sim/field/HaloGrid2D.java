@@ -97,6 +97,10 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 		// partition by aoi at each dimension
 		haloBounds = localBounds.resize(partition.getAOI());
 		localStorage.reshape(haloBounds);
+		
+		localStorage.setOffSet(haloBounds.ul().toArray()); //moving local point calculation to GridStorage
+		
+		
 		// Get the partition representing private area by shrinking the original
 		// partition by aoi at each dimension
 
@@ -143,9 +147,12 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 	 * @param p
 	 * @return location on the local partition
 	 */
+	
+	
 	public Int2D toLocalPoint(final Int2D p) {
 		return p.subtract(haloBounds.ul().toArray());
 	}
+	
 
 	/**
 	 * @param point
@@ -740,9 +747,9 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 	 */
 	 void addLocal(final NumberND p, final T t) {
 		if (localStorage instanceof ContinuousStorage)
-			((ContinuousStorage)localStorage).addObjectUsingGlobalLoc((Double2D)p, (DObject) t);
+			((ContinuousStorage)localStorage).addObject((Double2D)p, (DObject) t);
 		else
-			localStorage.addObject(toLocalPoint((Int2D) p), t);
+			localStorage.addObject(p, t);
 	}
 
 	//// FIXME -- this method definitely looks wrong
@@ -757,9 +764,9 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 	 */
 	 T getLocal(NumberND p) {
 		if (localStorage instanceof ContinuousStorage)
-			return (T) ((ContinuousStorage)localStorage).getAllObjectsUsingGlobalLoc((Double2D)p);
+			return (T) ((ContinuousStorage)localStorage).getAllObjects((Double2D)p);
 		else
-			return (T) localStorage.getAllObjects(toLocalPoint((Int2D) p));
+			return (T) localStorage.getAllObjects(p);
 	}
 
 	//// FIXME -- this method definitely looks wrong
@@ -774,9 +781,9 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 	 */
 	 T getLocal(NumberND p, long id) {
 		if (localStorage instanceof ContinuousStorage)
-			return (T) ((ContinuousStorage)localStorage).getObjectUsingGlobalLoc((Double2D) p, id);
+			return (T) ((ContinuousStorage)localStorage).getObject((Double2D) p, id);
 		else
-			return (T) localStorage.getObject(toLocalPoint((Int2D) p), id);
+			return (T) localStorage.getObject( p, id);
 	}
 
 
@@ -791,14 +798,14 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 	 public void removeLocal(NumberND p, long id) {
 		if (localStorage instanceof ContinuousStorage) {
 			int old_size = ((ContinuousStorage) localStorage).getCell((Double2D) p).size();
-			((ContinuousStorage)localStorage).removeObjectUsingGlobalLoc((Double2D)p, id);
+			((ContinuousStorage)localStorage).removeObject((Double2D)p, id);
 			if (old_size == ((ContinuousStorage) localStorage).getCell((Double2D) p).size()) {
 				System.out.println("remove not successful!");
 				System.out.println(p + " " + id);
 				System.exit(-1);
 			}
 		} else {
-			localStorage.removeObject(toLocalPoint((Int2D) p), id);
+			localStorage.removeObject(p, id);
 		}
 	}
 
@@ -807,7 +814,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 		if (localStorage instanceof ContinuousStorage) {
 			int old_size = ((ContinuousStorage) localStorage).getCell((Double2D) p).size();
 
-			((ContinuousStorage)localStorage).clearUsingGlobalLoc((Double2D)p);
+			((ContinuousStorage)localStorage).clear((Double2D)p);
 
 			if (old_size == ((ContinuousStorage) localStorage).getCell((Double2D) p).size()) {
 				System.out.println("remove not sucessful!");
@@ -817,7 +824,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage> extends U
 		}
 
 		else
-			localStorage.clear(toLocalPoint((Int2D) p));
+			localStorage.clear(p);
 	}
 	
 	//// FIXME -- This is broken: Sean

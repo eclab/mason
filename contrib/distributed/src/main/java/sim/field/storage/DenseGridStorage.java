@@ -22,6 +22,8 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T> {
 	 * GC, or should we keep them around?
 	 */
 	public boolean removeEmptyBags = true;
+	
+	
 
 	public DenseGridStorage(final IntRect2D shape) {
 		super(shape);
@@ -71,9 +73,10 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T> {
 
 	///// GRIDSTORAGE GUNK
 
-	public void addObject(Int2D p, T t) {
+	public void addObject(NumberND p, T t) {
+		Int2D local_p = toLocalPoint((Int2D) p);
 		final ArrayList<T>[] array = storage;
-		final int idx = getFlatIdx(p);
+		final int idx = getFlatIdx(local_p);
 
 		if (array[idx] == null)
 			array[idx] = new ArrayList<T>();
@@ -81,8 +84,9 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T> {
 		array[idx].add(t);
 	}
 
-	public T getObject(Int2D p, long id) {
-		ArrayList<T> ts = storage[getFlatIdx(p)];
+	public T getObject(NumberND p, long id) {
+		Int2D local_p = toLocalPoint((Int2D) p);
+		ArrayList<T> ts = storage[getFlatIdx(local_p)];
 		if (ts != null)
 			{
 			for (T t : ts)
@@ -92,10 +96,12 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T> {
 		return null;
 	}
 
-	public ArrayList<T> getAllObjects(Int2D p) {
-		return storage[getFlatIdx(p)];
+	public ArrayList<T> getAllObjects(NumberND p) {
+		Int2D local_p = toLocalPoint((Int2D) p);
+		return storage[getFlatIdx(local_p)];
 	}
 
+	//Does this need to be adapted to convert to local???
 	boolean removeFast(ArrayList<T> list, int pos)
 		{
 		int top = list.size() - 1;
@@ -114,9 +120,10 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T> {
 		}
 */
 
-	public boolean removeObject(Int2D p, long id) {
+	public boolean removeObject(NumberND p, long id) {
+		Int2D local_p = toLocalPoint((Int2D) p);
 		final ArrayList<T>[] array = storage;
-		final int idx = getFlatIdx(p);
+		final int idx = getFlatIdx(local_p);
 		boolean result = false;
 
 		if (array[idx] != null)
@@ -136,9 +143,10 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T> {
 		return result;
 	}
 
-	public void clear(Int2D p) {
+	public void clear(NumberND p) {
+		Int2D local_p = toLocalPoint((Int2D) p);
 		final ArrayList<T>[] array = storage;
-		final int idx = getFlatIdx(p);
+		final int idx = getFlatIdx(local_p);
 
 		if (array[idx] != null) {
 			if (removeEmptyBags)
@@ -151,4 +159,6 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T> {
 	public void clear() {
 		storage = new ArrayList[shape.getArea()];
 	}
+	
+
 }
