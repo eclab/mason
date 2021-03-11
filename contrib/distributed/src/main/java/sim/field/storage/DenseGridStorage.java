@@ -25,8 +25,8 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T> {
 	
 	
 
-	public DenseGridStorage(final IntRect2D shape, IntRect2D haloBounds) {
-		super(shape, haloBounds);
+	public DenseGridStorage(final IntRect2D shape) {
+		super(shape);
 		clear();
 	}
 

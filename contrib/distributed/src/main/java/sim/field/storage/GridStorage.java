@@ -15,7 +15,6 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	private static final long serialVersionUID = 1L;
 
 	IntRect2D shape;
-	IntRect2D haloBounds;
 	transient Datatype baseType = MPI.BYTE; // something by default
 	int height; // this is the same as shape.getHeight(), to save a bit of computation
 	
@@ -23,9 +22,8 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	
 	//// NOTE: Subclasses are responsible for allocating the storage
 	//// and setting the base type
-	public GridStorage(IntRect2D shape, IntRect2D haloBounds) {
+	public GridStorage(IntRect2D shape) {
 		this.shape = shape;
-		this.haloBounds = haloBounds;
 		height = shape.getHeight(); // getHeight(shape.getSizes());
 	}
 

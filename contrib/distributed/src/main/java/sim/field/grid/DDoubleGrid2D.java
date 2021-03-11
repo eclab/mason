@@ -22,7 +22,7 @@ public class DDoubleGrid2D extends DAbstractGrid2D
 	public DDoubleGrid2D(DSimState state) 
 		{
 		super(state);
-		storage = new DoubleGridStorage(state.getPartition().getLocalBounds(), state.getPartition().getHaloBounds());
+		storage = new DoubleGridStorage(state.getPartition().getLocalBounds());
 		try 
 			{
 			halo = new HaloGrid2D<Double, DoubleGridStorage>(storage, state);

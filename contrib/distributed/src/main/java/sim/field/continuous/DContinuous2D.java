@@ -37,7 +37,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	public DContinuous2D(int discretization, DSimState state) 
 		{
 		super(state);
-		storage = new ContinuousStorage<T>(state.getPartition().getLocalBounds(), state.getPartition().getHaloBounds(), discretization);
+		storage = new ContinuousStorage<T>(state.getPartition().getLocalBounds(), discretization);
 		
 		try 
 		{

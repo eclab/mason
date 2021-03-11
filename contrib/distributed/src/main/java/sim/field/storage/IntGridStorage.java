@@ -10,8 +10,8 @@ public class IntGridStorage extends GridStorage<Integer> {
 
 	public int[] storage;
 
-	public IntGridStorage(final IntRect2D shape, IntRect2D haloBounds) {
-		super(shape, haloBounds);
+	public IntGridStorage(final IntRect2D shape) {
+		super(shape);
 		baseType = MPI.INT;
 		clear();
 	}
