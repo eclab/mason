@@ -1,7 +1,5 @@
 package sim.field.grid;
 
-import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.rmi.RemoteException;
 import sim.engine.*;
 import sim.field.*;
@@ -26,7 +24,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 	public DObjectGrid2D(DSimState state) 
 		{
 		super(state);
-		storage = new ObjectGridStorage<T>(state.getPartition().getLocalBounds());
+		storage = new ObjectGridStorage<T>(state.getPartition().getLocalBounds(), state.getPartition().getHaloBounds());
 		try 
 			{
 			halo = new HaloGrid2D<>(storage, state);
