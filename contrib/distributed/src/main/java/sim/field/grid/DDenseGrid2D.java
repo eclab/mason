@@ -24,7 +24,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	public DDenseGrid2D(DSimState state) 
 		{
 		super(state);
-		storage = new DenseGridStorage<T>(state.getPartition().getLocalBounds());
+		storage = new DenseGridStorage<T>(state.getPartition().getLocalBounds(), state.getPartition().getHaloBounds());
 		try 
 		{
 			halo = new HaloGrid2D<>(storage, state);

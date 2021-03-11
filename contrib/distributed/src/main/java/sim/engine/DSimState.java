@@ -314,10 +314,10 @@ public class DSimState extends SimState {
 		if (schedule.getSteps() > 0 && (schedule.getSteps() % balanceInterval == 0)) {
 			try {
 				// Balance the partitions for the given level migrating the agents
-				balancePartitions(balancerLevel); 
+				balancePartitions(balancerLevel);
 				try {
 					// Synchronize all objects and agents.
-					transporter.sync(); 
+					transporter.sync();
 				} catch (ClassNotFoundException | IOException e1) {
 					throw new RuntimeException(e1);
 				}
@@ -399,47 +399,50 @@ public class DSimState extends SimState {
 	}
 
 	/*
-	 * Balance the partition for the given level by moving the agent according to the new shape (new centroid).
-	 * Takes all the agents inside the partition before the balance, clones them
-	 * and moves them to the new location.
-	 * Then the moved agents are removed from the old partition.
+	 * Balance the partition for the given level by moving the agent according to
+	 * the new shape (new centroid). Takes all the agents inside the partition
+	 * before the balance, clones them and moves them to the new location. Then the
+	 * moved agents are removed from the old partition.
 	 */
 	void balancePartitions(int level) throws MPIException {
 		final IntRect2D old_partition = partition.getLocalBounds();
 		final int old_pid = partition.getPID();
-		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage(); //used to compute the position of the new centroids
+		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage(); // used to compute the position of the
+																					// new centroids
 		Timing.start(Timing.LB_OVERHEAD);
-		((QuadTreePartition) partition).balance(runtime, level); // balance the partition moving the centroid for the given level
+		((QuadTreePartition) partition).balance(runtime, level); // balance the partition moving the centroid for the
+																	// given level
 		MPI.COMM_WORLD.barrier();
 
-		// iterates through the old partition's points 
+		// iterates through the old partition's points
 		for (Int2D p : old_partition.getPointList()) {
 
-			// check if the new partition contains the point 
+			// check if the new partition contains the point
 			if (!partition.getLocalBounds().contains(p)) {
 				final int toP = partition.toPartitionPID(p);
-				
-				//iterates through all the fields (HaloField) in the Model
+
+				// iterates through all the fields (HaloField) in the Model
 				for (Synchronizable field : fieldRegistry) {
 					ArrayList<Object> migratedAgents = new ArrayList<>();
 					HaloGrid2D haloGrid2D = (HaloGrid2D) field;
 
 					if (haloGrid2D.getStorage() instanceof ContinuousStorage) {
 
-						// all the agents of the field are cloned to avoid the ConcurrentModificationException
+						// all the agents of the field are cloned to avoid the
+						// ConcurrentModificationException
 						ContinuousStorage st = (ContinuousStorage) ((HaloGrid2D) field).getStorage();
 						Double2D doublep = new Double2D(p);
 						HashSet agents = new HashSet(((HashMap) st.getCell(doublep).clone()).values());
-						
-						/* 
+
+						/*
 						 * Each agent is stopped and added to the list of the already migrated agents
 						 * but is removed from the old partition only at the end using the agent ID.
 						 */
-						
+
 						for (Object a : agents) {
 							Double2D loc = st.getObjectLocation((DObject) a);
 							final int locToP = partition.toPartitionPID(loc);
-							
+
 							if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
 									&& !partition.getLocalBounds().contains(loc)) {
 
@@ -472,9 +475,9 @@ public class DSimState extends SimState {
 
 								migratedAgents.add(a);
 								System.out.println("PID: " + partition.getPID() + " processor " + old_pid + " move " + a
-										+ " from " + loc + " (point " + p + ") to processor " + toP); 
-								
-								// here the agent is removed from the old location 
+										+ " from " + loc + " (point " + p + ") to processor " + toP);
+
+								// here the agent is removed from the old location
 								// TOCHECK!!!
 								st.removeObjectUsingGlobalLoc(loc, ((DObject) a).ID());
 							}
@@ -535,10 +538,11 @@ public class DSimState extends SimState {
 									System.out.println(
 											"PID: " + partition.getPID() + " processor " + old_pid + " move " + stopping
 													+ " from " + p + " (point " + p + ") to processor " + toP);
-									
-									// here the agent is removed from the old location 
+
+									// here the agent is removed from the old location
 									// TOCHECK!!!
-									haloGrid2D.removeLocal(p, stopping.ID());
+//									haloGrid2D.removeLocal(p, stopping.ID());
+									st.removeObjectUsingGlobalLoc(p, stopping.ID());
 
 								}
 
@@ -681,7 +685,8 @@ public class DSimState extends SimState {
 			// schedule a zombie agent to prevent that a processor with no agent is stopped
 			// when the simulation is still going on
 			schedule.scheduleRepeating(new DSteppable() {
-				public void step(SimState state) {}
+				public void step(SimState state) {
+				}
 			});
 
 			// On all processors, wait for the start to finish

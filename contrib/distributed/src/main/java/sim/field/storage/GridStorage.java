@@ -14,13 +14,15 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	private static final long serialVersionUID = 1L;
 
 	IntRect2D shape;
+	IntRect2D haloBounds;
 	transient Datatype baseType = MPI.BYTE; // something by default
 	int height; // this is the same as shape.getHeight(), to save a bit of computation
 
 	//// NOTE: Subclasses are responsible for allocating the storage
 	//// and setting the base type
-	public GridStorage(IntRect2D shape) {
+	public GridStorage(IntRect2D shape, IntRect2D haloBounds) {
 		this.shape = shape;
+		this.haloBounds = haloBounds;
 		height = shape.getHeight(); // getHeight(shape.getSizes());
 	}
 
@@ -32,59 +34,89 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 		return shape;
 	}
 
-
 	public abstract String toString();
+
 	public abstract Serializable pack(MPIParam mp) throws MPIException;
+
 	public abstract int unpack(MPIParam mp, Serializable buf) throws MPIException;
 
-	/** Adds or sets the given object at the given point.  
-		Dense and Continuous storage add the object.  Int, Object, and Double grid storage set it.  */
-	public  void addObject(Int2D p, final T obj) { //convert all p to Int2D
-		
-		//add unimplemented method
-		throw new RuntimeException("addObject should not be used in this storage type"); //do this for all, implement Global new method in Continuous2D
+	/**
+	 * Adds or sets the given object at the given point. Dense and Continuous
+	 * storage add the object. Int, Object, and Double grid storage set it.
+	 */
+	public void addObject(Int2D p, final T obj) { // convert all p to Int2D
+		// add unimplemented method
+		throw new RuntimeException("addObject should not be used in this storage type");
+		// do this for all, implement Global new method in Continuous2D
 	}
-	/** Object, Int, and Double grid storage ignore the id and return whatever is currently present. 
-	 * @throws Exception */
+
+	public void addObjectUsingGlobalLoc(Int2D p, final T t) {
+		addObject(toLocalPoint(p), t);
+	}
+
+	/**
+	 * Object, Int, and Double grid storage ignore the id and return whatever is
+	 * currently present.
+	 * 
+	 * @throws Exception
+	 */
 	public T getObject(Int2D p, long id) {
 		throw new RuntimeException("getObject should not be used in this storage type");
-
-
 	}
-	/** Returns an ArrayList consisting of all the elements at a given location.  
-	 * @throws Exception */
-	public ArrayList<T> getAllObjects(Int2D p){
+
+	public T getObjectUsingGlobalLoc(Int2D p, long id) {
+		return getObject(toLocalPoint(p), id);
+	}
+
+	/**
+	 * Returns an ArrayList consisting of all the elements at a given location.
+	 * 
+	 * @throws Exception
+	 */
+	public ArrayList<T> getAllObjects(Int2D p) {
 		throw new RuntimeException("getAllObjects should not be used in this storage type");
-
-
 	}
-	/** Returns true if the object is at this location and was removed.
-		Continuous storage ignores the location and simply removes the object, returning
-		true if the object was successfully remeoved.
-		Int and Double grid storage ignore the id and set the value to 0, always returning true. 
-		Object grid storage sets the value to null, always returning true. 
-	 * @throws Exception */
+
+	public ArrayList<T> getAllObjectsUsingGlobalLoc(Int2D p) {
+		return getAllObjects(toLocalPoint(p));
+	}
+
+	/**
+	 * Returns true if the object is at this location and was removed. Continuous
+	 * storage ignores the location and simply removes the object, returning true if
+	 * the object was successfully remeoved. Int and Double grid storage ignore the
+	 * id and set the value to 0, always returning true. Object grid storage sets
+	 * the value to null, always returning true.
+	 * 
+	 * @throws Exception
+	 */
 	public boolean removeObject(Int2D p, long id) {
 		throw new RuntimeException("removeObject should not be used in this storage type");
-
 	}
-	/** Clears all objects at the given point.
-		Int and Double grid storage set all values to 0.
-		Object grid storage sets all values to null.
-	 * @throws Exception 
-		*/
-	public void clear(Int2D p)
-	{
+
+	public boolean removeObjectUsingGlobalLoc(Int2D p, long id) {
+		return removeObject(toLocalPoint(p), id);
+	}
+
+	/**
+	 * Clears all objects at the given point. Int and Double grid storage set all
+	 * values to 0. Object grid storage sets all values to null.
+	 * 
+	 * @throws Exception
+	 */
+	public void clear(Int2D p) {
 		throw new RuntimeException("clear should not be used in this storage type");
-
-
 	}
-	/** Clears all objects from the storage entirely.
-		Int and Double grid storage set all values to 0.
-		Object grid storage sets all values to null.
-		*/
-	public abstract void clear();
 
+	public void clearUsingGlobalLoc(Int2D p) {
+		clear(toLocalPoint(p));
+	}
+
+	/**
+	 * Clears all objects from the storage entirely. Int and Double grid storage set
+	 * all values to 0. Object grid storage sets all values to null.
+	 */
+	public abstract void clear();
 
 	// Method that allocates an array of objects of desired type
 	// This method will be called after the new shape has been set
@@ -158,5 +190,15 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	 */
 	public static int getFlatIdx(final Int2D p, final int[] wrtSize) {
 		return p.x * wrtSize[1] + p.y; // [1] is height
+	}
+
+	/**
+	 * Shifts point p to give location on the local partition
+	 * 
+	 * @param p
+	 * @return location on the local partition
+	 */
+	public Int2D toLocalPoint(final Int2D p) {
+		return p.subtract(haloBounds.ul().toArray());
 	}
 }

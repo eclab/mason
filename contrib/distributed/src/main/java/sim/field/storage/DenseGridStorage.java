@@ -23,8 +23,8 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T> {
 	 */
 	public boolean removeEmptyBags = true;
 
-	public DenseGridStorage(final IntRect2D shape) {
-		super(shape);
+	public DenseGridStorage(final IntRect2D shape, IntRect2D haloBounds) {
+		super(shape, haloBounds);
 		clear();
 	}
 

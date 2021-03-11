@@ -15,8 +15,8 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T> {
 
 	public T[] storage;
 
-	public ObjectGridStorage(final IntRect2D shape) {
-		super(shape);
+	public ObjectGridStorage(final IntRect2D shape, IntRect2D haloBounds) {
+		super(shape, haloBounds);
 		clear();
 	}
 

@@ -10,8 +10,8 @@ public class DoubleGridStorage extends GridStorage<Double> {
 
 	public double[] storage;
 
-	public DoubleGridStorage(IntRect2D shape) {
-		super(shape);
+	public DoubleGridStorage(final IntRect2D shape, IntRect2D haloBounds) {
+		super(shape, haloBounds);
 		baseType = MPI.DOUBLE;
 		clear();
 	}
