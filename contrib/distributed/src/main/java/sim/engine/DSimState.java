@@ -322,6 +322,7 @@ public class DSimState extends SimState {
 					throw new RuntimeException(e1);
 				}
 
+				//being transported from elsewhere, needs to be added to this partition's HaloGrid and schedule
 				for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
 
 					/*
@@ -336,10 +337,13 @@ public class DSimState extends SimState {
 					 * exceptions to be thrown
 					 */
 
+					//add payload into correct HaloGrid
 					if (payloadWrapper.fieldIndex >= 0)
 						// add the object to the field
 						fieldRegistry.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
 
+					
+					//DistributedIterativeRepeat
 					if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
 						final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
 
@@ -347,12 +351,16 @@ public class DSimState extends SimState {
 						// Not adding it to specific time because we get an error -
 						// "the time provided (-1.0000000000000002) is < EPOCH (0.0)"
 
+						//add back to schedule
 						Stopping stopping = iterativeRepeat.getSteppable();
 						stopping.setStoppable(schedule.scheduleRepeating(stopping, iterativeRepeat.getOrdering(),
 								iterativeRepeat.interval));
+						
+						
 					} else if (payloadWrapper.payload instanceof AgentWrapper) {
 						final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
 
+						//I am currently unclear on how this works
 						if (withRegistry) {
 							if (agentWrapper.getExportedName() != null) {
 								try {
@@ -364,6 +372,8 @@ public class DSimState extends SimState {
 								}
 							}
 						}
+						
+						//add back to schedule
 						if (agentWrapper.time < 0)
 							schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
 						else
@@ -381,11 +391,14 @@ public class DSimState extends SimState {
 					throw new RuntimeException(e);
 				}
 
+				//clear queue
 				transporter.objectQueue.clear();
 
 			} catch (MPIException | RemoteException e) {
 				throw new RuntimeException(e);
 			}
+			
+			//I'm not sure about this bit exactly
 			if (balancerLevel != 0)
 				balancerLevel--;
 			else
@@ -426,6 +439,7 @@ public class DSimState extends SimState {
 					ArrayList<Object> migratedAgents = new ArrayList<>();
 					HaloGrid2D haloGrid2D = (HaloGrid2D) field;
 
+					//ContinousStorage, do we need its own case anymore?  We may be able to combine with else code.
 					if (haloGrid2D.getStorage() instanceof ContinuousStorage) {
 
 						// all the agents of the field are cloned to avoid the
@@ -443,10 +457,13 @@ public class DSimState extends SimState {
 							Double2D loc = st.getObjectLocation((DObject) a);
 							final int locToP = partition.toPartitionPID(loc);
 
+							//if a can be stopped, isn't planned to be moved, and at a point that no longer exists in this partition
 							if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
 									&& !partition.getLocalBounds().contains(loc)) {
 
 								Stopping stopping = ((Stopping) a);
+								
+								//stop agent in schedule, then migrate it
 								if (stopping.getStoppable() instanceof TentativeStep) {
 
 									try {
@@ -458,6 +475,7 @@ public class DSimState extends SimState {
 											((HaloGrid2D) field).getFieldIndex());
 								}
 
+								//stop agent in schedule, then migrate it
 								if (stopping.getStoppable() instanceof IterativeRepeat) {
 									final IterativeRepeat iterativeRepeat = (IterativeRepeat) stopping.getStoppable();
 									final DistributedIterativeRepeat distributedIterativeRepeat = new DistributedIterativeRepeat(
@@ -465,14 +483,14 @@ public class DSimState extends SimState {
 											iterativeRepeat.getTime(), iterativeRepeat.getInterval(),
 											iterativeRepeat.getOrdering());
 
-									// transporter.migrateRepeatingAgent(distributedIterativeRepeat, toP,
-									// p,((HaloGrid2D) field).getFieldIndex());
+
 									transporter.migrateRepeatingAgent(distributedIterativeRepeat, locToP, loc,
 											((HaloGrid2D) field).getFieldIndex());
 
 									iterativeRepeat.stop();
 								}
 
+								//keeps track of agents being moved so not added again
 								migratedAgents.add(a);
 								System.out.println("PID: " + partition.getPID() + " processor " + old_pid + " move " + a
 										+ " from " + loc + " (point " + p + ") to processor " + toP);
@@ -491,13 +509,15 @@ public class DSimState extends SimState {
 						}
 					}
 
-					else { // Note that IntStorage and DoubleStorage don't move anything here because their
-							// a is not Stoppable (int or double)
+					//GridStorage that isn't ContinuousStorage
+					else { 
+						
+						//get list of agents/entities at point
 						GridStorage st = ((HaloGrid2D) field).getStorage();
 						Serializable a_list = st.getAllObjects(p);
 
+						//copy list of agents/entities (I forgot exactly why we need to do this, but I believe mpi concurrent errors occur if we don't)
 						if (a_list != null) {
-							System.out.println(a_list);
 
 							ArrayList<Serializable> a_list_copy = new ArrayList();
 							for (int i = 0; i < ((ArrayList) a_list).size(); i++) {
@@ -509,18 +529,19 @@ public class DSimState extends SimState {
 
 								Serializable a = a_list_copy.get(i);
 
-								System.out.println(a + " considered");
-
+                                //if a is stoppable
 								if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
 										&& old_partition.contains(p) && !partition.getLocalBounds().contains(p)) {
 									DSteppable stopping = ((DSteppable) a);
 
+									//stop and migrate
 									if (stopping.getStoppable() instanceof TentativeStep) {
 										stopping.getStoppable().stop();
 										transporter.migrateAgent(stopping, toP, p,
 												((HaloGrid2D) field).getFieldIndex());
 									}
 
+									//stop and migrate
 									if (stopping.getStoppable() instanceof IterativeRepeat) {
 										final IterativeRepeat iterativeRepeat = (IterativeRepeat) stopping
 												.getStoppable();
@@ -532,8 +553,7 @@ public class DSimState extends SimState {
 										iterativeRepeat.stop();
 									}
 
-									// migrateRepeatingAgent(final DistributedIterativeRepeat iterativeRepeat, final
-									// int dst,final NumberND loc,final int fieldIndex)
+
 									migratedAgents.add(stopping);
 									System.out.println(
 											"PID: " + partition.getPID() + " processor " + old_pid + " move " + stopping
@@ -799,6 +819,12 @@ public class DSimState extends SimState {
 		}
 	}
 
+	//for communicating global variables (usually best) at each time step
+	//takes set of variables from each partition, picks the best from them in some way, then distributes the best back to each partition.
+	//Example: DPSO has a best fitness score and an x and y associated with that score
+	  //1) gather each best score and corresponding x and y from each parition (gatherGlobals())
+	  //2) arbitrate (pick the best score and its x and y out of the partition candidates  (arbitrateGlobal)
+	  //3) distributed the winner back to each partition, each partition keeps track of the global
 	protected void updateGlobal() {
 		Object[][] gg = gatherGlobals();
 		Object[] g = arbitrateGlobal(gg);
@@ -806,8 +832,10 @@ public class DSimState extends SimState {
 
 	}
 
-	// should be overwritten in subclass
+	// this one creates the best global out of the globals from each partiton (gg)
+	// should override in subclass
 	// this version picks based on the highest value of index 0
+	//TODO should we make this one throw an exception and force specific agent to implement its own?
 	Object[] arbitrateGlobal(Object[][] gg) {
 
 		int chosen_index = 0;
@@ -826,11 +854,13 @@ public class DSimState extends SimState {
 
 	}
 
+	//takes the set of globals from each partition
+	//the set of variables this is is implemented in getPartitionGlobals(), implemented in the specific subclass
 	Object[][] gatherGlobals() {
 
 		try {
-			// call getGlobals() for each partition
-			Object[] g = this.getGlobals();
+			// call getPartitionGlobals() for each partition
+			Object[] g = this.getPartitionGlobals();
 
 			Object[][] gg = new Object[partition.getNumProcessors()][g.length];
 
@@ -850,14 +880,17 @@ public class DSimState extends SimState {
 		return null;
 
 	}
-
+	
+	
+    //after determining the overall global using arbitration, send that one back to each partition
+	//uses setPartitionGlobals(), should be implemented in subclass (to match getPartititonGlobals())
 	void distributeGlobals(Object[] global) {
 
 		// need to do typing
 		try {
 			partition.getCommunicator().bcast(global, 1, MPI.DOUBLE, 0);
 
-			setGlobals(global);
+			setPartitionGlobals(global);
 		}
 
 		catch (Exception e) {
@@ -866,20 +899,18 @@ public class DSimState extends SimState {
 	}
 
 	// implement in subclass
-	protected Object[] getGlobals() {
+	protected Object[] getPartitionGlobals() {
 
-		System.out.println("getGlobals() should be implemented in subclass");
-		System.exit(-1);
-		return null;
+		throw new RuntimeException("getPartitionGlobals() should be implemented in subclass");
+
 
 	}
 
 	// implement in subclass
-	protected void setGlobals(Object[] o) {
+	protected void setPartitionGlobals(Object[] o) {
 
-		// does nothing (subclass inheritance)
-		System.out.println("setGlobals() should be implemented in subclass");
-		System.exit(-1);
+		throw new RuntimeException("setPartitionGlobals() should be implemented in subclass");
+
 
 	}
 
