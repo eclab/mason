@@ -51,7 +51,9 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 	// behalf of remote processors.
 
 	// Queue of Promised results from getRMI
-	ArrayList<Pair<Promised, Serializable>> getQueue = new ArrayList<>();
+	ArrayList<Pair<Promised, NumberND>> getAllQueue = new ArrayList<>();
+	ArrayList<Pair<Promised, Pair<NumberND, Long>>> getQueue = new ArrayList<>();
+
 	// Queue of requests to add things to the grid via RMI
 	ArrayList<Pair<NumberND, T>> addQueue = new ArrayList<>();
 	// Queue of requests to remove things from the grid via RMI
@@ -97,10 +99,9 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 		// partition by aoi at each dimension
 		haloBounds = localBounds.resize(partition.getAOI());
 		localStorage.reshape(haloBounds);
-		
-		localStorage.setOffSet(haloBounds.ul().toArray()); //moving local point calculation to GridStorage
-		
-		
+
+		localStorage.setOffSet(haloBounds.ul().toArray()); // moving local point calculation to GridStorage
+
 		// Get the partition representing private area by shrinking the original
 		// partition by aoi at each dimension
 
@@ -138,12 +139,10 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 	 * @param p
 	 * @return location on the local partition
 	 */
-	
-	
+
 	public Int2D toLocalPoint(final Int2D p) {
 		return p.subtract(haloBounds.ul().toArray());
 	}
-	
 
 	/**
 	 * @param point
@@ -635,19 +634,22 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 	public void syncHalo() throws MPIException, RemoteException {
 		int numNeighbors = neighbors.size();
 		Serializable[] sendObjs = new Serializable[numNeighbors];
-		for (int i = 0; i < numNeighbors; i++) {
+		for (int i = 0; i < numNeighbors; i++)
 			sendObjs[i] = localStorage.pack(neighbors.get(i).sendParam);
-		}
 
 		ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>neighborAllToAll(partition, sendObjs);
 
 		for (int i = 0; i < numNeighbors; i++)
 			localStorage.unpack(neighbors.get(i).recvParam, recvObjs.get(i));
 
-		for (final Pair<Promised, Serializable> pair : getQueue) {
-			pair.a.fulfill(pair.b);
-		}
+		for (final Pair<Promised, NumberND> pair : getAllQueue)
+			pair.a.fulfill(getLocal(pair.b));
+
+		for (final Pair<Promised, Pair<NumberND, Long>> pair : getQueue)
+			pair.a.fulfill(getLocal(pair.b.a, pair.b.b));
+
 		getQueue.clear();
+		getAllQueue.clear();
 	}
 
 	/**
@@ -713,7 +715,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 		// Must happen asynchronously
 		// Do it in the queue
 		// Add to a queue here
-		getQueue.add(new Pair<>(promise, getLocal(p)));
+		getAllQueue.add(new Pair<>(promise, p));
 	}
 
 	/**
@@ -727,7 +729,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 		// Make promise remote
 		// update promise remotely
 		// Must happen asynchronously
-		getQueue.add(new Pair<>(promise, getLocal(p, id)));
+		getQueue.add(new Pair<>(promise, new Pair<>(p, id)));
 	}
 
 	//// LOCAL UPDATE METHODS CALLED BY THE RMI QUEUES
@@ -740,7 +742,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 	 */
 	void addLocal(final NumberND p, final T t) {
 		if (localStorage instanceof ContinuousStorage)
-			((ContinuousStorage)localStorage).addObject((Double2D)p, (DObject) t);
+			((ContinuousStorage) localStorage).addObject((Double2D) p, (DObject) t);
 		else
 			localStorage.addObject(p, t);
 
@@ -758,10 +760,9 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 	 */
 	ArrayList<T> getLocal(NumberND p) {
 		if (localStorage instanceof ContinuousStorage)
-			return (ArrayList<T>) ((ContinuousStorage)localStorage).getAllObjects((Double2D)p);
+			return (ArrayList<T>) ((ContinuousStorage) localStorage).getAllObjects((Double2D) p);
 		else
-			return (ArrayList<T>) localStorage.getAllObjects(p);
-
+			return localStorage.getAllObjects(p);
 	}
 
 	//// FIXME -- this method definitely looks wrong
@@ -776,13 +777,10 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 	 */
 	T getLocal(NumberND p, long id) {
 		if (localStorage instanceof ContinuousStorage)
-			return (T) ((ContinuousStorage)localStorage).getObject((Double2D) p, id);
+			return (T) ((ContinuousStorage) localStorage).getObject((Double2D) p, id);
 		else
-			return (T) localStorage.getObject( p, id);
-
+			return localStorage.getObject(p, id);
 	}
-
-	//// FIXME this should be private but DSimState calls it for some reason: sean
 
 	/**
 	 * Removes the object with the given ID from the local storage at the given
@@ -792,7 +790,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 	void removeLocal(NumberND p, long id) {
 		if (localStorage instanceof ContinuousStorage) {
 			int old_size = ((ContinuousStorage) localStorage).getCell((Double2D) p).size();
-			((ContinuousStorage)localStorage).removeObject((Double2D)p, id);
+			((ContinuousStorage) localStorage).removeObject((Double2D) p, id);
 			if (old_size == ((ContinuousStorage) localStorage).getCell((Double2D) p).size()) {
 				System.out.println("remove not successful!");
 				System.out.println(p + " " + id);
@@ -809,7 +807,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 		if (localStorage instanceof ContinuousStorage) {
 			int old_size = ((ContinuousStorage) localStorage).getCell((Double2D) p).size();
 
-			((ContinuousStorage)localStorage).clear((Double2D)p);
+			((ContinuousStorage) localStorage).clear((Double2D) p);
 
 			if (old_size == ((ContinuousStorage) localStorage).getCell((Double2D) p).size()) {
 				System.out.println("remove not sucessful!");
