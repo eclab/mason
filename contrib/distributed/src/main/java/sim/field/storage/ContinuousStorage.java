@@ -2,9 +2,7 @@ package sim.field.storage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 import sim.engine.DObject;
 import sim.util.*;
@@ -100,6 +98,14 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 		return getCelldp(discretize(p));
 	}
 
+	/**
+	 * Returns the cell which contains the given world point. Does not check to see
+	 * if the point is out of bounds.
+	 */
+	public HashMap<Long, T> getCell(final NumberND p) {
+		return getCelldp(discretize(buildDouble2D(p)));
+	}
+
 	/** Returns the location of the given object. */
 	public Double2D getObjectLocation(final T obj) {
 		return m.get(obj.ID());
@@ -112,36 +118,44 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 
 	///// GRIDSTORAGE METHODS
 
+	Double2D buildDouble2D(NumberND p) {
+		if (p instanceof Double2D)
+			return (Double2D) p;
+		return new Double2D(p.getVal(0), p.getVal(1));
+	}
+
 	// Put the object to the given point
 	public void addObject(NumberND p, T obj) {
-		Double2D p_double = (Double2D)p;
+		Double2D p_double = buildDouble2D(p);
+
 		final Double2D old = m.put(obj.ID(), p_double);
 
 		if (old != null)
-			getCell(old).remove(obj);
+			getCell(old).remove(obj.ID());
 		getCell(p_double).put(obj.ID(), obj);
 	}
-	
-	public T getObject(NumberND p, long id) 
-		{
-		Double2D p_double = (Double2D)p;
+
+	public T getObject(NumberND p, long id) {
+		Double2D p_double = buildDouble2D(p);
 
 		HashMap<Long, T> cell = getCell(p_double);
-		if (cell == null) return null;
-		else return cell.get(id);
-		}
+		if (cell == null)
+			return null;
+		else
+			return cell.get(id);
+	}
 
 	// Get all the objects at exactly the given point
 	public ArrayList<T> getAllObjects(final NumberND p) {
-		Double2D p_double = (Double2D)p;
+		Double2D p_double = buildDouble2D(p);
 
 		final ArrayList<T> objects = new ArrayList<>();
 		HashMap<Long, T> cell = getCell(p_double);
 
 		if (cell != null) {
-		for (final T t : cell.values()) {
-			if (m.get(t.ID()).equals(p_double))
-				objects.add(t);
+			for (final T t : cell.values()) {
+				if (m.get(t.ID()).equals(p_double))
+					objects.add(t);
 
 			}
 		}
@@ -149,9 +163,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	}
 
 	public boolean removeObject(NumberND p, long id) {
-
 		// p is ignored.
-		Double2D p_double = (Double2D)p;
 
 		Double2D loc = m.remove(id);
 		if (loc == null)
@@ -162,39 +174,34 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 
 	// Get all the objects at the given point
 	ArrayList<T> getObjects(NumberND p) {
-		Double2D p_double = (Double2D)p;
+		Double2D p_double = buildDouble2D(p);
 
 		final ArrayList<T> objects = new ArrayList<>();
 
 		if (getCell(p_double) != null) {
-		for (final T t : getCell(p_double).values()) {
-			if (m.get(t.ID()).equals(p_double))
-				objects.add(t);
-		}
+			for (final T t : getCell(p_double).values()) {
+				if (m.get(t.ID()).equals(p_double))
+					objects.add(t);
+			}
 		}
 		return objects;
 	}
 
 	// Remove all the objects at the given point
 	public void clear(NumberND p) {
-		Double2D p_double = (Double2D)p;
-
+		Double2D p_double = buildDouble2D(p);
 		HashMap<Long, T> cell = getCell(p_double);
 
-		for (T obj : cell.values()) {
-			if (m.get(obj.ID()).equals(p_double))
-				cell.remove(obj);
-		}
-	}
-
-	public void clear(Int2D p) {
-		clear(new Double2D(p.x, p.y));
+		for (Long key : cell.keySet())
+			if (m.get(key).equals(p_double))
+				cell.remove(key);
 	}
 
 	public void clearUsingGlobalLoc(Double2D p) {
 		clear(toLocalPoint(p));
 	}
 
+	@SuppressWarnings("unchecked")
 	public void clear() {
 		width = (int) Math.ceil(shape.getSizes()[0] / (double) discretization) + 1;
 		height = (int) Math.ceil(shape.getSizes()[1] / (double) discretization) + 1;
@@ -276,12 +283,12 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 			removeObjects(rect.shift(shape.ul().toArray()));
 
 		for (int k = 0; k < mp.rects.size(); k++)
-			for (int i = 0; i < objs.get(k).size(); i += 2) 
-				addObject( 
-					//// FIXME: This looks VERY inefficient, with lots of array allocations
-					((Double2D) objs.get(k).get(i + 1)).add(mp.rects.get(k).ul().toArray()).add(shape.ul().toArray()),
-					(T) objs.get(k).get(i));
-		
+			for (int i = 0; i < objs.get(k).size(); i += 2)
+				addObject(
+						//// FIXME: This looks VERY inefficient, with lots of array allocations
+						((Double2D) objs.get(k).get(i + 1)).add(mp.rects.get(k).ul().toArray())
+								.add(shape.ul().toArray()),
+						(T) objs.get(k).get(i));
 
 		int sum = 0;
 		for (int i = 0; i < objs.size(); i++) {

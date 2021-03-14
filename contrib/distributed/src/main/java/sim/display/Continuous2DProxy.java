@@ -49,7 +49,7 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy {
 		// KeySet returns nextNode().key
 		// EntrySet returns nextNode()
 		for (Entry<Long, Double2D> entry : map.entrySet()) {
-			Double2D loc = (Double2D) (entry.getValue());
+			Double2D loc = entry.getValue();
 			Double2D newLoc = new Double2D(loc.x - origin.x, loc.y - origin.y);
 			setObjectLocation(entry.getKey(), newLoc);
 		}

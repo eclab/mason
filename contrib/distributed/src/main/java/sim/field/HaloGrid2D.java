@@ -72,9 +72,10 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 		worldWidth = partition.getWorldWidth();
 		worldHeight = partition.getWorldHeight();
 
+//		final List<GridStorage<T>> tempStor = new ArrayList<>();
+//		final QuadTreePartition q = (QuadTreePartition) partition;
+
 		// register callbacks
-		final List<GridStorage> tempStor = new ArrayList<GridStorage>();
-		final QuadTreePartition q = (QuadTreePartition) partition;
 		partition.registerPreCommit(new Consumer() {
 			public void accept(Object arg) {
 			}
@@ -127,7 +128,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 	/**
 	 * @return local storage (for this partition)
 	 */
-	public GridStorage getStorage() {
+	public GridStorage<T> getStorage() {
 		return localStorage;
 	}
 
@@ -657,6 +658,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 	 * adding. Called by DSimState. Don't call this directly.
 	 *
 	 */
+	@SuppressWarnings("unchecked")
 	public void addPayload(PayloadWrapper payloadWrapper) {
 		if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
 			final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
@@ -740,9 +742,10 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 	 * @param p location
 	 * @param t Object to add
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	void addLocal(final NumberND p, final T t) {
 		if (localStorage instanceof ContinuousStorage)
-			((ContinuousStorage) localStorage).addObject((Double2D) p, (DObject) t);
+			((ContinuousStorage) localStorage).addObject(p, (DObject) t);
 		else
 			localStorage.addObject(p, t);
 
@@ -758,9 +761,10 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 	 * @return All objects at p
 	 * @throws Exception
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	ArrayList<T> getLocal(NumberND p) {
 		if (localStorage instanceof ContinuousStorage)
-			return (ArrayList<T>) ((ContinuousStorage) localStorage).getAllObjects((Double2D) p);
+			return ((ContinuousStorage) localStorage).getAllObjects(p);
 		else
 			return localStorage.getAllObjects(p);
 	}
@@ -775,9 +779,10 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 	 * @param id
 	 * @return Object with the given id at the point p
 	 */
+	@SuppressWarnings("unchecked")
 	T getLocal(NumberND p, long id) {
 		if (localStorage instanceof ContinuousStorage)
-			return (T) ((ContinuousStorage) localStorage).getObject((Double2D) p, id);
+			return (T) ((ContinuousStorage<?>) localStorage).getObject(p, id);
 		else
 			return localStorage.getObject(p, id);
 	}
@@ -788,37 +793,18 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 	 * will throw exceptions.
 	 */
 	void removeLocal(NumberND p, long id) {
-		if (localStorage instanceof ContinuousStorage) {
-			int old_size = ((ContinuousStorage) localStorage).getCell((Double2D) p).size();
-			((ContinuousStorage) localStorage).removeObject((Double2D) p, id);
-			if (old_size == ((ContinuousStorage) localStorage).getCell((Double2D) p).size()) {
-				System.out.println("remove not successful!");
-				System.out.println(p + " " + id);
-				System.exit(-1);
-			}
-		} else {
+		if (localStorage instanceof ContinuousStorage)
+			((ContinuousStorage<?>) localStorage).removeObject(p, id);
+		else
 			localStorage.removeObject(p, id);
-		}
-
 	}
 
 	/** Clears all objects from the local storage at the given point. */
 	void removeAllLocal(NumberND p) {
-		if (localStorage instanceof ContinuousStorage) {
-			int old_size = ((ContinuousStorage) localStorage).getCell((Double2D) p).size();
-
-			((ContinuousStorage) localStorage).clear((Double2D) p);
-
-			if (old_size == ((ContinuousStorage) localStorage).getCell((Double2D) p).size()) {
-				System.out.println("remove not sucessful!");
-				System.out.println(p);
-				System.exit(-1);
-			}
-		}
-
+		if (localStorage instanceof ContinuousStorage)
+			((ContinuousStorage<?>) localStorage).clear(p);
 		else
 			localStorage.clear(p);
-
 	}
 
 	//// FIXME -- This is broken: Sean
