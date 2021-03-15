@@ -127,7 +127,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 			{
 			if (storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))] == agent)
 				{
-				Stoppable stop = ((Stopping)b).getStoppable();
+				Stoppable stop = b.getStoppable();
 				if (stop == null)
 					{
 					// we're done

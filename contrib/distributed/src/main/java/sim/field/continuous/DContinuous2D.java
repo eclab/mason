@@ -335,7 +335,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		
 		if (isLocal(p))
 			{
-			Stoppable stop = ((Stopping)b).getStoppable();
+			Stoppable stop = b.getStoppable();
 			if (stop == null)
 				{
 				// we're done

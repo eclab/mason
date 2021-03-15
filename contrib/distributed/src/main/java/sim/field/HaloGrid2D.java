@@ -482,7 +482,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	}
 
 	/**
-	 * Removes an object (not an agent) from a remote location. Called by various
+	 * Removes an object (or an agent) from a remote location. Called by various
 	 * fields. Don't call this directly.
 	 */
 	public void removeFromRemote(final NumberND p, long id) {
@@ -610,8 +610,25 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * @throws RemoteException
 	 */
 	public void syncRemoveAndAdd() throws MPIException, RemoteException {
-		for (final Pair<NumberND, Long> pair : removeQueue)
+		for (final Pair<NumberND, Long> pair : removeQueue) {
+			// remove from schedule
+			T t = getLocal(pair.a, pair.b);
+			if (t instanceof Stopping) {
+				// Assumes that t is not an agent if it's not Stopping
+				Stopping b = (Stopping) t;
+				Stoppable stop = b.getStoppable();
+				if (stop == null) {
+					// we're done
+				} else if ((stop instanceof DistributedTentativeStep))
+					((DistributedTentativeStep) stop).stop();
+				else if ((stop instanceof DistributedIterativeRepeat))
+					((DistributedIterativeRepeat) stop).stop();
+				else
+					throw new RuntimeException("Cannot remove agent " + t + " from " + pair.a
+							+ " because it is wrapped in a Stoppable other than a DistributedIterativeRepeat or DistributedTenativeStep. This should not happen.");
+			}
 			removeLocal(pair.a, pair.b);
+		}
 		removeQueue.clear();
 
 		for (final NumberND p : removeAllQueue)
@@ -797,19 +814,18 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			localStorage.clear(p);
 	}
 
-	//// FIXME -- This is broken: Sean
-
 	public void removeAgent(final NumberND p, long id) {
-		if (!inLocal(p))
-			throw new IllegalArgumentException("p must be local");
+		if (inLocal(p)) {
+			T t = getLocal(p, id);
 
-		T t = getLocal(p, id);
+			if (!(t instanceof Stopping))
+				throw new IllegalArgumentException("t must be a Stopping");
 
-		if (!(t instanceof Stopping))
-			throw new IllegalArgumentException("t must be a Stopping");
-
-		removeLocal(p, id);
-		((Stopping) t).getStoppable().stop();
+			removeLocal(p, id);
+			((Stopping) t).getStoppable().stop();
+		} else {
+			removeFromRemote(p, id);
+		}
 	}
 
 	public String toString() {
