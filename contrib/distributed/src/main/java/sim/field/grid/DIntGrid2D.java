@@ -22,7 +22,7 @@ public class DIntGrid2D extends DAbstractGrid2D
 	public DIntGrid2D(DSimState state) 
 		{
 		super(state);
-		storage = new IntGridStorage(state.getPartition().getLocalBounds());
+		storage = new IntGridStorage(state.getPartition().getHaloBounds());
 		try 
 			{
 			halo = new HaloGrid2D<Integer, IntGridStorage>(storage, state);

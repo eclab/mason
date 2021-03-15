@@ -167,6 +167,5 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 
 	public Int2D toLocalPoint(final Int2D p) {
 		return p.subtract(offset);
-
 	}
 }

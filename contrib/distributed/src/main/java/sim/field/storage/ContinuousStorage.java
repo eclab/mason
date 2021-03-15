@@ -152,13 +152,11 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 		final ArrayList<T> objects = new ArrayList<>();
 		HashMap<Long, T> cell = getCell(p_double);
 
-		if (cell != null) {
-			for (final T t : cell.values()) {
+		if (cell != null)
+			for (final T t : cell.values())
 				if (m.get(t.ID()).equals(p_double))
 					objects.add(t);
 
-			}
-		}
 		return objects;
 	}
 
@@ -178,12 +176,11 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 
 		final ArrayList<T> objects = new ArrayList<>();
 
-		if (getCell(p_double) != null) {
-			for (final T t : getCell(p_double).values()) {
+		if (getCell(p_double) != null)
+			for (final T t : getCell(p_double).values())
 				if (m.get(t.ID()).equals(p_double))
 					objects.add(t);
-			}
-		}
+
 		return objects;
 	}
 
@@ -198,7 +195,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	}
 
 	public void clearUsingGlobalLoc(Double2D p) {
-		clear(toLocalPoint(p));
+		clear(p);
 	}
 
 	@SuppressWarnings("unchecked")

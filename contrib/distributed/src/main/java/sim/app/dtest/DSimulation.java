@@ -14,11 +14,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import sim.app.dflockers.DFlockers;
 import sim.engine.DSimState;
 import sim.field.continuous.DContinuous2D;
 import sim.field.storage.ContinuousStorage;
-//import sim.util.MPIUtil;
 import sim.util.Timing;
 import sim.util.*;
 
@@ -68,7 +66,6 @@ public class DSimulation extends DSimState {
 			myfileagent.createNewFile();
 			out = new PrintWriter(new FileOutputStream(myfileagent, false));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -102,7 +99,6 @@ public class DSimulation extends DSimState {
 
 	@Override
 	public void start() {
-		// TODO Auto-generated method stub
 		super.start(); // do not forget this line
 
 		ArrayList<Object> agents = (ArrayList<Object>) getRootInfo("agents");

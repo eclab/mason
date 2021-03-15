@@ -20,8 +20,8 @@ import java.util.function.Consumer;
  * @param <T> The Class of Object to store in the field
  * @param <S> The Type of Storage to use
  */
-public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extends UnicastRemoteObject
-		implements TransportRMIInterface<T, NumberND>, Synchronizable {
+public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
+		extends UnicastRemoteObject implements TransportRMIInterface<T, NumberND>, Synchronizable {
 	private static final long serialVersionUID = 1L;
 
 	// Backpointer to the SimState
@@ -108,9 +108,8 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 
 		// Get the neighbors and create Neighbor objects
 		neighbors = new ArrayList<Neighbor>();
-		for (int id : partition.getNeighborPIDs()) {
+		for (int id : partition.getNeighborPIDs())
 			neighbors.add(new Neighbor(partition.getLocalBounds(id)));
-		}
 	}
 
 	//// Simple requests
@@ -150,12 +149,12 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 	 * @return true if point is within the global grid
 	 */
 	public boolean inGlobal(final Int2D point) {
-		if (!(point.x >= 0 && point.x < worldWidth)) {
+		if (!(point.x >= 0 && point.x < worldWidth))
 			return false;
-		}
-		if (!(point.y >= 0 && point.y < worldHeight)) {
+
+		if (!(point.y >= 0 && point.y < worldHeight))
 			return false;
-		}
+
 		return true;
 	}
 
@@ -420,8 +419,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 	public void addAgentToRemote(final NumberND p, final T t, final int ordering, final double time) {
 		if (!(t instanceof Stopping))
 			throw new IllegalArgumentException("t must be a Stopping");
-		state.getTransporter().migrateAgent(ordering, time, (Stopping) t, partition.toPartitionPID(p), p,
-				this.fieldIndex);
+		state.getTransporter().migrateAgent(ordering, time, (Stopping) t, partition.toPartitionPID(p), p, this.fieldIndex);
 	}
 
 	/**
@@ -432,8 +430,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 			final double interval) {
 		if (!(t instanceof Stopping))
 			throw new IllegalArgumentException("t must be a Stopping");
-		DistributedIterativeRepeat iterativeRepeat = new DistributedIterativeRepeat((Stopping) t, time, interval,
-				ordering);
+		DistributedIterativeRepeat iterativeRepeat = new DistributedIterativeRepeat((Stopping) t, time, interval, ordering);
 		state.getTransporter().migrateRepeatingAgent(iterativeRepeat, partition.toPartitionPID(p), p, this.fieldIndex);
 	}
 
@@ -460,8 +457,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 	public Promised getFromRemote(final NumberND p, long id) {
 		try {
 			RemotePromise remotePromise = new RemotePromise();
-			// Make promise remote
-			// update promise remotely
+			// Make promise remote, then, update promise remotely
 			proxy.getField(partition.toPartitionPID(p)).getRMI(p, id, remotePromise);
 			return remotePromise;
 		} catch (final NullPointerException e) {
@@ -645,12 +641,11 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 
 		for (final Pair<Promised, NumberND> pair : getAllQueue)
 			pair.a.fulfill(getLocal(pair.b));
+		getAllQueue.clear();
 
 		for (final Pair<Promised, Pair<NumberND, Long>> pair : getQueue)
 			pair.a.fulfill(getLocal(pair.b.a, pair.b.b));
-
 		getQueue.clear();
-		getAllQueue.clear();
 	}
 
 	/**
@@ -748,10 +743,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 			((ContinuousStorage) localStorage).addObject(p, (DObject) t);
 		else
 			localStorage.addObject(p, t);
-
 	}
-
-	//// FIXME -- this method definitely looks wrong
 
 	/**
 	 * This method only works locally, it uses the global coordinates of an Object
@@ -768,8 +760,6 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 		else
 			return localStorage.getAllObjects(p);
 	}
-
-	//// FIXME -- this method definitely looks wrong
 
 	/**
 	 * This method only works locally, it uses the global coordinates of an Object
@@ -818,9 +808,8 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 		if (!(t instanceof Stopping))
 			throw new IllegalArgumentException("t must be a Stopping");
 
-		final Stopping stopping = (Stopping) t;
 		removeLocal(p, id);
-		stopping.getStoppable().stop();
+		((Stopping) t).getStoppable().stop();
 	}
 
 	public String toString() {
@@ -875,7 +864,6 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>> extend
 			return overlaps;
 		}
 	}
-
 }
 
 class Pair<A, B> implements Serializable {

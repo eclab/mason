@@ -24,7 +24,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 	public DObjectGrid2D(DSimState state) 
 		{
 		super(state);
-		storage = new ObjectGridStorage<T>(state.getPartition().getLocalBounds());
+		storage = new ObjectGridStorage<T>(state.getPartition().getHaloBounds());
 		try 
 			{
 			halo = new HaloGrid2D<>(storage, state);
