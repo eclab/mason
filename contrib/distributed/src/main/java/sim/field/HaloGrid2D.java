@@ -52,7 +52,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 
 	// Queue of Promised results from getRMI
 	ArrayList<Pair<Promised, NumberND>> getAllQueue = new ArrayList<>();
-	ArrayList<Pair<Promised, Pair<NumberND, Long>>> getQueue = new ArrayList<>();
+	ArrayList<Triplet<Promised, NumberND, Long>> getQueue = new ArrayList<>();
 
 	// Queue of requests to add things to the grid via RMI
 	ArrayList<Pair<NumberND, T>> addQueue = new ArrayList<>();
@@ -85,7 +85,6 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 				reload();
 			}
 		});
-
 		// init variables that may change with the partition scheme
 		reload();
 		fieldIndex = state.registerField(this);
@@ -611,33 +610,42 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 */
 	public void syncRemoveAndAdd() throws MPIException, RemoteException {
 		for (final Pair<NumberND, Long> pair : removeQueue) {
-			// remove from schedule
 			T t = getLocal(pair.a, pair.b);
-			if (t instanceof Stopping) {
-				// Assumes that t is not an agent if it's not Stopping
-				Stopping b = (Stopping) t;
-				Stoppable stop = b.getStoppable();
-				if (stop == null) {
-					// we're done
-				} else if ((stop instanceof DistributedTentativeStep))
-					((DistributedTentativeStep) stop).stop();
-				else if ((stop instanceof DistributedIterativeRepeat))
-					((DistributedIterativeRepeat) stop).stop();
-				else
-					throw new RuntimeException("Cannot remove agent " + t + " from " + pair.a
-							+ " because it is wrapped in a Stoppable other than a DistributedIterativeRepeat or DistributedTenativeStep. This should not happen.");
-			}
+
+			// Assumes that t is not an agent if it's not Stopping
+			if (t instanceof Stopping)
+				unscheduleAgent((Stopping) t);
+
 			removeLocal(pair.a, pair.b);
 		}
 		removeQueue.clear();
 
-		for (final NumberND p : removeAllQueue)
+		for (final NumberND p : removeAllQueue) {
+			ArrayList<T> list = getLocal(p);
+			// Assumes that t is not an agent if it's not Stopping
+			for (final T t : list)
+				if (t instanceof Stopping)
+					unscheduleAgent((Stopping) t);
 			removeAllLocal(p);
+		}
 		removeAllQueue.clear();
 
 		for (final Pair<NumberND, T> pair : addQueue)
 			addLocal(pair.a, pair.b);
 		addQueue.clear();
+	}
+
+	void unscheduleAgent(Stopping stopping) {
+		Stoppable stop = stopping.getStoppable();
+		if (stop == null) {
+			// we're done
+		} else if ((stop instanceof DistributedTentativeStep))
+			((DistributedTentativeStep) stop).stop();
+		else if ((stop instanceof DistributedIterativeRepeat))
+			((DistributedIterativeRepeat) stop).stop();
+		else
+			throw new RuntimeException("Cannot remove agent " + stopping
+					+ " because it is wrapped in a Stoppable other than a DistributedIterativeRepeat or DistributedTenativeStep. This should not happen.");
 	}
 
 	/**
@@ -660,8 +668,8 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			pair.a.fulfill(getLocal(pair.b));
 		getAllQueue.clear();
 
-		for (final Pair<Promised, Pair<NumberND, Long>> pair : getQueue)
-			pair.a.fulfill(getLocal(pair.b.a, pair.b.b));
+		for (final Triplet<Promised, NumberND, Long> trip : getQueue)
+			trip.a.fulfill(getLocal(trip.b, trip.c));
 		getQueue.clear();
 	}
 
@@ -743,7 +751,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		// Make promise remote
 		// update promise remotely
 		// Must happen asynchronously
-		getQueue.add(new Pair<>(promise, new Pair<>(p, id)));
+		getQueue.add(new Triplet<>(promise, p, id));
 	}
 
 	//// LOCAL UPDATE METHODS CALLED BY THE RMI QUEUES
@@ -891,5 +899,19 @@ class Pair<A, B> implements Serializable {
 	public Pair(A a, B b) {
 		this.a = a;
 		this.b = b;
+	}
+}
+
+class Triplet<A, B, C> implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	public final A a;
+	public final B b;
+	public final C c;
+
+	public Triplet(A a, B b, C c) {
+		this.a = a;
+		this.b = b;
+		this.c = c;
 	}
 }
