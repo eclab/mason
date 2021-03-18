@@ -495,8 +495,8 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	}
 
 	/**
-	 * Removes all objects from a remote location. Called by various fields. Don't
-	 * call this directly.
+	 * Removes all objects (and agents) from a remote location. Called by various
+	 * fields. Don't call this directly.
 	 */
 	public void removeAllFromRemote(final NumberND p) {
 		try {
@@ -610,6 +610,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 */
 	public void syncRemoveAndAdd() throws MPIException, RemoteException {
 		for (final Pair<NumberND, Long> pair : removeQueue) {
+			// remove from schedule
 			T t = getLocal(pair.a, pair.b);
 
 			// Assumes that t is not an agent if it's not Stopping
@@ -635,6 +636,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		addQueue.clear();
 	}
 
+	// TODO: Should we generalize this method for all grids
 	void unscheduleAgent(Stopping stopping) {
 		Stoppable stop = stopping.getStoppable();
 		if (stop == null) {

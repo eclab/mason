@@ -68,11 +68,15 @@ public interface VisualizationProcessor extends Remote {
 
 	public ArrayList<Stat> getStatList() throws RemoteException;
 	
+	public ArrayList<Stat> getDebugList() throws RemoteException;
+	
 	public void initStat() throws RemoteException;
 	
 	public void initDebug() throws RemoteException;
-
-	public ArrayList<Stat> getDebugList() throws RemoteException;
+	
+	public void stopStat() throws RemoteException;
+	
+	public void stopDebug() throws RemoteException;
 
 	// TODO: Adding here for now
 	// Not sure if one class can implement two remote interfaces

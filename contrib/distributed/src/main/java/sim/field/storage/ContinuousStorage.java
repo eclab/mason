@@ -118,12 +118,6 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 
 	///// GRIDSTORAGE METHODS
 
-	Double2D buildDouble2D(NumberND p) {
-		if (p instanceof Double2D)
-			return (Double2D) p;
-		return new Double2D(p.getVal(0), p.getVal(1));
-	}
-
 	// Put the object to the given point
 	public void addObject(NumberND p, T obj) {
 		Double2D p_double = buildDouble2D(p);
@@ -192,10 +186,6 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 		for (Long key : cell.keySet())
 			if (m.get(key).equals(p_double))
 				cell.remove(key);
-	}
-
-	public void clearUsingGlobalLoc(Double2D p) {
-		clear(p);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -302,10 +292,14 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 				System.out.println(i + " is null");
 				return false;
 			}
-
 		}
-
 		return true;
+	}
+
+	Double2D buildDouble2D(NumberND p) {
+		if (p instanceof Double2D)
+			return (Double2D) p;
+		return new Double2D(p.getVal(0), p.getVal(1));
 	}
 
 	/**
