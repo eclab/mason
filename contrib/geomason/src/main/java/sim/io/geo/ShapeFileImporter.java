@@ -379,7 +379,7 @@ public class ShapeFileImporter {
 				final int recordType = readInt(shpFileInputStream, true);
 
 				if (!isSupported(recordType)) {
-					System.out.println("Error: ShapeFileImporter.ingest(...): ShapeType " + typeToString(recordType)
+					System.err.println("Error: ShapeFileImporter.ingest(...): ShapeType " + typeToString(recordType)
 							+ " not supported.");
 					return; // all shapes are the same type so don't bother reading any more
 				}
@@ -544,8 +544,8 @@ public class ShapeFileImporter {
 			dbFileInputStream.close();
 			shpFileInputStream.close();
 		} catch (final IOException e) {
-			System.out.println("Error in ShapeFileImporter!!");
-			System.out.println("SHP filename: " + shpFile.getPath() + "; DB filename: " + dbFile.getPath());
+			System.err.println("Error in ShapeFileImporter!!");
+			System.err.println("SHP filename: " + shpFile.getPath() + "; DB filename: " + dbFile.getPath());
 			throw e;
 		}
 	}
@@ -667,7 +667,7 @@ public class ShapeFileImporter {
 				final int recordType = byteBuf.getInt();
 
 				if (!isSupported(recordType)) {
-					System.out.println("Error: ShapeFileImporter.ingest(...): ShapeType " + typeToString(recordType)
+					System.err.println("Error: ShapeFileImporter.ingest(...): ShapeType " + typeToString(recordType)
 							+ " not supported.");
 					return; // all shapes are the same type so don't bother reading any more
 				}
@@ -835,8 +835,8 @@ public class ShapeFileImporter {
 				}
 			}
 		} catch (final IOException e) {
-			System.out.println("Error in ShapeFileImporter!!");
-			System.out.println("SHP filename: " + shpFile);
+			System.err.println("Error in ShapeFileImporter!!");
+			System.err.println("SHP filename: " + shpFile);
 			// e.printStackTrace();
 
 			throw e;
