@@ -125,7 +125,6 @@ public class ShapeFileImporter {
 	 *
 	 */
 	private static Geometry createPolygon(final LinearRing[] parts) {
-		System.out.println("createPolygon");
 		final GeometryFactory geomFactory = new GeometryFactory();
 
 		if (parts.length == 1) {
