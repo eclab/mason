@@ -769,7 +769,7 @@ public class SimState implements java.io.Serializable
 
 	PrintWriter writer = null;
 	
-	/** This is method is called to set the PrintWriter used in getDescription() [which is more important to you]. */ 
+	/** This method is called to set the PrintWriter used in getDescription() [which is more important to you]. */ 
     public void setDescription(PrintWriter writer)
     	{
     	this.writer = writer;
@@ -782,20 +782,20 @@ public class SimState implements java.io.Serializable
 		be run one final time with a PrintWriter description.  The description will be set prior to start()
 		and should not be saved nor written to after finish().  
 		*/ 
-    public PrintWriter getDescription()
+    public PrintWriter description()
     	{
     	return writer;
     	}
     
-    /** Returns true if the simulation is a remote proxy simulation. Ordinarily you should leave this
-    	alone: it's provided mostly for the distributed visualizer. */
-    public boolean isRemoteProxy()
+    /** Returns true if the simulation is a remote proxy simulation.  Don't override this: 
+    	it's provided mostly for the distributed visualizer. */
+    public boolean remoteProxy()
     	{
     	return false;
     	}
     	
-    /** Override this to revise the steps displayed in the Console.  Ordinarily you should leave this
-    	alone: it's provided mostly for the distributed visualizer. */
+    /** Override this to revise the steps displayed in the Console.  Don't override this: 
+    	it's provided mostly for the distributed visualizer. */
     public long remoteSteps()
     	{
     	return 0;

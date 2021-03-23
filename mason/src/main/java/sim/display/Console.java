@@ -2700,7 +2700,7 @@ public class Console extends JFrame implements Controller
             		updateTimeText("");
             	else
             		{
-	            	if (simulation.state.isRemoteProxy())		// are we a remote visualization proxy?  If so, get the "real" time
+	            	if (simulation.state.remoteProxy())		// are we a remote visualization proxy?  If so, get the "real" time
 	            		{
 		                updateTimeText("" + simulation.state.schedule.getTimestamp(simulation.state.remoteTime(), "At Start", "At End"));
 		                }
@@ -2717,7 +2717,7 @@ public class Console extends JFrame implements Controller
             		updateTimeText("");
             	else
             		{
-	            	if (simulation.state.isRemoteProxy())		// are we a remote visualization proxy?  If so, get the "real" steps
+	            	if (simulation.state.remoteProxy())		// are we a remote visualization proxy?  If so, get the "real" steps
 	            		{
 		                updateTimeText("" + simulation.state.remoteSteps());
 		                }
