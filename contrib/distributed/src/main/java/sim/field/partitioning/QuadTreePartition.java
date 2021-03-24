@@ -113,62 +113,38 @@ public class QuadTreePartition extends Partition {
 		// Init into a full quad tree
 		int numProcessorsOld = numProcessors;
 		numProcessors = (int) Math.pow(4, (int) Math.floor(Math.log(numProcessorsOld) / Math.log(4)));
-		// System.out.println("***************************************** numProcessors "
-		// + numProcessors);
-		// if(numProcessors < 16){
-		// numProcessorsOld = numProcessors;
-		// numProcessors = 4;
-		// }
-		// Check whether np is power of (2 * nd)
-		// np's binary represention only contains a single one i.e.,
-		// (np & (np - 1)) == 0
-		// and the number of zeros before it is evenly divided by nd
+
 		int nz = 0;
 		while ((numProcessors >> nz & 0x1) != 0x1)
 			nz++;
-
-		// if ((numProcessors & numProcessors - 1) != 0 || nz % 2 != 0) // 2 == number
-		// of dimensions, width and height
-		// throw new IllegalArgumentException(
-		// "Currently only support the number processors that is power of " + 4);
 
 		for (int level = 0; level < nz / 2; level++) // 2 == number of dimensions, width and height
 		{
 			final ArrayList<QuadTreeNode> leaves = qt.getAllLeaves();
 
 			for (final QuadTreeNode leaf : leaves) {
-				// qt.split(leaf.getShape().getInt2DCenter());
 				Double2D d = leaf.getShape().getCenter();
 				qt.split(new Int2D((int) Math.floor(d.x), (int) Math.floor(d.y)));
 			}
 
 		}
 		treeDepth = (nz / 2) - 1;
-		if(this.pid==0)
-		System.out.println("NORMAL QUADTREE " + qt);
+
+		// Refine needs to be done twice
 		refineQuadtree(numProcessorsOld);
-		if(this.pid==0)
-		System.out.println("FIRST REFINED QUADTREE" + qt);
 		refineQuadtree(numProcessorsOld);
-		if(this.pid==0)
-		System.out.println("SECOND REFINED QUADTREE " + qt);
+
 		numProcessors = numProcessorsOld;
 		mapNodeToProc();
-		// if(this.pid==0)
-		// System.out.println("mapNodeToProc()" + qt + "\n\n");
+
 		createMPITopo();
-		// if(this.pid==0)
-		// System.out.println("CreateMPITopo()");
-		if(this.pid==0)
-		System.out.println("FINAL QUADTREE " + qt);
 
 	}
 
 	protected void refineQuadtree(int P) {
-		// INIZIO BAM BAM
 		QuadTreeNode root = qt.root;
 		ArrayList<QuadTreeNode> leaves = qt.getAllLeaves();
-		// ArrayList<QuadTree> leafs=new ArrayList<QuadTree>(findLeafs(root));
+
 		if (leaves.size() < P) {
 
 			ArrayList<QuadTreeNode> splittable_leaves = new ArrayList<QuadTreeNode>();
@@ -180,36 +156,28 @@ public class QuadTreePartition extends Partition {
 			}
 
 			int number_leaves = leaves.size();
-			// useful to handle the partitioning when the number of processers is lower than
-			// 4
-			if (number_leaves == 1 && leaves.get(0).isRoot()) { // the quadtree has only the root
+			// useful to handle the partitioning when the number of processers is lower than for
+			
+			// if the quadtree has only the root node
+			if (number_leaves == 1 && leaves.get(0).isRoot()) { 
 				splittable_leaves.add(root);
 			}
 
 			int toSplitId = -1;
-			while (number_leaves < P
-					&& ((toSplitId = splittable_leaves.remove(splittable_leaves.size() - 1).id) != -1)) {
-
+			
+			while (number_leaves < P && ((toSplitId = splittable_leaves.remove(splittable_leaves.size() - 1).id) != -1)) {
 				Double2D center = qt.getNode(toSplitId).shape.getCenter();
 				qt.split(new Int2D((int) Math.floor(center.x), (int) Math.floor(center.y)));
 				number_leaves += 3;
-				// split(toSplit, toSplit.discretization, toSplit.level);
-				// if(isSpaceSplittable(toSplit.getNeighbors()[0]))
-				// splittable_leaves.add(toSplit.getNeighbors()[0]);
-				// if(isSpaceSplittable(toSplit.getNeighbors()[1]))
-				// splittable_leaves.add(toSplit.getNeighbors()[1]);
-				// if(isSpaceSplittable(toSplit.getNeighbors()[2]))
-				// splittable_leaves.add(toSplit.getNeighbors()[2]);
-				// if(isSpaceSplittable(toSplit.getNeighbors()[3]))
-				// splittable_leaves.add(toSplit.getNeighbors()[3]);
-
 			}
+			
 			if (number_leaves < P) {
 				return;
 			}
-			// NOW THE NUMBER OF LEAF IS AT MOST P+2
+			// now the number of leaves is at most p+2
+			
 		} else {
-			ArrayList<QuadTreeNode> parents = new ArrayList<QuadTreeNode>(findLeafParent(leaves)); // da implementare
+			ArrayList<QuadTreeNode> parents = new ArrayList<QuadTreeNode>(findLeafParent(leaves));
 			int number_leaves = leaves.size();
 
 			while (number_leaves >= P + 3) {
@@ -217,26 +185,18 @@ public class QuadTreePartition extends Partition {
 				QuadTreeNode toMerge = parents.remove(0);
 
 				qt.merge(toMerge);
-
-				// QuadTreeNode parent=toMerge.parent;
-
-				// if(parent.getNeighbors()[0].getNeighbors()[0] == null
-				// && parent.getNeighbors()[1].getNeighbors()[0] == null
-				// && parent.getNeighbors()[2].getNeighbors()[0] == null
-				// && parent.getNeighbors()[3].getNeighbors()[0] == null)
-				// parents.add(parent);
+				
 				number_leaves -= 3;
 
 			}
 
 			while (number_leaves != P) {
-				refinePartition(); // da implementare
+				refinePartition();
 				number_leaves--;
 			}
 		}
 	}
 
-	// CONTINUO BAM BAM
 	// checks if the heigh and the width is at least 2*AOI
 	protected boolean isSpaceSplittable(QuadTreeNode node) {
 		int x = node.getShape().getHeight();
@@ -247,36 +207,11 @@ public class QuadTreePartition extends Partition {
 			return false;
 		}
 
-		// return ( ((node.x2-node.x1)/2) >= node.discretization &&
-		// ((node.y2-node.y1)/2) > node.discretization &&
-		// (node.level != 0));
 	}
 
 	// find the parents of all leaves
 	private static ArrayList<QuadTreeNode> findLeafParent(ArrayList<QuadTreeNode> leaves) {
 		ArrayList<QuadTreeNode> parents = new ArrayList<QuadTreeNode>();
-		// for(QuadTreeNode leaf: leaves)
-		// {
-		// boolean toAdd=true;
-
-		// for(QuadTree brother: leaf.parent.getNeighbors())
-		// {
-		// if(brother != leaf && brother.getNeighbors()[0]!=null)
-		// {
-		// toAdd=false;
-		// break;
-		// }
-		// }
-		// if(toAdd && !parents.contains(leaf.parent)) parents.add(leaf.parent);
-
-		// }
-		// Collections.sort(parents,new Comparator<QuadTreeNode>() {
-
-		// @Override
-		// public int compare(QuadTreeNode o1, QuadTreeNode o2) {
-		// return Integer.compare(o1.objects.size(), o2.objects.size());
-		// }
-		// });
 		for (QuadTreeNode leaf : leaves) {
 			if (!parents.contains(leaf.parent))
 				parents.add(leaf.parent);
@@ -301,19 +236,11 @@ public class QuadTreePartition extends Partition {
 
 		QuadTreeNode firstNode = mergable.get(0);
 		QuadTreeNode secondNode = mergable.get(1);
-		 
-		// for(int i=0; i<mergable.size()-1; i++){
-			//if(firstNode.getShape().getArea() == secondNode.getShape().getArea())
-				//break;
-			//else{
-				if(firstNode.getShape().getArea()>secondNode.getShape().getArea()){
-					firstNode=secondNode;
-					secondNode=mergable.get(2);
-				}
-			//}
-		//}
-		if (pid == 0)
-			System.out.println("REFINE PARTITION SELECTED MERGABLE "+firstNode+" --- "+ secondNode);
+ 
+		if(firstNode.getShape().getArea()>secondNode.getShape().getArea()){
+			firstNode=secondNode;
+			secondNode=mergable.get(2);
+		}
 		
 		Int2D maxul = firstNode.shape.ul().min(secondNode.shape.ul());
 
@@ -324,45 +251,6 @@ public class QuadTreePartition extends Partition {
 		firstNode.reshape(newShape);
 		
 		qt.delLeaf(secondNode);
-		if (pid == 0){
-			System.out.println("*******NODE " + secondNode.getParent() + "CHILDREN " + secondNode.getParent().children);
-		}
-			
-
-		// qt.getNode(maxChildrenId).getChildren().remove(mergable.get(1).id);
-		// BinaryNode mergable=findBinaryMergableBrother(leafs); //da implementare - mi
-		// deve restituire due foglie sorelle corrispondenti a due quadranti adiacenti
-
-		// QuadTreeNode node=new QuadTreeNode(MAX_AGENTS, mergable.node1.x1,
-		// mergable.node1.y1, mergable.node2.x2, mergable.node2.y2,
-		// mergable.node1.discretization,mergable.node1.level,
-		// mergable.orientation,mergable.node1.parent, mergable.node1.ID);
-		// node.getObjects().addAll(mergable.node1.getObjects());
-		// node.getObjects().addAll(mergable.node2.getObjects());
-
-		// switch (mergable.orientation) {
-		// case N:
-		// mergable.node1.parent.getNeighbors()[0]=node;
-		// mergable.node1.parent.getNeighbors()[1]=null;
-		// break;
-		// case S:
-		// mergable.node1.parent.getNeighbors()[2]=node;
-		// mergable.node1.parent.getNeighbors()[3]=null;
-
-		// break;
-		// case W:
-		// mergable.node1.parent.getNeighbors()[0]=node;
-		// mergable.node1.parent.getNeighbors()[2]=null;
-
-		// break;
-		// case E:
-		// mergable.node1.parent.getNeighbors()[1]=node;
-		// mergable.node1.parent.getNeighbors()[3]=null;
-		// break;
-		// default:
-		// break;
-		// }
-
 	}
 
 	/**
