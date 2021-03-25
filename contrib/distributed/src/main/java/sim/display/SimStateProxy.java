@@ -467,7 +467,7 @@ public class SimStateProxy extends SimState
 		super(seed);
 		}
 
-    public boolean isRemoteProxy()
+    public boolean remoteProxy()
     	{
     	return true;
     	}
