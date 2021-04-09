@@ -1,11 +1,6 @@
 package sim.app.geo.dcampusworld;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
@@ -13,22 +8,22 @@ import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import com.vividsolutions.jts.planargraph.DirectedEdgeStar;
 import com.vividsolutions.jts.planargraph.Node;
 
-import mpi.MPIException;
+import sim.engine.DSteppable;
 import sim.engine.SimState;
+import sim.util.Double2D;
 import sim.util.geo.GeomPlanarGraphDirectedEdge;
 import sim.util.geo.GeomPlanarGraphEdge;
 import sim.util.geo.MasonGeometry;
 import sim.util.geo.PointMoveTo;
 
-import sim.engine.DSteppable;
-
 //TODO rm JTS dependencies
 
-public class DAgent extends DSteppable {
+public class DAgent extends DSteppable {//add have id
 
     private static final long serialVersionUID = -1113018274619047013L;
     // point that denotes agent's position
-    private MasonGeometry location;
+    private transient MasonGeometry location = null;
+    Double2D loc;
     // The base speed of the agent.
     private double basemoveRate = 1.0;
     // How much to move the agent by in each step(); may become negative if
@@ -42,15 +37,19 @@ public class DAgent extends DSteppable {
     PointMoveTo pointMoveTo = new PointMoveTo();
     //TODO transient fields?
 
+    String type;
+    int age;
+    
     static private GeometryFactory fact = new GeometryFactory();
 
-    public DAgent(DCampusWorld state)
-    {
-        location = new MasonGeometry(fact.createPoint(new Coordinate(10, 10))); // magic numbers
+    public DAgent(DCampusWorld state, Double2D loc) {
+        this.loc = loc;
+        System.out.println(loc);
 
+        location = new MasonGeometry(fact.createPoint(new Coordinate(loc.x, loc.y))); // magic numbers
         location.isMovable = true;
         
-                // Find the first line segment and set our position over the start coordinate.
+        // Find the first line segment and set our position over the start coordinate.
         int walkway = state.random.nextInt(state.walkways.getGeometries().numObjs);
         MasonGeometry mg = (MasonGeometry) state.walkways.getGeometries().objs[walkway];
         setNewRoute((LineString) mg.getGeometry(), true);
@@ -58,17 +57,21 @@ public class DAgent extends DSteppable {
         // Now set up attributes for this agent
         if (state.random.nextBoolean())
         {
+        	type = "STUDENT";
+        	
             location.addStringAttribute("TYPE", "STUDENT");
 
-            int age = (int) (20.0 + 2.0 * state.random.nextGaussian());
+            age = (int) (20.0 + 2.0 * state.random.nextGaussian());
 
             location.addIntegerAttribute("AGE", age);
         }
         else
         {
+        	type = "FACULTY";
+
             location.addStringAttribute("TYPE", "FACULTY");
 
-            int age = (int) (40.0 + 9.0 * state.random.nextGaussian());
+            age = (int) (40.0 + 9.0 * state.random.nextGaussian());
 
             location.addIntegerAttribute("AGE", age);
         }
@@ -77,18 +80,25 @@ public class DAgent extends DSteppable {
         basemoveRate *= Math.abs(state.random.nextGaussian());
         location.addDoubleAttribute("MOVE RATE", basemoveRate);
     }
-
-
+    
+    public DAgent(DCampusWorld state) {
+    	this(state, new Double2D(10, 10));
+    }
 
     /**
      * @return geometry representing agent location
      */
-    public MasonGeometry getGeometry()
+    public MasonGeometry getGeoLocation()
     {
+    	if (location == null) {
+            location = new MasonGeometry(fact.createPoint(new Coordinate(loc.x, loc.y))); // magic numbers
+            location.isMovable = true;
+            location.addStringAttribute("TYPE", type);
+            location.addIntegerAttribute("AGE", age);
+            location.addDoubleAttribute("MOVE RATE", basemoveRate);
+    	}
         return location;
     }
-
-
     
     /** true if the agent has arrived at the target intersection
      */
@@ -110,7 +120,7 @@ public class DAgent extends DSteppable {
     /** @return string indicating whether we are "FACULTY" or a "STUDENT" */
     public String getType()
     {
-        return location.getStringAttribute("TYPE");
+        return getGeoLocation().getStringAttribute("TYPE");
     }
 
 
@@ -119,7 +129,7 @@ public class DAgent extends DSteppable {
     private void findNewPath(DCampusWorld geoTest)
     {
         // find all the adjacent junctions
-        Node currentJunction = geoTest.network.findNode(location.getGeometry().getCoordinate());
+        Node currentJunction = geoTest.network.findNode(getGeoLocation().getGeometry().getCoordinate());
 
         if (currentJunction != null)
         {
@@ -138,12 +148,12 @@ public class DAgent extends DSteppable {
                 Point startPoint = newRoute.getStartPoint();
                 Point endPoint = newRoute.getEndPoint();
 
-                if (startPoint.equals(location.geometry))
+                if (startPoint.equals(getGeoLocation().geometry))
                 {
                     setNewRoute(newRoute, true);
                 } else
                 {
-                    if (endPoint.equals(location.geometry))
+                    if (endPoint.equals(getGeoLocation().geometry))
                     {
                         setNewRoute(newRoute, false);
                     } else
@@ -191,19 +201,21 @@ public class DAgent extends DSteppable {
 
     public void moveTo(Coordinate c)
     {
+    	System.out.println("moveTo coordinate: " + c);
+    	loc = new Double2D(c.x, c.y);
         pointMoveTo.setCoordinate(c);
-        location.getGeometry().apply(pointMoveTo);
-        getGeometry().geometry.geometryChanged();
-
+        getGeoLocation().getGeometry().apply(pointMoveTo);
+        getGeoLocation().geometry.geometryChanged();
     }
 
-
-
+    //print to see if scheduled
     public void step(SimState state)
     {
         DCampusWorld campState = (DCampusWorld) state;
         move(campState);
 //        campState.agents.setGeometryLocation(getGeometry(), pointMoveTo);
+        
+        System.out.println(this.firstpid + ": " + campState.getPartition().getPID());
     }
 
 
@@ -254,5 +266,12 @@ public class DAgent extends DSteppable {
 
         moveTo(currentPos);
     }
+
+	@Override
+	public String toString() {
+		return "DAgent [loc=" + loc + ", basemoveRate=" + basemoveRate + ", moveRate=" + moveRate + ", segment="
+				+ segment + ", startIndex=" + startIndex + ", endIndex=" + endIndex + ", currentIndex=" + currentIndex
+				+ ", pointMoveTo=" + pointMoveTo + ", type=" + type + ", age=" + age + "]";
+	}
 
 }

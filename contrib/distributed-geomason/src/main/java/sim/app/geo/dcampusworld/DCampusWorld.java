@@ -31,6 +31,12 @@ public class DCampusWorld extends DSimState {
     /** How many agents in the simulation */
 	public int numAgents = 1000;
 
+    public int discretization;
+    /** Distributed locations of each agent across all partitions **/
+    public DContinuous2D<DAgent> agentLocations;
+    // serializable ^
+	
+    // TODO NOT distributed
     /** Fields to hold the associated GIS information */
     public GeomVectorField walkways = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
     public GeomVectorField roads = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
@@ -38,11 +44,6 @@ public class DCampusWorld extends DSimState {
 
     // where all the agents live
     public GeomVectorField agents = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
-
-    public int discretization;
-    /** Distributed locations of each agent across all partitions **/
-    public DContinuous2D<DMasonPoint> agentLocations;
-    // serializable ^
     
     // Stores the walkway network connections.  We represent the walkways as a PlanarGraph, which allows
     // easy selection of new waypoints for the agents.
@@ -70,7 +71,7 @@ public class DCampusWorld extends DSimState {
         {
             final DAgent a = new DAgent(this);
 
-            agents.addGeometry(a.getGeometry());
+            agents.addGeometry(a.getGeoLocation());
 
             schedule.scheduleRepeating(a);
 
@@ -152,7 +153,7 @@ public class DCampusWorld extends DSimState {
             //TODO how many subdivisions?
             discretization = 6;
 //            agentLocations = new DContinuous2D<DMasonPoint>(getPartitioning(), aoi[0], discretization, this);
-            agentLocations = new DContinuous2D<DMasonPoint>(discretization, this);
+            agentLocations = new DContinuous2D<>(discretization, this);
         } catch (final Exception ex)
         {
             Logger.getLogger(DCampusWorld.class.getName()).log(Level.SEVERE, null, ex);
@@ -188,6 +189,15 @@ public class DCampusWorld extends DSimState {
 //
 //            // TODO unhook AGENTS from old schedule and reschedule to new processor
 //        }
+        
+        
+        for (int i = 0; i < numAgents; i++)
+        {
+            final DAgent a = new DAgent(this);
+            System.out.println(a);
+            //TODO? agents.addGeometry(g);
+            agentLocations.addAgent(a.loc, a, 0, 1);
+        }
         
         //TODO distributed hashmap? Carmine et al
         
