@@ -418,13 +418,249 @@ public class DSimState extends SimState {
 	void balancePartitions(int level) throws MPIException {
 		final IntRect2D old_partition = partition.getLocalBounds();
 		final int old_pid = partition.getPID();
-		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage(); // used to compute the position of the
-																					// new centroids
+		
+		//System.out.println(old_partition+" vs "+partition.getHaloBounds());
+		//System.exit(-1);
+		
+		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage(); // used to compute the position of the new centroids
 		Timing.start(Timing.LB_OVERHEAD);
-		((QuadTreePartition) partition).balance(runtime, level); // balance the partition moving the centroid for the
-																	// given level
+		
+		//if (partition.getPID() == 0) {
+			
+			
+			
+		//}
+		
+		((QuadTreePartition) partition).balance(runtime, level); // balance the partition moving the centroid for the given level
 		MPI.COMM_WORLD.barrier();
 
+		//System.out.println("balanceParition");
+		//Raj rewrite
+		for (Synchronizable field : fieldRegistry) {
+			ArrayList<Object> migratedAgents = new ArrayList<>();
+			HaloGrid2D haloGrid2D = (HaloGrid2D) field;
+
+			// ContinousStorage, do we need its own case anymore? We may be able to combine
+			// with else code.
+			if (haloGrid2D.getStorage() instanceof ContinuousStorage) {
+				ContinuousStorage st = (ContinuousStorage) haloGrid2D.getStorage();
+				//for cell
+				for (int i=0; i<st.storage.length; i++)
+				{
+					//Should I check cell bounds to see if it even should be checked? Yes
+					
+					
+					
+				    //for agent/entity in cell
+					HashSet agents = new HashSet(((HashMap) st.storage[i].clone()).values());  //clones to avoid ConcurrentModificationException
+					//HashSet agents = new HashSet(((HashMap) st.storage[i]).values());
+
+
+					for (Object a : agents) {
+						Double2D loc = st.getObjectLocation((DObject) a);
+						
+												
+							if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
+									&& !partition.getLocalBounds().contains(loc)) {
+								
+								final int locToP = partition.toPartitionPID(loc); //we need to use this, not toP
+
+
+								Stopping stopping = ((Stopping) a);
+
+								// stop agent in schedule, then migrate it
+								if (stopping.getStoppable() instanceof TentativeStep) {
+									
+
+
+									try {
+										stopping.getStoppable().stop();
+										
+										transporter.migrateAgent((Stopping) a, locToP, loc,
+												((HaloGrid2D) field).getFieldIndex());
+										
+
+									} catch (Exception e) {
+										System.out.println("PID: " + partition.getPID() + " exception on " + a);
+									}
+
+									
+
+								}
+
+								// stop agent in schedule, then migrate it
+								if (stopping.getStoppable() instanceof IterativeRepeat) {
+									
+
+									final IterativeRepeat iterativeRepeat = (IterativeRepeat) stopping.getStoppable();
+									final DistributedIterativeRepeat distributedIterativeRepeat = new DistributedIterativeRepeat(
+											stopping,
+											iterativeRepeat.getTime(), iterativeRepeat.getInterval(),
+											iterativeRepeat.getOrdering());
+                                  
+									transporter.migrateRepeatingAgent(distributedIterativeRepeat, locToP, loc,
+											((HaloGrid2D) field).getFieldIndex());
+									
+
+									iterativeRepeat.stop();
+								}
+
+								// keeps track of agents being moved so not added again
+								migratedAgents.add(a);
+								System.out.println("PID: " + partition.getPID() + " processor " + old_pid + " move " + a
+										+ " from " + loc + " to processor " + locToP);
+
+								// here the agent is removed from the old location
+								// TOCHECK!!!
+								st.removeObject(loc, ((DObject) a).ID());
+							}
+
+							// not stoppable (transport a double or something) transporter call
+							// transportObject?
+							else if (old_partition.contains(loc) && !partition.getLocalBounds().contains(loc)) {
+								
+
+								    final int locToP = partition.toPartitionPID(loc); //we need to use this, not toP
+
+								
+									transporter.transportObject((Serializable) a, locToP, loc,
+									((HaloGrid2D) field).getFieldIndex());
+									
+
+							}
+						
+						//}
+						
+					}
+						
+						
+					
+						
+				}
+						
+
+					
+			}
+			
+			//other types of storage
+			else {
+				
+				GridStorage st = ((HaloGrid2D) field).getStorage();
+
+				//go by point here
+				for (Int2D p : old_partition.getPointList()) {
+
+					// check if the new partition contains the point
+					if (!partition.getLocalBounds().contains(p)) {
+						final int toP = partition.toPartitionPID(p);
+						
+						Serializable a_list = st.getAllObjects(p);
+						
+						if (a_list != null) {
+
+							ArrayList<Serializable> a_list_copy = new ArrayList();
+							for (int i = 0; i < ((ArrayList) a_list).size(); i++) {
+								Serializable a = ((ArrayList<Serializable>) a_list).get(i);
+								a_list_copy.add(a);
+							}
+
+							for (int i = 0; i < a_list_copy.size(); i++) {
+
+								Serializable a = a_list_copy.get(i);
+
+								// if a is stoppable
+								if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
+										&& old_partition.contains(p) && !partition.getLocalBounds().contains(p)) {
+									DSteppable stopping = ((DSteppable) a);
+
+									// stop and migrate
+									if (stopping.getStoppable() instanceof TentativeStep) {
+										stopping.getStoppable().stop();
+										transporter.migrateAgent(stopping, toP, p,
+												((HaloGrid2D) field).getFieldIndex());
+									}
+
+									// stop and migrate
+									if (stopping.getStoppable() instanceof IterativeRepeat) {
+										final IterativeRepeat iterativeRepeat = (IterativeRepeat) stopping
+												.getStoppable();
+										final DistributedIterativeRepeat distributedIterativeRepeat = new DistributedIterativeRepeat(
+												stopping, iterativeRepeat.getTime(), iterativeRepeat.getInterval(),
+												iterativeRepeat.getOrdering());
+										transporter.migrateRepeatingAgent(distributedIterativeRepeat, toP, p,
+												((HaloGrid2D) field).getFieldIndex());
+										iterativeRepeat.stop();
+									}
+
+									migratedAgents.add(stopping);
+									System.out.println(
+											"PID: " + partition.getPID() + " processor " + old_pid + " move " + stopping
+													+ " from " + p + " (point " + p + ") to processor " + toP);
+
+									// here the agent is removed from the old location
+									// TOCHECK!!!
+//									haloGrid2D.removeLocal(p, stopping.ID());
+									st.removeObject(p, stopping.ID());
+
+								}
+
+								// not stoppable (transport a double or something) transporter call
+								// transportObject?
+								else if (old_partition.contains(p) && !partition.getLocalBounds().contains(p)) {
+									transporter.transportObject((Serializable) a, toP, p,
+											((HaloGrid2D) field).getFieldIndex());
+								}
+
+								else {
+									System.out.println(a + " not moved over");
+								}
+							}
+						}
+						
+						
+					}
+				}
+				
+			}
+				
+		}
+			
+
+
+
+		MPI.COMM_WORLD.barrier();
+		Timing.stop(Timing.LB_OVERHEAD);
+	}
+	
+	
+	
+	/*
+	 * Balance the partition for the given level by moving the agent according to
+	 * the new shape (new centroid). Takes all the agents inside the partition
+	 * before the balance, clones them and moves them to the new location. Then the
+	 * moved agents are removed from the old partition.
+	 */
+	void balancePartitionsOrig(int level) throws MPIException {
+		final IntRect2D old_partition = partition.getLocalBounds();
+		final int old_pid = partition.getPID();
+		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage(); // used to compute the position of the new centroids
+		Timing.start(Timing.LB_OVERHEAD);
+		
+		//System.out.println("before "+old_pid+" : p : "+partition.getLocalBounds()+" cs: "+((ContinuousStorage)((HaloGrid2D) fieldRegistry.get(0)).getStorage()).getShape());
+		
+		((QuadTreePartition) partition).balance(runtime, level); // balance the partition moving the centroid for the given level
+		
+		//System.out.println("after "+old_pid+" : p : "+partition.getLocalBounds()+" cs: "+((ContinuousStorage)((HaloGrid2D) fieldRegistry.get(0)).getStorage()).getShape());
+
+		//System.exit(-1);
+		
+		MPI.COMM_WORLD.barrier();
+
+		
+		
+		
+
+		 
 		// iterates through the old partition's points
 		for (Int2D p : old_partition.getPointList()) {
 
@@ -447,15 +683,15 @@ public class DSimState extends SimState {
 						Double2D doublep = new Double2D(p);
 						HashSet agents = new HashSet(((HashMap) st.getCell(doublep).clone()).values());
 
-						/*
-						 * Each agent is stopped and added to the list of the already migrated agents
-						 * but is removed from the old partition only at the end using the agent ID.
-						 */
+
 
 						for (Object a : agents) {
 							Double2D loc = st.getObjectLocation((DObject) a);
-							final int locToP = partition.toPartitionPID(loc);
-
+							//System.out.println(loc+" "+p+" "+old_partition+" "+partition.getLocalBounds());
+							final int locToP = partition.toPartitionPID(loc); //we need to use this, not toP
+							if (locToP != toP) { //use as sanity check
+							}
+							
 							// if a can be stopped, isn't planned to be moved, and at a point that no longer
 							// exists in this partition
 							if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
@@ -581,6 +817,8 @@ public class DSimState extends SimState {
 				}
 			}
 		}
+		
+		
 
 		MPI.COMM_WORLD.barrier();
 		Timing.stop(Timing.LB_OVERHEAD);
@@ -830,8 +1068,17 @@ public class DSimState extends SimState {
 	// 3) distributed the winner back to each partition, each partition keeps track
 	// of the global
 	protected void updateGlobal() {
-		Object[][] gg = gatherGlobals();
-		Object[] g = arbitrateGlobal(gg);
+		
+		Object[] g = null;
+
+
+		ArrayList<Object[]> gg = gatherGlobals();
+		
+
+		if (partition.isRootProcessor()){		
+		g = arbitrateGlobal(gg);
+		}
+		
 		distributeGlobals(g);
 
 	}
@@ -841,36 +1088,44 @@ public class DSimState extends SimState {
 	// this version picks based on the highest value of index 0
 	// TODO should we make this one throw an exception and force specific agent to
 	// implement its own?
-	Object[] arbitrateGlobal(Object[][] gg) {
+	Object[] arbitrateGlobal(ArrayList<Object[]> gg) {
 
+		
 		int chosen_index = 0;
-		Object chosen_item = gg[0][0];
+		Object chosen_item = gg.get(0)[0];
+		
+
 
 		double best_val = (double) chosen_item; // make type invariant
 
 		for (int i = 0; i < partition.getNumProcessors(); i++) {
-			if ((double) gg[i][0] > best_val) {
-				best_val = (double) gg[i][0];
+			
+			if ((double) gg.get(i)[0] > best_val) {
+				best_val = (double) gg.get(i)[0];
 				chosen_index = i;
 			}
 		}
 
-		return gg[chosen_index];
+		return gg.get(chosen_index);
 
 	}
 
 	// takes the set of globals from each partition
 	// the set of variables this is is implemented in getPartitionGlobals(),
 	// implemented in the specific subclass
-	Object[][] gatherGlobals() {
+	ArrayList gatherGlobals() {
 
 		try {
 			// call getPartitionGlobals() for each partition
 			Object[] g = this.getPartitionGlobals();
+			
+			//System.out.println(g[0]+" "+g[1]+" "+g[2]);
 
-			Object[][] gg = new Object[partition.getNumProcessors()][g.length];
+			//Object[][] gg = new Object[partition.getNumProcessors()][g.length];
+			
 
-			partition.getCommunicator().gather(g, 1, MPI.DOUBLE, gg, 1, MPI.DOUBLE, 0); // fix type!
+			//partition.getCommunicator().gather(g, 1, MPI.DOUBLE, gg, 1, MPI.DOUBLE, 0); // fix type!
+			ArrayList<Object[]> gg = MPIUtil.gather(partition, g, 0);
 
 			return gg;
 		}
@@ -887,6 +1142,7 @@ public class DSimState extends SimState {
 
 	}
 
+
 	// after determining the overall global using arbitration, send that one back to
 	// each partition
 	// uses setPartitionGlobals(), should be implemented in subclass (to match
@@ -895,8 +1151,8 @@ public class DSimState extends SimState {
 
 		// need to do typing
 		try {
-			partition.getCommunicator().bcast(global, 1, MPI.DOUBLE, 0);
-
+			//partition.getCommunicator().bcast(global, 1, MPI.DOUBLE, 0);
+			MPIUtil.bcast(partition, global, 0);
 			setPartitionGlobals(global);
 		}
 
