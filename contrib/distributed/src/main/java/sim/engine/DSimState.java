@@ -439,57 +439,67 @@ public class DSimState extends SimState {
 		for (Synchronizable field : fieldRegistry) {
 			ArrayList<Object> migratedAgents = new ArrayList<>();
 			HaloGrid2D haloGrid2D = (HaloGrid2D) field;
+			
+			
 
 			// ContinousStorage, do we need its own case anymore? We may be able to combine
 			// with else code.
 			if (haloGrid2D.getStorage() instanceof ContinuousStorage) {
+				
+
+				
 				ContinuousStorage st = (ContinuousStorage) haloGrid2D.getStorage();
 				//for cell
 				for (int i=0; i<st.storage.length; i++)
 				{
-					//Should I check cell bounds to see if it even should be checked? Yes
 					
+					//don't bother with situations where no point would be valid
+					IntRect2D storage_bound = st.reconstructTrueBounds(i);
 					
+
 					
-				    //for agent/entity in cell
-					HashSet agents = new HashSet(((HashMap) st.storage[i].clone()).values());  //clones to avoid ConcurrentModificationException
-					//HashSet agents = new HashSet(((HashMap) st.storage[i]).values());
+					//if storage_bound entirely in haloGrid localBounds, no need to check
+					if (!haloGrid2D.getLocalBounds().contains(storage_bound)){
+					
+						//for agent/entity in cell
+						//HashSet agents = new HashSet(((HashMap) st.storage[i].clone()).values());  //clones to avoid ConcurrentModificationException
+						HashSet agents = new HashSet(((HashMap) st.storage[i]).values());
 
 
-					for (Object a : agents) {
-						Double2D loc = st.getObjectLocation((DObject) a);
+						for (Object a : agents) {
+							Double2D loc = st.getObjectLocation((DObject) a);
 						
 												
-							if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
-									&& !partition.getLocalBounds().contains(loc)) {
+								if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
+										&& !partition.getLocalBounds().contains(loc)) {
 								
-								final int locToP = partition.toPartitionPID(loc); //we need to use this, not toP
+									final int locToP = partition.toPartitionPID(loc); //we need to use this, not toP
 
 
-								Stopping stopping = ((Stopping) a);
+									Stopping stopping = ((Stopping) a);
 
-								// stop agent in schedule, then migrate it
-								if (stopping.getStoppable() instanceof TentativeStep) {
+									// stop agent in schedule, then migrate it
+									if (stopping.getStoppable() instanceof TentativeStep) {
 									
 
 
-									try {
-										stopping.getStoppable().stop();
+										try {
+											stopping.getStoppable().stop();
 										
-										transporter.migrateAgent((Stopping) a, locToP, loc,
+											transporter.migrateAgent((Stopping) a, locToP, loc,
 												((HaloGrid2D) field).getFieldIndex());
 										
 
-									} catch (Exception e) {
-										System.out.println("PID: " + partition.getPID() + " exception on " + a);
-									}
+										} catch (Exception e) {
+											System.out.println("PID: " + partition.getPID() + " exception on " + a);
+										}
 
 									
 
-								}
+									}
 
-								// stop agent in schedule, then migrate it
-								if (stopping.getStoppable() instanceof IterativeRepeat) {
+									// stop agent in schedule, then migrate it
+									if (stopping.getStoppable() instanceof IterativeRepeat) {
 									
 
 									final IterativeRepeat iterativeRepeat = (IterativeRepeat) stopping.getStoppable();
@@ -512,7 +522,7 @@ public class DSimState extends SimState {
 
 								// here the agent is removed from the old location
 								// TOCHECK!!!
-								st.removeObject(loc, ((DObject) a).ID());
+
 							}
 
 							// not stoppable (transport a double or something) transporter call
@@ -529,7 +539,6 @@ public class DSimState extends SimState {
 
 							}
 						
-						//}
 						
 					}
 						
@@ -539,7 +548,8 @@ public class DSimState extends SimState {
 				}
 						
 
-					
+				}	
+				
 			}
 			
 			//other types of storage
@@ -558,16 +568,23 @@ public class DSimState extends SimState {
 						
 						if (a_list != null) {
 
+							/*
 							ArrayList<Serializable> a_list_copy = new ArrayList();
 							for (int i = 0; i < ((ArrayList) a_list).size(); i++) {
 								Serializable a = ((ArrayList<Serializable>) a_list).get(i);
 								a_list_copy.add(a);
 							}
+							
 
 							for (int i = 0; i < a_list_copy.size(); i++) {
 
 								Serializable a = a_list_copy.get(i);
+                            */
+							
+							//go backwards, so removing is safe
+							for (int i = ((ArrayList<Serializable>)a_list).size()-1; i > 0; i--) {
 
+								Serializable a = ((ArrayList<Serializable>)a_list).get(i);							
 								// if a is stoppable
 								if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
 										&& old_partition.contains(p) && !partition.getLocalBounds().contains(p)) {

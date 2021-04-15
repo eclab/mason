@@ -61,6 +61,38 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 		}
 		return new Int2D(ans);
 	}
+	
+	//takes storage index and creates IntRect2D 
+	public IntRect2D reconstructTrueBounds(final int storageInd) {
+		
+         
+		int x_low = storageInd / this.height;
+		int y_low = storageInd % this.height;
+		
+		int x_high = x_low + 1;
+		int y_high = y_low + 1;
+		
+		//undiscetize
+		x_low = x_low * discretization;
+		y_low = y_low * discretization;
+		x_high = x_high * discretization;
+		y_high = y_high * discretization;
+		
+		//offset
+		Int2D cell_ul = new Int2D(x_low, y_low); //include
+		Int2D cell_br = new Int2D(x_high, y_high);  //don't include
+		
+		Int2D final_cell_ul = cell_ul.add(shape.ul());
+		Int2D final_cell_br = cell_br.add(shape.ul());
+		
+        
+		//System.out.println(this.getShape()+" storageInd "+storageInd+"ul "+final_cell_ul+"br "+final_cell_br);
+
+
+		return new IntRect2D(final_cell_ul,final_cell_br);
+
+		
+	}
 
 	void setCelldp(final Int2D p, HashMap<Long, T> cell) {
 		storage[getFlatIdx(p.x, p.y)] = cell;
