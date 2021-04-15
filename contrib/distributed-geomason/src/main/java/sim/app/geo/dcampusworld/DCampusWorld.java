@@ -13,6 +13,9 @@ import com.vividsolutions.jts.planargraph.Node;
 
 import sim.app.geo.dcampusworld.data.DCampusWorldData;
 import sim.engine.DSimState;
+import sim.engine.DSteppable;
+import sim.engine.SimState;
+import sim.engine.Steppable;
 import sim.field.continuous.DContinuous2D;
 import sim.field.geo.GeomVectorField;
 import sim.io.geo.ShapeFileExporter;
@@ -27,6 +30,7 @@ public class DCampusWorld extends DSimState {
     public static final int width = 300;
     public static final int height = 300;
 	public final static int aoi = 6;//TODO what value???
+	public Envelope MBR;
 
     /** How many agents in the simulation */
 	public int numAgents = 1000;
@@ -36,7 +40,7 @@ public class DCampusWorld extends DSimState {
     public DContinuous2D<DAgent> agentLocations;
     // serializable ^
 	
-    // TODO NOT distributed
+    // TODO NOT distributed. Load these remotely in a distributed way.
     /** Fields to hold the associated GIS information */
     public GeomVectorField walkways = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
     public GeomVectorField roads = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
@@ -119,7 +123,8 @@ public class DCampusWorld extends DSimState {
 
             // We want to save the MBR so that we can ensure that all GeomFields
             // cover identical area.
-            final Envelope MBR = buildings.getMBR();
+//            final Envelope MBR = buildings.getMBR();
+            MBR = buildings.getMBR();
 
             System.out.println("reading roads layer");
 
@@ -154,6 +159,8 @@ public class DCampusWorld extends DSimState {
             discretization = 6;
 //            agentLocations = new DContinuous2D<DMasonPoint>(getPartitioning(), aoi[0], discretization, this);
             agentLocations = new DContinuous2D<>(discretization, this);
+            
+            System.out.println("MBR: " + MBR);
         } catch (final Exception ex)
         {
             Logger.getLogger(DCampusWorld.class.getName()).log(Level.SEVERE, null, ex);
@@ -194,9 +201,15 @@ public class DCampusWorld extends DSimState {
         for (int i = 0; i < numAgents; i++)
         {
             final DAgent a = new DAgent(this);
-            System.out.println(a);
+//            System.out.println(a);
             //TODO? agents.addGeometry(g);
             agentLocations.addAgent(a.loc, a, 0, 1);
+            
+//            schedule.scheduleRepeating(new DSteppable() {
+//				public void step(SimState state) {
+//					
+//				}
+//            });            
         }
         
         //TODO distributed hashmap? Carmine et al
