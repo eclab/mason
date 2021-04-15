@@ -150,8 +150,13 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		if (!isLocal(p)) throwNotLocalException(p);	
 		Double2D oldLoc = getObjectLocationLocal(t);
 		HashMap<Long, T> newCell = getCellLocal(p);
+		
+
+		
 		if (oldLoc != null)
 			{
+			
+
 			HashMap<Long, T> oldCell = getCellLocal(oldLoc);			
 			if (oldCell == newCell)
 				{
@@ -159,35 +164,52 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 				}
 			else 
 				{
+				
 				if (oldCell != null)
 					{
+					
 					oldCell.remove(t);
 					if (oldCell.isEmpty() && storage.removeEmptyBags)
 					{
 						//storage.setCell(oldLoc, null);
 						storage.setCell(oldLoc, new HashMap<Long, T>());
 					}
+					
 					}
+				
+				
 				if (newCell == null)
 					{
 					newCell = new HashMap<>();
 					storage.setCell(p, newCell);
 					}
+				
+				
+				//System.out.println("1111: "+getCellLocal(p));
 				newCell.put(t.ID(), t);
+				//System.out.println("2222: "+getCellLocal(p));
 				}
+			
+
 			}
+			
 		else
 			{
+			
 			if (newCell == null)
 				{
 				newCell = new HashMap<>();
 				storage.setCell(p, newCell);
 				}
 			newCell.put(t.ID(), t);
+			
 			}
 
+		
 		HashMap<Long, Double2D> map = storage.getStorageMap();
 		map.put(t.ID(), p);
+		
+
 		}
 	
 	/** Removes the object of the given id, which must be local.  If it does not exist locally, this method returns FALSE. */
@@ -377,7 +399,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			Double2D p = getObjectLocationLocal(agent);
 			if (isLocal(to))
 				{
-				removeLocal(agent);
+				//removeLocal(agent);
 				addLocal(to, agent);
 				}
 			else
@@ -393,6 +415,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 					}
 				else if (stop instanceof DistributedTentativeStep)
 					{
+					
 					DistributedTentativeStep _stop = (DistributedTentativeStep)stop;
 					double time = _stop.getTime();
 					int ordering = _stop.getOrdering();
@@ -408,9 +431,11 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 						removeLocal(agent);
 						halo.addToRemote(to, agent);
 						}
+						
 					}
 				else if (stop instanceof DistributedIterativeRepeat)
 					{
+					
 					DistributedIterativeRepeat _stop = (DistributedIterativeRepeat)stop;
 					double time = _stop.getTime();
 					int ordering = _stop.getOrdering();
@@ -430,6 +455,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 						}
 					removeLocal(agent);
 					halo.addAgentToRemote(to, agent, ordering, time, interval);
+					
 					}
 				else
 					{

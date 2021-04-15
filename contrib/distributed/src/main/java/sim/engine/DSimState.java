@@ -207,6 +207,9 @@ public class DSimState extends SimState {
 	 * super.preSchedule() first.
 	 */
 	public void preSchedule() {
+		
+
+		
 		Timing.stop(Timing.LB_RUNTIME);
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
 		try {
@@ -246,6 +249,8 @@ public class DSimState extends SimState {
 			throw new RuntimeException(e);
 		}
 
+		
+		
 		for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
 			/*
 			 * Assumptions about what is to be added to the field using addToField method
@@ -258,10 +263,11 @@ public class DSimState extends SimState {
 			 * Improperly using the wrappers and/or fieldIndex will cause Class cast
 			 * exceptions to be thrown
 			 */
-
-			if (payloadWrapper.fieldIndex >= 0)
+            
+			if (payloadWrapper.fieldIndex >= 0) {
 				// add the object to the field
 				fieldRegistry.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
+			}
 
 			if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
 				final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
@@ -292,6 +298,7 @@ public class DSimState extends SimState {
 					schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
 			}
 		}
+		
 		transporter.objectQueue.clear();
 
 		// Wait that all nodes have registered their new objects in the distributed
@@ -305,6 +312,9 @@ public class DSimState extends SimState {
 
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
 		loadBalance();
+		
+
+		
 	}
 
 	void loadBalance() {
@@ -315,6 +325,7 @@ public class DSimState extends SimState {
 			try {
 				// Balance the partitions for the given level migrating the agents
 				balancePartitions(balancerLevel);
+
 				try {
 					// Synchronize all objects and agents.
 					transporter.sync();
@@ -419,22 +430,17 @@ public class DSimState extends SimState {
 		final IntRect2D old_partition = partition.getLocalBounds();
 		final int old_pid = partition.getPID();
 		
-		//System.out.println(old_partition+" vs "+partition.getHaloBounds());
-		//System.exit(-1);
+
 		
 		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage(); // used to compute the position of the new centroids
 		Timing.start(Timing.LB_OVERHEAD);
 		
-		//if (partition.getPID() == 0) {
-			
-			
-			
-		//}
+
 		
 		((QuadTreePartition) partition).balance(runtime, level); // balance the partition moving the centroid for the given level
 		MPI.COMM_WORLD.barrier();
+		
 
-		//System.out.println("balanceParition");
 		//Raj rewrite
 		for (Synchronizable field : fieldRegistry) {
 			ArrayList<Object> migratedAgents = new ArrayList<>();
@@ -445,6 +451,7 @@ public class DSimState extends SimState {
 			// ContinousStorage, do we need its own case anymore? We may be able to combine
 			// with else code.
 			if (haloGrid2D.getStorage() instanceof ContinuousStorage) {
+				
 				
 
 				
@@ -519,6 +526,8 @@ public class DSimState extends SimState {
 								migratedAgents.add(a);
 								System.out.println("PID: " + partition.getPID() + " processor " + old_pid + " move " + a
 										+ " from " + loc + " to processor " + locToP);
+								
+
 
 								// here the agent is removed from the old location
 								// TOCHECK!!!
@@ -649,7 +658,58 @@ public class DSimState extends SimState {
 		Timing.stop(Timing.LB_OVERHEAD);
 	}
 	
+	/*
+	void countFlockers(String s) throws MPIException {
+		final int old_pid = partition.getPID();
+		
+        int flocker_count = 0;
+        int map_count = 0;
+		for (Synchronizable field : fieldRegistry) {
+			ArrayList<Object> migratedAgents = new ArrayList<>();
+			HaloGrid2D haloGrid2D = (HaloGrid2D) field;
+			
+			
+
+			// ContinousStorage, do we need its own case anymore? We may be able to combine
+			// with else code.
+			if (haloGrid2D.getStorage() instanceof ContinuousStorage) {
+				
+				
+
+				
+				ContinuousStorage st = (ContinuousStorage) haloGrid2D.getStorage();
+				//for cell
+				for (int i=0; i<st.storage.length; i++)
+				{
+					HashSet agents = new HashSet(((HashMap) st.storage[i]).values());
+
+
+					for (Object a : agents) {
+						Double2D loc = st.getObjectLocation((DObject) a);
+						
+						//not in halo
+						if (haloGrid2D.getLocalBounds().contains(loc)){
+							flocker_count = flocker_count + 1;
+						}
+						
+					}
+				}
+				
+				for (Object qqq : st.getStorageMap().values()) {
+					if (haloGrid2D.getLocalBounds().contains((Double2D)qqq)){
+						map_count = map_count + 1;
+					}
+				}
+			}
+		}
+		
+		
+		
+		System.out.println(s+" "+old_pid+" : "+flocker_count+" mapcount "+map_count);
+		
+	}
 	
+	*/
 	
 	/*
 	 * Balance the partition for the given level by moving the agent according to
@@ -657,6 +717,8 @@ public class DSimState extends SimState {
 	 * before the balance, clones them and moves them to the new location. Then the
 	 * moved agents are removed from the old partition.
 	 */
+	/*
+
 	void balancePartitionsOrig(int level) throws MPIException {
 		final IntRect2D old_partition = partition.getLocalBounds();
 		final int old_pid = partition.getPID();
@@ -840,6 +902,7 @@ public class DSimState extends SimState {
 		MPI.COMM_WORLD.barrier();
 		Timing.stop(Timing.LB_OVERHEAD);
 	}
+	*/
 
 	static void initRemoteLogger(final String loggerName, final String logServAddr, final int logServPort)
 			throws IOException {
