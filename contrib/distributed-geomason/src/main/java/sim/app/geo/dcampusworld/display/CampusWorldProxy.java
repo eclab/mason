@@ -39,10 +39,10 @@ public class CampusWorldProxy extends SimStateProxy
 //		registerFieldProxy(buildingPortrayal, 1);
 //		registerFieldProxy(roadsPortrayal, 2);
       
-		registerFieldProxy(walkways, 0);
-		registerFieldProxy(buildings, 1);
-		registerFieldProxy(roads, 2);
-		registerFieldProxy(agents, 3);
+//		registerFieldProxy(walkways, 0);
+//		registerFieldProxy(buildings, 1);
+//		registerFieldProxy(roads, 2);
+		registerFieldProxy(agents, 0);
 //      	registerFieldProxy(agents, 0);
       }
   }

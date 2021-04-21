@@ -16,8 +16,6 @@ import sim.util.geo.GeomPlanarGraphEdge;
 import sim.util.geo.MasonGeometry;
 import sim.util.geo.PointMoveTo;
 
-//TODO rm JTS dependencies
-
 public class DAgent extends DSteppable {//add have id
 
     private static final long serialVersionUID = -1113018274619047013L;
@@ -48,11 +46,20 @@ public class DAgent extends DSteppable {//add have id
         location = new MasonGeometry(fact.createPoint(new Coordinate(loc.x, loc.y)));
         location.isMovable = true;
         
-        // Find the first line segment and set our position over the start coordinate.
-        int walkway = state.random.nextInt(state.walkways.getGeometries().numObjs);
-        MasonGeometry mg = (MasonGeometry) state.walkways.getGeometries().objs[walkway];
-        setNewRoute(state, (LineString) mg.getGeometry(), true);
-
+        while (true) {
+	        // Find the first line segment and set our position over the start coordinate.
+	        int walkway = state.random.nextInt(state.walkways.getGeometries().numObjs);
+	        MasonGeometry mg = (MasonGeometry) state.walkways.getGeometries().objs[walkway];
+	        Coordinate c = initiateRoute(state, (LineString) mg.getGeometry(), true);
+	        Double2D initialLoc = this.jtsToPartitionSpace(state, c);
+	        if (state.agentLocations.isLocal(initialLoc)) {
+	            // agent needs to be added to storage before moving
+	            ((DCampusWorld)state).agentLocations.addAgent(initialLoc, this, 0, 1);
+	            moveTo((DCampusWorld)state, c);
+	            break;
+	        }
+        }
+        
         // Now set up attributes for this agent
         if (state.random.nextBoolean())
         {
@@ -194,14 +201,35 @@ public class DAgent extends DSteppable {//add have id
 
         moveTo((DCampusWorld)state, startCoord);
     }
+    
+    private Coordinate initiateRoute(SimState state, LineString line, boolean start)
+    {
+        segment = new LengthIndexedLine(line);
+        startIndex = segment.getStartIndex();
+        endIndex = segment.getEndIndex();
+
+        Coordinate startCoord = null;
+
+        if (start)
+        {
+            startCoord = segment.extractPoint(startIndex);
+            currentIndex = startIndex;
+            moveRate = basemoveRate; // ensure we move forward along segment
+        } else
+        {
+            startCoord = segment.extractPoint(endIndex);
+            currentIndex = endIndex;
+            moveRate = -basemoveRate; // ensure we move backward along segment
+        }
+        
+        return startCoord;
+    }
 
     Double2D jtsToPartitionSpace(DCampusWorld cw, Coordinate coordJTS) {
-//    	System.out.println("width: " + cw.MBR.getWidth());
-//    	System.out.println("height: " + cw.MBR.getHeight());
-    	
-//    	System.out.println("jts coord: " + coordJTS);
-//    	System.out.println(cw.MBR.getMinX());
-//    	System.out.println(cw.MBR.getMinY());
+//    	System.out.println("moveTo:");
+//    	System.out.println(cw.agentLocations.getHaloGrid());
+//    	System.out.println(cw.agentLocations.getHaloGrid().getHaloBounds());
+//    	System.out.println(cw.agentLocations.getHaloGrid().getLocalBounds());
     	
     	double xJTS = coordJTS.x - cw.MBR.getMinX();
     	double yJTS = coordJTS.y - cw.MBR.getMinY();
@@ -226,7 +254,10 @@ public class DAgent extends DSteppable {//add have id
     	//TODO actually move the agent?
     	Double2D oldLoc = loc;
     	loc = jtsToPartitionSpace(state, c);
-    	System.out.println("move agent: " + oldLoc + " -> " + loc);
+//    	System.out.println("move agent: " + oldLoc + " -> " + loc);
+//    	System.out.println("partition getWorldBounds: " + state.getPartition().getWorldBounds());
+//    	System.out.println("partition getHaloBounds: " + state.getPartition().getHaloBounds());
+//    	System.out.println("partition getLocalBounds: " + state.getPartition().getLocalBounds());
 
         pointMoveTo.setCoordinate(c);
         getGeoLocation().getGeometry().apply(pointMoveTo);
@@ -241,7 +272,7 @@ public class DAgent extends DSteppable {//add have id
 //        campState.agents.setGeometryLocation(getGeometry(), pointMoveTo);
         
         //print to see if scheduled
-        System.out.println("pid: " + this.firstpid + ": " + ((DCampusWorld)state).getPartition().getPID());
+//        System.out.println("pid: " + this.firstpid + ": " + ((DCampusWorld)state).getPartition().getPID());
     }
 
 

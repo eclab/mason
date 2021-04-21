@@ -35,9 +35,9 @@ public class DCampusWorld extends DSimState {
     /** How many agents in the simulation */
 	public int numAgents = 1000;
 
-    public int discretization;
+    public final int discretization = 6;
     /** Distributed locations of each agent across all partitions **/
-    public DContinuous2D<DAgent> agentLocations;
+    public final DContinuous2D<DAgent> agentLocations = new DContinuous2D<>(discretization, this);
     // serializable ^
 	
     // TODO NOT distributed. Load these remotely in a distributed way.
@@ -47,7 +47,7 @@ public class DCampusWorld extends DSimState {
     public GeomVectorField buildings = new GeomVectorField(DCampusWorld.width,DCampusWorld.height);
 
     // where all the agents live
-    public GeomVectorField agents = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
+//    public GeomVectorField agents = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
     
     // Stores the walkway network connections.  We represent the walkways as a PlanarGraph, which allows
     // easy selection of new waypoints for the agents.
@@ -69,22 +69,22 @@ public class DCampusWorld extends DSimState {
      * Add agents to the simulation and to the agent GeomVectorField. Note that
      * each agent does not have any attributes.
      */
-    void addAgents()
-    {
-        for (int i = 0; i < numAgents; i++)
-        {
-            final DAgent a = new DAgent(this);
-
-            agents.addGeometry(a.getGeoLocation());
-
-            schedule.scheduleRepeating(a);
-
-            // we can set the userData field of any MasonGeometry.  If the userData is inspectable,
-            // then the inspector will show this information
-            //if (i == 10)
-            //	buildings.getGeometry("CODE", "JC").setUserData(a);
-        }
-    }
+//    void addAgents()
+//    {
+//        for (int i = 0; i < numAgents; i++)
+//        {
+//            final DAgent a = new DAgent(this);
+//
+//            agents.addGeometry(a.getGeoLocation());
+//
+//            schedule.scheduleRepeating(a);
+//
+//            // we can set the userData field of any MasonGeometry.  If the userData is inspectable,
+//            // then the inspector will show this information
+//            //if (i == 10)
+//            //	buildings.getGeometry("CODE", "JC").setUserData(a);
+//        }
+//    }
 
     @Override
     public void finish()
@@ -93,7 +93,7 @@ public class DCampusWorld extends DSimState {
 
         // Save the agents layer, which has no corresponding originating
         // shape file.
-        ShapeFileExporter.write("agents", agents);
+//        ShapeFileExporter.write("agents", agents);
     }
 
     
@@ -154,11 +154,11 @@ public class DCampusWorld extends DSimState {
             addIntersectionNodes(network.nodeIterator(), junctions);
             
             
-            // Distributed locations
-            //TODO how many subdivisions?
-            discretization = 6;
-//            agentLocations = new DContinuous2D<DMasonPoint>(getPartitioning(), aoi[0], discretization, this);
-            agentLocations = new DContinuous2D<>(discretization, this);
+//            // Distributed locations
+//            //TODO how many subdivisions?
+//            discretization = 6;
+////            agentLocations = new DContinuous2D<DMasonPoint>(getPartitioning(), aoi[0], discretization, this);
+//            agentLocations = new DContinuous2D<>(discretization, this);
             
             System.out.println("MBR: " + MBR);
         } catch (final Exception ex)
@@ -200,10 +200,11 @@ public class DCampusWorld extends DSimState {
         
         for (int i = 0; i < numAgents; i++)
         {
+//        	System.out.println("add agent # " + i);
             final DAgent a = new DAgent(this);
 //            System.out.println(a);
             //TODO? agents.addGeometry(g);
-            agentLocations.addAgent(a.loc, a, 0, 1);
+//            agentLocations.addAgent(a.loc, a, 0, 1);
             
 //            schedule.scheduleRepeating(new DSteppable() {
 //				public void step(SimState state) {
@@ -216,7 +217,7 @@ public class DCampusWorld extends DSimState {
         
         // Ensure that the spatial index is made aware of the new agent
         // positions.  Scheduled to guaranteed to run after all agents moved.
-        schedule.scheduleRepeating( agents.scheduleSpatialIndexUpdater(), Integer.MAX_VALUE, 1.0);
+//        schedule.scheduleRepeating( agents.scheduleSpatialIndexUpdater(), Integer.MAX_VALUE, 1.0);
 
 //      for(int x=0;x<size;x++)
 //          {
