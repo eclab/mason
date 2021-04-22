@@ -13,12 +13,8 @@ import com.vividsolutions.jts.planargraph.Node;
 
 import sim.app.geo.dcampusworld.data.DCampusWorldData;
 import sim.engine.DSimState;
-import sim.engine.DSteppable;
-import sim.engine.SimState;
-import sim.engine.Steppable;
 import sim.field.continuous.DContinuous2D;
 import sim.field.geo.GeomVectorField;
-import sim.io.geo.ShapeFileExporter;
 import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
 import sim.util.geo.GeomPlanarGraph;
@@ -36,11 +32,12 @@ public class DCampusWorld extends DSimState {
 	public int numAgents = 1000;
 
     public final int discretization = 6;
+    
     /** Distributed locations of each agent across all partitions **/
     public final DContinuous2D<DAgent> agentLocations = new DContinuous2D<>(discretization, this);
     // serializable ^
 	
-    // TODO NOT distributed. Load these remotely in a distributed way.
+    // NOT distributed. Load these remotely in a distributed way.
     /** Fields to hold the associated GIS information */
     public GeomVectorField walkways = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
     public GeomVectorField roads = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
@@ -65,41 +62,11 @@ public class DCampusWorld extends DSimState {
     public int getNumAgents() { return numAgents; }
     public void setNumAgents(final int n) { if (n > 0) numAgents = n; }
 
-    /**
-     * Add agents to the simulation and to the agent GeomVectorField. Note that
-     * each agent does not have any attributes.
-     */
-//    void addAgents()
-//    {
-//        for (int i = 0; i < numAgents; i++)
-//        {
-//            final DAgent a = new DAgent(this);
-//
-//            agents.addGeometry(a.getGeoLocation());
-//
-//            schedule.scheduleRepeating(a);
-//
-//            // we can set the userData field of any MasonGeometry.  If the userData is inspectable,
-//            // then the inspector will show this information
-//            //if (i == 10)
-//            //	buildings.getGeometry("CODE", "JC").setUserData(a);
-//        }
-//    }
-
     @Override
     public void finish()
     {
         super.finish();
-
-        // Save the agents layer, which has no corresponding originating
-        // shape file.
-//        ShapeFileExporter.write("agents", agents);
     }
-
-    
-//    protected void startRoot() {        
-//    	sendRootInfoToAll("agents", agentLocations);
-//    }
 
     void loadStatic() {
         try
@@ -112,18 +79,14 @@ public class DCampusWorld extends DSimState {
             masked.add("NAME");
             masked.add("FLOORS");
             masked.add("ADDR_NUM");
-
-//                System.out.println(System.getProperty("user.dir"));
-
+            
             // read in the buildings GIS file
-
             final URL bldgGeometry = DCampusWorldData.class.getResource("bldg.shp");
             final URL bldgDB = DCampusWorldData.class.getResource("bldg.dbf");
             ShapeFileImporter.read(bldgGeometry, bldgDB, buildings, masked);
 
             // We want to save the MBR so that we can ensure that all GeomFields
             // cover identical area.
-//            final Envelope MBR = buildings.getMBR();
             MBR = buildings.getMBR();
 
             System.out.println("reading roads layer");
@@ -152,15 +115,8 @@ public class DCampusWorld extends DSimState {
             network.createFromGeomField(walkways);
 
             addIntersectionNodes(network.nodeIterator(), junctions);
-            
-            
-//            // Distributed locations
-//            //TODO how many subdivisions?
-//            discretization = 6;
-////            agentLocations = new DContinuous2D<DMasonPoint>(getPartitioning(), aoi[0], discretization, this);
-//            agentLocations = new DContinuous2D<>(discretization, this);
-            
-            System.out.println("MBR: " + MBR);
+
+//            System.out.println("MBR: " + MBR);
         } catch (final Exception ex)
         {
             Logger.getLogger(DCampusWorld.class.getName()).log(Level.SEVERE, null, ex);
@@ -175,57 +131,11 @@ public class DCampusWorld extends DSimState {
         // dump static info to each partition here at start of sim instead of in constructor
         loadStatic();
         
-        //TODO???
-//        // add agents
-//        agents.clear(); // clear any existing agents from previous runs
-//        addAgents();
-//        agents.setMBR(buildings.getMBR());
- 
-//        for (Object geom : agents.getGeometries()) {
-//        	MasonGeometry masonGeom = (MasonGeometry) geom;
-////        	Point centroid = agents.getGeometryLocation(masonGeom);
-//        	Point centroid = masonGeom.geometry.getCentroid();
-//        	Coordinate[] coords = centroid.getCoordinates();
-//        	assert(coords.length == 1); // only 1 point
-//            Double2D location = new Double2D(coords[0].x, coords[0].y);
-//            
-//            // Get all local agents, move them and schedule them
-//            if (partition.getBounds().contains(location)) {
-//            	//TODO agentLocations.addLocal(location, masonGeom);
-//            }
-//
-//            // TODO unhook AGENTS from old schedule and reschedule to new processor
-//        }
-        
-        
+        // add agents
         for (int i = 0; i < numAgents; i++)
         {
-//        	System.out.println("add agent # " + i);
-            final DAgent a = new DAgent(this);
-//            System.out.println(a);
-            //TODO? agents.addGeometry(g);
-//            agentLocations.addAgent(a.loc, a, 0, 1);
-            
-//            schedule.scheduleRepeating(new DSteppable() {
-//				public void step(SimState state) {
-//					
-//				}
-//            });            
+            final DAgent a = new DAgent(this);         
         }
-        
-        //TODO distributed hashmap? Carmine et al
-        
-        // Ensure that the spatial index is made aware of the new agent
-        // positions.  Scheduled to guaranteed to run after all agents moved.
-//        schedule.scheduleRepeating( agents.scheduleSpatialIndexUpdater(), Integer.MAX_VALUE, 1.0);
-
-//      for(int x=0;x<size;x++)
-//          {
-//          Double2D location = new Double2D(_,_);
-//          DAgent agent = new DAgent(location);
-//          agent.setObjectLocation(agent, location);
-//          schedule.scheduleRepeating(agent);
-//          }
     }
 
 
@@ -242,7 +152,7 @@ public class DCampusWorld extends DSimState {
         final GeometryFactory fact = new GeometryFactory();
         Coordinate coord = null;
         Point point = null;
-        int counter = 0;
+//        int counter = 0;
 
         while (nodeIterator.hasNext())
             {
@@ -251,7 +161,7 @@ public class DCampusWorld extends DSimState {
                 point = fact.createPoint(coord);
 
                 junctions.addGeometry(new MasonGeometry(point));
-                counter++;
+//                counter++;
             }
     }
 

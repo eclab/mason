@@ -16,7 +16,7 @@ import sim.util.geo.GeomPlanarGraphEdge;
 import sim.util.geo.MasonGeometry;
 import sim.util.geo.PointMoveTo;
 
-public class DAgent extends DSteppable {//add have id
+public class DAgent extends DSteppable {
 
     private static final long serialVersionUID = -1113018274619047013L;
     // point that denotes agent's position
@@ -41,7 +41,6 @@ public class DAgent extends DSteppable {//add have id
 
     public DAgent(DCampusWorld state, Double2D loc) {
         this.loc = loc;
-//        System.out.println(loc);
 
         location = new MasonGeometry(fact.createPoint(new Coordinate(loc.x, loc.y)));
         location.isMovable = true;
@@ -171,8 +170,6 @@ public class DAgent extends DSteppable {//add have id
         }
     }
 
-
-
     /**
      * have the agent move along new route
      *
@@ -226,11 +223,6 @@ public class DAgent extends DSteppable {//add have id
     }
 
     Double2D jtsToPartitionSpace(DCampusWorld cw, Coordinate coordJTS) {
-//    	System.out.println("moveTo:");
-//    	System.out.println(cw.agentLocations.getHaloGrid());
-//    	System.out.println(cw.agentLocations.getHaloGrid().getHaloBounds());
-//    	System.out.println(cw.agentLocations.getHaloGrid().getLocalBounds());
-    	
     	double xJTS = coordJTS.x - cw.MBR.getMinX();
     	double yJTS = coordJTS.y - cw.MBR.getMinY();
 //    	System.out.println("x,y JTS: " + xJTS + ", " + yJTS);
@@ -244,15 +236,13 @@ public class DAgent extends DSteppable {//add have id
 //    	System.out.println("partition x,y: " + partX + ", " + partY);
 
     	return new Double2D(partX, partY);
-//    	return new Double2D(coordJTS.x, coordJTS.y);
     }
     
     // move the agent to the given coordinates
     public void moveTo(DCampusWorld state, Coordinate c)
     {
 //    	System.out.println("moveTo coordinate: " + c);
-    	//TODO actually move the agent?
-    	Double2D oldLoc = loc;
+//    	Double2D oldLoc = loc;
     	loc = jtsToPartitionSpace(state, c);
 //    	System.out.println("move agent: " + oldLoc + " -> " + loc);
 //    	System.out.println("partition getWorldBounds: " + state.getPartition().getWorldBounds());
