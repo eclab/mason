@@ -29,7 +29,7 @@ public class DCampusWorld extends DSimState {
 	public Envelope MBR;
 
     /** How many agents in the simulation */
-	public int numAgents = 1000;
+	public final int numAgents = 10000;
 
     public final int discretization = 6;
     
@@ -60,13 +60,11 @@ public class DCampusWorld extends DSimState {
 
 
     public int getNumAgents() { return numAgents; }
-    public void setNumAgents(final int n) { if (n > 0) numAgents = n; }
 
-    @Override
-    public void finish()
-    {
-        super.finish();
-    }
+//    public void finish()
+//    {
+//        super.finish();
+//    }
 
     void loadStatic() {
         try
@@ -131,11 +129,9 @@ public class DCampusWorld extends DSimState {
         // dump static info to each partition here at start of sim instead of in constructor
         loadStatic();
         
-        // add agents
+        // add agents (when created, the agent adds itself to agentLocations)
         for (int i = 0; i < numAgents; i++)
-        {
-            final DAgent a = new DAgent(this);         
-        }
+            new DAgent(this);         
     }
 
 
@@ -167,6 +163,6 @@ public class DCampusWorld extends DSimState {
 
     public static void main(final String[] args) {
     	doLoopDistributed(DCampusWorld.class, args);
-        System.exit(0);
-    }
+		System.exit(0);
+	}
 }
