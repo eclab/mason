@@ -20,7 +20,7 @@ public class DAgent extends DSteppable {
 
 	private static final long serialVersionUID = -1113018274619047013L;
 	// point that denotes agent's position
-	private transient MasonGeometry geometry = null;
+	private transient MasonGeometry agentGeometry = null;
 	Double2D jtsCoordinate;
 	// The base speed of the agent.
 	private double basemoveRate = 1.0;
@@ -40,7 +40,7 @@ public class DAgent extends DSteppable {
 	static private GeometryFactory fact = new GeometryFactory();
 
 	public DAgent(DCampusWorld state, Double2D loc) {
-		geometry = new MasonGeometry(fact.createPoint(new Coordinate(loc.x, loc.y)));
+		agentGeometry = new MasonGeometry(fact.createPoint(new Coordinate(loc.x, loc.y)));
 		// Set up attributes for this agent
 		if (state.random.nextBoolean()) {
 			type = "STUDENT";
@@ -51,13 +51,12 @@ public class DAgent extends DSteppable {
 		}
 		// Not everyone walks at the same speed
 		basemoveRate *= Math.abs(state.random.nextGaussian());
-		
-		geometry.isMovable = true;
-		geometry.addStringAttribute("TYPE", type);
-		geometry.addIntegerAttribute("AGE", age);
-		geometry.addDoubleAttribute("MOVE RATE", basemoveRate);
-		
-		
+
+		agentGeometry.isMovable = true;
+		agentGeometry.addStringAttribute("TYPE", type);
+		agentGeometry.addIntegerAttribute("AGE", age);
+		agentGeometry.addDoubleAttribute("MOVE RATE", basemoveRate);
+
 		// Now set the location of the agent
 		while (true) {
 			// Find the first line segment and set our position over the start coordinate.
@@ -83,15 +82,15 @@ public class DAgent extends DSteppable {
 	/**
 	 * @return geometry representing agent location
 	 */
-	public MasonGeometry getGeoLocation() {
-		if (geometry == null) {
-			geometry = new MasonGeometry(fact.createPoint(new Coordinate(jtsCoordinate.x, jtsCoordinate.y)));
-			geometry.isMovable = true;
-			geometry.addStringAttribute("TYPE", type);
-			geometry.addIntegerAttribute("AGE", age);
-			geometry.addDoubleAttribute("MOVE RATE", basemoveRate);
+	public MasonGeometry getAgentGeometry() {
+		if (agentGeometry == null) {
+			agentGeometry = new MasonGeometry(fact.createPoint(new Coordinate(jtsCoordinate.x, jtsCoordinate.y)));
+			agentGeometry.isMovable = true;
+			agentGeometry.addStringAttribute("TYPE", type);
+			agentGeometry.addIntegerAttribute("AGE", age);
+			agentGeometry.addDoubleAttribute("MOVE RATE", basemoveRate);
 		}
-		return geometry;
+		return agentGeometry;
 	}
 
 	/**
@@ -110,7 +109,8 @@ public class DAgent extends DSteppable {
 
 	/** @return string indicating whether we are "FACULTY" or a "STUDENT" */
 	public String getType() {
-		return getGeoLocation().getStringAttribute("TYPE");
+		return type;
+//		return getAgentGeometry().getStringAttribute("TYPE");
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class DAgent extends DSteppable {
 	 */
 	private void findNewPath(DCampusWorld state) {
 		// find all the adjacent junctions
-		Node currentJunction = state.network.findNode(getGeoLocation().getGeometry().getCoordinate());
+		Node currentJunction = state.network.findNode(getAgentGeometry().getGeometry().getCoordinate());
 
 		if (currentJunction != null) {
 			DirectedEdgeStar directedEdgeStar = currentJunction.getOutEdges();
@@ -135,14 +135,13 @@ public class DAgent extends DSteppable {
 				Point startPoint = newRoute.getStartPoint();
 				Point endPoint = newRoute.getEndPoint();
 
-				if (startPoint.equals(getGeoLocation().geometry)) {
+				if (startPoint.equals(getAgentGeometry().geometry)) {
 					setNewRoute(state, newRoute, true);
 				} else {
-					if (endPoint.equals(getGeoLocation().geometry)) {
+					if (endPoint.equals(getAgentGeometry().geometry))
 						setNewRoute(state, newRoute, false);
-					} else {
+					else
 						System.err.println("Where am I?");
-					}
 				}
 			}
 		}
@@ -202,27 +201,32 @@ public class DAgent extends DSteppable {
 
 	// move the agent to the given coordinates
 	public void moveTo(DCampusWorld state, Coordinate c) {
-//    	System.out.println("moveTo coordinate: " + c);
-//    	Double2D oldLoc = loc;
 		jtsCoordinate = new Double2D(c.x, c.y);
+
+//    	System.out.println("moveTo coordinate: " + c);
 //    	System.out.println("move agent: " + oldLoc + " -> " + loc);
 //    	System.out.println("partition getWorldBounds: " + state.getPartition().getWorldBounds());
 //    	System.out.println("partition getHaloBounds: " + state.getPartition().getHaloBounds());
 //    	System.out.println("partition getLocalBounds: " + state.getPartition().getLocalBounds());
 
-		pointMoveTo.setCoordinate(c);
-		getGeoLocation().getGeometry().apply(pointMoveTo);
-		getGeoLocation().geometry.geometryChanged();
+		Double2D toP = jtsToPartitionSpace(state, c);
 
-		state.agentLocations.moveAgent(jtsToPartitionSpace(state, c), this);
+		// TODO: how slow is it??
+		if (state.agentLocations.isLocal(toP)) {
+			// Need to migrate
+			state.agents.removeGeometry(getAgentGeometry());
+		} else {
+			// No need to migrate
+			pointMoveTo.setCoordinate(c);
+			getAgentGeometry().getGeometry().apply(pointMoveTo);
+			getAgentGeometry().geometry.geometryChanged();
+			state.agents.setGeometryLocation(getAgentGeometry(), pointMoveTo);
+		}
+		state.agentLocations.moveAgent(toP, this);
 	}
 
 	public void step(SimState state) {
 		move(state);
-//        ((DCampusWorld)state).agents.setGeometryLocation(geometry, pointMoveTo);
-
-		// print to see if scheduled
-//        System.out.println("pid: " + this.firstpid + ": " + ((DCampusWorld)state).getPartition().getPID());
 	}
 
 	/**
@@ -235,11 +239,10 @@ public class DAgent extends DSteppable {
 	 */
 	private void move(SimState state) {
 		// if we're not at a junction move along the current segment
-		if (!arrived()) {
+		if (!arrived())
 			moveAlongPath((DCampusWorld) state);
-		} else {
+		else
 			findNewPath((DCampusWorld) state);
-		}
 	}
 
 	// move agent along current line segment
@@ -269,11 +272,10 @@ public class DAgent extends DSteppable {
 		moveTo(state, currentPos);
 	}
 
-	@Override
 	public String toString() {
-		return "DAgent [jtsCoordinate=" + jtsCoordinate + ", basemoveRate=" + basemoveRate + ", moveRate=" + moveRate + ", segment="
-				+ segment + ", startIndex=" + startIndex + ", endIndex=" + endIndex + ", currentIndex=" + currentIndex
-				+ ", pointMoveTo=" + pointMoveTo + ", type=" + type + ", age=" + age + "]";
+		return "DAgent [jtsCoordinate=" + jtsCoordinate + ", basemoveRate=" + basemoveRate + ", moveRate=" + moveRate
+				+ ", segment=" + segment + ", startIndex=" + startIndex + ", endIndex=" + endIndex + ", currentIndex="
+				+ currentIndex + ", pointMoveTo=" + pointMoveTo + ", type=" + type + ", age=" + age + "]";
 	}
 
 }

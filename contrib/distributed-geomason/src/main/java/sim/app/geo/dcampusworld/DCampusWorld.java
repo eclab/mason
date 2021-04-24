@@ -44,7 +44,7 @@ public class DCampusWorld extends DSimState {
     public GeomVectorField buildings = new GeomVectorField(DCampusWorld.width,DCampusWorld.height);
 
     // where all the agents live
-//    public GeomVectorField agents = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
+    public GeomVectorField agents = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
     
     // Stores the walkway network connections.  We represent the walkways as a PlanarGraph, which allows
     // easy selection of new waypoints for the agents.
