@@ -21,148 +21,134 @@ import sim.util.geo.GeomPlanarGraph;
 import sim.util.geo.MasonGeometry;
 
 public class DCampusWorld extends DSimState {
-    private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
-    public static final int width = 300;
-    public static final int height = 300;
-	public final static int aoi = 6;//TODO what value???
+	public static final int width = 300;
+	public static final int height = 300;
+	public final static int aoi = 6;// TODO what value???
+	public final static int discretization = 6;
+	public final static int numAgents = 1000;
+
 	public Envelope MBR;
 
-    /** How many agents in the simulation */
-	public final int numAgents = 10000;
+	/** Distributed locations of each agent across all partitions **/
+	public final DContinuous2D<DAgent> agentLocations = new DContinuous2D<>(discretization, this);
 
-    public final int discretization = 6;
-    
-    /** Distributed locations of each agent across all partitions **/
-    public final DContinuous2D<DAgent> agentLocations = new DContinuous2D<>(discretization, this);
-    // serializable ^
-	
-    // NOT distributed. Load these remotely in a distributed way.
-    /** Fields to hold the associated GIS information */
-    public GeomVectorField walkways = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
-    public GeomVectorField roads = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
-    public GeomVectorField buildings = new GeomVectorField(DCampusWorld.width,DCampusWorld.height);
+	// NOT distributed. Load these remotely in a distributed way.
+	/** Fields to hold the associated GIS information */
+	public GeomVectorField walkways = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
+	public GeomVectorField roads = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
+	public GeomVectorField buildings = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
 
-    // where all the agents live
-    public GeomVectorField agents = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
-    
-    // Stores the walkway network connections.  We represent the walkways as a PlanarGraph, which allows
-    // easy selection of new waypoints for the agents.
-    public GeomPlanarGraph network = new GeomPlanarGraph();
-    public GeomVectorField junctions = new GeomVectorField(DCampusWorld.width, DCampusWorld.height); // nodes for intersections
+	// where all the agents live
+	public GeomVectorField agents = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
 
+	// Stores the walkway network connections. We represent the walkways as a
+	// PlanarGraph, which allows
+	// easy selection of new waypoints for the agents.
+	public GeomPlanarGraph network = new GeomPlanarGraph();
+	public GeomVectorField junctions = new GeomVectorField(DCampusWorld.width, DCampusWorld.height); // nodes for intersections
 
+	public DCampusWorld(final long seed) {
+		super(seed, width, height, aoi);
+	}
 
-    public DCampusWorld(final long seed)
-    {
-        super(seed, width, height, aoi);
-    }
+	public int getNumAgents() {
+		return numAgents;
+	}
 
+	void loadStatic() {
+		try {
+			System.out.println("reading buildings layer");
 
-    public int getNumAgents() { return numAgents; }
+			// this Bag lets us only display certain fields in the Inspector, the non-masked
+			// fields
+			// are not associated with the object at all
+			final Bag masked = new Bag();
+			masked.add("NAME");
+			masked.add("FLOORS");
+			masked.add("ADDR_NUM");
 
-//    public void finish()
-//    {
-//        super.finish();
-//    }
+			// read in the buildings GIS file
+			final URL bldgGeometry = DCampusWorldData.class.getResource("bldg.shp");
+			final URL bldgDB = DCampusWorldData.class.getResource("bldg.dbf");
+			ShapeFileImporter.read(bldgGeometry, bldgDB, buildings, masked);
 
-    void loadStatic() {
-        try
-        {
-            System.out.println("reading buildings layer");
+			// We want to save the MBR so that we can ensure that all GeomFields
+			// cover identical area.
+			MBR = buildings.getMBR();
 
-            // this Bag lets us only display certain fields in the Inspector, the non-masked fields
-            // are not associated with the object at all
-            final Bag masked = new Bag();
-            masked.add("NAME");
-            masked.add("FLOORS");
-            masked.add("ADDR_NUM");
-            
-            // read in the buildings GIS file
-            final URL bldgGeometry = DCampusWorldData.class.getResource("bldg.shp");
-            final URL bldgDB = DCampusWorldData.class.getResource("bldg.dbf");
-            ShapeFileImporter.read(bldgGeometry, bldgDB, buildings, masked);
+			System.out.println("reading roads layer");
 
-            // We want to save the MBR so that we can ensure that all GeomFields
-            // cover identical area.
-            MBR = buildings.getMBR();
+			final URL roadGeometry = DCampusWorldData.class.getResource("roads.shp");
+			final URL roadDB = DCampusWorldData.class.getResource("roads.dbf");
+			ShapeFileImporter.read(roadGeometry, roadDB, roads);
 
-            System.out.println("reading roads layer");
+			MBR.expandToInclude(roads.getMBR());
 
-            final URL roadGeometry = DCampusWorldData.class.getResource("roads.shp");
-            final URL roadDB = DCampusWorldData.class.getResource("roads.dbf");
-            ShapeFileImporter.read(roadGeometry, roadDB, roads);
+			System.out.println("reading walkways layer");
 
-            MBR.expandToInclude(roads.getMBR());
+			final URL walkWayGeometry = DCampusWorldData.class.getResource("walk_ways.shp");
+			final URL walkWayDB = DCampusWorldData.class.getResource("walk_ways.dbf");
+			ShapeFileImporter.read(walkWayGeometry, walkWayDB, walkways);
 
-            System.out.println("reading walkways layer");
+			MBR.expandToInclude(walkways.getMBR());
 
-            final URL walkWayGeometry = DCampusWorldData.class.getResource("walk_ways.shp");
-            final URL walkWayDB = DCampusWorldData.class.getResource("walk_ways.dbf");
-            ShapeFileImporter.read(walkWayGeometry, walkWayDB, walkways);
+			System.out.println("Done reading data");
 
-            MBR.expandToInclude(walkways.getMBR());
+			// Now synchronize the MBR for all GeomFields to ensure they cover the same area
+			buildings.setMBR(MBR);
+			roads.setMBR(MBR);
+			walkways.setMBR(MBR);
 
-            System.out.println("Done reading data");
+			network.createFromGeomField(walkways);
 
-            // Now synchronize the MBR for all GeomFields to ensure they cover the same area
-            buildings.setMBR(MBR);
-            roads.setMBR(MBR);
-            walkways.setMBR(MBR);
+			addIntersectionNodes(network.nodeIterator(), junctions);
 
-            network.createFromGeomField(walkways);
+		} catch (final Exception ex) {
+			Logger.getLogger(DCampusWorld.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
 
-            addIntersectionNodes(network.nodeIterator(), junctions);
+	@Override
+	public void start() {
+		super.start();
 
-//            System.out.println("MBR: " + MBR);
-        } catch (final Exception ex)
-        {
-            Logger.getLogger(DCampusWorld.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    @Override
-    public void start()
-    {
-        super.start();
-        
-        // dump static info to each partition here at start of sim instead of in constructor
-        loadStatic();
-        
-        // add agents (when created, the agent adds itself to agentLocations)
-        for (int i = 0; i < numAgents; i++)
-            new DAgent(this);         
-    }
+		// dump static info to each partition here at start of sim
+		loadStatic();
 
+		// add agents (when created, the agent adds itself to agentLocations)
+		for (int i = 0; i < numAgents; i++)
+			new DAgent(this);
+	}
 
-
-    /** adds nodes corresponding to road intersections to GeomVectorField
-     *
-     * @param nodeIterator Points to first node
-     * @param intersections GeomVectorField containing intersection geometry
-     *
-     * Nodes will belong to a planar graph populated from LineString network.
-     */
-    private void addIntersectionNodes(final Iterator nodeIterator, final GeomVectorField intersections)
-    {
-        final GeometryFactory fact = new GeometryFactory();
-        Coordinate coord = null;
-        Point point = null;
+	/**
+	 * adds nodes corresponding to road intersections to GeomVectorField
+	 *
+	 * @param nodeIterator  Points to first node
+	 * @param intersections GeomVectorField containing intersection geometry
+	 *
+	 *                      Nodes will belong to a planar graph populated from
+	 *                      LineString network.
+	 */
+	private void addIntersectionNodes(final Iterator nodeIterator, final GeomVectorField intersections) {
+		final GeometryFactory fact = new GeometryFactory();
+		Coordinate coord = null;
+		Point point = null;
 //        int counter = 0;
 
-        while (nodeIterator.hasNext())
-            {
-                final Node node = (Node) nodeIterator.next();
-                coord = node.getCoordinate();
-                point = fact.createPoint(coord);
+		while (nodeIterator.hasNext()) {
+			final Node node = (Node) nodeIterator.next();
+			coord = node.getCoordinate();
+			point = fact.createPoint(coord);
 
-                junctions.addGeometry(new MasonGeometry(point));
+			junctions.addGeometry(new MasonGeometry(point));
 //                counter++;
-            }
-    }
+		}
+	}
 
-    public static void main(final String[] args) {
-    	doLoopDistributed(DCampusWorld.class, args);
+	public static void main(final String[] args) {
+		doLoopDistributed(DCampusWorld.class, args);
 		System.exit(0);
 	}
 }

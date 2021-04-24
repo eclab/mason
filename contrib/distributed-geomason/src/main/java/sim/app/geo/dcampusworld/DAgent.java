@@ -29,18 +29,20 @@ public class DAgent extends DSteppable {
 	private double moveRate = basemoveRate;
 	// Used by agent to walk along line segment; assigned in setNewRoute()
 	private transient LengthIndexedLine segment = null;
+	int walkway;
+
 	double startIndex = 0.0; // start position of current line
 	double endIndex = 0.0; // end position of current line
 	double currentIndex = 0.0; // current location along line
 	PointMoveTo pointMoveTo = new PointMoveTo();
 
-	String type;
-	int age;
+	public final String type;
+	public final int age;
 
 	static private GeometryFactory fact = new GeometryFactory();
 
-	public DAgent(DCampusWorld state, Double2D loc) {
-		agentGeometry = new MasonGeometry(fact.createPoint(new Coordinate(loc.x, loc.y)));
+	public DAgent(DCampusWorld state) {
+		agentGeometry = new MasonGeometry(fact.createPoint(new Coordinate()));
 		// Set up attributes for this agent
 		if (state.random.nextBoolean()) {
 			type = "STUDENT";
@@ -60,23 +62,18 @@ public class DAgent extends DSteppable {
 		// Now set the location of the agent
 		while (true) {
 			// Find the first line segment and set our position over the start coordinate.
-			int walkway = state.random.nextInt(state.walkways.getGeometries().numObjs);
+			walkway = state.random.nextInt(state.walkways.getGeometries().numObjs);
 			MasonGeometry mg = (MasonGeometry) state.walkways.getGeometries().objs[walkway];
-			Coordinate c = initiateRoute(state, (LineString) mg.getGeometry());
-			Double2D initialLoc = this.jtsToPartitionSpace(state, c);
+			Coordinate c = initiateRoute((LineString) mg.getGeometry());
+			Double2D initialLoc = jtsToPartitionSpace(state, c);
 			if (state.agentLocations.isLocal(initialLoc)) {
 				// agent needs to be added to storage before moving
-				((DCampusWorld) state).agentLocations.addAgent(initialLoc, this, 0, 1);
-				moveTo((DCampusWorld) state, c);
+				state.agentLocations.addAgent(initialLoc, this, 0, 1);
+				moveTo(state, c);
 				jtsCoordinate = new Double2D(c.x, c.y);
 				break;
 			}
 		}
-
-	}
-
-	public DAgent(DCampusWorld state) {
-		this(state, new Double2D(10, 10));
 	}
 
 	/**
@@ -99,18 +96,12 @@ public class DAgent extends DSteppable {
 	private boolean arrived() {
 		// If we have a negative move rate the agent is moving from the end to
 		// the start, else the agent is moving in the opposite direction.
-		if ((moveRate > 0 && currentIndex >= endIndex)
-				|| (moveRate < 0 && currentIndex <= startIndex)) {
-			return true;
-		}
-
-		return false;
+		return (moveRate > 0 && currentIndex >= endIndex) || (moveRate < 0 && currentIndex <= startIndex);
 	}
 
 	/** @return string indicating whether we are "FACULTY" or a "STUDENT" */
 	public String getType() {
 		return type;
-//		return getAgentGeometry().getStringAttribute("TYPE");
 	}
 
 	/**
@@ -153,7 +144,7 @@ public class DAgent extends DSteppable {
 	 * @param line  defining new route
 	 * @param start true if agent at start of line else agent placed at end
 	 */
-	private void setNewRoute(SimState state, LineString line, boolean start) {
+	private void setNewRoute(DCampusWorld state, LineString line, boolean start) {
 		segment = new LengthIndexedLine(line);
 		startIndex = segment.getStartIndex();
 		endIndex = segment.getEndIndex();
@@ -170,10 +161,10 @@ public class DAgent extends DSteppable {
 			moveRate = -basemoveRate; // ensure we move backward along segment
 		}
 
-		moveTo((DCampusWorld) state, startCoord);
+		moveTo(state, startCoord);
 	}
 
-	private Coordinate initiateRoute(SimState state, LineString line) {
+	private Coordinate initiateRoute(LineString line) {
 		segment = new LengthIndexedLine(line);
 		endIndex = segment.getEndIndex();
 		Coordinate startCoord = segment.extractPoint(startIndex);
@@ -226,7 +217,7 @@ public class DAgent extends DSteppable {
 	}
 
 	public void step(SimState state) {
-		move(state);
+		move((DCampusWorld) state);
 	}
 
 	/**
@@ -237,12 +228,12 @@ public class DAgent extends DSteppable {
 	 *                The agent will randomly select an adjacent junction and then
 	 *                move along the line segment to it. Then it will repeat.
 	 */
-	private void move(SimState state) {
+	private void move(DCampusWorld state) {
 		// if we're not at a junction move along the current segment
 		if (!arrived())
-			moveAlongPath((DCampusWorld) state);
+			moveAlongPath(state);
 		else
-			findNewPath((DCampusWorld) state);
+			findNewPath(state);
 	}
 
 	// move agent along current line segment
@@ -262,9 +253,10 @@ public class DAgent extends DSteppable {
 
 		if (segment == null) {
 			// Find the first line segment and set our position over the start coordinate.
-			int walkway = state.random.nextInt(state.walkways.getGeometries().numObjs);
+//			int walkway = state.random.nextInt(state.walkways.getGeometries().numObjs);
 			MasonGeometry mg = (MasonGeometry) state.walkways.getGeometries().objs[walkway];
-			setNewRoute(state, (LineString) mg.getGeometry(), true);
+			segment = new LengthIndexedLine((LineString) mg.getGeometry());
+//			setNewRoute(state, (LineString) mg.getGeometry(), true);
 		}
 
 		Coordinate currentPos = segment.extractPoint(currentIndex);
