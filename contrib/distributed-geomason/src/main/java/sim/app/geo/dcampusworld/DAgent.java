@@ -17,18 +17,17 @@ import sim.util.geo.MasonGeometry;
 import sim.util.geo.PointMoveTo;
 
 public class DAgent extends DSteppable {
-
-	private static final long serialVersionUID = -1113018274619047013L;
+	static final long serialVersionUID = 1;
 	// point that denotes agent's position
-	private transient MasonGeometry agentGeometry = null;
+	transient MasonGeometry agentGeometry = null;
 	Double2D jtsCoordinate;
 	// The base speed of the agent.
-	private double basemoveRate = 1.0;
+	double basemoveRate = 1.0;
 	// How much to move the agent by in each step(); may become negative if
 	// agent is moving from the end to the start of current line.
-	private double moveRate = basemoveRate;
+	double moveRate = basemoveRate;
 	// Used by agent to walk along line segment; assigned in setNewRoute()
-	private transient LengthIndexedLine segment = null;
+	transient LengthIndexedLine segment = null;
 	int walkway;
 
 	double startIndex = 0.0; // start position of current line
@@ -192,10 +191,11 @@ public class DAgent extends DSteppable {
 
 	// move the agent to the given coordinates
 	public void moveTo(DCampusWorld state, Coordinate c) {
+    	System.out.println("move agent: " + jtsCoordinate + " -> " + new Double2D(c.x, c.y));
+
 		jtsCoordinate = new Double2D(c.x, c.y);
 
 //    	System.out.println("moveTo coordinate: " + c);
-//    	System.out.println("move agent: " + oldLoc + " -> " + loc);
 //    	System.out.println("partition getWorldBounds: " + state.getPartition().getWorldBounds());
 //    	System.out.println("partition getHaloBounds: " + state.getPartition().getHaloBounds());
 //    	System.out.println("partition getLocalBounds: " + state.getPartition().getLocalBounds());

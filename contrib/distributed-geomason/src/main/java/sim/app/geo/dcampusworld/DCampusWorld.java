@@ -27,8 +27,9 @@ public class DCampusWorld extends DSimState {
 	public static final int height = 300;
 	public final static int aoi = 6;// TODO what value???
 	public final static int discretization = 6;
-	public final static int numAgents = 1000;
+	public final static int numAgents = 10;//1000;
 
+	/** Convex hull of all JTS objects **/
 	public Envelope MBR;
 
 	/** Distributed locations of each agent across all partitions **/

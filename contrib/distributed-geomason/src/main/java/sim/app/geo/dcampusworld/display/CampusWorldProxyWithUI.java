@@ -13,14 +13,17 @@ import sim.engine.SimState;
 import sim.portrayal.continuous.ContinuousPortrayal2D;
 import sim.portrayal.geo.GeomPortrayal;
 import sim.portrayal.geo.GeomVectorFieldPortrayal;
+import sim.portrayal.simple.AdjustablePortrayal2D;
+import sim.portrayal.simple.MovablePortrayal2D;
+import sim.portrayal.simple.OvalPortrayal2D;
 
 public class CampusWorldProxyWithUI extends GUIState {
     public Display2D display;
     public JFrame displayFrame;
 	
-    GeomVectorFieldPortrayal walkwaysPortrayal = new GeomVectorFieldPortrayal();
-    GeomVectorFieldPortrayal buildingPortrayal = new GeomVectorFieldPortrayal();
-    GeomVectorFieldPortrayal roadsPortrayal = new GeomVectorFieldPortrayal();
+//    GeomVectorFieldPortrayal walkwaysPortrayal = new GeomVectorFieldPortrayal();
+//    GeomVectorFieldPortrayal buildingPortrayal = new GeomVectorFieldPortrayal();
+//    GeomVectorFieldPortrayal roadsPortrayal = new GeomVectorFieldPortrayal();
 //    RectanglePortrayal2D walkwaysPortrayal = new RectanglePortrayal2D();
 //    RectanglePortrayal2D buildingPortrayal = new RectanglePortrayal2D();
 //    RectanglePortrayal2D roadsPortrayal = new RectanglePortrayal2D();
@@ -60,21 +63,22 @@ public class CampusWorldProxyWithUI extends GUIState {
     }
 	
 	public void setupPortrayals() {
-		CampusWorldProxy world = (CampusWorldProxy) state;
+//        walkwaysPortrayal.setField(world.walkways);
+//        walkwaysPortrayal.setPortrayalForAll(new GeomPortrayal(Color.CYAN,true));
+//
+//        buildingPortrayal.setField(world.buildings);
+//        BuildingLabelPortrayal b = new BuildingLabelPortrayal(new GeomPortrayal(Color.DARK_GRAY,true), Color.BLUE);
+//        buildingPortrayal.setPortrayalForAll(b);
+//        
+//        roadsPortrayal.setField(world.roads);
+//        roadsPortrayal.setPortrayalForAll(new GeomPortrayal(Color.GRAY,true));
 
-        walkwaysPortrayal.setField(world.walkways);
-        walkwaysPortrayal.setPortrayalForAll(new GeomPortrayal(Color.CYAN,true));
-
-        buildingPortrayal.setField(world.buildings);
-        BuildingLabelPortrayal b = new BuildingLabelPortrayal(new GeomPortrayal(Color.DARK_GRAY,true), Color.BLUE);
-        buildingPortrayal.setPortrayalForAll(b);
+        agentPortrayal.setField(((CampusWorldProxy)state).agents);
+//        agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,10.0,true));
+//        agentPortrayal.setPortrayalForAll(new AdjustablePortrayal2D(new MovablePortrayal2D(basic)));
         
-        roadsPortrayal.setField(world.roads);
-        roadsPortrayal.setPortrayalForAll(new GeomPortrayal(Color.GRAY,true));
-
-        agentPortrayal.setField(world.agents);
-        agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,10.0,true));
 //        agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,6.0));
+        agentPortrayal.setPortrayalForAll(new MovablePortrayal2D(new OvalPortrayal2D(Color.RED,6.0)));
 
         // reschedule the displayer
         display.reset();
@@ -91,9 +95,9 @@ public class CampusWorldProxyWithUI extends GUIState {
         display = new Display2D(CampusWorld.WIDTH, CampusWorld.HEIGHT, this);
 		
 		// attach the portrayals
-        display.attach(walkwaysPortrayal, "Walkways", true);
-        display.attach(buildingPortrayal, "Buildings", true);
-        display.attach(roadsPortrayal, "Roads", true);
+//        display.attach(walkwaysPortrayal, "Walkways", true);
+//        display.attach(buildingPortrayal, "Buildings", true);
+//        display.attach(roadsPortrayal, "Roads", true);
         display.attach(agentPortrayal, "Agents", true);
 
 		displayFrame = display.createFrame();
