@@ -16,6 +16,7 @@ import sim.engine.Stoppable;
 import sim.engine.Stopping;
 import sim.field.DAbstractGrid2D;
 import sim.field.HaloGrid2D;
+import sim.app.dflockers.DFlocker;
 import sim.engine.*;
 import sim.field.partitioning.Partition;
 import sim.field.storage.ContinuousStorage;
@@ -173,7 +174,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 				if (oldCell != null)
 					{
 					
-					oldCell.remove(t);
+					oldCell.remove(t.ID());
 					if (oldCell.isEmpty() && storage.removeEmptyBags)
 					{
 						//storage.setCell(oldLoc, null);
@@ -190,9 +191,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 					}
 				
 				
-				//System.out.println("1111: "+getCellLocal(p));
 				newCell.put(t.ID(), t);
-				//System.out.println("2222: "+getCellLocal(p));
 				}
 			
 
@@ -413,6 +412,17 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 				}
 			else
 				{
+				
+				/*
+				System.out.println("moveAgent getHaloGrid: " + getHaloGrid());
+		    	System.out.println("moveAgent getHaloBounds: " + getHaloGrid().getHaloBounds());
+		    	System.out.println("moveAgent getLocalBounds: " + getHaloGrid().getLocalBounds());
+		    	System.out.println("moveAgent m: " + this.storage.m);
+		    	System.out.println("moveAgent cells: " + this.storage.storage);
+		    	
+				System.out.println(agent+" moving remote to "+to);
+				*/
+				
 				// Here we have to move the agent remotely and reschedule him
 				Stopping a = (Stopping) agent;			// may throw exception if it's not really an agent
 				Stoppable stop = a.getStoppable();
@@ -474,6 +484,20 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			}
 		else
 			{
+			/*
+	    	System.out.println("agent: " + agent);
+            System.out.println("agent loc from"+((DFlocker)agent).loc);
+            System.out.println("agent to"+to);
+
+	    	System.out.println("map: " + this.getStorage().getStorageMap());
+
+			System.out.println("moveAgent getHaloGrid: " + getHaloGrid());
+	    	System.out.println("moveAgent getHaloBounds: " + getHaloGrid().getHaloBounds());
+	    	System.out.println("moveAgent getLocalBounds: " + getHaloGrid().getLocalBounds());
+	    	
+	    	System.exit(-1);
+	    	*/
+			
 			throw new RuntimeException("Cannot move agent " + agent + " to " + to + " because agent is not local.");
 			}
 		}

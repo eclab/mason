@@ -311,7 +311,7 @@ public class DSimState extends SimState {
 		}
 
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
-//		loadBalance(); //TODO ENABLE balancing
+		loadBalance(); //TODO ENABLE balancing
 		
 
 		

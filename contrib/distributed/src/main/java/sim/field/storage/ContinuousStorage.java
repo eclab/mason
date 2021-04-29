@@ -262,8 +262,10 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 				HashMap<Long, T> cell = getCelldp(x, y);
 
 				if (cell != null) {
-
 					for (T obj : cell.values()) { // need to offset/discretize!
+						
+
+						
 						if (r.contains(m.get(obj.ID()))) {
 							objs.add(obj);
 						}
