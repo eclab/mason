@@ -6,6 +6,7 @@
 
 package sim.app.dflockers.display;
 import sim.engine.*;
+
 import sim.display.*;
 import sim.portrayal.continuous.*;
 import javax.swing.*;

@@ -144,6 +144,7 @@ public class DFlocker extends DSteppable implements Remote, Oriented2D {
         }
 
 	public void step(final SimState state) {
+		
 		final DFlockers dFlockers = (DFlockers) state;
 
 		final Double2D oldloc = loc;

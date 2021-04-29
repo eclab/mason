@@ -128,6 +128,7 @@ public class SimStateProxy extends SimState
 		{
 		if (pid < 0 || pid > numProcessors) return;
 		processor = pid;
+
 		}
 		
 	/** Returns the current processor to be visualized */
@@ -207,7 +208,7 @@ public class SimStateProxy extends SimState
 						try
 							{
 							// Now we query the remote processor to see if a new step has elapsed
-							VisualizationProcessor vp = visualizationProcessor();
+							VisualizationProcessor vp = visualizationProcessor(); //!
 							
 							if (overview != null)
 								{
@@ -219,10 +220,25 @@ public class SimStateProxy extends SimState
 								{
 								// Okay it's worth updating, so let's grab the data
 								vp.lock();
+								
+
+								//(I did this in the update method)								
+								//for loop: for each processor
+								   //get processorbounds
+								   //determine offsets
+								//get union of bounds (this is what we report to reshapeAndClear()
+								
 								for(int i = 0; i < fields.size(); i++)
 									{
+									//reshapeAndClear()
 									fields.get(i).update(SimStateProxy.this, indices.get(i));
 									}
+								
+								//I did this in the update method
+								//for each field
+								   //for each processor
+								      //change processor
+								        //update field with appropiate offset
 								vp.unlock();
 
 								// === Stats & Debug === //

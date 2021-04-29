@@ -461,7 +461,7 @@ public class DSimState extends SimState {
 				{
 					
 					//don't bother with situations where no point would be valid
-					IntRect2D storage_bound = st.reconstructTrueBounds(i);
+					IntRect2D storage_bound = st.getCellBounds(i);
 					
 
 					
