@@ -63,7 +63,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	}
 	
 	//takes storage index and creates IntRect2D 
-	public IntRect2D reconstructTrueBounds(final int storageInd) {
+	public IntRect2D getCellBounds(final int storageInd) {
 		
          
 		int x_low = storageInd / this.height;
