@@ -591,7 +591,7 @@ public class DSimState extends SimState {
                             */
 							
 							//go backwards, so removing is safe
-							for (int i = ((ArrayList<Serializable>)a_list).size()-1; i > 0; i--) {
+							for (int i = ((ArrayList<Serializable>)a_list).size()-1; i >= 0; i--) {
 
 								Serializable a = ((ArrayList<Serializable>)a_list).get(i);							
 								// if a is stoppable
