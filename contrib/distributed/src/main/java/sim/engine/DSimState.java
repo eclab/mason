@@ -311,7 +311,7 @@ public class DSimState extends SimState {
 		}
 
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
-		loadBalance();
+//		loadBalance(); //TODO ENABLE balancing
 		
 
 		
@@ -1021,9 +1021,14 @@ public class DSimState extends SimState {
 
 			// schedule a zombie agent to prevent that a processor with no agent is stopped
 			// when the simulation is still going on
-			schedule.scheduleRepeating(new DSteppable() {
-				public void step(SimState state) {
-				}
+			schedule.scheduleRepeating(new Stopping() {
+				public void step(SimState state) {}
+
+				public Stoppable getStoppable() { return null; }
+
+				public boolean isStopped() { return false; }
+
+				public void setStoppable(Stoppable stop) {}
 			});
 
 			// On all processors, wait for the start to finish

@@ -199,6 +199,7 @@ public class Agent implements Steppable
 
     public void moveTo(Coordinate c)
     {
+    	System.out.println("moveto: " + c);
         pointMoveTo.setCoordinate(c);
         location.getGeometry().apply(pointMoveTo);
         getGeometry().geometry.geometryChanged();

@@ -147,6 +147,10 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		exists at another local point, it will be removed from that point and moved to the new point. */
 	public void addLocal(Double2D p, T t) 
 		{
+//		System.out.println("agent: " + t);
+//		System.out.println("map: " + this.storage.getStorageMap());
+		
+		
 		if (!isLocal(p)) throwNotLocalException(p);	
 		Double2D oldLoc = getObjectLocationLocal(t);
 		HashMap<Long, T> newCell = getCellLocal(p);
@@ -157,7 +161,8 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			{
 			
 
-			HashMap<Long, T> oldCell = getCellLocal(oldLoc);			
+			HashMap<Long, T> oldCell = getCellLocal(oldLoc);
+//			System.out.println("oldcell: " + oldCell);
 			if (oldCell == newCell)
 				{
 				// don't mess with them
@@ -308,6 +313,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		the local and halo regions; if so, it will be set after the end of this timestep.  */
 	public void addAgent(Double2D p, T agent, double time, int ordering) 
 		{
+//		System.out.println("addAgent");
 		if (agent == null)
 			{
 			throw new RuntimeException("Cannot move null agent to " + p);
@@ -328,6 +334,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		the local and halo regions; if so, it will be set after the end of this timestep.  */
 	public void addAgent(Double2D p, T agent, double time, int ordering, double interval) 
 		{
+//		System.out.println("addAgent");
 		if (agent == null)
 			{
 			throw new RuntimeException("Cannot move null agent to " + p);
@@ -389,7 +396,9 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		If the agent is not presently AT from, then the from location is undisturbed. */
 	public void moveAgent(Double2D to, T agent) 
 		{
-
+//		System.out.println("moveAgent getHaloGrid: " + getHaloGrid());
+//    	System.out.println("moveAgent getHaloBounds: " + getHaloGrid().getHaloBounds());
+//    	System.out.println("moveAgent getLocalBounds: " + getHaloGrid().getLocalBounds());
 		if (agent == null)
 			{
 			throw new RuntimeException("Cannot move null agent to " + to);
