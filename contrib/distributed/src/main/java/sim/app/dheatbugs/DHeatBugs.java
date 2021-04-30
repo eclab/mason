@@ -67,7 +67,7 @@ public class DHeatBugs extends DSimState {
 			System.exit(-1);
 		}
 
-		setBalanceInterval(100000);
+//		balanceInterval = 100000;
 	}
 
 	// Same getters and setters as HeatBugs
@@ -163,11 +163,11 @@ public class DHeatBugs extends DSimState {
 
 		sendRootInfoToAll("agents", agents);
 
-		
 		schedule.scheduleRepeating(new DSteppable() {
 			public void step(SimState state) {
-				
-			}}, 10, 1);
+
+			}
+		}, 10, 1);
 	}
 
 	// @Override
@@ -252,7 +252,7 @@ public class DHeatBugs extends DSimState {
 			}
 		}
 		schedule.scheduleRepeating(Schedule.EPOCH, 1, new Diffuser(), 1);
-		
+
 //		// Stats Example:
 //		schedule.scheduleRepeating(new DSteppable() {
 //			public void step(SimState state) {

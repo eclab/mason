@@ -17,7 +17,7 @@ import sim.util.geo.MasonGeometry;
 import sim.util.geo.PointMoveTo;
 
 public class DAgent extends DSteppable {
-	static final long serialVersionUID = 1;
+	static final long serialVersionUID = 1L;
 	// point that denotes agent's position
 	transient MasonGeometry agentGeometry = null;
 	Double2D jtsCoordinate;
@@ -67,7 +67,7 @@ public class DAgent extends DSteppable {
 			Double2D initialLoc = jtsToPartitionSpace(state, c);
 			if (state.agentLocations.isLocal(initialLoc)) {
 				// agent needs to be added to storage before moving
-				state.agentLocations.addAgent(initialLoc, this, 0, 1);
+				state.agentLocations.addAgent(initialLoc, this, 0, 1, 1);
 				moveTo(state, c);
 				jtsCoordinate = new Double2D(c.x, c.y);
 				break;
@@ -79,7 +79,10 @@ public class DAgent extends DSteppable {
 	 * @return geometry representing agent location
 	 */
 	public MasonGeometry getAgentGeometry() {
-		if (agentGeometry == null) {
+		if (agentGeometry == null ||
+				agentGeometry.getGeometry().getCoordinate().x != jtsCoordinate.x ||
+				agentGeometry.getGeometry().getCoordinate().y != jtsCoordinate.y) {
+
 			agentGeometry = new MasonGeometry(fact.createPoint(new Coordinate(jtsCoordinate.x, jtsCoordinate.y)));
 			agentGeometry.isMovable = true;
 			agentGeometry.addStringAttribute("TYPE", type);
@@ -107,7 +110,9 @@ public class DAgent extends DSteppable {
 	 * randomly selects an adjacent route to traverse
 	 */
 	private void findNewPath(DCampusWorld state) {
+		System.out.println("Finding New Path jtsCoordinate: " + jtsCoordinate + ", agentGeometry" + getAgentGeometry());
 		// find all the adjacent junctions
+
 		Node currentJunction = state.network.findNode(getAgentGeometry().getGeometry().getCoordinate());
 
 		if (currentJunction != null) {
@@ -134,6 +139,8 @@ public class DAgent extends DSteppable {
 						System.err.println("Where am I?");
 				}
 			}
+		} else {
+			System.err.println("No Junction Found");
 		}
 	}
 
@@ -191,9 +198,10 @@ public class DAgent extends DSteppable {
 
 	// move the agent to the given coordinates
 	public void moveTo(DCampusWorld state, Coordinate c) {
-    	System.out.println("move agent: " + jtsCoordinate + " -> " + new Double2D(c.x, c.y));
+//		System.out.println("move agent: " + jtsCoordinate + " -> " + new Double2D(c.x, c.y));
 
 		jtsCoordinate = new Double2D(c.x, c.y);
+		System.out.println("Move To: " + jtsCoordinate);
 
 //    	System.out.println("moveTo coordinate: " + c);
 //    	System.out.println("partition getWorldBounds: " + state.getPartition().getWorldBounds());
@@ -202,7 +210,6 @@ public class DAgent extends DSteppable {
 
 		Double2D toP = jtsToPartitionSpace(state, c);
 
-		// TODO: how slow is it??
 		if (state.agentLocations.isLocal(toP)) {
 			// Need to migrate
 			state.agents.removeGeometry(getAgentGeometry());
@@ -217,16 +224,14 @@ public class DAgent extends DSteppable {
 	}
 
 	public void step(SimState state) {
+//		System.out.println("step agent: " + System.identityHashCode(this));
 		move((DCampusWorld) state);
 	}
 
 	/**
 	 * moves the agent along the grid
-	 *
-	 * @param geoTest handle on the base SimState
-	 *
-	 *                The agent will randomly select an adjacent junction and then
-	 *                move along the line segment to it. Then it will repeat.
+	 * 
+	 * The agent will randomly select an adjacent junction and then move along the line segment to it. Then it will repeat.
 	 */
 	private void move(DCampusWorld state) {
 		// if we're not at a junction move along the current segment
@@ -238,6 +243,7 @@ public class DAgent extends DSteppable {
 
 	// move agent along current line segment
 	private void moveAlongPath(DCampusWorld state) {
+		System.out.println("Moving along Path: " + System.identityHashCode(this));
 		currentIndex += moveRate;
 
 		// Truncate movement to end of line segment

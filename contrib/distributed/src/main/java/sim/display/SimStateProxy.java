@@ -71,14 +71,16 @@ public class SimStateProxy extends SimState
 	/** Returns the string by which a given visualization processor (a VisualizationProcessor instance) is registered with the Registry. */
 	public final String visualizationProcessorString(int pid) { return RemoteProcessor.getProcessorName(pid); }		
 	
-	public static final int SLEEP = 25;	// ms
+	public static final int DEFAULT_SLEEP = 25;	// ms
+	public static final int DEFAULT_STEP_SIZE = 1000;
+	
 	public long refresh = 0;
-	public static final int DEFAULT_RATE = 1000;
-	public int rate = DEFAULT_RATE;
+	protected int sleep = DEFAULT_SLEEP;
+	protected int stepSize = DEFAULT_STEP_SIZE;
 	/** Returns the update rate in ms */
-	public int rate() { return rate; }
+	public int stepSize() { return stepSize; }
 	/** Sets the update rate in ms */
-	public void setRate(int val) { rate = val; }
+	public void setStepSize(int val) { stepSize = val; }
 	public long lastSteps = -1;
 	
 	// The registry proper
@@ -193,7 +195,7 @@ public class SimStateProxy extends SimState
 					// First we sleep a little bit so we don't just constantly poll
 					try
 						{
-						Thread.currentThread().sleep(SLEEP);
+						Thread.sleep(sleep);
 						}
 					catch (InterruptedException ex)
 						{
@@ -202,7 +204,7 @@ public class SimStateProxy extends SimState
 					
 					// Next we check to see if enough time has elapsed to bother querying the remote processor
 					long cur = System.currentTimeMillis();
-					if (cur - refresh >= DEFAULT_RATE)
+					if (cur - refresh >= stepSize)
 						{
 						refresh = cur;
 						try

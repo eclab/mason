@@ -25,9 +25,9 @@ public class DCampusWorld extends DSimState {
 
 	public static final int width = 300;
 	public static final int height = 300;
-	public final static int aoi = 6;// TODO what value???
-	public final static int discretization = 6;
-	public final static int numAgents = 10;//1000;
+	public static final int aoi = 6;// TODO what value???
+	public static final int discretization = 6;
+	public static final int numAgents = 100; // 1000
 
 	/** Convex hull of all JTS objects **/
 	public Envelope MBR;
@@ -52,6 +52,7 @@ public class DCampusWorld extends DSimState {
 
 	public DCampusWorld(final long seed) {
 		super(seed, width, height, aoi);
+//		balanceInterval = 100000;
 	}
 
 	public int getNumAgents() {
@@ -129,8 +130,7 @@ public class DCampusWorld extends DSimState {
 	 * @param nodeIterator  Points to first node
 	 * @param intersections GeomVectorField containing intersection geometry
 	 *
-	 *                      Nodes will belong to a planar graph populated from
-	 *                      LineString network.
+	 *                      Nodes will belong to a planar graph populated from LineString network.
 	 */
 	private void addIntersectionNodes(final Iterator nodeIterator, final GeomVectorField intersections) {
 		final GeometryFactory fact = new GeometryFactory();
