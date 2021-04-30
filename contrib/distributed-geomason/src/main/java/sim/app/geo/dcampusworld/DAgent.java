@@ -102,9 +102,7 @@ public class DAgent extends DSteppable {
 	}
 
 	/** @return string indicating whether we are "FACULTY" or a "STUDENT" */
-	public String getType() {
-		return type;
-	}
+	public String getType() { return type; }
 
 	/**
 	 * randomly selects an adjacent route to traverse

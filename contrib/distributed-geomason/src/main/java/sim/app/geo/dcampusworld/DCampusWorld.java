@@ -53,9 +53,7 @@ public class DCampusWorld extends DSimState {
 //		balanceInterval = 100000;
 	}
 
-	public int getNumAgents() {
-		return numAgents;
-	}
+	public int getNumAgents() { return numAgents; }
 
 	void loadStatic() {
 		try {

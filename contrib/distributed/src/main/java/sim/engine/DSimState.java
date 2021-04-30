@@ -124,9 +124,7 @@ public class DSimState extends SimState {
 	 * Returns whether the DSimState is assuming that you may be allocating DObjects in a multithreaded environment. In general
 	 * you should try to run in single-threaded mode, it will cause far fewer headaches.
 	 */
-	public static boolean isMultiThreaded() {
-		return multiThreaded;
-	}
+	public static boolean isMultiThreaded() { return multiThreaded; }
 
 	/**
 	 * Sets whether the DSimState is assuming that you may be allocating DObjects in a multithreaded environment. In general you
@@ -188,7 +186,6 @@ public class DSimState extends SimState {
 	 * communication between steps. If you override this method, you absolutely need to call super.preSchedule() first.
 	 */
 	public void preSchedule() {
-
 		Timing.stop(Timing.LB_RUNTIME);
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
 		try {
@@ -358,7 +355,6 @@ public class DSimState extends SimState {
 						else
 							schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
 					}
-
 				}
 
 				// Wait that all nodes have registered their new objects in the distributed registry.
@@ -472,32 +468,21 @@ public class DSimState extends SimState {
 								migratedAgents.add(a);
 								System.out.println("PID: " + partition.getPID() + " processor " + old_pid + " move " + a
 										+ " from " + loc + " to processor " + locToP);
-
 								// here the agent is removed from the old location TOCHECK!!!
-
 							}
 
 							// not stoppable (transport a double or something) transporter call transportObject?
 							else if (old_partition.contains(loc) && !partition.getLocalBounds().contains(loc)) {
-
 								final int locToP = partition.toPartitionPID(loc); // we need to use this, not toP
-
-								transporter.transportObject((Serializable) a, locToP, loc,
-										((HaloGrid2D) field).getFieldIndex());
-
+								transporter.transportObject((Serializable) a, locToP, loc, ((HaloGrid2D) field).getFieldIndex());
 							}
-
 						}
-
 					}
-
 				}
-
 			}
 
 			// other types of storage
 			else {
-
 				GridStorage st = ((HaloGrid2D) field).getStorage();
 
 				// go by point here
@@ -572,14 +557,11 @@ public class DSimState extends SimState {
 								}
 							}
 						}
-
 					}
 				}
 
 			}
-
 		}
-
 		MPI.COMM_WORLD.barrier();
 		Timing.stop(Timing.LB_OVERHEAD);
 	}
@@ -654,16 +636,13 @@ public class DSimState extends SimState {
 	/**
 	 * Modelers must override this method if they want to add any logic that is unique to the root processor
 	 */
-	protected void startRoot() {
-	}
+	protected void startRoot() {}
 
 	/**
 	 * @return the DRegistry instance, or null if the registry is not available. You can call this method after calling the
 	 *         start() method.
 	 */
-	public DRegistry getDRegistry() {
-		return registry;
-	}
+	public DRegistry getDRegistry() { return registry; }
 
 	public void start() {
 		super.start();
@@ -701,19 +680,13 @@ public class DSimState extends SimState {
 			// schedule a zombie agent to prevent that a processor with no agent is stopped
 			// when the simulation is still going on
 			schedule.scheduleRepeating(new Stopping() {
-				public void step(SimState state) {
-				}
+				public void step(SimState state) {}
 
-				public Stoppable getStoppable() {
-					return null;
-				}
+				public Stoppable getStoppable() { return null; }
 
-				public boolean isStopped() {
-					return false;
-				}
+				public boolean isStopped() { return false; }
 
-				public void setStoppable(Stoppable stop) {
-				}
+				public void setStoppable(Stoppable stop) {}
 			});
 
 			// On all processors, wait for the start to finish
@@ -727,23 +700,17 @@ public class DSimState extends SimState {
 	/**
 	 * @return the partition
 	 */
-	public QuadTreePartition getPartition() {
-		return partition;
-	}
+	public QuadTreePartition getPartition() { return partition; }
 
 	/**
 	 * @return an arraylist of all the HaloGrid2Ds registered with the SimState
 	 */
-	public ArrayList<HaloGrid2D<?, ?>> getFieldRegistry() {
-		return fieldRegistry;
-	}
+	public ArrayList<HaloGrid2D<?, ?>> getFieldRegistry() { return fieldRegistry; }
 
 	/*
 	 * @return the Transporter
 	 */
-	public TransporterMPI getTransporter() {
-		return transporter;
-	}
+	public TransporterMPI getTransporter() { return transporter; }
 
 	/**
 	 * Distribute the following keyed information from the root to all the nodes. This may be called inside startRoot().
@@ -758,20 +725,14 @@ public class DSimState extends SimState {
 	 * Distribute the following keyed information from the root to a specific node (given by the pid). This may be called inside
 	 * startRoot().
 	 */
-	public void sendRootInfoToProcessor(int pid, String key, Serializable sendObj) {
-		init[pid].put(key, sendObj);
-	}
+	public void sendRootInfoToProcessor(int pid, String key, Serializable sendObj) { init[pid].put(key, sendObj); }
 
 	/**
 	 * Extract information set to a processor by the root. This may be called inside start().
 	 */
-	public Serializable getRootInfo(String key) {
-		return rootInfo.get(key);
-	}
+	public Serializable getRootInfo(String key) { return rootInfo.get(key); }
 
-	public void enableRegistry() {
-		withRegistry = true;
-	}
+	public void enableRegistry() { withRegistry = true; }
 
 	/**
 	 * Log statistics data for this timestep. This data will then be sent to a remote statistics computer.

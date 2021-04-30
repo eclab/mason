@@ -26,26 +26,16 @@ public class CampusWorldProxyWithUI extends GUIState {
 
 	ContinuousPortrayal2D agentPortrayal = new ContinuousPortrayal2D();
 
-	public static void main(String[] args) {
-		new CampusWorldProxyWithUI().createController();
-	}
+	public static void main(String[] args) { new CampusWorldProxyWithUI().createController(); }
 
-	public CampusWorldProxyWithUI() {
-		super(new CampusWorldProxy(System.currentTimeMillis()));
-	}
+	public CampusWorldProxyWithUI() { super(new CampusWorldProxy(System.currentTimeMillis())); }
 
-	public CampusWorldProxyWithUI(SimState state) {
-		super(state);
-	}
+	public CampusWorldProxyWithUI(SimState state) { super(state); }
 
-	public static String getName() {
-		return "CampusWorld Proxy";
-	}
+	public static String getName() { return "CampusWorld Proxy"; }
 
 	// TODO What is this?
-	public Object getSimulationInspectedObject() {
-		return state;
-	} // non-volatile
+	public Object getSimulationInspectedObject() { return state; } // non-volatile
 
 	// TODO?
 	// public Controller createController() {//...}
@@ -55,7 +45,7 @@ public class CampusWorldProxyWithUI extends GUIState {
 		setupPortrayals();
 		// TODO: How to update display bounds
 		// What happens when balancing changes the bounds?
-		
+
 //		try {
 //			System.out.println("Hi");
 //			bounds = ((CampusWorldProxy) state).bounds();

@@ -13,15 +13,9 @@ public abstract class DSteppable extends DObject implements Stopping {
 
 	Stoppable stop = null;
 
-	public Stoppable getStoppable() {
-		return stop;
-	}
+	public Stoppable getStoppable() { return stop; }
 
-	public void setStoppable(Stoppable stop) {
-		this.stop = stop;
-	}
+	public void setStoppable(Stoppable stop) { this.stop = stop; }
 
-	public boolean isStopped() {
-		return stop == null;
-	}
+	public boolean isStopped() { return stop == null; }
 }
