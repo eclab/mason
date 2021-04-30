@@ -5,10 +5,8 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.planargraph.Node;
 
 import sim.app.geo.dcampusworld.data.DCampusWorldData;
@@ -132,19 +130,12 @@ public class DCampusWorld extends DSimState {
 	 *
 	 *                      Nodes will belong to a planar graph populated from LineString network.
 	 */
-	private void addIntersectionNodes(final Iterator nodeIterator, final GeomVectorField intersections) {
-		final GeometryFactory fact = new GeometryFactory();
-		Coordinate coord = null;
-		Point point = null;
-//        int counter = 0;
+	void addIntersectionNodes(final Iterator<Node> nodeIterator, final GeomVectorField intersections) {
+		final GeometryFactory geometryFactory = new GeometryFactory();
 
 		while (nodeIterator.hasNext()) {
-			final Node node = (Node) nodeIterator.next();
-			coord = node.getCoordinate();
-			point = fact.createPoint(coord);
-
-			junctions.addGeometry(new MasonGeometry(point));
-//                counter++;
+			final Node node = nodeIterator.next();
+			junctions.addGeometry(new MasonGeometry(geometryFactory.createPoint(node.getCoordinate())));
 		}
 	}
 
