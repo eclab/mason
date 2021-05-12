@@ -1,16 +1,19 @@
 package sim.display;
 
 import java.rmi.NotBoundException;
+
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 
 import ec.util.MersenneTwisterFast;
+import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.engine.rmi.RemoteProcessor;
+import sim.field.partitioning.QuadTreeNode;
 import sim.field.storage.GridStorage;
 import sim.util.IntRect2D;
 
@@ -95,6 +98,7 @@ public class SimStateProxy extends SimState
 	int numProcessors = 0;
 	// which processor are we currently visualizing?
 	int processor = 0;
+	
 	// The SimState's fields (on the MASON side), all field proxies.
 	// These need to be in the same order as the order associated with the remote grids
 	ArrayList<UpdatableProxy> fields = new ArrayList<UpdatableProxy>();
@@ -102,6 +106,8 @@ public class SimStateProxy extends SimState
 	
 	// The visualization overview
 	Overview overview = null;
+	
+	int[] chosenNodePartitionList = {0, 1, 2, 3}; //list of partitions based on chosen node of the tree
 	
 	/** Ordered stat data (or placeholder if no data) for each processor from the earliest timestep saved in the queues {@link SimStateProxy#statsSmallestTimestep} to the current one
 	<p> TODO WELL atm, it's really this: ArrayList&ltArrayList&ltInteger | Stat&gt&gt */
@@ -210,8 +216,8 @@ public class SimStateProxy extends SimState
 						try
 							{
 							// Now we query the remote processor to see if a new step has elapsed
-							VisualizationProcessor vp = visualizationProcessor(); //!
-							
+							VisualizationProcessor vp = visualizationProcessor(); 
+                            							
 							if (overview != null)
 								{
 								overview.update(vp.getAllLocalBounds());
@@ -233,7 +239,7 @@ public class SimStateProxy extends SimState
 								for(int i = 0; i < fields.size(); i++)
 									{
 									//reshapeAndClear()
-									fields.get(i).update(SimStateProxy.this, indices.get(i));
+									fields.get(i).update(SimStateProxy.this, indices.get(i), chosenNodePartitionList);
 									}
 								
 								//I did this in the update method
@@ -483,6 +489,7 @@ public class SimStateProxy extends SimState
 	public SimStateProxy(long seed)
 		{
 		super(seed);
+
 		}
 
     public boolean remoteProxy()
@@ -515,6 +522,19 @@ public class SimStateProxy extends SimState
 		    return Schedule.BEFORE_SIMULATION;
 	    	}
     	}
+    
+    //return list of partitions from the node in the tree
+    public int[] buildPartitionsList(QuadTreeNode chosenNode) {
+    	
+    	int[] selectedNodes = new int[chosenNode.getLeaves().size()];
+    	ArrayList<QuadTreeNode> leafNodes = chosenNode.getLeaves();
+    	for (int i=0; i<selectedNodes.length; i++) {
+    		selectedNodes[i] = leafNodes.get(i).getProcessor();
+    	}
+    	
+    	return selectedNodes;
+    	
+    }
     
 	/** Override this to add a tab to the Console. Normally you'd not do this from the SimState, but the Distributed code needs to use this. */
     public javax.swing.JComponent provideAdditionalTab()

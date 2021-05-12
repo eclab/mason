@@ -13,65 +13,51 @@ public class DenseGrid2DProxy extends DenseGrid2D implements UpdatableProxy
 
 	public DenseGrid2DProxy(int width, int height) { super(width, height); }
 	
-	public void update(SimStateProxy stateProxy, int proxyIndex) throws RemoteException, NotBoundException
+	public void update(SimStateProxy stateProxy, int proxyIndex, int[] quad_tree_partitions) throws RemoteException, NotBoundException
 		{
-		/*
-		//original 
-		
-		// reshape if needed
-		IntRect2D bounds = stateProxy.bounds();
-		int width = bounds.br().x - bounds.ul().x;
-		int height = bounds.br().y - bounds.ul().y;
 
-		if (width != this.width || height != this.height)
-			reshape(width, height);
-		
-		// load storage
-		DenseGridStorage storage = (DenseGridStorage)(stateProxy.storage(proxyIndex));
-		ArrayList[] data = (ArrayList[])(storage.storage);	
-		for(int x = 0; x < width; x++)
-			{
-			Bag[] fieldx = field[x];
-			for(int y = 0; y < height; y++)
-				{
-				ArrayList list = data[x * height + y];
-				if (list == null) 
-					{
-					fieldx[y] = null;
-					}
-				else 
-					{
-					int sz = list.size();
-					fieldx[y] = new Bag(sz);
-					for(int i = 0; i < sz; i++)
-						{
-						fieldx[y].add(list.get(i));
-						}
-					}
-				}
-			}
-				
-		
-		*/
 		
 		//stitch together with all partition storages
 		
 		//rebuild bounds by combining each processor?
-		//IntRect2D bounds = stateProxy.bounds(); //HERE USE worldbounds instead! 
 		
-		IntRect2D bounds = stateProxy.worldBounds;
-		System.out.println(bounds);
+		//IntRect2D bounds = stateProxy.worldBounds;
+		//System.out.println(bounds);
 
-		int width = bounds.br().x - bounds.ul().x;
-		int height = bounds.br().y - bounds.ul().y;
+		//int width = bounds.br().x - bounds.ul().x;
+		//int height = bounds.br().y - bounds.ul().y;
 		
+		int halo_size = 0;
 
-		if (width != this.width || height != this.height)
-			reshape(width, height);
 		
-		for (int p = 0; p < stateProxy.numProcessors; p++) {
+		IntRect2D[] rect_list = new IntRect2D[quad_tree_partitions.length];
+		for (int p_ind = 0; p_ind < quad_tree_partitions.length; p_ind++) {
+			int p = quad_tree_partitions[p_ind];
 			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
-			int halo_size = vp1.getAOI();
+			halo_size = vp1.getAOI();
+
+			rect_list[p_ind] = vp1.getStorageBounds();
+		    
+		}
+		
+		IntRect2D fullBounds = IntRect2D.getBoundingRect(rect_list);
+		Int2D new_ul = fullBounds.ul().add(halo_size); //remove halo
+		Int2D new_br = fullBounds.br().add(-1 * halo_size); //remove halo
+		fullBounds = new IntRect2D(new_ul, new_br);
+		
+		Int2D fullBounds_offset = fullBounds.ul();
+		
+		int width = fullBounds.br().x - fullBounds.ul().x;
+		int height = fullBounds.br().y - fullBounds.ul().y;
+		
+
+		//if (width != this.width || height != this.height)
+		reshape(width, height);
+		
+		//for (int p = 0; p < stateProxy.numProcessors; p++) {
+		for (int p : quad_tree_partitions) {
+			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
+			//int halo_size = vp1.getAOI();
 		    IntRect2D partBound = vp1.getStorageBounds();
 		    
 		    
@@ -98,7 +84,7 @@ public class DenseGrid2DProxy extends DenseGrid2D implements UpdatableProxy
 				{
 				
 				
-				Bag[] fieldx = field[x];
+				Bag[] fieldx = field[x - fullBounds_offset.getX()];
 				for(int y = partition_height_low_ind; y < partition_height_high_ind; y++)
 					{
 					
@@ -108,15 +94,15 @@ public class DenseGrid2DProxy extends DenseGrid2D implements UpdatableProxy
 					ArrayList list = data[local_p.x * partBound.getHeight() + local_p.y];
 					if (list == null) 
 						{
-						fieldx[y] = null;
+						fieldx[y - fullBounds_offset.getY()] = null;
 						}
 					else 
 						{
 						int sz = list.size();
-						fieldx[y] = new Bag(sz);
+						fieldx[y - fullBounds_offset.getY()] = new Bag(sz);
 						for(int i = 0; i < sz; i++)
 							{
-							fieldx[y].add(list.get(i));
+							fieldx[y - fullBounds_offset.getY()].add(list.get(i));
 							}
 						}
 					}

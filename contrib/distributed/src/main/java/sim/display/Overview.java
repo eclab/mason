@@ -19,6 +19,8 @@ public class Overview extends JComponent
 	int current = -1;
 	SimStateProxy proxy;
 	
+	ArrayList<Integer> selected = new ArrayList<Integer>();
+	
 	public Overview(SimStateProxy proxy)
 		{
 		this.proxy = proxy;
@@ -39,14 +41,16 @@ public class Overview extends JComponent
 					if (ex >= x && ex < x + w &&
 						ey >= y && ey < y + h) // found it
 						{
-						changeCurrentProcessor(i); 
+						toggleProcessor(i); 
 						break;
 						}
 					}
 				}
 			});
 		}
-		
+	
+	
+	
 	public void changeCurrentProcessor(int val)
 		{
 		setCurrent(val);
@@ -55,6 +59,30 @@ public class Overview extends JComponent
 		}
 	
 	public void setCurrent(int current) { this.current = current; }
+	
+	
+	public void toggleProcessor(int i) {
+		if (selected.contains((Integer)i)){
+			selected.remove((Integer)i);
+			
+		}
+		
+		else {
+			selected.add((Integer)i);
+		}
+		
+		int[] int_selected = new int[selected.size()];
+		
+		for (int q=0; q<int_selected.length; q++) {
+			int_selected[q] = selected.get(q);
+		}
+		
+		proxy.chosenNodePartitionList = int_selected;
+		
+		repaint();
+
+		
+	}
 		
 	public void update(ArrayList<IntRect2D> b) 	// , int aoi)
 		{
@@ -104,7 +132,8 @@ public class Overview extends JComponent
 					double h = (bounds[i].br().y - bounds[i].ul().y) / (double)(outerHeight) * height;
 			int fmWidth = fm.stringWidth(str);
 			
-			if (current == i)
+			//if (current == i)
+			if (selected.contains((Integer)i))
 				{
 				g.fillRect((int)x, (int)y, (int)w, (int)h);
 				g.setColor(Color.BLACK);

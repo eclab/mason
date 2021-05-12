@@ -10,7 +10,7 @@ import java.rmi.*;
 
 public interface UpdatableProxy
 	{
-	public void update(SimStateProxy proxy, int storage) throws RemoteException, NotBoundException;
+	public void update(SimStateProxy proxy, int storage, int[] partition_list) throws RemoteException, NotBoundException;
 	}
 
 

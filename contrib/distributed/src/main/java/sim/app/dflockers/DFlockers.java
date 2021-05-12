@@ -20,7 +20,7 @@ public class DFlockers extends DSimState {
 
 	public final static int width = 600;
 	public final static int height = 600;
-	public final static int numFlockers = 3;
+	public final static int numFlockers = 1000;
 	public final static double cohesion = 1.0;
 	public final static double avoidance = 1.0;
 	public final static double randomness = 1.0;
@@ -41,6 +41,7 @@ public class DFlockers extends DSimState {
 		super(seed, DFlockers.width, DFlockers.height, DFlockers.neighborhood);
 
 		flockers = new DContinuous2D<>((int) (DFlockers.neighborhood / 1.5), this);
+
 	}
 
 	@Override

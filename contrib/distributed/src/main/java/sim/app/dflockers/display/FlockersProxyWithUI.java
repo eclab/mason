@@ -31,7 +31,7 @@ public class FlockersProxyWithUI extends GUIState
     ContinuousPortrayal2D flockersPortrayal = new ContinuousPortrayal2D();
         
 // uncomment this to try out trails  (also need to uncomment out some others in this file, look around)
-    ContinuousPortrayal2D trailsPortrayal = new ContinuousPortrayal2D(); 
+    //ContinuousPortrayal2D trailsPortrayal = new ContinuousPortrayal2D(); 
     
     public FlockersProxyWithUI()
         {
@@ -63,8 +63,9 @@ public class FlockersProxyWithUI extends GUIState
 
         flockersPortrayal.setField(flock.flockers);
         // uncomment this to try out trails  (also need to uncomment out some others in this file, look around)
-        trailsPortrayal.setField(flock.flockers);
+        //trailsPortrayal.setField(flock.flockers);
         
+        /*
             SimplePortrayal2D basic = new TrailedPortrayal2D(
                 this,
                 new OrientedPortrayal2D(
@@ -89,6 +90,7 @@ public class FlockersProxyWithUI extends GUIState
                     		}
                     	},                    	
                 trailsPortrayal, 100);
+                */
 
             // note that the basic portrayal includes the TrailedPortrayal.  We'll add that to BOTH 
             // trails so it's sure to be selected even when moving.  The issue here is that MovablePortrayal2D
@@ -98,9 +100,10 @@ public class FlockersProxyWithUI extends GUIState
             // It's okay because the TrailedPortrayal will only draw itself in the trailsPortrayal, which
             // we passed into its constructor.
                         
-            flockersPortrayal.setPortrayalForAll(new AdjustablePortrayal2D(new MovablePortrayal2D(basic)));
-            trailsPortrayal.setPortrayalForAll( basic );
+            flockersPortrayal.setPortrayalForAll(new MovablePortrayal2D(new sim.portrayal.simple.OvalPortrayal2D(Color.white)));
+            //trailsPortrayal.setPortrayalForAll( basic );
         
+         /*
         // update the size of the display appropriately.
         double w = flock.flockers.getWidth();
         double h = flock.flockers.getHeight();
@@ -110,7 +113,7 @@ public class FlockersProxyWithUI extends GUIState
             { display.insideDisplay.width = 750; display.insideDisplay.height = 750 * (h/w); }
         else if (w < h)
             { display.insideDisplay.height = 750; display.insideDisplay.width = 750 * (w/h); }
-            
+            */
         // reschedule the displayer
         display.reset();
                 
@@ -132,7 +135,7 @@ public class FlockersProxyWithUI extends GUIState
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
         displayFrame.setVisible(true);
 // uncomment this to try out trails  (also need to uncomment out some others in this file, look around)
-        display.attach( trailsPortrayal, "Trails" );
+       // display.attach( trailsPortrayal, "Trails" );
                 
         display.attach( flockersPortrayal, "Behold the Flock!" );
         display.setClipping(false);

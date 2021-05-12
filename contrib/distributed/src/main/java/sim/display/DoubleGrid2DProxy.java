@@ -14,36 +14,12 @@ public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
 
 	public DoubleGrid2DProxy(int width, int height) { super(width, height); }
 
-	public void update(SimStateProxy stateProxy, int proxyIndex) throws RemoteException, NotBoundException
+	public void update(SimStateProxy stateProxy, int proxyIndex, int[] quad_tree_partitions) throws RemoteException, NotBoundException
 		{
 		
-		/* only does one partition
-		
-		// reshape if needed
-		IntRect2D bounds = stateProxy.bounds();
-		int width = bounds.br().x - bounds.ul().x;
-		int height = bounds.br().y - bounds.ul().y;
 
-		if (width != this.width || height != this.height)
-			reshape(width, height);
 		
-		// load storage
-		DoubleGridStorage storage = (DoubleGridStorage)(stateProxy.storage(proxyIndex));
-		double[] data = (double[])(storage.storage);	
-		for(int x = 0; x < width; x++)
-			{
-			double[] fieldx = field[x];
-			for(int y = 0; y < height; y++)
-				{
-				fieldx[y] = data[x * height + y];
-//				System.err.println("" + x + " " + y + " " + fieldx[y]);
-				}
-			}
-			
-					
-			*/
-		
-		
+		/*
 		IntRect2D bounds = stateProxy.worldBounds;
 		//System.out.println(bounds);
 
@@ -53,13 +29,45 @@ public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
 
 		if (width != this.width || height != this.height)
 			reshape(width, height);
+		*/
 		
-		for (int p = 0; p < stateProxy.numProcessors; p++) {
+		int halo_size = 0;
+
+		
+		IntRect2D[] rect_list = new IntRect2D[quad_tree_partitions.length];
+		for (int p_ind = 0; p_ind < quad_tree_partitions.length; p_ind++) {
+			int p = quad_tree_partitions[p_ind];
 			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
-			int halo_size = vp1.getAOI();
+			halo_size = vp1.getAOI();
+
+			rect_list[p_ind] = vp1.getStorageBounds();
+		    
+		}
+		
+		IntRect2D fullBounds = IntRect2D.getBoundingRect(rect_list);
+		Int2D new_ul = fullBounds.ul().add(halo_size); //remove halo
+		Int2D new_br = fullBounds.br().add(-1 * halo_size); //remove halo
+		fullBounds = new IntRect2D(new_ul, new_br);
+		
+		Int2D fullBounds_offset = fullBounds.ul();
+		
+		int width = fullBounds.br().x - fullBounds.ul().x;
+		int height = fullBounds.br().y - fullBounds.ul().y;
+		
+
+		//if (width != this.width || height != this.height)
+		//	reshape(width, height);
+		reshape(width, height);
+		
+		
+		//for (int p = 0; p < stateProxy.numProcessors; p++) {
+		for (int p_ind = 0; p_ind < quad_tree_partitions.length; p_ind++) {
+			int p = quad_tree_partitions[p_ind];
+			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
+			//int halo_size = vp1.getAOI();
 		    IntRect2D partBound = vp1.getStorageBounds();
 		    
-		    
+		    System.out.println("partBound "+partBound);
 		    
 			//remove halo bounds using bounds.ul offset, assumption is offset from 0,0 is halo size
 		    
@@ -76,14 +84,14 @@ public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
 				{
 				
 				
-				double[] fieldx = field[x];
+				double[] fieldx = field[x - fullBounds_offset.getX()];
 				for(int y = partition_height_low_ind; y < partition_height_high_ind; y++)
 					{
 					
 
 					
 					Int2D local_p = storage.toLocalPoint(new Int2D(x, y)); //convert to local storage to access partiton storage correctly
-					fieldx[y] = data[local_p.x * partBound.getHeight() + local_p.y];
+					fieldx[y - fullBounds_offset.getY()] = data[local_p.x * partBound.getHeight() + local_p.y];
 
 					}
 				}
