@@ -55,7 +55,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	ArrayList<Triplet<Promised, NumberND, Long>> getQueue = new ArrayList<>();
 
 	// Queue of requests to add things to the grid via RMI
-	ArrayList<Pair<NumberND, T>> addQueue = new ArrayList<>();
+	ArrayList<Triplet<NumberND, T, Object[]>> addQueue = new ArrayList<>();
 	// Queue of requests to remove things from the grid via RMI
 	ArrayList<Pair<NumberND, Long>> removeQueue = new ArrayList<>();
 	// Queue of requests to remove all elements at certain locations from the grid
@@ -418,7 +418,20 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	public void addAgentToRemote(final NumberND p, final T t, final int ordering, final double time) {
 		if (!(t instanceof Stopping))
 			throw new IllegalArgumentException("t must be a Stopping");
-		state.getTransporter().migrateAgent(ordering, time, (Stopping) t, partition.toPartitionPID(p), p, this.fieldIndex);
+
+		// If local, then MPI
+		if (state.getTransporter().isLocal(partition.toPartitionPID(p))) {
+			state.getTransporter().migrateAgent(ordering, time, (Stopping) t, partition.toPartitionPID(p), p, this.fieldIndex);
+		}
+		else { // ...otherwise, RMI
+			try {
+				//TODO REMOVE FIRST???
+				proxy.getField(partition.toPartitionPID(p)).addRMI(p, t, ordering, time, -1);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
@@ -429,8 +442,21 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			final double interval) {
 		if (!(t instanceof Stopping))
 			throw new IllegalArgumentException("t must be a Stopping");
-		DistributedIterativeRepeat iterativeRepeat = new DistributedIterativeRepeat((Stopping) t, time, interval, ordering);
-		state.getTransporter().migrateRepeatingAgent(iterativeRepeat, partition.toPartitionPID(p), p, this.fieldIndex);
+
+		// If local, then MPI
+		if (state.getTransporter().isLocal(partition.toPartitionPID(p))) {
+			DistributedIterativeRepeat iterativeRepeat = new DistributedIterativeRepeat((Stopping) t, time, interval, ordering);
+			state.getTransporter().migrateRepeatingAgent(iterativeRepeat, partition.toPartitionPID(p), p, this.fieldIndex);
+		}
+		else { // ...otherwise, RMI
+			try {
+				//TODO REMOVE FIRST???
+				proxy.getField(partition.toPartitionPID(p)).addRMI(p, t, ordering, time, interval);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
@@ -631,8 +657,24 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		}
 		removeAllQueue.clear();
 
-		for (final Pair<NumberND, T> pair : addQueue)
+		for (final Triplet<NumberND, T, Object[]> pair : addQueue) {
 			addLocal(pair.a, pair.b);
+			
+			// Reschedule
+			if (pair.c != null) {
+				// 	pair.c is scheduling information holding: ordering, time, [interval]
+				if (pair.c.length == 3) { // Repeating agent, if array contains interval information
+					state.schedule.scheduleOnce((double) pair.c[1], (int) pair.c[0], (Steppable) pair.b);
+					System.out.println("agent rescheduled!");
+				}
+				else {
+					assert(pair.c.length == 2);
+					state.schedule.scheduleRepeating((double) pair.c[1], (int) pair.c[0], (Steppable) pair.b, (int) pair.c[2]);
+					System.out.println("repeating agent rescheduled!");
+				}
+			}
+		}
+		
 		addQueue.clear();
 	}
 
@@ -703,8 +745,21 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * the TransportRMIInterface. Don't call this directly.
 	 */
 	public void addRMI(NumberND p, T t) throws RemoteException {
-		addQueue.add(new Pair<>(p, t));
+		addQueue.add(new Triplet<>(p, t, null));
 	}
+	
+	/**
+	 * This method queues an agent t and scheduling information to be set at or added to point p at end of the
+	 * time step, via addLocal(). This is called remotely via RMI, and is part of
+	 * the TransportRMIInterface. Don't call this directly.
+	 */
+	public void addRMI(NumberND p, T t, int ordering, double time, double interval) throws RemoteException {
+		if (interval > 0) // so a repeating agent
+			addQueue.add(new Triplet<>(p, t, new Object[]{ordering, time, interval}));
+		else
+			addQueue.add(new Triplet<>(p, t, new Object[]{ordering, time}));
+	}
+
 
 	/**
 	 * This method queues an object at a point p with the given id to be removed at
