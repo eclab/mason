@@ -48,19 +48,24 @@ import sim.util.*;
    </ol>
    <li>If the object is non-null:
    <ol>
-   <li>If the object implements the appropriate Portrayal interface, return the object itself as its own Portrayal.
+   <li>If we are using the "traditional" portrayal ordering, and the object implements the appropriate Portrayal interface, return the object itself as its own Portrayal.
    <li>Return the portrayalForNonNull if there is one
    <li>
    If a portrayal is explicitly registered for the object, return that portrayal.  Portrayals may be registered for <tt>null</tt> as well.
    <li>
    <li> 
    If a Portrayal is registered for the object's exact class (superclasses are ignored), return that portrayal.
+   <li>If we are using the "alternate" portrayal ordering, and the object implements the appropriate Portrayal interface, return the object itself as its own Portrayal.
    <li>
    Return the portrayalForRemainder if there is one
    <li>
    Return the default Portrayal object.
    </ol>
    </ol>
+
+   <p>Note that when we decide to use objects themselves (if they are Portrayals) is determined by the <i>portrayal ordering</i>.
+   The "default" (or "classic") version of this ordering uses objects themselves prior to looking up registered portrayals for them
+   or for their classes. The "alternate" ordering instead looks up and uses registered portrayals first.
 
    <p>FieldPortrayals store Portrayal objects in WeakHashMaps.  This means that if you register a Portrayal explicitly for an object, and then later the object is eliminated from your model, the FieldPortrayal will not hold onto the object or onto its Portrayal, but will allow them to garbage collect as well.  Thus you don't have to worry about de-registering an object.
    
@@ -77,6 +82,19 @@ public abstract class FieldPortrayal
     public Portrayal portrayalForRemainder;
     public WeakHashMap portrayals; // = new WeakHashMap();
     public WeakHashMap classPortrayals; // = new WeakHashMap();
+    boolean alternatePortrayalOrdering = false;
+
+    /** Sets whether the alternate portrayal ordering is used.   The default is false. */
+    public void setAlternatePortrayalOrdering(boolean val)
+        {
+        alternatePortrayalOrdering = val;
+        }
+    
+    /** Returns whether the alternate portrayal ordering is used.   The default is false. */
+    public boolean getAlternatePortrayalOrdering()
+        { 
+        return alternatePortrayalOrdering;
+        }
 
     /** Set the portrayal to null to remove it. */
     public void setPortrayalForAll(Portrayal portrayal)
@@ -171,12 +189,13 @@ public abstract class FieldPortrayal
             }
         else
             {
-            if (obj instanceof Portrayal) return (Portrayal) obj;
+            if (!alternatePortrayalOrdering && obj instanceof Portrayal) return (Portrayal) obj;
             if (portrayalForNonNull != null) return portrayalForNonNull;
             if ( (portrayals != null /* && !portrayals.isEmpty() */) &&  // a little efficiency -- avoid making weak keys etc. 
                 ((tmp = ((Portrayal)(portrayals.get(obj))) ) !=null)) return tmp;
             if ( (classPortrayals != null /* && !classPortrayals.isEmpty() */) &&  // a little efficiency -- avoid making weak keys etc. 
                 ((tmp = ((Portrayal)(classPortrayals.get(obj.getClass()))) ) !=null)) return tmp;
+            if (alternatePortrayalOrdering && obj instanceof Portrayal) return (Portrayal) obj;
             if (portrayalForRemainder!=null) return portrayalForRemainder;
             return getDefaultPortrayal();
             }
@@ -196,7 +215,7 @@ public abstract class FieldPortrayal
     public synchronized boolean isDirtyField() { return dirtyField; }
         
     /**
-       @deprecated Use setDirtyField(false);
+       @deprecated Use setDirtyField(true);
     */
     public synchronized void reset() { dirtyField = true; }
     
