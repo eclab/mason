@@ -5,7 +5,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import sim.engine.*;
-import sim.util.NumberND;
 
 /**
  * Implemented by fields that will be used for RMI
@@ -30,7 +29,7 @@ public interface TransportRMIInterface<T extends Serializable, P> extends Remote
 	 */
 	public abstract void getRMI(P p, Promised promise) throws RemoteException;
 
-	public abstract void getRMI(NumberND p, long id, Promised promise) throws RemoteException;
+	public abstract void getRMI(P p, long id, Promised promise) throws RemoteException;
 
 	/**
 	 * Used internally for RMI

@@ -250,8 +250,7 @@ public class TransporterMPI {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateRepeatingAgent(final DistributedIterativeRepeat iterativeRepeat, final int dst,
-			final NumberND loc,
-			final int fieldIndex) {
+			final NumberND loc, final int fieldIndex) {
 
 		// TODO: do we need to synchronize something to ensure that the stoppable is
 		// stopped before we transport?
