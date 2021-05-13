@@ -274,7 +274,6 @@ public final class Int2D extends NumberND
 		return new Int2D(x - offset[0], y - offset[1]);
 		} 
 	*/
-	
 
 //    public boolean equals(Int2D val)
 //        {
@@ -296,6 +295,5 @@ public final class Int2D extends NumberND
 	public Int2D min(Int2D val)
 		{
 		return new Int2D(Math.min(x, val.x), Math.min(y, val.y));
-		} 
-
+		}
     }
