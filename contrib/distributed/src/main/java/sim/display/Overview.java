@@ -20,7 +20,8 @@ public class Overview extends JComponent
 	SimStateProxy proxy;
 	
 	ArrayList<Integer> selected = new ArrayList<Integer>();
-	
+	ArrayList<Integer> tempSelected = new ArrayList<Integer>();
+
 	public Overview(SimStateProxy proxy)
 		{
 		this.proxy = proxy;
@@ -46,6 +47,34 @@ public class Overview extends JComponent
 						}
 					}
 				}
+			
+		    public void mouseDragged(MouseEvent e) {  
+				{
+		int width = getBounds().width;
+		int height = getBounds().height;
+				for(int i = 0; i < bounds.length; i++)
+					{
+					double x = (bounds[i].ul().x - outerX) / (double)(outerWidth) * width;
+					double y = (bounds[i].ul().y - outerY) / (double)(outerHeight) * height;
+					double w = (bounds[i].br().x - bounds[i].ul().x) / (double)(outerWidth) * width;
+					double h = (bounds[i].br().y - bounds[i].ul().y) / (double)(outerHeight) * height;
+					int ex = e.getX();
+					int ey = e.getY();
+					if (ex >= x && ex < x + w &&
+						ey >= y && ey < y + h) // found it
+						{
+						addToTempSelected(i); 
+						break;
+						}
+					}
+				}
+		    }  
+		    public void mouseReleased(MouseEvent e) {
+		    	
+		    	addDraggedProcessors(); 
+		    }  
+			
+			
 			});
 		}
 	
@@ -76,6 +105,38 @@ public class Overview extends JComponent
 		for (int q=0; q<int_selected.length; q++) {
 			int_selected[q] = selected.get(q);
 		}
+		
+		proxy.chosenNodePartitionList = int_selected;
+		
+		repaint();
+
+		
+	}
+	
+	public void addToTempSelected(int i) {
+		
+		tempSelected.add((Integer)i);
+	
+	}
+
+	public void addDraggedProcessors() {
+
+        Set set = new HashSet();
+
+        set.addAll(selected);
+        set.addAll(tempSelected);
+		
+		int[] int_selected = new int[set.size()];
+		
+         int ind = 0;
+     	 System.out.println("addDragged ");
+
+	     Iterator<Integer> it = set.iterator();
+	     while(it.hasNext()){
+	    	 System.out.println(int_selected[ind]);
+	    	 int_selected[ind] = it.next();
+	    	 ind = ind + 1;
+	     }
 		
 		proxy.chosenNodePartitionList = int_selected;
 		
