@@ -18,7 +18,7 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	transient Datatype baseType = MPI.BYTE; // something by default
 	int height; // this is the same as shape.getHeight(), to save a bit of computation
 
-	int[] offset; // moved here
+	Int2D offset; // moved here
 
 	//// NOTE: Subclasses are responsible for allocating the storage
 	//// and setting the base type
@@ -151,17 +151,17 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 		return x * height + y;
 	}
 
-	/**
-	 * @param p
-	 * @param height
-	 * 
-	 * @return flattened index with respect to the given height
-	 */
+/*
 	public static int getFlatIdx(final Int2D p, final int[] wrtSize) {
 		return p.x * wrtSize[1] + p.y; // [1] is height
 	}
+*/
 
-	public void setOffSet(int[] offset) {
+	public static int getFlatIdx(final Int2D p, int height) {
+		return p.x * height + p.y;
+	}
+
+	public void setOffSet(Int2D offset) {
 		this.offset = offset;
 	}
 

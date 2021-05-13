@@ -35,14 +35,20 @@ public class MPIParam {
 	// TODO should store rects in local coordinates?
 
 	public MPIParam(IntRect2D rect, IntRect2D bound, Datatype baseType) {
-		int[] bsize = bound.getSizes();
+		int width = bound.getWidth();
+		int height = bound.getHeight();
+		int[] bsize = new int[] { width, height };
+		int[] rsize = new int[] { rect.getWidth(), rect.getHeight() };
 
-		this.idx = GridStorage.getFlatIdx(rect.ul().subtract(new int[]{bound.ul().x,bound.ul().y}), bsize);
-		this.type = getNdArrayDatatype(rect.getSizes(), baseType, bsize);
+//		this.idx = GridStorage.getFlatIdx(rect.ul().subtract(new int[]{bound.ul().x,bound.ul().y}), bsize);
+
+		this.idx = GridStorage.getFlatIdx(rect.ul().subtract(bound.ul), height);
+		this.type = getNdArrayDatatype(rsize , baseType, bsize );
 		this.size = rect.getArea();
 		this.rects = new ArrayList<IntRect2D>() {
 			{
-				add(rect.rshift(new int[]{bound.ul().x,bound.ul().y}));
+				//add(rect.rshift(new int[]{bound.ul().x,bound.ul().y}));
+				add(rect.rshift(bound.ul()));
 			}
 		};
 	}
@@ -56,8 +62,10 @@ public class MPIParam {
 		int typeSize = getTypePackSize(baseType);
 
 		int[] bl = new int[count], displ = new int[count];
-		int[] bsize = bound.getSizes();
-
+		int width = bound.getWidth();
+		int height = bound.getHeight();
+		int[] bsize = new int[] { width, height };
+	
 		Datatype[] types = new Datatype[count];
 
 		// blocklength is always 1
@@ -65,11 +73,12 @@ public class MPIParam {
 
 		for (int i = 0; i < count; i++) {
 			IntRect2D rect = rects.get(i);
-			displ[i] = GridStorage.getFlatIdx(rect.ul().subtract(new int[]{bound.ul().x,bound.ul().y}), bsize) * typeSize; // displacement from the
-																								// start in bytes
-			types[i] = getNdArrayDatatype(rect.getSizes(), baseType, bsize);
+//			displ[i] = GridStorage.getFlatIdx(rect.ul().subtract(new int[]{bound.ul().x,bound.ul().y}), bsize) * typeSize; // displacement from the start in bytes
+			displ[i] = GridStorage.getFlatIdx(rect.ul().subtract(bound.ul()), height) * typeSize; // displacement from the start in bytes
+			types[i] = getNdArrayDatatype(new int[] { rect.getWidth(), rect.getHeight() }, baseType, bsize);
 			this.size += rect.getArea();
-			this.rects.add(rect.rshift(new int[]{bound.ul().x,bound.ul().y}));
+			/// this.rects.add(rect.rshift(new int[]{bound.ul().x,bound.ul().y}));
+			this.rects.add(rect.rshift(bound.ul()));
 		}
 
 		try {

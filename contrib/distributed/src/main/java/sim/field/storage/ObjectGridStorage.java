@@ -21,13 +21,14 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T> {
 	}
 
 	public String toString() {
-		final int[] size = shape.getSizes();
+		int width = shape.getWidth();
+		int height = shape.getHeight();
 		final StringBuffer buf = new StringBuffer(
 				String.format("ObjectGridStorage<%s>-%s\n", storage.getClass().getSimpleName(), shape));
 
-		for (int i = 0; i < size[0]; i++) {
-			for (int j = 0; j < size[1]; j++)
-				buf.append(String.format(" %8s ", storage[i * size[1] + j]));
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++)
+				buf.append(String.format(" %8s ", storage[i * height + j]));
 			buf.append("\n");
 		}
 

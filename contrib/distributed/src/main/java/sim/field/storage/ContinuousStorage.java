@@ -222,8 +222,8 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 
 	@SuppressWarnings("unchecked")
 	public void clear() {
-		width = (int) Math.ceil(shape.getSizes()[0] / (double) discretization) + 1;
-		height = (int) Math.ceil(shape.getSizes()[1] / (double) discretization) + 1;
+		width = (int) Math.ceil(shape.getWidth() / (double) discretization) + 1;
+		height = (int) Math.ceil(shape.getHeight() / (double) discretization) + 1;
 		this.m = new HashMap<>();
 
 		storage = new HashMap[width * height];
@@ -246,13 +246,15 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 		}
 	}
 
+	static final Int2D OFFSET = new Int2D(1,1);
+	
 	// Get all the objects inside the given rectangle
 	public ArrayList<T> getObjects(final IntRect2D r) {
 		final ArrayList<T> objs = new ArrayList<T>();
-		int[] offset = { 1, 1 };
+//		int[] offset = { 1, 1 };
 
 		final Int2D ul = discretize(new Double2D(r.ul()));
-		final Int2D br = discretize(new Double2D(r.br())).add(offset);
+		final Int2D br = discretize(new Double2D(r.br())).add(OFFSET);
 
 		// I believe this code is just doing:
 
@@ -263,9 +265,6 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 
 				if (cell != null) {
 					for (T obj : cell.values()) { // need to offset/discretize!
-						
-
-						
 						if (r.contains(m.get(obj.ID()))) {
 							objs.add(obj);
 						}
@@ -284,7 +283,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 
 		for (final IntRect2D rect : mp.rects) {
 			final ArrayList<Serializable> objs = new ArrayList<>();
-			for (final T obj : getObjects(rect.shift(shape.ul().toArray()))) {
+			for (final T obj : getObjects(rect.shift(shape.ul()))) {
 				objs.add(obj);
 				// Append the object's location relative to the rectangle
 				objs.add(m.get(obj.ID()).subtract(shape.ul().toArray()).subtract(rect.ul().toArray()));
@@ -301,14 +300,13 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 		// Remove any objects that are in the unpack area (overwrite the area)
 		// shift the rect with local coordinates back to global coordinates
 		for (final IntRect2D rect : mp.rects)
-			removeObjects(rect.shift(shape.ul().toArray()));
+			removeObjects(rect.shift(shape.ul()));
 
 		for (int k = 0; k < mp.rects.size(); k++)
 			for (int i = 0; i < objs.get(k).size(); i += 2)
 				addObject(
 						//// FIXME: This looks VERY inefficient, with lots of array allocations
-						((Double2D) objs.get(k).get(i + 1)).add(mp.rects.get(k).ul().toArray())
-								.add(shape.ul().toArray()),
+						((Double2D) objs.get(k).get(i + 1)).add(mp.rects.get(k).ul()).add(shape.ul()),
 						(T) objs.get(k).get(i));
 
 		int sum = 0;

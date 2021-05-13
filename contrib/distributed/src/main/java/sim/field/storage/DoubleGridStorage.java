@@ -27,13 +27,14 @@ public class DoubleGridStorage extends GridStorage<Double> {
 	}
 
 	public String toString() {
-		int[] size = shape.getSizes();
+		int width = shape.getWidth();
+		int height = shape.getHeight();
 		double[] array = (double[]) storage;
 		StringBuffer buf = new StringBuffer(String.format("DoubleGridStorage-%s\n", shape));
 
-		for (int i = 0; i < size[0]; i++) {
-			for (int j = 0; j < size[1]; j++)
-				buf.append(String.format(" %4.2f ", array[i * size[1] + j]));
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++)
+				buf.append(String.format(" %4.2f ", array[i * height + j]));
 			buf.append("\n");
 		}
 

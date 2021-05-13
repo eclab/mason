@@ -100,7 +100,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		haloBounds = localBounds.resize(partition.getAOI());
 		localStorage.reshape(haloBounds);
 
-		localStorage.setOffSet(haloBounds.ul().toArray()); // moving local point calculation to GridStorage
+		localStorage.setOffSet(haloBounds.ul()); // moving local point calculation to GridStorage
 
 		// Get the partition representing private area by shrinking the original
 		// partition by aoi at each dimension
@@ -140,7 +140,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 */
 
 	public Int2D toLocalPoint(final Int2D p) {
-		return p.subtract(haloBounds.ul().toArray());
+		return p.subtract(haloBounds.ul());
 	}
 
 	/**
@@ -941,7 +941,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 				};
 
 				for (final Int2D p : shifts) {
-					final IntRect2D sp = p2.shift(new int[] { p.x, p.y });
+					final IntRect2D sp = p2.shift(p);		// new int[] { p.x, p.y });
 					if (p1.intersects(sp))
 						overlaps.add(p1.getIntersection(sp));
 				}

@@ -44,9 +44,9 @@ public class IntRect2D implements Serializable {
 
 //// SEAN FIXME:  Delete this one?
 	// Return the size of the hyper rectangle in each dimension
-	public int[] getSizes() {
-		return new int[] { getWidth(), getHeight() };
-	}
+	//public int[] getSizes() {
+	//	return new int[] { getWidth(), getHeight() };
+	//}
 
 	public int getHeight() {
 		return br.y - ul.y;
@@ -195,10 +195,12 @@ public class IntRect2D implements Serializable {
 
 		int list_ind = 0;
 
-		int[] sizes = this.getSizes();
-
-		for (int i = 0; i < sizes[0]; i++) {
-			for (int j = 0; j < sizes[1]; j++) {
+		//int[] sizes = this.getSizes();
+		int width = getWidth();
+		int height = getHeight();
+		
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
 				listOfPoints[list_ind] = new Int2D(ul.x + i, ul.y + j);
 				list_ind++;
 			}
@@ -208,13 +210,16 @@ public class IntRect2D implements Serializable {
 	}
 
 	// remove? or add?
-	public IntRect2D resize(int[] vals) {
+	public IntRect2D resize(Int2D vals) {
 		return new IntRect2D(ul.subtract(vals), br.add(vals));
 	}
 
 	public IntRect2D resize(int val) {
-		int[] vals = new int[] { val, val };
-		return resize(vals);
+		//int[] vals = new int[] { val, val };
+		//return resize(vals);
+		
+		/// SEAN -- I *think* this is right?
+		return new IntRect2D(ul.subtract(val), br.add(val));		
 	}
 
 	// maybe remove, maybe keep
@@ -223,12 +228,12 @@ public class IntRect2D implements Serializable {
 	}
 
 	// maybe remove, maybe keep
-	public IntRect2D shift(int[] offsets) {
+	public IntRect2D shift(Int2D offsets) {
 		return new IntRect2D(ul.add(offsets), br.add(offsets));
 	}
 
 	// maybe remove, maybe keep
-	public IntRect2D rshift(int[] offsets) {
+	public IntRect2D rshift(Int2D offsets) {
 		return new IntRect2D(ul.subtract(offsets), br.subtract(offsets));
 	}
 }
