@@ -427,7 +427,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			try {
 				//No need to remove from storage first
 				// TODO might need to remove from schedule
-				proxy.getField(partition.toPartitionPID(p)).addRMI(p, t, ordering, time, -1);
+				proxy.getField(partition.toPartitionPID(p)).addRMI(p, t, ordering, time);
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
