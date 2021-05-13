@@ -107,7 +107,7 @@ public class SimStateProxy extends SimState
 	// The visualization overview
 	Overview overview = null;
 	
-	int[] chosenNodePartitionList = {0, 1, 2, 3}; //list of partitions based on chosen node of the tree
+	int[] chosenNodePartitionList = {0}; //list of partitions based on chosen node of the tree
 	
 	/** Ordered stat data (or placeholder if no data) for each processor from the earliest timestep saved in the queues {@link SimStateProxy#statsSmallestTimestep} to the current one
 	<p> TODO WELL atm, it's really this: ArrayList&ltArrayList&ltInteger | Stat&gt&gt */

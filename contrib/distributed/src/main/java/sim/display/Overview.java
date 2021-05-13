@@ -20,65 +20,146 @@ public class Overview extends JComponent
 	SimStateProxy proxy;
 	
 	ArrayList<Integer> selected = new ArrayList<Integer>();
-	ArrayList<Integer> tempSelected = new ArrayList<Integer>();
-
+	HashSet<Integer> tempSelected = new HashSet<Integer>();
+    boolean dragging = false;
+    
+    int drag_start_point_x = 0;
+    int drag_start_point_y = 0;
+    int mouse_current_x = 0;
+    int mouse_current_y = 0;
+    
+    
 	public Overview(SimStateProxy proxy)
+	{
+		
+	//initialize	
+	for (int i :proxy.chosenNodePartitionList) {
+		selected.add((Integer)i);
+	}
+	this.proxy = proxy;
+	addMouseListener(new MouseAdapter()
 		{
-		this.proxy = proxy;
-		addMouseListener(new MouseAdapter()
+		public void mouseClicked(MouseEvent e)
 			{
-			public void mouseClicked(MouseEvent e)
+	int width = getBounds().width;
+	int height = getBounds().height;
+			for(int i = 0; i < bounds.length; i++)
 				{
-		int width = getBounds().width;
-		int height = getBounds().height;
-				for(int i = 0; i < bounds.length; i++)
+				double x = (bounds[i].ul().x - outerX) / (double)(outerWidth) * width;
+				double y = (bounds[i].ul().y - outerY) / (double)(outerHeight) * height;
+				double w = (bounds[i].br().x - bounds[i].ul().x) / (double)(outerWidth) * width;
+				double h = (bounds[i].br().y - bounds[i].ul().y) / (double)(outerHeight) * height;
+				int ex = e.getX();
+				int ey = e.getY();
+				if (ex >= x && ex < x + w &&
+					ey >= y && ey < y + h) // found it
 					{
-					double x = (bounds[i].ul().x - outerX) / (double)(outerWidth) * width;
-					double y = (bounds[i].ul().y - outerY) / (double)(outerHeight) * height;
-					double w = (bounds[i].br().x - bounds[i].ul().x) / (double)(outerWidth) * width;
-					double h = (bounds[i].br().y - bounds[i].ul().y) / (double)(outerHeight) * height;
-					int ex = e.getX();
-					int ey = e.getY();
-					if (ex >= x && ex < x + w &&
-						ey >= y && ey < y + h) // found it
-						{
-						toggleProcessor(i); 
+					
+					if(e.isShiftDown()) {
+						toggleProcessor(i);
 						break;
-						}
+					}
+					else {
+						singleSelect(i); 
+						break;
+					}
 					}
 				}
-			
-		    public void mouseDragged(MouseEvent e) {  
-				{
-		int width = getBounds().width;
-		int height = getBounds().height;
-				for(int i = 0; i < bounds.length; i++)
-					{
-					double x = (bounds[i].ul().x - outerX) / (double)(outerWidth) * width;
-					double y = (bounds[i].ul().y - outerY) / (double)(outerHeight) * height;
-					double w = (bounds[i].br().x - bounds[i].ul().x) / (double)(outerWidth) * width;
-					double h = (bounds[i].br().y - bounds[i].ul().y) / (double)(outerHeight) * height;
-					int ex = e.getX();
-					int ey = e.getY();
-					if (ex >= x && ex < x + w &&
-						ey >= y && ey < y + h) // found it
-						{
-						addToTempSelected(i); 
-						break;
-						}
-					}
-				}
-		    }  
+			}
+
+
 		    public void mouseReleased(MouseEvent e) {
 		    	
-		    	addDraggedProcessors(); 
+		    	if (dragging == true) {
+		    	
+				System.out.println("add Dragged called");		    	
+		    	addDraggedProcessors();		    	
+		    	dragging = false;
+		    	}
 		    }  
+		    
+		    
 			
 			
 			});
-		}
+		
 	
-	
+	addMouseMotionListener(new MouseMotionAdapter()
+	{
+		
+	    public void mouseDragged(MouseEvent e) {  
+			{
+				System.out.println("dragging");
+				if (dragging == false) { //first dragging
+					drag_start_point_x = e.getX();
+					drag_start_point_y = e.getY();
+				}
+				
+			    mouse_current_x = e.getX();
+			    mouse_current_y = e.getY();
+				
+				dragging = true;
+	int width = getBounds().width;
+	int height = getBounds().height;
+			for(int i = 0; i < bounds.length; i++)
+				{
+				double x = (bounds[i].ul().x - outerX) / (double)(outerWidth) * width;
+				double y = (bounds[i].ul().y - outerY) / (double)(outerHeight) * height;
+				double w = (bounds[i].br().x - bounds[i].ul().x) / (double)(outerWidth) * width;
+				double h = (bounds[i].br().y - bounds[i].ul().y) / (double)(outerHeight) * height;
+
+				
+				double bound_ul_x = x;
+				double bound_ul_y = y;
+				double bound_br_x = x + w;
+				double bound_br_y = y + h;
+				
+				
+				double drag_rect_ul_x;
+				double drag_rect_ul_y;
+				double drag_rect_br_x;
+				double drag_rect_br_y;
+				
+				if (drag_start_point_x < mouse_current_x) {
+					drag_rect_ul_x = drag_start_point_x;
+					drag_rect_br_x = mouse_current_x;
+				}
+				else {
+					drag_rect_ul_x = mouse_current_x;
+					drag_rect_br_x = drag_start_point_x;				
+				}
+				
+				
+				if (drag_start_point_y < mouse_current_y) {
+					drag_rect_ul_y = drag_start_point_y;
+					drag_rect_br_y = mouse_current_y;
+				}
+				else {
+					drag_rect_ul_y = mouse_current_y;
+					drag_rect_br_y = drag_start_point_y;				
+				}
+                
+                 //intersects
+                if (bound_ul_x < drag_rect_br_x && bound_ul_y < drag_rect_br_y && drag_rect_ul_x < bound_br_x && drag_rect_ul_y < bound_br_y ) {
+
+					
+					System.out.println("add to temp selected called");
+					addToTempSelected(i); 
+					//break;
+				}
+                
+				}
+			
+			repaint();
+
+			}
+	    }  
+
+	    
+		
+		
+		});
+	}
 	
 	public void changeCurrentProcessor(int val)
 		{
@@ -88,7 +169,22 @@ public class Overview extends JComponent
 		}
 	
 	public void setCurrent(int current) { this.current = current; }
+
 	
+	public void singleSelect(int i) {
+
+		int[] int_selected = {i};
+
+		
+		proxy.chosenNodePartitionList = int_selected;
+		
+		selected = new ArrayList<Integer>();
+		selected.add((Integer)i);
+		
+		repaint();
+
+		
+	}
 	
 	public void toggleProcessor(int i) {
 		if (selected.contains((Integer)i)){
@@ -121,24 +217,17 @@ public class Overview extends JComponent
 
 	public void addDraggedProcessors() {
 
-        Set set = new HashSet();
+		selected = new ArrayList<Integer>(tempSelected);
+		int[] int_selected = new int[tempSelected.size()];
 
-        set.addAll(selected);
-        set.addAll(tempSelected);
-		
-		int[] int_selected = new int[set.size()];
-		
-         int ind = 0;
-     	 System.out.println("addDragged ");
-
-	     Iterator<Integer> it = set.iterator();
-	     while(it.hasNext()){
-	    	 System.out.println(int_selected[ind]);
-	    	 int_selected[ind] = it.next();
-	    	 ind = ind + 1;
-	     }
+		for (int i = 0; i<tempSelected.size() ; i++) {
+			int_selected[i] = selected.get(i);
+		}
 		
 		proxy.chosenNodePartitionList = int_selected;
+		
+		tempSelected = new HashSet<Integer>();
+
 		
 		repaint();
 
@@ -207,5 +296,38 @@ public class Overview extends JComponent
 				g.drawString(str, (float)(x + w * 0.5 - fmWidth * 0.5), (float)(y + h * 0.5 + fmHeight * 0.5));
 				}
 			}
+		
+		if (dragging == true) {
+			System.out.println("drawing drag box");
+			g.setColor(Color.YELLOW);
+
+            int ul_x;
+            int br_x;
+            int ul_y;
+            int br_y;
+			
+			if (drag_start_point_x < mouse_current_x) {
+				ul_x = drag_start_point_x;
+				br_x = mouse_current_x;
+			}
+			else {
+				ul_x = mouse_current_x;
+				br_x = drag_start_point_x;
+			}
+			
+			if (drag_start_point_y < mouse_current_y) {
+                ul_y = drag_start_point_y;
+                br_y = mouse_current_y;
+			}
+			else {
+				ul_y = mouse_current_y;
+				br_y = drag_start_point_y;
+			}
+			
+			
+			g.drawRect(ul_x, ul_y, br_x - ul_x, br_y - ul_y);
+
+		}
+		
 		}
 	}
