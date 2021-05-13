@@ -425,8 +425,9 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		}
 		else { // ...otherwise, RMI
 			try {
-				//No need to remove from storage first
-				// TODO might need to remove from schedule
+				// First, remove from schedule
+				assert(t instanceof Stopping); // Assumes that t is not an agent if it's not Stopping
+				unscheduleAgent((Stopping) t);
 				proxy.getField(partition.toPartitionPID(p)).addRMI(p, t, ordering, time);
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -451,7 +452,10 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		}
 		else { // ...otherwise, RMI
 			try {
-				//TODO REMOVE FIRST???
+				// First, remove from schedule
+				assert(t instanceof Stopping); // Assumes that t is not an agent if it's not Stopping
+				unscheduleAgent((Stopping) t);
+				// Update using RMI
 				proxy.getField(partition.toPartitionPID(p)).addRMI(p, t, ordering, time, interval);
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -665,13 +669,13 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			if (pair.c != null) {
 				// 	pair.c is scheduling information holding: ordering, time, [interval]
 				if (pair.c.length == 3) { // Repeating agent, if array contains interval information
-					state.schedule.scheduleOnce(pair.c[1], (int) pair.c[0], (Steppable) pair.b);
-					System.out.println("agent rescheduled!");
+					state.schedule.scheduleRepeating(pair.c[1], (int) pair.c[0], (Steppable) pair.b, pair.c[2]);
+//					System.out.println("repeating agent rescheduled!");
 				}
 				else {
 					assert(pair.c.length == 2);
-					state.schedule.scheduleRepeating(pair.c[1], (int) pair.c[0], (Steppable) pair.b, pair.c[2]);
-					System.out.println("repeating agent rescheduled!");
+					state.schedule.scheduleOnce(pair.c[1], (int) pair.c[0], (Steppable) pair.b);
+//					System.out.println("agent rescheduled!");
 				}
 			}
 		}
