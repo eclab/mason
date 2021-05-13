@@ -286,7 +286,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 			for (final T obj : getObjects(rect.shift(shape.ul()))) {
 				objs.add(obj);
 				// Append the object's location relative to the rectangle
-				objs.add(m.get(obj.ID()).subtract(shape.ul().toArray()).subtract(rect.ul().toArray()));
+				objs.add(m.get(obj.ID()).subtract(shape.ul()).subtract(rect.ul()));
 			}
 			ret.add(objs);
 		}

@@ -219,7 +219,7 @@ public class IntRect2D implements Serializable {
 		//return resize(vals);
 		
 		/// SEAN -- I *think* this is right?
-		return new IntRect2D(ul.subtract(val), br.add(val));		
+		return new IntRect2D(ul.add(-val), br.add(val));		
 	}
 
 	// maybe remove, maybe keep

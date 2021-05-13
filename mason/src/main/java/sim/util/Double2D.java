@@ -456,6 +456,11 @@ public final class Double2D extends NumberND
 		return new Double2D(Math.min(x, val.x), Math.min(y, val.y));
 		} 
 
+	public Double2D add(double offset)
+		{
+		return new Double2D(x + offset, y + offset);
+		} 
+	
 	public Double2D add(int offset)
 		{
 		return new Double2D(x + offset, y + offset);
@@ -468,20 +473,18 @@ public final class Double2D extends NumberND
 		else
 			return new Double2D(x, y + offset);
 		} 
-
-	// should be renamed "add"
+	
+	/*
 	public Double2D add(int[] offset)
 		{
 		return new Double2D(x + offset[0], y + offset[1]);
-		} 
+		}
 	
-
-
-	// should be renamed "subtract"
 	public Double2D subtract(int[] offset)
 		{
 		return new Double2D(x - offset[0], y - offset[1]);
 		} 
+	*/
 
 	public double[] getOffsets(final Double2D that)
 		{
@@ -489,23 +492,23 @@ public final class Double2D extends NumberND
 		}
 
 	public Double2D add(int dim, double offset)
-	{
-	if (dim == 0)
-		return new Double2D(x + offset, y);
-	else
-		return new Double2D(x, y + offset);
-	} 
+		{
+		if (dim == 0)
+			return new Double2D(x + offset, y);
+		else
+			return new Double2D(x, y + offset);
+		} 
 
-    // should be renamed "add"
+	/*
     public Double2D add(double[] offset)
-	{
-	return new Double2D(x + offset[0], y + offset[1]);
-	} 
+		{
+		return new Double2D(x + offset[0], y + offset[1]);
+		} 
 
-    // should be renamed "subtract"
     public Double2D subtract(double[] offset)
-	{
-	return new Double2D(x - offset[0], y - offset[1]);
-	} 	
+		{
+		return new Double2D(x - offset[0], y - offset[1]);
+		} 	
+	*/
 
     }

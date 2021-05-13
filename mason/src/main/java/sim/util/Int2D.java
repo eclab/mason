@@ -252,24 +252,29 @@ public final class Int2D extends NumberND
 		else
 			return new Int2D(x, y + offset);
 		} 
-
-	// should be renamed "add"
-	public Int2D add(int[] offset)
-		{
-		return new Int2D(x + offset[0], y + offset[1]);
-		} 
 	
-	// should be renamed "add"
 	public Int2D add(Int2D other)
 		{
 		return new Int2D(x + other.x, y + other.y);
 		} 
+	
+	public Int2D subtract(Int2D other)
+		{
+		return new Int2D(x - other.x, y - other.y);
+		} 
 
-	// should be renamed "subtract"
+	/*
+	public Int2D add(int[] offset)
+		{
+		return new Int2D(x + offset[0], y + offset[1]);
+		} 
+
 	public Int2D subtract(int[] offset)
 		{
 		return new Int2D(x - offset[0], y - offset[1]);
 		} 
+	*/
+	
 
 //    public boolean equals(Int2D val)
 //        {
