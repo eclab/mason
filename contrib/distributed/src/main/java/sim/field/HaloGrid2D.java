@@ -55,7 +55,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	ArrayList<Triplet<Promised, NumberND, Long>> getQueue = new ArrayList<>();
 
 	// Queue of requests to add things to the grid via RMI
-	ArrayList<Triplet<NumberND, T, Object[]>> addQueue = new ArrayList<>();
+	ArrayList<Triplet<NumberND, T, double[]>> addQueue = new ArrayList<>();
 	// Queue of requests to remove things from the grid via RMI
 	ArrayList<Pair<NumberND, Long>> removeQueue = new ArrayList<>();
 	// Queue of requests to remove all elements at certain locations from the grid
@@ -420,12 +420,13 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			throw new IllegalArgumentException("t must be a Stopping");
 
 		// If local, then MPI
-		if (state.getTransporter().isLocal(partition.toPartitionPID(p))) {
+		if (state.getTransporter().isNeighbor(partition.toPartitionPID(p))) {
 			state.getTransporter().migrateAgent(ordering, time, (Stopping) t, partition.toPartitionPID(p), p, this.fieldIndex);
 		}
 		else { // ...otherwise, RMI
 			try {
-				//TODO REMOVE FIRST???
+				//No need to remove from storage first
+				// TODO might need to remove from schedule
 				proxy.getField(partition.toPartitionPID(p)).addRMI(p, t, ordering, time, -1);
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -444,7 +445,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			throw new IllegalArgumentException("t must be a Stopping");
 
 		// If local, then MPI
-		if (state.getTransporter().isLocal(partition.toPartitionPID(p))) {
+		if (state.getTransporter().isNeighbor(partition.toPartitionPID(p))) {
 			DistributedIterativeRepeat iterativeRepeat = new DistributedIterativeRepeat((Stopping) t, time, interval, ordering);
 			state.getTransporter().migrateRepeatingAgent(iterativeRepeat, partition.toPartitionPID(p), p, this.fieldIndex);
 		}
@@ -657,19 +658,19 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		}
 		removeAllQueue.clear();
 
-		for (final Triplet<NumberND, T, Object[]> pair : addQueue) {
+		for (final Triplet<NumberND, T, double[]> pair : addQueue) {
 			addLocal(pair.a, pair.b);
 			
 			// Reschedule
 			if (pair.c != null) {
 				// 	pair.c is scheduling information holding: ordering, time, [interval]
 				if (pair.c.length == 3) { // Repeating agent, if array contains interval information
-					state.schedule.scheduleOnce((double) pair.c[1], (int) pair.c[0], (Steppable) pair.b);
+					state.schedule.scheduleOnce(pair.c[1], (int) pair.c[0], (Steppable) pair.b);
 					System.out.println("agent rescheduled!");
 				}
 				else {
 					assert(pair.c.length == 2);
-					state.schedule.scheduleRepeating((double) pair.c[1], (int) pair.c[0], (Steppable) pair.b, (int) pair.c[2]);
+					state.schedule.scheduleRepeating(pair.c[1], (int) pair.c[0], (Steppable) pair.b, pair.c[2]);
 					System.out.println("repeating agent rescheduled!");
 				}
 			}
@@ -753,11 +754,12 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * time step, via addLocal(). This is called remotely via RMI, and is part of
 	 * the TransportRMIInterface. Don't call this directly.
 	 */
+	public void addRMI(NumberND p, T t, int ordering, double time) throws RemoteException {
+		addQueue.add(new Triplet<>(p, t, new double[]{ordering, time}));
+	}
+	
 	public void addRMI(NumberND p, T t, int ordering, double time, double interval) throws RemoteException {
-		if (interval > 0) // so a repeating agent
-			addQueue.add(new Triplet<>(p, t, new Object[]{ordering, time, interval}));
-		else
-			addQueue.add(new Triplet<>(p, t, new Object[]{ordering, time}));
+		addQueue.add(new Triplet<>(p, t, new double[]{ordering, time, interval}));
 	}
 
 

@@ -303,7 +303,7 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public boolean isLocal(final int loc) {
+	public boolean isNeighbor(final int loc) {
 		return dstMap.containsKey(loc);
 	}
 
