@@ -1,5 +1,8 @@
 package sim.app.geo.dcampusworld;
 
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
@@ -108,11 +111,16 @@ public class DAgent extends DSteppable {
 	 * randomly selects an adjacent route to traverse
 	 */
 	private void findNewPath(DCampusWorld state) {
-		System.out.println("Finding New Path jtsCoordinate: " + jtsCoordinate + ", agentGeometry" + getAgentGeometry());
+		System.out.println("Finding New Path jtsCoordinate: " + jtsCoordinate + ", agentGeometry" + getAgentGeometry() + "MBR: " + state.MBR + "; network: " + 
+				state.network.getNodes().stream().map(new Function<com.vividsolutions.jts.planargraph.Node, String>() {
+					public String apply(Node t) {
+						return t.getCoordinate().toString();
+					}
+				}).collect(Collectors.toList())
+		);
+				
 		// find all the adjacent junctions
-
 		Node currentJunction = state.network.findNode(getAgentGeometry().getGeometry().getCoordinate());
-
 		if (currentJunction != null) {
 			DirectedEdgeStar directedEdgeStar = currentJunction.getOutEdges();
 			Object[] edges = directedEdgeStar.getEdges().toArray();

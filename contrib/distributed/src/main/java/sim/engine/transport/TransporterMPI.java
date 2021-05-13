@@ -29,7 +29,7 @@ public class TransporterMPI {
 	int numNeighbors; // number of direct neighbors
 	int[] src_count, src_displ, dst_count, dst_displ;
 
-	HashMap<Integer, RemoteOutputStream> dstMap;
+	HashMap<Integer, RemoteOutputStream> dstMap; // map of all neighboring partitions
 
 	Partition partition;
 	int[] neighbors;
@@ -294,6 +294,17 @@ public class TransporterMPI {
 			e.printStackTrace();
 			System.exit(-1);
 		}
+	}
+	
+	/**
+	 * Determines if the given partition is local to our partition
+	 *
+	 * @param loc        partition pid
+	 *
+	 * @throws IllegalArgumentException if destination (pid) is local
+	 */
+	public boolean isNeighbor(final int loc) {
+		return dstMap.containsKey(loc);
 	}
 
 	public static class RemoteOutputStream {

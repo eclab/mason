@@ -41,6 +41,31 @@ public interface TransportRMIInterface<T extends Serializable, P> extends Remote
 	 *                         field
 	 */
 	public abstract void addRMI(P p, T t) throws RemoteException;
+	
+	/**
+	 * Used internally for RMI
+	 *
+	 * @param p location
+	 * @param t Agent
+	 * @param ordering
+	 * @param time
+	 * @throws RemoteException If the point requested is not local to the remote
+	 *                         field
+	 */
+	public abstract void addRMI(P p, T t, int ordering, double time) throws RemoteException;
+	
+	/**
+	 * Used internally for RMI
+	 *
+	 * @param p location
+	 * @param t Agent
+	 * @param ordering
+	 * @param time
+	 * @param interval
+	 * @throws RemoteException If the point requested is not local to the remote
+	 *                         field
+	 */
+	public abstract void addRMI(P p, T t, int ordering, double time, double interval) throws RemoteException;
 
 	/**
 	 * Used internally for RMI
