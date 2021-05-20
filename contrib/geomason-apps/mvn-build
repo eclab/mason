@@ -13,7 +13,37 @@ squeaky_clean: clean
 	mvn clean
 
 # data: ebola acequias dadaab csv4j psh swiselib toolsui hotspots refugee kibera
-data: ebola dadaab csv4j swiselib hotspots refugee kibera
+data: acequias cityMigrationData conflictDiamondsData omolandCAData riftland ebola dadaab csv4j swiselib hotspots refugee kibera
+
+acequias:
+	rm -rf repository/edu/gmu/eclab/acequiasData/
+	mvn install:install-file -Dfile=repository/jars/acequiasData.jar -DgroupId=edu.gmu.eclab -DartifactId=acequiasData -Dversion=1.0 -Dpackaging=jar -DlocalRepositoryPath:repository/
+	mkdir -p repository/edu/gmu/eclab/acequiasData/
+	cp repository/jars/acequiasData.jar repository/edu/gmu/eclab/acequiasData
+
+cityMigrationData:
+	rm -rf repository/edu/gmu/eclab/cityMigrationData/
+	mvn install:install-file -Dfile=repository/jars/cityMigrationData.jar -DgroupId=edu.gmu.eclab -DartifactId=cityMigrationData -Dversion=1.0 -Dpackaging=jar -DlocalRepositoryPath:repository/
+	mkdir -p repository/edu/gmu/eclab/cityMigrationData/
+	cp repository/jars/cityMigrationData.jar repository/edu/gmu/eclab/cityMigrationData/
+
+conflictDiamondsData:
+	rm -rf repository/edu/gmu/eclab/conflictDiamondsData/
+	mvn install:install-file -Dfile=repository/jars/conflictDiamondsData.jar -DgroupId=edu.gmu.eclab -DartifactId=conflictDiamondsData -Dversion=1.0 -Dpackaging=jar -DlocalRepositoryPath:repository/
+	mkdir -p repository/edu/gmu/eclab/conflictDiamondsData/
+	cp repository/jars/conflictDiamondsData.jar repository/edu/gmu/eclab/conflictDiamondsData/
+
+omolandCAData:
+	rm -rf repository/edu/gmu/eclab/omolandCAData/
+	mvn install:install-file -Dfile=repository/jars/omolandCAData.jar -DgroupId=edu.gmu.eclab -DartifactId=omolandCAData -Dversion=1.0 -Dpackaging=jar -DlocalRepositoryPath:repository/
+	mkdir -p repository/edu/gmu/eclab/omolandCAData/
+	cp repository/jars/omolandCAData.jar repository/edu/gmu/eclab/omolandCAData/
+
+riftland:
+	rm -rf repository/edu/gmu/eclab/riftlandData/
+	mvn install:install-file -Dfile=repository/jars/riftlandData.jar -DgroupId=edu.gmu.eclab -DartifactId=riftlandData -Dversion=1.0 -Dpackaging=jar -DlocalRepositoryPath:repository/
+	mkdir -p repository/edu/gmu/eclab/riftlandData/
+	cp repository/jars/riftlandData.jar repository/edu/gmu/eclab/riftlandData/
 
 
 ebola:
@@ -21,12 +51,6 @@ ebola:
 	mvn install:install-file -Dfile=repository/jars/ebolaData.jar -DgroupId=edu.gmu.eclab -DartifactId=ebolaData -Dversion=1.0 -Dpackaging=jar -DlocalRepositoryPath:repository/
 	mkdir -p repository/edu/gmu/eclab/ebolaData/
 	cp repository/jars/ebolaData.jar repository/edu/gmu/eclab/ebolaData/
-
-# acequias:
-# 	rm -rf repository/edu/gmu/eclab/acequiasData/
-# 	mvn install:install-file -Dfile=repository/jars/acequiasData.jar -DgroupId=edu.gmu.eclab -DartifactId=acequiasData -Dversion=1.0 -Dpackaging=jar -DlocalRepositoryPath:repository/
-# 	mkdir -p repository/edu/gmu/eclab/acequiasData/
-# 	cp repository/jars/acequiasData.jar repository/edu/gmu/eclab/acequiasData
 
 dadaab:
 	rm -rf repository/edu/gmu/eclab/dadaabData/
