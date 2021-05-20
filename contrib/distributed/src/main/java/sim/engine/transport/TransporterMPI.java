@@ -127,6 +127,10 @@ public class TransporterMPI {
 		final ByteBuffer sendbuf = ByteBuffer.allocateDirect(objstream.size());
 		sendbuf.put(objstream.toByteArray()).flip();
 
+		
+		// TODO: we should not be calling MPI methods directly, this should be in MPIUtil 
+		
+		
 		// First exchange count[] of the send byte buffers with neighbors so that we can
 		// setup recvbuf
 		partition.getCommunicator().neighborAllToAll(src_count, 1, MPI.INT, dst_count, 1, MPI.INT);

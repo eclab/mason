@@ -794,7 +794,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * called remotely via RMI, and is part of the TransportRMIInterface. Don't call
 	 * this directly.
 	 */
-	public void getRMI(NumberND p, Promised promise) throws RemoteException {
+	public void getRMI(NumberND p, RemotePromise promise) throws RemoteException {
 		// Make promise remote
 		// update promise remotely
 		// Must happen asynchronously
@@ -810,7 +810,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * called remotely via RMI, and is part of the TransportRMIInterface. Don't call
 	 * this directly.
 	 */
-	public void getRMI(NumberND p, long id, Promised promise) throws RemoteException {
+	public void getRMI(NumberND p, long id, RemotePromise promise) throws RemoteException {
 		// Make promise remote
 		// update promise remotely
 		// Must happen asynchronously
