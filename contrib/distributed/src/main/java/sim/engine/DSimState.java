@@ -19,6 +19,7 @@ import sim.field.partitioning.*;
 import sim.field.storage.*;
 import sim.util.*;
 import sim.engine.rmi.*;
+import sim.app.dheatbugs.DHeatBug;
 import sim.display.*;
 
 /**
@@ -238,6 +239,10 @@ public class DSimState extends SimState {
 			if (payloadWrapper.fieldIndex >= 0) {
 				// add the object to the field
 				fieldRegistry.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
+				
+				if (payloadWrapper.payload instanceof DHeatBug) {
+					DSimState.loc_disagree((Int2D)payloadWrapper.loc, (DHeatBug)payloadWrapper.payload, "preschedule");
+				}
 			}
 
 			if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
@@ -317,9 +322,14 @@ public class DSimState extends SimState {
 					 */
 
 					// add payload into correct HaloGrid
-					if (payloadWrapper.fieldIndex >= 0)
+					if (payloadWrapper.fieldIndex >= 0) {
 						// add the object to the field
 						fieldRegistry.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
+						
+						if (payloadWrapper.payload instanceof DHeatBug) {
+							DSimState.loc_disagree((Int2D)payloadWrapper.loc, (DHeatBug)payloadWrapper.payload, "rrr");
+						}	
+					}
 
 					// DistributedIterativeRepeat
 					if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
@@ -486,7 +496,7 @@ public class DSimState extends SimState {
 				GridStorage st = ((HaloGrid2D) field).getStorage();
 
 				// go by point here
-				for (Int2D p : old_partition.getPointList()) {
+				for (Int2D p : old_partition.getPointList()) { //should we ignore halobound here?
 
 					// check if the new partition contains the point
 					if (!partition.getLocalBounds().contains(p)) {
@@ -511,10 +521,18 @@ public class DSimState extends SimState {
 							for (int i = ((ArrayList<Serializable>) a_list).size() - 1; i >= 0; i--) {
 
 								Serializable a = ((ArrayList<Serializable>) a_list).get(i);
+								
+								if (a instanceof DHeatBug) {
+									DSimState.loc_disagree(p, (DHeatBug)a, "loadBalance");
+								}
+								
+								
 								// if a is stoppable
 								if (a != null && a instanceof Stopping && !migratedAgents.contains(a)
 										&& old_partition.contains(p) && !partition.getLocalBounds().contains(p)) {
 									DSteppable stopping = ((DSteppable) a);
+									
+									
 
 									// stop and migrate
 									if (stopping.getStoppable() instanceof TentativeStep) {
@@ -525,24 +543,27 @@ public class DSimState extends SimState {
 
 									// stop and migrate
 									if (stopping.getStoppable() instanceof IterativeRepeat) {
+										
 										final IterativeRepeat iterativeRepeat = (IterativeRepeat) stopping
 												.getStoppable();
+										iterativeRepeat.stop();
 										final DistributedIterativeRepeat distributedIterativeRepeat = new DistributedIterativeRepeat(
 												stopping, iterativeRepeat.getTime(), iterativeRepeat.getInterval(),
 												iterativeRepeat.getOrdering());
 										transporter.migrateRepeatingAgent(distributedIterativeRepeat, toP, p,
 												((HaloGrid2D) field).getFieldIndex());
-										iterativeRepeat.stop();
+										
 									}
 
 									migratedAgents.add(stopping);
 									System.out.println(
 											"PID: " + partition.getPID() + " processor " + old_pid + " move " + stopping
-													+ " from " + p + " (point " + p + ") to processor " + toP);
+													+ " from " + p + " (point " + p + ") to processor " + toP+ " "+partition.getLocalBounds()+" "+((DHeatBug)stopping).loc_x+" "+((DHeatBug)stopping).loc_y);
 
 									// here the agent is removed from the old location TOCHECK!!!
 									// haloGrid2D.removeLocal(p, stopping.ID());
 									st.removeObject(p, stopping.ID());
+
 
 								}
 
@@ -869,6 +890,16 @@ public class DSimState extends SimState {
 	// implement in subclass
 	protected void setPartitionGlobals(Object[] o) {
 		throw new RuntimeException("setPartitionGlobals() should be implemented in subclass");
+	}
+	
+	public static void loc_disagree(Int2D p, DHeatBug h, String s) {
+		
+		Int2D h_loc = new Int2D(h.loc_x, h.loc_y);
+		if (!p.equals(h_loc)){
+			System.out.println(s+" loc disagree "+h+" h_loc "+h_loc+" p "+p);
+			System.exit(-1);
+		}
+		
 	}
 
 }

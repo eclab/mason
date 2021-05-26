@@ -4,7 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.function.IntFunction;
 
+import sim.app.dheatbugs.DHeatBug;
+import sim.app.dheatbugs.DHeatBugs;
 import sim.engine.DObject;
+import sim.engine.DSimState;
 import sim.util.*;
 
 /**
@@ -74,6 +77,9 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T> {
 	///// GRIDSTORAGE GUNK
 
 	public void addObject(NumberND p, T t) {
+		
+		//System.out.println("adding obj "+t+" to"+p);
+		
 		Int2D local_p = toLocalPoint((Int2D) p);
 		final ArrayList<T>[] array = storage;
 		final int idx = getFlatIdx(local_p);
@@ -82,6 +88,8 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T> {
 			array[idx] = new ArrayList<T>();
 
 		array[idx].add(t);
+		
+		DSimState.loc_disagree((Int2D)p, (DHeatBug) t, "addObject");
 	}
 
 	public T getObject(NumberND p, long id) {

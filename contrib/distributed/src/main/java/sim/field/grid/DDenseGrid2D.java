@@ -438,11 +438,16 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 				}
 			else if (isLocal(to))
 				{
+				//System.out.println(agent+" local_move");
 				removeLocal(from, agent);
 				addLocal(to, agent);
 				}
 			else
 				{
+				
+				//System.out.println(agent+" remote_move");
+
+				
 				// Here we have to move the agent remotely and reschedule him
 				Stopping a = (Stopping) agent;			// may throw exception if it's not really an agent
 				Stoppable stop = a.getStoppable();
@@ -490,7 +495,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 						time = time + interval;					// advance to next
 						}
 					removeLocal(from, agent);
-					//System.out.println(a+" addedAgent at"+ to+" (4)");
+					System.out.println(a+" addedAgent at"+ to+" (4)");
 					halo.addAgentToRemote(to, agent, ordering, time, interval);
 					}
 				else

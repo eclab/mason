@@ -7,6 +7,7 @@
 package sim.app.dheatbugs;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 import sim.engine.DSteppable;
 import sim.engine.SimState;
@@ -51,7 +52,19 @@ public class DHeatBug extends DSteppable {
 //		} catch (RemoteException e) {
 //			throw new RuntimeException(e);
 //		}
-
+		
+		if (!dHeatBugs.valgrid.isHalo(new Int2D(loc_x, loc_y))) {
+			
+            for (ArrayList<DHeatBug> a : dHeatBugs.bugs.getStorageArray())
+            {
+            	if (a != null) {
+            	    if (a.contains(this)) {
+            		    System.out.println("in storage on this partition");
+            	    }
+            	}
+            }
+            //System.out.println(this+" "+loc_x+" "+loc_y+" " +dHeatBugs.getPID()+" "+dHeatBugs.getPartition().getLocalBounds());
+		}
 		double old_heat = dHeatBugs.valgrid.getLocal(new Int2D(loc_x, loc_y));
 		double new_heat = 0;
 
@@ -73,8 +86,7 @@ public class DHeatBug extends DSteppable {
 		} else if (new_heat > idealTemp) { // go to coldest place
 			for (int x = -1; x < 2; x++)
 				for (int y = -1; y < 2; y++)
-					if (!(x == 0
-							&& y == 0)) {
+					if (!(x == 0 && y == 0)) {
 						final int xx = (x + loc_x);
 						final int yy = (y + loc_y);
 
@@ -90,14 +102,14 @@ public class DHeatBug extends DSteppable {
 //							promiseBest_heat = dHeatBugs.valgrid.get(new Int2D(bestx, besty));
 //							// FIXME: This should only be used after the promise has been fulfilled
 //							best_heat = promiseBest_heat.getDouble();
-							best_heat = dHeatBugs.valgrid.getLocal(new Int2D(bestx, besty));
+							//best_heat = dHeatBugs.valgrid.getLocal(new Int2D(bestx, besty));
+							best_heat = heat;
 						}
 					}
 		} else if (new_heat < idealTemp) { // go to warmest place
 			for (int x = -1; x < 2; x++)
 				for (int y = -1; y < 2; y++)
-					if (!(x == 0
-							&& y == 0)) {
+					if (!(x == 0 && y == 0)) {
 						final int xx = (x + loc_x);
 						final int yy = (y + loc_y);
 //						Promise promiseHeat = dHeatBugs.valgrid.get(new Int2D(xx, yy));
@@ -106,13 +118,14 @@ public class DHeatBug extends DSteppable {
 						double heat = dHeatBugs.valgrid.getLocal(new Int2D(xx, yy));
 
 						// not uniform, but enough to break up the go-up-and-to-the-left syndrome
-						if (bestx == START || heat < best_heat || (heat == best_heat && state.random.nextBoolean())) {
+						if (bestx == START || heat > best_heat || (heat == best_heat && state.random.nextBoolean())) {
 							bestx = xx;
 							besty = yy;
 //							promiseBest_heat = dHeatBugs.valgrid.get(new Int2D(bestx, besty));
 //							// FIXME: This should only be used after the promise has been fulfilled
 //							best_heat = promiseBest_heat.getDouble();
-							best_heat = dHeatBugs.valgrid.getLocal(new Int2D(bestx, besty));
+							//best_heat = dHeatBugs.valgrid.getLocal(new Int2D(bestx, besty));
+							best_heat = heat;
 						}
 					}
 		} else { // stay put
@@ -124,8 +137,17 @@ public class DHeatBug extends DSteppable {
 		final int old_y = loc_y;
 		loc_x = dHeatBugs.valgrid.stx(bestx);
 		loc_y = dHeatBugs.valgrid.sty(besty);
+		
+
+		
+	
+		
 
 //		System.out.println(DSimState.getPID() + " : " + dHeatBugs.bugs.get(new Int2D(0, 0)));
+		
+		System.out.println("moving "+this+" "+(new Int2D(old_x, old_y))+new Int2D(loc_x, loc_y));
+		
+		
 		dHeatBugs.bugs.moveAgent(new Int2D(old_x, old_y), new Int2D(loc_x, loc_y), this);
 	}
 

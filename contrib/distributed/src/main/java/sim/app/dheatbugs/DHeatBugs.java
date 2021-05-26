@@ -49,7 +49,7 @@ public class DHeatBugs extends DSimState {
 	public DDenseGrid2D<DHeatBug> bugs; // Instead of SparseGrid2D
 
 	public DHeatBugs(final long seed) {
-		this(seed, 100, 100, 100, 5);
+		this(seed, 100, 100, 100, 1);
 	}
 
 	public DHeatBugs(final long seed, final int width, final int height, final int count, final int aoi) {
@@ -246,7 +246,7 @@ public class DHeatBugs extends DSimState {
 			for (DHeatBug a : agents.get(p)) {
 				if (partition.getLocalBounds().contains(p)) {
 					bugs.addAgent(p, a, 0, 0, 1);
-					System.out.println("start : " + a);
+					System.out.println("start : " + a+" "+a.loc_x+" "+a.loc_y+p);
 				}
 
 			}
