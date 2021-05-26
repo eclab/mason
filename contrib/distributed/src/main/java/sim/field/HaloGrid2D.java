@@ -100,7 +100,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		haloBounds = localBounds.resize(partition.getAOI());
 		localStorage.reshape(haloBounds);
 
-		localStorage.setOffSet(haloBounds.ul().toArray()); // moving local point calculation to GridStorage
+		localStorage.setOffSet(haloBounds.ul()); // moving local point calculation to GridStorage
 
 		// Get the partition representing private area by shrinking the original
 		// partition by aoi at each dimension
@@ -140,7 +140,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 */
 
 	public Int2D toLocalPoint(final Int2D p) {
-		return p.subtract(haloBounds.ul().toArray());
+		return p.subtract(haloBounds.ul());
 	}
 
 	/**
@@ -425,10 +425,10 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		}
 		else { // ...otherwise, RMI
 			try {
-				//No need to remove from storage first
-				// TODO might need to remove from schedule
-				System.out.println("RMI called 1");
 
+				// First, remove from schedule
+				assert(t instanceof Stopping); // Assumes that t is not an agent if it's not Stopping
+				unscheduleAgent((Stopping) t);
 				proxy.getField(partition.toPartitionPID(p)).addRMI(p, t, ordering, time);
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -453,8 +453,11 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		}
 		else { // ...otherwise, RMI
 			try {
-				//TODO REMOVE FIRST???
-				System.out.println("RMI called 2");
+
+				// First, remove from schedule
+				assert(t instanceof Stopping); // Assumes that t is not an agent if it's not Stopping
+				unscheduleAgent((Stopping) t);
+				// Update using RMI
 				proxy.getField(partition.toPartitionPID(p)).addRMI(p, t, ordering, time, interval);
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -668,13 +671,13 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			if (pair.c != null) {
 				// 	pair.c is scheduling information holding: ordering, time, [interval]
 				if (pair.c.length == 3) { // Repeating agent, if array contains interval information
-					state.schedule.scheduleOnce(pair.c[1], (int) pair.c[0], (Steppable) pair.b);
-					System.out.println("agent rescheduled!");
+					state.schedule.scheduleRepeating(pair.c[1], (int) pair.c[0], (Steppable) pair.b, pair.c[2]);
+//					System.out.println("repeating agent rescheduled!");
 				}
 				else {
 					assert(pair.c.length == 2);
-					state.schedule.scheduleRepeating(pair.c[1], (int) pair.c[0], (Steppable) pair.b, pair.c[2]);
-					System.out.println("repeating agent rescheduled!");
+					state.schedule.scheduleOnce(pair.c[1], (int) pair.c[0], (Steppable) pair.b);
+//					System.out.println("agent rescheduled!");
 				}
 			}
 		}
@@ -793,7 +796,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * called remotely via RMI, and is part of the TransportRMIInterface. Don't call
 	 * this directly.
 	 */
-	public void getRMI(NumberND p, Promised promise) throws RemoteException {
+	public void getRMI(NumberND p, RemotePromise promise) throws RemoteException {
 		// Make promise remote
 		// update promise remotely
 		// Must happen asynchronously
@@ -809,7 +812,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * called remotely via RMI, and is part of the TransportRMIInterface. Don't call
 	 * this directly.
 	 */
-	public void getRMI(NumberND p, long id, Promised promise) throws RemoteException {
+	public void getRMI(NumberND p, long id, RemotePromise promise) throws RemoteException {
 		// Make promise remote
 		// update promise remotely
 		// Must happen asynchronously
@@ -940,7 +943,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 				};
 
 				for (final Int2D p : shifts) {
-					final IntRect2D sp = p2.shift(new int[] { p.x, p.y });
+					final IntRect2D sp = p2.shift(p);		// new int[] { p.x, p.y });
 					if (p1.intersects(sp))
 						overlaps.add(p1.getIntersection(sp));
 				}

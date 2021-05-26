@@ -7,7 +7,6 @@ import java.rmi.RemoteException;
 import mpi.MPI;
 import mpi.MPIException;
 import sim.engine.DSteppable;
-import sim.app.dflockers.DFlockers;
 import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.engine.SimState;
@@ -44,10 +43,12 @@ public class DFlockersWithDRegistry extends DSimState {
 
 	public void start() {
 		super.start();
-		final int[] size = getPartition().getLocalBounds().getSizes();
+		final int width = getPartition().getLocalBounds().getWidth();
+		final int height = getPartition().getLocalBounds().getHeight();
+
 		for (int x = 0; x < DFlockersWithDRegistry.numFlockers / getPartition().getNumProcessors(); x++) {
-			final double px = random.nextDouble() * size[0] + getPartition().getLocalBounds().ul().toArray()[0];
-			final double py = random.nextDouble() * size[1] + getPartition().getLocalBounds().ul().toArray()[1];
+			final double px = random.nextDouble() * width + getPartition().getLocalBounds().ul().toArray()[0];
+			final double py = random.nextDouble() * height + getPartition().getLocalBounds().ul().toArray()[1];
 			final Double2D location = new Double2D(px, py);
 //			final DFlockerWithDRegistry flocker = new DFlockerWithDRegistry(location, 
 //					(getPartitioning().pid * (DFlockersWithDRegistry.numFlockers / getPartitioning().numProcessors)) + x);

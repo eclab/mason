@@ -199,6 +199,16 @@ public class DFlocker extends DSteppable implements Remote, Oriented2D {
 		}
 		lastd = new Double2D(dx, dy);
 		loc = new Double2D(dFlockers.flockers.stx(loc.x + dx), dFlockers.flockers.sty(loc.y + dy));
+		
+//		// TESTING >>>>>>>>
+//		// Sometimes, randomly send flocker to root node
+//		if (state.random.nextBoolean(0.0001)) {
+//			//TODO lastd?
+//			loc = new Double2D(0,0);
+//			System.out.println("moved flocker to origin");
+//		}
+//		// <<<<<<<<<<<<<<<<
+		
 		try {
 			dFlockers.flockers.moveAgent(loc, this);
 		} catch (Exception e) {

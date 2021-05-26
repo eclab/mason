@@ -24,17 +24,16 @@ public class Diffuser extends DSteppable {
 		final DHeatBugs heatbugs = (DHeatBugs) state;
 		
 		sim.field.partitioning.Partition partition = heatbugs.getPartition();
-		int[] sizes = partition.getLocalBounds().getSizes();
 		final int aoi = partition.getAOI();
 
 		// locals are faster than instance variables
 		final double[] _valgrid_field = heatbugs.valgrid.getStorageArray();
 		final double[] _valgrid2_field = heatbugs.valgrid2.getStorageArray();
-		final int _gridWidth = sizes[0];
-		final int _gridHeight = sizes[1];
+		final int _gridWidth = partition.getLocalBounds().getWidth();
+		final int _gridHeight = partition.getLocalBounds().getHeight();
 		final double _evaporationRate = heatbugs.evaporationRate;
 		final double _diffusionRate = heatbugs.diffusionRate;
-		final int offset = sizes[1] + (2 * aoi);
+		final int offset = _gridHeight + (2 * aoi);
 		int past, curr, next;
 
 		// for each x and y position

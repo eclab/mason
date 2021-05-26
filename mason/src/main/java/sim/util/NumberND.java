@@ -213,7 +213,7 @@ public abstract class NumberND implements java.io.Serializable
 		else return null;
 		} 
 
-	public NumberND add(int[] offset)
+	public NumberND add(Int2D offset)
 		{
 		if (this instanceof Int2D)
 			return ((Int2D)this).add(offset);
@@ -232,7 +232,7 @@ public abstract class NumberND implements java.io.Serializable
 	else return null;
 	} 	
 
-	public NumberND subtract(int[] offset)
+	public NumberND subtract(Int2D offset)
 		{
 		if (this instanceof Int2D)
 			return ((Int2D)this).subtract(offset);

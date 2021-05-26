@@ -27,13 +27,14 @@ public class IntGridStorage extends GridStorage<Integer> {
 	}
 
 	public String toString() {
-		int[] size = shape.getSizes();
+		int width = shape.getWidth();
+		int height = shape.getHeight();
 		int[] array = (int[]) storage;
 		StringBuffer buf = new StringBuffer(String.format("IntGridStorage-%s\n", shape));
 
-		for (int i = 0; i < size[0]; i++) {
-			for (int j = 0; j < size[1]; j++)
-				buf.append(String.format(" %4d ", array[i * size[1] + j]));
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++)
+				buf.append(String.format(" %4d ", array[i * height + j]));
 			buf.append("\n");
 		}
 

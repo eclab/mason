@@ -57,6 +57,33 @@
 			<version>1.0</version> </dependency> -->
 		<dependency>
 			<groupId>edu.gmu.eclab</groupId>
+			<artifactId>acequiasData</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>edu.gmu.eclab</groupId>
+			<artifactId>cityMigrationData</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.gmu.eclab</groupId>
+			<artifactId>riftlandData</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.gmu.eclab</groupId>
+			<artifactId>conflictDiamondsData</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.gmu.eclab</groupId>
+			<artifactId>omolandCAData</artifactId>
+			<version>1.0</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>edu.gmu.eclab</groupId>
 			<artifactId>ebolaData</artifactId>
 			<version>1.0</version>
 		</dependency>
