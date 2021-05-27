@@ -13,6 +13,7 @@ import com.vividsolutions.jts.planargraph.Node;
 
 import sim.engine.DSteppable;
 import sim.engine.SimState;
+import sim.field.geo.GeomVectorField;
 import sim.util.Double2D;
 import sim.util.geo.GeomPlanarGraphDirectedEdge;
 import sim.util.geo.GeomPlanarGraphEdge;
@@ -228,6 +229,14 @@ public class DAgent extends DSteppable {
 		}
 		state.agentLocations.moveAgent(toP, this);
 	}
+	
+	public void transfer(Double2D point, GeomVectorField g) {
+		pointMoveTo.setCoordinate(new Coordinate(point.x, point.y));
+		getAgentGeometry().getGeometry().apply(pointMoveTo);
+		getAgentGeometry().geometry.geometryChanged();
+		g.setGeometryLocation(getAgentGeometry(), pointMoveTo);
+	}
+	
 
 	public void step(SimState state) {
 //		System.out.println("step agent: " + System.identityHashCode(this));

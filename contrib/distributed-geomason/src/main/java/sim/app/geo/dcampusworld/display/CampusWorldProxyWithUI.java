@@ -46,8 +46,11 @@ public class CampusWorldProxyWithUI extends GUIState {
 
 	
 
-	ContinuousPortrayal2D agentPortrayal = new ContinuousPortrayal2D();
+	//ContinuousPortrayal2D agentPortrayal = new ContinuousPortrayal2D();
 
+    GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
+
+	
 	public static void main(String[] args) { new CampusWorldProxyWithUI().createController(); }
 
 	public CampusWorldProxyWithUI() { super(new CampusWorldProxy(System.currentTimeMillis())); 	loadStatic();

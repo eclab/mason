@@ -563,12 +563,14 @@ public class DSimState extends SimState {
 									// here the agent is removed from the old location TOCHECK!!!
 									// haloGrid2D.removeLocal(p, stopping.ID());
 									st.removeObject(p, stopping.ID());
+									
+
 
 
 								}
 
 								// not stoppable (transport a double or something) transporter call transportObject?
-								else if (old_partition.contains(p) && !partition.getLocalBounds().contains(p)) {
+								else if (old_partition.contains(p) && !partition.getLocalBounds().contains(p) && !migratedAgents.contains(a)) {
 									transporter.transportObject((Serializable) a, toP, p,
 											((HaloGrid2D) field).getFieldIndex());
 								}
@@ -901,5 +903,7 @@ public class DSimState extends SimState {
 		}
 		
 	}
+	
+	
 
 }
