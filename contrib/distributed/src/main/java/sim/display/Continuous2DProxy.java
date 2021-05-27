@@ -69,6 +69,7 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy {
 			//int halo_size = vp1.getAOI();
 		    IntRect2D partBound = vp1.getStorageBounds();
 		    
+		    System.out.println(partBound);
 		    
 		    
 			//remove halo bounds using bounds.ul offset, assumption is offset from 0,0 is halo size
@@ -80,19 +81,27 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy {
 
             
 			// load storage, add this to field!
+            
             ContinuousStorage storage = (ContinuousStorage)(stateProxy.storage(proxyIndex));
     		HashMap<Long, Double2D> map = storage.getStorageMap();
     		discretization = storage.getDiscretization();
 
-    		clear();
+    		//clear();
 
     		Int2D origin = fullBounds.ul();
     		
     		for (Entry<Long, Double2D> entry : map.entrySet()) {
     			Double2D loc = entry.getValue();
-    			setObjectLocation(entry.getKey(), loc);
+    			System.out.println(loc);
+    			System.out.println(setObjectLocation(entry.getKey(), loc));
     		}
+    		
+            
+
+            
 		}
+		
+		System.out.println("--");
     		
 
 	}
