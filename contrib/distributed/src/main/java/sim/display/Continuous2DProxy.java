@@ -86,14 +86,13 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy {
     		HashMap<Long, Double2D> map = storage.getStorageMap();
     		discretization = storage.getDiscretization();
 
-    		//clear();
 
     		Int2D origin = fullBounds.ul();
     		
     		for (Entry<Long, Double2D> entry : map.entrySet()) {
     			Double2D loc = entry.getValue();
-    			System.out.println(loc);
-    			System.out.println(setObjectLocation(entry.getKey(), loc));
+    			Double2D new_loc = loc.subtract(new Double2D(fullBounds_offset));
+    			setObjectLocation(entry.getKey(), new_loc);
     		}
     		
             

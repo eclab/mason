@@ -25,10 +25,68 @@ public class GeomVectorFieldProxy extends GeomVectorField implements UpdatablePr
     }
 
 	@Override
-	public void update(SimStateProxy proxy, int storage, int[] partition_list)
+	public void update(SimStateProxy stateProxy, int proxyIndex, int[] quad_tree_partitions)
 			throws RemoteException, NotBoundException {
 		// TODO Auto-generated method stub
 		
+		int halo_size = 0;
+
+		
+		IntRect2D[] rect_list = new IntRect2D[quad_tree_partitions.length];
+		for (int p_ind = 0; p_ind < quad_tree_partitions.length; p_ind++) {
+			int p = quad_tree_partitions[p_ind];
+			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
+			halo_size = vp1.getAOI();
+
+			rect_list[p_ind] = vp1.getStorageBounds();
+		    
+		}
+		
+		IntRect2D fullBounds = IntRect2D.getBoundingRect(rect_list);
+		Int2D new_ul = fullBounds.ul().add(halo_size); //remove halo
+		Int2D new_br = fullBounds.br().add(-1 * halo_size); //remove halo
+		fullBounds = new IntRect2D(new_ul, new_br);
+		
+		Int2D fullBounds_offset = fullBounds.ul();
+		
+		int width = fullBounds.br().x - fullBounds.ul().x;
+		int height = fullBounds.br().y - fullBounds.ul().y;
+		
+
+		//if (width != this.width || height != this.height)
+		reshape(width, height);
+		
+		//for (int p = 0; p < stateProxy.numProcessors; p++) {
+		for (int p : quad_tree_partitions) {
+
+			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
+			//int halo_size = vp1.getAOI();
+		    IntRect2D partBound = vp1.getStorageBounds();
+		    
+		    System.out.println(partBound);
+		    
+		    
+			//remove halo bounds using bounds.ul offset, assumption is offset from 0,0 is halo size
+		    
+            int partition_width_low_ind = partBound.ul().getX()+halo_size;  //partition bounds, subtract to remove halo
+            int partition_width_high_ind = partBound.br().getX()-halo_size;  //partition bounds, add to remove halo
+            int partition_height_low_ind =  partBound.ul().getY()+halo_size;  //partition bounds
+            int partition_height_high_ind =  partBound.br().getY()-halo_size;   //partition bounds 
+            
+            
+
+            
+		}
+		
+		
+		
+		
+		
+	}
+		
+	public void reshape(int w, int h) {
+		   setFieldWidth(w);
+		   setFieldHeight(h);
 	}
 
 //	public void update(SimStateProxy stateProxy, int proxyIndex) throws RemoteException, NotBoundException {
