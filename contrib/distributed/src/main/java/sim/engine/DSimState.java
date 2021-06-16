@@ -69,7 +69,7 @@ public class DSimState extends SimState {
 	// A list of all fields in the Model. Any HaloField that is created will
 	// register itself here.
 	// Not to be confused with the DRegistry.
-	ArrayList<HaloGrid2D<?, ?>> fieldRegistry;
+	ArrayList<HaloGrid2D<?, ?>> fieldList;
 
 	// The RMI registry
 	protected DRegistry registry;
@@ -93,11 +93,23 @@ public class DSimState extends SimState {
 		partition.initialize();
 		balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
 		transporter = new TransporterMPI(partition);
-		fieldRegistry = new ArrayList<>();
+		fieldList = new ArrayList<>();
 		rootInfo = new HashMap<>();
 		withRegistry = false;
 	}
 
+	public DSimState(long seed, int width, int height, int aoi, boolean isToroidal) {
+		super(seed, new MersenneTwisterFast(seed), new DistributedSchedule());
+		this.partition = new QuadTreePartition(width, height, isToroidal, aoi);
+		partition.initialize();
+		balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
+		transporter = new TransporterMPI(partition);
+		fieldList = new ArrayList<>();
+		rootInfo = new HashMap<>();
+		withRegistry = false;
+	}	
+	
+	
 	// loads and stores the pid.
 	// Only call this after COMM_WORLD has been set up.
 	static void loadPID() {
@@ -153,8 +165,8 @@ public class DSimState extends SimState {
 	 */
 	public int registerField(final HaloGrid2D<?, ?> halo) {
 		// Must be called in a deterministic manner
-		final int index = fieldRegistry.size();
-		fieldRegistry.add(halo);
+		final int index = fieldList.size();
+		fieldList.add(halo);
 		return index;
 	}
 
@@ -166,16 +178,16 @@ public class DSimState extends SimState {
 	 */
 	void syncFields() throws MPIException, RemoteException {
 		
-		//for (Synchronizable field : fieldRegistry) {
+		//for (Synchronizable field : fieldList) {
 		  //   ((HaloGrid2D) field).loc_disagree_all_points("sf1");
 		//}
 		
-		for (final Synchronizable haloField : fieldRegistry)
+		for (final Synchronizable haloField : fieldList)
 			haloField.syncHalo();
 	}
 
 	void syncRemoveAndAdd() throws MPIException, RemoteException {
-		for (final HaloGrid2D<?, ?> haloField : fieldRegistry)
+		for (final HaloGrid2D<?, ?> haloField : fieldList)
 			haloField.syncRemoveAndAdd();
 	}
 
@@ -243,7 +255,7 @@ public class DSimState extends SimState {
 
 			if (payloadWrapper.fieldIndex >= 0) {
 				// add the object to the field
-				fieldRegistry.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
+				fieldList.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
 				
 				//if (payloadWrapper.payload instanceof DHeatBug) {
 				//	DSimState.loc_disagree((Int2D)payloadWrapper.loc, (DHeatBug)payloadWrapper.payload, this.partition, "preschedule");
@@ -287,7 +299,7 @@ public class DSimState extends SimState {
 		try {
 			MPI.COMM_WORLD.barrier();
 			
-			//for (Synchronizable field : fieldRegistry) {
+			//for (Synchronizable field : fieldList) {
 			  //   ((HaloGrid2D) field).loc_disagree_all_points("ps");
 			//}
 			
@@ -312,13 +324,13 @@ public class DSimState extends SimState {
 
 				try {
 					// Synchronize all objects and agents.
-					//for (Synchronizable field : fieldRegistry) {
+					//for (Synchronizable field : fieldList) {
 					  //   ((HaloGrid2D) field).loc_disagree_all_points("lb1");
 					//}
 
 					transporter.sync();
 					
-					//for (Synchronizable field : fieldRegistry) {
+					//for (Synchronizable field : fieldList) {
 					  //   ((HaloGrid2D) field).loc_disagree_all_points("lb2");
 					//}
 					
@@ -344,7 +356,7 @@ public class DSimState extends SimState {
 					// add payload into correct HaloGrid
 					if (payloadWrapper.fieldIndex >= 0) {
 						// add the object to the field
-						fieldRegistry.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
+						fieldList.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
 						//verify it was added to the correct location!
 						
 
@@ -408,7 +420,7 @@ public class DSimState extends SimState {
 				//	}
 				}
 
-				//for (Synchronizable field : fieldRegistry) {
+				//for (Synchronizable field : fieldList) {
 				  //   ((HaloGrid2D) field).loc_disagree_all_points("lb3");
 				//}
 				
@@ -416,7 +428,7 @@ public class DSimState extends SimState {
 				try {
 					MPI.COMM_WORLD.barrier();
 					
-					//for (Synchronizable field : fieldRegistry) {
+					//for (Synchronizable field : fieldList) {
 					//     ((HaloGrid2D) field).loc_disagree_all_points("lb4");
 					//}
 					
@@ -444,7 +456,7 @@ public class DSimState extends SimState {
 			}
 		}
 		
-		//for (Synchronizable field : fieldRegistry) {
+		//for (Synchronizable field : fieldList) {
 		//     ((HaloGrid2D) field).loc_disagree_all_points("lb5");
 		//}
 	}
@@ -469,7 +481,7 @@ public class DSimState extends SimState {
 		MPI.COMM_WORLD.barrier();
 
 		// Raj rewrite
-		for (Synchronizable field : fieldRegistry) {
+		for (Synchronizable field : fieldList) {
 			
 			//((HaloGrid2D) field).loc_disagree_all_points("bp1");
 
@@ -768,7 +780,7 @@ public class DSimState extends SimState {
 		try {
 			syncFields();
 
-			for (final Synchronizable haloField : fieldRegistry)
+			for (final Synchronizable haloField : fieldList)
 				haloField.initRemote();
 
 			if (partition.isRootProcessor()) {
@@ -809,7 +821,7 @@ public class DSimState extends SimState {
 	/**
 	 * @return an arraylist of all the HaloGrid2Ds registered with the SimState
 	 */
-	public ArrayList<HaloGrid2D<?, ?>> getFieldRegistry() { return fieldRegistry; }
+	public ArrayList<HaloGrid2D<?, ?>> getFieldList() { return fieldList; }
 
 	/*
 	 * @return the Transporter
