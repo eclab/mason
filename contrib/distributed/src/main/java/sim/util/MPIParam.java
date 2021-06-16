@@ -48,11 +48,13 @@ public class MPIParam {
 		this.rects = new ArrayList<IntRect2D>() {
 			{
 				//add(rect.rshift(new int[]{bound.ul().x,bound.ul().y}));
-				add(rect.rshift(bound.ul()));
+				add(rect.subtract(bound.ul()));
 			}
 		};
 	}
 
+	
+	/*old version
 	public MPIParam(List<IntRect2D> rects, IntRect2D bound, Datatype baseType) {
 		this.idx = 0;
 		this.size = 0;
@@ -78,7 +80,48 @@ public class MPIParam {
 			types[i] = getNdArrayDatatype(new int[] { rect.getWidth(), rect.getHeight() }, baseType, bsize);
 			this.size += rect.getArea();
 			/// this.rects.add(rect.rshift(new int[]{bound.ul().x,bound.ul().y}));
-			this.rects.add(rect.rshift(bound.ul()));
+			this.rects.add(rect.subtract(bound.ul()));
+		}
+
+		try {
+			this.type = Datatype.createStruct(bl, displ, types);
+			this.type.commit();
+		} catch (MPIException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+	*/
+	
+	//fixed by Raj, this should get local point first, then get flat idx I think
+	public MPIParam(List<IntRect2D> rects, IntRect2D bound, Datatype baseType) {
+		this.idx = 0;
+		this.size = 0;
+		this.rects = new ArrayList<IntRect2D>();
+
+		int count = rects.size();
+		int typeSize = getTypePackSize(baseType);
+
+		int[] bl = new int[count], displ = new int[count];
+		int width = bound.getWidth();
+		int height = bound.getHeight();
+		int[] bsize = new int[] { width, height };
+	
+		Datatype[] types = new Datatype[count];
+
+		// blocklength is always 1
+		Arrays.fill(bl, 1);
+
+		for (int i = 0; i < count; i++) {
+			IntRect2D rect = rects.get(i);
+//			displ[i] = GridStorage.getFlatIdx(rect.ul().subtract(new int[]{bound.ul().x,bound.ul().y}), bsize) * typeSize; // displacement from the start in bytes
+			displ[i] = GridStorage.getFlatIdx(rect.ul().subtract(bound.ul()), height) * typeSize; // displacement from the start in bytes
+			types[i] = getNdArrayDatatype(new int[] { rect.getWidth(), rect.getHeight() }, baseType, bsize);
+			this.size += rect.getArea();
+			/// this.rects.add(rect.rshift(new int[]{bound.ul().x,bound.ul().y}));
+			this.rects.add(rect.subtract(bound.ul()));
+			//this.rects.add(rect);
+
 		}
 
 		try {

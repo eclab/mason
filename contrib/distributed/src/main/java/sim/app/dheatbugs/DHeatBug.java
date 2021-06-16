@@ -145,7 +145,7 @@ public class DHeatBug extends DSteppable {
 
 //		System.out.println(DSimState.getPID() + " : " + dHeatBugs.bugs.get(new Int2D(0, 0)));
 		
-		System.out.println("moving "+this+" "+(new Int2D(old_x, old_y))+new Int2D(loc_x, loc_y));
+		//System.out.println("moving "+this+" "+(new Int2D(old_x, old_y))+new Int2D(loc_x, loc_y));
 		
 		
 		dHeatBugs.bugs.moveAgent(new Int2D(old_x, old_y), new Int2D(loc_x, loc_y), this);

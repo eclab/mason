@@ -125,6 +125,62 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	public int[] getProcessorNeighborhood(int level) throws RemoteException {
 		return dSimState.getPartition().getProcessorNeighborhood(level);
 	}
+	
+	//Raj: input pids and get all neighbors in the lowest point in quadtree that contains inputed pids
+	public int[] getMinimumNeighborhood(int[] proc_ids) throws RemoteException {
+		
+		if (proc_ids.length == 1) {
+			return proc_ids;
+		}
+		
+		int selected_level = dSimState.getPartition().getTreeDepth(); //-1?
+		
+		for (int i=selected_level; i>=0; i--) {
+			
+			boolean all_contained = true;
+			
+			int[] chosen_neighborhood = getProcessorNeighborhood(i); //this should contain all partitions
+			
+			for (int a : chosen_neighborhood) {
+				
+				System.out.println(a);
+				
+			}
+
+			
+			for (int proc_id : proc_ids) {
+				boolean contained = false;
+				for (int neigh_id : chosen_neighborhood) {
+					if (proc_id == neigh_id) {
+						contained = true;
+						break; //found
+					}
+					
+				}
+				
+				if (contained == false) {
+					all_contained = false;
+					break;
+				}
+				
+			
+				
+			}
+			
+			if (all_contained == true) {
+				return chosen_neighborhood;
+			}
+			
+			
+
+		}
+		
+		
+        throw new RemoteException("some proc_ids not in quad tree");    
+        //return null;
+	
+		
+	}
 
 	public ArrayList<Stat> getStatList() throws RemoteException {
 		return dSimState.getStatList();

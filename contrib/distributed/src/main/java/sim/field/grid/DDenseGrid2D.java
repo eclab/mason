@@ -210,10 +210,15 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	public Promised get(Int2D p, T t) 
 		{
 		DObject obj = (DObject) t;		// this may throw a runtime exception
-		if (isHalo(p))
+		if (isHalo(p) || isHalo(toHaloToroidal(p)))
 			{
 			return new Promise(containsLocal(p, t) ? obj : null);
 			}
+		
+		//elif antiwraparound point in halo
+		    //return promise for 
+		    //toHaloToroidal
+		
 		else
 			return halo.getFromRemote(p, obj.ID());
 		}

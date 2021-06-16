@@ -283,7 +283,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 
 		for (final IntRect2D rect : mp.rects) {
 			final ArrayList<Serializable> objs = new ArrayList<>();
-			for (final T obj : getObjects(rect.shift(shape.ul()))) {
+			for (final T obj : getObjects(rect.add(shape.ul()))) {
 				objs.add(obj);
 				// Append the object's location relative to the rectangle
 				objs.add(m.get(obj.ID()).subtract(shape.ul()).subtract(rect.ul()));
@@ -300,7 +300,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 		// Remove any objects that are in the unpack area (overwrite the area)
 		// shift the rect with local coordinates back to global coordinates
 		for (final IntRect2D rect : mp.rects)
-			removeObjects(rect.shift(shape.ul()));
+			removeObjects(rect.add(shape.ul()));
 
 		for (int k = 0; k < mp.rects.size(); k++)
 			for (int i = 0; i < objs.get(k).size(); i += 2)
