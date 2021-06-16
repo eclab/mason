@@ -1,0 +1,1 @@
+file:/Users/rmoffatt/gmuDev/mason/contrib/geomason/target/classes/sim/app/geo/haiti/data/pop.txt	file:/Users/rmoffatt/gmuDev/mason/contrib/geomason/target/classes/sim/app/geo/haiti/data/relief1.txt	20	18	100	1000	0.1	0.5	1.0	5.0	-1	414	1316178	0	1635485743	4	149

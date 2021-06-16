@@ -48,16 +48,19 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy {
 		    
 		}
 		
+		// RM TODO: shouldn't halo_size = AOI / 2
+		
 		IntRect2D fullBounds = IntRect2D.getBoundingRect(rect_list);
 		Int2D new_ul = fullBounds.ul().add(halo_size); //remove halo
 		Int2D new_br = fullBounds.br().add(-1 * halo_size); //remove halo
 		fullBounds = new IntRect2D(new_ul, new_br);
+		// ^ private area bounds
 		
 		Int2D fullBounds_offset = fullBounds.ul();
 		
 		int width = fullBounds.br().x - fullBounds.ul().x;
 		int height = fullBounds.br().y - fullBounds.ul().y;
-		
+		// ^ width & height of private area
 
 		//if (width != this.width || height != this.height)
 		reshape(width, height);
@@ -78,24 +81,62 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy {
             int partition_width_high_ind = partBound.br().getX()-halo_size;  //partition bounds, add to remove halo
             int partition_height_low_ind =  partBound.ul().getY()+halo_size;  //partition bounds
             int partition_height_high_ind =  partBound.br().getY()-halo_size;   //partition bounds 
-
             
 			// load storage, add this to field!
-            
             ContinuousStorage storage = (ContinuousStorage)(stateProxy.storage(proxyIndex));
-    		HashMap<Long, Double2D> map = storage.getStorageMap();
-    		discretization = storage.getDiscretization();
+            HashMap<Long, DObject>[] data = storage.storage;
+            HashMap<Long, Double2D> locations = storage.getStorageMap();
 
+//            HashMap<Long, DObject>[] privateData = (HashMap<Long, DObject>[]) new Object[data.length];
 
-    		Int2D origin = fullBounds.ul();
-    		
-    		for (Entry<Long, Double2D> entry : map.entrySet()) {
-    			Double2D loc = entry.getValue();
-    			Double2D new_loc = loc.subtract(new Double2D(fullBounds_offset));
-    			setObjectLocation(entry.getKey(), new_loc);
-    		}
-    		
+			for (int x = partition_width_low_ind; x < partition_width_high_ind; x++) {
+				for (int y = partition_height_low_ind; y < partition_height_high_ind; y++) {
+					Int2D local_p = storage.toLocalPoint(new Int2D(x, y)); //convert to local storage to access partition storage correctly
+//					if (local_p.x * partBound.getHeight() + local_p.y < 0 || local_p.x * partBound.getHeight() + local_p.y >= data.length) {
+//						System.err.println("IndexOutOfBoundsException: " + local_p.x * partBound.getHeight() + local_p.y + " for bounds " + data.length);
+//						continue;
+//					}
+					HashMap<Long, DObject> privateArea = storage.getCell(local_p);
+//					HashMap<Long, DObject> privateArea = data[local_p.x * partBound.getHeight() + local_p.y];
+//					HashMap<Long, DObject> privateArea = data[GridStorage.getFlatIdx(local_p, partBound.getHeight())];
+	    			for (Entry<Long, DObject> entry : privateArea.entrySet()) {
+	    				Double2D loc = locations.get(entry.getKey());
+	    				DObject obj = entry.getValue();
+	    				setObjectLocation(obj, loc);
+	    			}
+				}
+			}
             
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+//            HashMap<Long, Double2D> map = storage.getStorageMap();
+////    		discretization = storage.getDiscretization();
+//
+//
+////    		Int2D origin = fullBounds.ul();
+//    		
+//    		for (int i = 0; i < data.length; i++) {
+//    			for (Entry<Long, DObject> entry : data[i].entrySet()) {
+//    				Double2D loc = map.get(entry.getKey());
+//    				if (storage.) {
+//    					continue;
+//    				}
+//    				DObject obj = entry.getValue();
+//    				setObjectLocation(obj, loc);
+//    			}
+//    		}
+
+    		
+            //TODO 
 
             
 		}

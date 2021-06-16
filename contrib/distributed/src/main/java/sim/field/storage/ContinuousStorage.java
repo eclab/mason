@@ -14,8 +14,8 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	// in GridStorage)
 	int width;
 	int discretization;
-	public HashMap<Long, Double2D> m;
-	public HashMap<Long, T>[] storage;
+	public HashMap<Long, Double2D> m; // id -> DObject's location
+	public HashMap<Long, T>[] storage; // id -> DObject
 	public boolean removeEmptyBags = true;
 
 	public ContinuousStorage(final IntRect2D shape, int discretization) {
@@ -153,7 +153,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	// Put the object to the given point
 	public void addObject(NumberND p, T obj) {
 		Double2D p_double = buildDouble2D(p);
-
+//		System.out.println("add Object: " + m + "; " + obj);
 		final Double2D old = m.put(obj.ID(), p_double);
 
 		if (old != null)

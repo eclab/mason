@@ -10928,7 +10928,7 @@ There are several kinds of Simple Portrayals in 3D, many of which are similar to
 \item {\bf Value Simple Portrayals} portray numbers as if they were simple shapes (typically cubes) of various colors, using a \class{sim.util.gui.ColorMap} to translate between numerical values and colors.  These are designed primarily to work with \class{sim.portrayal3d.grid.ValueGridPortrayal3D}.
 \item {\bf Quad Portrayals} portray numbers as if they were squares or points in a mesh, of various colors, using a \class{sim.util.gui.ColorMap} to translate between numerical values and colors.  These are designed primarily to work with \class{sim.portrayal3d.grid.Value2DGridPortrayal3D}.  Quad Portrayals were discussed in Section \ref{sim.portrayal3d.grid.quad.QuadPortrayal}.
 \item {\bf Edge Simple Portrayals} draw edges in networks.  These are designed to work with \method{sim.portrayal3d.network.NetworkPortrayal3D}.
-\item {\bf Wrapper Simple Portrayals}  ``wrap'' around subsidiary Simple Portrayals to add additional gizmos  to them. For example. to add a label, or to circle an object when it�s selected, simply create a wrapper portrayal around your basic portrayal and submit the wrapper portrayal as the Simple Portrayal to the Field Portrayal. Wrapper portrayals can wrap other wrapper portrayals, creating a sequence of ``wraps'' around a basic portrayal. 
+\item {\bf Wrapper Simple Portrayals}  ``wrap'' around subsidiary Simple Portrayals to add additional gizmos  to them. For example. to add a label, or to circle an object when it's selected, simply create a wrapper portrayal around your basic portrayal and submit the wrapper portrayal as the Simple Portrayal to the Field Portrayal. Wrapper portrayals can wrap other wrapper portrayals, creating a sequence of ``wraps'' around a basic portrayal. 
 \end{itemize}
 
 
@@ -14376,21 +14376,22 @@ import sim.util.MPITest.*;
 import mpi.*;
 \end{verbatim}
 
-Second, you'll not be subclassing \Class{sim.util.SimState} any more, but rather \Class{sim.util.DSimState}.  This class doesn't use \Class{sim.util.Schedule}, but rather \Class{sim.util.DistributedSchedule} (though you probably won't notice that fact).
+Second, you'll not be subclassing \Class{sim.util.SimState} any more, but rather \Class{sim.util.DSimState}.  This class doesn't use \Class{sim.util.Schedule}, but rather \Class{sim.engine.DistributedSchedule} (though you probably won't notice that fact).
 
 Third, there are new fields.  Below is a table showing MASON fields with their distributed counterparts.
 
 \begin{center}
 \begin{tabular}{@{}ll@{}}
 \textbf{MASON Field} & \textbf{Distributed MASON Equivalent}\\
-IntGrid2D & \Class{sim.util.DIntGrid2D}\\
-DoubleGrid2D & \Class{sim.util.DDoubleGrid2D}\\
-DenseGrid2D & \Class{sim.util.DDenseGrid2D}\\
-Continuous2D& \Class{sim.util.DContinuous2D}\\
+IntGrid2D & \Class{sim.field.grid.DIntGrid2D}\\
+DoubleGrid2D & \Class{sim.field.grid.DDoubleGrid2D}\\
+DenseGrid2D & \Class{sim.field.grid.DDenseGrid2D}\\
+Continuous2D& \Class{sim.field.continuous.DContinuous2D}\\
 \end{tabular}%
 \end{center}
 
-Fourth, another simple, but essential, change is to replace the \method{doLoop} method call with the \method{doLoopMPI} method call in the main simulation method. {\bf\color{red} This method throws an \Class{mpi.MPIException}: we'll be changing this further to clean this up.}
+Fourth, another simple, but essential, change is to replace the \method{doLoop} method call with the \method{doLoopDistributed} method call in the main simulation method. 
+%{\bf\color{red} This method throws an \Class{mpi.MPIException}: we'll be changing this further to clean this up.}
 
 The changes we have described so far are syntax-level. But converting from a MASON simulation into its distributed counterpart will also require a slight conceptual shift, which results in you writing a small portion of code that deals with how the simulation is started.  Specifically, you'll need to get all the distributed nodes up and running, with each node knowing what part of the simulation space it's responsible for, and which agents are (initially) under its control.  You can start a distributed simulation in two different ways: {\bf fully distributed} or {\bf partially centralized}.   We discuss both here.
 
@@ -14815,7 +14816,7 @@ Return a List that contains all the object contained in own field partition.
 \end{methods}
 
 \subsection{Field Storage}
-As mentioned before, in distributed MASON instead the access to the objects stored in the field is delegated to another object called Storage. We have differente Storage object. We have different Storage objects based on the type of field and on the type of object that the storage itself contains.
+As mentioned before, in distributed MASON instead the access to the objects stored in the field is delegated to another object called Storage. We have different Storage objects based on the type of field and on the type of object that the storage itself contains.
 The \textit{sim.field.storage} package contains the following classes:
 \begin{itemize}
     \item sim.field.storage.GridStorage: abstract class the implements some of common methods for all the other Storage class.

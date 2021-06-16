@@ -1,9 +1,7 @@
 package sim.app.geo.dcampusworld;
 
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
@@ -22,8 +20,9 @@ import sim.util.geo.PointMoveTo;
 
 public class DAgent extends DSteppable {
 	static final long serialVersionUID = 1L;
-	// point that denotes agent's position
+	// the agent's geometry
 	transient MasonGeometry agentGeometry = null;
+	// the JTS position of the agent
 	Double2D jtsCoordinate;
 	// The base speed of the agent.
 	double basemoveRate = 1.0;
@@ -32,19 +31,24 @@ public class DAgent extends DSteppable {
 	double moveRate = basemoveRate;
 	// Used by agent to walk along line segment; assigned in setNewRoute()
 	transient LengthIndexedLine segment = null;
+	// the current walkway the agent is on
 	int walkway;
-
+	
+	//TODO can we remove these?
 	double startIndex = 0.0; // start position of current line
 	double endIndex = 0.0; // end position of current line
 	double currentIndex = 0.0; // current location along line
 	PointMoveTo pointMoveTo = new PointMoveTo();
 
+	// Stored Attributes
 	public final String type;
 	public final int age;
+	private final Envelope MBR; // world's original envelope
 
 	static private GeometryFactory fact = new GeometryFactory();
 
 	public DAgent(DCampusWorld state) {
+		MBR = state.MBR;
 		agentGeometry = new MasonGeometry(fact.createPoint(new Coordinate()));
 		// Set up attributes for this agent
 		if (state.random.nextBoolean()) {
@@ -62,6 +66,7 @@ public class DAgent extends DSteppable {
 		agentGeometry.addIntegerAttribute("AGE", age);
 		agentGeometry.addDoubleAttribute("MOVE RATE", basemoveRate);
 
+		//TODO this is hacky
 		// Now set the location of the agent
 		while (true) {
 			// Find the first line segment and set our position over the start coordinate.
@@ -71,16 +76,17 @@ public class DAgent extends DSteppable {
 			Double2D initialLoc = jtsToPartitionSpace(state, c);
 			if (state.agentLocations.isLocal(initialLoc)) {
 				// agent needs to be added to storage before moving
-				state.agentLocations.addAgent(initialLoc, this, 0, 1, 1);
+				state.agentLocations.addAgent(initialLoc, this, 0, 0, 1);
 				moveTo(state, c);
 				jtsCoordinate = new Double2D(c.x, c.y);
 				break;
 			}
 		}
+		System.out.println("size of agentLocations: " + state.agentLocations.getStorage().getStorageMap().keySet().size());
 	}
 
 	/**
-	 * @return geometry representing agent location
+	 * Return the geometry representing the agent, insuring it's never null
 	 */
 	public MasonGeometry getAgentGeometry() {
 		if (agentGeometry == null ||
@@ -105,20 +111,20 @@ public class DAgent extends DSteppable {
 		return (moveRate > 0 && currentIndex >= endIndex) || (moveRate < 0 && currentIndex <= startIndex);
 	}
 
-	/** @return string indicating whether we are "FACULTY" or a "STUDENT" */
+	/** Return a string indicating whether we are "FACULTY" or a "STUDENT" */
 	public String getType() { return type; }
 
 	/**
 	 * randomly selects an adjacent route to traverse
 	 */
 	private void findNewPath(DCampusWorld state) {
-		System.out.println("Finding New Path jtsCoordinate: " + jtsCoordinate + ", agentGeometry" + getAgentGeometry() + "MBR: " + state.MBR + "; network: " + 
-				state.network.getNodes().stream().map(new Function<com.vividsolutions.jts.planargraph.Node, String>() {
-					public String apply(Node t) {
-						return t.getCoordinate().toString();
-					}
-				}).collect(Collectors.toList())
-		);
+//		System.out.println("Finding New Path jtsCoordinate: " + jtsCoordinate + ", agentGeometry" + getAgentGeometry() + "MBR: " + state.MBR + "; network: " + 
+//				state.network.getNodes().stream().map(new Function<com.vividsolutions.jts.planargraph.Node, String>() {
+//					public String apply(Node t) {
+//						return t.getCoordinate().toString();
+//					}
+//				}).collect(Collectors.toList())
+//		);
 				
 		// find all the adjacent junctions
 		Node currentJunction = state.network.findNode(getAgentGeometry().getGeometry().getCoordinate());
@@ -187,51 +193,69 @@ public class DAgent extends DSteppable {
 		return startCoord;
 	}
 
+	/**
+	 * Return a mapping from JTS's UTM coords -> our world coords
+	 */
 	Double2D jtsToPartitionSpace(DCampusWorld cw, Coordinate coordJTS) {
 		double xJTS = coordJTS.x - cw.MBR.getMinX();
 		double yJTS = coordJTS.y - cw.MBR.getMinY();
-//    	System.out.println("x,y JTS: " + xJTS + ", " + yJTS);
 
 		double wP = xJTS / cw.MBR.getWidth();
 		double hP = yJTS / cw.MBR.getHeight();
-//    	System.out.println("w/h JTS percentage: " + wP + ", " + hP);
 
 		double partX = DCampusWorld.width * wP;
 		double partY = DCampusWorld.height * hP;
-//    	System.out.println("partition x,y: " + partX + ", " + partY);
 
 		return new Double2D(partX, partY);
 	}
+	
+	/**
+	 * Return a mapping from our world coords -> JTS's UTM coords
+	 */
+	Coordinate partitionSpaceToJTS(Double2D d) {
+		double xP = d.x - DCampusWorld.width;
+		double yP = d.y - DCampusWorld.height;
+		
+		double wJTS = xP / DCampusWorld.width;
+		double hJTS = yP / DCampusWorld.height;
+		
+		double partX = MBR.getWidth() * wJTS;
+		double partY = MBR.getHeight() * hJTS;
+		
+		return new Coordinate(partX, partY);
+	}
 
-	// move the agent to the given coordinates
+	/**
+	 * Move the agent to the given coordinates
+	 */
 	public void moveTo(DCampusWorld state, Coordinate c) {
-//		System.out.println("move agent: " + jtsCoordinate + " -> " + new Double2D(c.x, c.y));
-
 		jtsCoordinate = new Double2D(c.x, c.y);
-		System.out.println("Move To: " + jtsCoordinate);
-
-//    	System.out.println("moveTo coordinate: " + c);
-//    	System.out.println("partition getWorldBounds: " + state.getPartition().getWorldBounds());
-//    	System.out.println("partition getHaloBounds: " + state.getPartition().getHaloBounds());
-//    	System.out.println("partition getLocalBounds: " + state.getPartition().getLocalBounds());
 
 		Double2D toP = jtsToPartitionSpace(state, c);
 
-		if (state.agentLocations.isLocal(toP)) {
-			// Need to migrate
-			state.agents.removeGeometry(getAgentGeometry());
-		} else {
-			// No need to migrate
-			pointMoveTo.setCoordinate(c);
-			getAgentGeometry().getGeometry().apply(pointMoveTo);
-			getAgentGeometry().geometry.geometryChanged();
-			state.agents.setGeometryLocation(getAgentGeometry(), pointMoveTo);
-		}
+//		if (state.agentLocations.isLocal(toP)) {
+//			// No need to migrate
+//			pointMoveTo.setCoordinate(c);
+//			getAgentGeometry().getGeometry().apply(pointMoveTo);
+//			getAgentGeometry().geometry.geometryChanged();
+////			state.agents.setGeometryLocation(getAgentGeometry(), pointMoveTo);
+//		} else {
+//			//TODO?
+//			// Need to migrate
+////			state.agents.removeGeometry(getAgentGeometry());
+////			state.agentLocations.remove(p, this);
+//		}
 		state.agentLocations.moveAgent(toP, this);
 	}
 	
+	// TODO difference between this and move agent....confusing
+	/**
+	 * Move the agent
+	 */
 	public void transfer(Double2D point, GeomVectorField g) {
-		pointMoveTo.setCoordinate(new Coordinate(point.x, point.y));
+		Coordinate jtsCoordinate = partitionSpaceToJTS(point);
+//		pointMoveTo.setCoordinate(new Coordinate(point.x, point.y));
+		pointMoveTo.setCoordinate(jtsCoordinate);
 		getAgentGeometry().getGeometry().apply(pointMoveTo);
 		getAgentGeometry().geometry.geometryChanged();
 		g.setGeometryLocation(getAgentGeometry(), pointMoveTo);
@@ -239,7 +263,6 @@ public class DAgent extends DSteppable {
 	
 
 	public void step(SimState state) {
-//		System.out.println("step agent: " + System.identityHashCode(this));
 		move((DCampusWorld) state);
 	}
 
@@ -278,6 +301,7 @@ public class DAgent extends DSteppable {
 			MasonGeometry mg = (MasonGeometry) state.walkways.getGeometries().objs[walkway];
 			segment = new LengthIndexedLine((LineString) mg.getGeometry());
 //			setNewRoute(state, (LineString) mg.getGeometry(), true);
+			// TODO ^ why is this commented out?....
 		}
 
 		Coordinate currentPos = segment.extractPoint(currentIndex);

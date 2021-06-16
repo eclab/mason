@@ -176,10 +176,10 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 					
 					oldCell.remove(t.ID());
 					if (oldCell.isEmpty() && storage.removeEmptyBags)
-					{
+						{
 						//storage.setCell(oldLoc, null);
 						storage.setCell(oldLoc, new HashMap<Long, T>());
-					}
+						}
 					
 					}
 				
@@ -388,7 +388,6 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			}
 		}
 		
-
 	/** Moves an agent from one location to another, possibly rescheduling it if the new location is remote.
 	  	The [from] location must be local, but the [to] location can be outside
 		the local and halo regions; if so, it will be set and rescheduled after the end of this timestep.
@@ -410,6 +409,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 				//removeLocal(agent);
 				addLocal(to, agent);
 				}
+			// otherwise, within the aoi
 			else
 				{
 				
@@ -434,7 +434,6 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 					}
 				else if (stop instanceof DistributedTentativeStep)
 					{
-					
 					DistributedTentativeStep _stop = (DistributedTentativeStep)stop;
 					double time = _stop.getTime();
 					int ordering = _stop.getOrdering();
@@ -450,7 +449,6 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 						removeLocal(agent);
 						halo.addToRemote(to, agent);
 						}
-						
 					}
 				else if (stop instanceof DistributedIterativeRepeat)
 					{
@@ -497,7 +495,6 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	    	
 	    	System.exit(-1);
 	    	*/
-			
 			throw new RuntimeException("Cannot move agent " + agent + " to " + to + " because agent is not local.");
 			}
 		}

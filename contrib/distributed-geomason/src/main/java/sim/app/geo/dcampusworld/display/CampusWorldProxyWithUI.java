@@ -89,8 +89,6 @@ public class CampusWorldProxyWithUI extends GUIState {
 	}
 
 	public void setupPortrayals() {
-		
-		
         walkwaysPortrayal.setField(walkways);
         walkwaysPortrayal.setPortrayalForAll(new GeomPortrayal(Color.CYAN,true));
 
@@ -101,12 +99,13 @@ public class CampusWorldProxyWithUI extends GUIState {
         roadsPortrayal.setField(roads);
         roadsPortrayal.setPortrayalForAll(new GeomPortrayal(Color.GRAY,true));
 
-		agentPortrayal.setField(((CampusWorldProxy) state).agents);
-//        agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,10.0,true));
+		agentPortrayal.setField(((CampusWorldProxy) state).agentRepresentations);
+//		System.out.println(((CampusWorldProxy) state).agents.getGeometries().get(0));
+        agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,10.0,true));
 //        agentPortrayal.setPortrayalForAll(new AdjustablePortrayal2D(new MovablePortrayal2D(basic)));
 
 //        agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,6.0));
-		agentPortrayal.setPortrayalForAll(new MovablePortrayal2D(new OvalPortrayal2D(Color.RED, 6.0)));
+//		agentPortrayal.setPortrayalForAll(new MovablePortrayal2D(new OvalPortrayal2D(Color.RED, 6.0)));
 
 		// reschedule the displayer
 		display.reset();

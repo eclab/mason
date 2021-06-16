@@ -27,20 +27,22 @@ public class DCampusWorld extends DSimState {
 	public static final int discretization = 6;
 	public static final int numAgents = 100; // 1000
 
-	/** Convex hull of all JTS objects **/
+	/** Convex hull of all static JTS objects **/
 	public Envelope MBR;
 
 	/** Distributed locations of each agent across all partitions **/
-	public final DContinuous2D<DAgent> agentLocations = new DContinuous2D<>(discretization, this);
+	public final DContinuous2D<DAgent> agentLocations;// = new DContinuous2D<>(discretization, this);
 
+	// TODO Remove these
 	// NOT distributed. Load these remotely in a distributed way.
 	/** Fields to hold the associated GIS information */
 	public GeomVectorField walkways = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
 	public GeomVectorField roads = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
 	public GeomVectorField buildings = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
 
+	// TODO Remove these
 	// where all the agents live
-	public GeomVectorField agents = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
+//	public GeomVectorField agents = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
 
 	// Stores the walkway network connections. We represent the walkways as a
 	// PlanarGraph, which allows
@@ -50,11 +52,13 @@ public class DCampusWorld extends DSimState {
 
 	public DCampusWorld(final long seed) {
 		super(seed, width, height, aoi);
+		agentLocations = new DContinuous2D<>(discretization, this);
 //		balanceInterval = 100000;
 	}
 
 	public int getNumAgents() { return numAgents; }
 
+	// TODO Remove this
 	void loadStatic() {
 		try {
 			System.out.println("reading buildings layer");
@@ -107,17 +111,44 @@ public class DCampusWorld extends DSimState {
 			Logger.getLogger(DCampusWorld.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
-
+	
+//	@Override
+//	protected void startRoot() {
+//		ArrayList<DAgent> agents = new ArrayList<DAgent>();
+//		for (int x = 0; x < DCampusWorld.numAgents; x++) {
+//			DAgent agent = new DAgent(this);
+//			agents.add(agent);
+//		}
+//		sendRootInfoToAll("agents", agents);
+//	}
+	
 	@Override
 	public void start() {
 		super.start();
 
 		// dump static info to each partition here at start of sim
-		loadStatic();
+		loadStatic();// TODO Remove this
+		
+		
+		
+		
+		
+//		ArrayList<DAgent> agents = (ArrayList<DAgent>) getRootInfo("agents");
+//		for (Object p : agents) {
+//			DFlocker a = (DFlocker) p;
+//			if (partition.getLocalBounds().contains(a.loc))
+//				flockers.addAgent(a.loc, a, 0, 0, 1);
+//		}
 
+		
+		
+		
 		// add agents (when created, the agent adds itself to agentLocations)
 		for (int i = 0; i < numAgents; i++)
 			new DAgent(this);
+		
+		System.out.println("storage map size after start(): " + agentLocations.getStorage().getStorageMap().keySet().size());
+		System.out.println("One of the agents: " + agentLocations.getStorage().getStorageMap().keySet().iterator().next().getClass());
 	}
 
 	/**
