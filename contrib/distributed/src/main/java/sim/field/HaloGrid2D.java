@@ -102,7 +102,12 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 */
 	public void reload()
 	{
-		System.out.println("called reload");
+		//System.out.println("called reload");
+		
+		
+		//delete all HaloGrid information to prevent leaking into real space!
+		this.deleteHaloInfo();
+		
 		localBounds = partition.getLocalBounds();
 		// Get the partition representing halo and local area by expanding the original
 		// partition by aoi at each dimension
@@ -125,12 +130,33 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		for (int id : partition.getNeighborPIDs())
 		{
 			neighbors.add(new Neighbor(partition.getLocalBounds(id)));
-		    System.out.println(localBounds+" : "+partition.getLocalBounds(id));
+		    //System.out.println(localBounds+" : "+partition.getLocalBounds(id));
 			//neighbors.add(new Neighbor(partition.getHaloBounds()));
 
 		}
 		
 		//System.exit(-1);
+	}
+
+	//Raj this deletes agents in the Halo before reloading, in order to prevent agents being moved to real space by bound changing
+	private void deleteHaloInfo() {
+		
+		if (this.haloBounds != null && this.localBounds != null) {
+		
+		for (Int2D a : this.haloBounds.getPointList()) {
+			
+			if (!this.localBounds.contains(a)) {
+			
+				if (localStorage.getAllObjects(a) != null) {
+					
+					localStorage.clear(a);
+					
+					
+				}
+			}
+			
+		}
+		}
 	}
 
 	//// Simple requests
@@ -832,7 +858,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	{
 		
 		
-		//loc_disagree_all_points("syncHalo1");
+		loc_disagree_all_points("syncHalo1");
 		
 		
 		int numNeighbors = neighbors.size();
@@ -845,7 +871,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		for (int i = 0; i < numNeighbors; i++)
 			localStorage.unpack(neighbors.get(i).recvParam, recvObjs.get(i));
 		
-		//loc_disagree_all_points("syncHalo2");
+		loc_disagree_all_points("syncHalo2");
 
 
 		for (final Pair<Promised, NumberND> pair : getAllQueue)
@@ -856,7 +882,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			trip.a.fulfill(getLocal(trip.b, trip.c));
 		getQueue.clear();
 		
-		//loc_disagree_all_points("syncHalo3");
+		loc_disagree_all_points("syncHalo3");
 
 		
 
@@ -864,7 +890,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	
 	public void loc_disagree_all_points(String s)
 	{
-		for (Int2D a : localStorage.getShape().getPointList())
+		for (Int2D a : this.localBounds.getPointList())
 		{
 			if (localStorage.getAllObjects(a) != null)
 			{
@@ -876,7 +902,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 						//DHeatBug t2 = (DHeatBug)t;
 						//System.out.println(s+" "+t2 +" h_loc "+new Int2D(t2.loc_x, t2.loc_y)+" p "+ a );
 
-						//DSimState.loc_disagree(a, (DHeatBug)t, this.partition, s);
+						DSimState.loc_disagree(a, (DHeatBug)t, this.partition, s);
 					}
 				}
 			}
@@ -1106,8 +1132,8 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			if (localBounds.contains(57,57))
 			{
 				
-				for (IntRect2D r : sendOverlaps)
-				{
+				/*
+				for (IntRect2D r : sendOverlaps) {
 					System.out.println("send "+r);
 				}
 				System.out.println("----");
@@ -1116,6 +1142,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 				{
 					System.out.println("rec "+r);
 				}
+				*/
 				
 				//System.exit(-1);
 				

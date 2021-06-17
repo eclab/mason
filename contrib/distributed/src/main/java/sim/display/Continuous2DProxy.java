@@ -42,7 +42,8 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
 
 		//IntRect2D[] rect_list = new IntRect2D[quad_tree_partitions.length];
 		IntRect2D[] rect_list = new IntRect2D[extended_partition_list.length];
-		for (int p_ind = 0; p_ind < extended_partition_list.length; p_ind++) {
+		for (int p_ind = 0; p_ind < extended_partition_list.length; p_ind++)
+		{
 			int p = extended_partition_list[p_ind];
 			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
 			halo_size = vp1.getAOI();
@@ -62,13 +63,22 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
 		
 		int width = fullBounds.br().x - fullBounds.ul().x;
 		int height = fullBounds.br().y - fullBounds.ul().y;
-		// ^ width & height of private area
+		
+		int max_w_h = width;
+		
+		if (width < height)
+		{
+			max_w_h = height;
 
-		//if (width != this.width || height != this.height)
-		reshape(width, height);
+		}
+		
+		//reshape(width, height);
+		reshape(max_w_h, max_w_h);
+
 		
 		//for (int p = 0; p < stateProxy.numProcessors; p++) {
-		for (int p : quad_tree_partitions) {
+		for (int p : quad_tree_partitions)
+		{
 
 			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
 			//int halo_size = vp1.getAOI();
@@ -111,11 +121,13 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
 //			}
 
             HashMap<Long, Double2D> map = storage.getStorageMap();
-    		for (Entry<Long, Double2D> entry : map.entrySet()) {
+    		for (Entry<Long, Double2D> entry : map.entrySet())
+    		{
     			Double2D loc = entry.getValue();
     			Double2D new_loc = loc.subtract(new Double2D(fullBounds_offset));
     			
-    			if (privateBounds.contains(loc)){
+    			if (privateBounds.contains(loc))
+    			{
     				System.out.println("set obj loc: " + loc + " -> " + new_loc);
     			    setObjectLocation(entry.getKey(), new_loc);
     			}

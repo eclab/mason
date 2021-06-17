@@ -195,9 +195,10 @@ public class DSimState extends SimState
 	void syncFields() throws MPIException, RemoteException
 	{
 		
-		//for (Synchronizable field : fieldList) {
-		  //   ((HaloGrid2D) field).loc_disagree_all_points("sf1");
-		//}
+		for (Synchronizable field : fieldList)
+		{
+		     ((HaloGrid2D) field).loc_disagree_all_points("sf1");
+		}
 		
 		for (final Synchronizable haloField : fieldList)
 			haloField.syncHalo();
@@ -226,6 +227,12 @@ public class DSimState extends SimState
 	{
 		Timing.stop(Timing.LB_RUNTIME);
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
+		
+		for (Synchronizable field : fieldList)
+		{
+		     ((HaloGrid2D) field).loc_disagree_all_points("accelgor");
+		}
+		
 		try
 		{
 			// Wait for all agents globally to stop moving
@@ -244,7 +251,18 @@ public class DSimState extends SimState
 
 			// Sync all the Remove and Add queues for RMI
 			syncRemoveAndAdd();
+			
+			for (Synchronizable field : fieldList)
+			{
+			     ((HaloGrid2D) field).loc_disagree_all_points("liepard");
+			}
+			
 			transporter.sync();
+			
+			for (Synchronizable field : fieldList)
+			{
+			     ((HaloGrid2D) field).loc_disagree_all_points("ninetlaes");
+			}
 
 			if (withRegistry)
 			{
@@ -272,6 +290,11 @@ public class DSimState extends SimState
 		{
 			throw new RuntimeException(e);
 		}
+		
+		for (Synchronizable field : fieldList)
+		{
+		     ((HaloGrid2D) field).loc_disagree_all_points("ps_before");
+		}
 
 		for (final PayloadWrapper payloadWrapper : transporter.objectQueue)
 		{
@@ -290,9 +313,10 @@ public class DSimState extends SimState
 				// add the object to the field
 				fieldList.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
 				
-				//if (payloadWrapper.payload instanceof DHeatBug) {
-				//	DSimState.loc_disagree((Int2D)payloadWrapper.loc, (DHeatBug)payloadWrapper.payload, this.partition, "preschedule");
-				//}
+				if (payloadWrapper.payload instanceof DHeatBug)
+				{
+					DSimState.loc_disagree((Int2D)payloadWrapper.loc, (DHeatBug)payloadWrapper.payload, this.partition, "preschedule");
+				}
 			}
 
 			if (payloadWrapper.payload instanceof DistributedIterativeRepeat)
@@ -341,10 +365,9 @@ public class DSimState extends SimState
 		{
 			MPI.COMM_WORLD.barrier();
 			
-			//for (Synchronizable field : fieldList) {
-			  //   ((HaloGrid2D) field).loc_disagree_all_points("ps");
-			//}
-			
+			for (Synchronizable field : fieldList) {
+			     ((HaloGrid2D) field).loc_disagree_all_points("ps");
+			}
 			syncFields();
 		}
 		catch (MPIException | RemoteException e)
@@ -372,15 +395,15 @@ public class DSimState extends SimState
 				try
 				{
 					// Synchronize all objects and agents.
-					//for (Synchronizable field : fieldList) {
-					  //   ((HaloGrid2D) field).loc_disagree_all_points("lb1");
-					//}
+					for (Synchronizable field : fieldList) {
+					     ((HaloGrid2D) field).loc_disagree_all_points("lb1");
+					}
 
 					transporter.sync();
 					
-					//for (Synchronizable field : fieldList) {
-					  //   ((HaloGrid2D) field).loc_disagree_all_points("lb2");
-					//}
+					for (Synchronizable field : fieldList) {
+					     ((HaloGrid2D) field).loc_disagree_all_points("lb2");
+					}
 					
 					
 				}
@@ -414,7 +437,7 @@ public class DSimState extends SimState
 
 					}
 					
-					/*
+					
 					if (payloadWrapper.payload instanceof DHeatBug) {
 						System.out.println((DHeatBug)payloadWrapper.payload+" loaded in");
 						System.exit(-1);
@@ -430,7 +453,7 @@ public class DSimState extends SimState
 
 					
 					}
-					*/
+					
 
 					// DistributedIterativeRepeat
 					if (payloadWrapper.payload instanceof DistributedIterativeRepeat)
@@ -475,14 +498,16 @@ public class DSimState extends SimState
 							schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
 					}
 					
-				//	if (payloadWrapper.payload instanceof DHeatBug) {
-				//		DSimState.loc_disagree((Int2D)payloadWrapper.loc, (DHeatBug)payloadWrapper.payload, this.partition, "rrr2");
-				//	}
+					if (payloadWrapper.payload instanceof DHeatBug)
+					{
+						DSimState.loc_disagree((Int2D)payloadWrapper.loc, (DHeatBug)payloadWrapper.payload, this.partition, "rrr2");
+					}
 				}
 
-				//for (Synchronizable field : fieldList) {
-				  //   ((HaloGrid2D) field).loc_disagree_all_points("lb3");
-				//}
+				for (Synchronizable field : fieldList)
+				{
+				     ((HaloGrid2D) field).loc_disagree_all_points("lb3");
+				}
 				
 				// Wait that all nodes have registered their new objects in the distributed registry.
 				try
@@ -646,7 +671,7 @@ public class DSimState extends SimState
 				// go by point here
 				for (Int2D p : old_partition.getPointList()) //should we ignore halobound here?
 					{
-
+					
 					// check if the new partition contains the point
 					if (!partition.getLocalBounds().contains(p))
 					{
@@ -721,7 +746,7 @@ public class DSimState extends SimState
 									migratedAgents.add(stopping);
 									System.out.println(
 											"PID: " + partition.getPID() + " processor " + old_pid + " move " + stopping
-													+ " from " + p + " (point " + p + ") to processor " + toP+ " "+partition.getLocalBounds()+" "+((DHeatBug)stopping).loc_x+" "+((DHeatBug)stopping).loc_y);
+													+ " from " + p + " (point " + p + ") to processor " + toP+ " "+partition.getLocalBounds(toP)+" "+((DHeatBug)stopping).loc_x+" "+((DHeatBug)stopping).loc_y);
 
 									// here the agent is removed from the old location TOCHECK!!!
 									// haloGrid2D.removeLocal(p, stopping.ID());
@@ -759,7 +784,7 @@ public class DSimState extends SimState
 		MPI.COMM_WORLD.barrier();
 		Timing.stop(Timing.LB_OVERHEAD);
 		
-		System.out.println("done balancing");
+		//System.out.println("done balancing");
 
 
 	}
@@ -1143,11 +1168,38 @@ public class DSimState extends SimState
 		
 		Int2D h_loc = new Int2D(h.loc_x, h.loc_y);
 		
+		int new_px = p.x;
+		int new_py = p.y;
+		
+		/*
+		if (new_px < 0) {
+			
+			new_px = new_px + 100;
+		}
+		
+		if (new_px >= 100) {
+			new_px = new_px - 100;
+		}
+		
+		if (new_py < 0) {
+			
+			new_py = new_py + 100;
+		}
+		
+		if (new_py >= 100) {
+			new_py = new_py - 100;
+		}
+		*/
+		
+		Int2D new_p = new Int2D(new_px, new_py);
 		//System.out.println(s+" "+h +" h_loc "+h_loc+" p "+ p );
 		
-		if (!p.equals(h_loc))
+		if (!new_p.equals(h_loc))
 		{
-			System.out.println(s+" loc disagree "+h+" h_loc "+h_loc+" p "+ p + " "+p2.getAllBounds());
+			
+			
+			
+			System.out.println(s+" loc disagree "+h+" h_loc "+h_loc+" p "+ p + " "+p2.getLocalBounds());
 			System.exit(-1);
 		}
 		

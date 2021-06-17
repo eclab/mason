@@ -56,9 +56,15 @@ public class ObjectGrid2DProxy extends ObjectGrid2D implements UpdatableProxy
 		int width = fullBounds.br().x - fullBounds.ul().x;
 		int height = fullBounds.br().y - fullBounds.ul().y;
 		
+		int max_w_h = width;
+		
+		if (width < height) {
+			max_w_h = height;
 
-		//if (width != this.width || height != this.height)
-		reshape(width, height);			
+		}
+		
+		//reshape(width, height);
+		reshape(max_w_h, max_w_h);		
 		
 		//for (int p = 0; p < stateProxy.numProcessors; p++) {
 		for (int p : quad_tree_partitions)

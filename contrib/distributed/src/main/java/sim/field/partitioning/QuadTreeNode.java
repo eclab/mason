@@ -342,7 +342,7 @@ public class QuadTreeNode
 		{
 			if(children.get(i).shape.contains(p))
 			{
-				// System.out.println("*************p " + p + " is contained in " + children.get(i));
+				//System.out.println("*************p " + p + " is contained in " + children.get(i)+" "+children.get(i).shape);
 				// System.out.println("*************r " + r);
 				return i;
 			}

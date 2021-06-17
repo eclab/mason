@@ -8,6 +8,9 @@ import sim.app.dheatbugs.DHeatBug;
 import sim.app.dheatbugs.DHeatBugs;
 import sim.engine.DObject;
 import sim.engine.DSimState;
+import sim.engine.DSteppable;
+import sim.engine.Steppable;
+import sim.engine.Stoppable;
 import sim.util.*;
 
 /**
@@ -87,9 +90,27 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 			for (final Int2D p : rect.getPointList())
 			{
 				
-				//Int2D local_p = toLocalPoint(p);
+
+				
 
 				stor[getFlatIdx(p)] = objs[curr++];
+				
+				/*
+				stor[getFlatIdx(p)] = objs[curr];
+				
+				if (stor[getFlatIdx(p)] != null) {
+					for (T t : stor[getFlatIdx(p)]) {
+						if (t instanceof Stoppable) {
+							((Stoppable)t).stop();
+						}
+					}
+				}
+				curr++;
+				*/
+				
+				
+				
+
 			}
 		}
 
