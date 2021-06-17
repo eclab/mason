@@ -149,7 +149,7 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy {
     			Double2D loc = entry.getValue();
     			Double2D new_loc = loc.subtract(new Double2D(fullBounds_offset));
     			
-    			if (newPartBound.contains(new_loc)){
+    			if (newPartBound.contains(loc)){
     			    setObjectLocation(entry.getKey(), new_loc);
     			}
     		}

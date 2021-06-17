@@ -58,11 +58,11 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	}
 
 	public GridStorage getStorage(int fieldId) throws RemoteException {
-		return dSimState.getFieldRegistry().get(fieldId).getStorage();
+		return dSimState.getFieldList().get(fieldId).getStorage();
 	}
 
 	public TransportRMIInterface getTransportRMI(int fieldId) throws RemoteException {
-		return dSimState.getFieldRegistry().get(fieldId);
+		return dSimState.getFieldList().get(fieldId);
 	}
 
 	public int getNumProcessors() throws RemoteException {
