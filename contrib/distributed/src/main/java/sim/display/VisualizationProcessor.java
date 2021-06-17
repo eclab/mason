@@ -65,6 +65,9 @@ public interface VisualizationProcessor extends Remote {
 	public int getProcessorLevels() throws RemoteException;
 
 	public int[] getProcessorNeighborhood(int level) throws RemoteException;
+	
+	//Raj: input pids and get all neighbors in the lowest point in quadtree that contains inputed pids
+	public int[] getMinimumNeighborhood(int[] proc_ids) throws RemoteException;
 
 	public ArrayList<Stat> getStatList() throws RemoteException;
 	

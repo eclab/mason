@@ -5,6 +5,7 @@ import java.rmi.*;
 import java.rmi.server.*;
 import java.util.*;
 import mpi.*;
+import sim.app.dheatbugs.DHeatBug;
 import sim.engine.*;
 import sim.engine.transport.*;
 import sim.field.partitioning.*;
@@ -94,21 +95,34 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * Resizes the partition and halo region, and reloads the neighbors.
 	 */
 	public void reload() {
+		System.out.println("called reload");
 		localBounds = partition.getLocalBounds();
 		// Get the partition representing halo and local area by expanding the original
 		// partition by aoi at each dimension
 		haloBounds = localBounds.resize(partition.getAOI());
-		localStorage.reshape(haloBounds);
+		
+		//localStorage.setOffSet(haloBounds.ul()); // moving local point calculation to GridStorage
 
+		
+		localStorage.reshape(haloBounds);
+		
 		localStorage.setOffSet(haloBounds.ul()); // moving local point calculation to GridStorage
+
+
 
 		// Get the partition representing private area by shrinking the original
 		// partition by aoi at each dimension
 
 		// Get the neighbors and create Neighbor objects
 		neighbors = new ArrayList<Neighbor>();
-		for (int id : partition.getNeighborPIDs())
+		for (int id : partition.getNeighborPIDs()) {
 			neighbors.add(new Neighbor(partition.getLocalBounds(id)));
+		    System.out.println(localBounds+" : "+partition.getLocalBounds(id));
+			//neighbors.add(new Neighbor(partition.getHaloBounds()));
+
+		}
+		
+		//System.exit(-1);
 	}
 
 	//// Simple requests
@@ -705,6 +719,11 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 *
 	 */
 	public void syncHalo() throws MPIException, RemoteException {
+		
+		
+		//loc_disagree_all_points("syncHalo1");
+		
+		
 		int numNeighbors = neighbors.size();
 		Serializable[] sendObjs = new Serializable[numNeighbors];
 		for (int i = 0; i < numNeighbors; i++)
@@ -714,6 +733,9 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 
 		for (int i = 0; i < numNeighbors; i++)
 			localStorage.unpack(neighbors.get(i).recvParam, recvObjs.get(i));
+		
+		//loc_disagree_all_points("syncHalo2");
+
 
 		for (final Pair<Promised, NumberND> pair : getAllQueue)
 			pair.a.fulfill(getLocal(pair.b));
@@ -722,6 +744,28 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		for (final Triplet<Promised, NumberND, Long> trip : getQueue)
 			trip.a.fulfill(getLocal(trip.b, trip.c));
 		getQueue.clear();
+		
+		//loc_disagree_all_points("syncHalo3");
+
+		
+
+	}
+	
+	public void loc_disagree_all_points(String s) {
+		
+		for (Int2D a : localStorage.getShape().getPointList()) {
+			if (localStorage.getAllObjects(a) != null) {
+				for (T t : localStorage.getAllObjects(a)) {
+					if (t instanceof DHeatBug) {
+						//System.out.println("in HaloGrid2D syncHalo");
+						//DHeatBug t2 = (DHeatBug)t;
+						//System.out.println(s+" "+t2 +" h_loc "+new Int2D(t2.loc_x, t2.loc_y)+" p "+ a );
+
+						//DSimState.loc_disagree(a, (DHeatBug)t, this.partition, s);
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -915,12 +959,35 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		public Neighbor(final IntRect2D neighborPart) {
 			final ArrayList<IntRect2D> sendOverlaps = generateOverlaps(localBounds,
 					neighborPart.resize(partition.getAOI()));
+
+			
 			final ArrayList<IntRect2D> recvOverlaps = generateOverlaps(haloBounds, neighborPart);
 
+			if (localBounds.contains(57,57)){
+				
+				for (IntRect2D r : sendOverlaps) {
+					System.out.println("send "+r);
+				}
+				System.out.println("----");
+				
+				for (IntRect2D r : recvOverlaps) {
+					System.out.println("rec "+r);
+				}
+				
+				//System.exit(-1);
+				
+				
+			}
+
+			
 			assert sendOverlaps.size() == recvOverlaps.size();
 
 			sendParam = new MPIParam(sendOverlaps, haloBounds, localStorage.getMPIBaseType());
 			recvParam = new MPIParam(recvOverlaps, haloBounds, localStorage.getMPIBaseType());
+			
+			
+
+			
 		}
 
 		private ArrayList<IntRect2D> generateOverlaps(final IntRect2D p1, final IntRect2D p2) {
@@ -943,7 +1010,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 				};
 
 				for (final Int2D p : shifts) {
-					final IntRect2D sp = p2.shift(p);		// new int[] { p.x, p.y });
+					final IntRect2D sp = p2.add(p);		// new int[] { p.x, p.y });
 					if (p1.intersects(sp))
 						overlaps.add(p1.getIntersection(sp));
 				}

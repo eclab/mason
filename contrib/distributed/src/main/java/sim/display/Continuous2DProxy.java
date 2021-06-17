@@ -37,10 +37,16 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy {
 
 		int halo_size = 0;
 
+		//calculate position in quadtree that encompasses all desired partitions
+		VisualizationProcessor vp2 = stateProxy.visualizationProcessor(quad_tree_partitions[0]); //pick 1
+		int[] extended_partition_list = vp2.getMinimumNeighborhood(quad_tree_partitions);
 		
-		IntRect2D[] rect_list = new IntRect2D[quad_tree_partitions.length];
-		for (int p_ind = 0; p_ind < quad_tree_partitions.length; p_ind++) {
-			int p = quad_tree_partitions[p_ind];
+		
+		
+		//IntRect2D[] rect_list = new IntRect2D[quad_tree_partitions.length];
+		IntRect2D[] rect_list = new IntRect2D[extended_partition_list.length];
+		for (int p_ind = 0; p_ind < extended_partition_list.length; p_ind++) {
+			int p = extended_partition_list[p_ind];
 			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
 			halo_size = vp1.getAOI();
 
@@ -48,9 +54,9 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy {
 		    
 		}
 		
-		// RM TODO: shouldn't halo_size = AOI / 2
+		IntRect2D fullBounds = IntRect2D.getBoundingRect(rect_list); //I want this to be based on quadtree
 		
-		IntRect2D fullBounds = IntRect2D.getBoundingRect(rect_list);
+		
 		Int2D new_ul = fullBounds.ul().add(halo_size); //remove halo
 		Int2D new_br = fullBounds.br().add(-1 * halo_size); //remove halo
 		fullBounds = new IntRect2D(new_ul, new_br);
@@ -81,6 +87,9 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy {
             int partition_width_high_ind = partBound.br().getX()-halo_size;  //partition bounds, add to remove halo
             int partition_height_low_ind =  partBound.ul().getY()+halo_size;  //partition bounds
             int partition_height_high_ind =  partBound.br().getY()-halo_size;   //partition bounds 
+            
+            IntRect2D newPartBound = new IntRect2D(new Int2D(partition_width_low_ind, partition_height_low_ind), new Int2D(partition_width_high_ind,partition_height_high_ind));
+
             
 			// load storage, add this to field!
             ContinuousStorage storage = (ContinuousStorage)(stateProxy.storage(proxyIndex));
@@ -118,7 +127,7 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy {
             
             
             
-//            HashMap<Long, Double2D> map = storage.getStorageMap();
+            HashMap<Long, Double2D> map = storage.getStorageMap();
 ////    		discretization = storage.getDiscretization();
 //
 //
@@ -136,7 +145,16 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy {
 //    		}
 
     		
-            //TODO 
+    		for (Entry<Long, Double2D> entry : map.entrySet()) {
+    			Double2D loc = entry.getValue();
+    			Double2D new_loc = loc.subtract(new Double2D(fullBounds_offset));
+    			
+    			if (newPartBound.contains(new_loc)){
+    			    setObjectLocation(entry.getKey(), new_loc);
+    			}
+    		}
+    		
+            
 
             
 		}

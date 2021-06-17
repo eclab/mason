@@ -54,9 +54,16 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T> {
 		final ArrayList<T>[] stor = storage;
 		int curr = 0;
 
-		for (final IntRect2D rect : mp.rects)
-			for (final Int2D p : rect.getPointList())
+		for (final IntRect2D rect : mp.rects) {
+			//System.out.println("packing "+rect);
+			for (final Int2D p : rect.getPointList()) {
+				
+				//local_p = toLocalPoint(p);
+
+				
 				objs[curr++] = stor[getFlatIdx(p)];
+			}
+		}
 
 		return objs;
 	}
@@ -66,9 +73,15 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T> {
 		final ArrayList<T>[] objs = (ArrayList<T>[]) buf;
 		int curr = 0;
 
-		for (final IntRect2D rect : mp.rects)
-			for (final Int2D p : rect.getPointList())
+		for (final IntRect2D rect : mp.rects) {
+			//System.out.println("unpacking "+rect);
+			for (final Int2D p : rect.getPointList()) {
+				
+				//Int2D local_p = toLocalPoint(p);
+
 				stor[getFlatIdx(p)] = objs[curr++];
+			}
+		}
 
 		return curr;
 	}
@@ -90,7 +103,13 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T> {
 
 		array[idx].add(t);
 		
-		DSimState.loc_disagree((Int2D)p, (DHeatBug) t, "addObject");
+		//DSimState.loc_disagree((Int2D)p, (DHeatBug) t, null, "addObject");
+		
+		if (!getAllObjects(p).contains(t)){
+			System.out.println("not added to correct location");
+			System.exit(-1);
+		}
+		
 	}
 
 	public T getObject(NumberND p, long id) {

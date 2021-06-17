@@ -223,17 +223,17 @@ public class IntRect2D implements Serializable {
 	}
 
 	// maybe remove, maybe keep
-	public IntRect2D shift(int dim, int offset) {
+	public IntRect2D add(int dim, int offset) {
 		return new IntRect2D(ul.add(dim, offset), br.add(dim, offset));
 	}
 
 	// maybe remove, maybe keep
-	public IntRect2D shift(Int2D offsets) {
+	public IntRect2D add(Int2D offsets) {
 		return new IntRect2D(ul.add(offsets), br.add(offsets));
 	}
 
 	// maybe remove, maybe keep
-	public IntRect2D rshift(Int2D offsets) {
+	public IntRect2D subtract(Int2D offsets) {
 		return new IntRect2D(ul.subtract(offsets), br.subtract(offsets));
 	}
 }
