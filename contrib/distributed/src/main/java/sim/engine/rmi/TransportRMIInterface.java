@@ -13,7 +13,8 @@ import sim.engine.*;
  * @param <P> The Type of PointND to use
  * @param <T> The Type of Object in the field
  */
-public interface TransportRMIInterface<T extends Serializable, P> extends Remote {
+public interface TransportRMIInterface<T extends Serializable, P> extends Remote
+{
 
 	/**
 	 * Used internally for RMI

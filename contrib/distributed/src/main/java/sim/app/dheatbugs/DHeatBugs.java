@@ -18,10 +18,12 @@ import sim.field.grid.DDoubleGrid2D;
 import sim.util.Interval;
 import sim.util.*;
 
-public class DHeatBugs extends DSimState {
+public class DHeatBugs extends DSimState
+{
 	private static final long serialVersionUID = 1;
 
-	static {
+	static
+	{
 		DSimState.setMultiThreaded(true);
 	}
 
@@ -48,21 +50,26 @@ public class DHeatBugs extends DSimState {
 	public DDoubleGrid2D valgrid2; // Instead of DoubleGrid2D
 	public DDenseGrid2D<DHeatBug> bugs; // Instead of SparseGrid2D
 
-	public DHeatBugs(final long seed) {
+	public DHeatBugs(final long seed)
+	{
 		this(seed, 100, 100, 100, 1);
 	}
 
-	public DHeatBugs(final long seed, final int width, final int height, final int count, final int aoi) {
+	public DHeatBugs(final long seed, final int width, final int height, final int count, final int aoi)
+	{
 		super(seed, width, height, aoi);
 		gridWidth = width;
 		gridHeight = height;
 		bugCount = count;
 		privBugCount = bugCount / getPartition().getNumProcessors();
-		try {
+		try
+		{
 			valgrid = new DDoubleGrid2D(this);
 			valgrid2 = new DDoubleGrid2D(this);
 			bugs = new DDenseGrid2D<DHeatBug>(this);
-		} catch (final Exception e) {
+		}
+		catch (final Exception e)
+		{
 			e.printStackTrace();
 			System.exit(-1);
 		}
@@ -71,85 +78,104 @@ public class DHeatBugs extends DSimState {
 	}
 
 	// Same getters and setters as HeatBugs
-	public double getMinimumIdealTemperature() {
+	public double getMinimumIdealTemperature()
+	{
 		return minIdealTemp;
 	}
 
-	public void setMinimumIdealTemperature(final double temp) {
+	public void setMinimumIdealTemperature(final double temp)
+	{
 		if (temp <= maxIdealTemp)
 			minIdealTemp = temp;
 	}
 
-	public double getMaximumIdealTemperature() {
+	public double getMaximumIdealTemperature()
+	{
 		return maxIdealTemp;
 	}
 
-	public void setMaximumIdealTemperature(final double temp) {
+	public void setMaximumIdealTemperature(final double temp)
+	{
 		if (temp >= minIdealTemp)
 			maxIdealTemp = temp;
 	}
 
-	public double getMinimumOutputHeat() {
+	public double getMinimumOutputHeat()
+	{
 		return minOutputHeat;
 	}
 
-	public void setMinimumOutputHeat(final double temp) {
+	public void setMinimumOutputHeat(final double temp)
+	{
 		if (temp <= maxOutputHeat)
 			minOutputHeat = temp;
 	}
 
-	public double getMaximumOutputHeat() {
+	public double getMaximumOutputHeat()
+	{
 		return maxOutputHeat;
 	}
 
-	public void setMaximumOutputHeat(final double temp) {
+	public void setMaximumOutputHeat(final double temp)
+	{
 		if (temp >= minOutputHeat)
 			maxOutputHeat = temp;
 	}
 
-	public double getEvaporationConstant() {
+	public double getEvaporationConstant()
+	{
 		return evaporationRate;
 	}
 
-	public void setEvaporationConstant(final double temp) {
+	public void setEvaporationConstant(final double temp)
+	{
 		if (temp >= 0 && temp <= 1)
 			evaporationRate = temp;
 	}
 
-	public Object domEvaporationConstant() {
+	public Object domEvaporationConstant()
+	{
 		return new Interval(0.0, 1.0);
 	}
 
-	public double getDiffusionConstant() {
+	public double getDiffusionConstant()
+	{
 		return diffusionRate;
 	}
 
-	public void setDiffusionConstant(final double temp) {
+	public void setDiffusionConstant(final double temp)
+	{
 		if (temp >= 0 && temp <= 1)
 			diffusionRate = temp;
 	}
 
-	public Object domDiffusionConstant() {
+	public Object domDiffusionConstant()
+	{
 		return new Interval(0.0, 1.0);
 	}
 
-	public Object domRandomMovementProbability() {
+	public Object domRandomMovementProbability()
+	{
 		return new Interval(0.0, 1.0);
 	}
 
-	public double getRandomMovementProbability() {
+	public double getRandomMovementProbability()
+	{
 		return randomMovementProbability;
 	}
 
-	public double getMaximumHeat() {
+	public double getMaximumHeat()
+	{
 		return DHeatBugs.MAX_HEAT;
 	}
 
-	protected void startRoot() {
+	protected void startRoot()
+	{
 		HashMap<Int2D, ArrayList<DHeatBug>> agents = new HashMap<Int2D, ArrayList<DHeatBug>>();
 		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
 		final double rangeOutputHeat = maxOutputHeat - minOutputHeat;
-		for (int x = 0; x < bugCount; x++) {
+		for (int x = 0; x < bugCount; x++)
+		{
 			final double idealTemp = random.nextDouble() * rangeIdealTemp + minIdealTemp;
 			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
 			int px = random.nextInt(gridWidth);
@@ -163,11 +189,14 @@ public class DHeatBugs extends DSimState {
 
 		sendRootInfoToAll("agents", agents);
 
-		schedule.scheduleRepeating(new DSteppable() {
-			public void step(SimState state) {
+		schedule.scheduleRepeating(new DSteppable()
+		{
+			public void step(SimState state)
+			{
 
 			}
-		}, 10, 1);
+		}
+		, 10, 1);
 	}
 
 	// @Override
@@ -238,13 +267,17 @@ public class DHeatBugs extends DSimState {
 	// }
 	// }
 
-	public void start() {
+	public void start()
+	{
 		super.start();
 
 		HashMap<Int2D, ArrayList<DHeatBug>> agents = (HashMap<Int2D, ArrayList<DHeatBug>>) getRootInfo("agents");
-		for (Int2D p : agents.keySet()) {
-			for (DHeatBug a : agents.get(p)) {
-				if (partition.getLocalBounds().contains(p)) {
+		for (Int2D p : agents.keySet())
+		{
+			for (DHeatBug a : agents.get(p))
+			{
+				if (partition.getLocalBounds().contains(p))
+				{
 					bugs.addAgent(p, a, 0, 0, 1);
 					System.out.println("start : " + a+" "+a.loc_x+" "+a.loc_y+p);
 				}
@@ -270,7 +303,8 @@ public class DHeatBugs extends DSimState {
 //			}}, 10, 1);
 	}
 
-	public static void main(final String[] args) {
+	public static void main(final String[] args)
+	{
 		doLoopDistributed(DHeatBugs.class, args);
 		System.exit(0);
 	}

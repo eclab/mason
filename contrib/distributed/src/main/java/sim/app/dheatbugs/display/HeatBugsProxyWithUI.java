@@ -34,16 +34,25 @@ public class HeatBugsProxyWithUI extends GUIState
         new HeatBugsProxyWithUI().createController();
         }
     
-    public HeatBugsProxyWithUI() { super(new HeatBugsProxy(System.currentTimeMillis())); }
+    public HeatBugsProxyWithUI()
+    	{
+    	super(new HeatBugsProxy(System.currentTimeMillis()));
+    	}
     
-    public HeatBugsProxyWithUI(SimState state) { super(state); }
+    public HeatBugsProxyWithUI(SimState state)
+    	{
+    	super(state);
+		}
     
     public static String getName()
         {
         return "HeatBugs Proxy";
         }
     
-    public Object getSimulationInspectedObject() { return state; }  // non-volatile
+    public Object getSimulationInspectedObject()
+    	{
+    	return state; // non-volatile
+    	}
 
     public void start()
         {

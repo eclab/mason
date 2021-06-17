@@ -13,7 +13,8 @@ import sim.util.*;
  * Contains data type (mpi.Datatype), size, index and rectangles of a partition
  *
  */
-public class MPIParam {
+public class MPIParam
+{
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -34,7 +35,8 @@ public class MPIParam {
 	// free them all
 	// TODO should store rects in local coordinates?
 
-	public MPIParam(IntRect2D rect, IntRect2D bound, Datatype baseType) {
+	public MPIParam(IntRect2D rect, IntRect2D bound, Datatype baseType)
+	{
 		int width = bound.getWidth();
 		int height = bound.getHeight();
 		int[] bsize = new int[] { width, height };
@@ -45,7 +47,8 @@ public class MPIParam {
 		this.idx = GridStorage.getFlatIdx(rect.ul().subtract(bound.ul), height);
 		this.type = getNdArrayDatatype(rsize , baseType, bsize );
 		this.size = rect.getArea();
-		this.rects = new ArrayList<IntRect2D>() {
+		this.rects = new ArrayList<IntRect2D>()
+		{
 			{
 				//add(rect.rshift(new int[]{bound.ul().x,bound.ul().y}));
 				add(rect.subtract(bound.ul()));
@@ -94,7 +97,8 @@ public class MPIParam {
 	*/
 	
 	//fixed by Raj, this should get local point first, then get flat idx I think
-	public MPIParam(List<IntRect2D> rects, IntRect2D bound, Datatype baseType) {
+	public MPIParam(List<IntRect2D> rects, IntRect2D bound, Datatype baseType)
+	{
 		this.idx = 0;
 		this.size = 0;
 		this.rects = new ArrayList<IntRect2D>();
@@ -112,7 +116,8 @@ public class MPIParam {
 		// blocklength is always 1
 		Arrays.fill(bl, 1);
 
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < count; i++)
+		{
 			IntRect2D rect = rects.get(i);
 //			displ[i] = GridStorage.getFlatIdx(rect.ul().subtract(new int[]{bound.ul().x,bound.ul().y}), bsize) * typeSize; // displacement from the start in bytes
 			displ[i] = GridStorage.getFlatIdx(rect.ul().subtract(bound.ul()), height) * typeSize; // displacement from the start in bytes
@@ -121,13 +126,15 @@ public class MPIParam {
 			/// this.rects.add(rect.rshift(new int[]{bound.ul().x,bound.ul().y}));
 			this.rects.add(rect.subtract(bound.ul()));
 			//this.rects.add(rect);
-
 		}
 
-		try {
+		try
+		{
 			this.type = Datatype.createStruct(bl, displ, types);
 			this.type.commit();
-		} catch (MPIException e) {
+		}
+		catch (MPIException e)
+		{
 			e.printStackTrace();
 			System.exit(-1);
 		}
@@ -142,18 +149,23 @@ public class MPIParam {
 	 * 
 	 * @return MPI Datatype
 	 */
-	Datatype getNdArrayDatatype(int[] size, Datatype base, int[] strideSize) {
+	Datatype getNdArrayDatatype(int[] size, Datatype base, int[] strideSize)
+	{
 		Datatype type = null;
 		int typeSize = getTypePackSize(base);
 
-		try {
-			for (int i = size.length - 1; i >= 0; i--) {
+		try
+		{
+			for (int i = size.length - 1; i >= 0; i--)
+			{
 				type = Datatype.createContiguous(size[i], base);
 				type = Datatype.createResized(type, 0, strideSize[i] * typeSize);
 				base = type;
 			}
 			type.commit();
-		} catch (MPIException e) {
+		}
+		catch (MPIException e)
+		{
 			e.printStackTrace();
 			System.exit(-1);
 		}
@@ -161,12 +173,16 @@ public class MPIParam {
 		return type;
 	}
 
-	int getTypePackSize(Datatype type) {
+	int getTypePackSize(Datatype type)
+	{
 		int size = 0;
 
-		try {
+		try
+		{
 			size = MPI.COMM_WORLD.packSize(1, type);
-		} catch (MPIException e) {
+		}
+		catch (MPIException e)
+		{
 			e.printStackTrace();
 			System.exit(-1);
 		}

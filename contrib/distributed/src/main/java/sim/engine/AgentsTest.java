@@ -1,9 +1,11 @@
 package sim.engine;
 
-public class AgentsTest {
+public class AgentsTest
+{
 	private static final long serialVersionUID = 1L;
 
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		
 		String str = "10 11 12 41 21 2";
 		String[] strs = str.split(" ");

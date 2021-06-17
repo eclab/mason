@@ -26,7 +26,10 @@ public class FlockersProxyWithUI extends GUIState
         new FlockersProxyWithUI().createController();  // randomizes by currentTimeMillis
         }
 
-    public Object getSimulationInspectedObject() { return state; }  // non-volatile
+    public Object getSimulationInspectedObject()
+    	{
+    	return state;  // non-volatile
+    	}
 
     ContinuousPortrayal2D flockersPortrayal = new ContinuousPortrayal2D();
         
@@ -43,7 +46,10 @@ public class FlockersProxyWithUI extends GUIState
         super(state);
         }
 
-    public static String getName() { return "Flockers Proxy"; }
+    public static String getName()
+    	{
+    	return "Flockers Proxy";
+    	}
 
     public void start()
         {

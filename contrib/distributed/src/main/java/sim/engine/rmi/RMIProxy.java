@@ -14,22 +14,26 @@ import sim.util.NumberND;
  * @param <T> The Type of Object in the field
  */
 @SuppressWarnings("rawtypes")
-public class RMIProxy<T extends Serializable, P extends NumberND> {
+public class RMIProxy<T extends Serializable, P extends NumberND>
+{
 
 	private static final long serialVersionUID = 1L;
 
 	final TransportRMIInterface[] cache;
 	final int fieldId;
 
-	public RMIProxy(final Partition ps, HaloGrid2D haloGrid) {
+	public RMIProxy(final Partition ps, HaloGrid2D haloGrid)
+	{
 		this.fieldId = haloGrid.getFieldIndex();
 		this.cache = new TransportRMIInterface[ps.getNumProcessors()];
 	}
 
 	@SuppressWarnings("unchecked")
-	public TransportRMIInterface<T, P> getField(final int pid) throws RemoteException {
+	public TransportRMIInterface<T, P> getField(final int pid) throws RemoteException
+	{
 		TransportRMIInterface<T, P> transportRMI = cache[pid];
-		if (transportRMI == null) {
+		if (transportRMI == null)
+		{
 			transportRMI = RemoteProcessor.getProcessor(pid).getTransportRMI(fieldId);
 			cache[pid] = transportRMI;
 		}

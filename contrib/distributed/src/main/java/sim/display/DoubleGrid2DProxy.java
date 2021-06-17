@@ -12,7 +12,10 @@ public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
 	{
 	private static final long serialVersionUID = 1L;
 
-	public DoubleGrid2DProxy(int width, int height) { super(width, height); }
+	public DoubleGrid2DProxy(int width, int height)
+		{
+		super(width, height);
+		}
 
 	public void update(SimStateProxy stateProxy, int proxyIndex, int[] quad_tree_partitions) throws RemoteException, NotBoundException
 		{
@@ -39,7 +42,8 @@ public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
 
 		
 		IntRect2D[] rect_list = new IntRect2D[extended_partition_list.length];
-		for (int p_ind = 0; p_ind < extended_partition_list.length; p_ind++) {
+		for (int p_ind = 0; p_ind < extended_partition_list.length; p_ind++)
+		{
 			int p = extended_partition_list[p_ind];
 			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
 			halo_size = vp1.getAOI();
@@ -65,7 +69,8 @@ public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
 		
 		
 		//for (int p = 0; p < stateProxy.numProcessors; p++) {
-		for (int p_ind = 0; p_ind < quad_tree_partitions.length; p_ind++) {
+		for (int p_ind = 0; p_ind < quad_tree_partitions.length; p_ind++)
+		{
 			int p = quad_tree_partitions[p_ind];
 			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
 			//int halo_size = vp1.getAOI();

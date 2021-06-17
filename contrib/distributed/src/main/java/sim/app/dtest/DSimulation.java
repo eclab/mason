@@ -20,7 +20,8 @@ import sim.field.storage.ContinuousStorage;
 import sim.util.Timing;
 import sim.util.*;
 
-public class DSimulation extends DSimState {
+public class DSimulation extends DSimState
+{
 	private static final long serialVersionUID = 1;
 
 	public final static int width = 600;
@@ -35,7 +36,8 @@ public class DSimulation extends DSimState {
 	String dirname = System.getProperty("user.dir") + File.separator + dateString;
 
 	/** Creates a Flockers simulation with the given random number seed. */
-	public DSimulation(final long seed) {
+	public DSimulation(final long seed)
+	{
 		super(seed, DSimulation.width, DSimulation.height, DSimulation.neighborhood);
 
 		// final double[] discretizations = new double[] { DSimulation.neighborhood /
@@ -44,10 +46,12 @@ public class DSimulation extends DSimState {
 	}
 
 	@Override
-	public void preSchedule() {
+	public void preSchedule()
+	{
 		super.preSchedule();
 
-		if (schedule.getSteps() == 92) {
+		if (schedule.getSteps() == 92)
+		{
 			System.exit(0);
 		}
 
@@ -62,15 +66,19 @@ public class DSimulation extends DSimState {
 		System.out.println("Create file " + filename);
 
 		PrintWriter out = null;
-		try {
+		try
+		{
 			myfileagent.createNewFile();
 			out = new PrintWriter(new FileOutputStream(myfileagent, false));
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 
 		for (DAgent f : ((ContinuousStorage<DAgent>) field.getHaloGrid().getStorage())
-				.getObjects(field.getHaloGrid().getStorage().getShape())) {
+				.getObjects(field.getHaloGrid().getStorage().getShape()))
+		{
 //			out.println("agent " + f.getId() + " in position " + f.loc + " num neighbours: " + f.neighbours.size() + " neighbours " + f.neighbours);
 			out.println("agent " + f.ID() + " in position " + f.loc + " num neighbours: " + f.neighbours.size()
 					+ " neighbours " + f.neighbours);
@@ -82,11 +90,14 @@ public class DSimulation extends DSimState {
 	}
 
 	@Override
-	protected void startRoot() {
+	protected void startRoot()
+	{
 		ArrayList<DAgent> agents = new ArrayList<DAgent>();
 //		int c = 0;
-		for (int i = 75; i < 600; i = i + 150) {
-			for (int j = 75; j < 600; j = j + 150) {
+		for (int i = 75; i < 600; i = i + 150)
+		{
+			for (int j = 75; j < 600; j = j + 150)
+			{
 				Double2D loc = new Double2D(i, j);
 //				int id = 100 * partition.toPartitionPID(loc) + c;
 //				c++;
@@ -98,14 +109,17 @@ public class DSimulation extends DSimState {
 	}
 
 	@Override
-	public void start() {
+	public void start()
+	{
 		super.start(); // do not forget this line
 
 		ArrayList<Object> agents = (ArrayList<Object>) getRootInfo("agents");
 
-		for (Object p : agents) {
+		for (Object p : agents)
+		{
 			DAgent a = (DAgent) p;
-			if (partition.getLocalBounds().contains(a.loc)) {
+			if (partition.getLocalBounds().contains(a.loc))
+			{
 				field.addAgent(a.loc, a, 0, 0);
 				System.out.println("pid " + partition.getPID() + " add agent " + a);
 			}
@@ -113,7 +127,8 @@ public class DSimulation extends DSimState {
 
 	}
 
-	public static void main(final String[] args) {
+	public static void main(final String[] args)
+	{
 		Timing.setWindow(20);
 		doLoopDistributed(DSimulation.class, args);
 		System.exit(0);

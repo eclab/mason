@@ -7,7 +7,8 @@ import java.util.*;
 import java.io.*;
 import java.net.InetAddress;
 
-public class Launcher {
+public class Launcher
+{
 	private static final long serialVersionUID = 1L;
 
 
@@ -22,15 +23,18 @@ public class Launcher {
     int logServPort = -1;
     String logServAddr;
 
-    public Launcher(int np, String hostfile, String jobClass, String[] jobArgs) {
+    public Launcher(int np, String hostfile, String jobClass, String[] jobArgs)
+    {
         this.np = np;
         this.hostfile = hostfile;
         this.jobClass = jobClass;
         this.jobArgs = jobArgs;
     }
 
-    public Launcher(String args[]) {
-        if (args.length < 3) {
+    public Launcher(String args[])
+    {
+        if (args.length < 3)
+        {
             usage();
             System.exit(-1);
             //throw new IllegalArgumentException("Not enough arguments");
@@ -42,11 +46,14 @@ public class Launcher {
         this.jobArgs = Arrays.copyOfRange(args, 3, args.length);
     }
 
-    public void startLogServer() throws IOException {
-        if (logServPort < 0) {
+    public void startLogServer() throws IOException
+    {
+        if (logServPort < 0)
+        {
             ls = new LogServer();
             logServPort = ls.port;
-        } else
+        }
+        else
             ls = new LogServer(logServPort);
 
         logServAddr = InetAddress.getLocalHost().getHostAddress();
@@ -54,7 +61,8 @@ public class Launcher {
         ls.start();
     }
 
-    public void startMPIJobs() throws MPIException {
+    public void startMPIJobs() throws MPIException
+    {
         /**
          * set CLASSPATH env varible to include mpi.jar and mason, or
          * pass "-cp "[MASON_PATH]:[MPI_PATH]" to jre
@@ -76,7 +84,8 @@ public class Launcher {
         jobComm = MPI.COMM_WORLD.spawn(jobCommand, getMPIJobArgs(), np, info, 0, null);
     }
 
-    public void tearddown() throws MPIException {
+    public void tearddown() throws MPIException
+    {
         // Abort MPI jobs
         if (jobComm != null)
             jobComm.abort(0);
@@ -89,7 +98,8 @@ public class Launcher {
     }
 
     // Concat the following pieces to construct the command arguments
-    private String[] getMPIJobArgs() {
+    private String[] getMPIJobArgs()
+    {
         // Default MPI args
         List<String> allArgs = new ArrayList<String>(mpiDefaultArgs);
 
@@ -108,18 +118,22 @@ public class Launcher {
         return allArgs.toArray(new String[0]);
     }
 
-    public static void usage() {
+    public static void usage()
+    {
         System.out.println("sim.util.Launcher [NP] [Path to Hostfile] [Target Java Class] [Arguments...]");
     }
 
-    public static void main(String args[]) {
-
+    public static void main(String args[])
+    {
         Launcher l = new Launcher(args);
 
         // Create log server
-        try {
+        try
+        {
             l.startLogServer();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
             System.exit(-1);
         }
@@ -127,9 +141,12 @@ public class Launcher {
         // TODO: Create other utils
 
         // start MPI jobs
-        try {
+        try
+        {
             l.startMPIJobs();
-        } catch (MPIException e) {
+        }
+        catch (MPIException e)
+        {
             e.printStackTrace();
             System.exit(-1);
         }
@@ -137,15 +154,20 @@ public class Launcher {
         // TODO: Create visualization & control
 
         // Catch Ctrl+C to clean up
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-                public void run() {
-                    try {
-                        System.out.println("\nShutting down ...\n");
-                        l.tearddown();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        Runtime.getRuntime().addShutdownHook(new Thread()
+        {
+            public void run()
+            {
+                try
+                {
+                    System.out.println("\nShutting down ...\n");
+                    l.tearddown();
                 }
-            });
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

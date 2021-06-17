@@ -25,7 +25,8 @@ import sim.util.*;
  * In Distributed Mason moving objects from one processor to another is called
  * transportation and transporting agents is called migration.
  */
-public class TransporterMPI {
+public class TransporterMPI
+{
 	int numNeighbors; // number of direct neighbors
 	int[] src_count, src_displ, dst_count, dst_displ;
 
@@ -38,25 +39,34 @@ public class TransporterMPI {
 
 	protected boolean withRegistry;
 
-	public TransporterMPI(final Partition partition) {
+	public TransporterMPI(final Partition partition)
+	{
 		this.partition = partition;
 		this.withRegistry = false;
 		reload();
 
-		partition.registerPreCommit(arg -> {
-			try {
+		partition.registerPreCommit(arg ->
+		{
+			try
+			{
 				sync();
-			} catch (MPIException | IOException | ClassNotFoundException e) {
+			}
+			catch (MPIException | IOException | ClassNotFoundException e)
+			{
 				e.printStackTrace();
 				System.exit(-1);
 			}
 		});
 
-		partition.registerPostCommit(arg -> {
+		partition.registerPostCommit(arg ->
+		{
 			reload();
-			try {
+			try
+			{
 				sync();
-			} catch (MPIException | IOException | ClassNotFoundException e) {
+			}
+			catch (MPIException | IOException | ClassNotFoundException e)
+			{
 				e.printStackTrace();
 				System.exit(-1);
 			}
@@ -69,7 +79,8 @@ public class TransporterMPI {
 	 * neighbors.
 	 * 
 	 */
-	public void reload() {
+	public void reload()
+	{
 		// TODO cannot work with one node?
 		neighbors = partition.getNeighborPIDs();
 		numNeighbors = neighbors.length;
@@ -83,21 +94,26 @@ public class TransporterMPI {
 
 		// outputStreams for direct neighbors
 		dstMap = new HashMap<Integer, RemoteOutputStream>();
-		try {
+		try
+		{
 			for (int i : neighbors)
 				dstMap.putIfAbsent(i, new RemoteOutputStream());
-		} catch (final IOException e) {
+		}
+		catch (final IOException e)
+		{
 			e.printStackTrace();
 			System.exit(-1);
 		}
 
 	}
 
-	public int size() {
+	public int size()
+	{
 		return objectQueue.size();
 	}
 
-	public void clear() {
+	public void clear()
+	{
 		objectQueue.clear();
 	}
 
@@ -109,9 +125,11 @@ public class TransporterMPI {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	public void sync() throws MPIException, IOException, ClassNotFoundException {
+	public void sync() throws MPIException, IOException, ClassNotFoundException
+	{
 		// Prepare data
-		for (int i = 0, total = 0; i < numNeighbors; i++) {
+		for (int i = 0, total = 0; i < numNeighbors; i++)
+		{
 			RemoteOutputStream outputStream = dstMap.get(neighbors[i]);
 			outputStream.flush();
 			src_count[i] = outputStream.size();
@@ -135,7 +153,8 @@ public class TransporterMPI {
 		// setup recvbuf
 		partition.getCommunicator().neighborAllToAll(src_count, 1, MPI.INT, dst_count, 1, MPI.INT);
 
-		for (int i = 0, total = 0; i < numNeighbors; i++) {
+		for (int i = 0, total = 0; i < numNeighbors; i++)
+		{
 			dst_displ[i] = total;
 			total += dst_count[i];
 		}
@@ -147,23 +166,30 @@ public class TransporterMPI {
 
 		// read and handle incoming objects
 //		final ArrayList<PayloadWrapper> bufferList = new ArrayList<>();
-		for (int i = 0; i < numNeighbors; i++) {
+		for (int i = 0; i < numNeighbors; i++)
+		{
 			final byte[] data = new byte[dst_count[i]];
 			recvbuf.position(dst_displ[i]);
 			recvbuf.get(data);
 			final ObjectInputStream inputStream = new ObjectInputStream(new ByteArrayInputStream(data));
 
-			while (true) {
-				try {
+			while (true)
+			{
+				try
+				{
 					final PayloadWrapper wrapper = (PayloadWrapper) inputStream.readObject();
-					if (partition.getPID() != wrapper.destination) {
+					if (partition.getPID() != wrapper.destination)
+					{
 						System.err.println("This is not the correct processor");
 						throw new RuntimeException("This is not the correct processor");
 //						assert dstMap.containsKey(wrapper.destination);
 //						bufferList.add(wrapper);
-					} else
+					}
+					else
 						objectQueue.add(wrapper);
-				} catch (final EOFException e) {
+				}
+				catch (final EOFException e)
+				{
 					break;
 				}
 			}
@@ -172,7 +198,6 @@ public class TransporterMPI {
 		// Clear previous queues
 		for (int i : neighbors)
 			dstMap.get(i).reset();
-
 	}
 
 	/**
@@ -186,7 +211,8 @@ public class TransporterMPI {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final Stopping agent, final int dst, final NumberND loc,
-			final int fieldIndex) {
+			final int fieldIndex)
+	{
 		AgentWrapper wrapper = new AgentWrapper(agent);
 		migrateAgent(wrapper, dst, loc, fieldIndex);
 	}
@@ -203,7 +229,8 @@ public class TransporterMPI {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final int ordering, final Stopping agent, final int dst, final NumberND loc,
-			final int fieldIndex) {
+			final int fieldIndex)
+	{
 		AgentWrapper wrapper = new AgentWrapper(ordering, agent);
 		migrateAgent(wrapper, dst, loc, fieldIndex);
 	}
@@ -221,7 +248,8 @@ public class TransporterMPI {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final int ordering, final double time, final Stopping agent, final int dst,
-			final NumberND loc, final int fieldIndex) {
+			final NumberND loc, final int fieldIndex)
+	{
 		AgentWrapper wrapper = new AgentWrapper(ordering, time, agent);
 		migrateAgent(wrapper, dst, loc, fieldIndex);
 	}
@@ -237,7 +265,8 @@ public class TransporterMPI {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final AgentWrapper agentWrapper, final int dst, final NumberND loc,
-			final int fieldIndex) {
+			final int fieldIndex)
+	{
 		// These methods differ in just the datatype of the WrappedObject
 		transportObject(agentWrapper, dst, loc, fieldIndex);
 	}
@@ -254,8 +283,8 @@ public class TransporterMPI {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateRepeatingAgent(final DistributedIterativeRepeat iterativeRepeat, final int dst,
-			final NumberND loc, final int fieldIndex) {
-
+			final NumberND loc, final int fieldIndex)
+	{
 		// TODO: do we need to synchronize something to ensure that the stoppable is
 		// stopped before we transport?
 
@@ -275,7 +304,8 @@ public class TransporterMPI {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void transportObject(final Serializable obj, final int dst, final NumberND loc,
-			final int fieldIndex) {
+			final int fieldIndex)
+	{
 		if (partition.getPID() == dst)
 			throw new IllegalArgumentException("Destination cannot be local, must be remote");
 
@@ -285,16 +315,20 @@ public class TransporterMPI {
 		// dst, which could be the diagonal processor
 		final PayloadWrapper wrapper = new PayloadWrapper(dst, obj, loc, fieldIndex);
 
-		if (withRegistry) {
+		if (withRegistry)
+		{
 			String name = DRegistry.getInstance().ifExportedThenAddMigratedName(obj);
 			if (name != null)
 				wrapper.setExportedName(name);
 		}
 
 		assert dstMap.containsKey(dst);
-		try {
+		try
+		{
 			dstMap.get(dst).write(wrapper);
-		} catch (final Exception e) {
+		}
+		catch (final Exception e)
+		{
 			e.printStackTrace();
 			System.exit(-1);
 		}
@@ -307,43 +341,50 @@ public class TransporterMPI {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public boolean isNeighbor(final int loc) {
+	public boolean isNeighbor(final int loc)
+	{
 		return dstMap.containsKey(loc);
 	}
 
-	public static class RemoteOutputStream {
+	public static class RemoteOutputStream
+	{
 		public ByteArrayOutputStream out;
 		public ObjectOutputStream os;
 		public ArrayList<Object> obj = new ArrayList<Object>();
 
-		public RemoteOutputStream() throws IOException {
+		public RemoteOutputStream() throws IOException
+		{
 			out = new ByteArrayOutputStream();
 			os = new ObjectOutputStream(out);
 		}
 
-		public void write(final Object obj) throws IOException {
+		public void write(final Object obj) throws IOException
+		{
 			// os.writeObject(obj);
 			// virtual write really write only at the end of the simulation steps
 			this.obj.add(obj);
 		}
 
-		public byte[] toByteArray() throws IOException {
-
+		public byte[] toByteArray() throws IOException
+		{
 			return out.toByteArray();
 		}
 
-		public int size() {
+		public int size()
+		{
 			return out.size();
 		}
 
-		public void flush() throws IOException {
+		public void flush() throws IOException
+		{
 			// write all objects
 			for (Object o : obj)
 				os.writeObject(o);
 			os.flush();
 		}
 
-		public void reset() throws IOException {
+		public void reset() throws IOException
+		{
 			os.close();
 			out.close();
 			out = new ByteArrayOutputStream();

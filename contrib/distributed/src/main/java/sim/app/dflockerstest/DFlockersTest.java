@@ -21,7 +21,8 @@ import sim.field.continuous.DContinuous2D;
 import sim.util.Timing;
 import sim.util.*;
 
-public class DFlockersTest extends DSimState {
+public class DFlockersTest extends DSimState
+{
 	private static final long serialVersionUID = 1;
 
 	public final static int width = 600;
@@ -46,7 +47,8 @@ public class DFlockersTest extends DSimState {
 	String dirname = System.getProperty("user.dir") + File.separator + dateString;
 
 	/** Creates a Flockers simulation with the given random number seed. */
-	public DFlockersTest(final long seed) {
+	public DFlockersTest(final long seed)
+	{
 		super(seed, DFlockersTest.width, DFlockersTest.height, DFlockersTest.neighborhood);
 
 		// final double[] discretizations = new double[] { DFlockersTest.neighborhood /
@@ -57,15 +59,20 @@ public class DFlockersTest extends DSimState {
 	}
 
 	@Override
-	public void preSchedule() {
+	public void preSchedule()
+	{
 		super.preSchedule();
-		try {
+		try
+		{
 			MPI.COMM_WORLD.barrier();
-		} catch (MPIException e2) {
+		}
+		catch (MPIException e2)
+		{
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		if (schedule.getSteps() > 0) {
+		if (schedule.getSteps() > 0)
+		{
 			int[] dstDispl = new int[partition.getNumProcessors()];
 			final int[] dstCount = new int[partition.getNumProcessors()];
 			long[] recv = new long[numFlockers];
@@ -76,13 +83,15 @@ public class DFlockersTest extends DSimState {
 //			}
 //			Long[] ids = (Long[]) idLocal.toArray();
 			long[] ids = new long[idLocal.size()];
-			for (int i = 0; i < idLocal.size(); i++) {
+			for (int i = 0; i < idLocal.size(); i++)
+			{
 				ids[i] = idLocal.get(i);
 			}
 
 			int num = ids.length;
 
-			try {
+			try
+			{
 
 				MPI.COMM_WORLD.gather(new int[] { num }, 1, MPI.INT, dstCount, 1, MPI.INT, 0);
 
@@ -92,25 +101,33 @@ public class DFlockersTest extends DSimState {
 
 				MPI.COMM_WORLD.gatherv(ids, num, MPI.LONG, recv, dstCount, dstDispl, MPI.LONG, 0);
 
-			} catch (MPIException e1) {
+			}
+			catch (MPIException e1)
+			{
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 
-			if (partition.getPID() == 0) {
+			if (partition.getPID() == 0)
+			{
 				System.out.println("STEP " + schedule.getSteps() + " count ");
-				for (int i = 0; i < dstCount.length; i++) {
+				for (int i = 0; i < dstCount.length; i++)
+				{
 					System.out.print(dstCount[i] + " ");
 				}
 				System.out.println();
 				System.out.println("STEP " + schedule.getSteps() + " disp ");
-				for (int i = 0; i < dstDispl.length; i++) {
+				for (int i = 0; i < dstDispl.length; i++)
+				{
 					System.out.print(dstDispl[i] + " ");
 				}
 				System.out.println();
-				try {
+				try
+				{
 					Thread.sleep(1000);
-				} catch (InterruptedException e) {
+				}
+				catch (InterruptedException e)
+				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -125,9 +142,11 @@ public class DFlockersTest extends DSimState {
 		}
 	}
 
-	protected void startRoot() {
+	protected void startRoot()
+	{
 		ArrayList<DFlocker> agents = new ArrayList<DFlocker>();
-		for (int x = 0; x < DFlockersTest.numFlockers; x++) {
+		for (int x = 0; x < DFlockersTest.numFlockers; x++)
+		{
 			final Double2D loc = new Double2D(random.nextDouble() * width, random.nextDouble() * height);
 			DFlocker flocker = new DFlocker(loc);
 			// idAgents.add(flocker.getId());
@@ -140,13 +159,15 @@ public class DFlockersTest extends DSimState {
 		sendRootInfoToAll("agents", agents);
 	}
 
-	public void start() {
+	public void start()
+	{
 		// TODO Auto-generated method stub
 		super.start(); // do not forget this line
 
 		ArrayList<Object> agents = (ArrayList<Object>) getRootInfo("agents");
 
-		for (Object p : agents) {
+		for (Object p : agents)
+		{
 			DFlocker a = (DFlocker) p;
 			if (partition.getLocalBounds().contains(a.loc))
 				flockers.addAgent(a.loc, a, 0, 0);
@@ -154,7 +175,8 @@ public class DFlockersTest extends DSimState {
 
 	}
 
-	public static void main(final String[] args) {
+	public static void main(final String[] args)
+	{
 		Timing.setWindow(20);
 		doLoopDistributed(DFlockersTest.class, args);
 		System.exit(0);

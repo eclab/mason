@@ -12,7 +12,8 @@ import sim.engine.transport.PayloadWrapper;
  *
  */
 
-public interface Synchronizable {
+public interface Synchronizable
+{
 
 	/**
 	 * Initializes remote proxy

@@ -10,23 +10,27 @@ import sim.util.*;
  *
  * @param <T> Type of objects to store
  */
-public class ObjectGridStorage<T extends DObject> extends GridStorage<T> {
+public class ObjectGridStorage<T extends DObject> extends GridStorage<T>
+{
 	private static final long serialVersionUID = 1L;
 
 	public T[] storage;
 
-	public ObjectGridStorage(final IntRect2D shape) {
+	public ObjectGridStorage(final IntRect2D shape)
+	{
 		super(shape);
 		clear();
 	}
 
-	public String toString() {
+	public String toString()
+	{
 		int width = shape.getWidth();
 		int height = shape.getHeight();
 		final StringBuffer buf = new StringBuffer(
 				String.format("ObjectGridStorage<%s>-%s\n", storage.getClass().getSimpleName(), shape));
 
-		for (int i = 0; i < width; i++) {
+		for (int i = 0; i < width; i++)
+		{
 			for (int j = 0; j < height; j++)
 				buf.append(String.format(" %8s ", storage[i * height + j]));
 			buf.append("\n");
@@ -35,7 +39,8 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T> {
 		return buf.toString();
 	}
 
-	public Serializable pack(final MPIParam mp) {
+	public Serializable pack(final MPIParam mp)
+	{
 		final T[] objs = (T[]) new Object[mp.size];
 		final T[] stor = storage;
 		int curr = 0;
@@ -47,7 +52,8 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T> {
 		return objs;
 	}
 
-	public int unpack(final MPIParam mp, final Serializable buf) {
+	public int unpack(final MPIParam mp, final Serializable buf)
+	{
 		final T[] stor = (T[]) storage;
 		final T[] objs = (T[]) buf;
 		int curr = 0;
@@ -63,20 +69,20 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T> {
 
 
 
-	public void set(Int2D p, T t) {
-		
+	public void set(Int2D p, T t)
+	{
 		storage[getFlatIdx((Int2D) p)] = t;
 	}
 
-	public void addObject(NumberND p, T t) {
-		
+	public void addObject(NumberND p, T t)
+	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 
 		set(local_p, t);
 	}
 
-	public T getObject(NumberND p, long id) {
-		
+	public T getObject(NumberND p, long id)
+	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 
 		
@@ -84,8 +90,8 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T> {
 	}
 
 	// Don't call this method, it'd be foolish
-	public ArrayList<T> getAllObjects(NumberND p) {
-		
+	public ArrayList<T> getAllObjects(NumberND p)
+	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 
 		
@@ -94,21 +100,21 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T> {
 		return list;
 	}
 
-	public boolean removeObject(NumberND p, long id) {
-		
+	public boolean removeObject(NumberND p, long id)
+	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 		set(local_p, null);
 		return true;
 	}
 
-	public void clear(NumberND p) {
+	public void clear(NumberND p)
+	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 		set(local_p, null);
 	}
 
-	public void clear() {
+	public void clear()
+	{
 		storage = (T[]) new Object[shape.getArea()];
 	}
-
-
 }

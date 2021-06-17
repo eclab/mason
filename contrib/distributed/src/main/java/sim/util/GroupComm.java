@@ -9,7 +9,8 @@ import sim.field.partitioning.QuadTreeNode;
  * Creates and contains the comm world (for the communication topology)
  *
  */
-public class GroupComm {
+public class GroupComm
+{
 	private static final long serialVersionUID = 1L;
 
 	public QuadTreeNode master;
@@ -24,7 +25,8 @@ public class GroupComm {
 	 * @param master
 	 * @throws MPIException
 	 */
-	public GroupComm(QuadTreeNode master) throws MPIException {
+	public GroupComm(QuadTreeNode master) throws MPIException
+	{
 		this.master = master;
 		this.leaves = master.getLeaves();
 
@@ -51,7 +53,8 @@ public class GroupComm {
 	 * @param nodes
 	 * @throws MPIException
 	 */
-	public void setInterComm(ArrayList<QuadTreeNode> nodes) throws MPIException {
+	public void setInterComm(ArrayList<QuadTreeNode> nodes) throws MPIException
+	{
 		Group world = MPI.COMM_WORLD.getGroup();
 		Group group = world.incl(nodes.stream()
 				.filter(node -> !node.isLeaf())

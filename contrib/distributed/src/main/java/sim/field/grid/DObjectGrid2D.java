@@ -38,7 +38,10 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 	/** Returns the underlying storage array for the DDoubleGrid2D.  This array
 		is a one-dimensional array, in row-major order, of all the cells in
 		the halo region. */
-	public T[] getStorageArray() { return storage.storage; }
+	public T[] getStorageArray()
+		{
+		return storage.storage;
+		}
 
 	/** Returns the data associated with the given point.  This point
 		must lie within the halo region or an exception will be thrown.  */
@@ -56,7 +59,10 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 		storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))] = t;
 		}
 
-	public HaloGrid2D getHaloGrid() { return halo; }
+	public HaloGrid2D getHaloGrid()
+		{
+		return halo;
+		}
 
 	/** Returns a Promise which will eventually (immediately or within one timestep)
 		hold the data located at the given point.  This point can be outside

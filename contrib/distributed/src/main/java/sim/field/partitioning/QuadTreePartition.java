@@ -22,7 +22,8 @@ import sim.util.*;
  *
  * @param <P> Type of point
  */
-public class QuadTreePartition extends Partition {
+public class QuadTreePartition extends Partition
+{
 	private static final long serialVersionUID = 1L;
 
 	QuadTree qt;
@@ -30,16 +31,19 @@ public class QuadTreePartition extends Partition {
 	Map<Integer, GroupComm> groups; // Map the level to its corresponding comm group
 	int treeDepth;
 
-	public QuadTreePartition(int width, int height, boolean isToroidal, int aoi) {
+	public QuadTreePartition(int width, int height, boolean isToroidal, int aoi)
+	{
 		super(width, height, isToroidal, aoi);
 		qt = new QuadTree(new IntRect2D(width, height), numProcessors);
 	}
 
-	public IntRect2D getLocalBounds() {
+	public IntRect2D getLocalBounds()
+	{
 		return myLeafNode.getShape();
 	}
 
-	public IntRect2D getLocalBounds(final int pid) {
+	public IntRect2D getLocalBounds(final int pid)
+	{
 		for (final QuadTreeNode node : qt.getAllLeaves())
 			if (node.getProcessor() == pid)
 				return node.getShape();
@@ -47,11 +51,13 @@ public class QuadTreePartition extends Partition {
 		throw new IllegalArgumentException("The partition for " + pid + " does not exist");
 	}
 
-	public IntRect2D getHaloBounds() {
+	public IntRect2D getHaloBounds()
+	{
 		return myLeafNode.getShape().resize(aoi);
 	}
 
-	public ArrayList<IntRect2D> getAllBounds() {
+	public ArrayList<IntRect2D> getAllBounds()
+	{
 		ArrayList<IntRect2D> allBounds = new ArrayList<>();
 
 		// init with nulls
@@ -63,29 +69,36 @@ public class QuadTreePartition extends Partition {
 		return allBounds;
 	}
 
-	public QuadTree getQt() {
+	public QuadTree getQt()
+	{
 		return qt;
 	}
 
-	public int getNumNeighbors() {
+	public int getNumNeighbors()
+	{
 		return getNeighborPIDs().length;
 	}
 
-	public int[] getNeighborPIDs() {
+	public int[] getNeighborPIDs()
+	{
 		return qt.getNeighborPids(myLeafNode, aoi, toroidal);
 	}
 
-	public int toPartitionPID(final NumberND p) {
+	public int toPartitionPID(final NumberND p)
+	{
 		return qt.getLeafNode(p).getProcessor();
 	}
 	/**
 	 * Creates the MPI comm world by defining the MPI topology as this quad tree.
 	 */
-	protected void createMPITopo() {
+	protected void createMPITopo()
+	{
 		final int[] ns = getNeighborPIDs();
 
-		try {
-			if(comm != null) {
+		try
+		{
+			if(comm != null)
+			{
 				comm.free();
 				//MPI.COMM_WORLD.barrier(); not sure if needed
 			}
@@ -96,20 +109,24 @@ public class QuadTreePartition extends Partition {
 			// and its all leaves (intracomm)
 
 			createGroups();
-		} catch (final MPIException e) {
+		}
+		catch (final MPIException e)
+		{
 			e.printStackTrace();
 			System.exit(-1);
 		}
 	}
 
-	public void initialize() {
+	public void initialize()
+	{
 		initUniformly();
 	}
 
 	/**
 	 * This method is only used internally, for init use initialize instead
 	 */
-	void initUniformly() {
+	void initUniformly()
+	{
 		// Init into a full quad tree
 		int numProcessorsOld = numProcessors;
 		numProcessors = (int) Math.pow(4, (int) Math.floor(Math.log(numProcessorsOld) / Math.log(4)));
@@ -122,7 +139,8 @@ public class QuadTreePartition extends Partition {
 		{
 			final ArrayList<QuadTreeNode> leaves = qt.getAllLeaves();
 
-			for (final QuadTreeNode leaf : leaves) {
+			for (final QuadTreeNode leaf : leaves)
+			{
 				Double2D d = leaf.getShape().getCenter();
 				qt.split(new Int2D((int) Math.floor(d.x), (int) Math.floor(d.y)));
 			}
@@ -138,19 +156,22 @@ public class QuadTreePartition extends Partition {
 		mapNodeToProc();
 
 		createMPITopo();
-
 	}
 
-	protected void refineQuadtree(int P) {
+	protected void refineQuadtree(int P)
+	{
 		QuadTreeNode root = qt.root;
 		ArrayList<QuadTreeNode> leaves = qt.getAllLeaves();
 
-		if (leaves.size() < P) {
+		if (leaves.size() < P)
+		{
 
 			ArrayList<QuadTreeNode> splittable_leaves = new ArrayList<QuadTreeNode>();
 
-			for (QuadTreeNode leaf : leaves) {
-				if (isSpaceSplittable(leaf)) {
+			for (QuadTreeNode leaf : leaves)
+			{
+				if (isSpaceSplittable(leaf))
+				{
 					splittable_leaves.add(leaf);
 				}
 			}
@@ -159,28 +180,34 @@ public class QuadTreePartition extends Partition {
 			// useful to handle the partitioning when the number of processers is lower than for
 			
 			// if the quadtree has only the root node
-			if (number_leaves == 1 && leaves.get(0).isRoot()) { 
+			if (number_leaves == 1 && leaves.get(0).isRoot())
+			{ 
 				splittable_leaves.add(root);
 			}
 
 			int toSplitId = -1;
 			
-			while (number_leaves < P && ((toSplitId = splittable_leaves.remove(splittable_leaves.size() - 1).id) != -1)) {
+			while (number_leaves < P && ((toSplitId = splittable_leaves.remove(splittable_leaves.size() - 1).id) != -1))
+			{
 				Double2D center = qt.getNode(toSplitId).shape.getCenter();
 				qt.split(new Int2D((int) Math.floor(center.x), (int) Math.floor(center.y)));
 				number_leaves += 3;
 			}
 			
-			if (number_leaves < P) {
+			if (number_leaves < P)
+			{
 				return;
 			}
 			// now the number of leaves is at most p+2
 			
-		} else {
+		}
+		else
+		{
 			ArrayList<QuadTreeNode> parents = new ArrayList<QuadTreeNode>(findLeafParent(leaves));
 			int number_leaves = leaves.size();
 
-			while (number_leaves >= P + 3) {
+			while (number_leaves >= P + 3)
+			{
 
 				QuadTreeNode toMerge = parents.remove(0);
 
@@ -190,7 +217,8 @@ public class QuadTreePartition extends Partition {
 
 			}
 
-			while (number_leaves != P) {
+			while (number_leaves != P)
+			{
 				refinePartition();
 				number_leaves--;
 			}
@@ -198,33 +226,42 @@ public class QuadTreePartition extends Partition {
 	}
 
 	// checks if the heigh and the width is at least 2*AOI
-	protected boolean isSpaceSplittable(QuadTreeNode node) {
+	protected boolean isSpaceSplittable(QuadTreeNode node)
+	{
 		int x = node.getShape().getHeight();
 		int y = node.getShape().getWidth();
-		if ((x >= 2 * this.aoi) && (y >= 2 * this.aoi) && (node.level != 0)) {
+		if ((x >= 2 * this.aoi) && (y >= 2 * this.aoi) && (node.level != 0))
+		{
 			return true;
-		} else {
+		}
+		else
+		{
 			return false;
 		}
 
 	}
 
 	// find the parents of all leaves
-	private static ArrayList<QuadTreeNode> findLeafParent(ArrayList<QuadTreeNode> leaves) {
+	private static ArrayList<QuadTreeNode> findLeafParent(ArrayList<QuadTreeNode> leaves)
+	{
 		ArrayList<QuadTreeNode> parents = new ArrayList<QuadTreeNode>();
-		for (QuadTreeNode leaf : leaves) {
+		for (QuadTreeNode leaf : leaves)
+		{
 			if (!parents.contains(leaf.parent))
 				parents.add(leaf.parent);
 		}
 		return parents;
 	}
 
-	private void refinePartition() {
+	private void refinePartition()
+	{
 		ArrayList<QuadTreeNode> allNodes = new ArrayList<QuadTreeNode>(qt.getAllNodes());
 		int maxChildren = -1;
 		int maxChildrenId = -1;
-		for (int i = 0; i < allNodes.size(); i++) {
-			if (allNodes.get(i).getLevel() == (qt.getDepth() - 1)) {
+		for (int i = 0; i < allNodes.size(); i++)
+		{
+			if (allNodes.get(i).getLevel() == (qt.getDepth() - 1))
+			{
 				if (maxChildren < allNodes.get(i).getChildren().size())
 					maxChildren = allNodes.get(i).getChildren().size();
 				maxChildrenId = allNodes.get(i).id;
@@ -237,7 +274,8 @@ public class QuadTreePartition extends Partition {
 		QuadTreeNode firstNode = mergable.get(0);
 		QuadTreeNode secondNode = mergable.get(1);
  
-		if(firstNode.getShape().getArea()>secondNode.getShape().getArea()){
+		if(firstNode.getShape().getArea()>secondNode.getShape().getArea())
+		{
 			firstNode=secondNode;
 			secondNode=mergable.get(2);
 		}
@@ -257,7 +295,8 @@ public class QuadTreePartition extends Partition {
 	 * Maps node to a processor
 	 * 
 	 */
-	protected void mapNodeToProc() {
+	protected void mapNodeToProc()
+	{
 		final ArrayList<QuadTreeNode> leaves = qt.getAllLeaves();
 
 		if (leaves.size() != numProcessors)
@@ -270,7 +309,8 @@ public class QuadTreePartition extends Partition {
 		myLeafNode = leaves.get(pid);
 
 		// Map non-leaf nodes - Use the first children node to hold itself
-		while (leaves.size() > 0) {
+		while (leaves.size() > 0)
+		{
 			final QuadTreeNode curr = leaves.remove(0);
 			final QuadTreeNode parent = curr.getParent();
 			if (parent == null || parent.getChild(0) != curr)
@@ -292,7 +332,8 @@ public class QuadTreePartition extends Partition {
 	 * 
 	 * @throws MPIException
 	 */
-	protected void createGroups() throws MPIException {
+	protected void createGroups() throws MPIException
+	{
 		freeResources();
 		int currDepth = 0;
 		groups = new HashMap<Integer, GroupComm>();
@@ -300,15 +341,18 @@ public class QuadTreePartition extends Partition {
 		// Iterate level by level to create groups
 		ArrayList<QuadTreeNode> currLevel = new ArrayList<>();
 		currLevel.add(qt.getRoot());
-		while (currLevel.size() > 0) {
+		while (currLevel.size() > 0)
+		{
 
 			final ArrayList<QuadTreeNode> nextLevel = new ArrayList<>();
 
-			for (final QuadTreeNode node : currLevel) {
+			for (final QuadTreeNode node : currLevel)
+			{
 				nextLevel.addAll(node.getChildren());
 
 				// whether this pid should participate in this group
-				if (node.isAncestorOf(myLeafNode)) {
+				if (node.isAncestorOf(myLeafNode))
+				{
 
 					groups.put(currDepth, new GroupComm(node));
 
@@ -330,7 +374,8 @@ public class QuadTreePartition extends Partition {
 		}
 	}
 
-	public int[] getProcessorNeighborhood(int level) throws RemoteException {
+	public int[] getProcessorNeighborhood(int level) throws RemoteException
+	{
 		ArrayList<QuadTreeNode> leaves = groups.get(level).leaves;
 		int[] pids = new int[leaves.size()];
 		for (int i = 0; i < pids.length; i++)
@@ -342,7 +387,8 @@ public class QuadTreePartition extends Partition {
 	 * @param gc
 	 * @return true if the calling pid is the master node of the given GroupComm
 	 */
-	public boolean isGroupMaster(final GroupComm gc) {
+	public boolean isGroupMaster(final GroupComm gc)
+	{
 		return gc != null && gc.master.getProcessor() == pid;
 	}
 
@@ -351,11 +397,13 @@ public class QuadTreePartition extends Partition {
 	 * @return true if the calling pid is the master node of the GroupComm at the
 	 *         given level
 	 */
-	public boolean isGroupMaster(final int level) {
+	public boolean isGroupMaster(final int level)
+	{
 		return isGroupMaster(getGroupComm(level));
 	}
 
-	public boolean isRootProcessor() {
+	public boolean isRootProcessor()
+	{
 		// The Global Master of Quad Tree is global root for MPI as well
 		return isGroupMaster(0);
 	}
@@ -366,7 +414,8 @@ public class QuadTreePartition extends Partition {
 	 *         group communication of the given level <br>
 	 *         null otherwise
 	 */
-	public GroupComm getGroupComm(final int level) {
+	public GroupComm getGroupComm(final int level)
+	{
 		return groups.get(level);
 	}
 
@@ -376,7 +425,8 @@ public class QuadTreePartition extends Partition {
 	 *         level <br>
 	 *         null otherwise
 	 */
-	public IntRect2D getNodeShapeAtLevel(final int level) {
+	public IntRect2D getNodeShapeAtLevel(final int level)
+	{
 		final GroupComm gc = getGroupComm(level);
 		if (isGroupMaster(gc))
 			return gc.master.getShape();
@@ -386,14 +436,17 @@ public class QuadTreePartition extends Partition {
 	/**
 	 * @return the treeDepth
 	 */
-	public int getTreeDepth() {
+	public int getTreeDepth()
+	{
 		return treeDepth;
 	}
 
-	private void testIntraGroupComm(final int depth) throws MPIException {
+	private void testIntraGroupComm(final int depth) throws MPIException
+	{
 		MPITest.printOnlyIn(0, "Testing intra group comm at depth " + depth);
 
-		if (groups.containsKey(depth)) {
+		if (groups.containsKey(depth))
+		{
 			final Comm gcomm = groups.get(depth).comm;
 			final int[] buf = new int[16];
 
@@ -405,11 +458,13 @@ public class QuadTreePartition extends Partition {
 		MPI.COMM_WORLD.barrier();
 	}
 
-	private void testInterGroupComm(final int depth) throws MPIException {
+	private void testInterGroupComm(final int depth) throws MPIException
+	{
 		MPITest.printOnlyIn(0, "Testing inter group comm at depth " + depth);
 
 		final GroupComm gc = getGroupComm(depth);
-		if (isGroupMaster(gc)) {
+		if (isGroupMaster(gc))
+		{
 			final Comm gcomm = gc.interComm;
 			final int[] buf = new int[16];
 
@@ -430,13 +485,14 @@ public class QuadTreePartition extends Partition {
 	 * @throws MPIException
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void balance(final double myRuntime, final int level) throws MPIException {
+	public void balance(final double myRuntime, final int level) throws MPIException
+	{
 		final GroupComm gc = groups.get(level);
 
 		Object[] sendCentroids = new Object[] { null };
 
-		if (gc != null) {
-
+		if (gc != null)
+		{
 			Double2D d = myLeafNode.getShape().getCenter();
 			final Int2D ctr = new Int2D((int) Math.floor(d.x), (int) Math.floor(d.y));
 			// final Int2D ctr = myLeafNode.getShape().getInt2DCenter();
@@ -448,10 +504,12 @@ public class QuadTreePartition extends Partition {
 
 			gc.comm.reduce(sendData, recvData, recvData.length, MPI.DOUBLE, MPI.SUM, gc.groupRoot);
 
-			if (isGroupMaster(gc)) {
+			if (isGroupMaster(gc))
+			{
 				int[] locVals = new int[recvData.length - 1];
 				// skip first (i = 1)
-				for (int i = 1; i < recvData.length; i++) {
+				for (int i = 1; i < recvData.length; i++)
+				{
 					double x = recvData[i];
 					locVals[i - 1] = (int) (x / recvData[0]);
 				}
@@ -485,7 +543,8 @@ public class QuadTreePartition extends Partition {
 	 *
 	 * @param splitPoints
 	 */
-	private void initQuadTree(final ArrayList<Int2D> splitPoints) {
+	private void initQuadTree(final ArrayList<Int2D> splitPoints)
+	{
 		// Create the quad tree based on the given split points
 		qt.split(splitPoints);
 
@@ -494,7 +553,8 @@ public class QuadTreePartition extends Partition {
 		createMPITopo();
 	}
 
-	private static void testBalance() throws MPIException {
+	private static void testBalance() throws MPIException
+	{
 		MPITest.printOnlyIn(0, "Testing balance()......");
 
 		final QuadTreePartition p = new QuadTreePartition(100, 100, false, 1);
@@ -514,7 +574,8 @@ public class QuadTreePartition extends Partition {
 		MPITest.printOnlyIn(0, p.qt.toString());
 	}
 
-	private static void testInitWithPoints() throws MPIException {
+	private static void testInitWithPoints() throws MPIException
+	{
 		MPITest.printOnlyIn(0, "Testing init with points......");
 
 		final QuadTreePartition p = new QuadTreePartition(100, 100, false, 1);
@@ -524,13 +585,15 @@ public class QuadTreePartition extends Partition {
 
 		p.initQuadTree(new ArrayList<>(Arrays.asList(splitPoints)));
 
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++)
+		{
 			p.testIntraGroupComm(i);
 			p.testInterGroupComm(i);
 		}
 	}
 
-	private static void testInitUniformly() throws MPIException {
+	private static void testInitUniformly() throws MPIException
+	{
 		MPITest.printOnlyIn(0, "Testing init uniformly......");
 
 		final QuadTreePartition p = new QuadTreePartition(1000, 1000, false, 1);
@@ -544,18 +607,25 @@ public class QuadTreePartition extends Partition {
 	}
 	
 	//iterates through groups and calls free
-	public void freeResources() {
+	public void freeResources()
+	{
 		
-		if (groups != null) {
+		if (groups != null)
+		{
 		
-			for (GroupComm gc : groups.values()) {
+			for (GroupComm gc : groups.values())
+			{
 			
-				try {
-					if (gc != null) {
-						if (gc.comm != null) {
+				try
+				{
+					if (gc != null)
+					{
+						if (gc.comm != null)
+						{
 							gc.comm.free();
 						}
-						else if (gc.interComm != null){
+						else if (gc.interComm != null)
+						{
 							gc.interComm.free();
 
 						}
@@ -564,17 +634,19 @@ public class QuadTreePartition extends Partition {
 				
 				} 
 			
-			catch (MPIException e) {
+			catch (MPIException e)
+				{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+				}
 			
 		}
 		}
 		
 	}
 
-	public static void main(final String[] args) throws MPIException {
+	public static void main(final String[] args) throws MPIException
+	{
 		MPI.Init(args);
 
 		// testInitWithPoints();
@@ -585,13 +657,16 @@ public class QuadTreePartition extends Partition {
 		MPI.Finalize();
 	}
 
-	private static void testNeighbors(){
+	private static void testNeighbors()
+	{
 		final QuadTreePartition p = new QuadTreePartition(1000, 1000, false, 1);
 		p.initUniformly();
-		if(p.pid==0){
+		if(p.pid==0)
+		{
 			System.out.println(p.qt);
 			List<QuadTreeNode> allNodes = p.qt.getAllNodes();
-			for(int i= 0; i<allNodes.size(); i++){
+			for(int i= 0; i<allNodes.size(); i++)
+			{
 				HashSet<QuadTreeNode> neighbors = p.qt.getNeighbors(allNodes.get(i), p.aoi, p.toroidal);
 				System.out.println("pid "+p.getPID()+" node "+allNodes.get(i)+ " neighbors "+neighbors);
 				System.out.println("-------availIds " + p.qt.availIds);
@@ -599,7 +674,8 @@ public class QuadTreePartition extends Partition {
 		}
 	}
 
-	public String toString() {
+	public String toString()
+	{
 		return "DQuadTreePartition [qt=" + qt + ", myLeafNode=" + myLeafNode + ", groups=" + groups + ", aoi=" + aoi + "]";
 	}
 }

@@ -10,7 +10,8 @@ import sim.engine.*;
 import sim.field.grid.*;
 import sim.util.*;
 
-public /* strictfp */ class DAntsForage extends DSimState {
+public /* strictfp */ class DAntsForage extends DSimState
+{
 	private static final long serialVersionUID = 1;
 
 	public static final int GRID_HEIGHT = 100;
@@ -49,7 +50,8 @@ public /* strictfp */ class DAntsForage extends DSimState {
 	public double updateCutDown = 0.9;
 	public double diagonalCutDown = computeDiagonalCutDown();
 
-	public double computeDiagonalCutDown() {
+	public double computeDiagonalCutDown()
+	{
 		return Math.pow(updateCutDown, Math.sqrt(2));
 	}
 
@@ -57,70 +59,85 @@ public /* strictfp */ class DAntsForage extends DSimState {
 	public double randomActionProbability = 0.1;
 
 	// some properties
-	public int getNumAnts() {
+	public int getNumAnts()
+	{
 		return numAnts;
 	}
 
-	public void setNumAnts(int val) {
+	public void setNumAnts(int val)
+	{
 		if (val > 0)
 			numAnts = val;
 	}
 
-	public double getEvaporationConstant() {
+	public double getEvaporationConstant()
+	{
 		return evaporationConstant;
 	}
 
-	public void setEvaporationConstant(double val) {
+	public void setEvaporationConstant(double val)
+	{
 		if (val >= 0 && val <= 1.0)
 			evaporationConstant = val;
 	}
 
-	public double getReward() {
+	public double getReward()
+	{
 		return reward;
 	}
 
-	public void setReward(double val) {
+	public void setReward(double val)
+	{
 		if (val >= 0)
 			reward = val;
 	}
 
-	public double getCutDown() {
+	public double getCutDown()
+	{
 		return updateCutDown;
 	}
 
-	public void setCutDown(double val) {
+	public void setCutDown(double val)
+	{
 		if (val >= 0 && val <= 1.0)
 			updateCutDown = val;
 		diagonalCutDown = computeDiagonalCutDown();
 	}
 
-	public Object domCutDown() {
+	public Object domCutDown()
+	{
 		return new Interval(0.0, 1.0);
 	}
 
-	public double getMomentumProbability() {
+	public double getMomentumProbability()
+	{
 		return momentumProbability;
 	}
 
-	public void setMomentumProbability(double val) {
+	public void setMomentumProbability(double val)
+	{
 		if (val >= 0 && val <= 1.0)
 			momentumProbability = val;
 	}
 
-	public Object domMomentumProbability() {
+	public Object domMomentumProbability()
+	{
 		return new Interval(0.0, 1.0);
 	}
 
-	public double getRandomActionProbability() {
+	public double getRandomActionProbability()
+	{
 		return randomActionProbability;
 	}
 
-	public void setRandomActionProbability(double val) {
+	public void setRandomActionProbability(double val)
+	{
 		if (val >= 0 && val <= 1.0)
 			randomActionProbability = val;
 	}
 
-	public Object domRandomActionProbability() {
+	public Object domRandomActionProbability()
+	{
 		return new Interval(0.0, 1.0);
 	}
 
@@ -131,7 +148,8 @@ public /* strictfp */ class DAntsForage extends DSimState {
 	public DIntGrid2D obstacles;
 	
 
-	public DAntsForage(long seed) {
+	public DAntsForage(long seed)
+	{
 		super(seed, GRID_WIDTH, GRID_HEIGHT, 10);
 		sites = new DIntGrid2D(this);
 		toFoodGrid = new DDoubleGrid2D(this);
@@ -140,15 +158,18 @@ public /* strictfp */ class DAntsForage extends DSimState {
 		obstacles = new DIntGrid2D(this);
 	}
 
-	public void start() {
+	public void start()
+	{
 		super.start(); // clear out the schedule
 
-		switch (OBSTACLES) {
+		switch (OBSTACLES)
+		{
 		case NO_OBSTACLES:
 			break;
 		case ONE_OBSTACLE:
 			for (int x = 0; x < GRID_WIDTH; x++)
-				for (int y = 0; y < GRID_HEIGHT; y++) {
+				for (int y = 0; y < GRID_HEIGHT; y++)
+				{
 					obstacles.set(new Int2D(x, y), 0);
 					if (((x - 55) * 0.707 + (y - 35) * 0.707) * ((x - 55) * 0.707 + (y - 35) * 0.707) / 36 +
 							((x - 55) * 0.707 - (y - 35) * 0.707) * ((x - 55) * 0.707 - (y - 35) * 0.707) / 1024 <= 1)
@@ -158,7 +179,8 @@ public /* strictfp */ class DAntsForage extends DSimState {
 			break;
 		case TWO_OBSTACLES:
 			for (int x = 0; x < GRID_WIDTH; x++)
-				for (int y = 0; y < GRID_HEIGHT; y++) {
+				for (int y = 0; y < GRID_HEIGHT; y++)
+				{
 					obstacles.set(new Int2D(x, y), 0);
 					if (((x - 45) * 0.707 + (y - 25) * 0.707) * ((x - 45) * 0.707 + (y - 25) * 0.707) / 36 +
 							((x - 45) * 0.707 - (y - 25) * 0.707) * ((x - 45) * 0.707 - (y - 25) * 0.707) / 1024 <= 1)
@@ -171,7 +193,8 @@ public /* strictfp */ class DAntsForage extends DSimState {
 			break;
 		case ONE_LONG_OBSTACLE:
 			for (int x = 0; x < GRID_WIDTH; x++)
-				for (int y = 0; y < GRID_HEIGHT; y++) {
+				for (int y = 0; y < GRID_HEIGHT; y++)
+				{
 					obstacles.set(new Int2D(x, y), 0);
 					if ((x - 60) * (x - 60) / 1600 +
 							(y - 50) * (y - 50) / 25 <= 1)
@@ -190,9 +213,11 @@ public /* strictfp */ class DAntsForage extends DSimState {
 				if (getPartition().getLocalBounds().contains(new Int2D(x, y)))
 					sites.set(new Int2D(x, y), 2);
 
-		for (int x = 0; x < numAnts; x++) {
+		for (int x = 0; x < numAnts; x++)
+		{
 			if (getPartition().getLocalBounds()
-					.contains(new Int2D((HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2))) {
+					.contains(new Int2D((HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2)))
+			{
 				DAnt ant = new DAnt(reward, (HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2);
 				buggrid.add(new Int2D((HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2), ant);
 				schedule.scheduleRepeating(Schedule.EPOCH + x, 0, ant, 1);
@@ -200,8 +225,10 @@ public /* strictfp */ class DAntsForage extends DSimState {
 		}
 
 		// Schedule evaporation to happen after the ants move and update
-		schedule.scheduleRepeating(Schedule.EPOCH, 1, new DSteppable() {
-			public void step(SimState state) {
+		schedule.scheduleRepeating(Schedule.EPOCH, 1, new DSteppable()
+		{
+			public void step(SimState state)
+			{
 				toFoodGrid.multiply(evaporationConstant);
 				toHomeGrid.multiply(evaporationConstant);
 			}
@@ -209,7 +236,8 @@ public /* strictfp */ class DAntsForage extends DSimState {
 
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		doLoopDistributed(DAntsForage.class, args);
 		System.exit(0);
 	}

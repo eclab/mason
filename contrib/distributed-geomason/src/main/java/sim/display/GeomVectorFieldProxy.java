@@ -13,27 +13,29 @@ import java.util.Map.Entry;
 import sim.util.*;
 
 @SuppressWarnings("rawtypes")
-public class GeomVectorFieldProxy extends GeomVectorField implements UpdatableProxy {
+public class GeomVectorFieldProxy extends GeomVectorField implements UpdatableProxy
+{
 	private static final long serialVersionUID = 1L;
 
-    public GeomVectorFieldProxy() {
+    public GeomVectorFieldProxy()
+    {
         super();
     }
     
-    public GeomVectorFieldProxy(int w, int h) {
+    public GeomVectorFieldProxy(int w, int h)
+    {
     	super(w, h);
     }
 
 	@Override
 	public void update(SimStateProxy stateProxy, int proxyIndex, int[] quad_tree_partitions)
-			throws RemoteException, NotBoundException {
-		// TODO Auto-generated method stub
-		
+			throws RemoteException, NotBoundException
+	{		
 		int halo_size = 0;
 
-		
 		IntRect2D[] rect_list = new IntRect2D[quad_tree_partitions.length];
-		for (int p_ind = 0; p_ind < quad_tree_partitions.length; p_ind++) {
+		for (int p_ind = 0; p_ind < quad_tree_partitions.length; p_ind++)
+		{
 			int p = quad_tree_partitions[p_ind];
 			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
 			halo_size = vp1.getAOI();
@@ -57,7 +59,8 @@ public class GeomVectorFieldProxy extends GeomVectorField implements UpdatablePr
 		reshape(width, height);
 		
 		//for (int p = 0; p < stateProxy.numProcessors; p++) {
-		for (int p : quad_tree_partitions) {
+		for (int p : quad_tree_partitions)
+		{
 
 			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
 			//int halo_size = vp1.getAOI();
@@ -84,7 +87,8 @@ public class GeomVectorFieldProxy extends GeomVectorField implements UpdatablePr
 		
 	}
 		
-	public void reshape(int w, int h) {
+	public void reshape(int w, int h)
+	{
 		   setFieldWidth(w);
 		   setFieldHeight(h);
 	}

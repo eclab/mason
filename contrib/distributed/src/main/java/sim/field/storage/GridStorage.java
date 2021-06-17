@@ -11,7 +11,8 @@ import java.util.*;
  *
  * @param <T> Type of objects to store
  */
-public abstract class GridStorage<T extends Serializable> implements java.io.Serializable {
+public abstract class GridStorage<T extends Serializable> implements java.io.Serializable
+{
 	private static final long serialVersionUID = 1L;
 
 	IntRect2D shape;
@@ -22,16 +23,19 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 
 	//// NOTE: Subclasses are responsible for allocating the storage
 	//// and setting the base type
-	public GridStorage(IntRect2D shape) {
+	public GridStorage(IntRect2D shape)
+	{
 		this.shape = shape;
 		height = shape.getHeight(); // getHeight(shape.getSizes());
 	}
 
-	public Datatype getMPIBaseType() {
+	public Datatype getMPIBaseType()
+	{
 		return baseType;
 	}
 
-	public IntRect2D getShape() {
+	public IntRect2D getShape()
+	{
 		return shape;
 	}
 
@@ -96,7 +100,8 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	 * 
 	 * @param newShape
 	 */
-	void reload(final IntRect2D newShape) {
+	void reload(final IntRect2D newShape)
+	{
 		shape = newShape;
 		height = newShape.getHeight();
 		clear();
@@ -107,29 +112,34 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	 * 
 	 * @param newShape
 	 */
-	public void reshape(final IntRect2D newShape) {
+	public void reshape(final IntRect2D newShape)
+	{
 		if (newShape.equals(shape))
 			return;
 
-		if (newShape.intersects(shape)) {
-
+		if (newShape.intersects(shape))
+		{
 			final IntRect2D overlap = newShape.getIntersection(shape);
 
 			final MPIParam fromParam = new MPIParam(overlap, shape, baseType);
 			final MPIParam toParam = new MPIParam(overlap, newShape, baseType);
 
-			try {
+			try
+			{
 				final Serializable buf = pack(fromParam);
 				reload(newShape);
 				unpack(toParam, buf);
 
 				fromParam.type.free();
 				toParam.type.free();
-			} catch (final MPIException e) {
+			}
+			catch (final MPIException e)
+			{
 				e.printStackTrace();
 				System.exit(-1);
 			}
-		} else
+		}
+		else
 			reload(newShape);
 	}
 
@@ -138,7 +148,8 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	 * 
 	 * @return flattened index
 	 */
-	public int getFlatIdx(final Int2D p) {
+	public int getFlatIdx(final Int2D p)
+	{
 		return getFlatIdx(p.x, p.y);
 	}
 
@@ -147,7 +158,8 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	 * 
 	 * @return flattened index
 	 */
-	public int getFlatIdx(int x, int y) {
+	public int getFlatIdx(int x, int y)
+	{
 		return x * height + y;
 	}
 
@@ -157,15 +169,18 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	}
 */
 
-	public static int getFlatIdx(final Int2D p, int height) {
+	public static int getFlatIdx(final Int2D p, int height)
+	{
 		return p.x * height + p.y;
 	}
 
-	public void setOffSet(Int2D offset) {
+	public void setOffSet(Int2D offset)
+	{
 		this.offset = offset;
 	}
 
-	public Int2D toLocalPoint(final Int2D p) {
+	public Int2D toLocalPoint(final Int2D p)
+	{
 		return p.subtract(offset);
 	}
 }

@@ -9,7 +9,8 @@ import sim.util.*;
  * Used Internally
  *
  */
-public class PayloadWrapper extends MigratableObject {
+public class PayloadWrapper extends MigratableObject
+{
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -41,14 +42,16 @@ public class PayloadWrapper extends MigratableObject {
 	 */
 	public final int fieldIndex;
 
-	public PayloadWrapper(final int dst, final Serializable payload, final NumberND loc, final int fieldIndex) {
+	public PayloadWrapper(final int dst, final Serializable payload, final NumberND loc, final int fieldIndex)
+	{
 		destination = dst;
 		this.payload = payload;
 		this.loc = loc;
 		this.fieldIndex = fieldIndex;
 	}
     
-	public PayloadWrapper(final int dst, final Serializable payload) {
+	public PayloadWrapper(final int dst, final Serializable payload)
+	{
 		destination = dst;
 		this.payload = payload;
 		loc = null;
@@ -56,7 +59,8 @@ public class PayloadWrapper extends MigratableObject {
 	}
 	
 
-	public String toString() {
+	public String toString()
+	{
 		return "PayloadWrapper [payload=" + payload + ", destination=" + destination + ", loc=" + loc + ", fieldIndex="
 				+ fieldIndex + "]";
 	}

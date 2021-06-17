@@ -3,7 +3,8 @@ package sim.util;
 import java.io.*;
 
 // TODO Move to NdRectangle
-public class IntRect2D implements Serializable {
+public class IntRect2D implements Serializable
+{
 	private static final long serialVersionUID = 1L;
 	//// SEAN FIXME: I am presuming that this rectangle is HALF-OPEN, that is br is
 	//// out of bounds
@@ -12,33 +13,39 @@ public class IntRect2D implements Serializable {
 
 //// SEAN FIXME: I changed this to >= from >, assuming you can't have zero-length rects. 
 //// Zero-length rects are fine but they can't have a "center", which is one of the functions.
-	void verifyValidSize(Int2D ul, Int2D br) {
+	void verifyValidSize(Int2D ul, Int2D br)
+	{
 		if (ul.x >= br.x)
 			throw new IllegalArgumentException("IntRect2D ul.x >= br.x");
 		if (ul.y >= br.y)
 			throw new IllegalArgumentException("IntRect2D ul.y >= br.y");
 	}
 
-	public IntRect2D(Int2D ul, Int2D br) {
+	public IntRect2D(Int2D ul, Int2D br)
+	{
 		verifyValidSize(ul, br);
 		this.ul = ul;
 		this.br = br;
 	}
 
-	public IntRect2D(int width, int height) {
+	public IntRect2D(int width, int height)
+	{
 		this(new Int2D(0, 0), new Int2D(width, height));
 	}
 
-	public Int2D ul() {
+	public Int2D ul()
+	{
 		return ul;
 	}
 
-	public Int2D br() {
+	public Int2D br()
+	{
 		return br;
 	}
 	
 	// Return the area of the hyper rectangle
-	public int getArea() {
+	public int getArea()
+	{
 		return (br.x - ul.x) * (br.y - ul.y);
 	}
 
@@ -48,40 +55,47 @@ public class IntRect2D implements Serializable {
 	//	return new int[] { getWidth(), getHeight() };
 	//}
 
-	public int getHeight() {
+	public int getHeight()
+	{
 		return br.y - ul.y;
 	}
 
-	public int getWidth() {
+	public int getWidth()
+	{
 		return br.x - ul.x;
 	}
 
 	// Return whether the rect contains the given <x, y> point.
 	// Noted that the rect is treated as half-inclusive (ul) and half-exclusive (br)
-	public boolean contains(int x, int y) {
+	public boolean contains(int x, int y)
+	{
 		return (ul.x <= x && ul.y <= y && br.x > x && br.y > y);
 	}
 
 	// Return whether the rect contains the given <x, y> point.
 	// Noted that the rect is treated as half-inclusive (ul) and half-exclusive (br)
-	public boolean contains(double x, double y) {
+	public boolean contains(double x, double y)
+	{
 		return (ul.x <= x && ul.y <= y && br.x > x && br.y > y);
 	}
 
 	// Return whether the rect contains p
 	// Noted that the rect is treated as half-inclusive (ul) and half-exclusive (br)
-	public boolean contains(Int2D p) {
+	public boolean contains(Int2D p)
+	{
 		return (ul.x <= p.x && ul.y <= p.y && br.x > p.x && br.y > p.y);
 	}
 
 	// Return whether the rect contains p
 	// Noted that the rect is treated as half-inclusive (ul) and half-exclusive (br)
-	public boolean contains(Double2D p) {
+	public boolean contains(Double2D p)
+	{
 		return (ul.x <= p.x && ul.y <= p.y && br.x > p.x && br.y > p.y);
 	}
 
 //// SEAN FIXME: we should try not to require this
-	public boolean contains(NumberND p) {
+	public boolean contains(NumberND p)
+	{
 		double x = p.getVal(0);
 		double y = p.getVal(1);
 		return (ul.x <= x && ul.y <= y && br.x > x && br.y > y);
@@ -89,33 +103,38 @@ public class IntRect2D implements Serializable {
 
 //// SEAN FIXME: Verify that this is the case for half-open intervals
 	// Return whether the given rect is inside this rectangle
-	public boolean contains(IntRect2D that) {
+	public boolean contains(IntRect2D that)
+	{
 		return (ul.x <= that.ul.x && ul.y <= that.ul.y && br.x >= that.br.x && br.y >= that.br.y);
 	}
 
 //// SEAN FIXME: rename to intersects(...)
 //// SEAN FIXME: Verify that this is the case for half-open intervals
 	// Return whether the given rect intersects with self
-	public boolean intersects(IntRect2D that) {
+	public boolean intersects(IntRect2D that)
+	{
 		return (ul.x < that.br.x && ul.y < that.br.y && that.ul.x < br.x && that.ul.y < br.y);
 	}
 
 //// SEAN FIXME: Verify that this is the case for half-open intervals
 	// Return the intersection of the given rect and self
-	public IntRect2D getIntersection(IntRect2D that) {
+	public IntRect2D getIntersection(IntRect2D that)
+	{
 		if (!intersects(that))
 			throw new IllegalArgumentException(this + " does not intersect with " + that);
 		return new IntRect2D(new Int2D(Math.max(ul.x, that.ul.x), Math.max(ul.y, that.ul.y)),
 				new Int2D(Math.min(br.x, that.br.x), Math.min(br.y, that.br.y)));
 	}
 
-	public IntRect2D resize(int left, int up, int right, int down) {
+	public IntRect2D resize(int left, int up, int right, int down)
+	{
 		Int2D new_ul = new Int2D(ul.x + left, ul.y + up);
 		Int2D new_br = new Int2D(br.x + right, br.y + down);
 		return new IntRect2D(new_ul, new_br);
 	}
 
-	public IntRect2D translate(int x, int y) {
+	public IntRect2D translate(int x, int y)
+	{
 		Int2D new_ul = new Int2D(ul.x + x, ul.y + y);
 		Int2D new_br = new Int2D(br.x + x, br.y + y);
 		return new IntRect2D(new_ul, new_br);
@@ -123,7 +142,8 @@ public class IntRect2D implements Serializable {
 
 //// SEAN FIXME: I changed this to Double2D because it does / 2 which is almost certainly wrong
 //// SEAN FIXME: I think the code is wrong in general anyway, as it rounds *up* because of half-open
-	public Double2D getCenter() {
+	public Double2D getCenter()
+	{
 		// return new Double2D((br.x - ul.x + 1) / 2.0, (br.y - ul.y + 1) / 2.0);
 		return new Double2D(((br.x - ul.x) / 2.0) + ul.x, ((br.y - ul.y) / 2.0) + ul.y);
 
@@ -132,18 +152,21 @@ public class IntRect2D implements Serializable {
 	}
 
 	// Return whether two hyper rectangles equal (the two vertexs equal)
-	public boolean equals(IntRect2D that) {
+	public boolean equals(IntRect2D that)
+	{
 		return this.ul.equals(that.ul) && this.br.equals(that.br);
 	}
 
 //// SEAN FIXME: I deleted compareTo entirely because it makes arbitrary comparison orderings and Int2D is not comparable
 
-	public static IntRect2D getBoundingRect(IntRect2D[] rects) {
+	public static IntRect2D getBoundingRect(IntRect2D[] rects)
+	{
 		if (rects.length == 0)
 			return null;
 
 		Int2D ul = rects[0].ul, br = rects[0].br;
-		for (IntRect2D rect : rects) {
+		for (IntRect2D rect : rects)
+		{
 			ul = (Int2D) ul.min(rect.ul);
 			// br = (Int2D)br.max(rect.ul);
 			br = (Int2D) br.max(rect.br);
@@ -152,14 +175,16 @@ public class IntRect2D implements Serializable {
 		return new IntRect2D(ul, br);
 	}
 
-	public String toString() {
+	public String toString()
+	{
 		return new String("IntRect2D[(" + ul.x + ", " + ul.y + ") -> (" + br.x + ", " + br.y + ")]");
 	}
 
 //// SEAN FIXME: I deleted toToroidal(rect) and split entirely for the time being
 
 	// fix for bugs
-	public Int2D toToroidal(Int2D p) {
+	public Int2D toToroidal(Int2D p)
+	{
 		int x = p.x;
 		int y = p.y;
 		int width = br.x - ul.x;
@@ -169,7 +194,8 @@ public class IntRect2D implements Serializable {
 	}
 
 	// slight revision for more efficiency
-	final int tx(int x, int width) {
+	final int tx(int x, int width)
+	{
 		if (x >= 0 && x < width)
 			return x; // do clearest case first
 		x = x % width;
@@ -179,7 +205,8 @@ public class IntRect2D implements Serializable {
 	}
 
 	// slight revision for more efficiency
-	final int ty(int y, int height) {
+	final int ty(int y, int height)
+	{
 		if (y >= 0 && y < height)
 			return y; // do clearest case first
 		y = y % height;
@@ -190,7 +217,8 @@ public class IntRect2D implements Serializable {
 
 	// added by Raj Patel
 	// returns a list of every Int2D point in IntRect2D
-	public Int2D[] getPointList() {
+	public Int2D[] getPointList()
+	{
 		Int2D[] listOfPoints = new Int2D[this.getArea()];
 
 		int list_ind = 0;
@@ -199,8 +227,10 @@ public class IntRect2D implements Serializable {
 		int width = getWidth();
 		int height = getHeight();
 		
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
+		for (int i = 0; i < width; i++)
+		{
+			for (int j = 0; j < height; j++)
+			{
 				listOfPoints[list_ind] = new Int2D(ul.x + i, ul.y + j);
 				list_ind++;
 			}
@@ -210,11 +240,13 @@ public class IntRect2D implements Serializable {
 	}
 
 	// remove? or add?
-	public IntRect2D resize(Int2D vals) {
+	public IntRect2D resize(Int2D vals)
+	{
 		return new IntRect2D(ul.subtract(vals), br.add(vals));
 	}
 
-	public IntRect2D resize(int val) {
+	public IntRect2D resize(int val)
+	{
 		//int[] vals = new int[] { val, val };
 		//return resize(vals);
 		
@@ -223,17 +255,20 @@ public class IntRect2D implements Serializable {
 	}
 
 	// maybe remove, maybe keep
-	public IntRect2D add(int dim, int offset) {
+	public IntRect2D add(int dim, int offset)
+	{
 		return new IntRect2D(ul.add(dim, offset), br.add(dim, offset));
 	}
 
 	// maybe remove, maybe keep
-	public IntRect2D add(Int2D offsets) {
+	public IntRect2D add(Int2D offsets)
+	{
 		return new IntRect2D(ul.add(offsets), br.add(offsets));
 	}
 
 	// maybe remove, maybe keep
-	public IntRect2D subtract(Int2D offsets) {
+	public IntRect2D subtract(Int2D offsets)
+	{
 		return new IntRect2D(ul.subtract(offsets), br.subtract(offsets));
 	}
 }

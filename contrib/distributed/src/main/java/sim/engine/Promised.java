@@ -4,7 +4,8 @@ import java.io.*;
 import java.rmi.*;
 import sim.engine.*;
 
-public interface Promised extends Serializable {
+public interface Promised extends Serializable
+{
 	
 	public boolean isReady() throws RemoteException;
 

@@ -18,12 +18,13 @@ import sim.util.Bag;
 import sim.util.geo.GeomPlanarGraph;
 import sim.util.geo.MasonGeometry;
 
-public class DCampusWorld extends DSimState {
+public class DCampusWorld extends DSimState
+{
 	private static final long serialVersionUID = 1;
 
 	public static final int width = 300;
 	public static final int height = 300;
-	public static final int aoi = 6;// TODO what value???
+	public static final int aoi = 1;// TODO what value???
 	public static final int discretization = 6;
 	public static final int numAgents = 100; // 1000
 
@@ -50,17 +51,23 @@ public class DCampusWorld extends DSimState {
 	public GeomPlanarGraph network = new GeomPlanarGraph();
 	public GeomVectorField junctions = new GeomVectorField(DCampusWorld.width, DCampusWorld.height); // nodes for intersections
 
-	public DCampusWorld(final long seed) {
+	public DCampusWorld(final long seed)
+	{
 		super(seed, width, height, aoi);
 		agentLocations = new DContinuous2D<>(discretization, this);
 //		balanceInterval = 100000;
 	}
 
-	public int getNumAgents() { return numAgents; }
+	public int getNumAgents()
+		{
+		return numAgents;
+		}
 
 	// TODO Remove this
-	void loadStatic() {
-		try {
+	void loadStatic()
+	{
+		try
+		{
 			System.out.println("reading buildings layer");
 
 			// this Bag lets us only display certain fields in the Inspector, the non-masked
@@ -107,7 +114,9 @@ public class DCampusWorld extends DSimState {
 
 			addIntersectionNodes(network.nodeIterator(), junctions);
 
-		} catch (final Exception ex) {
+		}
+		catch (final Exception ex)
+		{
 			Logger.getLogger(DCampusWorld.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
@@ -123,7 +132,8 @@ public class DCampusWorld extends DSimState {
 //	}
 	
 	@Override
-	public void start() {
+	public void start()
+	{
 		super.start();
 
 		// dump static info to each partition here at start of sim
@@ -159,16 +169,19 @@ public class DCampusWorld extends DSimState {
 	 *
 	 *                      Nodes will belong to a planar graph populated from LineString network.
 	 */
-	void addIntersectionNodes(final Iterator<Node> nodeIterator, final GeomVectorField intersections) {
+	void addIntersectionNodes(final Iterator<Node> nodeIterator, final GeomVectorField intersections)
+	{
 		final GeometryFactory geometryFactory = new GeometryFactory();
 
-		while (nodeIterator.hasNext()) {
+		while (nodeIterator.hasNext())
+		{
 			final Node node = nodeIterator.next();
 			junctions.addGeometry(new MasonGeometry(geometryFactory.createPoint(node.getCoordinate())));
 		}
 	}
 
-	public static void main(final String[] args) {
+	public static void main(final String[] args)
+	{
 		doLoopDistributed(DCampusWorld.class, args);
 		System.exit(0);
 	}

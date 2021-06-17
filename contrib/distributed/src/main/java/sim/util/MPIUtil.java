@@ -27,7 +27,8 @@ import sim.field.partitioning.Partition;
  * This class contains methods that implement boiler plate code for low level
  * MPI methods.
  */
-public class MPIUtil {
+public class MPIUtil
+{
 	private static final long serialVersionUID = 1L;
 
 	// static final int MAX_SIZE = 1 << 30; // 1024MBytes
@@ -59,7 +60,8 @@ public class MPIUtil {
 	/**
 	 * Makes a buffer for sending data through MPI
 	 */
-	static ByteBuffer initSendBuf() {
+	static ByteBuffer initSendBuf()
+	{
 		// TODO: Makes a ginormous and inappropriate buffer for sending.
 		// This needs to be fixed.
 		if (MPIUtil.pSendBuf == null)
@@ -73,7 +75,8 @@ public class MPIUtil {
 	/**
 	 * Makes a buffer for receiving data through MPI
 	 */
-	static ByteBuffer initRecvBuf() {
+	static ByteBuffer initRecvBuf()
+	{
 		// TODO: Makes a ginormous and inappropriate buffer for receiving.
 		// This needs to be fixed.
 		if (MPIUtil.pRecvBuf == null)
@@ -91,14 +94,17 @@ public class MPIUtil {
 	 * @param obj
 	 * @param buf
 	 */
-	static void serialize(final Serializable obj, final ByteBuffer buf) {
+	static void serialize(final Serializable obj, final ByteBuffer buf)
+	{
 		try (ByteBufferOutputStream out = new ByteBufferOutputStream(buf);
 				ObjectOutputStream os = new ObjectOutputStream(out)) {
 			os.writeObject(obj);
 			os.flush();
 			/// SEAN QUESTION: If the try ALREADY closes the stream,
 			/// why do we need to flush it?
-		} catch (final IOException e) {
+		}
+		catch (final IOException e)
+		{
 			e.printStackTrace();
 			System.exit(-1);
 		}
@@ -117,8 +123,10 @@ public class MPIUtil {
 	 * @param buffer to write the serialized objects into
 	 * @param count
 	 */
-	static void serialize(final Serializable[] objs, final ByteBuffer buffer, final int[] count) {
-		for (int i = 0, prevPos = buffer.position(); i < objs.length; i++) {
+	static void serialize(final Serializable[] objs, final ByteBuffer buffer, final int[] count)
+	{
+		for (int i = 0, prevPos = buffer.position(); i < objs.length; i++)
+		{
 			serialize(objs[i], buffer);
 			count[i] = buffer.position() - prevPos;
 			prevPos = buffer.position();
@@ -136,15 +144,19 @@ public class MPIUtil {
 	 * 
 	 * @return the deserialized object
 	 */
-	static <T extends Serializable> T deserialize(final ByteBuffer buffer, final int pos, final int len) {
+	static <T extends Serializable> T deserialize(final ByteBuffer buffer, final int pos, final int len)
+	{
 		T obj = null;
 
 		buffer.position(pos);
 		try (
 				ByteBufferInputStream in = new ByteBufferInputStream(buffer);
-				ObjectInputStream is = new ObjectInputStream(in);) {
+				ObjectInputStream is = new ObjectInputStream(in);)
+		{
 			obj = (T) is.readObject();
-		} catch (IOException | ClassNotFoundException e) {
+		}
+		catch (IOException | ClassNotFoundException e)
+		{
 			e.printStackTrace();
 			System.exit(-1);
 		}
@@ -161,15 +173,19 @@ public class MPIUtil {
 	 * 
 	 * @return the deserialized object
 	 */
-	static <T extends Serializable> T deserialize(final ByteBuffer buffer, final int pos) {
+	static <T extends Serializable> T deserialize(final ByteBuffer buffer, final int pos)
+	{
 		T obj = null;
 
 		buffer.position(pos);
 		try (
 				ByteBufferInputStream in = new ByteBufferInputStream(buffer);
-				ObjectInputStream is = new ObjectInputStream(in);) {
+				ObjectInputStream is = new ObjectInputStream(in);)
+		{
 			obj = (T) is.readObject();
-		} catch (IOException | ClassNotFoundException e) {
+		}
+		catch (IOException | ClassNotFoundException e)
+		{
 			e.printStackTrace();
 			System.exit(-1);
 		}
@@ -186,7 +202,8 @@ public class MPIUtil {
 	 * 
 	 * @param count
 	 */
-	static int[] getDispl(final int[] count) {
+	static int[] getDispl(final int[] count)
+	{
 		return IntStream.range(0, count.length)
 				.map(x -> Arrays.stream(count).limit(x).sum())
 				.toArray();
@@ -204,7 +221,8 @@ public class MPIUtil {
 	 * @return The broadcasted object (from root)
 	 * @throws MPIException
 	 */
-	public static <T extends Serializable> T bcast(final Comm comm, final T obj, final int root) throws MPIException {
+	public static <T extends Serializable> T bcast(final Comm comm, final T obj, final int root) throws MPIException
+	{
 		final int pid = comm.getRank();
 		final ByteBuffer buf = initSendBuf();
 
@@ -232,7 +250,8 @@ public class MPIUtil {
 	 * @throws MPIException
 	 */
 	public static <T extends Serializable> T bcast(final Partition partition, final T obj,
-			final int root) throws MPIException {
+			final int root) throws MPIException
+	{
 		return MPIUtil.<T>bcast(partition.getCommunicator(), obj, root);
 	}
 
@@ -248,7 +267,8 @@ public class MPIUtil {
 	 * @throws MPIException
 	 */
 	public static Integer bcast(final Partition partition, final int obj, final int root)
-			throws MPIException {
+			throws MPIException
+	{
 		return MPIUtil.<Integer>bcast(partition.getCommunicator(), obj, root);
 	}
 
@@ -263,7 +283,8 @@ public class MPIUtil {
 	 * @return The broadcasted object (from root)
 	 * @throws MPIException
 	 */
-	public static <T extends Serializable> T bcast(final T obj, final int root) throws MPIException {
+	public static <T extends Serializable> T bcast(final T obj, final int root) throws MPIException
+	{
 		// Used by init() in RemoteProxy() to broadcast the host ip address
 		return MPIUtil.<T>bcast(MPI.COMM_WORLD, obj, root);
 	}
@@ -282,7 +303,8 @@ public class MPIUtil {
 	 * @throws MPIException
 	 */
 	public static <T extends Serializable> T scatter(final Comm comm, final T[] sendObjs, final int root)
-			throws MPIException {
+			throws MPIException
+	{
 		final int pid = comm.getRank();
 		final int np = comm.getSize();
 		int dstCount;
@@ -290,7 +312,8 @@ public class MPIUtil {
 		final int[] srcCount = new int[np];
 		final ByteBuffer srcBuf = initSendBuf(), dstBuf = initRecvBuf();
 
-		if (pid == root) {
+		if (pid == root)
+		{
 			serialize(sendObjs, srcBuf, srcCount);
 			srcDispl = getDispl(srcCount);
 		}
@@ -316,7 +339,8 @@ public class MPIUtil {
 	 * @throws MPIException
 	 */
 	public static <T extends Serializable> T scatter(final Partition p, final T[] sendObjs, final int root)
-			throws MPIException {
+			throws MPIException
+	{
 		return MPIUtil.<T>scatter(p.getCommunicator(), sendObjs, root);
 	}
 
@@ -330,7 +354,8 @@ public class MPIUtil {
 	 * 
 	 * @throws MPIException
 	 */
-	public static void bSend(final Comm comm, final Serializable sendObj, final int dst) throws MPIException {
+	public static void bSend(final Comm comm, final Serializable sendObj, final int dst) throws MPIException
+	{
 		final ByteBuffer srcBuf = initSendBuf();
 
 		serialize(sendObj, srcBuf);
@@ -346,7 +371,8 @@ public class MPIUtil {
 	 * @return Recieved object
 	 * @throws MPIException
 	 */
-	public static Serializable recv(final Comm comm, final int src) throws MPIException {
+	public static Serializable recv(final Comm comm, final int src) throws MPIException
+	{
 		final ByteBuffer dstBuf = initRecvBuf();
 
 		// TODO: how to figure out the count?
@@ -370,7 +396,8 @@ public class MPIUtil {
 	 * @throws MPIException
 	 */
 	public static <T extends Serializable> ArrayList<T> gather(final Comm comm, final T sendObj, final int dst)
-			throws MPIException {
+			throws MPIException
+	{
 		final int np = comm.getSize();
 		final int pid = comm.getRank();
 		int[] dstDispl;
@@ -412,7 +439,8 @@ public class MPIUtil {
 	public static <T extends Serializable> ArrayList<T> gather(final Partition partition,
 			final T sendObj,
 			final int dst)
-			throws MPIException {
+			throws MPIException
+	{
 		return MPIUtil.<T>gather(partition.getCommunicator(), sendObj, dst);
 	}
 
@@ -430,7 +458,8 @@ public class MPIUtil {
 	 * @throws MPIException
 	 */
 	public static <T extends Serializable> ArrayList<T> allGather(final Comm comm, final T sendObj)
-			throws MPIException {
+			throws MPIException
+	{
 		final int np = comm.getSize();
 		final int pid = comm.getRank();
 		int[] dstDispl;
@@ -467,7 +496,8 @@ public class MPIUtil {
 	 * @throws MPIException
 	 */
 	public static <T extends Serializable> ArrayList<T> allGather(final Partition partition,
-			final T sendObj) throws MPIException {
+			final T sendObj) throws MPIException
+	{
 		return MPIUtil.<T>allGather(partition.getCommunicator(), sendObj);
 	}
 
@@ -485,7 +515,8 @@ public class MPIUtil {
 	 * @throws MPIException
 	 */
 	public static <T extends Serializable> ArrayList<T> neighborAllToAll(final Comm comm, final T[] sendObjs)
-			throws MPIException {
+			throws MPIException
+	{
 		final int nc = sendObjs.length;
 		int[] srcDispl;
 		final int[] srcCount = new int[nc];
@@ -522,7 +553,8 @@ public class MPIUtil {
 	 * @throws MPIException
 	 */
 	public static <T extends Serializable> ArrayList<T> neighborAllToAll(final Intracomm comm, final T[] sendObjs)
-			throws MPIException {
+			throws MPIException
+	{
 		final int nc = sendObjs.length;
 		int[] srcDispl;
 		final int[] srcCount = new int[nc];
@@ -559,7 +591,8 @@ public class MPIUtil {
 	 * @throws MPIException
 	 */
 	public static <T extends Serializable> ArrayList<T> neighborAllToAll(final Partition partition,
-			final T[] sendObjs) throws MPIException {
+			final T[] sendObjs) throws MPIException
+	{
 		return MPIUtil.<T>neighborAllToAll(partition.getCommunicator(), sendObjs);
 	}
 
@@ -583,27 +616,38 @@ public class MPIUtil {
 	 * @throws MPIException
 	 */
 	public static Object neighborAllGather(final Partition partition, final Object val,
-			final Datatype type) throws MPIException {
+			final Datatype type) throws MPIException
+	{
 		final int nc = partition.getNumNeighbors();
 		Object sendBuf, recvBuf;
 
 		// Use if-else since switch-case only accepts int
-		if (type == MPI.BYTE) {
+		if (type == MPI.BYTE)
+		{
 			sendBuf = new byte[] { (byte) val };
 			recvBuf = new byte[nc];
-		} else if (type == MPI.DOUBLE) {
+		}
+		else if (type == MPI.DOUBLE)
+		{
 			sendBuf = new double[] { (double) val };
 			recvBuf = new double[nc];
-		} else if (type == MPI.INT) {
+		}
+		else if (type == MPI.INT)
+		{
 			sendBuf = new int[] { (int) val };
 			recvBuf = new int[nc];
-		} else if (type == MPI.FLOAT) {
+		}
+		else if (type == MPI.FLOAT)
+		{
 			sendBuf = new float[] { (float) val };
 			recvBuf = new float[nc];
-		} else if (type == MPI.LONG) {
+		}
+		else if (type == MPI.LONG)
+		{
 			sendBuf = new long[] { (long) val };
 			recvBuf = new long[nc];
-		} else
+		}
+		else
 			throw new UnsupportedOperationException(
 					"The given MPI Datatype " + type + " is invalid / not implemented yet");
 
@@ -677,53 +721,67 @@ public class MPIUtil {
 	 */
 }
 
-class ByteBufferOutputStream extends OutputStream implements AutoCloseable {
+class ByteBufferOutputStream extends OutputStream implements AutoCloseable
+{
 	ByteBuffer buf;
 
-	public ByteBufferOutputStream(final ByteBuffer buf) {
+	public ByteBufferOutputStream(final ByteBuffer buf)
+	{
 		if (buf == null)
 			throw new IllegalArgumentException("The buffer provided is null!");
 
 		this.buf = buf;
 	}
 
-	public void write(final int b) throws IOException {
+	public void write(final int b) throws IOException
+	{
 		buf.put((byte) b);
 	}
 
-	public void write(final byte[] bytes, final int off, final int len) throws IOException {
+	public void write(final byte[] bytes, final int off, final int len) throws IOException
+	{
 		buf.put(bytes, off, len);
 	}
 
-	public void close() {
-		try {
+	public void close()
+	{
+		try
+		{
 			super.close();
-		} catch (final IOException e) {
+		}
+		catch (final IOException e)
+		{
 			e.printStackTrace();
 			System.exit(-1);
 		}
 	}
 }
 
-class ByteBufferInputStream extends InputStream implements AutoCloseable {
+class ByteBufferInputStream extends InputStream implements AutoCloseable
+{
 	ByteBuffer buf;
 
-	public ByteBufferInputStream(final ByteBuffer buf) {
+	public ByteBufferInputStream(final ByteBuffer buf)
+	{
 		if (buf == null)
 			throw new IllegalArgumentException("The buffer provided is null!");
 
 		this.buf = buf;
 	}
 
-	public int read() throws IOException {
-		if (!buf.hasRemaining()) {
+	public int read() throws IOException
+	{
+		if (!buf.hasRemaining())
+		{
 			return -1;
 		}
 		return buf.get() & 0xFF;
 	}
 
-	public int read(final byte[] bytes, final int off, int len) throws IOException {
-		if (!buf.hasRemaining()) {
+	public int read(final byte[] bytes, final int off, int len) throws IOException
+	{
+		if (!buf.hasRemaining())
+		{
 			return -1;
 		}
 
@@ -732,10 +790,14 @@ class ByteBufferInputStream extends InputStream implements AutoCloseable {
 		return len;
 	}
 
-	public void close() {
-		try {
+	public void close()
+	{
+		try
+		{
 			super.close();
-		} catch (final IOException e) {
+		}
+		catch (final IOException e)
+		{
 			e.printStackTrace();
 			System.exit(-1);
 		}

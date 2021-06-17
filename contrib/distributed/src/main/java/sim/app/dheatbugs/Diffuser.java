@@ -17,10 +17,12 @@ import sim.field.grid.DDoubleGrid2D;
  * many-fold in classes such as Diffuser.
  */
 
-public class Diffuser extends DSteppable {
+public class Diffuser extends DSteppable
+{
 	private static final long serialVersionUID = 1;
 
-	public void step(final SimState state) {
+	public void step(final SimState state)
+	{
 		final DHeatBugs heatbugs = (DHeatBugs) state;
 		
 		sim.field.partitioning.Partition partition = heatbugs.getPartition();
@@ -37,12 +39,14 @@ public class Diffuser extends DSteppable {
 		int past, curr, next;
 
 		// for each x and y position
-		for (int x = aoi; x < _gridWidth + aoi; x++) {
+		for (int x = aoi; x < _gridWidth + aoi; x++)
+		{
 			past = (x - 1) * offset;
 			curr = past + offset;
 			next = curr + offset;
 
-			for (int y = aoi; y < _gridHeight + aoi; y++) {
+			for (int y = aoi; y < _gridHeight + aoi; y++)
+			{
 				final double average = (_valgrid_field[past + y - 1] + _valgrid_field[past + y]
 						+ _valgrid_field[past + y + 1]
 						+ _valgrid_field[curr + y - 1] + _valgrid_field[curr + y] + _valgrid_field[curr + y + 1]

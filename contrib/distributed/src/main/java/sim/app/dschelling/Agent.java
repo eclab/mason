@@ -8,7 +8,8 @@ import sim.engine.SimState;
 import sim.util.Int2D;
 import sim.util.IntBag;
 
-public class Agent extends DSteppable implements Remote{
+public class Agent extends DSteppable implements Remote
+{
 	
     private static final long serialVersionUID = 1;
 
@@ -87,10 +88,11 @@ public class Agent extends DSteppable implements Remote{
         loc = newLoc;
         }
     	
-        catch(Exception e) {
+        catch(Exception e)
+    	{
 		System.out.println(e);
 		System.exit(-1);
-         }
+        }
     	
         }
     

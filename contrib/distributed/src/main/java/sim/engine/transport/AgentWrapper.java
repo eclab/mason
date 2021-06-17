@@ -9,7 +9,8 @@ import sim.engine.Stopping;
  * Used internally
  *
  */
-public class AgentWrapper extends MigratableObject implements Serializable {
+public class AgentWrapper extends MigratableObject implements Serializable
+{
 
 	private static final long serialVersionUID = 1L;
 
@@ -31,31 +32,36 @@ public class AgentWrapper extends MigratableObject implements Serializable {
 
 	public final Stopping agent;
 
-	public AgentWrapper(final Stopping agent) {
+	public AgentWrapper(final Stopping agent)
+	{
 		ordering = 1;
 		time = -1.0;
 		this.agent = agent;
 	}
 
-	public AgentWrapper(final int ordering, final Stopping agent) {
+	public AgentWrapper(final int ordering, final Stopping agent)
+	{
 		this.ordering = ordering;
 		time = -1.0;
 		this.agent = agent;
 	}
 
-	public AgentWrapper(final double time, final Stopping agent) {
+	public AgentWrapper(final double time, final Stopping agent)
+	{
 		ordering = 1;
 		this.time = time;
 		this.agent = agent;
 	}
 
-	public AgentWrapper(final int ordering, final double time, final Stopping agent) {
+	public AgentWrapper(final int ordering, final double time, final Stopping agent)
+	{
 		this.ordering = ordering;
 		this.time = time;
 		this.agent = agent;
 	}
 
-	public String toString() {
+	public String toString()
+	{
 		return "AgentWrapper [ordering=" + ordering + ", time=" + time + ", agent=" + agent + "]";
 	}
 

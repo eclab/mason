@@ -31,7 +31,8 @@ import sim.util.MPIUtil;
  * reference to that agent and invoke a method on that agent in order to obtain
  * the information he wishes.
  */
-public class DRegistry {
+public class DRegistry
+{
 	 static final long serialVersionUID = 1L;
 
 	public static final int PORT = 5000;
@@ -51,18 +52,21 @@ public class DRegistry {
 	/**
 	 * Clear the list of the registered agent’s keys on the registry
 	 */
-	public void clearMigratedNames() {
+	public void clearMigratedNames()
+	{
 		migrated_names.clear();
 	}
 
 	/**
 	 * @return the List of the agent’s keys on the registry.
 	 */
-	public ArrayList<String> getMigratedNames() {
+	public ArrayList<String> getMigratedNames()
+	{
 		return migrated_names;
 	}
 
-	public void addMigratedName(Object obj) {
+	public void addMigratedName(Object obj)
+	{
 		migrated_names.add(exported_objects.get(obj));
 	}
 
@@ -73,21 +77,25 @@ public class DRegistry {
 	 * @param obj
 	 * @return Object name if isExported is True, null otherwise.
 	 */
-	public String ifExportedThenAddMigratedName(Object obj) {
+	public String ifExportedThenAddMigratedName(Object obj)
+	{
 		String name = exported_objects.get(obj);
 		if (name != null)
 			migrated_names.add(name);
 		return name;
 	}
 
-	 static void initLocalLogger(final String loggerName) {
+	 static void initLocalLogger(final String loggerName)
+	 {
 		DRegistry.logger = Logger.getLogger(DRegistry.class.getName());
 		DRegistry.logger.setLevel(Level.ALL);
 		DRegistry.logger.setUseParentHandlers(false);
 
 		final ConsoleHandler handler = new ConsoleHandler();
-		handler.setFormatter(new java.util.logging.Formatter() {
-			public synchronized String format(final LogRecord rec) {
+		handler.setFormatter(new java.util.logging.Formatter()
+		{
+			public synchronized String format(final LogRecord rec)
+			{
 				return String.format(loggerName + " [%s][%-7s] %s%n",
 						new SimpleDateFormat("MM-dd-YYYY HH:mm:ss.SSS").format(new Date(rec.getMillis())),
 						rec.getLevel().getLocalizedName(), rec.getMessage());
@@ -96,9 +104,10 @@ public class DRegistry {
 		DRegistry.logger.addHandler(handler);
 	}
 
-	 DRegistry() throws NumberFormatException, Exception {
-
-		if (instance != null) {
+	 DRegistry() throws NumberFormatException, Exception
+	 {
+		if (instance != null)
+		{
 			throw new RuntimeException(
 					"Use getInstance() method to get the single instance of the Distributed Registry.");
 		}
@@ -110,14 +119,15 @@ public class DRegistry {
 		port = PORT;
 		String myip = InetAddress.getLocalHost().getHostAddress();
 
-		if (rank == 0) {
+		if (rank == 0)
+		{
 			startLocalRegistry(myip, port);
 		}
 
 		final String master_data[] = MPIUtil.<String>bcast(myip + ":" + port, 0).split(":");
 
-		if (rank != 0) {
-
+		if (rank != 0)
+		{
 			startLocalRegistry(master_data[0], Integer.parseInt(master_data[1]));
 		}
 
@@ -125,32 +135,45 @@ public class DRegistry {
 
 	}
 
-	 void startLocalRegistry(String master_ip, int master_port) {
+	 void startLocalRegistry(String master_ip, int master_port)
+	 {
 
-		try {
+		try
+		{
 			registry = rank == 0 ? LocateRegistry.createRegistry(port)
 					: LocateRegistry.getRegistry(master_ip, master_port);
-		} catch (RemoteException e1) {
+		}
+		catch (RemoteException e1)
+		{
 			logger.log(Level.SEVERE, "Error Distributed Registry lookup for MPI node on master port: " + master_port);
 			e1.printStackTrace();
 		}
 
-		try {
+		try
+		{
 			registry.list();
-		} catch (AccessException e) {
+		}
+		catch (AccessException e)
+		{
 			logger.log(Level.SEVERE, "Error Distributed Registry lookup for MPI node on master port: " + master_port);
 			e.printStackTrace();
-		} catch (RemoteException e) {
+		}
+		catch (RemoteException e)
+		{
 			logger.log(Level.SEVERE, "Error Distributed Registry lookup for MPI node on master port: " + master_port);
 			e.printStackTrace();
 		}
 		logger.log(Level.INFO, "Distributed Registry created/obtained on MPI node on master port: " + port);
 	}
 
-	public static DRegistry getInstance() {
-		try {
+	public static DRegistry getInstance()
+	{
+		try
+		{
 			return instance = instance == null ? new DRegistry() : instance;
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			logger.log(Level.SEVERE, "Error Distributed Registry started for MPI node.");
 			return null;
 		}
@@ -175,14 +198,19 @@ public class DRegistry {
 	 * @throws AccessException
 	 * @throws RemoteException
 	 */
-	public boolean registerObject(String name, Remote obj) throws AccessException, RemoteException {
-		if (!exported_names.containsKey(name)) {
-			try {
+	public boolean registerObject(String name, Remote obj) throws AccessException, RemoteException
+	{
+		if (!exported_names.containsKey(name))
+		{
+			try
+			{
 				Remote stub = UnicastRemoteObject.exportObject(obj, 0);
 				registry.bind(name, stub);
 				exported_names.put(name, obj);
 				exported_objects.put(obj, name);
-			} catch (AlreadyBoundException e) {
+			}
+			catch (AlreadyBoundException e)
+			{
 				return false;
 			}
 			return true;
@@ -202,14 +230,19 @@ public class DRegistry {
 	 * @throws AccessException
 	 * @throws RemoteException
 	 */
-	public boolean registerObject(String name, UnicastRemoteObject obj) throws AccessException, RemoteException {
-		if (!exported_names.containsKey(name)) {
-			try {
+	public boolean registerObject(String name, UnicastRemoteObject obj) throws AccessException, RemoteException
+	{
+		if (!exported_names.containsKey(name))
+		{
+			try
+			{
 				Remote stub = UnicastRemoteObject.toStub(obj);
 				registry.bind(name, stub);
 				exported_names.put(name, obj);
 				exported_objects.put(obj, name);
-			} catch (AlreadyBoundException e) {
+			}
+			catch (AlreadyBoundException e)
+			{
 				return false;
 			}
 			return true;
@@ -218,7 +251,8 @@ public class DRegistry {
 
 	}
 
-	public String getLocalExportedName(Object obj) {
+	public String getLocalExportedName(Object obj)
+	{
 		return exported_objects.get(obj);
 	}
 
@@ -230,7 +264,8 @@ public class DRegistry {
 	 * @throws RemoteException
 	 * @throws NotBoundException
 	 */
-	public Remote getObject(String name) throws AccessException, RemoteException, NotBoundException {
+	public Remote getObject(String name) throws AccessException, RemoteException, NotBoundException
+	{
 		return registry.lookup(name);
 	}
 
@@ -249,7 +284,8 @@ public class DRegistry {
 	 * @throws NotBoundException
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Remote> T getObjectT(String name) throws AccessException, RemoteException, NotBoundException {
+	public <T extends Remote> T getObjectT(String name) throws AccessException, RemoteException, NotBoundException
+	{
 		return (T) registry.lookup(name);
 	}
 
@@ -263,9 +299,11 @@ public class DRegistry {
 	 * @throws RemoteException
 	 * @throws NotBoundException
 	 */
-	public boolean unRegisterObject(String name) throws AccessException, RemoteException, NotBoundException {
+	public boolean unRegisterObject(String name) throws AccessException, RemoteException, NotBoundException
+	{
 		Remote remote = exported_names.remove(name);
-		if (remote != null) {
+		if (remote != null)
+		{
 			registry.unbind(name);
 			UnicastRemoteObject.unexportObject(remote, true);
 			exported_objects.remove(remote);
@@ -278,7 +316,8 @@ public class DRegistry {
 	 * @param agent
 	 * @return True if the object agent is registered on the registry.
 	 */
-	public boolean isExported(Object agent) {
+	public boolean isExported(Object agent)
+	{
 		return exported_objects.containsKey(agent);
 	}
 

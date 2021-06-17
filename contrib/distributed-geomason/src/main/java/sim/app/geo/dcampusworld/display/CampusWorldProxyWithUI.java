@@ -26,16 +26,15 @@ import sim.portrayal.simple.OvalPortrayal2D;
 import sim.util.Bag;
 import sim.util.geo.GeomPlanarGraph;
 
-public class CampusWorldProxyWithUI extends GUIState {
+public class CampusWorldProxyWithUI extends GUIState
+{
 	public Display2D display;
 	public JFrame displayFrame;
-	
 	
 	public GeomVectorField walkways = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
 	public GeomVectorField roads = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
 	public GeomVectorField buildings = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
 	
-
 	public Envelope MBR;
     GeomVectorFieldPortrayal walkwaysPortrayal = new GeomVectorFieldPortrayal();
     GeomVectorFieldPortrayal buildingPortrayal = new GeomVectorFieldPortrayal();
@@ -44,30 +43,40 @@ public class CampusWorldProxyWithUI extends GUIState {
 	public GeomPlanarGraph network = new GeomPlanarGraph();
 	public GeomVectorField junctions = new GeomVectorField(DCampusWorld.width, DCampusWorld.height); // nodes for intersections
 
-	
-
-	//ContinuousPortrayal2D agentPortrayal = new ContinuousPortrayal2D();
-
     GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
 
-	
-	public static void main(String[] args) { new CampusWorldProxyWithUI().createController(); }
+	public static void main(String[] args)
+		{
+		new CampusWorldProxyWithUI().createController();
+		}
 
-	public CampusWorldProxyWithUI() { super(new CampusWorldProxy(System.currentTimeMillis())); 	loadStatic();
-}
+	public CampusWorldProxyWithUI()
+		{
+		super(new CampusWorldProxy(System.currentTimeMillis()));
+		loadStatic();
+		}
 
-	public CampusWorldProxyWithUI(SimState state) { super(state); 	loadStatic();
- }
+	public CampusWorldProxyWithUI(SimState state)
+		{
+		super(state);
+		loadStatic();
+		}
 
-	public static String getName() { return "CampusWorld Proxy"; }
+	public static String getName()
+		{
+		return "CampusWorld Proxy";
+		}
 
-	// TODO What is this?
-	public Object getSimulationInspectedObject() { return state; } // non-volatile
+	public Object getSimulationInspectedObject()
+		{
+		return state; // non-volatile
+		}
 
 	// TODO?
 	// public Controller createController() {//...}
 
-	public void start() {
+	public void start()
+	{
 		super.start();
 		setupPortrayals();
 		// TODO: How to update display bounds
@@ -80,15 +89,16 @@ public class CampusWorldProxyWithUI extends GUIState {
 //		} catch (RemoteException | NotBoundException e) {
 //			throw new RuntimeException(e);
 //		}
-
 	}
 
-	public void load(SimState state) {
+	public void load(SimState state)
+	{
 		super.load(state);
 		setupPortrayals();
 	}
 
-	public void setupPortrayals() {
+	public void setupPortrayals()
+	{
         walkwaysPortrayal.setField(walkways);
         walkwaysPortrayal.setPortrayalForAll(new GeomPortrayal(Color.CYAN,true));
 
@@ -115,7 +125,8 @@ public class CampusWorldProxyWithUI extends GUIState {
 		display.repaint();
 	}
 
-	public void init(final Controller c) {
+	public void init(final Controller c)
+	{
 		super.init(c);
 
 		// Make the Display2D
@@ -136,7 +147,8 @@ public class CampusWorldProxyWithUI extends GUIState {
 		display.setBackdrop(Color.WHITE);
 	}
 
-	public void quit() {
+	public void quit()
+	{
 		super.quit();
 
 		if (displayFrame != null)
@@ -145,8 +157,10 @@ public class CampusWorldProxyWithUI extends GUIState {
 		display = null; // let gc
 	}
 	
-	void loadStatic() {
-		try {
+	void loadStatic()
+	{
+		try
+		{
 			System.out.println("reading buildings layer ...");
 
 			// this Bag lets us only display certain fields in the Inspector, the non-masked
@@ -193,7 +207,9 @@ public class CampusWorldProxyWithUI extends GUIState {
 
 			//addIntersectionNodes(network.nodeIterator(), junctions);
 
-		} catch (final Exception ex) {
+		}
+		catch (final Exception ex)
+		{
 			Logger.getLogger(DCampusWorld.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}

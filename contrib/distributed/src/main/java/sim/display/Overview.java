@@ -33,7 +33,8 @@ public class Overview extends JComponent
 	{
 		
 	//initialize	
-	for (int i :proxy.chosenNodePartitionList) {
+	for (int i :proxy.chosenNodePartitionList)
+	{
 		selected.add((Integer)i);
 	}
 	this.proxy = proxy;
@@ -55,11 +56,13 @@ public class Overview extends JComponent
 					ey >= y && ey < y + h) // found it
 					{
 					
-					if(e.isShiftDown()) {
+					if (e.isShiftDown())
+					{
 						toggleProcessor(i);
 						break;
 					}
-					else {
+					else
+					{
 						singleSelect(i); 
 						break;
 					}
@@ -68,9 +71,11 @@ public class Overview extends JComponent
 			}
 
 
-		    public void mouseReleased(MouseEvent e) {
+		    public void mouseReleased(MouseEvent e)
+		    {
 		    	
-		    	if (dragging == true) {
+		    	if (dragging == true)
+		    	{
 		    	
 				System.out.println("add Dragged called");		    	
 		    	addDraggedProcessors();		    	
@@ -81,19 +86,21 @@ public class Overview extends JComponent
 		    
 			
 			
-			});
+			}
+	);
 		
 	
 	addMouseMotionListener(new MouseMotionAdapter()
 	{
 		
-	    public void mouseDragged(MouseEvent e) {  
+	    public void mouseDragged(MouseEvent e)
 			{
 				System.out.println("dragging");
-				if (dragging == false) { //first dragging
+				if (dragging == false) //first dragging
+					{
 					drag_start_point_x = e.getX();
 					drag_start_point_y = e.getY();
-				}
+					}
 				
 			    mouse_current_x = e.getX();
 			    mouse_current_y = e.getY();
@@ -120,29 +127,32 @@ public class Overview extends JComponent
 				double drag_rect_br_x;
 				double drag_rect_br_y;
 				
-				if (drag_start_point_x < mouse_current_x) {
+				if (drag_start_point_x < mouse_current_x)
+				{
 					drag_rect_ul_x = drag_start_point_x;
 					drag_rect_br_x = mouse_current_x;
 				}
-				else {
+				else
+				{
 					drag_rect_ul_x = mouse_current_x;
 					drag_rect_br_x = drag_start_point_x;				
 				}
 				
 				
-				if (drag_start_point_y < mouse_current_y) {
+				if (drag_start_point_y < mouse_current_y)
+				{
 					drag_rect_ul_y = drag_start_point_y;
 					drag_rect_br_y = mouse_current_y;
 				}
-				else {
+				else
+				{
 					drag_rect_ul_y = mouse_current_y;
 					drag_rect_br_y = drag_start_point_y;				
 				}
                 
-                 //intersects
-                if (bound_ul_x < drag_rect_br_x && bound_ul_y < drag_rect_br_y && drag_rect_ul_x < bound_br_x && drag_rect_ul_y < bound_br_y ) {
-
-					
+                //intersects
+                if (bound_ul_x < drag_rect_br_x && bound_ul_y < drag_rect_br_y && drag_rect_ul_x < bound_br_x && drag_rect_ul_y < bound_br_y )
+                {
 					System.out.println("add to temp selected called");
 					addToTempSelected(i); 
 					//break;
@@ -153,7 +163,6 @@ public class Overview extends JComponent
 			repaint();
 
 			}
-	    }  
 
 	    
 		
@@ -168,11 +177,14 @@ public class Overview extends JComponent
 		repaint();
 		}
 	
-	public void setCurrent(int current) { this.current = current; }
+	public void setCurrent(int current)
+		{
+		this.current = current;
+		}
 
 	
-	public void singleSelect(int i) {
-
+	public void singleSelect(int i)
+	{
 		int[] int_selected = {i};
 
 		
@@ -182,45 +194,43 @@ public class Overview extends JComponent
 		selected.add((Integer)i);
 		
 		repaint();
-
-		
 	}
 	
-	public void toggleProcessor(int i) {
-		if (selected.contains((Integer)i)){
+	public void toggleProcessor(int i)
+	{
+		if (selected.contains((Integer)i))
+		{
 			selected.remove((Integer)i);
-			
 		}
-		
-		else {
+		else
+		{
 			selected.add((Integer)i);
 		}
 		
 		int[] int_selected = new int[selected.size()];
 		
-		for (int q=0; q<int_selected.length; q++) {
+		for (int q=0; q<int_selected.length; q++)
+		{
 			int_selected[q] = selected.get(q);
 		}
 		
 		proxy.chosenNodePartitionList = int_selected;
 		
 		repaint();
-
-		
 	}
 	
-	public void addToTempSelected(int i) {
-		
+	public void addToTempSelected(int i)
+	{
 		tempSelected.add((Integer)i);
-	
 	}
 
-	public void addDraggedProcessors() {
-
+	public void addDraggedProcessors()
+	{
 		selected = new ArrayList<Integer>(tempSelected);
 		int[] int_selected = new int[tempSelected.size()];
 
-		for (int i = 0; i<tempSelected.size() ; i++) {
+		for (int i = 0; i<tempSelected.size() ; i++)
+		{
 			int_selected[i] = selected.get(i);
 		}
 		
@@ -228,10 +238,7 @@ public class Overview extends JComponent
 		
 		tempSelected = new HashSet<Integer>();
 
-		
 		repaint();
-
-		
 	}
 		
 	public void update(ArrayList<IntRect2D> b) 	// , int aoi)
@@ -273,7 +280,7 @@ public class Overview extends JComponent
 		FontMetrics fm = g.getFontMetrics(font);
 		int fmHeight = fm.getAscent();			// we only need ascent since we're doing numbers
 		
-		for(int i = 0; i < bounds.length; i++)
+		for (int i = 0; i < bounds.length; i++)
 			{
 			String str = "" + i;
 					double x = (bounds[i].ul().x - outerX) / (double)(outerWidth) * width;
@@ -297,7 +304,8 @@ public class Overview extends JComponent
 				}
 			}
 		
-		if (dragging == true) {
+		if (dragging == true)
+		{
 			System.out.println("drawing drag box");
 			g.setColor(Color.YELLOW);
 
@@ -306,20 +314,24 @@ public class Overview extends JComponent
             int ul_y;
             int br_y;
 			
-			if (drag_start_point_x < mouse_current_x) {
+			if (drag_start_point_x < mouse_current_x)
+			{
 				ul_x = drag_start_point_x;
 				br_x = mouse_current_x;
 			}
-			else {
+			else
+			{
 				ul_x = mouse_current_x;
 				br_x = drag_start_point_x;
 			}
 			
-			if (drag_start_point_y < mouse_current_y) {
+			if (drag_start_point_y < mouse_current_y)
+			{
                 ul_y = drag_start_point_y;
                 br_y = mouse_current_y;
 			}
-			else {
+			else
+			{
 				ul_y = mouse_current_y;
 				br_y = drag_start_point_y;
 			}

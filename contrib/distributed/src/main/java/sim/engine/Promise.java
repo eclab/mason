@@ -8,19 +8,22 @@ import java.io.*;
  * java.util.concurrent.Future.
  */
 
-public class Promise implements Promised {
+public class Promise implements Promised
+{
 	private static final long serialVersionUID = 1L;
 
 	boolean ready = false;
 	Serializable object = null;
 
 	/** Returns TRUE if the promised data is ready, else FALSE. */
-	public boolean isReady() {
+	public boolean isReady()
+	{
 		return ready;
 	}
 
 	/** Returns the data. This data is only valid if isReady() is TRUE. */
-	public Serializable get() {
+	public Serializable get()
+	{
 		return object;
 	}
 
@@ -28,7 +31,8 @@ public class Promise implements Promised {
 	 * Returns the data, which should be an integer. This data is only valid if
 	 * isReady() is TRUE.
 	 */
-	public int getInt() {
+	public int getInt()
+	{
 		return (Integer) object;
 	}
 
@@ -36,18 +40,21 @@ public class Promise implements Promised {
 	 * Returns the data, which should be an double. This data is only valid if
 	 * isReady() is TRUE.
 	 */
-	public double getDouble() {
+	public double getDouble()
+	{
 		return (Double) object;
 	}
 
 	/** Provides the data and makes the promise ready. */
-	public void fulfill(Serializable object) {
+	public void fulfill(Serializable object)
+	{
 		ready = true;
 		this.object = object;
 	}
 
 	/** Copies the data and readiness from another promise. */
-	public void setTo(Promise promise) {
+	public void setTo(Promise promise)
+	{
 		ready = promise.ready;
 		object = promise.object;
 	}
@@ -55,13 +62,15 @@ public class Promise implements Promised {
 	/**
 	 * Constructs an unfulfilled promise
 	 */
-	public Promise() {
+	public Promise()
+	{
 	}
 
 	/**
 	 * Constructs an already fulfilled promise
 	 */
-	public Promise(Serializable object) {
+	public Promise(Serializable object)
+	{
 		this.object = object;
 		ready = true;
 	}
@@ -69,7 +78,8 @@ public class Promise implements Promised {
 	/**
 	 * Constructs an already fulfilled promise
 	 */
-	public Promise(int value) {
+	public Promise(int value)
+	{
 		this.object = Integer.valueOf(value);
 		ready = true;
 	}
@@ -77,7 +87,8 @@ public class Promise implements Promised {
 	/**
 	 * Constructs an already fulfilled promise
 	 */
-	public Promise(double value) {
+	public Promise(double value)
+	{
 		this.object = Double.valueOf(value);
 		ready = true;
 	}

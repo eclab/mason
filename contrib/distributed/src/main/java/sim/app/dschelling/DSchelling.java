@@ -18,7 +18,8 @@ import sim.util.Double2D;
 import sim.util.Int2D;
 import sim.util.Interval;
 
-public class DSchelling extends DSimState{
+public class DSchelling extends DSimState
+{
 
     private static final long serialVersionUID = 1;
 
@@ -32,18 +33,57 @@ public class DSchelling extends DSimState{
     public double unavailableProbability = 0.1;
 
     // we presume that no one relies on these DURING a simulation
-    public int getGridHeight() { return gridHeight; }
-    public void setGridHeight(int val) { if (val > 0) gridHeight = val; }
-    public int getGridWidth() { return gridWidth; }
-    public void setGridWidth(int val) { if (val > 0) gridWidth = val; }
-    public int getNeighborhood() { return neighborhood; }
-    public void setNeighborhood(int val) { if (val > 0) neighborhood = val; }
-    public int getThreshold() { return threshold; }
-    public void setThreshold(int val) { if (val >= 0) threshold = val; }
+    public int getGridHeight()
+    {
+    	return gridHeight;
+    }
+    
+    public void setGridHeight(int val)
+    {
+    	if (val > 0) gridHeight = val;
+    }
+    
+    public int getGridWidth()
+    {
+    	return gridWidth;
+	}
+    
+    public void setGridWidth(int val)
+    {
+    	if (val > 0) gridWidth = val;
+	}
+    
+    public int getNeighborhood()
+    {
+    	return neighborhood;
+    }
+    
+    public void setNeighborhood(int val)
+    {
+    	if (val > 0) neighborhood = val;
+	}
+    
+    public int getThreshold()
+    {
+    	return threshold;
+	}
+    
+    public void setThreshold(int val)
+    {
+    	if (val >= 0) threshold = val;
+	}
 
     // some cutsie-pie probability sliders.  More work than necessary, but it was fun.
-    public Object domRedProbability() { return new Interval(0.0,1.0); }
-    public double getRedProbability() { return redProbability; }
+    public Object domRedProbability()
+    {
+    	return new Interval(0.0,1.0);
+	}
+    
+    public double getRedProbability()
+    {
+    	return redProbability;
+	}
+    
     public void setRedProbability(double val) 
         { 
         if (val >= 0 && val <= 1.0)
@@ -52,8 +92,16 @@ public class DSchelling extends DSimState{
             }
         }
     
-    public Object domBlueProbability() { return new Interval(0.0,1.0); }
-    public double getBlueProbability() { return blueProbability; }
+    public Object domBlueProbability()
+    {
+    	return new Interval(0.0,1.0);
+	}
+    
+    public double getBlueProbability()
+    {
+    	return blueProbability;
+	}
+    
     public void setBlueProbability(double val) 
         { 
         if (val >= 0 && val <= 1.0)
@@ -62,8 +110,16 @@ public class DSchelling extends DSimState{
             }
         }
 
-    public Object domEmptyProbability() { return new Interval(0.0,1.0); }
-    public double getEmptyProbability() { return emptyProbability; }
+    public Object domEmptyProbability()
+    {
+    	return new Interval(0.0,1.0);
+	}
+    
+    public double getEmptyProbability()
+    {
+    	return emptyProbability;
+	}
+    
     public void setEmptyProbability(double val) 
         { 
         if (val >= 0 && val <= 1.0)
@@ -72,8 +128,16 @@ public class DSchelling extends DSimState{
             }
         }
 
-    public Object domUnavailableProbability() { return new Interval(0.0,1.0); }
-    public double getUnavailableProbability() { return unavailableProbability; }
+    public Object domUnavailableProbability()
+    {
+    	return new Interval(0.0,1.0);
+	}
+    
+    public double getUnavailableProbability()
+    {
+    	return unavailableProbability;
+	}
+    
     public void setUnavailableProbability(double val) 
         { 
         if (val >= 0 && val <= 1.0)
@@ -161,7 +225,8 @@ public class DSchelling extends DSimState{
     
 
     
-	public static void main(final String[] args) {
+	public static void main(final String[] args)
+	{
 		doLoopDistributed(Schelling.class, args);
 		System.exit(0);
 	}

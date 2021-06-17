@@ -14,7 +14,8 @@ import java.util.ArrayList;
  * registry.
  */
 
-public interface VisualizationProcessor extends Remote {
+public interface VisualizationProcessor extends Remote
+{
 	/**
 	 * Blocks until the remote processor is in a state where we can safely grab
 	 * storage objects without creating a race condition; then holds a lock to

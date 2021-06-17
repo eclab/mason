@@ -10,43 +10,56 @@ import mpi.*;
  * 
  *
  */
-public class MPITest {
+public class MPITest
+{
 	private static final long serialVersionUID = 1L;
 
 
 	private static final Comm comm = MPI.COMM_WORLD;
 
-	private MPITest() {
+	private MPITest()
+	{
 	}
 
-	public static void execInOrder(Consumer<Integer> func, int delay) {
-		try {
-			for (int i = 0; i < comm.getSize(); i++) {
+	public static void execInOrder(Consumer<Integer> func, int delay)
+	{
+		try
+		{
+			for (int i = 0; i < comm.getSize(); i++)
+			{
 				execOnlyIn(i, func);
 				TimeUnit.MILLISECONDS.sleep(delay);
 			}
-		} catch (MPIException | InterruptedException e) {
+		}
+		catch (MPIException | InterruptedException e)
+		{
 			e.printStackTrace();
 			System.exit(-1);
 		}
 	}
 
-	public static void execOnlyIn(int pid, Consumer<Integer> func) {
-		try {
+	public static void execOnlyIn(int pid, Consumer<Integer> func)
+	{
+		try
+		{
 			if (pid == comm.getRank())
 				func.accept(pid);
 			comm.barrier();
-		} catch (MPIException e) {
+		}
+		catch (MPIException e)
+		{
 			e.printStackTrace();
 			System.exit(-1);
 		}
 	}
 
-	public static void printInOrder(String s) {
+	public static void printInOrder(String s)
+	{
 		execInOrder(i -> System.out.printf("[%2d] %s\n", i, s), 0);
 	}
 
-	public static void printOnlyIn(int pid, String s) {
+	public static void printOnlyIn(int pid, String s)
+	{
 		execOnlyIn(pid, i -> System.out.printf("[%2d] %s\n", i, s));
 	}
 }

@@ -16,13 +16,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  * based on comparing these IDs.
  */
 
-public abstract class DObject implements java.io.Serializable {
+public abstract class DObject implements java.io.Serializable
+{
 	private static final long serialVersionUID = 1;
 
 	private static int idCounter = 0;
 	private static final AtomicInteger threadSafeCounter = new AtomicInteger();
 
-	static int nextCounter() {
+	static int nextCounter()
+	{
 		if (DSimState.isMultiThreaded())
 			return threadSafeCounter.getAndIncrement();
 		else
@@ -32,12 +34,14 @@ public abstract class DObject implements java.io.Serializable {
 	public final int firstpid; // this is the PID of the *original* processor on which this object was created
 	public final int localid; // this is a unique ID special to processor PID
 
-	public DObject() {
+	public DObject()
+	{
 		firstpid = DSimState.getPID(); // called originally to get the FIRST PID
 		localid = nextCounter();
 	}
 
-	public boolean equals(Object other) {
+	public boolean equals(Object other)
+	{
 		if (other == null)
 			return false;
 		else if (other == this)
@@ -48,7 +52,8 @@ public abstract class DObject implements java.io.Serializable {
 			return (firstpid == ((DObject) other).firstpid && localid == ((DObject) other).localid);
 	}
 
-	public final int hashCode() {
+	public final int hashCode()
+	{
 		// stolen from Int2D.hashCode()
 		int y = this.localid;
 		y += ~(y << 15);
@@ -61,7 +66,8 @@ public abstract class DObject implements java.io.Serializable {
 	}
 
 	/** Returns a unique system-wideID to this object. */
-	public final long ID() {
+	public final long ID()
+	{
 		return (((long) firstpid) << 32) | localid;
 	}
 
@@ -69,17 +75,22 @@ public abstract class DObject implements java.io.Serializable {
 	 * Returns a string consisting of the original pid, followed by the unique local
 	 * id of the object. Together these form a unique, permanent systemwide id.
 	 */
-	public final String toIDString() {
+	public final String toIDString()
+	{
 		return firstpid + "/" + localid;
 	}
 
 	/** Returns a string consisting of the form CLASSNAME:UNIQUEID@CURRENTPID */
-	public String toString() {
+	public String toString()
+	{
 		int pid = -1;
 
-		try {
+		try
+		{
 			pid = DSimState.getPID();
-		} catch (Throwable e) {
+		}
+		catch (Throwable e)
+		{
 			// if its running on the remote visualizer its not going have a pid
 		}
 

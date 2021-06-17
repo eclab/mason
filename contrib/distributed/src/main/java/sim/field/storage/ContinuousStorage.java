@@ -7,7 +7,8 @@ import java.util.HashMap;
 import sim.engine.DObject;
 import sim.util.*;
 
-public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
+public class ContinuousStorage<T extends DObject> extends GridStorage<T>
+{
 	private static final long serialVersionUID = 1L;
 
 	// note that this is the DISCRETIZED WIDTH (and the DISCRETIZED HEIGHT is height
@@ -18,25 +19,31 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	public HashMap<Long, T>[] storage; // id -> DObject
 	public boolean removeEmptyBags = true;
 
-	public ContinuousStorage(final IntRect2D shape, int discretization) {
+	public ContinuousStorage(final IntRect2D shape, int discretization)
+	{
 		super(shape);
 		this.discretization = discretization;
 		clear();
 	}
 
-	public HashMap<Long, Double2D> getStorageMap() {
+	public HashMap<Long, Double2D> getStorageMap()
+	{
 		return m;
 	}
 
-	public int getDiscretization() {
+	public int getDiscretization()
+	{
 		return discretization;
 	}
 
-	public String toString() {
+	public String toString()
+	{
 		final StringBuffer string = new StringBuffer(String.format("ContStorage-%s\n", shape));
 
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++)
+		{
+			for (int y = 0; y < height; y++)
+			{
 				HashMap<Long, T> cell = getCelldp(x, y);
 				if (cell.size() > 0)
 					string.append("Cell (" + x + ", " + y + "):\t" + cell + "\n");
@@ -51,21 +58,21 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	 * the point. Warning: does not check to see if the point is inside the local
 	 * boundary.
 	 */
-	public Int2D discretize(final Double2D p) {
-
+	public Int2D discretize(final Double2D p)
+	{
 		final double[] offsets = shape.ul().getOffsets(p);
 
 		int[] ans = new int[2];
-		for (int i = 0; i < offsets.length; i++) {
+		for (int i = 0; i < offsets.length; i++)
+		{
 			ans[i] = 0 - (int) (offsets[i] / (double) discretization);
 		}
 		return new Int2D(ans);
 	}
 	
 	//takes storage index and creates IntRect2D 
-	public IntRect2D getCellBounds(final int storageInd) {
-		
-         
+	public IntRect2D getCellBounds(final int storageInd)
+	{
 		int x_low = storageInd / this.height;
 		int y_low = storageInd % this.height;
 		
@@ -84,22 +91,20 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 		
 		Int2D final_cell_ul = cell_ul.add(shape.ul());
 		Int2D final_cell_br = cell_br.add(shape.ul());
-		
         
 		//System.out.println(this.getShape()+" storageInd "+storageInd+"ul "+final_cell_ul+"br "+final_cell_br);
 
-
 		return new IntRect2D(final_cell_ul,final_cell_br);
-
-		
 	}
 
-	void setCelldp(final Int2D p, HashMap<Long, T> cell) {
+	void setCelldp(final Int2D p, HashMap<Long, T> cell)
+	{
 		storage[getFlatIdx(p.x, p.y)] = cell;
 	}
 
 	/** Sets the given discretized cell. */
-	void setCelldp(int x, int y, HashMap<Long, T> cell) {
+	void setCelldp(int x, int y, HashMap<Long, T> cell)
+	{
 		storage[getFlatIdx(x, y)] = cell;
 	}
 
@@ -107,18 +112,20 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	 * Sets the cell which contains the given world point. Does not check to see if
 	 * the point is out of bounds.
 	 */
-	public void setCell(final Double2D p, HashMap<Long, T> cell) {
+	public void setCell(final Double2D p, HashMap<Long, T> cell)
+	{
 		setCelldp(discretize(p), cell);
 	}
 
 	/** Returns the given discretized cell. */
-	HashMap<Long, T> getCelldp(final Int2D p) {
-
+	HashMap<Long, T> getCelldp(final Int2D p)
+	{
 		return storage[getFlatIdx(p.x, p.y)];
 	}
 
 	/** Returns the given discretized cell. */
-	public HashMap<Long, T> getCelldp(int x, int y) {
+	public HashMap<Long, T> getCelldp(int x, int y)
+	{
 		return storage[getFlatIdx(x, y)];
 	}
 
@@ -126,7 +133,8 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	 * Returns the cell which contains the given world point. Does not check to see
 	 * if the point is out of bounds.
 	 */
-	public HashMap<Long, T> getCell(final Double2D p) {
+	public HashMap<Long, T> getCell(final Double2D p)
+	{
 		return getCelldp(discretize(p));
 	}
 
@@ -134,24 +142,28 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	 * Returns the cell which contains the given world point. Does not check to see
 	 * if the point is out of bounds.
 	 */
-	public HashMap<Long, T> getCell(final NumberND p) {
+	public HashMap<Long, T> getCell(final NumberND p)
+	{
 		return getCelldp(discretize(buildDouble2D(p)));
 	}
 
 	/** Returns the location of the given object. */
-	public Double2D getObjectLocation(final T obj) {
+	public Double2D getObjectLocation(final T obj)
+	{
 		return m.get(obj.ID());
 	}
 
 	/** Returns the location of the object with the given ID. */
-	public Double2D getObjectLocation(final long id) {
+	public Double2D getObjectLocation(final long id)
+	{
 		return m.get(id);
 	}
 
 	///// GRIDSTORAGE METHODS
 
 	// Put the object to the given point
-	public void addObject(NumberND p, T obj) {
+	public void addObject(NumberND p, T obj)
+	{
 		Double2D p_double = buildDouble2D(p);
 //		System.out.println("add Object: " + m + "; " + obj);
 		final Double2D old = m.put(obj.ID(), p_double);
@@ -161,7 +173,8 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 		getCell(p_double).put(obj.ID(), obj);
 	}
 
-	public T getObject(NumberND p, long id) {
+	public T getObject(NumberND p, long id)
+	{
 		Double2D p_double = buildDouble2D(p);
 
 		HashMap<Long, T> cell = getCell(p_double);
@@ -172,7 +185,8 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	}
 
 	// Get all the objects at exactly the given point
-	public ArrayList<T> getAllObjects(final NumberND p) {
+	public ArrayList<T> getAllObjects(final NumberND p)
+	{
 		Double2D p_double = buildDouble2D(p);
 
 		final ArrayList<T> objects = new ArrayList<>();
@@ -186,7 +200,8 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 		return objects;
 	}
 
-	public boolean removeObject(NumberND p, long id) {
+	public boolean removeObject(NumberND p, long id)
+	{
 		// p is ignored.
 
 		Double2D loc = m.remove(id);
@@ -197,7 +212,8 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	}
 
 	// Get all the objects at the given point
-	ArrayList<T> getObjects(NumberND p) {
+	ArrayList<T> getObjects(NumberND p)
+	{
 		Double2D p_double = buildDouble2D(p);
 
 		final ArrayList<T> objects = new ArrayList<>();
@@ -211,7 +227,8 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	}
 
 	// Remove all the objects at the given point
-	public void clear(NumberND p) {
+	public void clear(NumberND p)
+	{
 		Double2D p_double = buildDouble2D(p);
 		HashMap<Long, T> cell = getCell(p_double);
 
@@ -221,27 +238,31 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void clear() {
+	public void clear()
+	{
 		width = (int) Math.ceil(shape.getWidth() / (double) discretization) + 1;
 		height = (int) Math.ceil(shape.getHeight() / (double) discretization) + 1;
 		this.m = new HashMap<>();
 
 		storage = new HashMap[width * height];
-		for (int i = 0; i < storage.length; i++) {
+		for (int i = 0; i < storage.length; i++)
+		{
 			storage[i] = new HashMap<>();
-
 		}
 	}
 
 	/// METHODS FOR PACKING AND UNPACKING
 
-	void removeObject(long id) {
+	void removeObject(long id)
+	{
 		getCell(m.remove(id)).remove(id);
 	}
 
 	// Remove all the objects inside the given rectangle
-	void removeObjects(final IntRect2D r) {
-		for (T obj : getObjects(r)) {
+	void removeObjects(final IntRect2D r)
+	{
+		for (T obj : getObjects(r))
+		{
 			removeObject(obj.ID());
 		}
 	}
@@ -249,7 +270,8 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	static final Int2D OFFSET = new Int2D(1,1);
 	
 	// Get all the objects inside the given rectangle
-	public ArrayList<T> getObjects(final IntRect2D r) {
+	public ArrayList<T> getObjects(final IntRect2D r)
+	{
 		final ArrayList<T> objs = new ArrayList<T>();
 //		int[] offset = { 1, 1 };
 
@@ -258,14 +280,19 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 
 		// I believe this code is just doing:
 
-		for (int x = ul.x; x < br.x; x++) {
-			for (int y = ul.y; y < br.y; y++) {
+		for (int x = ul.x; x < br.x; x++)
+		{
+			for (int y = ul.y; y < br.y; y++)
+			{
 
 				HashMap<Long, T> cell = getCelldp(x, y);
 
-				if (cell != null) {
-					for (T obj : cell.values()) { // need to offset/discretize!
-						if (r.contains(m.get(obj.ID()))) {
+				if (cell != null)
+				{
+					for (T obj : cell.values()) // need to offset/discretize!
+						{
+						if (r.contains(m.get(obj.ID())))
+						{
 							objs.add(obj);
 						}
 					}
@@ -278,12 +305,15 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 
 	// This returns a list of a list of dissimilar Objects
 	// They are either of type T or of type Double2D
-	public Serializable pack(final MPIParam mp) {
+	public Serializable pack(final MPIParam mp)
+	{
 		final ArrayList<ArrayList<Serializable>> ret = new ArrayList<>();
 
-		for (final IntRect2D rect : mp.rects) {
+		for (final IntRect2D rect : mp.rects)
+		{
 			final ArrayList<Serializable> objs = new ArrayList<>();
-			for (final T obj : getObjects(rect.add(shape.ul()))) {
+			for (final T obj : getObjects(rect.add(shape.ul())))
+			{
 				objs.add(obj);
 				// Append the object's location relative to the rectangle
 				objs.add(m.get(obj.ID()).subtract(shape.ul()).subtract(rect.ul()));
@@ -294,7 +324,8 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 		return ret;
 	}
 
-	public int unpack(final MPIParam mp, final Serializable buf) {
+	public int unpack(final MPIParam mp, final Serializable buf)
+	{
 		final ArrayList<ArrayList<Serializable>> objs = (ArrayList<ArrayList<Serializable>>) buf;
 
 		// Remove any objects that are in the unpack area (overwrite the area)
@@ -310,17 +341,20 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 						(T) objs.get(k).get(i));
 
 		int sum = 0;
-		for (int i = 0; i < objs.size(); i++) {
+		for (int i = 0; i < objs.size(); i++)
+		{
 			sum += objs.get(i).size();
 		}
 
 		return sum;
 	}
 
-	public boolean checkNull() {
-
-		for (int i = 0; i < storage.length; i++) {
-			if (storage[i] == null) {
+	public boolean checkNull()
+	{
+		for (int i = 0; i < storage.length; i++)
+		{
+			if (storage[i] == null)
+			{
 				System.out.println(i + " is null");
 				return false;
 			}
@@ -328,7 +362,8 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 		return true;
 	}
 
-	Double2D buildDouble2D(NumberND p) {
+	Double2D buildDouble2D(NumberND p)
+	{
 		if (p instanceof Double2D)
 			return (Double2D) p;
 		return new Double2D(p.getVal(0), p.getVal(1));
@@ -340,7 +375,8 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	 * @param p
 	 * @return location on the local partition
 	 */
-	public Int2D toLocalPoint(final Int2D p) {
+	public Int2D toLocalPoint(final Int2D p)
+	{
 		return p;
 	}
 
@@ -350,7 +386,8 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T> {
 	 * @param p
 	 * @return location on the local partition
 	 */
-	public Double2D toLocalPoint(final Double2D p) {
+	public Double2D toLocalPoint(final Double2D p)
+	{
 		return p;
 	}
 }

@@ -14,19 +14,22 @@ import sim.engine.DSteppable;
 import sim.engine.SimState;
 import sim.util.*;
 
-public class DAgent extends DSteppable implements Remote {
+public class DAgent extends DSteppable implements Remote
+{
 	private static final long serialVersionUID = 1;
 	public Double2D loc;
 	public Double2D initLoc;
 	public ArrayList<Long> neighbours;
 
-	public DAgent(final Double2D location) {
+	public DAgent(final Double2D location)
+	{
 		this.loc = location;
 		this.initLoc = location;
 		this.neighbours = new ArrayList<>();
 	}
 
-	public void step(final SimState state) {
+	public void step(final SimState state)
+	{
 		final DSimulation dSimstate = (DSimulation) state;
 		Double2D curr_loc = loc;
 		double curr_x = loc.x;
@@ -34,32 +37,49 @@ public class DAgent extends DSteppable implements Remote {
 		double new_x = curr_x;
 		double new_y = curr_y;
 
-		if (dSimstate.schedule.getSteps() < 46) {
-			if (curr_x < 300) {
+		if (dSimstate.schedule.getSteps() < 46)
+		{
+			if (curr_x < 300)
+			{
 				new_x += 5;
-			} else if (curr_x > 300) {
+			}
+			else if (curr_x > 300)
+			{
 				new_x -= 5;
 			}
-			if (curr_y < 300) {
+			if (curr_y < 300)
+			{
 				new_y += 5;
-			} else if (curr_y > 300) {
+			}
+			else if (curr_y > 300)
+			{
 				new_y -= 5;
 			}
-		} else {
-			if (curr_x < initLoc.x) {
+		}
+		else
+		{
+			if (curr_x < initLoc.x)
+			{
 				new_x += 5;
-			} else if (curr_x > initLoc.x) {
+			}
+			else if (curr_x > initLoc.x)
+			{
 				new_x -= 5;
 			}
-			if (curr_y < initLoc.y) {
+			if (curr_y < initLoc.y)
+			{
 				new_y += 5;
-			} else if (curr_y > initLoc.y) {
+			}
+			else if (curr_y > initLoc.y)
+			{
 				new_y -= 5;
 			}
 		}
 		List<DAgent> tmp = dSimstate.field.getNeighborsWithinDistance(loc, dSimstate.neighborhood);
-		for (DAgent a : tmp) {
-			if (!neighbours.contains(a.ID())) {
+		for (DAgent a : tmp)
+		{
+			if (!neighbours.contains(a.ID()))
+			{
 				neighbours.add(a.ID());
 				// if (!neighbours.contains(a.getId())) {
 				// neighbours.add(a.getId());

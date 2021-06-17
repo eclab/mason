@@ -56,13 +56,22 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		return storage;
 	}
 	
-	public HaloGrid2D getHaloGrid() { return halo; }
+	public HaloGrid2D getHaloGrid()
+		{
+		return halo;
+		}
 		
 	/** Returns true if the real-valued point is within the local (non-halo) region.  */
-	public boolean isLocal(Double2D p) { return halo.inLocal(p); }
+	public boolean isLocal(Double2D p)
+		{
+		return halo.inLocal(p);
+		}
 
 	/** Returns true if the real-valued point is within the halo region.  */
-	public boolean isHalo(Double2D p) { return halo.inHalo(p); }
+	public boolean isHalo(Double2D p)
+		{
+		return halo.inHalo(p);
+		}
 
 	/** Returns the local (including halo region) location object with the given id, if any, else null.*/
 	public Double2D getObjectLocationLocal(long id)
@@ -233,7 +242,8 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			HashMap<Long, T> cell = getCellLocal(loc);
 			if (cell != null)
 				cell.remove(t.ID());
-			if (cell.isEmpty() && storage.removeEmptyBags) {
+			if (cell.isEmpty() && storage.removeEmptyBags)
+			{
 				//storage.setCell(loc, null);
 				storage.setCell(loc, new HashMap<Long, T>());
 			}
@@ -254,7 +264,8 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			{
 			if (cell != null)
 				cell.remove(t.ID());
-			if (cell.isEmpty() && storage.removeEmptyBags) {
+			if (cell.isEmpty() && storage.removeEmptyBags)
+			{
 				//storage.setCell(p, null);
      			storage.setCell(p, new HashMap<Long, T>());
 			}
@@ -729,7 +740,9 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
         to within the boundaries before computation.
     */
     public ArrayList<T> getNeighborsWithinDistance( final Double2D position, final double distance)
-        { return getNeighborsWithinDistance(position,distance, null); }
+        {
+    	return getNeighborsWithinDistance(position,distance, null);
+    	}
 
     /** Puts into the result ArrayList (and returns it) AT LEAST those objects within the bounding box surrounding the
         specified distance of the specified position.  If the result ArrayList is null, then a ArrayList is created.

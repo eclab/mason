@@ -11,7 +11,10 @@ public class DenseGrid2DProxy extends DenseGrid2D implements UpdatableProxy
 	{
 	private static final long serialVersionUID = 1L;
 
-	public DenseGrid2DProxy(int width, int height) { super(width, height); }
+	public DenseGrid2DProxy(int width, int height)
+	{
+		super(width, height);
+	}
 	
 	public void update(SimStateProxy stateProxy, int proxyIndex, int[] quad_tree_partitions) throws RemoteException, NotBoundException
 		{
@@ -34,7 +37,8 @@ public class DenseGrid2DProxy extends DenseGrid2D implements UpdatableProxy
 		int[] extended_partition_list = vp2.getMinimumNeighborhood(quad_tree_partitions);
 		
 		IntRect2D[] rect_list = new IntRect2D[extended_partition_list.length];
-		for (int p_ind = 0; p_ind < extended_partition_list.length; p_ind++) {
+		for (int p_ind = 0; p_ind < extended_partition_list.length; p_ind++)
+		{
 			int p = extended_partition_list[p_ind];
 			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
 			halo_size = vp1.getAOI();
@@ -58,7 +62,8 @@ public class DenseGrid2DProxy extends DenseGrid2D implements UpdatableProxy
 		reshape(width, height);
 		
 		//for (int p = 0; p < stateProxy.numProcessors; p++) {
-		for (int p : quad_tree_partitions) {
+		for (int p : quad_tree_partitions)
+		{
 			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
 			//int halo_size = vp1.getAOI();
 		    IntRect2D partBound = vp1.getStorageBounds();

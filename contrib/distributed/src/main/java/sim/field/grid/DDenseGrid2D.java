@@ -38,7 +38,10 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	/** Returns the underlying storage array for the DDenseGrid2D.  This array
 		is a one-dimensional array, in row-major order, of all the cells in
 		the halo region.  Each cell is either null or is an arraylist of objects. */
-	public ArrayList<T>[] getStorageArray() { return storage.storage; }
+	public ArrayList<T>[] getStorageArray()
+		{
+		return storage.storage;
+		}
 
 	/** Returns true if the data is located at the given point, which must be within the halo region.  */
 	public boolean containsLocal(Int2D p, T t) 
@@ -188,10 +191,14 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 				array[idx].clear();
 			return ret;
  			}
- 		else return false;
+ 		else
+ 			return false;
 		}
 
-	public HaloGrid2D getHaloGrid() { return halo; }
+	public HaloGrid2D getHaloGrid()
+		{
+		return halo;
+		}
 
 	/** Returns a Promise which will eventually (immediately or within one timestep)
 		hold the data (the ENTIRE ArrayList) located at the given point.  This point can be outside
@@ -517,17 +524,24 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 			//is this agent in local storage?
 			Boolean found = false;
 			for (ArrayList<T> li : this.storage.storage)
-			{   if (li != null) {
-				    for (T my_agent : li) {
-					    if (my_agent.equals(agent)){
+			{
+				if (li != null)
+				{
+				    for (T my_agent : li)
+				    {
+					    if (my_agent.equals(agent))
+					    {
 						    System.out.println("agent"+agent+"is in this storage at point "+from);
 						    found = true;
 						    //System.exit(-1);
 						    //throw new RuntimeException("exit this");
 
 					    }
-				    }}}
-			    if (found == false) {
+				    }
+				    }
+				}
+			    if (found == false)
+			    {
 			    	System.out.println(agent+" not in storage at all");
 			    }
 				    
@@ -600,9 +614,9 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
         {
         if (dist > halo.getPartition().getAOI()) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.getPartition().getAOI());
 
-        if( xPos == null )
+        if (xPos == null)
             xPos = new IntBag();
-        if( yPos == null )
+        if (yPos == null)
             yPos = new IntBag();
 
         getMooreLocations( x, y, dist, UNBOUNDED, includeOrigin, xPos, yPos );
@@ -635,9 +649,9 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
         {
         if (dist > halo.getPartition().getAOI()) throw new RuntimeException("Distance " + dist + " is larger than AOI " + halo.getPartition().getAOI());
 
-        if( xPos == null )
+        if (xPos == null)
             xPos = new IntBag();
-        if( yPos == null )
+        if (yPos == null)
             yPos = new IntBag();
 
         getVonNeumannLocations( x, y, dist, UNBOUNDED, includeOrigin, xPos, yPos );

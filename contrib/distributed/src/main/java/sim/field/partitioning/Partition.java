@@ -13,7 +13,8 @@ import sim.util.*;
  */
 // Consumer is Raw Type because its parameter is of type int
 //@SuppressWarnings("rawtypes")
-public abstract class Partition {
+public abstract class Partition
+{
 	private static final long serialVersionUID = 1L;
 
 	int pid;
@@ -26,16 +27,20 @@ public abstract class Partition {
 
 	ArrayList<Consumer> preCallbacks, postCallbacks;
 
-	Partition(int width, int height, boolean toroidal, int aoi) {
+	Partition(int width, int height, boolean toroidal, int aoi)
+	{
 		this.width = width;
 		this.height = height;
 		this.toroidal = toroidal;
 		this.aoi = aoi;
 
-		try {
+		try
+		{
 			pid = DSimState.getPID();
 			numProcessors = MPI.COMM_WORLD.getSize();
-		} catch (MPIException e) {
+		}
+		catch (MPIException e)
+		{
 			e.printStackTrace();
 			System.exit(-1);
 		}
@@ -44,31 +49,38 @@ public abstract class Partition {
 		postCallbacks = new ArrayList<Consumer>();
 	}
 
-	public int getPID() {
+	public int getPID()
+	{
 		return pid;
 	}
 
-	public int getNumProcessors() {
+	public int getNumProcessors()
+	{
 		return numProcessors;
 	}
 
-	public boolean isToroidal() {
+	public boolean isToroidal()
+	{
 		return toroidal;
 	}
 
-	public Comm getCommunicator() {
+	public Comm getCommunicator()
+	{
 		return comm;
 	}
 
-	public int getWorldWidth() {
+	public int getWorldWidth()
+	{
 		return width;
 	}
 
-	public int getWorldHeight() {
+	public int getWorldHeight()
+	{
 		return height;
 	}
 
-	public IntRect2D getWorldBounds() {
+	public IntRect2D getWorldBounds()
+	{
 		return new IntRect2D(width, height);
 	}
 
@@ -91,7 +103,8 @@ public abstract class Partition {
 
 	public abstract int[] getNeighborPIDs();
 
-	public int getAOI() {
+	public int getAOI()
+	{
 		return aoi;
 	}
 
@@ -114,7 +127,8 @@ public abstract class Partition {
 	 * 
 	 * @param r
 	 */
-	public void registerPreCommit(final Consumer r) {
+	public void registerPreCommit(final Consumer r)
+	{
 		preCallbacks.add(r);
 	}
 
@@ -123,7 +137,8 @@ public abstract class Partition {
 	 * 
 	 * @param r
 	 */
-	public void registerPostCommit(final Consumer r) {
+	public void registerPostCommit(final Consumer r)
+	{
 		postCallbacks.add(r);
 	}
 }

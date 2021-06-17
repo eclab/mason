@@ -19,87 +19,108 @@ public class Timing
 
 	private static int window = 100;
 	private static HashMap<String, TimingStat> m = new HashMap<String, TimingStat>();
-	private static NanoClock clock = new NanoClock() {
-		public long nanoTime() {
+	private static NanoClock clock = new NanoClock()
+	{
+		public long nanoTime()
+		{
 			return System.nanoTime();
 		}
 
-		public void advance(long val) {
+		public void advance(long val)
+		{
 			throw new UnsupportedOperationException("Cannot set nano time for real clock");
 		}
 	};
 
-	private static class FakeClock implements NanoClock {
+	private static class FakeClock implements NanoClock
+	{
 		public long val = 0;
 
-		public long nanoTime() {
+		public long nanoTime()
+		{
 			return val;
 		}
 
-		public void advance(long val) {
+		public void advance(long val)
+		{
 			this.val += val;
 		}
 	}
 
-	private interface NanoClock {
+	private interface NanoClock
+	{
 		long nanoTime();
 
 		void advance(long val);
 	}
 
-	public static void useFakeClock() {
+	public static void useFakeClock()
+	{
 		clock = new FakeClock();
 	}
 
-	public static void advanceFakeClock(long time) {
+	public static void advanceFakeClock(long time)
+	{
 		clock.advance(time);
 	}
 
-	public static void advanceFakeClockMS(int time) {
+	public static void advanceFakeClockMS(int time)
+	{
 		clock.advance(time * 1000000L);
 	}
 
-	public static void setWindow(int win) {
+	public static void setWindow(int win)
+	{
 		window = win;
 	}
 
-	public static void start(String... ids) {
-		for (String id : ids) {
+	public static void start(String... ids)
+	{
+		for (String id : ids)
+		{
 			m.putIfAbsent(id, new TimingStat(window));
 			m.get(id).start(clock.nanoTime());
 		}
 	}
 
-	public static void stop(String... ids) {
-		for (String id : ids) {
+	public static void stop(String... ids)
+	{
+		for (String id : ids)
+		{
 			check(id);
 			m.get(id).stop(clock.nanoTime());
 		}
 	}
 
-	public static void reset(String... ids) {
-		for (String id : ids) {
+	public static void reset(String... ids)
+	{
+		for (String id : ids)
+		{
 			check(id);
 			m.get(id).reset();
 		}
 	}
 
-	public static TimingStat get(String id) {
+	public static TimingStat get(String id)
+	{
 		check(id);
 		return m.get(id);
 	}
 
-	public static double getLast(String id) {
+	public static double getLast(String id)
+	{
 		check(id);
 		return m.get(id).last();
 	}
 
-	private static void check(String id) {
+	private static void check(String id)
+	{
 		if (!m.containsKey(id))
 			throw new NoSuchElementException("Timer for " + id + " does not exist");
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		useFakeClock();
 
 		System.out.println(
@@ -164,23 +185,29 @@ public class Timing
 /**
  * Internal utility class used to calculate moving average. Used by TimingStat.
  */
-static class MovingAverage {
+static class MovingAverage
+{
 	double average;
 	double var;
 	double[] queue;
 	int count, st;
 	final int capacity;
 
-	public MovingAverage(int capacity) {
+	public MovingAverage(int capacity)
+	{
 		this.queue = new double[capacity];
 		this.capacity = capacity;
 	}
 
-	public double next(double val) {
-		if (count < capacity) {
+	public double next(double val)
+	{
+		if (count < capacity)
+		{
 			queue[st + count] = val;
 			average += (val - average) / ++count;
-		} else {
+		}
+		else
+		{
 			average += (val - queue[st]) / capacity;
 			queue[st] = val;
 			st = (st + 1) % capacity;
@@ -189,11 +216,13 @@ static class MovingAverage {
 		return average;
 	}
 
-	public double average() {
+	public double average()
+	{
 		return average;
 	}
 
-	public double stdev() {
+	public double stdev()
+	{
 		if (count < 2)
 			return 0;
 		return Math.sqrt(Arrays.stream(queue)
@@ -202,7 +231,8 @@ static class MovingAverage {
 				.sum() / (count - 1));
 	}
 
-	public static void main(String args[]) {
+	public static void main(String args[])
+	{
 		MovingAverage a = new MovingAverage(4);
 		System.out.printf("1 \t Want %g \t Got %g stdev %g\n", 10.0, a.next(10), a.stdev());
 		System.out.printf("2 \t Want %g \t Got %g stdev %g\n", 15.0, a.next(20), a.stdev());
@@ -226,7 +256,8 @@ static class MovingAverage {
  *
  *Internal Class used by Timing.java
  */
-public static class TimingStat {
+public static class TimingStat
+{
 
     int cap;
     long cnt, conv, ts;
@@ -234,18 +265,21 @@ public static class TimingStat {
     MovingAverage mav;
     TimeUnit u;
 
-     TimingStat(int cap) {
+     TimingStat(int cap)
+     {
         this.cap = cap;
         this.setUnit(TimeUnit.MILLISECONDS);
         reset();
     }
 
-     void setUnit(TimeUnit u) {
+     void setUnit(TimeUnit u)
+     {
         this.u = u;
         this.conv = TimeUnit.NANOSECONDS.convert(1L, u);
     }
 
-     void add(double val) {
+     void add(double val)
+     {
         last = val;
         min = Math.min(min, val);
         max = Math.max(max, val);
@@ -257,7 +291,8 @@ public static class TimingStat {
         mav.next(val);
     }
 
-     void reset() {
+     void reset()
+     {
         mav = new MovingAverage(cap);
         cnt = 0;
         min = Double.MAX_VALUE;
@@ -267,7 +302,8 @@ public static class TimingStat {
         ts = -1L;
     }
 
-     void start(long curr) {
+     void start(long curr)
+     {
         if (ts != -1L)
             throw new IllegalStateException("Timer is already started");
         ts = curr;
@@ -292,48 +328,58 @@ public static class TimingStat {
      *
      */
     @Deprecated
-     void stop(long curr) {
+     void stop(long curr)
+    {
         /*if (ts == -1L)
             throw new IllegalStateException("Timer is not started"); */
         add((double)(curr - ts));
         ts = -1L;
     }
 
-    public double last() {
+    public double last()
+    {
         return last / conv;
     }
 
-    public long getCount() {
+    public long getCount()
+    {
         return cnt;
     }
 
-    public double getMean() {
+    public double getMean()
+    {
         return avg / conv;
     }
 
-    public double getMin() {
+    public double getMin()
+    {
         return min / conv;
     }
 
-    public double getMax() {
+    public double getMax()
+    {
         return max / conv;
     }
 
-    public double getStdev() {
+    public double getStdev()
+    {
         if (cnt > 1)
             return Math.sqrt(var / (cnt - 1)) / conv;
         return 0;
     }
 
-    public double getMovingAverage() {
+    public double getMovingAverage()
+    {
         return mav.average() / conv;
     }
 
-    public double getMovingStdev() {
+    public double getMovingStdev()
+    {
         return mav.stdev() / conv;
     }
 
-    public String toString() {
+    public String toString()
+    {
         return String.format("%d\t%f\t%f\t%f\t%f\t%f\t%f\t%s",
                              getCount(),
                              getMin(),

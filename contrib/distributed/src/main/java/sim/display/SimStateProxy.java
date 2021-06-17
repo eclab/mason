@@ -54,25 +54,50 @@ public class SimStateProxy extends SimState
 	private static final long serialVersionUID = 1L;
 
 	String host = "localhost";
+	
 	/** Returns the IP address of the distributed RMI registry.  You need to set this before start() is called. */
-	public String registryHost() { return host; }
+	public String registryHost()
+		{
+		return host;
+		}
+	
 	/** Sets the IP address of the distributed RMI registry.  You need to set this before start() is called. */
-	public void setRegistryHost(String host) { this.host = host; }
+	public void setRegistryHost(String host)
+		{
+		this.host = host;
+		}
 	
 	int port = sim.util.DRegistry.PORT;
+	
 	/** Returns the IP address of the distributed RMI registry.  You need to set this before start() is called. */
-	public int registryPort() { return port; }
+	public int registryPort()
+		{
+		return port; 
+		}
+	
 	/** Sets the IP address of the distributed RMI registry.  You need to set this before start() is called. */
-	public void setRegistryPort(int port) { this.port = port; }
+	public void setRegistryPort(int port)
+		{
+		this.port = port;
+		}
 	
 	/** Returns the string by which the visualization root (a VisualizationRoot instance) is registered with the Registry. */
-	public final String visualizationRootString() { return visualizationProcessorString(visualizationRootPID()); }						
+	public final String visualizationRootString()
+		{
+		return visualizationProcessorString(visualizationRootPID());
+		}						
 	
 	/** Returns the pid by which the visualization root (a VisualizationRoot instance) is registered with the Registry. */
-	public final int visualizationRootPID() { return 0; }						
+	public final int visualizationRootPID()
+		{
+		return 0;
+		}						
 	
 	/** Returns the string by which a given visualization processor (a VisualizationProcessor instance) is registered with the Registry. */
-	public final String visualizationProcessorString(int pid) { return RemoteProcessor.getProcessorName(pid); }		
+	public final String visualizationProcessorString(int pid)
+		{
+		return RemoteProcessor.getProcessorName(pid);
+		}		
 	
 	public static final int DEFAULT_SLEEP = 25;	// ms
 	public static final int DEFAULT_STEP_SIZE = 1000;
@@ -81,9 +106,17 @@ public class SimStateProxy extends SimState
 	protected int sleep = DEFAULT_SLEEP;
 	protected int stepSize = DEFAULT_STEP_SIZE;
 	/** Returns the update rate in ms */
-	public int stepSize() { return stepSize; }
+	public int stepSize()
+		{
+		return stepSize;
+		}
+	
 	/** Sets the update rate in ms */
-	public void setStepSize(int val) { stepSize = val; }
+	public void setStepSize(int val)
+		{
+		stepSize = val;
+		}
+	
 	public long lastSteps = -1;
 	
 	// The registry proper
@@ -129,7 +162,10 @@ public class SimStateProxy extends SimState
 		}
 	
 	/** Returns the number of processors */
-	public int numProcessors() { return numProcessors; }
+	public int numProcessors()
+		{
+		return numProcessors;
+		}
 
 	/** Sets the current processor to be visualized */
 	public void setCurrentProcessor(int pid)
@@ -140,10 +176,14 @@ public class SimStateProxy extends SimState
 		}
 		
 	/** Returns the current processor to be visualized */
-	public int currentProcessor() { return processor; }
+	public int currentProcessor()
+		{
+		return processor;
+		}
 	
 	/** Sets the current processor and returns Visualization Processor. */
-	public VisualizationProcessor visualizationProcessor(int pid) throws RemoteException, NotBoundException {
+	public VisualizationProcessor visualizationProcessor(int pid) throws RemoteException, NotBoundException
+	{
 		if (pid < 0 || pid > numProcessors) throw new IllegalArgumentException(pid+"");
 		setCurrentProcessor(pid);
 		return visualizationProcessor();
@@ -167,7 +207,6 @@ public class SimStateProxy extends SimState
 		
 	/** Fetches the halo bounds from the current Visualization Processor. */
 	public IntRect2D bounds() throws RemoteException, NotBoundException
-
 		{
 		return visualizationProcessor().getStorageBounds();
 		}
@@ -186,7 +225,8 @@ public class SimStateProxy extends SimState
 			worldBounds = visualizationRoot.getWorldBounds();
 			numProcessors = visualizationRoot.getNumProcessors();
 			
-			for (int i = 0; i < numProcessors; i++) {
+			for (int i = 0; i < numProcessors; i++)
+			{
 				statQueues.add(new ArrayList<>());
 			}
 
@@ -253,7 +293,8 @@ public class SimStateProxy extends SimState
 								// Determine if any stats are registered (on *any* processor)
 								boolean statsExist = false; // flag for if any stats are registered
 								ArrayList<ArrayList<Stat>> allStats = new ArrayList<>();
-								for (int p = 0; p < numProcessors; p++) {
+								for (int p = 0; p < numProcessors; p++)
+								{
 									VisualizationProcessor vp1 = visualizationProcessor(p);
 									ArrayList<Stat> statList = vp1.getStatList();
 									allStats.add(statList);
@@ -261,43 +302,52 @@ public class SimStateProxy extends SimState
 										statsExist = true;
 								}
 								
-								if (statsExist) {
+								if (statsExist)
+								{
 									// Find minimum step over all processor stats
 									long minStep = Long.MAX_VALUE;
 									long maxStep = Long.MIN_VALUE;
 									for (int p = 0; p < allStats.size(); p++) {
 										ArrayList<Stat> stats = allStats.get(p);
-										if (stats.get(0).steps < minStep) {
+										if (stats.get(0).steps < minStep)
+										{
 											minStep = stats.get(0).steps;
 										}
-										if (stats.get(stats.size() - 1).steps > maxStep) { //TODO What if stats is empty? can it be?
+										if (stats.get(stats.size() - 1).steps > maxStep) //TODO What if stats is empty? can it be?
+										{
 											maxStep = stats.get(stats.size() - 1).steps;
 										}
 									}
 									// TODO Overflow check?...or no?
-									if (minStep < 0) {
+									if (minStep < 0)
+									{
 										throw new IllegalStateException();
 									}
 									
-									for (int p = 0; p < allStats.size(); p++) {
+									for (int p = 0; p < allStats.size(); p++)
+									{
 										ArrayList<Stat> stats = allStats.get(p);
 										ArrayList<Object> queue = statQueues.get(p);
 										
 	//									TODO? long currStep = minStep;
 										long currStep = 0; // if queue is empty, start at timestep 0
-										if (!queue.isEmpty()) { // ...otherwise, start at last timestep + 1
+										if (!queue.isEmpty()) // ...otherwise, start at last timestep + 1
+										{
 											currStep = getStep(p, queue.size() - 1, minStep) + 1;
 										}
 	
 										// Purpose: Verification - to make sure all timesteps are accounted for
-										if (!queue.isEmpty()) {
+										if (!queue.isEmpty())
+										{
 											getStep(p, queue.size() - 1, minStep); // <- Note: this will throw error this creates inconsistent timsteps in queues
 										}
 	
 										int currIndex = 0; // index of incoming stats
-										while (currIndex < stats.size()) {
+										while (currIndex < stats.size())
+										{
 											// Fill in any skipped steps
-											while (currStep < stats.get(currIndex).steps) {
+											while (currStep < stats.get(currIndex).steps)
+											{
 //												System.out.println("off steps: " + currStep + " and " + stats.get(currIndex).steps);
 												long lastStep = getStep(p, queue.size() - 1, minStep);
 												queue.add(lastStep);
@@ -306,7 +356,8 @@ public class SimStateProxy extends SimState
 											// <- currStep == stat.steps
 											// Add *this* stat and the rest of the stats at *this* timestep
 											ArrayList<Stat> currTimeStepStats = new ArrayList<Stat>();
-											do {
+											do
+											{
 												currTimeStepStats.add(stats.get(currIndex));
 												currIndex++;
 											}
@@ -324,12 +375,14 @@ public class SimStateProxy extends SimState
 									System.out.println("***************************************");
 									System.out.println("*** Stats dumped for timestep " + maxStep);
 									String header = "";
-									for (int p = 0; p < numProcessors; p++) {
+									for (int p = 0; p < numProcessors; p++)
+									{
 										header += "P" + p + " | ";
 									}
 									System.out.println(header.substring(0, header.length() - " | ".length()));
 									
-									for (int i = 0; i < maxStep - 1; i++) {
+									for (int i = 0; i < maxStep - 1; i++)
+									{
 										System.out.println(getStatsAsCSV(i));
 									}
 									
@@ -337,7 +390,8 @@ public class SimStateProxy extends SimState
 									MersenneTwisterFast random = new MersenneTwisterFast();
 									long randStart = Math.abs(random.nextLong()) % (maxStep - minStep);
 									long randEnd = Math.abs(random.nextLong()) % (maxStep - minStep);
-									if (randStart > randEnd) { // swap if necessary
+									if (randStart > randEnd) // swap if necessary
+									{
 										long tmp = randStart;
 										randStart = randEnd;
 										randEnd = tmp;
@@ -392,23 +446,29 @@ public class SimStateProxy extends SimState
 			System.err.println("-start()");
 		}
 
-	private long getStep(int pid, int index, long minStep) {
-		if (pid < 0 || pid > numProcessors) {
+	private long getStep(int pid, int index, long minStep)
+	{
+		if (pid < 0 || pid > numProcessors)
+		{
 			throw new IndexOutOfBoundsException(); //TODO
 		}
 		ArrayList<Object> queue = statQueues.get(pid);
 		
-		if (index < 0 || index > queue.size()) {
+		if (index < 0 || index > queue.size())
+		{
 			throw new IllegalArgumentException();//TODO
 		}
 		Object stats = queue.get(index);
 		long lastStep; // <- the last step that was added to queue
-		if (stats instanceof Long) {
+		if (stats instanceof Long)
+		{
 			lastStep = (long) stats;
 		}
-		else {
+		else
+		{
 			// Elements are either Stat objects or a placeholder as a long value holding the current timestep
-			if (!(stats instanceof ArrayList)) {
+			if (!(stats instanceof ArrayList))
+			{
 				throw new IllegalStateException();
 				//TODO CHECK INNER TYPE (ArrayList<Stat>)
 			}
@@ -420,9 +480,11 @@ public class SimStateProxy extends SimState
 	}
 	
 	//TODO no checks
-	public String getStatsAsCSV(long step) {
+	public String getStatsAsCSV(long step)
+	{
 		ArrayList<Object> statsAtTimeStep = new ArrayList<Object>();
-		for (int p = 0; p < numProcessors; p++) {
+		for (int p = 0; p < numProcessors; p++)
+		{
 			ArrayList<Object> queue = statQueues.get(p);
 			Object s = queue.get(0);
 			if (!(s instanceof ArrayList))
@@ -433,7 +495,8 @@ public class SimStateProxy extends SimState
 			int index = (int) (step - firstElemSteps);
 
 			// Fail-safe
-			if (index > queue.size() - 1) {
+			if (index > queue.size() - 1)
+			{
 				index = queue.size() - 1;
 			}
 			
@@ -442,14 +505,18 @@ public class SimStateProxy extends SimState
 		}
 		
 		String str = "";
-		for (int i = 0; i < statsAtTimeStep.size(); i++) {
+		for (int i = 0; i < statsAtTimeStep.size(); i++)
+		{
 			Object obj = statsAtTimeStep.get(i);
-			if (obj instanceof Long) {
+			if (obj instanceof Long)
+			{
 				str += "__" + (long) obj + "__" + ",";//TODO just comma
 			}
-			else {
+			else
+			{
 				// Elements are either Stat objects or a placeholder as a long value holding the current timestep
-				if (!(obj instanceof ArrayList)) {
+				if (!(obj instanceof ArrayList))
+				{
 					throw new IllegalStateException();
 					//TODO CHECK INNER TYPE (ArrayList<Stat>)
 				}
@@ -469,9 +536,11 @@ public class SimStateProxy extends SimState
 	/**
 	 * Retrieve stats from a time interval [start, end)
 	 */
-	public String getStatsAsCSV(long start, long end) {
+	public String getStatsAsCSV(long start, long end)
+	{
 		String str = "";
-		for (long index = start; index < end; index++) {
+		for (long index = start; index < end; index++)
+		{
 			str += getStatsAsCSV(index) + "\n";
 		}
 		return str;
@@ -480,7 +549,8 @@ public class SimStateProxy extends SimState
 	/**
 	 * Returns and clears the stat queues
 	 */
-	public ArrayList<ArrayList<Object>> getStats() {
+	public ArrayList<ArrayList<Object>> getStats()
+	{
 		ArrayList<ArrayList<Object>> ret = statQueues;
 		statQueues = new ArrayList<>();
 		return ret;
@@ -489,7 +559,6 @@ public class SimStateProxy extends SimState
 	public SimStateProxy(long seed)
 		{
 		super(seed);
-
 		}
 
     public boolean remoteProxy()
@@ -524,16 +593,17 @@ public class SimStateProxy extends SimState
     	}
     
     //return list of partitions from the node in the tree
-    public int[] buildPartitionsList(QuadTreeNode chosenNode) {
+    public int[] buildPartitionsList(QuadTreeNode chosenNode)
+    {
     	
     	int[] selectedNodes = new int[chosenNode.getLeaves().size()];
     	ArrayList<QuadTreeNode> leafNodes = chosenNode.getLeaves();
-    	for (int i=0; i<selectedNodes.length; i++) {
+    	for (int i=0; i<selectedNodes.length; i++)
+    	{
     		selectedNodes[i] = leafNodes.get(i).getProcessor();
     	}
     	
     	return selectedNodes;
-    	
     }
     
 	/** Override this to add a tab to the Console. Normally you'd not do this from the SimState, but the Distributed code needs to use this. */
