@@ -507,7 +507,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 						time = time + interval;					// advance to next
 						}
 					removeLocal(from, agent);
-					System.out.println(a+" addedAgent at"+ to+" (4)");
+					//System.out.println(a+" addedAgent at"+ to+" (4)");
 					halo.addAgentToRemote(to, agent, ordering, time, interval);
 					}
 				else

@@ -858,7 +858,6 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	{
 		
 		
-		loc_disagree_all_points("syncHalo1");
 		
 		
 		int numNeighbors = neighbors.size();
@@ -871,7 +870,6 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		for (int i = 0; i < numNeighbors; i++)
 			localStorage.unpack(neighbors.get(i).recvParam, recvObjs.get(i));
 		
-		loc_disagree_all_points("syncHalo2");
 
 
 		for (final Pair<Promised, NumberND> pair : getAllQueue)
@@ -882,12 +880,12 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			trip.a.fulfill(getLocal(trip.b, trip.c));
 		getQueue.clear();
 		
-		loc_disagree_all_points("syncHalo3");
 
 		
 
 	}
 	
+	/*
 	public void loc_disagree_all_points(String s)
 	{
 		for (Int2D a : this.localBounds.getPointList())
@@ -908,6 +906,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			}
 		}
 	}
+	*/
 
 	/**
 	 * Adds an incoming to the field. Has cases for the type of object we are

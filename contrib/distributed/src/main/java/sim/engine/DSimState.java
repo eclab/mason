@@ -195,10 +195,7 @@ public class DSimState extends SimState
 	void syncFields() throws MPIException, RemoteException
 	{
 		
-		for (Synchronizable field : fieldList)
-		{
-		     ((HaloGrid2D) field).loc_disagree_all_points("sf1");
-		}
+
 		
 		for (final Synchronizable haloField : fieldList)
 			haloField.syncHalo();
@@ -228,10 +225,7 @@ public class DSimState extends SimState
 		Timing.stop(Timing.LB_RUNTIME);
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
 		
-		for (Synchronizable field : fieldList)
-		{
-		     ((HaloGrid2D) field).loc_disagree_all_points("accelgor");
-		}
+
 		
 		try
 		{
@@ -252,17 +246,11 @@ public class DSimState extends SimState
 			// Sync all the Remove and Add queues for RMI
 			syncRemoveAndAdd();
 			
-			for (Synchronizable field : fieldList)
-			{
-			     ((HaloGrid2D) field).loc_disagree_all_points("liepard");
-			}
+
 			
 			transporter.sync();
 			
-			for (Synchronizable field : fieldList)
-			{
-			     ((HaloGrid2D) field).loc_disagree_all_points("ninetlaes");
-			}
+
 
 			if (withRegistry)
 			{
@@ -291,10 +279,7 @@ public class DSimState extends SimState
 			throw new RuntimeException(e);
 		}
 		
-		for (Synchronizable field : fieldList)
-		{
-		     ((HaloGrid2D) field).loc_disagree_all_points("ps_before");
-		}
+
 
 		for (final PayloadWrapper payloadWrapper : transporter.objectQueue)
 		{
@@ -313,10 +298,7 @@ public class DSimState extends SimState
 				// add the object to the field
 				fieldList.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
 				
-				if (payloadWrapper.payload instanceof DHeatBug)
-				{
-					DSimState.loc_disagree((Int2D)payloadWrapper.loc, (DHeatBug)payloadWrapper.payload, this.partition, "preschedule");
-				}
+
 			}
 
 			if (payloadWrapper.payload instanceof DistributedIterativeRepeat)
@@ -365,9 +347,7 @@ public class DSimState extends SimState
 		{
 			MPI.COMM_WORLD.barrier();
 			
-			for (Synchronizable field : fieldList) {
-			     ((HaloGrid2D) field).loc_disagree_all_points("ps");
-			}
+
 			syncFields();
 		}
 		catch (MPIException | RemoteException e)
@@ -394,16 +374,11 @@ public class DSimState extends SimState
 
 				try
 				{
-					// Synchronize all objects and agents.
-					for (Synchronizable field : fieldList) {
-					     ((HaloGrid2D) field).loc_disagree_all_points("lb1");
-					}
+
 
 					transporter.sync();
 					
-					for (Synchronizable field : fieldList) {
-					     ((HaloGrid2D) field).loc_disagree_all_points("lb2");
-					}
+
 					
 					
 				}
@@ -438,17 +413,12 @@ public class DSimState extends SimState
 					}
 					
 					
-					if (payloadWrapper.payload instanceof DHeatBug) {
-						System.out.println((DHeatBug)payloadWrapper.payload+" loaded in");
-						System.exit(-1);
-						DSimState.loc_disagree((Int2D)payloadWrapper.loc, (DHeatBug)payloadWrapper.payload, this.partition, "rrr");
-					}	
+
 					
 					if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
 						System.out.println(" loaded in");
 						Stopping sss = ((DistributedIterativeRepeat) payloadWrapper.payload).getSteppable();
 						
-						DSimState.loc_disagree((Int2D)payloadWrapper.loc, (DHeatBug)sss, this.partition, "rrr2");
 						//System.exit(-1);
 
 					
@@ -498,16 +468,10 @@ public class DSimState extends SimState
 							schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
 					}
 					
-					if (payloadWrapper.payload instanceof DHeatBug)
-					{
-						DSimState.loc_disagree((Int2D)payloadWrapper.loc, (DHeatBug)payloadWrapper.payload, this.partition, "rrr2");
-					}
+
 				}
 
-				for (Synchronizable field : fieldList)
-				{
-				     ((HaloGrid2D) field).loc_disagree_all_points("lb3");
-				}
+
 				
 				// Wait that all nodes have registered their new objects in the distributed registry.
 				try
@@ -549,9 +513,7 @@ public class DSimState extends SimState
 			}
 		}
 		
-		//for (Synchronizable field : fieldList) {
-		//     ((HaloGrid2D) field).loc_disagree_all_points("lb5");
-		//}
+
 	}
 
 	/*
@@ -561,7 +523,18 @@ public class DSimState extends SimState
 	 */
 	void balancePartitions(int level) throws MPIException
 	{
-		System.out.println("balancing");
+		
+
+		int x = countTotalAgents(fieldList.get(0));
+
+		if (this.getPID() == 0) {
+			
+			System.out.println("field num of agents : "+x);
+
+			System.out.println("---");
+		}
+		
+		//System.out.println("balancing");
 		
 		final IntRect2D old_partition = partition.getLocalBounds();
 		final int old_pid = partition.getPID();
@@ -576,7 +549,6 @@ public class DSimState extends SimState
 		// Raj rewrite
 		for (Synchronizable field : fieldList)
 		{
-			//((HaloGrid2D) field).loc_disagree_all_points("bp1");
 
 			
 			ArrayList<Object> migratedAgents = new ArrayList<>();
@@ -1163,6 +1135,85 @@ public class DSimState extends SimState
 		throw new RuntimeException("setPartitionGlobals() should be implemented in subclass");
 	}
 	
+	//testing method: counts agents in each storage (not in halo) and sums them.  Should remain constant!
+	protected int countTotalAgents(Synchronizable field) {
+		
+	
+		int total = 0;
+
+		try {
+			int count = countLocal(field);
+			ArrayList<Integer> counts = MPIUtil.gather(partition, count, 0);
+		
+			for (Integer c: counts) {
+				total = total + c;
+			}
+		}
+		
+		catch (Exception e) {
+		}
+		
+		return total;
+
+	}
+	
+	protected int countLocal(Synchronizable field) {
+		
+		HaloGrid2D haloGrid2D = (HaloGrid2D) field;
+		int count = 0;
+
+		// ContinousStorage, do we need its own case anymore? We may be able to combine with else code.
+		if (haloGrid2D.getStorage() instanceof ContinuousStorage)
+		{
+
+			ContinuousStorage st = (ContinuousStorage) haloGrid2D.getStorage();
+			// for cell
+			for (int i = 0; i < st.storage.length; i++)
+			{
+				HashSet agents = new HashSet(((HashMap) st.storage[i]).values());
+
+				for (Object a : agents) {
+					Double2D loc = st.getObjectLocation((DObject) a);
+					
+					if (partition.getLocalBounds().contains(loc)) {
+						count = count + 1;
+					}
+
+				}
+			}
+		}
+		
+		else {
+			
+			GridStorage st = ((HaloGrid2D) field).getStorage();
+
+			// go by point here
+			for (Int2D p : st.getShape().getPointList())
+			{
+				
+				// check if the partition contains the point
+				if (partition.getLocalBounds().contains(p))
+				{
+
+					Serializable a_list = st.getAllObjects(p);
+
+					if (a_list != null)
+					{
+						count = count + ((ArrayList<Serializable>) a_list).size();
+					}
+					
+			
+			
+			
+				}
+			}
+		}
+		
+		return count;
+		
+	}
+	
+	/*
 	public static void loc_disagree(Int2D p, DHeatBug h, Partition p2, String s)
 	{
 		
@@ -1171,25 +1222,7 @@ public class DSimState extends SimState
 		int new_px = p.x;
 		int new_py = p.y;
 		
-		/*
-		if (new_px < 0) {
-			
-			new_px = new_px + 100;
-		}
-		
-		if (new_px >= 100) {
-			new_px = new_px - 100;
-		}
-		
-		if (new_py < 0) {
-			
-			new_py = new_py + 100;
-		}
-		
-		if (new_py >= 100) {
-			new_py = new_py - 100;
-		}
-		*/
+
 		
 		Int2D new_p = new Int2D(new_px, new_py);
 		//System.out.println(s+" "+h +" h_loc "+h_loc+" p "+ p );
@@ -1204,6 +1237,7 @@ public class DSimState extends SimState
 		}
 		
 	}
+    */
 	
 	
 
