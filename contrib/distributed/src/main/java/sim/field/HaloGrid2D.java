@@ -113,12 +113,12 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		// partition by aoi at each dimension
 		haloBounds = localBounds.resize(partition.getAOI());
 		
-		//localStorage.setOffSet(haloBounds.ul()); // moving local point calculation to GridStorage
+		//localStorage.setOffset(haloBounds.ul()); // moving local point calculation to GridStorage
 
 		
-		localStorage.reshape(haloBounds);
+		localStorage.setShape(haloBounds);
 		
-		localStorage.setOffSet(haloBounds.ul()); // moving local point calculation to GridStorage
+		localStorage.setOffset(haloBounds.ul()); // moving local point calculation to GridStorage
 
 
 

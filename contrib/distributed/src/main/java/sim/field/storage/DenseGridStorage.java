@@ -71,14 +71,14 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 				//local_p = toLocalPoint(p);
 
 				
-				objs[curr++] = stor[getFlatIdx(p)];
+				objs[curr++] = stor[getFlatIndex(p)];
 			}
 		}
 
 		return objs;
 	}
 
-	public int unpack(final MPIParam mp, final Serializable buf)
+	public void unpack(final MPIParam mp, final Serializable buf)
 	{
 		final ArrayList<T>[] stor = (ArrayList<T>[]) storage;
 		final ArrayList<T>[] objs = (ArrayList<T>[]) buf;
@@ -93,13 +93,13 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 
 				
 
-				stor[getFlatIdx(p)] = objs[curr++];
+				stor[getFlatIndex(p)] = objs[curr++];
 				
 				/*
-				stor[getFlatIdx(p)] = objs[curr];
+				stor[getFlatIndex(p)] = objs[curr];
 				
-				if (stor[getFlatIdx(p)] != null) {
-					for (T t : stor[getFlatIdx(p)]) {
+				if (stor[getFlatIndex(p)] != null) {
+					for (T t : stor[getFlatIndex(p)]) {
 						if (t instanceof Stoppable) {
 							((Stoppable)t).stop();
 						}
@@ -114,7 +114,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 			}
 		}
 
-		return curr;
+		//return curr;
 	}
 
 
@@ -127,7 +127,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 		
 		Int2D local_p = toLocalPoint((Int2D) p);
 		final ArrayList<T>[] array = storage;
-		final int idx = getFlatIdx(local_p);
+		final int idx = getFlatIndex(local_p);
 
 		if (array[idx] == null)
 			array[idx] = new ArrayList<T>();
@@ -147,7 +147,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 	public T getObject(NumberND p, long id)
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
-		ArrayList<T> ts = storage[getFlatIdx(local_p)];
+		ArrayList<T> ts = storage[getFlatIndex(local_p)];
 		if (ts != null)
 			{
 			for (T t : ts)
@@ -160,7 +160,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 	public ArrayList<T> getAllObjects(NumberND p)
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
-		return storage[getFlatIdx(local_p)];
+		return storage[getFlatIndex(local_p)];
 	}
 
 	//Does this need to be adapted to convert to local???
@@ -186,7 +186,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 		final ArrayList<T>[] array = storage;
-		final int idx = getFlatIdx(local_p);
+		final int idx = getFlatIndex(local_p);
 		boolean result = false;
 
 		if (array[idx] != null)
@@ -210,7 +210,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 		final ArrayList<T>[] array = storage;
-		final int idx = getFlatIdx(local_p);
+		final int idx = getFlatIndex(local_p);
 
 		if (array[idx] != null)
 		{

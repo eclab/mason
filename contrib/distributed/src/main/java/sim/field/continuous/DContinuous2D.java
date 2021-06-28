@@ -76,7 +76,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	/** Returns the local (including halo region) location object with the given id, if any, else null.*/
 	public Double2D getObjectLocationLocal(long id)
 		{
-		HashMap<Long, Double2D> map = storage.getStorageMap();
+		HashMap<Long, Double2D> map = storage.getLocations();
 		return map.get(id);
 		}
 
@@ -158,7 +158,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 	public void addLocal(Double2D p, T t) 
 		{
 //		System.out.println("agent: " + t);
-//		System.out.println("map: " + this.storage.getStorageMap());
+//		System.out.println("map: " + this.storage.getLocations());
 		
 		
 		if (!isLocal(p)) throwNotLocalException(p);	
@@ -219,7 +219,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			}
 
 		
-		HashMap<Long, Double2D> map = storage.getStorageMap();
+		HashMap<Long, Double2D> map = storage.getLocations();
 		map.put(t.ID(), p);
 		
 
@@ -498,7 +498,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
             System.out.println("agent loc from"+((DFlocker)agent).loc);
             System.out.println("agent to"+to);
 
-	    	System.out.println("map: " + this.getStorage().getStorageMap());
+	    	System.out.println("map: " + this.getStorage().getLocations());
 
 			System.out.println("moveAgent getHaloGrid: " + getHaloGrid());
 	    	System.out.println("moveAgent getHaloBounds: " + getHaloGrid().getHaloBounds());

@@ -98,7 +98,7 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
 			// load storage, add this to field!
             ContinuousStorage storage = (ContinuousStorage)(stateProxy.storage(proxyIndex));
             HashMap<Long, DObject>[] data = storage.storage;
-            HashMap<Long, Double2D> locations = storage.getStorageMap();
+            HashMap<Long, Double2D> locations = storage.getLocations();
 
 //            HashMap<Long, DObject>[] privateData = (HashMap<Long, DObject>[]) new Object[data.length];
 
@@ -120,7 +120,7 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
 //				}
 //			}
 
-            HashMap<Long, Double2D> map = storage.getStorageMap();
+            HashMap<Long, Double2D> map = storage.getLocations();
     		for (Entry<Long, Double2D> entry : map.entrySet())
     		{
     			Double2D loc = entry.getValue();

@@ -100,8 +100,8 @@ public class MPIUtil
 				ObjectOutputStream os = new ObjectOutputStream(out)) {
 			os.writeObject(obj);
 			os.flush();
-			/// SEAN QUESTION: If the try ALREADY closes the stream,
-			/// why do we need to flush it?
+
+			/// SEAN QUESTION: Why are we flushing rather than closing this stream?
 		}
 		catch (final IOException e)
 		{
@@ -599,6 +599,7 @@ public class MPIUtil
 	//// SEAN QUESTION: Why is this different from the others? Why do we not have
 	//// serialization?
 	//// Is this because we'd never use it?
+	////
 	//// SEAN CONCERN: This is horribly inefficient, we're boxing and unboxing vals.
 	//// Why not pass in
 	//// The value as a byte, or int, or float, etc. BTW, we don't need float and
@@ -721,6 +722,8 @@ public class MPIUtil
 	 */
 }
 
+/// SEAN NOTES: AutoCloseable doesn't appear to be used at all.  We can remove it?
+
 class ByteBufferOutputStream extends OutputStream implements AutoCloseable
 {
 	ByteBuffer buf;
@@ -756,6 +759,8 @@ class ByteBufferOutputStream extends OutputStream implements AutoCloseable
 		}
 	}
 }
+
+/// SEAN NOTES: AutoCloseable doesn't appear to be used at all.  We can remove it?
 
 class ByteBufferInputStream extends InputStream implements AutoCloseable
 {
