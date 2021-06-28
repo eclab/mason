@@ -3,15 +3,15 @@ package sim.app.dballs;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import sim.engine.DistinguishObject;
-import sim.engine.RemotePromise;
+import sim.engine.DistinguishedSteppable;
+import sim.engine.Promised;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
 import sim.field.network.*;
 import sim.util.Bag;
 import sim.util.Double2D;
 
-public class DBall extends DistinguishObject {
+public class DBall extends DistinguishedSteppable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -106,7 +106,7 @@ public class DBall extends DistinguishObject {
 					him = balls.getObjectLocationLocal(other);
 				} else {
 					try {
-						RemotePromise remoteNodeHim = allBalls.contactRemoteObj(other.id, other);
+						Promised remoteNodeHim = allBalls.contactRemoteObj(other.id, other);
 						if(remoteNodeHim.isReady()) { 
 							him = (Double2D) remoteNodeHim.get();
 						}

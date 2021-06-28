@@ -84,6 +84,10 @@ public class DSimState extends SimState
 	// be properly in sync
 	int balancerLevel;
 
+	// Queue of RemotePromise first is the promise, second is the data required, third is the author of the request
+	static ArrayList<Triplet<RemotePromise, Serializable, Serializable>> promises = new ArrayList<>();
+
+	
 	/**
 	 * Builds a new DSimState with the given random number SEED, the WIDTH and HEIGIHT of the entire model (not just the
 	 * partition), and the AREA OF INTEREST (AOI) for the halo field
@@ -243,6 +247,26 @@ public class DSimState extends SimState
 				throw new RuntimeException(e1);
 			}
 
+			// Check for RemotePromise to fill and fill them
+			// we need to do this before the synchronization I guess
+			if(withRegistry && !promises.isEmpty()) {				
+				//MPI.COMM_WORLD.barrier();
+				System.out.println("Promises are: " + promises.toString());
+				for(Triplet<RemotePromise, Serializable, Serializable> promisesToFill : promises) {
+					// Get the object inside the RemotePromise together with the required data
+					// Use the method of the remote interface to get the required information
+					// NOTE THAT the method needs to be implemented by the developer
+					// author + method tag + serializable data + promise
+					System.out.println("Filling the response!");
+					Distinguished author = (Distinguished) promisesToFill.c;
+					Serializable response = author.respondToRemote(); // argument data also + tag
+					promisesToFill.a.fulfill(response);
+				}
+				// clear the queue since all the promises have been fulfilled
+				promises.clear();
+				System.out.println("Promises queue cleared!");
+			}
+			
 			// Sync all the Remove and Add queues for RMI
 			syncRemoveAndAdd();
 			
@@ -1214,6 +1238,31 @@ public class DSimState extends SimState
 	}
 	
 	/*
+	 * Looks up for the object with name to get data
+	 * returns a RemotePromise that will be filled out after
+	 * 
+	 * @param name is the name of the required Remote DObject that has the data
+	 * @param data is the information that we want to get from the Remote DObject 
+	 * 
+	 * @return a RemotePromise that will be filled out
+	 */
+	public Promised contactRemoteObj(String name, Serializable data) throws RemoteException, NotBoundException {
+		Distinguished remoteObject = (Distinguished) this.getDRegistry().getObject(name);
+		Promised promiseUnfilled = remoteObject.contactFor(data);
+		return promiseUnfilled;
+	}
+	
+	/**
+	 * Add a RemotePromise to the queue.
+	 * The promise will be filled then
+	 */
+	public static void addRemotePromise(RemotePromise promise, Serializable author, Serializable data) {
+		promises.add(new Triplet<RemotePromise, Serializable, Serializable>(promise, author, data));
+		// here the promise needs the information about the object that has the data
+		// and so info about the required data and the object are needed
+	}
+	
+	/*
 	public static void loc_disagree(Int2D p, DHeatBug h, Partition p2, String s)
 	{
 		
@@ -1241,4 +1290,18 @@ public class DSimState extends SimState
 	
 	
 
+}
+
+class Triplet<A, B, C> implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	public final A a;
+	public final B b;
+	public final C c;
+
+	public Triplet(A a, B b, C c) {
+		this.a = a;
+		this.b = b;
+		this.c = c;
+	}
 }

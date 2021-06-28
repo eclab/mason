@@ -2,13 +2,13 @@ package sim.engine;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import sim.engine.rmi.RemotePromise;
 
-import sim.engine.rmi.RemotePromiseImpl;
 
-public abstract class DistinguishObject extends DSteppable implements DistinguishInterface {
+public abstract class DistinguishedSteppable extends DSteppable implements Distinguished {
 	private static final long serialVersionUID = 1;
 	
-	public DistinguishObject() throws RemoteException {
+	public DistinguishedSteppable() throws RemoteException {
 		super();
 	}
 
@@ -20,11 +20,11 @@ public abstract class DistinguishObject extends DSteppable implements Distinguis
 	 * 
 	 * @returns promiseUnfilled promise that will be filled out
 	 */
-	public RemotePromise contactFor(Serializable data) throws RemoteException {
+	public Promised contactFor(Serializable data) throws RemoteException {
 		// create a RemotePromise unfilled with the required data and myself as author
 		// DObject will fulfill this promise in future
 		// separate remotepromise / data request / method tag maybe triplet
-		RemotePromiseImpl promise = new RemotePromiseImpl(); 
+		RemotePromise promise = new RemotePromise(); 
 		DSimState.addRemotePromise(promise, data, this);
 		return promise;
 
@@ -32,7 +32,4 @@ public abstract class DistinguishObject extends DSteppable implements Distinguis
 
 	public abstract Serializable respondToRemote() throws RemoteException;
 
-	@Override
-	public abstract void step(SimState state);
-	
 }

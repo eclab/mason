@@ -17,7 +17,7 @@ import sim.field.continuous.DContinuous2D;
 import sim.util.*;
 import java.util.*;
 
-public class DFlockerRemote extends DistinguishObject {
+public class DFlockerRemote extends DistinguishedSteppable {
 
 	private static final long serialVersionUID = 1;
 	public Double2D loc;
@@ -177,7 +177,7 @@ public class DFlockerRemote extends DistinguishObject {
 		
 		try {
 //			if(state.schedule.isRemote(agent)) // do remote
-			RemotePromise remoteData = dFlockersRemote.contactRemoteObj("cafebabe", new String("location"));
+			Promised remoteData = dFlockersRemote.contactRemoteObj("cafebabe", new String("location"));
 			if(remoteData.isReady()) { 
 				System.out.println("I got this data from cafebabe: \n" + remoteData.get());
 			}
@@ -224,7 +224,7 @@ public class DFlockerRemote extends DistinguishObject {
 	}
 
 	public Serializable respondToRemote() {
-		return "My location is" + loc + "]";
+		return "My location is" + this.loc + "]";
 	}
 	
 	public String toString() {

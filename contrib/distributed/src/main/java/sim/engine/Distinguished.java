@@ -10,14 +10,12 @@ import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import sim.engine.rmi.RemotePromiseImpl;
-
 /*
  * Interface that should be implemented by a class that needs to be a remote (Distinguish) Object
  * The modeler needs to implement the method of the class based on needs
  */
 
-public interface DistinguishInterface extends Remote {
+public interface Distinguished extends Remote {
 	
 	/*
 	 * The method returns the data required to fill out the RemotePromise
@@ -29,5 +27,5 @@ public interface DistinguishInterface extends Remote {
 	 * Creates an unfilled RemotePromise that contains the request of some processor.
 	 * Puts the RemotePromise in the queue of its processor.
 	 */
-	public RemotePromise contactFor(Serializable data) throws RemoteException;
+	public Promised contactFor(Serializable data) throws RemoteException;
 }
