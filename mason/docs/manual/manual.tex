@@ -13859,16 +13859,40 @@ Finally at the bottom you can start the optimization process by pressing the {\b
 
 Distributed MASON allows you to create large MASON models which run over a potentially very large number of machines in compute farms or cloud computing services.  To do this will require a few modifications to the classes you use in your model and some tweaking on your part, but we have tried hard to keep this to a minimum.
 
-To use Distributed MASON, you'll need to understand how to use or set up cloud computing services or your own servers (we'll show how to get running locally on your laptop, and also with Amazon Web Services).  It's also helpful to understand some basic concepts in distributed computing.  Let's go over those now.
+To use Distributed MASON, you'll need to understand how to use or set up cloud computing services or to run processes on your own servers (we'll show how to get running locally on your laptop, and also with Amazon Web Services).  It's also helpful to understand some basic concepts in distributed computing.  Let's go over those now.
 
+\section{Basic Concepts}
+Distributed MASON is run over some \(N\) {\bf processors} (computers) which are all connected over a network.  Distributed MASON cuts up your model field (grid, continuous) into rectangular pieces, called {\bf partitions}, and each processor is in charge of one partition.  The sizes and locations of these partitions may change over time.  Distributed MASON ties the processors together using two well known distributed computing facilities: a Java version of the venerable {\bf Message Passing Interface (MPI)}, and Java's own {\bf Remote Method Invocation (RMI)} API.
 
-\paragraph{MPI and RMI} Distributed MASON is run over some \(N\) {\bf processors} (computers) which are all connected over a network.  These processors use two well known distributed computing facilities: a Java version of the venerable {\bf Message Passing Interface (MPI)} and Java's {\bf Remote Method Invocation (RMI)} API.  MPI is synchronous: it keeps all your processors working in sync in an elaborate dance.  RMI is asynchronous: it allows arbitrary processors to communicate with arbitrary processors as necessary.  We use MPI whenever possible, and fall back to RMI for a variety of less common functions.
+\paragraph{MPI} The Message Passing Interface (MPI) is a classic library and protocol to hook together large numbers of processors in supercomputers, compute farms, and so on.  The general design of MPI is to run some \(N\) processes on various nodes in your facility, then define a  {\it neighborhood topology} among them: the topology simply says which processes can talk to which other processes.  You can use MPI to tell the system that all processors should send a message to each of their neighbors simultaneously.  Or you can use it to tell the system that some specific node will send some data to every other node simultaneously.  And so on.  MPI is {\it synchronous}: it keeps all your processors working in sync in an elaborate dance.  To send a message from node A to all other nodes (for example) every single processor simultaneously calls the same MPI method (node A passes its data to this method, the other nodes pass in null), and then when MPI has finished its work, every processor gets the data returned by this method.
 
-In MPI, your \(N\) nodes are organized in some kind of lattice or other structure, such that each of them has \(M\) neighbors.  MASON's lattice is simple: the nodes are laid out in a grid and so each has 4 neighbors (north/south/east/west).  The grid is toroidal\,---\,for example, each far-west node has as its westerly neighbor a far-east node.  As you likely have a 2D spatial environment in your model, MASON will take your model and cut it up into a grid, handing one grid region to each of the nodes.  The boundaries of the region that a node controls are not fixed: if a certain node is overwhelmed with work, its region (and thus some of its agents) may be shrunk and part of it given to other nodes, and so ultimately the grid will be distorted, with some nodes in control of large spaces and other nodes in control of small, but congested areas.  This process is known as {\bf load balancing}, and it is important in order to keep things efficient.  Internally we manage this using a {\bf QuadTree} structure.
+Distributed MASON uses MPI to trade notes between neighboring nodes, to move agents to neighboring nodes, and to do load balancing.    You will not need to know anything about how MPI works to use Distributed MASON: but you should know that it's there, lurking underneath.
+
+\paragraph{Neighborhoods and Load Balancing} Distributed MASON's MPI neighborhood topology is simple: two nodes are neighbors of each other if they border each other in Distributed MASON's model  space. As you likely have a 2D spatial environment in your model, Distributed MASON will start by taking your model and cut it up into a grid, handing one grid region to each of the nodes.   The grid can be toroidal\,---\,for example, each far-west node has as its westerly neighbor a far-east node.   The boundaries of the region that a node controls are not fixed: if a certain node is overwhelmed with work, its region (and thus some of its agents) may be shrunk and part of it given to other nodes, and so ultimately the grid will be distorted, with some nodes in control of large spaces and other nodes in control of small, but congested areas.  This process is known as {\bf load balancing}, and it is important in order to keep things efficient.  Internally we manage this using a {\bf QuadTree} structure.  Load balancing is handled using MPI.
 
 \paragraph{Shared and Halo Areas} It's very common for nodes to need to know about the goings on in other nodes: for example, if you have an agent in node A which lies on the boundary between nodes A and B, its actions may depend on values (heat? rainfall?) that happen to lie in B.  To get this information, A must contact B, which is very, very, {\it very} costly because it involves communication over your network.  To minimize this, Distributed MASON sets things up so that A has stored a cache of information it knows regarding a thin region of B near to its border.  Indeed A has caches of all its neighbors.  The combined regions in A which it has cached from its neighbors are known as A's {\bf Halo Region}.
 
-Obviously if B modifies information in these regions, Distributed MASON must notify B's neighbors so they can update their caches.  Thus you'd like this incursion into B's territory to be as small as possible: but if you have a model where agents must access information in a wide neighborhood around them, so be it.  The region around an agent which it must know about in order to do its work is known as the agent's {\bf Area of Interest (AOI)} and it will determine the size of the halo regions. 
+Obviously if B modifies information in these regions, Distributed MASON must notify B's neighbors so they can update their caches.  Thus you'd like this incursion into B's territory to be as small as possible: but if you have a model where agents must access information in a wide neighborhood around them, so be it.  The region around an agent which it must know about in order to do its work is known as the agent's {\bf Area of Interest (AOI)} and it will determine the size of the halo regions.   Each timestep the neighboring regions use MPI to update their caches regarding one another in a process known as {\bf halo exchange}.
+
+\paragraph{RMI}  MPI is reasonably efficient, but it is limited in that communication occurs between neighboring nodes.   If you had an agent which needed information about a region that happened to be in a neighboring node, or which migrated across the border between two nodes, then MPI is fine.  But what if the agent needed information about an object that happened to be in a distant node?  MPI can't handle this situation easily.  For this we use Java's Remote Method Invocation (or RMI) protocol.  
+
+RMI is {\it asynchronous}: it allows arbitrary processors to communicate with arbitrary processors whenever they see fit.  It's not necessary that all the processors engage in a simultaneous call to some method.  However a processor can't just call another processor willy nilly, because the other processor is likely to be currently engaged in running its portion of the model.  Thus when processor A contacts processor B about something, it usually goes like this: (1) processor A places a request in processor B's mailbox (2) when the processors have all finished doing their model step, processor B goes through its current mailbox and handles all the requests, sending information back to processor A if needed.  This means that requests for remote information, etc., can often take a model step before they're finished.  Distributed MASON handles this by responding to the Modeler's request with a {\bf Promise}, a special object which is {\it fulfilled} with the requested data at some point in the future.
+
+RMI is also fairly slow.  Thus we use MPI whenever possible, and fall back to RMI for a variety of less common functions.  Again, you will not need to know anything about how RMI works to use Distributed MASON: but you should know that it's being used internally.
+
+While you don't need to know anything about RMI or MPI, it's helpful to know (for efficiency's sake) whether an action you're performing will call on their (slow) services, or is entirely {\bf local} to your processor's region and thus done at full speed.  Distributed MASON provides methods to help you determine locality if you need it.
+
+\paragraph{Agent Migration} When an object is moved a short distance, it may eventually cross the boundary between two processors.  In this case the object will be {\bf migrated} from one processor to the other.  If the object is (as is often the case) an {\it agent}, then it needs to not only be moved from one processor to the other but also rescheduled in the schedule of the new processor.  When the processors are neighbors, this is handled by MPI.  When object or agent is for some reason being moved to a region controlled by a {\it distant} processor, this is handled by RMI.
+
+\paragraph{Distinguished and Global Objects} Every object and agent in Distributed MASON has a unique tag (a long).   Sometimes it's necessary to contact a distant object to inform it of something: but you may not know where that object is located.  For example, an agent may need to inform its boss of some interesting fact, but the boss wanders around the model and the agent (and modeler) has no idea where it is.  How can it inform the boss?  In Distributed MASON this is done by registering the boss as a {\bf distinguished agent}.  This uses RMI to track the location of the boss at all times, and so the agent can look up his boss in the distinguished agent registry (by his unique tag), then send it a special message (returning a Promise).  The distinguished agent facility isn't fast, so you should minimize the number of distinguished agents if possible.
+
+It is also often the case that many agents need to read or write some global parameter or object: for example all agents might need to know the current weather. Distributed MASON has a separate facility for querying and changing {\bf global objects}. This again isn't particularly fast as it's a centralized mechanism.
+
+\paragraph{Visualization and Statistics} Distributed MASON provides a facility for visualizing all or a spatial portion of your model.  This is done by creating a separate process (perhaps on your laptop) with special {\bf proxy} objects which pretend to be your model's SimState and various fields.  Then you just attach standard MASON visualization to these proxy objects in lieu of the actual SimState and fields.  Every \(N\) model steps, the proxy objects go out to the distributed model and collect visualization data, and then the visualizers visualize it as if the model was actually running on your laptop.  No one's the wiser!  You can use this to easily visualize, but not (at present) inspect or modify, agents and objects in the model. 
+
+How about statistics or debugging?  If you had access to the stdout and stderr of each processor, there's no reason you couldn't just write stuff out with \code{System.err.println(...)} etc.  But Distributed MASON also provides to facilities for you to send {\bf statistics} or {\bf debugging} information to a remote visualization laptop from all the distributed processors.
+
+\paragraph{Race Conditions} One critical item to keep in mind is that a distributed model is synchronous but only at model step boundaries: if an agent Alice in the partition of processor A wants to access data in a partition belonging to processor B, then what Alice receives will be accurate only up to the last timestep.  If an agent Bob on processor B is currently modifying that data, Alice may not see these changes until the {\it next} timestep.  Exact results are only promised if Alice is reading data in her own partition A (this is called {\bf local} data).  Similar gotchas (race conditions) occur if two processors try to write to a certain spot in a partition controlled by a third processor.  This is not a Distributed MASON thing: it is simply the nature of a distributed model.  This is quite different from the guarantees made in standard MASON, and you will have to think about how it affects your model design.
 
 \paragraph{What's Easy and What's Not}  Computational nodes in Distributed MASON are organized in a 2D space in order to match the 2D spaces common in a great many agent-based models.  In models like these, agents typically only communicate with other agents near to them, or gather or change information in the environment near to them.  It's well understood how to use this organization to do distributed computing relatively efficiently.  
 
@@ -13894,15 +13918,11 @@ Distributed MASON does not at present have facilities for:
 \item Multiple fields with different lengths or widths (they must be the same size)
 \end{itemize}
 
-Distributed MASON at present does not provide any visualization at all: but that will change later.
-
-\section{Setting up Distributed MASON}
+\section{Setting up and Running Distributed MASON Applications}
 
 To build Distributed MASON for the first time, you'll need to set up a number of items.   We'll assume in this documentation that you have a Unix-like system (Linux, MacOS).
 
-\subsection{Install the Java 8 SDK (JDK) or Later}
-
-If you're running MASON already on a given machine, you had to do this step anyway.
+First, you'll need to install the {\bf Java 8 SDK (JDK)} or a later version. If you're running MASON already on a given machine, you had to do this step anyway.
 
 \subsection{Install OpenMPI with Java Bindings}
 
@@ -13916,12 +13936,14 @@ If you're on Homebrew for the Mac, installation is pretty straightforward, but y
 	\item Save the formula file
 	\item Next we need to install from source so Java is built from the formula.\\Do this: \lstinline[style=Bash]{brew install --build-from-source open-mpi}
 	\item You may need to force the links to be installed.\\Do this: \lstinline[style=Bash]{brew link --overwrite open-mpi}
-	\item Last, you need the freshly-built {\tt mpi.jar} file.  Copy the file {\tt /usr/local/lib/mpi.jar} (also known as {\tt /usr/local/Cellar/open-mpi/4.0.5/lib/mpi.jar}) to some location and put it in your CLASSPATH.   An obvious place would be to put it into {\tt /Library/Java/Extensions/} which is already in the system-level CLASSPATH.
+	\item Last, you need the {\tt mpi.jar} file just freshly built by Homebrew.  Copy the file {\tt /usr/local/lib/mpi.jar} (also known as {\tt /usr/local/Cellar/open-mpi/4.0.5/lib/mpi.jar}) to some location and put it in your CLASSPATH.   An obvious place would be to put it into {\tt /Library/Java/Extensions/} which is already in the system-level CLASSPATH.
 \end{enumerate}
 
 \paragraph{Note} If you have previously built and installed openmpi from scratch, you may not be able to reinstall from homebrew.  This is because openmpi installed from scratch is installed as root in various places in {\sf /usr/local/}, so homebrew (which does not install as root) cannot overwrite them.  Homebrew will let you know which files it cannot move; you'll need to go into those subdirectories and either remove the old ones or (more easily) change everything to be owned by yourself rather than root (as I might do with {\sf sudo chown -R sean /usr/local/lib/}).  Make sure you know what you're doing.
 
 \subsubsection{Building from Scratch}
+
+If you're on Linux, or for some reason don't want to or cannot install from Homebrew, it's time to install from scratch instead!
 
 \begin{enumerate}
 
@@ -13966,8 +13988,7 @@ If you're on Homebrew for the Mac, installation is pretty straightforward, but y
             --with-jdk-dir=/lib/jvm/java-8-openjdk  \
             FC=/usr/bin/gfortran \
             LDFLAGS="${LDFLAGS} -Wl,-z,noexecstack"
-            
-        \end{verbatim}
+	\end{verbatim}
         }
         
         \item Read these if you wish to choose your own configuration command:
@@ -14073,9 +14094,7 @@ If you need to update the \$CLASSPATH because of an update to the directory, do 
     \end{enumerate}
 \end{enumerate}
 
-\section{Running Applications}
-
-\subsection{Available Built-In Demos}
+\subsection{Running Applications Locally}
 Currently, there are two demos you can run: 
 
 \begin{itemize}
@@ -14085,9 +14104,6 @@ Currently, there are two demos you can run:
 
 They are located in sim/app/dflockers and sim/app/dheatbugs respectively (from the distributed/ directory).  {\bf \color{red} We have an additional GeoMASON demo (CampusWorld) but don't have it documented here at present.  Just let us know if you're interested.}
 
-
-
-\subsection{Running Applications Locally}
 \lstinline[style=Bash]{mpirun -np n java application} \\
 E.g.: \lstinline[style=Bash]{mpirun -np 4 java sim.app.dflockers.DFlockers}
 
@@ -14103,7 +14119,7 @@ E.g.: \lstinline[style=Bash]{mpirun --oversubscribe -np 4 java -jar Heatbugs-R.j
 \paragraph{Note: The value of ``n'' must be a multiple of 4} The reason for this is due to MASON's partitioning scheme (the way that the platform divides tasking amongst machines), which depends on the QuadTree data structure.  {\bf \color{red} We're working on loosening this constraint.}
 
 
-\subsection{Running Applications Over AWS}
+\section{Setting up and Running Applications Over AWS}
 
 If you wish to take advantage of cloud computing, we have instructions for setup over Amazon Web Services. Of course, you can skip any step of which you have already done and go on to the next part. The final two steps are the only ones strictly necessary if the appropriate setup is complete.
 
@@ -14519,7 +14535,7 @@ We have tried to shield you from knowing as much of the distributed system's fun
 
 \begin{figure}[t]
 \begin{center}\includegraphics[width=2.5in]{distributed/pids}\end{center}
-\caption{Field divided up into a 4\(\times\)4 grid of 16 Distributed MASON processors.  Processor 0 is the ``Root Processor'', but do not assume that it is the top left processor.}
+\caption{Field divided up into a 4\(\times\)4 grid of 16 Distributed MASON processors.  Processor 0 is the ``Root Processor'', but do not assume that it is the top left processor.  As load balancing progresses, these clean grid boundaries will no longer be accurate, but this is what it might look like at the beginning of your run.}
 \label{DistributedPID}
 \end{figure}
 
@@ -14689,7 +14705,7 @@ Returns the stored Stoppable.
 Returns true if the agent is stopped (it Stoppable is null).
 \end{methods}
 
-Your agent can subclass from DObject and implement the Stopping interface itself, or it can simply subclass from a convenience class called \class{sim.engine.DSteppable} which handles all of this for you.  That's what I would do.
+\paragraph{The DSteppable class} Your agent can subclass from DObject and implement the Stopping interface itself, or it can simply subclass from a convenience class called \class{sim.engine.DSteppable} which handles all of this for you.  That's what I would do.
 
 
 \subsection{Initialization}  In ordinary MASON, you initialize your model\,---\,set up various global variables, initialize the fields, load agents into the schedule, and so on\,---\, in the \method{start()} method.  But in Distributed MASON, these tasks must be done, often in concert, by a number of processors in parallel.  This can be somewhat complex to do.
@@ -14801,7 +14817,7 @@ DoubleGrid2D & \Class{sim.util.DDoubleGrid2D}\\
 DenseGrid2D & \Class{sim.util.DDenseGrid2D}\\
 Continuous2D& \Class{sim.util.DContinuous2D}\\
 SparseGrid2D& No equivalent. Instead, use \Class{sim.util.DDenseGrid2D}\\
-Network&No equivalent for now.
+Network&No equivalent for now.  We're working on it.
 \end{tabular}%
 \end{center}
 
@@ -15164,8 +15180,6 @@ Returns only those neighbors within, or (if {\it inclusive} is true) at the give
 \end{methods}
 
 
-
-
 \section{Visualization and Statistics}
 
 Though Distributed MASON is running on remote distributed machines, you can still visualize it and gather statistics from it.  This is done by running a special version of MASON on (say) your laptop, and connecting that special version to the root processor (PID 0) in the distributed collection.  From there, you can transfer some or all of the current distributed MASON model and visualize it as if it were a single MASON model on your laptop.  You can also access a streams of statistics information from all the processors, and output the results as you see fit.
@@ -15249,6 +15263,149 @@ Additionally, the Play/Pause/Stop buttons do not at present {\bf not control the
 Do not expect inspection to work: each time a HeatBug is reloaded from the partition, it's a copy of a {\it different HeatBug}.  Perhaps in the future we will be able to get this to work (sort of), but not now.  Similarly, don't expect much charting to work at present.
 
 \section{Underneath}
+
+\subsection{Grid Storage and Halo Grids}
+
+Each grid and continuous field object, in each partition, contains two objects internally: a {\bf Halo Grid} and a {\bf Storage Object}.  The storage object holds all local storage for the partition (including the halo boundary).  The halo grid handles all intercommunication between field objects in different partitions.  
+
+\subsubsection{Grid Storage}
+
+Each grid, on each partition, stores its local and halo data in a grid storage object, a subclass of \class{sim.field.storage.GridStorage}.  This object holds the {\it shape} (an IntRect2D) of the data, which is the rectangular region of the partition in this grid; plus the {\it offset}, which is the position of the top-left corner of the region in the world coordinates, and a {\it data type} (an mpi.Datatype), defining what kind of data is being held for MPI purposes.  Each subclass also stores its data packed into one-dimensional array.  The Continuous storage includes an additional hashtable to specify real-valued locations of objects.
+
+The main purpose of the storage objects is to make it easy for their parent field objects to access local data, while simultaneously make it easy for data to be packed and unpacked, moved, set, and queried remotely by other partitions.
+
+Grid storage objects store their data with a {\it local} coordinate system starting at \(\langle 0,0\rangle\).  This is different from the {\it global} coordinate system of the entire distributed model.  To convert from one to the other, methods are provided below.
+
+\begin{methods}{\class{sim.field.storage.GridStorage} Constructor}
+\mthd{public GridStorage(Int2D Shape)}
+Creates a GridStorage Object with the given shape.
+\end{methods}
+
+\begin{methods}{\class{sim.field.storage.GridStorage}}
+\mthd{public mpi.Datatype getMPIBaseType()}
+Returns the base MPI datatype of this object.  For object grids and continuous, this is MPI.BYTE.  For IntGridStorage it's MPI.INT.  For DoubleGridStorage it's MPI.DOUBLE.
+\mthd{public IntRect2D getShape()}
+Returns the rectangular bounds of this grid object.
+\mthd{public void setShape(IntRect2D newShape)}
+Reshapes the GridStorage to reflect the given new shape, and reloads (clears) it.
+\mthd{public Int2D getOffset()}
+Returns the offset of the grid storage.
+\mthd{public void setOffset(Int2D newShape)}
+Sets the offset of the grid storage.
+\mthd{public String toString()}
+Returns a string description of the storage object.
+\mthd{public Serializable pack(sim.util.MPIParam mp) throws MPIException}
+Packs the portion of the storage specified by the MPIParam into a Serializable object for MPI to transport, and returns it.
+\mthd{public void unpack(sim.util.MPIParam mp, Serializable buf) throws MPIException}
+Unpacks the portion of the storage specified by the MPIParam from a Serializable object transported by MPI, and updates the grid storage to reflect changes in that portion.
+\mthd{public int getFlatIndex(Int2D p)}
+Returns the index of the (local) point p in the internal storage array.
+\mthd{public int getFlatIndex(int x, int y)}
+Returns the index of the (local) point \(\langle x, y\rangle\) in the internal storage array.
+\mthd{public int getFlatIndex(Int2D p, int wrtHeight)}
+Returns what the index of the (local) point p would be in the storage array if it had a Shape with a height of {\it wrtHeight}.
+\mthd{public Int2D toLocalPoint(Int2D p)}
+Converts the given global point to a local point.
+\mthd{public Int2D toGlobalPoint(Int2D p)}
+Converts the given local point to a global point.
+\end{methods}
+
+Grids query and change data in their storage objects using a unified API used by the system to fulfill remote requests, but because various grids are different kinds of data types, what each method does varies slightly from storage object to storage object.  For IntGridStorage, \(\langle\)T\(\rangle\) is an Integer.  For DoubleGridStorage, \(\langle\)T\(\rangle\) is a Double.  For ObjectGridStorage, DenseGridStorage, and ContinuousStorage, \(\langle\)T\(\rangle\) is a subclass of DObject.  
+
+\begin{methods}{\class{sim.field.storage.GridStorage\(\langle\)T\(\rangle\) API}}
+\mthd{abstract void addObject(NumberND p, T obj)}
+{\it IntGridStorage, ObjectGridStorage, DoubleGridStorage:} sets the given (Int2D) global location to the provided object.   {\it DenseGridStorage:} adds the provided object to the given (Int2D) global location (there can be more than one object there).   {\it ContinuousStorage:} adds the provided object to the given (Double2D or Int2D) global location, removing it from any other local global location.
+\mthd{abstract T getObject(NumberND p, long id)}
+{\it IntGridStorage, ObjectGridStorage, DoubleGridStorage:} returns the object at the given  (Int2D) global location (id is ignored).   {\it DenseGridStorage:} returns the object of the given ID if it is located at the given  (Int2D) global location.   {\it ContinuousStorage:} returns the object of the given ID if it exists locally.
+\mthd{abstract ArrayList\(\langle\)T\(\rangle\) getAllObjects(NumberND p)}
+{\it IntGridStorage, ObjectGridStorage, DoubleGridStorage:} returns the object at the given (Int2D) global location.   {\it DenseGridStorage, ContinuousStorage:} returns an ArrayList of all objects located at the given (Int2D or (for ContinuousStorage) Double2D) global location.
+\mthd{abstract boolean removeObject(NumberND p, long id)}
+{\it IntGridStorage, ObjectGridStorage, DoubleGridStorage:} sets the value at the given (Int2D) global location to 0 or null, returning true.   {\it DenseGridStorage:} removes the given object from the given (Int2D) global location, returning whether the object was located there.{\it ContinuousStorage:} removes the given object if it exists locally, returning whether an object was removed.
+\mthd{abstract void clear(NumberND p)}
+{\it IntGridStorage, ObjectGridStorage, DoubleGridStorage:} sets the value at the given (Int2D) global location to 0 or null, returning true.   {\it DenseGridStorage, ContinuousStorage:} removes all objects from the given (Int2D or (for ContinuousStorage) Double2D) global location.
+\mthd{public abstract void clear()}
+{\it IntGridStorage, ObjectGridStorage, DoubleGridStorage:} sets the value of all locations to 0 or null.   {\it DenseGridStorage, ContinuousStorage:} removes all objects.
+\end{methods}
+
+\paragraph{IntGridStorage, DoubleGridStorage, and ObjectGridStorage}  These storage objects all contain a single array called \variable{storage} which holds the elements.  Each also has similar and straightforward utility methods:
+
+\begin{methods}{\class{sim.field.storage.IntGridStorage}}
+\mthd{public int get(Int2D p)}
+Returns the value at the given local point.
+\mthd{public int get(int x, int y)}
+Returns the value at the given local point.
+\mthd{public void set(Int2D p, int val)}
+Segs the value at the given local point to val.
+\mthd{public void set(int x, int y, int val)}
+Segs the value at the given local point to val.
+\end{methods}
+
+\begin{methods}{\class{sim.field.storage.DoubleGridStorage}}
+\mthd{public double get(Int2D p)}
+Returns the value at the given local point.
+\mthd{public double get(int x, int y)}
+Returns the value at the given local point.
+\mthd{public void set(Int2D p, double val)}
+Segs the value at the given local point to val.
+\mthd{public void set(int x, int y, double val)}
+Segs the value at the given local point to val.
+\end{methods}
+
+\begin{methods}{\class{sim.field.storage.ObjectGridStorage\(\langle\)T\(\rangle\)}}
+\mthd{public T get(Int2D p)}
+Returns the value at the given local point.
+\mthd{public T get(int x, int y)}
+Returns the value at the given local point.
+\mthd{public void set(Int2D p, T val)}
+Segs the value at the given local point to val.
+\mthd{public void set(int x, int y, T val)}
+Segs the value at the given local point to val.
+\end{methods}
+
+\paragraph{DenseGridStorage}  This storage object must be able to hold multiple objects, and indeed multiple instances of the same object, in the same location.  To do this, it has a single array called \variable{storage} but which holds ArrayLists of the given type \(\langle\)T\(\rangle\), or null slots.  When an object is added to the array, if an ArrayList does not yet exist at that location, it is created.  If the last object is removed from an ArrayList, the ArrayList is deleted and replaced with \code{null} according to the setting of the \variable{removeEmptyBags} variable (by default \code{true}).
+
+\paragraph{ContinuousStorage}  This storage object differs from the others.  It stores objects in a discretized grid, but also associates them with real-valued locations.  The grid is managed with an array of HashMaps:
+
+\java{public HashMap\(\langle\)Long, T\(\rangle\)[] storage;}
+
+This is much like the storage array in DenseGridStorage, but instead of ArrayLists, HashMaps are used to map object IDs to actual objects.  You can compute the location of the object in the storage with the \method{discretize(...)} method.  If a HashMap doesn't exist when an object is added, then it is created.  And if a HashMap is depleted when objects are removed, it is deleted and replaced with \code{null} according to the setting of the \variable{removeEmptyBags} variable (by default \code{true}).
+
+Another HashMap maps object IDs to the actual (global) real-valued location of the objects:
+
+\java{public HashMap\(\langle\)Long, Double2D\(\rangle\) locations;}
+
+\begin{methods}{\class{sim.field.storage.ContinuousStorage} Constructor}
+\mthd{public ContinuousStorage(Int2D Shape, int discretization)}
+Creates a ContinuousStorage Object with the given shape and grid discretization
+\end{methods}
+
+\begin{methods}{\class{sim.field.storage.ContinuousStorage\(\langle\)T\(\rangle\)}}
+\mthd{public HashMap\(\langle\)Long, Double2D\(\rangle\) getLocations()}
+Returns the locations map.
+\mthd{public int getDiscretization()}
+Returns the grid discretization.
+\mthd{public Int2D discretize(Double2D p)}
+Converts the given (global) point into the local point of the corresponding storage grid cell.  Does not check to see if the global point is actually within the partition's boundaries.
+\mthd{public IntRect2D getCellBounds(int index)}
+Returns the bounds of the given grid cell.
+\mthd{public void setCell(Double2D p, HashMap\(\langle\)Long, T\(\rangle\) cell)}
+Sets the cell corresponding to the given (global) point to the given HashMap.
+\mthd{public HashMap\(\langle\)Long, T\(\rangle\) getCell(Double2D p)}
+Returns the HashMap at the cell corresponding to the given (global) point.
+\mthd{public HashMap\(\langle\)Long, T\(\rangle\) getCell(NumberND p)}
+Returns the HashMap at the cell corresponding to the given (global) point.
+\mthd{public Double2D toLocalPoint(Double2D p)}
+Converts the given global point to a local point. 
+\mthd{public Double2D toLocalPoint(Double2D p)}
+Converts the given global point to a local point. 
+\mthd{public Double2D getObjectLocation(T obj)}
+Returns the real-valued (global) location of the given object, else null.
+\mthd{public Double2D getObjectLocation(long id)}
+Returns the real-valued (global) location of the object with the given ID, else null.
+\end{methods}
+
+
+
 \subsection{Halo Grids}
 
 \begin{methods}{\class{sim.field.HaloGrid2D} Halo Exchange}
