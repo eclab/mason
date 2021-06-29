@@ -46,7 +46,7 @@ public class DIntGrid2D extends DAbstractGrid2D
 	public int getLocal(Int2D p) 
 		{
 		if (!isHalo(p)) throwNotLocalException(p);
-		return storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))];
+		return storage.storage[storage.getFlatIndex(storage.toLocalPoint(p))];
 		}
 
 	/** Returns the data associated with the given point.  This point
@@ -54,7 +54,7 @@ public class DIntGrid2D extends DAbstractGrid2D
 	public void setLocal(Int2D p, int t) 
 		{
 		if (!isLocal(p)) throwNotLocalException(p);
-		storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))] = t;
+		storage.storage[storage.getFlatIndex(storage.toLocalPoint(p))] = t;
 		}
 	
 	public HaloGrid2D getHaloGrid()
@@ -68,7 +68,7 @@ public class DIntGrid2D extends DAbstractGrid2D
 	public Promised get(Int2D p) 
 		{
 		if (isHalo(p))
-			return new Promise(storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))]);
+			return new Promise(storage.storage[storage.getFlatIndex(storage.toLocalPoint(p))]);
 		else return halo.getFromRemote(p);
 		}
 
@@ -77,7 +77,7 @@ public class DIntGrid2D extends DAbstractGrid2D
 	public void set(Int2D p, int val) 
 		{
 		if (isLocal(p))
-			storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))] = val;
+			storage.storage[storage.getFlatIndex(storage.toLocalPoint(p))] = val;
 		else
 			halo.addToRemote(p, val);
 		}

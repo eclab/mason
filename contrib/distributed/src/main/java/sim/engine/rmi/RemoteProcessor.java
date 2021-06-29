@@ -16,11 +16,11 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	// public class RemoteProcessor implements VisualizationProcessor {
 	private static final long serialVersionUID = 1L;
 
-	final DSimState dSimState;
-	private final ReentrantLock lock = new ReentrantLock(true); // Fair lock
+	DSimState dSimState;
+	ReentrantLock lock = new ReentrantLock(true); // Fair lock
 	public static final String NAME_PREFIX = "processorPId: ";
 	public final String processorName;
-	private static final ArrayList<VisualizationProcessor> processorCache = new ArrayList<>();
+	static ArrayList<VisualizationProcessor> processorCache = new ArrayList<>();
 
 	/**
 	 * Creates a processor and registers it to the RMI Registry
@@ -35,7 +35,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 		super();
 
 		this.dSimState = dSimState;
-		final int pid = DSimState.getPID();
+		int pid = DSimState.getPID();
 		processorName = RemoteProcessor.getProcessorName(pid);
 
 		try
@@ -100,7 +100,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 		return dSimState.getPartition().getAllBounds();
 	}
 
-	public static VisualizationProcessor getProcessor(final int pid)
+	public static VisualizationProcessor getProcessor(int pid)
 	{
 		VisualizationProcessor processor;
 		if (processorCache.size() <= pid)
@@ -119,7 +119,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 		return processor;
 	}
 
-	public static String getProcessorName(final int pid)
+	public static String getProcessorName(int pid)
 	{
 		return NAME_PREFIX + pid;
 	}
@@ -156,7 +156,6 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	//Raj: input pids and get all neighbors in the lowest point in quadtree that contains inputed pids
 	public int[] getMinimumNeighborhood(int[] proc_ids) throws RemoteException
 	{
-		
 		if (proc_ids.length == 1)
 		{
 			return proc_ids;
@@ -246,7 +245,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	}
 
 //	// TODO: do we extend this to other Remote objects?
-//	private Remote getRemote(final String key) {
+//	private Remote getRemote(String key) {
 //		Remote remote = cache.get(key);
 //		if (remote != null)
 //			return remote;

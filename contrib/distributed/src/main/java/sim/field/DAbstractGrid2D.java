@@ -7,7 +7,7 @@ import sim.field.partitioning.Partition;
 import sim.util.*;
 
 /**
- * A abstract distributed grid 2d. It wraps all methods of distributed grid.
+ * A abstract distributed Grid2D. It wraps all methods of distributed grid.
  * 
  * @author Carmine Spagnuolo
  */

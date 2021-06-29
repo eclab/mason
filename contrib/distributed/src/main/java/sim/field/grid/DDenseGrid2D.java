@@ -46,7 +46,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	/** Returns true if the data is located at the given point, which must be within the halo region.  */
 	public boolean containsLocal(Int2D p, T t) 
 		{
-		ArrayList<T> list = storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))];
+		ArrayList<T> list = storage.storage[storage.getFlatIndex(storage.toLocalPoint(p))];
 		if (list == null) return false;
 		else return (list.contains(t));
 		}
@@ -54,7 +54,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	/** Returns true if the data is located at the given point, which must be within the halo region.  */
 	public boolean containsLocal(Int2D p, long id) 
 		{
-		ArrayList<T> list = storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))];
+		ArrayList<T> list = storage.storage[storage.getFlatIndex(storage.toLocalPoint(p))];
 		if (list == null) return false;
 		else 
 			{
@@ -76,7 +76,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	public ArrayList<T> getAllLocal(Int2D p) 
 		{
 		if (!isHalo(p)) throwNotLocalException(p);
-		return storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))];
+		return storage.storage[storage.getFlatIndex(storage.toLocalPoint(p))];
 		}
 
 	/** Sets the data associated with the given point.  This point
@@ -86,7 +86,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	public void setAllLocal(Int2D p, ArrayList<T> t) 
 		{
 		if (!isLocal(p)) throwNotLocalException(p);
-		storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))] = t;
+		storage.storage[storage.getFlatIndex(storage.toLocalPoint(p))] = t;
 		}
 
 	/** Adds an object to the given point. This point
@@ -95,7 +95,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 		{
 		if (!isLocal(p)) throwNotLocalException(p);
 		ArrayList<T>[] array = storage.storage;
-		int idx = storage.getFlatIndex(halo.toLocalPoint(p));
+		int idx = storage.getFlatIndex(storage.toLocalPoint(p));
 
 		if (array[idx] == null)
 			array[idx] = new ArrayList<T>();
@@ -128,7 +128,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	{
 		if (!isLocal(p)) throwNotLocalException(p);
 		ArrayList<T>[] array = storage.storage;
-		int idx = storage.getFlatIndex(halo.toLocalPoint(p));
+		int idx = storage.getFlatIndex(storage.toLocalPoint(p));
 		if (array[idx] != null)
 			{
 			if (removeFast(array[idx], t))
@@ -151,7 +151,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	public boolean removeMultiplyLocal(Int2D p, T t) 
 		{
 		ArrayList<T>[] array = storage.storage;
-		int idx = storage.getFlatIndex(halo.toLocalPoint(p));
+		int idx = storage.getFlatIndex(storage.toLocalPoint(p));
 		boolean found = false;
 		
 		ArrayList<T> list = array[idx];
@@ -180,7 +180,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	public boolean removeAllLocal(Int2D p) 
 		{
 		ArrayList<T>[] array = storage.storage;
-		int idx = storage.getFlatIndex(halo.toLocalPoint(p));
+		int idx = storage.getFlatIndex(storage.toLocalPoint(p));
 		
 		if (array[idx] != null)
 			{
@@ -206,7 +206,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	public Promised getAll(Int2D p) 
 		{
 		if (isHalo(p))
-			return new Promise(storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))]);
+			return new Promise(storage.storage[storage.getFlatIndex(storage.toLocalPoint(p))]);
 		else
 			return halo.getFromRemote(p);
 		}
@@ -263,8 +263,9 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 //		}
 
 	/** Removes all data from the given point. This point can be outside the local and halo regions. 
-		Note that if agents are present at this point, they will not be stopped: in that case you should
-		instead call removeAllAgentsAndObjects(p). */
+		Note that if agents are present at this point, and the point is local, they will not be stopped, but if the point is
+		remote, they *will* be stopped.  In general, this method should only be used for non-Agent objects or for local
+		Agents that you don't want to stop.  For Agents you want to stop, call removeAllAgentsAndObjects(p). */
 	public void removeAll(Int2D p) 
 		{
 		if (isLocal(p))
@@ -428,7 +429,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 			removeAllLocal(p);
 			}
 		else
-			halo.removeAllAgentsAndObjectsFromRemote(p);
+			halo.removeAllFromRemote(p);
 		}
 
 

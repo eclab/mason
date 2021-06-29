@@ -197,9 +197,6 @@ public class DSimState extends SimState
 	 */
 	void syncFields() throws MPIException, RemoteException
 	{
-		
-
-		
 		for (final Synchronizable haloField : fieldList)
 			haloField.syncHalo();
 	}
@@ -228,8 +225,6 @@ public class DSimState extends SimState
 		Timing.stop(Timing.LB_RUNTIME);
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
 		
-
-		
 		try
 		{
 			// Wait for all agents globally to stop moving
@@ -248,7 +243,7 @@ public class DSimState extends SimState
 
 			// Check for RemotePromise to fill and fill them
 			// we need to do this before the synchronization I guess
-			if(withRegistry && !promises.isEmpty()) {				
+			if (withRegistry && !promises.isEmpty()) {				
 				//MPI.COMM_WORLD.barrier();
 				System.out.println("Promises are: " + promises.toString());
 				for(Triplet<RemotePromise, Serializable, Serializable> promisesToFill : promises) {
@@ -269,11 +264,7 @@ public class DSimState extends SimState
 			// Sync all the Remove and Add queues for RMI
 			syncRemoveAndAdd();
 			
-
-			
 			transporter.sync();
-			
-
 
 			if (withRegistry)
 			{
@@ -301,7 +292,6 @@ public class DSimState extends SimState
 		{
 			throw new RuntimeException(e);
 		}
-		
 
 
 		for (final PayloadWrapper payloadWrapper : transporter.objectQueue)
@@ -320,8 +310,6 @@ public class DSimState extends SimState
 			{
 				// add the object to the field
 				fieldList.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
-				
-
 			}
 
 			if (payloadWrapper.payload instanceof DistributedIterativeRepeat)
@@ -369,8 +357,6 @@ public class DSimState extends SimState
 		try
 		{
 			MPI.COMM_WORLD.barrier();
-			
-
 			syncFields();
 		}
 		catch (MPIException | RemoteException e)

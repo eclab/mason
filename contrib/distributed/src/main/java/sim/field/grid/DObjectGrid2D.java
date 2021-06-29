@@ -48,7 +48,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 	public T getLocal(Int2D p) 
 		{
 		if (!isHalo(p)) throwNotLocalException(p);
-		return storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))];
+		return storage.storage[storage.getFlatIndex(storage.toLocalPoint(p))];
 		}
 
 	/** Returns the data associated with the given point.  This point
@@ -56,7 +56,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 	public void setLocal(Int2D p, T t) 
 		{
 		if (!isLocal(p)) throwNotLocalException(p);
-		storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))] = t;
+		storage.storage[storage.getFlatIndex(storage.toLocalPoint(p))] = t;
 		}
 
 	public HaloGrid2D getHaloGrid()
@@ -70,7 +70,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 	public Promised get(Int2D p) 
 		{
 		if (isHalo(p))
-			return new Promise(storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))]);
+			return new Promise(storage.storage[storage.getFlatIndex(storage.toLocalPoint(p))]);
 		else
 			return halo.getFromRemote(p);
 		}
@@ -80,7 +80,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 	public void set(Int2D p, T val) 
 		{
 		if (isLocal(p))
-			storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))] = val;
+			storage.storage[storage.getFlatIndex(storage.toLocalPoint(p))] = val;
 		else
 			halo.addToRemote(p, val);
 		}
@@ -92,7 +92,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 		Stopping a = (Stopping) agent;		// may generate a runtime error
 		if (isLocal(p))
 			{
-			storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))] = agent;
+			storage.storage[storage.getFlatIndex(storage.toLocalPoint(p))] = agent;
 			state.schedule.scheduleOnce(time, ordering, a); 
 			}
 		else
@@ -108,7 +108,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 		Stopping a = (Stopping) agent;		// may generate a runtime error
 		if (isLocal(p))
 			{
-			storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))] = agent;
+			storage.storage[storage.getFlatIndex(storage.toLocalPoint(p))] = agent;
 			state.schedule.scheduleRepeating(time, ordering, a, interval); 
 			}
 		else
@@ -131,7 +131,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 		
 		if (isLocal(p))
 			{
-			if (storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))] == agent)
+			if (storage.storage[storage.getFlatIndex(storage.toLocalPoint(p))] == agent)
 				{
 				Stoppable stop = b.getStoppable();
 				if (stop == null)
@@ -150,7 +150,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 					{
 					throw new RuntimeException("Cannot remove agent " + a + " from " + p + " because it is wrapped in a Stoppable other than a DistributedIterativeRepeat or DistributedTenativeStep.  This should not happen.");
 					}
-				storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))] = null;
+				storage.storage[storage.getFlatIndex(storage.toLocalPoint(p))] = null;
 				}
 			}
 		else
@@ -173,7 +173,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 			}
 		else if (isLocal(from))
 			{
-			int fromidx = storage.getFlatIndex(halo.toLocalPoint(from));
+			int fromidx = storage.getFlatIndex(storage.toLocalPoint(from));
 			
 			if (from.equals(to))
 				{
@@ -182,7 +182,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
 			else if (isLocal(to))
 				{
 				// This situation is easy -- we just move the agent and keep him on our schedule, done and done
-				storage.storage[storage.getFlatIndex(halo.toLocalPoint(to))] = agent;
+				storage.storage[storage.getFlatIndex(storage.toLocalPoint(to))] = agent;
 				if (storage.storage[fromidx] == agent) storage.storage[fromidx] = null;
 				}
 			else
