@@ -4,7 +4,7 @@ import java.io.*;
 import java.rmi.*;
 import sim.engine.*;
 
-public interface Promised extends Serializable
+public interface Promised extends Serializable 
 {
 	
 	public boolean isReady() throws RemoteException;
@@ -19,7 +19,7 @@ public interface Promised extends Serializable
 	public int getInt() throws RemoteException;
 
 	/**
-	 * Returns the data, which should be an double. This data is only valid if
+	 * Returns the data, which should be a double. This data is only valid if
 	 * isReady() is TRUE.
 	 */
 	public double getDouble() throws RemoteException;

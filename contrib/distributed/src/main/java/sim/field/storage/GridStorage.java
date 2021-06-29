@@ -16,9 +16,7 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	private static final long serialVersionUID = 1L;
 
 	IntRect2D shape;
-	transient Datatype baseType = MPI.BYTE; // something by default
 	int height; // this is the same as shape.getHeight(), to save a bit of computation
-
 	Int2D offset; // moved here
 
 	//// NOTE: Subclasses are responsible for allocating the storage
@@ -29,10 +27,12 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 		height = shape.getHeight(); // getHeight(shape.getSizes());
 	}
 
+	/** Returns the base MPI type.  By default this is BYTE.  For Int and Double
+		grids, is INT or DOUBLE respectively. */
 	public Datatype getMPIBaseType()
-	{
-		return baseType;
-	}
+		{
+		return MPI.BYTE;
+		}
 
 	public IntRect2D getShape()
 	{
@@ -43,7 +43,7 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 
 	public abstract Serializable pack(MPIParam mp) throws MPIException;
 
-	public abstract int unpack(MPIParam mp, Serializable buf) throws MPIException;
+	public abstract void unpack(MPIParam mp, Serializable buf) throws MPIException;
 
 	/**
 	 * Adds or sets the given object at the given point. Dense and Continuous
@@ -112,7 +112,7 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	 * 
 	 * @param newShape
 	 */
-	public void reshape(final IntRect2D newShape)
+	public void setShape(IntRect2D newShape)
 	{
 		if (newShape.equals(shape))
 			return;
@@ -120,7 +120,7 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 		if (newShape.intersects(shape))
 		{
 			final IntRect2D overlap = newShape.getIntersection(shape);
-
+			final Datatype baseType = getMPIBaseType();
 			final MPIParam fromParam = new MPIParam(overlap, shape, baseType);
 			final MPIParam toParam = new MPIParam(overlap, newShape, baseType);
 
@@ -140,7 +140,9 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 			}
 		}
 		else
+			{
 			reload(newShape);
+			}
 	}
 
 	/**
@@ -148,9 +150,9 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	 * 
 	 * @return flattened index
 	 */
-	public int getFlatIdx(final Int2D p)
+	public int getFlatIndex(final Int2D p)
 	{
-		return getFlatIdx(p.x, p.y);
+		return getFlatIndex(p.x, p.y);
 	}
 
 	/**
@@ -158,23 +160,25 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	 * 
 	 * @return flattened index
 	 */
-	public int getFlatIdx(int x, int y)
+	public int getFlatIndex(int x, int y)
 	{
 		return x * height + y;
 	}
 
-/*
-	public static int getFlatIdx(final Int2D p, final int[] wrtSize) {
-		return p.x * wrtSize[1] + p.y; // [1] is height
+	/** 
+		Returns the index of the given point in SOME storage array with the given height;
+		this isn't the index in THIS grid storage's array necessarily. 
+	*/
+	public static int getFlatIndex(final Int2D p, int wrtHeight) {
+		return p.x * wrtHeight + p.y;
 	}
-*/
 
-	public static int getFlatIdx(final Int2D p, int height)
+	public Int2D getOffset()
 	{
-		return p.x * height + p.y;
+		return offset;
 	}
 
-	public void setOffSet(Int2D offset)
+	public void setOffset(Int2D offset)
 	{
 		this.offset = offset;
 	}
@@ -183,4 +187,10 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	{
 		return p.subtract(offset);
 	}
+
+	public Int2D toGlobalPoint(final Int2D p)
+	{
+		return p.add(offset);
+	}
+	
 }

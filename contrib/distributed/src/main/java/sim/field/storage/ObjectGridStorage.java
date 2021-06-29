@@ -47,12 +47,12 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T>
 
 		for (final IntRect2D rect : mp.rects)
 			for (final Int2D p : rect.getPointList())
-				objs[curr++] = stor[getFlatIdx(p)];
+				objs[curr++] = stor[getFlatIndex(p)];
 
 		return objs;
 	}
 
-	public int unpack(final MPIParam mp, final Serializable buf)
+	public void unpack(final MPIParam mp, final Serializable buf)
 	{
 		final T[] stor = (T[]) storage;
 		final T[] objs = (T[]) buf;
@@ -60,19 +60,29 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T>
 
 		for (final IntRect2D rect : mp.rects)
 			for (final Int2D p : rect.getPointList())
-				stor[getFlatIdx(p)] = objs[curr++];
-
-		return curr;
+				stor[getFlatIndex(p)] = objs[curr++];
 	}
 
-
-
-
+	public T get(Int2D p)
+	{
+		return storage[getFlatIndex((Int2D) p)];
+	}
 
 	public void set(Int2D p, T t)
 	{
-		storage[getFlatIdx((Int2D) p)] = t;
+		storage[getFlatIndex((Int2D) p)] = t;
 	}
+
+	public T get(int x, int y)
+	{
+		return storage[getFlatIndex(x, y)];
+	}
+
+	public void set(int x, int y, T t)
+	{
+		storage[getFlatIndex(x, y)] = t;
+	}
+
 
 	public void addObject(NumberND p, T t)
 	{
@@ -84,9 +94,8 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T>
 	public T getObject(NumberND p, long id)
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
-
 		
-		return storage[getFlatIdx(local_p)];
+		return storage[getFlatIndex(local_p)];
 	}
 
 	// Don't call this method, it'd be foolish
@@ -96,7 +105,7 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T>
 
 		
 		ArrayList<T> list = new ArrayList<T>();
-		list.add(storage[getFlatIdx(local_p)]);
+		list.add(storage[getFlatIndex(local_p)]);
 		return list;
 	}
 

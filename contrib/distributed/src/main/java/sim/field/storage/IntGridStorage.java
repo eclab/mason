@@ -14,20 +14,19 @@ public class IntGridStorage extends GridStorage<Integer>
 	public IntGridStorage(final IntRect2D shape)
 	{
 		super(shape);
-		baseType = MPI.INT;
 		clear();
 	}
 
 	public byte[] pack(MPIParam mp) throws MPIException
 	{
-		byte[] buf = new byte[MPI.COMM_WORLD.packSize(mp.size, baseType)];
+		byte[] buf = new byte[MPI.COMM_WORLD.packSize(mp.size, MPI.INT)];
 		MPI.COMM_WORLD.pack(MPI.slice((int[]) storage, mp.idx), 1, mp.type, buf, 0);
 		return buf;
 	}
 
-	public int unpack(MPIParam mp, Serializable buf) throws MPIException
+	public void unpack(MPIParam mp, Serializable buf) throws MPIException
 	{
-		return MPI.COMM_WORLD.unpack((byte[]) buf, 0, MPI.slice((int[]) storage, mp.idx), 1, mp.type);
+		MPI.COMM_WORLD.unpack((byte[]) buf, 0, MPI.slice((int[]) storage, mp.idx), 1, mp.type);
 	}
 
 	public String toString()
@@ -47,9 +46,24 @@ public class IntGridStorage extends GridStorage<Integer>
 		return buf.toString();
 	}
 
+	public int get(Int2D p)
+	{
+		return storage[getFlatIndex((Int2D) p)];
+	}
+
 	public void set(Int2D p, int t)
 	{
-		storage[getFlatIdx((Int2D) p)] = t;
+		storage[getFlatIndex((Int2D) p)] = t;
+	}
+
+	public int get(int x, int y)
+	{
+		return storage[getFlatIndex(x, y)];
+	}
+
+	public void set(int x, int y, int t)
+	{
+		storage[getFlatIndex(x, y)] = t;
 	}
 
 	public void addObject(NumberND p, Integer t)
@@ -63,7 +77,7 @@ public class IntGridStorage extends GridStorage<Integer>
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 
-		return storage[getFlatIdx(local_p)];
+		return storage[getFlatIndex(local_p)];
 	}
 
 	// Don't call this method, it'd be foolish
@@ -73,7 +87,7 @@ public class IntGridStorage extends GridStorage<Integer>
 		Int2D local_p = toLocalPoint((Int2D) p);
 
 		ArrayList<Integer> list = new ArrayList<Integer>();
-		list.add(storage[getFlatIdx(local_p)]);
+		list.add(storage[getFlatIndex(local_p)]);
 		return list;
 	}
 

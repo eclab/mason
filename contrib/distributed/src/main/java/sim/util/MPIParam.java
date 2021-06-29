@@ -42,9 +42,9 @@ public class MPIParam
 		int[] bsize = new int[] { width, height };
 		int[] rsize = new int[] { rect.getWidth(), rect.getHeight() };
 
-//		this.idx = GridStorage.getFlatIdx(rect.ul().subtract(new int[]{bound.ul().x,bound.ul().y}), bsize);
+//		this.idx = GridStorage.getFlatIndex(rect.ul().subtract(new int[]{bound.ul().x,bound.ul().y}), bsize);
 
-		this.idx = GridStorage.getFlatIdx(rect.ul().subtract(bound.ul), height);
+		this.idx = GridStorage.getFlatIndex(rect.ul().subtract(bound.ul), height);
 		this.type = getNdArrayDatatype(rsize , baseType, bsize );
 		this.size = rect.getArea();
 		this.rects = new ArrayList<IntRect2D>()
@@ -78,8 +78,8 @@ public class MPIParam
 
 		for (int i = 0; i < count; i++) {
 			IntRect2D rect = rects.get(i);
-//			displ[i] = GridStorage.getFlatIdx(rect.ul().subtract(new int[]{bound.ul().x,bound.ul().y}), bsize) * typeSize; // displacement from the start in bytes
-			displ[i] = GridStorage.getFlatIdx(rect.ul().subtract(bound.ul()), height) * typeSize; // displacement from the start in bytes
+//			displ[i] = GridStorage.getFlatIndex(rect.ul().subtract(new int[]{bound.ul().x,bound.ul().y}), bsize) * typeSize; // displacement from the start in bytes
+			displ[i] = GridStorage.getFlatIndex(rect.ul().subtract(bound.ul()), height) * typeSize; // displacement from the start in bytes
 			types[i] = getNdArrayDatatype(new int[] { rect.getWidth(), rect.getHeight() }, baseType, bsize);
 			this.size += rect.getArea();
 			/// this.rects.add(rect.rshift(new int[]{bound.ul().x,bound.ul().y}));
@@ -119,8 +119,8 @@ public class MPIParam
 		for (int i = 0; i < count; i++)
 		{
 			IntRect2D rect = rects.get(i);
-//			displ[i] = GridStorage.getFlatIdx(rect.ul().subtract(new int[]{bound.ul().x,bound.ul().y}), bsize) * typeSize; // displacement from the start in bytes
-			displ[i] = GridStorage.getFlatIdx(rect.ul().subtract(bound.ul()), height) * typeSize; // displacement from the start in bytes
+//			displ[i] = GridStorage.getFlatIndex(rect.ul().subtract(new int[]{bound.ul().x,bound.ul().y}), bsize) * typeSize; // displacement from the start in bytes
+			displ[i] = GridStorage.getFlatIndex(rect.ul().subtract(bound.ul()), height) * typeSize; // displacement from the start in bytes
 			types[i] = getNdArrayDatatype(new int[] { rect.getWidth(), rect.getHeight() }, baseType, bsize);
 			this.size += rect.getArea();
 			/// this.rects.add(rect.rshift(new int[]{bound.ul().x,bound.ul().y}));

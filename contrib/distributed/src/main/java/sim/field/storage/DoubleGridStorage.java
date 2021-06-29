@@ -14,20 +14,24 @@ public class DoubleGridStorage extends GridStorage<Double>
 	public DoubleGridStorage(final IntRect2D shape)
 	{
 		super(shape);
-		baseType = MPI.DOUBLE;
 		clear();
 	}
 
+	public Datatype getMPIBaseType()
+		{
+		return MPI.DOUBLE;
+		}
+		
 	public byte[] pack(MPIParam mp) throws MPIException
 	{
-		byte[] buf = new byte[MPI.COMM_WORLD.packSize(mp.size, baseType)];
+		byte[] buf = new byte[MPI.COMM_WORLD.packSize(mp.size, MPI.DOUBLE)];
 		MPI.COMM_WORLD.pack(MPI.slice((double[]) storage, mp.idx), 1, mp.type, buf, 0);
 		return buf;
 	}
 
-	public int unpack(MPIParam mp, Serializable buf) throws MPIException
+	public void unpack(MPIParam mp, Serializable buf) throws MPIException
 	{
-		return MPI.COMM_WORLD.unpack((byte[]) buf, 0, MPI.slice((double[]) storage, mp.idx), 1, mp.type);
+		MPI.COMM_WORLD.unpack((byte[]) buf, 0, MPI.slice((double[]) storage, mp.idx), 1, mp.type);
 	}
 
 	public String toString()
@@ -47,10 +51,26 @@ public class DoubleGridStorage extends GridStorage<Double>
 		return buf.toString();
 	}
 
+	public double get(Int2D p)
+	{
+		return storage[getFlatIndex((Int2D) p)];
+	}
+
 	public void set(Int2D p, double t)
 	{
-		storage[getFlatIdx((Int2D) p)] = t;
+		storage[getFlatIndex((Int2D) p)] = t;
 	}
+
+	public double get(int x, int y)
+	{
+		return storage[getFlatIndex(x, y)];
+	}
+
+	public void set(int x, int y, double t)
+	{
+		storage[getFlatIndex(x, y)] = t;
+	}
+
 
 	public void addObject(NumberND p, Double t)
 	{
@@ -62,7 +82,7 @@ public class DoubleGridStorage extends GridStorage<Double>
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 
-		return storage[getFlatIdx(local_p)];
+		return storage[getFlatIndex(local_p)];
 	}
 
 	// Don't call this method, it'd be foolish
@@ -71,7 +91,7 @@ public class DoubleGridStorage extends GridStorage<Double>
 		Int2D local_p = toLocalPoint((Int2D) p);
 
 		ArrayList<Double> list = new ArrayList<Double>();
-		list.add(storage[getFlatIdx(local_p)]);
+		list.add(storage[getFlatIndex(local_p)]);
 		return list;
 	}
 

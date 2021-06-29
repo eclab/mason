@@ -5,8 +5,7 @@ import java.rmi.server.UnicastRemoteObject;
 import sim.engine.*;
 import java.rmi.*;
 
-public class RemotePromise extends UnicastRemoteObject implements Promised, Remote
-{
+public class RemotePromise extends UnicastRemoteObject implements Promised {
 	private static final long serialVersionUID = 1L;
 
 	boolean ready = false;
@@ -19,8 +18,7 @@ public class RemotePromise extends UnicastRemoteObject implements Promised, Remo
 	}
 
 	/** Returns the data. This data is only valid if isReady() is TRUE. */
-	public Serializable get() throws RemoteException
-	{
+	public Serializable get() throws RemoteException {
 		return object;
 	}
 
@@ -28,8 +26,7 @@ public class RemotePromise extends UnicastRemoteObject implements Promised, Remo
 	 * Returns the data, which should be an integer. This data is only valid if
 	 * isReady() is TRUE.
 	 */
-	public int getInt() throws RemoteException
-	{
+	public int getInt() throws RemoteException {
 		return (Integer) object;
 	}
 
@@ -37,21 +34,25 @@ public class RemotePromise extends UnicastRemoteObject implements Promised, Remo
 	 * Returns the data, which should be an double. This data is only valid if
 	 * isReady() is TRUE.
 	 */
-	public double getDouble() throws RemoteException
-	{
+	public double getDouble() throws RemoteException {
 		return (Double) object;
 	}
 
+//	/**
+//	 * Returns the author that have the data to fulfill the RemotePromise
+//	 */
+//	public Remote getAuthor() throws RemoteException {
+//		return author;
+//	}
+//	
 	/** Provides the data and makes the promise ready. */
-	public void fulfill(Serializable object) throws RemoteException
-	{
+	public void fulfill(Serializable object) throws RemoteException {
 		ready = true;
 		this.object = object;
 	}
 
 	/** Copies the data and readiness from another promise. */
-	public void setTo(Promise promise) throws RemoteException
-	{
+	public void setTo(Promise promise) throws RemoteException {
 		ready = promise.isReady();
 		object = promise.get();
 	}
@@ -61,8 +62,7 @@ public class RemotePromise extends UnicastRemoteObject implements Promised, Remo
 	 * 
 	 * @throws RemoteException
 	 */
-	public RemotePromise() throws RemoteException
-	{
+	public RemotePromise() throws RemoteException {
 		super();
 	}
 
@@ -71,8 +71,7 @@ public class RemotePromise extends UnicastRemoteObject implements Promised, Remo
 	 * 
 	 * @throws RemoteException
 	 */
-	public RemotePromise(Serializable object) throws RemoteException
-	{
+	public RemotePromise(Serializable object) throws RemoteException {
 		super();
 		this.object = object;
 		ready = true;
@@ -83,8 +82,7 @@ public class RemotePromise extends UnicastRemoteObject implements Promised, Remo
 	 * 
 	 * @throws RemoteException
 	 */
-	public RemotePromise(int value) throws RemoteException
-	{
+	public RemotePromise(int value) throws RemoteException {
 		super();
 		this.object = Integer.valueOf(value);
 		ready = true;
@@ -95,8 +93,7 @@ public class RemotePromise extends UnicastRemoteObject implements Promised, Remo
 	 * 
 	 * @throws RemoteException
 	 */
-	public RemotePromise(double value) throws RemoteException
-	{
+	public RemotePromise(double value) throws RemoteException {
 		super();
 		this.object = Double.valueOf(value);
 		ready = true;

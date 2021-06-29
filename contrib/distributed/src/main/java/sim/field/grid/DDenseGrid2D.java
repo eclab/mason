@@ -46,7 +46,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	/** Returns true if the data is located at the given point, which must be within the halo region.  */
 	public boolean containsLocal(Int2D p, T t) 
 		{
-		ArrayList<T> list = storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))];
+		ArrayList<T> list = storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))];
 		if (list == null) return false;
 		else return (list.contains(t));
 		}
@@ -54,7 +54,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	/** Returns true if the data is located at the given point, which must be within the halo region.  */
 	public boolean containsLocal(Int2D p, long id) 
 		{
-		ArrayList<T> list = storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))];
+		ArrayList<T> list = storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))];
 		if (list == null) return false;
 		else 
 			{
@@ -76,7 +76,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	public ArrayList<T> getAllLocal(Int2D p) 
 		{
 		if (!isHalo(p)) throwNotLocalException(p);
-		return storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))];
+		return storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))];
 		}
 
 	/** Sets the data associated with the given point.  This point
@@ -86,7 +86,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	public void setAllLocal(Int2D p, ArrayList<T> t) 
 		{
 		if (!isLocal(p)) throwNotLocalException(p);
-		storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))] = t;
+		storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))] = t;
 		}
 
 	/** Adds an object to the given point. This point
@@ -95,7 +95,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 		{
 		if (!isLocal(p)) throwNotLocalException(p);
 		ArrayList<T>[] array = storage.storage;
-		int idx = storage.getFlatIdx(halo.toLocalPoint(p));
+		int idx = storage.getFlatIndex(halo.toLocalPoint(p));
 
 		if (array[idx] == null)
 			array[idx] = new ArrayList<T>();
@@ -128,7 +128,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	{
 		if (!isLocal(p)) throwNotLocalException(p);
 		ArrayList<T>[] array = storage.storage;
-		int idx = storage.getFlatIdx(halo.toLocalPoint(p));
+		int idx = storage.getFlatIndex(halo.toLocalPoint(p));
 		if (array[idx] != null)
 			{
 			if (removeFast(array[idx], t))
@@ -151,7 +151,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	public boolean removeMultiplyLocal(Int2D p, T t) 
 		{
 		ArrayList<T>[] array = storage.storage;
-		int idx = storage.getFlatIdx(halo.toLocalPoint(p));
+		int idx = storage.getFlatIndex(halo.toLocalPoint(p));
 		boolean found = false;
 		
 		ArrayList<T> list = array[idx];
@@ -180,7 +180,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	public boolean removeAllLocal(Int2D p) 
 		{
 		ArrayList<T>[] array = storage.storage;
-		int idx = storage.getFlatIdx(halo.toLocalPoint(p));
+		int idx = storage.getFlatIndex(halo.toLocalPoint(p));
 		
 		if (array[idx] != null)
 			{
@@ -206,7 +206,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 	public Promised getAll(Int2D p) 
 		{
 		if (isHalo(p))
-			return new Promise(storage.storage[storage.getFlatIdx(halo.toLocalPoint(p))]);
+			return new Promise(storage.storage[storage.getFlatIndex(halo.toLocalPoint(p))]);
 		else
 			return halo.getFromRemote(p);
 		}
@@ -825,7 +825,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
         // for each location...
         for(int i=0; i < len; i++)
             {
-            ArrayList<T> temp = storage.storage[storage.getFlatIdx(xPos.objs[i], yPos.objs[i])];
+            ArrayList<T> temp = storage.storage[storage.getFlatIndex(xPos.objs[i], yPos.objs[i])];
             int size = temp.size();
             // for each object at that location...
             for(int j = 0; j < size; j++)
@@ -859,7 +859,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
             {
             // a little efficiency: add if we're 1, addAll if we're > 1, 
             // do nothing if we're 0
-            ArrayList<T> temp = storage.storage[storage.getFlatIdx(xPos.objs[i], yPos.objs[i])];
+            ArrayList<T> temp = storage.storage[storage.getFlatIndex(xPos.objs[i], yPos.objs[i])];
             if (temp!=null)
                 {
                 result.addAll(temp);

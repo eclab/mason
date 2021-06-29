@@ -11,11 +11,10 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 {
 	private static final long serialVersionUID = 1L;
 
-	// note that this is the DISCRETIZED WIDTH (and the DISCRETIZED HEIGHT is height
-	// in GridStorage)
+	// note that this is the DISCRETIZED WIDTH (and the DISCRETIZED HEIGHT is height in GridStorage)
 	int width;
 	int discretization;
-	public HashMap<Long, Double2D> m; // id -> DObject's location
+	public HashMap<Long, Double2D> locations; // id -> DObject's location
 	public HashMap<Long, T>[] storage; // id -> DObject
 	public boolean removeEmptyBags = true;
 
@@ -26,9 +25,9 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 		clear();
 	}
 
-	public HashMap<Long, Double2D> getStorageMap()
+	public HashMap<Long, Double2D> getLocations()
 	{
-		return m;
+		return locations;
 	}
 
 	public int getDiscretization()
@@ -58,9 +57,9 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	 * the point. Warning: does not check to see if the point is inside the local
 	 * boundary.
 	 */
-	public Int2D discretize(final Double2D p)
+	public Int2D discretize(Double2D p)
 	{
-		final double[] offsets = shape.ul().getOffsets(p);
+		double[] offsets = shape.ul().getOffsets(p);
 
 		int[] ans = new int[2];
 		for (int i = 0; i < offsets.length; i++)
@@ -71,10 +70,10 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	}
 	
 	//takes storage index and creates IntRect2D 
-	public IntRect2D getCellBounds(final int storageInd)
+	public IntRect2D getCellBounds(int index)
 	{
-		int x_low = storageInd / this.height;
-		int y_low = storageInd % this.height;
+		int x_low = index / this.height;
+		int y_low = index % this.height;
 		
 		int x_high = x_low + 1;
 		int y_high = y_low + 1;
@@ -92,20 +91,20 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 		Int2D final_cell_ul = cell_ul.add(shape.ul());
 		Int2D final_cell_br = cell_br.add(shape.ul());
         
-		//System.out.println(this.getShape()+" storageInd "+storageInd+"ul "+final_cell_ul+"br "+final_cell_br);
+		//System.out.println(this.getShape()+" index "+index+"ul "+final_cell_ul+"br "+final_cell_br);
 
 		return new IntRect2D(final_cell_ul,final_cell_br);
 	}
 
 	void setCelldp(final Int2D p, HashMap<Long, T> cell)
 	{
-		storage[getFlatIdx(p.x, p.y)] = cell;
+		storage[getFlatIndex(p.x, p.y)] = cell;
 	}
 
 	/** Sets the given discretized cell. */
 	void setCelldp(int x, int y, HashMap<Long, T> cell)
 	{
-		storage[getFlatIdx(x, y)] = cell;
+		storage[getFlatIndex(x, y)] = cell;
 	}
 
 	/**
@@ -120,13 +119,13 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	/** Returns the given discretized cell. */
 	HashMap<Long, T> getCelldp(final Int2D p)
 	{
-		return storage[getFlatIdx(p.x, p.y)];
+		return storage[getFlatIndex(p.x, p.y)];
 	}
 
 	/** Returns the given discretized cell. */
 	public HashMap<Long, T> getCelldp(int x, int y)
 	{
-		return storage[getFlatIdx(x, y)];
+		return storage[getFlatIndex(x, y)];
 	}
 
 	/**
@@ -150,13 +149,13 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	/** Returns the location of the given object. */
 	public Double2D getObjectLocation(final T obj)
 	{
-		return m.get(obj.ID());
+		return locations.get(obj.ID());
 	}
 
 	/** Returns the location of the object with the given ID. */
 	public Double2D getObjectLocation(final long id)
 	{
-		return m.get(id);
+		return locations.get(id);
 	}
 
 	///// GRIDSTORAGE METHODS
@@ -166,7 +165,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	{
 		Double2D p_double = buildDouble2D(p);
 //		System.out.println("add Object: " + m + "; " + obj);
-		final Double2D old = m.put(obj.ID(), p_double);
+		final Double2D old = locations.put(obj.ID(), p_double);
 
 		if (old != null)
 			getCell(old).remove(obj.ID());
@@ -194,7 +193,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 
 		if (cell != null)
 			for (final T t : cell.values())
-				if (m.get(t.ID()).equals(p_double))
+				if (locations.get(t.ID()).equals(p_double))
 					objects.add(t);
 
 		return objects;
@@ -204,7 +203,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	{
 		// p is ignored.
 
-		Double2D loc = m.remove(id);
+		Double2D loc = locations.remove(id);
 		if (loc == null)
 			return false;
 		getCell(loc).remove(id);
@@ -220,7 +219,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 
 		if (getCell(p_double) != null)
 			for (final T t : getCell(p_double).values())
-				if (m.get(t.ID()).equals(p_double))
+				if (locations.get(t.ID()).equals(p_double))
 					objects.add(t);
 
 		return objects;
@@ -233,7 +232,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 		HashMap<Long, T> cell = getCell(p_double);
 
 		for (Long key : cell.keySet())
-			if (m.get(key).equals(p_double))
+			if (locations.get(key).equals(p_double))
 				cell.remove(key);
 	}
 
@@ -242,7 +241,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	{
 		width = (int) Math.ceil(shape.getWidth() / (double) discretization) + 1;
 		height = (int) Math.ceil(shape.getHeight() / (double) discretization) + 1;
-		this.m = new HashMap<>();
+		this.locations = new HashMap<>();
 
 		storage = new HashMap[width * height];
 		for (int i = 0; i < storage.length; i++)
@@ -255,7 +254,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 
 	void removeObject(long id)
 	{
-		getCell(m.remove(id)).remove(id);
+		getCell(locations.remove(id)).remove(id);
 	}
 
 	// Remove all the objects inside the given rectangle
@@ -270,7 +269,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	static final Int2D OFFSET = new Int2D(1,1);
 	
 	// Get all the objects inside the given rectangle
-	public ArrayList<T> getObjects(final IntRect2D r)
+	ArrayList<T> getObjects(final IntRect2D r)
 	{
 		final ArrayList<T> objs = new ArrayList<T>();
 //		int[] offset = { 1, 1 };
@@ -291,7 +290,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 				{
 					for (T obj : cell.values()) // need to offset/discretize!
 						{
-						if (r.contains(m.get(obj.ID())))
+						if (r.contains(locations.get(obj.ID())))
 						{
 							objs.add(obj);
 						}
@@ -316,7 +315,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 			{
 				objs.add(obj);
 				// Append the object's location relative to the rectangle
-				objs.add(m.get(obj.ID()).subtract(shape.ul()).subtract(rect.ul()));
+				objs.add(locations.get(obj.ID()).subtract(shape.ul()).subtract(rect.ul()));
 			}
 			ret.add(objs);
 		}
@@ -324,7 +323,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 		return ret;
 	}
 
-	public int unpack(final MPIParam mp, final Serializable buf)
+	public void unpack(final MPIParam mp, final Serializable buf)
 	{
 		final ArrayList<ArrayList<Serializable>> objs = (ArrayList<ArrayList<Serializable>>) buf;
 
@@ -340,15 +339,17 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 						((Double2D) objs.get(k).get(i + 1)).add(mp.rects.get(k).ul()).add(shape.ul()),
 						(T) objs.get(k).get(i));
 
+/*
 		int sum = 0;
 		for (int i = 0; i < objs.size(); i++)
 		{
 			sum += objs.get(i).size();
 		}
-
 		return sum;
+*/
 	}
 
+/*
 	public boolean checkNull()
 	{
 		for (int i = 0; i < storage.length; i++)
@@ -361,6 +362,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 		}
 		return true;
 	}
+*/
 
 	Double2D buildDouble2D(NumberND p)
 	{
@@ -369,24 +371,22 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 		return new Double2D(p.getVal(0), p.getVal(1));
 	}
 
-	/**
-	 * Shifts point p to give location on the local partition
-	 * 
-	 * @param p
-	 * @return location on the local partition
-	 */
 	public Int2D toLocalPoint(final Int2D p)
 	{
 		return p;
 	}
 
-	/**
-	 * Shifts point p to give location on the local partition
-	 * 
-	 * @param p
-	 * @return location on the local partition
-	 */
 	public Double2D toLocalPoint(final Double2D p)
+	{
+		return p;
+	}
+
+	public Int2D toGlobalPoint(final Int2D p)
+	{
+		return p;
+	}
+
+	public Double2D toGlobalPoint(final Double2D p)
 	{
 		return p;
 	}
