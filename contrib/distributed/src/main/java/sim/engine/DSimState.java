@@ -19,7 +19,6 @@ import sim.field.partitioning.*;
 import sim.field.storage.*;
 import sim.util.*;
 import sim.engine.rmi.*;
-import sim.app.dheatbugs.DHeatBug;
 import sim.display.*;
 
 /**
@@ -415,15 +414,6 @@ public class DSimState extends SimState
 					
 
 					
-					if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
-						System.out.println(" loaded in");
-						Stopping sss = ((DistributedIterativeRepeat) payloadWrapper.payload).getSteppable();
-						
-						//System.exit(-1);
-
-					
-					}
-					
 
 					// DistributedIterativeRepeat
 					if (payloadWrapper.payload instanceof DistributedIterativeRepeat)
@@ -672,16 +662,7 @@ public class DSimState extends SimState
 								
 								
 								
-								if (a instanceof DHeatBug)
-								{
-									//DSimState.loc_disagree(p, (DHeatBug)a, this.partition, "loadBalance");
-									
-									if (((DSteppable)a).isStopped())
-									{
-										System.out.println("a is stopped already!");
-										System.exit(-1);
-									}
-								}
+
 								
 
 								
@@ -718,7 +699,7 @@ public class DSimState extends SimState
 									migratedAgents.add(stopping);
 									System.out.println(
 											"PID: " + partition.getPID() + " processor " + old_pid + " move " + stopping
-													+ " from " + p + " (point " + p + ") to processor " + toP+ " "+partition.getLocalBounds(toP)+" "+((DHeatBug)stopping).loc_x+" "+((DHeatBug)stopping).loc_y);
+													+ " from " + p + " (point " + p + ") to processor " + toP+ " "+partition.getLocalBounds(toP));
 
 									// here the agent is removed from the old location TOCHECK!!!
 									// haloGrid2D.removeLocal(p, stopping.ID());
