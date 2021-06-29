@@ -54,8 +54,9 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
 		
 		IntRect2D fullBounds = IntRect2D.getBoundingRect(rect_list); //I want this to be based on quadtree
 		
-		Int2D new_ul = fullBounds.ul().add(halo_size); //remove halo
-		Int2D new_br = fullBounds.br().add(-1 * halo_size); //remove halo
+		/// SEAN -- double check add
+		Int2D new_ul = fullBounds.ul().add(halo_size, halo_size); //remove halo
+		Int2D new_br = fullBounds.br().add(-1 * halo_size, -1 * halo_size); //remove halo
 		fullBounds = new IntRect2D(new_ul, new_br);
 		// ^ private area bounds
 		

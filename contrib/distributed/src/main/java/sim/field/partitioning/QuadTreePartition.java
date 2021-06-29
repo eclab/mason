@@ -53,7 +53,7 @@ public class QuadTreePartition extends Partition
 
 	public IntRect2D getHaloBounds()
 	{
-		return myLeafNode.getShape().resize(aoi);
+		return myLeafNode.getShape().expand(aoi);
 	}
 
 	public ArrayList<IntRect2D> getAllBounds()

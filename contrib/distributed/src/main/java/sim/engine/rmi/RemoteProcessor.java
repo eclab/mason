@@ -193,25 +193,16 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 					all_contained = false;
 					break;
 				}
-				
-			
-				
 			}
 			
 			if (all_contained == true)
 			{
 				return chosen_neighborhood;
 			}
-			
-			
-
 		}
-		
 		
         throw new RemoteException("some proc_ids not in quad tree");    
         //return null;
-	
-		
 	}
 
 	public ArrayList<Stat> getStatList() throws RemoteException

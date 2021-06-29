@@ -110,7 +110,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		localBounds = partition.getLocalBounds();
 		// Get the partition representing halo and local area by expanding the original
 		// partition by aoi at each dimension
-		haloBounds = localBounds.resize(partition.getAOI());
+		haloBounds = localBounds.expand(partition.getAOI());
 		
 		//localStorage.setOffset(haloBounds.ul()); // moving local point calculation to GridStorage
 
@@ -1093,7 +1093,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		 Neighbor(IntRect2D neighborPart)
 		{
 			ArrayList<IntRect2D> sendOverlaps = generateOverlaps(localBounds,
-					neighborPart.resize(getPartition().getAOI()));
+					neighborPart.expand(getPartition().getAOI()));
 
 			
 			ArrayList<IntRect2D> recvOverlaps = generateOverlaps(haloBounds, neighborPart);

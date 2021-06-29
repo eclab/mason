@@ -2,7 +2,6 @@ package sim.util;
 
 import java.io.*;
 
-// TODO Move to NdRectangle
 public class IntRect2D implements Serializable
 {
 	private static final long serialVersionUID = 1L;
@@ -48,12 +47,6 @@ public class IntRect2D implements Serializable
 	{
 		return (br.x - ul.x) * (br.y - ul.y);
 	}
-
-//// SEAN FIXME:  Delete this one?
-	// Return the size of the hyper rectangle in each dimension
-	//public int[] getSizes() {
-	//	return new int[] { getWidth(), getHeight() };
-	//}
 
 	public int getHeight()
 	{
@@ -126,19 +119,22 @@ public class IntRect2D implements Serializable
 				new Int2D(Math.min(br.x, that.br.x), Math.min(br.y, that.br.y)));
 	}
 
+/*
 	public IntRect2D resize(int left, int up, int right, int down)
 	{
 		Int2D new_ul = new Int2D(ul.x + left, ul.y + up);
 		Int2D new_br = new Int2D(br.x + right, br.y + down);
 		return new IntRect2D(new_ul, new_br);
 	}
-
+*/
+/*
 	public IntRect2D translate(int x, int y)
 	{
 		Int2D new_ul = new Int2D(ul.x + x, ul.y + y);
 		Int2D new_br = new Int2D(br.x + x, br.y + y);
 		return new IntRect2D(new_ul, new_br);
 	}
+*/
 
 //// SEAN FIXME: I changed this to Double2D because it does / 2 which is almost certainly wrong
 //// SEAN FIXME: I think the code is wrong in general anyway, as it rounds *up* because of half-open
@@ -180,6 +176,7 @@ public class IntRect2D implements Serializable
 		return new String("IntRect2D[(" + ul.x + ", " + ul.y + ") -> (" + br.x + ", " + br.y + ")]");
 	}
 
+/*
 //// SEAN FIXME: I deleted toToroidal(rect) and split entirely for the time being
 
 	// fix for bugs
@@ -214,6 +211,7 @@ public class IntRect2D implements Serializable
 			y = y + height;
 		return y;
 	}
+*/
 
 	// added by Raj Patel
 	// returns a list of every Int2D point in IntRect2D
@@ -239,26 +237,30 @@ public class IntRect2D implements Serializable
 		return listOfPoints;
 	}
 
+/*
 	// remove? or add?
 	public IntRect2D resize(Int2D vals)
 	{
 		return new IntRect2D(ul.subtract(vals), br.add(vals));
 	}
+*/
 
-	public IntRect2D resize(int val)
+	public IntRect2D expand(int val)
 	{
 		//int[] vals = new int[] { val, val };
 		//return resize(vals);
 		
 		/// SEAN -- I *think* this is right?
-		return new IntRect2D(ul.add(-val), br.add(val));		
+		return new IntRect2D(ul.add(-val, -val), br.add(val, val));		
 	}
 
+/*
 	// maybe remove, maybe keep
 	public IntRect2D add(int dim, int offset)
 	{
 		return new IntRect2D(ul.add(dim, offset), br.add(dim, offset));
 	}
+*/
 
 	// maybe remove, maybe keep
 	public IntRect2D add(Int2D offsets)

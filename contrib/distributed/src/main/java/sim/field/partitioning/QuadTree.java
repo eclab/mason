@@ -189,7 +189,7 @@ public class QuadTree
 		if (node.isRoot())
 			return new HashSet<QuadTreeNode>();
 
-		final IntRect2D myHalo = node.getShape().resize(aoi);
+		final IntRect2D myHalo = node.getShape().expand(aoi);
 		final HashSet<QuadTreeNode> ret = new HashSet<QuadTreeNode>();
 		final ArrayList<QuadTreeNode> stack = new ArrayList<QuadTreeNode>();
 
@@ -273,7 +273,7 @@ public class QuadTree
 		final int[] br = new int[] {myShape.br().x,myShape.br().y};
 	
 		//TODO maybe I can use myShape.toToroidal() --- maybe not
-		//final List<IntRect2D> haloRegions = myShape.resize(aoi).toToroidal(myShape);
+		//final List<IntRect2D> haloRegions = myShape.expand(aoi).toToroidal(myShape);
 		final List<IntRect2D> haloRegions = new ArrayList<IntRect2D>();
 		
 		//north
