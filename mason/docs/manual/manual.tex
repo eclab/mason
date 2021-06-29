@@ -15264,11 +15264,9 @@ Do not expect inspection to work: each time a HeatBug is reloaded from the parti
 
 \section{Underneath}
 
-\subsection{Grid Storage and Halo Grids}
+\subsection{Grid Storage}
 
-Each grid and continuous field object, in each partition, contains two objects internally: a {\bf Halo Grid} and a {\bf Storage Object}.  The storage object holds all local storage for the partition (including the halo boundary).  The halo grid handles all intercommunication between field objects in different partitions.  
-
-\subsubsection{Grid Storage}
+Each grid and continuous field object, in each partition, contains two objects internally: a {\bf Halo Grid} and a {\bf Storage Object}.  The storage object holds all local storage for the partition (including the halo boundary).  The halo grid handles all intercommunication between field objects in different partitions.  We'll get to Halo Grids in the next section.
 
 Each grid, on each partition, stores its local and halo data in a grid storage object, a subclass of \class{sim.field.storage.GridStorage}.  This object holds the {\it shape} (an IntRect2D) of the data, which is the rectangular region of the partition in this grid; plus the {\it offset}, which is the position of the top-left corner of the region in the world coordinates, and a {\it data type} (an mpi.Datatype), defining what kind of data is being held for MPI purposes.  Each subclass also stores its data packed into one-dimensional array.  The Continuous storage includes an additional hashtable to specify real-valued locations of objects.
 
@@ -15408,6 +15406,149 @@ Returns the real-valued (global) location of the object with the given ID, else 
 
 \subsection{Halo Grids}
 
+As mentioned before, each grid and continuous field object, in each partition, contains two objects internally: a {\bf Halo Grid} and a {\bf Storage Object}.  The storage object holds all local storage for the partition (including the halo boundary).  The halo grid handles all intercommunication between field objects in different partitions.
+
+Halo Grids are of the class \class{sim.field.HaloGrid2D}.  Because they're the hubs for in a lot of interprocess communication among the fields, have a lot of complicated methods, only some of which you would benefit from knowing.  But we're gonna go through them all!  
+
+\paragraph{The Basics}  A Halo Grid is initialized with pointers to the DSimState and to its parent field's storage object:
+
+\begin{methods}{\class{sim.field.HaloGrid2D}\(\langle\)S\(\rangle\) Constructor}
+\mthd{public HaloGrid2D(S storage, DSimState state) throws RemoteException}
+Creates a HaloGrid2D.
+\end{methods}
+
+Each field object is registered with a unique number called the {\bf field index}: the same field object in different processors will have the same field index.  The field's HaloGrid maintains the field index information. It also can provide the Partition and the field's Storage as convenience methods.
+
+\begin{methods}{\class{sim.field.HaloGrid2D}}
+\mthd{public int getFieldIndex()}
+Returns the unique integer corresponding to the field (grid) which owns this HaloGrid2D.
+\mthd{public Partition getPartition()}
+Returns the DSimState's Partition.  A convenience method.
+\mthd{public GridStorage\(\langle\)T\(\rangle\)getStorage()}
+Returns the storage object corresponding to the field (grid) which owns this HaloGrid2D.
+\mthd{public String toString()}
+Gives a string version of this HaloGrid2D
+\end{methods}
+	
+\paragraph{World, Halo, and Local Bounds} The HaloGrid contains a number of helpful methods for determining halo and local bounds for its partition, and figuring out if a point lies within them.
+
+\begin{methods}{\class{sim.field.HaloGrid2D}}
+\mthd{public IntRect2D getWorldBounds()}
+Returns the global model bounds.
+\mthd{public IntRect2D getHaloBounds()}
+Returns the bounds of the partition's halo region.
+\mthd{public IntRect2D getLocalBounds()}
+Returns the bounds of the partition's local region.
+\mthd{public boolean inWorld(Int2D point)}
+Returns whether the given point is within the global model bounds.
+\mthd{public boolean inHalo(NumberND point)}
+Returns whether the given point is within the partition's halo bounds.
+\mthd{public boolean inLocal(NumberND point)}
+Returns whether the given point is within the partition's local bounds (excluding the halo boundary).
+\mthd{public boolean inHaloToroidal(NumberND point)}
+Returns whether the given point is within the partition's halo bounds, when wrapped around toroidally.
+\mthd{public boolean inHaloToroidal(double x, double y)}
+Returns whether the given point is within the partition's halo bounds, when wrapped around toroidally.
+\mthd{public Double2D toHaloToroidal(Double2D point)}
+Attempts to wrap around the given point to within the halo bounds region, if possible, and returns it, else returns null.
+\mthd{public Int2D toHaloToroidal(Int2D point)}
+Attempts to wrap around the given point to within the halo bounds region, if possible, and returns it, else returns null.
+\end{methods}
+
+\paragraph{RMI and Halo Sync}  A number of HaloGrid2D methods concern themselves with making requests over RMI to other partitions.  A HaloGrid2D can as a remote HaloGrid2D to add an agent or an object to its field, to remove it from the field, or to return a copy of it.  This is done in several stages.
+
+\begin{enumerate}
+\item The modeler asks a field object to add, remove, move, or query an object.
+\item If the object is not local, the field asks its Halo Grid to add, remove, move, or query an object by calling one of the \method{...FromRemote()} or {...toRemote()} methods, or \method{removeAgent()}.
+\item This method looks up the remote Halo Grid and calls a remote method on it: one of the \method{...RMI()} methods.
+\item The remote method places a request on a queue.
+\item In-between timesteps, the queue requests are processed.  First, remove requests are processed, then add requests, and then finally get-requests (queries), fulfilling Remote Promises.
+\end{enumerate}
+
+The first set of methods are (don't call these directly):
+
+\begin{methods}{\class{sim.field.HaloGrid2D}\(\langle\)T\(\rangle\)}
+\mthd{public void addToRemote(NumberND p, T t)}
+Sets or adds an object to a remote location.
+\mthd{public void addAgentToRemote(NumberND p, T t, int ordering, double time)}
+Sets or adds an agent to a remote location and schedules it in the remote schedule.
+\mthd{public void addAgentToRemote(NumberND p, T t, int ordering, double time, double interval)}
+Sets or adds an agent to a remote location and schedules it repeating in the remote schedule.
+\mthd{public Promised getFromRemote(NumberND p)}
+Requests an object from a remote location.
+\mthd{public Promised getFromRemote(NumberND p, long id)}
+Requests an object from a remote location with the given ID (for DenseGrid2D).
+\mthd{public void removeFromRemote(NumberND p, long id)}
+Removes an object with the given id from the given remote location.
+\mthd{public void removeAgent(NumberND p, long id)}
+Removes an agent either locally or remotely and stops it.
+\mthd{public void removeAllFromRemote(NumberND p)}
+Removes all objects from the given remote location.  If they are agents, then they are also stopped.
+\end{methods}
+
+These methods in turn call the following remote methods over RMI (don't call these directly):
+	
+\begin{methods}{\class{sim.field.HaloGrid2D}\(\langle\)T\(\rangle\) RMI}
+\mthd{public void addRMI(NumberND p, T t) throws RemoteException}
+Sets or adds an object to a remote location.
+\mthd{public void addRMI(NumberND p, T t, int ordering, double time) throws RemoteException}
+Sets or adds an agent to a remote location and schedules it in the remote schedule.
+\mthd{public void addRMI(NumberND p, T t, int ordering, double time, double interval) throws RemoteException}
+Sets or adds an agent to a remote location and schedules it repeating in the remote schedule.
+\mthd{public void getRMI(NumberND p, RemotePromise promise) throws RemoteException}
+Requests an object from a remote location.
+\mthd{public void getRMI(NumberND p, long id, RemotePromise promise) throws RemoteException}
+Requests an object from a remote location with the given ID (for DenseGrid2D).
+\mthd{public void removeRMI(NumberND p, long id) throws RemoteException}
+Removes an object with the given id from the given remote location.
+\mthd{public void removeAllRMI(NumberND p) throws RemoteException}
+Removes all objects from the given remote location.  If they are agents, then they are also stopped.
+\end{methods}
+
+These methods comprise the \class{sim.engine.transport.TransportRMIInterface} by which Halo Grids can call remote methods on other Halo Grids. 
+
+In-between model steps, the Halo Grid is busy fulfilling requests from the RMI queues and syncing the Halo Regions with its neighbors.  These methods are called from DSimState (don't call them directly):	
+
+\begin{methods}{\class{sim.field.HaloGrid2D}}
+\mthd{public void syncRemoveAndAdd() throws MPIException, RemoteException}
+Processes the RMI Remove and Add queues.
+\mthd{public void syncHalo() throws MPIException, RemoteException}
+Syncs Halo regions from neighboring partitions, then processes the RMI Get queue.
+\end{methods}
+	
+
+\paragraph{Migration}  When an agent or object crosses a partition boundary, or when load balancing changes the partition boundary under its feet, the agent or object must be {\it migrated}.  This is done by loading up a \class{sim.engine.transport.PayloadWrapper} with the object or agent, then sending it via MPI to the remote Halo Grid.  The remote Halo Grid then unwraps it and adds the object or agent to its own partition with:
+	
+\begin{methods}{\class{sim.field.HaloGrid2D} Migration}
+	\mthd{public void addPayload(PayloadWrapper payloadWrapper)}
+Processes a PayloadWrapper, adding its object or agent to the field, and (if it's an Agent) scheduling it in the schedule.
+\end{methods}
+
+\paragraph{The RMIProxy} To enable a Halo Grid to find other Halo grids, in order to call remote RMI methods on them, each Halo Grid builds a \class{sim.field.transport.RMIProxy} object.  The Halo Grid does this at the appropriate time when the following method is called from DSimState:
+
+\begin{methods}{\class{sim.field.HaloGrid2D}}
+\mthd{public void initRemote()}
+Sets up the Halo Grid's RMIProxy.
+\end{methods}
+
+The RMIProxy is little more than a cache of RMI remote objects representing Halo Grids on other processors.  It's simple:
+
+\begin{methods}{\class{sim.field.transport.RMIProxy} Constructor}
+\mthd{public RMIProxy(Partition ps, HaloGrid2D haloGrid)}
+Builds an RMIProxy for the given Halo Grid on the given partition.
+\end{methods}
+
+\begin{methods}{\class{sim.field.transport.RMIProxy}}
+\mthd{public TransportRMIInterface getField(int pid) throws RemoteException}
+Returns the TransportRMIInterface (the Halo Grid) for the given remote process which corresponds to the Halo Grid that owns this RMIProxy.
+\end{methods}
+
+\subsection{The RemoteProcessor}
+[To Write --- it doesn't feel that this class is all that settled yet]
+
+
+
+\ignore{
 \begin{methods}{\class{sim.field.HaloGrid2D} Halo Exchange}
 
 \mthd{public void syncHalo() throws MPIException}
@@ -15506,6 +15647,7 @@ As shown before, HaloGrid2D provides moveAgent and moveRepeatingAgent methods th
 % \end{center}
 
 % Sometimes agents need to access other agents or other information well outside of their AOI.  Such access is supported with special methods, but it is not well-optimized in terms of performance and scalability.  You have been warned!
+}
 
 \subsection{Partitioning Schema and Load-balancing}
 \label{sec:partitioning}
