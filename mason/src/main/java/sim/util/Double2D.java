@@ -498,11 +498,18 @@ public final class Double2D extends NumberND
 		return new Double2D(Math.min(x, val.x), Math.min(y, val.y));
 		} 
 
+/*
 	public Double2D add(double offset)
 		{
 		return new Double2D(x + offset, y + offset);
 		} 
+*/
+    public Double2D add(double dx, double dy)
+		{
+		return new Double2D(x + dx, y + dy);
+		} 
 
+/*
 	public Double2D add(int dim, double offset)
 		{
 		if (dim == 0)
@@ -516,18 +523,23 @@ public final class Double2D extends NumberND
 		return new Double2D(x + offset.x, y + offset.y);
 		} 
 
-	public Double2D subtract(Int2D offset)
+	public Double2D subtract(Double2D offset)
 		{
 		return new Double2D(x - offset.x, y - offset.y);
 		} 
+*/
 
+/*
 	public Double2D subtract(double offset)
 		{
 		return new Double2D(x - offset, y - offset);
 		} 
+*/
 
+/*
 	public double[] getOffsets(final Double2D from)
 		{
 		return new double[] { x - from.x, y - from.y };
 		}
+*/
     }

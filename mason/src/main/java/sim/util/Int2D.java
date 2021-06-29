@@ -238,12 +238,20 @@ public final class Int2D extends NumberND
         return Math.abs((long)this.x-p.x) + Math.abs((long)this.y-p.y);
         }
         
-	/// FOR DISTRIBUTED CODE        
+	/// FOR DISTRIBUTED CODE    
+	/*    
     public Int2D add(int offset)
 		{
 		return new Int2D(x + offset, y + offset);
 		} 
+	*/
 
+    public Int2D add(int dx, int dy)
+		{
+		return new Int2D(x + dx, y + dy);
+		} 
+
+/*
 	public Int2D add(int dim, int offset)
 		{
 		if (dim == 0)
@@ -251,6 +259,7 @@ public final class Int2D extends NumberND
 		else
 			return new Int2D(x, y + offset);
 		} 
+*/
 
 /*
 	public Int2D add(int[] offset)
@@ -276,17 +285,20 @@ public final class Int2D extends NumberND
 		return new Int2D(x - other.x, y - other.y);
 		} 
 
+/*
     public Int2D subtract(int offset)
 		{
 		return new Int2D(x - offset, y - offset);
 		} 
-
+*/
+/*
 	public int compareTo(final Int2D other) 
 		{
 		if (x == other.x)
 			return (y - other.y);
 		else return (x - other.x);
 		}
+*/
 
 	public Int2D max(Int2D val)
 		{

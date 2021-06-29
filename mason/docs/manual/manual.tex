@@ -2896,6 +2896,11 @@ You should access these variables with abandon: they're designed for it.    Addi
 \mthd{public String toCoordinates()} Returns a String version of the x and y values as coordinates in the form \((x, y)\).
 \mthd{public int hashCode()} Builds a hash code from the Int2D.
 \mthd{public boolean equals(Object obj)} Returns true if the Int2D is equal to the other object in value.  Int2D can be compared against other Int2D, MutableIn2D, Double2D, and MutableDouble2D objects.
+\mthd{public Int2D add(Int2D other)} Adds this Int2D to the other, returning a new Int2D.
+\mthd{public Int2D add(int dx, int dy)} Adds \(\langle}{\it dx, dy}\(\rangle\) to this Int2D, returning a new Int2D.
+\mthd{public Int2D subtract(Int2D other)} Subtracts the other rect from this Int2D, returning a new Int2D.
+\mthd{public Int2D max(Int2D other)} Returns an Int2D whose x value is the maximum of this Int2D and the other, and likewise the y value is the maximum of the two.
+\mthd{public Int2D min(Int2D other)} Returns an Int2D whose x value is the minimum of this Int2D and the other, and likewise the y value is the minimum of the two.
 \mthd{public double distance(double x, double y)} Returns the distance from the Int2D to the given coordinates.
 \mthd{public double distance(Int2D p)} Returns the distance from the Int2D to the given coordinates.
 \mthd{public double distance(MutableInt2D p)} Returns the distance from the Int2D to the given coordinates.
@@ -2952,6 +2957,11 @@ Double2D is similar to Int2D, though you'll find a few more constructors and use
 \mthd{public String toCoordinates()} Returns a String version of the x and y values as coordinates in the form \((x, y)\).
 \mthd{public int hashCode()} Builds a hash code from the Double2D.
 \mthd{public boolean equals(Object obj)} Returns true if the Double2D is equal to the other object in value.  Double2D can be compared against Int2D, MutableIn2D, Double2D, and MutableDouble2D objects.
+\mthd{public Double2D add(Double2D other)} Adds the other Double2D and returns a new Double2D holding the result.
+\mthd{public Double2D add(double dx, double dy)} Adds \(\langle}{\it dx, dy}\(\rangle\) to this Double2D, returning a new Double2D.
+\mthd{public Double2D subtract(Double2D other)} Subtracts the other rect from this Double2D, returning a new Double2D.
+\mthd{public Double2D max(Double2D other)} Returns an Double2D whose x value is the maximum of this Double2D and the other, and likewise the y value is the maximum of the two.
+\mthd{public Double2D min(Double2D other)} Returns an Double2D whose x value is the minimum of this Double2D and the other, and likewise the y value is the minimum of the two.
 \mthd{public double distance(double x, double y)} Returns the distance from the Double2D to the given coordinates.
 \mthd{public double distance(Int2D p)} Returns the distance from the Double2D to the given coordinates.
 \mthd{public double distance(MutableInt2D p)} Returns the distance from the Double2D to the given coordinates.
@@ -2976,8 +2986,6 @@ Double2D is similar to Int2D, though you'll find a few more constructors and use
 \mthd{public double dot(Double2D other)} Takes the dot product of this and the other Double2D.
 \mthd{public double perpDot(Double2D other)} Takes the ``perp dot product'' (the 2D equivalent of the cross product) of this and the other Double2D.
 \mthd{public Double2D negate()} Returns the negation of this Double2D.
-\mthd{public Double2D add(Double2D other)} Adds the other Double2D and returns a new Double2D holding the result.
-\mthd{public Double2D subtract(Double2D other)} Subtracts the other Double2D and returns a new Double2D holding the result.
 \mthd{public Double2D multiply(double scalar)} Multiplies the Double2D against the scalar and returns a new Double2D holding the result.
 \mthd{public Double2D resize(double length)} Scales the Double2D to be the given length and returns a new Double2D holding the result.
 \mthd{public Double2D normalize()} Normalizes the Double2D and returns a new Double2D holding the result.  If the Double2D is zero in length, an error is thrown.
@@ -14412,7 +14420,7 @@ The script will tell AWS to shutdown and destroy your instances. {\bf If you don
 
 \section{Package and Class Overview}
 
-Distributed MASON was co-designed by ISISLAB-UNISA (University of Salerno) and George Mason University, and is inspired loosely on the earlier D-MASON architecture developed at Salerno (https:/!/isislab-unisa.github.io/dmason/). Distributed MASON consists of the following packages:
+Distributed MASON was co-designed by ISISLAB-UNISA (University of Salerno) and George Mason University, and is inspired loosely on the earlier D-MASON architecture developed at Salerno (https:/\!/isislab-unisa.github.io/dmason/). Distributed MASON consists of the following packages:
 
 \begin{itemize}
 	\item \package{sim.engine}
@@ -14435,7 +14443,7 @@ Distributed MASON was co-designed by ISISLAB-UNISA (University of Salerno) and G
     \item \Class{sim.engine.DObject}: a distributed Object.
     \item \Class{sim.engine.Stopping}: an object which can hold a Stoppable (this is actually in the primary MASON system now).
     \item \Class{sim.engine.DSteppable}: a distributed Steppable.
-    \item \Class{sim.engine.DistributedTentaiveStep}: distributed version of the TentativeStep class.  This is used internally by the Schedule.
+    \item \Class{sim.engine.DistributedTentativeStep}: distributed version of the TentativeStep class.  This is used internally by the Schedule.
     \item \Class{sim.engine.DistributedIterativeRepeat}: distributed version of the  IterativeRepeat class.    This is used internally by the Schedule.
     \item \Class{sim.engine.Promised}: an interface for objects which hold information that will be filled out and provided in the future. 
     \item \Class{sim.engine.Promise}: a basic implementation of Promised.
@@ -14529,9 +14537,7 @@ Distributed MASON was co-designed by ISISLAB-UNISA (University of Salerno) and G
 
 \section{Developing in Distributed MASON}
 
-First a word about assumptions made about distributed computing.  Distributed systems use multiple processors to act as a single system. However, realistically this presents only an illusion of a single system: to get reasonable efficiency out of the system, it is necessary to know {\it some} of the low-level details of the distributed facility.  This is known as a {\it brittle abstraction}. Factors like geolocation and physical limitations of the machines in question will have a major impact.
-
-We have tried to shield you from knowing as much of the distributed system's functionality, but you still need to understand some of it.  So here we go!
+First a word about assumptions made about distributed computing.  Distributed systems use multiple processors to act as a single system. However, realistically this presents only an illusion of a single system: to get reasonable efficiency out of the system, it is necessary to know {\it some} of the low-level details of the distributed facility.  This is known as a {\it brittle abstraction}. Factors like the geographic location of the computers, their physical limitations, and how they're connected together, will have a major impact.  We have tried to shield you from knowing as much of the distributed system's functionality, but you still need to understand some of it.  So here we go!
 
 \begin{figure}[t]
 \begin{center}\includegraphics[width=2.5in]{distributed/pids}\end{center}
@@ -14555,7 +14561,7 @@ Each processor has its own special subclasses of SimState and its own Schedule c
 Returns the PID of the process in charge of this DSimState.
 \mthd{QuadTreePartition getPartition()}
 Returns the Partition object in charge of this DSimState.
-\mthd{static void doLoopDistributed(final Class<?> c, final String[] args) }
+\mthd{static void doLoopDistributed(final Class\(\langle\)?\(\rangle\) c, final String[] args) }
 Replaces doLoop()
 \end{methods}
 
@@ -14586,7 +14592,7 @@ IntGrid2D & \Class{sim.util.DIntGrid2D}\\
 DoubleGrid2D & \Class{sim.util.DDoubleGrid2D}\\
 DenseGrid2D & \Class{sim.util.DDenseGrid2D}\\
 Continuous2D& \Class{sim.util.DContinuous2D}\\
-SparseGrid2D& No equivalent. Instead, use \Class{sim.util.DDenseGrid2D}\\
+SparseGrid2D& No equivalent. Instead, use \Class{sim.util.DDenseGrid2D}, possibly with locations flag turned on\\
 Network&No equivalent for now.
 \end{tabular}%
 \end{center}
@@ -14652,8 +14658,59 @@ Returns a list of all partition bounds for all processors.
 Returns the PID of the processor in charge of the partition which encompasses the given point.
 \end{methods}
 
-Note the use of the class \class{sim.field.IntRect2D}, which is nothing more than two Int2D objects, one representing an upper left corner, and one representing a lower right corner, in order to form a rectangle.
+\paragraph{IntRect2D} Note the use of the class \class{sim.field.IntRect2D}, which is nothing more than two Int2D objects, one representing an upper left corner, and one representing a lower right corner, in order to form a rectangle. Like most things in MASON, \(\langle 0, 0\rangle\) is the top left corner of the space, so the ``upper left'' corner is smaller in coordinates than the ``lower right'' corner.  IntRect2D is {\bf half-open}, meaning that it ranges from the upper left corner {\bf inclusive} to the lower right corner {\bf exclusive}.
 
+\begin{methods}{\class{sim.util.IntRect2D} Constructor}
+\mthd{public IntRect2D(Int2D ul, Int2D br)}
+Builds an IntRect2D with the given upper left and bottom right corners.
+\mthd{public IntRect2D(int width, int height)}
+Builds an IntRect2D with \(\langle 0, 0\rangle\) as the upper left corner, and \(\langle\){\it width, height}\(\rangle\) as the bottom right corner.
+\end{methods}
+
+\begin{methods}{\class{sim.util.IntRect2D}}
+\mthd{public Int2D ul()}
+Returns the upper left corner.
+\mthd{public Int2D br()}
+Returns the bottom right corner.
+\mthd{public int getArea()}
+Returns the area of the rectangle
+\mthd{public int getHeight()}
+Returns the height of the rectangle
+\mthd{public int getWidth()}
+Returns the with of the rectangle
+\mthd{public boolean contains(int x, int y)}
+Returns whether the given point is contained within the boundary of the rectangle.
+\mthd{public boolean contains(double x, double y)}
+Returns whether the given point is contained within the boundary of the rectangle.
+\mthd{public boolean contains(Int2D point)}
+Returns whether the given point is contained within the boundary of the rectangle.
+\mthd{public boolean contains(Double2D point)}
+Returns whether the given point is contained within the boundary of the rectangle.
+\mthd{public boolean contains(NumberND point)}
+Returns whether the given point is contained within the boundary of the rectangle.
+\mthd{public boolean contains(IntRect2D other)}
+Returns whether the given rectangle is entirely contained within the boundary of the rectangle.
+\mthd{public boolean intersects(IntRect2D other)}
+Returns whether the other rectangle intersects with this one.
+\mthd{public IntRect2D intersection(IntRect2D other)}
+Returns the intersection between this rectangle and the other one.  If there is no intersection, then an IllegalArgumentException is raised.
+\mthd{public boolean equals(IntRect2D other)}
+Returns whether this rectangle is identical to the other rectangle.
+\mthd{public Double2D getCenter()}
+Returns the center of the rectangle.
+\mthd{public static IntRect2D getBoundingRect(IntRect2D[] rects)}
+Returns a bounding rectangle which tightly surrounds the provided rectangles.
+\mthd{public Int2D[] getPointList()}
+Returns an array of every point contained within the rectangle.
+\mthd{public IntRect2D expand(int val)}
+Expands the IntRect2D in all directions by val.
+\mthd{public IntRect2D add(Int2D offsets)}
+Translates the IntRect2D by adding offsets to it.
+\mthd{public IntRect2D subtract(Int2D offsets)}
+Translates the IntRect2D by subtracting offsets from it.
+\mthd{public String toString()}
+Returns the rectangle in text form.
+\end{methods}
 
 \subsection{Objects}
 
@@ -14692,7 +14749,7 @@ Returns whether the DSimState is assuming that you could be allocating DObjects 
 
 \subsection{Agents}
 
-Agents are likely to migrate from processor to processor as they wander to different partitions of your field.  This means that they must be DObjects, but it also means that not only must migrate from one processor's field partition to another processor's field partition, but must {\it also} be moved from one processor's schedule to another processor's schedule.  This in turn means that we must be able to \method{stop()} all agents.  Thus all agents in Distributed MASON must implement the \class{sim.field.Stopping} interface.
+Agents are likely to migrate from processor to processor as they wander to different partitions of your field.  This means that they must be DObjects, but it also means that they not only must migrate from one processor's field partition to another processor's field partition, but must {\it also} be moved from one processor's schedule to another processor's schedule.  This in turn means that we must be able to \method{stop()} all agents.  Thus all agents in Distributed MASON must implement the \class{sim.field.Stopping} interface.
 
 The Stopping interface is very simple: it stores and retrieves a \class{sim.field.Stoppable} object.  Why is this necessary?  As usual, all agents are either scheduled repeating or one-shot.  Normally whenever a MASON agent is scheduled repeating, it is stored on the schedule wrapped in a \class{sim.engine.IterativeRepeat} object, but when it is scheduled one-shot, it is just stuck on the schedule.  In Distributed MASON this is somewhat different: when an agent is scheduled repeating, it is placed in a special wrapper called \class{sim.engine.DistributedIterativeRepeat}, and when it is scheduled one-shot, it is placed in a special wrapper called \class{sim.engine.DistributedTentativeStep}.  These special wrappers are Stoppable, and in turn tell your object (because it is Stopping) who they are.  Thus when your object must be migrated to another processor, your schedule can efficiently figure out who to stop by just querying your agent.  Note that this means that {\bf at present you should not use Sequence or other wrappers.}
 
@@ -14976,7 +15033,9 @@ Returns the local storage array for the grid, containing objects of the class {\
 
 These are grids of ArrayLists of objects, and are approximately the same as DenseGrid2D in ordinary MASON.  There is no equivalent to SparseGrid2D: you'll need to use dense grids.  The Dense grid class is \class{sim.field.grid.DDenseGrid2D}.   Unlike the MASON version of this method (\class{sim.field.grid.DenseGrid2D}, this version uses Java generics and is parameterized so that each object must be of some class \(T\), which must in turn be a subclass of \class{sim.engine.DObject}.  Note that this class contains methods for manipulating agents (Steppable).
 
-{\bf Not listed below are all the neighborhood lookup and toroidal computation methods} available in DenseGrid2D, which are available in exactly the same form in DDenseGrid2D.
+%\paragraph{Optional Location Lookup} One feature of Sparse Grids was the ability to rapidly look up the location of an object.  A special DDenseGrid2D option maintains object locations, if you want, but you will have to be careful when you use it.  You turn this on by calling \code{setMaintainsLocations(true)}.  When this option is turned on, then whenever you add an object or remove it, DDenseGrid2D will also add the object or remove it from a HashMap of DObject IDs to Int2D locations.  You can get this HashMap with \code{getObjectLocations()}.  Note that if you add the same object multiple times, this HashMap, or remove an object located in multiple places, this HashMap may not point to the instance of the object expected.  The map will also be rebuilt every timestep when incoming halo objects are recached, and this can be costly.  Thus this option should only be used, and judiciously, when your grid {\bf never contains an object multiple times}.  Also note that this does not prevent you from adding the object to multiple separate partitions: you shouldn't do that either.
+
+Okay, on to the methods.  {\bf Not listed below are all the neighborhood lookup and toroidal computation methods} available in DenseGrid2D, which are available in exactly the same form in DDenseGrid2D.
 
 \begin{methods}{\class{sim.field.grid.DDenseGrid2D} constructor}
 \mthd{public DDenseGrid2D\(\langle\)T extends DObject\(\rangle\)(DSimState state)}
@@ -15020,6 +15079,12 @@ Removes all objects from the given point, which can be any point in the model, b
 Moves an agent from one point to the other, by next timestep.  The {\it from} point must be local to this partition, but the {\it to} point can be any point in the model.  Also moves it (locally or remotely) to the appropriate processor's schedule.  Remember that this is costly unless the {\it to} point also happens to be in your local region.
 \mthd{public ArrayList\(<\)T\(>\)[\ ] getStorageArray()}
 Returns the local storage array for the grid, containing objects of the class {\it T}, in row-major order including the halo region.  Be careful with this.  You probably shouldn't play with this if you don't know what it does.
+%\mthd{public HashMap\(<\)Long, Int2D\(>\) getObjectLocations()}
+%Returns the optional map of object IDs to locations, or null if this feature is not turned on.
+%\mthd{public boolean getMaintainsLocations()}
+%Returns if the ID to locations mapping feature is turned on.
+%\mthd{public void getMaintainsLocations(boolean val)}
+%Sets whether the ID to locations mapping feature is turned on.
 \end{methods}
 
 
@@ -15262,7 +15327,7 @@ Additionally, the Play/Pause/Stop buttons do not at present {\bf not control the
 
 Do not expect inspection to work: each time a HeatBug is reloaded from the partition, it's a copy of a {\it different HeatBug}.  Perhaps in the future we will be able to get this to work (sort of), but not now.  Similarly, don't expect much charting to work at present.
 
-\section{Underneath}
+\section{Under the Hood}
 
 \subsection{Grid Storage}
 
@@ -15361,6 +15426,9 @@ Segs the value at the given local point to val.
 \end{methods}
 
 \paragraph{DenseGridStorage}  This storage object must be able to hold multiple objects, and indeed multiple instances of the same object, in the same location.  To do this, it has a single array called \variable{storage} but which holds ArrayLists of the given type \(\langle\)T\(\rangle\), or null slots.  When an object is added to the array, if an ArrayList does not yet exist at that location, it is created.  If the last object is removed from an ArrayList, the ArrayList is deleted and replaced with \code{null} according to the setting of the \variable{removeEmptyBags} variable (by default \code{true}).
+
+
+
 
 \paragraph{ContinuousStorage}  This storage object differs from the others.  It stores objects in a discretized grid, but also associates them with real-valued locations.  The grid is managed with an array of HashMaps:
 
@@ -15723,11 +15791,20 @@ Besides setting up the communication topology with its neighbors, the partition 
 
 Distributed Mason uses a space partitioning approach where the association between processors and agents changes during the simulation. To better exploit the computing power provided by the processors it is necessary to design the system to avoid bottlenecks. Since the simulation is synchronized after each step, the system advances with the same speed provided by the slower processor in the system. For this reason it is necessary to balance the load among processor. 
 
-Distributed Mason presents a first version of load balancing that uses a hierarchy methodology, favoring a more frequent load balancing at the lower levels of the QuadTree which represents the partition and less frequently that at the upper levels. For the moment the frequency of load balancig at the lower and upper levels is fixed, but we hope to be able to make it completely, or as dynamic as possible.
+Distributed Mason presents a first version of load balancing that uses a hierarchy methodology, favoring a more frequent load balancing at the lower levels of the QuadTree which represents the partition and less frequently that at the upper levels. For the moment the frequency of load balancing at the lower and upper levels is fixed, but we hope to be able to make it completely, or as dynamic as possible.
 
 \subsection{Transporting and Migration}
 
-Moving an object across process nodes (because it was moved quite some distance in the field) is called {\bf transporting}; while moving and scheduling an agent is called {\it migrating} the agent. 
+An agent or object may be moved or copied from partition to partition for one of four reasons:
+
+\begin{itemize}
+\item Because the agent or object is wandering across a partition boundary.
+\item Because load balancing has shifted the partition boundary under the object/agent's feet, and it now finds itself in the region of a different partition.
+\item Because an agent or object is near a partition boundary and falls within the Area of Interest (AOI) of the neighboring partition, and so a copy of it must be provided to the halo field of the other partition.
+\item Because the modeler is explicitly moving the agent, or adding it, to a distant partition, well beyond a single partition boundary.
+\end{itemize} 
+
+The fourth case, which uses RMI to move the object/agent to a distant location, has been discussed already with HaloGrid2D.  The other three cases move or copy object/agent to a neighbor using MPI.  Moving an object across a partition boundary is called {\bf transporting}; while moving and scheduling an agent is called {\bf migrating} the agent.
 
 When an agent sets its location in a field to somewhere outside its current processor's region, the field will determine where the agent should migrated, and add the agent to the appropriate neighbor's queue in the TransporterMPI by calling one of its migration methods. The TransporterMPI  have inside an HashMap, called dstMap, that hold the migration queue for all the neighbors.
 
