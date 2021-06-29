@@ -13792,7 +13792,7 @@ This is because \parameter{stat.child.0} is our tabular statistics, and the obje
 Also note that ECJ at present does not implement an evolutionary algorithm which is {\it both} multiobjective {\it and} steady-state.  You'll have to pick.
 
 
-\subsection{Model Optimization through Graphical Interface}
+\subsection{Model Optimization through the Graphical Interface}
 
 Nearly all of what's been described previously can also be done at the GUI level.  To use the GUI optimizer, first create an instance of your model, then select {\bf Optimize Model} under the {\bf File} menu.  You will be presented with a window such as the one at right.
 
@@ -13859,13 +13859,73 @@ Finally at the bottom you can start the optimization process by pressing the {\b
 
 \subsection{Custom Model Optimization}
 
-[Still gotta write this]
+If you need more flexibility or capability, there's nothing stopping you from just running MASON as part of ECJ.  This is not the right place to discuss how ECJ works (you can grab ECJ's manual PDF, much like the MASON manual), but here's the general idea.
+
+ECJ is a stochastic and evolutionary optimization toolkit.  It uses a variety of parameter files to set up and customize an optimization process.  In short most such optimization tasks work like this:
+
+\begin{enumerate}
+\item Build an initial {\it population} (a sample) of some \(N\) candidate solutions, ({\it individuals}).   Each individual is represented by some kind of data structure appropriate to the problem: common data structures include fixed-length arrays of parameters (that's what we've seen so far), variable-length lists, trees, etc.
+\item For each individual in the population...
+	\begin{enumerate}
+	\item Set up, or reset, an environment to test the individual
+	\item Assess the individual to compute its {\it fitness} (quality)
+	\item Tear down the environment
+	\end{enumerate}
+\item If an ideal individual is discovered, or we have run out of time, quit and return the fittest individual discovered so far.
+\item Build a next-generation population from the original one, by iteratively selecting high-fitness individuals, copying them, mixing and matching pieces of them, and mutating (slightly randomizing) the resulting ``child'' individuals. The specifics of this part vary depending on the optimization algorithm chosen.
+\item Replace the population with the new next-generation population.
+\item Go to step 2.
+\end{enumerate}
+
+For us the interesting steps are 2(a), 2(b), and 2(c).  In ECJ these are done inside the \method{evaluate(...)} method of a class we generate, a subclass of \class{ec.Problem}:
+
+\java{
+public void evaluate(ec.EvolutionState state, ec.Individual ind, int subpopulation, int threadnum);
+}
+
+This method is called to assess the fitness of a single individual.  The \class{ec.EvolutionState} is the global top-level object for the evolutionary optimization system, much as \class{sim.engine.SimState} is the top-level object for a simulation model.  We might implement this method something like this.  Imagine that our Individuals are actually subclasses of \class{ec.vector.DoubleVectorIndividual}, which a wrapper over an array of doubles that represent our parameters to optimize.  We might say:
+
+{
+\small
+\begin{verbatim}
+public void evaluate(ec.EvolutionState state, ec.Individual ind, int subpopulation, int threadnum)
+    {
+    ec.vector.DoubleVectorIndividual vec = (ec.vector.DoubleVectorIndividual) ind;
+    double[] params = vec.genome;
+
+    MySimState simstate = MySimState(1);
+    simstate = state.random[threadnum];
+    
+    simstate.start();
+    
+    // Here we load the parameters into our simstate as we see fit...
+    // .... .... ....
+    // End loading
+    
+    do 
+        if (!simstate.schedule.step(state)) break;
+    while(simstate.schedule.getSteps() < MAX_STEPS);    // say, 5000?
+    simstate.finish();
+    
+    // Now we extract an assessment of the model
+    double assessment = ...       // higher fitness is better: fitness values ought to be greater than 0
+    boolean isOptimal = ...      // probably false?
+    // End extracting
+
+     SimpleFitness f = ((SimpleFitness)ind.fitness);
+     f.setFitness(state, assessment, isOptimal);
+     ind.evaluated = true;
+     }
+\end{verbatim}
+}
+
+This example simply builds a new MASON model, loads it with parameters as specified in the Individual, and tests it.  There are situations where we might instead want to build a model, run it, and in the process of it running, it calls back on our parameters.  For example, Genetic Programming is an approach to optimizing agent behaviors in the form of parse tree structures.  Here we might create a model, imbue each of the agents with parse trees, and run the model.  In the course of stepping the agents, these structures will have to be accessed, requiring access back to ECJ's EvolutionState.  In the \file{contrib/optimize/sim/app/serengeti/} directory is an ECJ example which uses Genetic Programming to optimize agent behaviors for a simple MASON model.
 
 \chapter{Distributed MASON}
 
 {\bf \color{red} Warning.  Distributed MASON is in early testing stages.  We're including documentation here for you in case you'd like to try it out, but do not be surprised if everything is modified many times before things settle down.}
 
-Distributed MASON allows you to create large MASON models which run over a potentially very large number of machines in compute farms or cloud computing services.  To do this will require a few modifications to the classes you use in your model and some tweaking on your part, but we have tried hard to keep this to a minimum.
+Distributed MASON allows you to create large MASON models which run over a potentially very large number of machines in compute farms or cloud computing services.  To do this will require some modifications to the classes you use in your model and some tweaking on your part, but we have tried hard to keep this to a minimum.
 
 To use Distributed MASON, you'll need to understand how to use or set up cloud computing services or to run processes on your own servers (we'll show how to get running locally on your laptop, and also with Amazon Web Services).  It's also helpful to understand some basic concepts in distributed computing.  Let's go over those now.
 

@@ -413,6 +413,33 @@ public class MASONProblem extends Problem implements SimpleProblemForm
             }
         }
         
+    public void describe(
+        final EvolutionState state, 
+        final Individual ind, 
+        final int subpopulation,
+        final int threadnum,
+        final int log)
+        {
+		initSimState(state, threadnum);
+		PrintWriter writer = state.output.getLog(log).writer;
+		simstate.setDescription(writer);
+		setProperties(state, ind);
+		simstate.start();
+		do
+			{
+			if (!simstate.schedule.step(simstate)) 
+				{
+				break; 
+				}
+			}
+		while(simstate.schedule.getSteps() < maximumSteps); 
+		simstate.finish();
+		if (writer != null) 
+			{
+			writer.flush();
+			}
+		simstate.setDescription(null);
+		}
 
     public void evaluate(
         final EvolutionState state,
