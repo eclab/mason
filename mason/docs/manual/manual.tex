@@ -2897,7 +2897,7 @@ You should access these variables with abandon: they're designed for it.    Addi
 \mthd{public int hashCode()} Builds a hash code from the Int2D.
 \mthd{public boolean equals(Object obj)} Returns true if the Int2D is equal to the other object in value.  Int2D can be compared against other Int2D, MutableIn2D, Double2D, and MutableDouble2D objects.
 \mthd{public Int2D add(Int2D other)} Adds this Int2D to the other, returning a new Int2D.
-\mthd{public Int2D add(int dx, int dy)} Adds \(\langle}{\it dx, dy}\(\rangle\) to this Int2D, returning a new Int2D.
+\mthd{public Int2D add(int dx, int dy)} Adds \(\langle\){\it dx, dy}\(\rangle\) to this Int2D, returning a new Int2D.
 \mthd{public Int2D subtract(Int2D other)} Subtracts the other rect from this Int2D, returning a new Int2D.
 \mthd{public Int2D max(Int2D other)} Returns an Int2D whose x value is the maximum of this Int2D and the other, and likewise the y value is the maximum of the two.
 \mthd{public Int2D min(Int2D other)} Returns an Int2D whose x value is the minimum of this Int2D and the other, and likewise the y value is the minimum of the two.
@@ -2958,7 +2958,7 @@ Double2D is similar to Int2D, though you'll find a few more constructors and use
 \mthd{public int hashCode()} Builds a hash code from the Double2D.
 \mthd{public boolean equals(Object obj)} Returns true if the Double2D is equal to the other object in value.  Double2D can be compared against Int2D, MutableIn2D, Double2D, and MutableDouble2D objects.
 \mthd{public Double2D add(Double2D other)} Adds the other Double2D and returns a new Double2D holding the result.
-\mthd{public Double2D add(double dx, double dy)} Adds \(\langle}{\it dx, dy}\(\rangle\) to this Double2D, returning a new Double2D.
+\mthd{public Double2D add(double dx, double dy)} Adds \(\langle\){\it dx, dy}\(\rangle\) to this Double2D, returning a new Double2D.
 \mthd{public Double2D subtract(Double2D other)} Subtracts the other rect from this Double2D, returning a new Double2D.
 \mthd{public Double2D max(Double2D other)} Returns an Double2D whose x value is the maximum of this Double2D and the other, and likewise the y value is the maximum of the two.
 \mthd{public Double2D min(Double2D other)} Returns an Double2D whose x value is the minimum of this Double2D and the other, and likewise the y value is the minimum of the two.
@@ -14579,7 +14579,7 @@ Finally, \method{doLoopDistributed} replaces the standard \method{doLoop()} meth
 }
 
 
-\subsection{Distributed Fields and Partitions}
+\subsection{Distributed Fields, Partitions, and Int Rects}
 \label{distributedfieldsandpartitions}
 
 Because MASON's fields are distributed among multiple processors, MASON must use new field classes:
