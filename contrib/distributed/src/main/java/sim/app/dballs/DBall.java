@@ -3,7 +3,9 @@ package sim.app.dballs;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import sim.engine.DistinguishedSteppable;
+
+import sim.engine.DSteppable;
+import sim.engine.Distinguished;
 import sim.engine.Promised;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
@@ -11,7 +13,7 @@ import sim.field.network.*;
 import sim.util.Bag;
 import sim.util.Double2D;
 
-public class DBall extends DistinguishedSteppable {
+public class DBall extends DSteppable implements Distinguished {
 
 	private static final long serialVersionUID = 1L;
 	

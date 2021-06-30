@@ -250,7 +250,6 @@ public class DSimState extends SimState
 					// Get the object inside the RemotePromise together with the required data
 					// Use the method of the remote interface to get the required information
 					// NOTE THAT the method needs to be implemented by the developer
-					// author + method tag + serializable data + promise
 					System.out.println("Filling the response!");
 					Distinguished author = (Distinguished) promisesToFill.c;
 					Serializable response = author.respondToRemote(); // argument data also + tag
@@ -1206,7 +1205,8 @@ public class DSimState extends SimState
 	
 	/*
 	 * Looks up for the object with name to get data
-	 * returns a RemotePromise that will be filled out after
+	 * Creates an unfilled RemotePromise that contains the request of some processor.
+	 * Calls addRemotePromise to put the RemotePromise in the queue of its processor.
 	 * 
 	 * @param name is the name of the required Remote DObject that has the data
 	 * @param data is the information that we want to get from the Remote DObject 
@@ -1215,7 +1215,8 @@ public class DSimState extends SimState
 	 */
 	public Promised contactRemoteObj(String name, Serializable data) throws RemoteException, NotBoundException {
 		Distinguished remoteObject = (Distinguished) this.getDRegistry().getObject(name);
-		Promised promiseUnfilled = remoteObject.contactFor(data);
+		RemotePromise promiseUnfilled = new RemotePromise(); 
+		DSimState.addRemotePromise(promiseUnfilled, data, (Serializable) remoteObject);
 		return promiseUnfilled;
 	}
 	
@@ -1223,8 +1224,8 @@ public class DSimState extends SimState
 	 * Add a RemotePromise to the queue.
 	 * The promise will be filled then
 	 */
-	public static void addRemotePromise(RemotePromise promise, Serializable author, Serializable data) {
-		promises.add(new Triplet<RemotePromise, Serializable, Serializable>(promise, author, data));
+	public static void addRemotePromise(RemotePromise promise, Serializable data, Serializable author) {
+		promises.add(new Triplet<RemotePromise, Serializable, Serializable>(promise, data, author));
 		// here the promise needs the information about the object that has the data
 		// and so info about the required data and the object are needed
 	}

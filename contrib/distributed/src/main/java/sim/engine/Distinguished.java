@@ -23,9 +23,4 @@ public interface Distinguished extends Remote {
 	 */
 	public Serializable respondToRemote() throws RemoteException;
 	
-	/*
-	 * Creates an unfilled RemotePromise that contains the request of some processor.
-	 * Puts the RemotePromise in the queue of its processor.
-	 */
-	public Promised contactFor(Serializable data) throws RemoteException;
 }

@@ -2,7 +2,6 @@ package sim.engine;
 
 import java.io.*;
 import java.rmi.*;
-import sim.engine.*;
 
 public interface Promised extends Serializable 
 {

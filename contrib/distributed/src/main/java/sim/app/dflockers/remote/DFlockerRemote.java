@@ -17,7 +17,7 @@ import sim.field.continuous.DContinuous2D;
 import sim.util.*;
 import java.util.*;
 
-public class DFlockerRemote extends DistinguishedSteppable {
+public class DFlockerRemote extends DSteppable implements Distinguished{
 
 	private static final long serialVersionUID = 1;
 	public Double2D loc;
