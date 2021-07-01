@@ -43,7 +43,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 		{
 			for (int y = 0; y < height; y++)
 			{
-				HashMap<Long, T> cell = getCelldp(x, y);
+				HashMap<Long, T> cell = getDiscretizedCell(x, y);
 				if (cell.size() > 0)
 					string.append("Cell (" + x + ", " + y + "):\t" + cell + "\n");
 			}
@@ -117,13 +117,13 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	}
 
 	/** Returns the given discretized cell. */
-	HashMap<Long, T> getCelldp(final Int2D p)
+	HashMap<Long, T> getDiscretizedCell(final Int2D p)
 	{
 		return storage[getFlatIndex(p.x, p.y)];
 	}
 
 	/** Returns the given discretized cell. */
-	public HashMap<Long, T> getCelldp(int x, int y)
+	public HashMap<Long, T> getDiscretizedCell(int x, int y)
 	{
 		return storage[getFlatIndex(x, y)];
 	}
@@ -134,7 +134,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	 */
 	public HashMap<Long, T> getCell(final Double2D p)
 	{
-		return getCelldp(discretize(p));
+		return getDiscretizedCell(discretize(p));
 	}
 
 	/**
@@ -143,7 +143,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	 */
 	public HashMap<Long, T> getCell(final NumberND p)
 	{
-		return getCelldp(discretize(buildDouble2D(p)));
+		return getDiscretizedCell(discretize(buildDouble2D(p)));
 	}
 
 	/** Returns the location of the given object. */
@@ -210,6 +210,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 		return true;
 	}
 
+/*
 	// Get all the objects at the given point
 	ArrayList<T> getObjects(NumberND p)
 	{
@@ -224,6 +225,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 
 		return objects;
 	}
+*/
 
 	// Remove all the objects at the given point
 	public void clear(NumberND p)
@@ -284,7 +286,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 			for (int y = ul.y; y < br.y; y++)
 			{
 
-				HashMap<Long, T> cell = getCelldp(x, y);
+				HashMap<Long, T> cell = getDiscretizedCell(x, y);
 
 				if (cell != null)
 				{
