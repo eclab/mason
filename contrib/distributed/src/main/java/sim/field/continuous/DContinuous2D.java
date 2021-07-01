@@ -672,7 +672,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
         to within the boundaries before computation.
     */
 
-    public ArrayList<T> getNeighborsExactlyWithinDistance(final Double2D position, final double distance)
+    public ArrayList<T> getNeighborsExactlyWithinDistance(Double2D position, double distance)
         {
         return getNeighborsExactlyWithinDistance(position, distance, true, true, null);
         }
@@ -690,12 +690,12 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
         to within the boundaries before computation.
     */
 
-    public ArrayList<T> getNeighborsExactlyWithinDistance(final Double2D position, final double distance, 
-    	final boolean radial, final boolean inclusive, ArrayList<T> result)
+    public ArrayList<T> getNeighborsExactlyWithinDistance(Double2D position, double distance, 
+    	boolean radial, boolean inclusive, ArrayList<T> result)
         {
         if (distance > halo.getPartition().getAOI()) throw new RuntimeException("Distance " + distance + " is larger than AOI " + halo.getPartition().getAOI());
 
-        final int expectedBagSize = 1;  // in the future, pick a smarter bag size?
+        int expectedBagSize = 1;  // in the future, pick a smarter bag size?
 
 		ArrayList<T> objs = getNeighborsWithinDistance(position, distance, null);
 		if (result == null) result = new ArrayList<T>(expectedBagSize);
@@ -721,7 +721,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
                     miny = loc.y - position.y;
                 if (minx < 0) minx = -minx;
                 if (miny < 0) miny = -miny;
-                if (!((minx > distance || miny > distance) || (!inclusive && ( minx >= distance || miny >= distance))))
+                if (!((minx > distance || miny > distance) || (!inclusive && (minx >= distance || miny >= distance))))
                     result.add(obj);
                 }
         return result;
@@ -739,7 +739,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
         to within the boundaries before computation.
     */
-    public ArrayList<T> getNeighborsWithinDistance( final Double2D position, final double distance)
+    public ArrayList<T> getNeighborsWithinDistance(Double2D position, double distance)
         {
     	return getNeighborsWithinDistance(position,distance, null);
     	}
@@ -762,26 +762,17 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
         to within the boundaries before computation.
     */
     
-    public ArrayList<T> getNeighborsWithinDistance( Double2D position, final double distance, ArrayList<T> result)
+    public ArrayList<T> getNeighborsWithinDistance(Double2D position, double distance, ArrayList<T> result)
         {
         if (distance > halo.getPartition().getAOI()) throw new RuntimeException("Distance " + distance + " is larger than AOI " + halo.getPartition().getAOI());
-
-        double discDistance = distance;
-        double discX = position.x;
-        double discY = position.y;        
         
-
-	/// FIXME: This is wrong, discDistance is discretized distance not low-level real-valued distance
-	
-        if (discDistance > halo.getPartition().getAOI()) throw new RuntimeException("To permit non-point objects, the distance must be enlarged (to " + discDistance + "), and this is larger than AOI " + halo.getPartition().getAOI());
-
-        final int expectedBagSize = 1;  // in the future, pick a smarter bag size?
+        int expectedBagSize = 1;  // in the future, pick a smarter bag size?
         if (result!=null) result.clear();
         else result = new ArrayList<T>(expectedBagSize);
         ArrayList<T> temp;
     
-    	Int2D min = storage.discretize(new Double2D(discX - discDistance, discY - discDistance));
-    	Int2D max = storage.discretize(new Double2D(discX + discDistance, discY + discDistance));
+    	Int2D min = storage.discretize(new Double2D(position.x - distance, position.y - distance));
+    	Int2D max = storage.discretize(new Double2D(position.x + distance, position.y + distance));
     	int minX = min.x;
     	int maxX = max.x;
     	int minY = min.y;
@@ -791,8 +782,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 		for(int x = minX; x<= maxX; x++)
 			for(int y = minY ; y <= maxY; y++)
 				{
-				HashMap<Long, T> cell = storage.getCelldp(x, y);
-
+				HashMap<Long, T> cell = storage.getDiscretizedCell(x, y);
 
 				for(T t : cell.values())
 					{
