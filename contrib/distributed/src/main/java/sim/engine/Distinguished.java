@@ -17,10 +17,14 @@ import java.rmi.RemoteException;
 
 public interface Distinguished extends Remote {
 	
-	/*
-	 * The method returns the data required to fill out the RemotePromise
-	 * See other classes for more information
+	/**
+	 * Respond to a remote request of some data.
+	 * The method is used to fulfill a RemotePromise.
+	 * @param tag is the tag used to understand which method to use to fill the promise  
+	 * @param argument is the optional argument that could be needed
+	 * 
 	 */
-	public Serializable respondToRemote() throws RemoteException;
+	
+	public Serializable respondToRemote(Integer tag, Serializable argument) throws RemoteException;
 	
 }
