@@ -19,6 +19,7 @@ import sim.engine.SimState;
 import sim.field.continuous.Continuous2D;
 import sim.field.continuous.DContinuous2D;
 import sim.util.Double2D;
+import sim.util.Int2D;
 import sim.util.MutableDouble2D;
 import sim.util.Timing;
 
@@ -29,8 +30,8 @@ public class DPSO extends DSimState {
 
 
     
-    public int width = 1024;
-    public int height = 1024;
+    public int width = 11;
+    public int height = 11;
     
     public DContinuous2D<DParticle> space = new DContinuous2D<DParticle>(getPartition().getAOI(), this);;
 
@@ -38,7 +39,7 @@ public class DPSO extends DSimState {
     int prevSuccessCount = -1; 
     
     // public modifier values
-    public int numParticles = 100;
+    public int numParticles = 1000;
     public int getNumParticles() { return numParticles; }
     public void setNumParticles(int val) { if (val >= 0) numParticles = val; }
 
@@ -46,11 +47,11 @@ public class DPSO extends DSimState {
     public int getNeighborhoodSize() { return neighborhoodSize; }
     public void setNeighborhoodSize(int val) { if ((val >= 0) && (val <= numParticles)) neighborhoodSize = val; }
 
-    public double initialVelocityRange = .001; //1.0;
+    public double initialVelocityRange = 1.0;
     public double getInitialVelocityRange() { return initialVelocityRange; }
     public void setInitialVelocityRange(double val) { if (val >= 0.0) initialVelocityRange = val; }
     
-    public double velocityScalar = .0027; //2.7;
+    public double velocityScalar = 2.7;
     public double getVelocityScalar() { return velocityScalar; }
     public void setVelocityScalar(double val) { if (val >= 0.0) velocityScalar = val; }
 
@@ -95,19 +96,27 @@ public class DPSO extends DSimState {
         
     public DPSO(long seed)
         {
-        super(seed, 1024, 1024, 10);  //what should these be
+        super(seed, 11, 11, 10);  //what should these be
         }
     
     
     public void updateBest(double currVal, double currX, double currY)
     {
+    
+
+    
     if (currVal > bestVal)
         {
         bestVal = currVal;
         //bestPosition.setTo(currX, currY);
         best_x = currX;
         best_y = currY;
-        }               
+        }
+    
+    System.out.println("dpso updateBest called "+bestVal);
+    //System.exit(-1);
+    
+    
     }
     
     
@@ -121,7 +130,12 @@ public class DPSO extends DSimState {
     if (start < 0)
         start += numParticles;
 
-    List<DParticle> particle_list = space.getStorage().getObjects(space.getStorage().getShape());
+    //List<DParticle> particle_list = space.getStorage().getObjects(space.getStorage().getShape());
+    List<DParticle> particle_list = space.getAllAgentsInStorage();
+
+    
+    
+    
     for (int i = 0; i < neighborhoodSize; i++)
         {
         //p = particles[(start + i) % numParticles]; //access storage instead?  won't have a master list in distributed, I believe
@@ -144,20 +158,27 @@ public class DPSO extends DSimState {
 
         for (int i = 0; i < numParticles; i++)
         {
-        double x = (random.nextDouble() * width); // - (width * 0.5);
-        double y = (random.nextDouble() * height); // - (height * 0.5);
+        //double x = (random.nextDouble() * width); // - (width * 0.5);
+        //double y = (random.nextDouble() * height); // - (height * 0.5);
+        //double vx = (random.nextDouble() * initialVelocityRange) - (initialVelocityRange * 0.5);
+        //double vy = (random.nextDouble() * initialVelocityRange) - (initialVelocityRange * 0.5);
+        
+        double x = (random.nextDouble() * width) - (width * 0.5);
+        double y = (random.nextDouble() * height) - (height * 0.5);
         double vx = (random.nextDouble() * initialVelocityRange) - (initialVelocityRange * 0.5);
         double vy = (random.nextDouble() * initialVelocityRange) - (initialVelocityRange * 0.5);
                     
         final DParticle p = new DParticle(x, y, vx, vy, f, i);
         
         particles[i] = p;
-        
-		sendRootInfoToAll("particles", particles);
+        System.out.println(particles[i]+" "+particles[i].position);
 		
 
 
 	    }
+        
+		sendRootInfoToAll("particles", particles);
+
 	    
 	
    }
@@ -171,11 +192,13 @@ public class DPSO extends DSimState {
 		super.start(); // do not forget this line
 
 		bestVal = 0;  //how do I keep track of global?
-
+        System.out.println("best set to 0");
+        
 		DParticle[] particles = (DParticle[]) getRootInfo("particles");
 		
 		for (Object p : particles) {
 			DParticle a = (DParticle) p;
+			//System.out.println(a.bestVal);
 			if (partition.getLocalBounds().contains(a.position)) {
 				
 				  this.space.addAgent(new Double2D(a.position), a, 0, 0);
@@ -188,7 +211,9 @@ public class DPSO extends DSimState {
         public void step(SimState state)
             {
             int successCount = 0;
-            List<DParticle> particle_list = space.getStorage().getObjects(space.getStorage().getShape());
+            //List<DParticle> particle_list = space.getStorage().getObjects(space.getStorage().getShape());
+            List<DParticle> particle_list = space.getAllAgentsInStorage();
+
             for (DParticle p: particle_list)            
                 {
                                                     
