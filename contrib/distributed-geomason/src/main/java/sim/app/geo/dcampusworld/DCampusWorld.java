@@ -157,8 +157,8 @@ public class DCampusWorld extends DSimState
 		for (int i = 0; i < numAgents; i++)
 			new DAgent(this);
 		
-		System.out.println("storage map size after start(): " + agentLocations.getStorage().getStorageMap().keySet().size());
-		System.out.println("One of the agents: " + agentLocations.getStorage().getStorageMap().keySet().iterator().next().getClass());
+		//System.out.println("storage map size after start(): " + agentLocations.getStorage().getStorageMap().keySet().size());
+		//System.out.println("One of the agents: " + agentLocations.getStorage().getStorageMap().keySet().iterator().next().getClass());
 	}
 
 	/**

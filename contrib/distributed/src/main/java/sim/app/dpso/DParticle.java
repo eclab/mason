@@ -51,6 +51,8 @@ public class DParticle extends DSteppable{
                     
         //dpso.updateBest(currVal, currX, currY);
         }
+        //System.out.println("currVal : "+currVal);
+        //System.out.println("bestVal : "+bestVal);
     }
     
     public double getFitness()

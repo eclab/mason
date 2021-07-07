@@ -802,4 +802,16 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 
         return result;
         }
+    
+    public ArrayList<T> getAllAgentsInStorage(){
+    	ArrayList<T> allAgents = new ArrayList<T>();
+    	for (int i=0; i<this.storage.storage.length; i++) {
+    		for (T t :this.storage.storage[i].values()) {
+    			allAgents.add(t);
+    		}
+    	}
+    	
+		return allAgents;
+
+    }
 }

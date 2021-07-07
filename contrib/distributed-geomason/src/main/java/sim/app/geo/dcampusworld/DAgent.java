@@ -89,7 +89,7 @@ public class DAgent extends DSteppable
 				break;
 			}
 		}
-		System.out.println("size of agentLocations: " + state.agentLocations.getStorage().getStorageMap().keySet().size());
+		//System.out.println("size of agentLocations: " + state.agentLocations.getStorage().getStorageMap().keySet().size());
 	}
 
 	/**

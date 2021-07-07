@@ -86,7 +86,7 @@ public class CampusWorldProxy extends SimStateProxy
 			// Alternative way?
 			// Move all agents into GeomVectorField
 //            ContinuousStorage storage = (ContinuousStorage)(stateProxy.storage(proxyIndex));
-            HashMap<Long, Double2D> map = storage.getStorageMap();
+            HashMap<Long, Double2D> map = storage.getLocations();
             // ^ object ids? to locations
 			System.out.println("Updating " + map.entrySet().size() + " objects");
             for (Entry<Long, Double2D> entry : map.entrySet()) {
