@@ -177,7 +177,7 @@ public class DFlockerRemote extends DSteppable implements Distinguished{
 		
 		try {
 //			if(state.schedule.isRemote(agent)) // do remote
-			Promised remoteData = dFlockersRemote.contactRemoteObj("cafebabe", new String("location"));
+			Promised remoteData = dFlockersRemote.contactRemoteObj("cafebabe", 0, null);
 			if(remoteData.isReady()) { 
 				System.out.println("I got this data from cafebabe: \n" + remoteData.get());
 			}
@@ -223,7 +223,7 @@ public class DFlockerRemote extends DSteppable implements Distinguished{
 		}
 	}
 
-	public Serializable respondToRemote() {
+	public Serializable respondToRemote(Integer tag, Serializable argument) {
 		return "My location is" + this.loc + "]";
 	}
 	

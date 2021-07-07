@@ -108,7 +108,7 @@ public class DBall extends DSteppable implements Distinguished {
 					him = balls.getObjectLocationLocal(other);
 				} else {
 					try {
-						Promised remoteNodeHim = allBalls.contactRemoteObj(other.id, other);
+						Promised remoteNodeHim = allBalls.contactRemoteObj(other.id, 0, null);
 						if(remoteNodeHim.isReady()) { 
 							him = (Double2D) remoteNodeHim.get();
 						}
@@ -177,9 +177,10 @@ public class DBall extends DSteppable implements Distinguished {
 			diameter = Math.sqrt(val);
 		}
 	}
-	
-	public Serializable respondToRemote() {
+
+	public Serializable respondToRemote(Integer tag, Serializable argument) throws RemoteException {
 		return this.loc;
 	}
+	
 
 }
