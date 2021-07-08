@@ -23,5 +23,7 @@ package ec.util;
 
 public class BadParameterException extends RuntimeException
     {
+    private static final long serialVersionUID = 1;
+
     public BadParameterException(String s) { super("\n"+s); }
     }
