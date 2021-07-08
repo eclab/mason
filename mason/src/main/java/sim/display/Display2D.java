@@ -1127,13 +1127,15 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     
     
     
-    /** Quits the Display2D.  Okay, so finalize is evil and we're not supposed to rely on it.
+    /* Quits the Display2D.  Okay, so finalize is evil and we're not supposed to rely on it.
         We're not.  But it's an additional cargo-cult programming measure just in case. */
+/*
     protected void finalize() throws Throwable
         {
         super.finalize();
         quit();
         }
+*/
     
     /** Quits the Display2D.  Called by the Display2D's frame if the Display2D made the frame itself.
         Also called by finalize().  Otherwise you should call this method before destroying the Display2D. */
