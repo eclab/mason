@@ -1424,6 +1424,7 @@ public class Display3D extends JPanel implements Steppable
         Ought only be done from the main event loop. */
     public void takeSnapshot()
         {
+        /*
         if (SimApplet.isApplet())
             {
             Object[] options = {"Oops"};
@@ -1434,6 +1435,7 @@ public class Display3D extends JPanel implements Steppable
                 null, options, options[0]);
             return;
             }
+        */
 
         // start the image
         canvas.beginCapturing(false);
@@ -1469,6 +1471,7 @@ public class Display3D extends JPanel implements Steppable
         On the Mac, Quicktime Pro will do this quite elegantly. */
     public void startMovie()
         {
+        /*
         // can't start a movie if we're in an applet
         if (SimApplet.isApplet())
             {
@@ -1480,6 +1483,7 @@ public class Display3D extends JPanel implements Steppable
                 null, options, options[0]);
             return;
             }
+        */
 
         if (movieMaker!=null) return;  // already running
 
@@ -1553,13 +1557,15 @@ public class Display3D extends JPanel implements Steppable
         universe.cleanup(); 
         }
         
-    /** Quits the Display3D.  Okay, so finalize is evil and we're not supposed to rely on it.
+    /* Quits the Display3D.  Okay, so finalize is evil and we're not supposed to rely on it.
         We're not.  But it's an additional cargo-cult programming measure just in case. */
+/*
     protected void finalize() throws Throwable
         {
         super.finalize();
         quit();
         }
+*/
         
     JCheckBox orbitRotateXCheckBox = new JCheckBox("Rotate Left/Right");
     JCheckBox orbitRotateYCheckBox = new JCheckBox("Up/Down");

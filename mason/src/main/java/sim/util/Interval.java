@@ -21,8 +21,10 @@ public class Interval
     
     public Interval(double min, double max)
         {
-        this.min = new Double(min);
-        this.max = new Double(max);
+        //this.min = new Double(min);
+        this.min = Double.valueOf(min);
+        //this.max = new Double(max);
+        this.max = Double.valueOf(max);
         isDouble = true;
         }
             

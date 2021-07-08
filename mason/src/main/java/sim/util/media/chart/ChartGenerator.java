@@ -251,6 +251,7 @@ public abstract class ChartGenerator extends JPanel
         On the Mac, Quicktime Pro will do this quite elegantly. */
     public void startMovie()
         {
+        /*
         // can't start a movie if we're in an applet
         if (SimApplet.isApplet())
             {
@@ -262,6 +263,7 @@ public abstract class ChartGenerator extends JPanel
                 null, options, options[0]);
             return;
             }
+        */
                                         
         if (movieMaker != null) return;  // already running
         movieMaker = new MovieMaker(getFrame());

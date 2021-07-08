@@ -216,7 +216,8 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
 
     public Object getValue(final int index)
         {
-        return new Double(get(index));
+        // return new Double(get(index));
+        return Double.valueOf(get(index));
         }
 
     public double set(final int index, final double element)
@@ -231,7 +232,8 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
 
     public Object setValue(final int index, final Object value)
         {
-        Double old = new Double(get(index));
+        //Double old = new Double(get(index));
+        Double old = Double.valueOf(get(index));
         Double newval = null;
         try { newval = (Double)value; }
         catch (ClassCastException e) { throw new IllegalArgumentException("Expected a Double"); }
@@ -366,7 +368,8 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
         {
         Double[] o = new Double[numObjs];
         for(int i = 0; i < numObjs; i++)
-            o[i] = new Double(objs[i]);
+            //o[i] = new Double(objs[i]);
+            o[i] = Double.valueOf(objs[i]);
         return o;
         }
 

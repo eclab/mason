@@ -295,7 +295,8 @@ public class TableLoader
                             {
                             while(rowScan.hasNextDouble())
                                 {
-                                firstRow.add(new Double(rowScan.nextDouble()));  // ugh, boxed
+//                                firstRow.add(new Double(rowScan.nextDouble()));  // ugh, boxed
+                                firstRow.add(Double.valueOf(rowScan.nextDouble()));  // ugh, boxed
                                 w++;
                                 }
                             }

@@ -350,11 +350,13 @@ public class AsynchronousSteppable implements Stoppable
         state = (SimState)(p.readObject());
         }
         
+/*
     protected void finalize() throws Throwable
         {
         try { stop(); } 
         finally { super.finalize(); }
         }
+*/
         
     /** Call this method to get a Steppable, which when called, executes top() on the AsynchornousSteppable.
         You can then schedule this Steppable to occur at some point in the future on a schedule. 

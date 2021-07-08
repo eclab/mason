@@ -251,9 +251,11 @@ public class PieChartGenerator extends ChartGenerator
                 label = objs[i].toString();
             if (map.containsKey(label))
                 map.put(label,
-                    new Double(((Double)(map.get(label))).doubleValue() + 1));
+//                    new Double(((Double)(map.get(label))).doubleValue() + 1));
+                    Double.valueOf(((Double)(map.get(label))).doubleValue() + 1));
             else
-                map.put(label, new Double(1));
+//                map.put(label, new Double(1));
+                map.put(label, Double.valueOf(1));
             }
         return map;
         }

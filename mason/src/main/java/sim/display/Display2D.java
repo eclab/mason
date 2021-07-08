@@ -1864,6 +1864,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         {
         synchronized(Display2D.this.simulation.state.schedule)
             {
+            /*
             if (SimApplet.isApplet)
                 {
                 Object[] options = {"Oops"};
@@ -1874,6 +1875,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                     null, options, options[0]);
                 return;
                 }
+            */
 
             // do we have the PDFEncoder?
             boolean havePDF = false;
@@ -1967,6 +1969,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         // isn't doing anything.
         synchronized(Display2D.this.simulation.state.schedule)
             {
+            /*
             // can't start a movie if we're in an applet
             if (SimApplet.isApplet)
                 {
@@ -1978,6 +1981,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                     null, options, options[0]);
                 return;
                 }
+            */
                         
             if (movieMaker != null) return;  // already running
             movieMaker = new MovieMaker(getFrame());

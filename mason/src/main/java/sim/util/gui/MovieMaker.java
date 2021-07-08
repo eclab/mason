@@ -61,7 +61,10 @@ public class MovieMaker
             // get the list of supported formats
             Object[] f = (Object[]) encoderClass.
                 getMethod("getEncodingFormats", new Class[] {Float.TYPE, BufferedImage.class}).
-                invoke(null, new Object[] { new Float(fps), typicalImage });
+                invoke(null, new Object[] { 
+                	//new Float(fps), 
+                	Float.valueOf(fps), 
+                	typicalImage });
             if (f==null) return false;
             
             // init the dialog panel
@@ -135,7 +138,10 @@ public class MovieMaker
             
             f = (Object[])encoderClass.
                 getMethod("getEncodingFormats", new Class[] {Float.TYPE, BufferedImage.class}).
-                invoke(null, new Object[] { new Float(fps), typicalImage });
+                invoke(null, new Object[] { 
+//                	new Float(fps), 
+                	Float.valueOf(fps), 
+                	typicalImage });
             
             // now choose the same one as before but with the fps
             // And we hope that the same encoding formats show up with the different framerate's query--
@@ -158,7 +164,9 @@ public class MovieMaker
                         BufferedImage.class, 
                         Class.forName("javax.media.Format")
                         }).
-                    newInstance(new Object[]{new Float(fps), 
+                    newInstance(new Object[]{
+                    						// new Float(fps), 
+                    						 Float.valueOf(fps), 
                                              new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".mov")),
                                              typicalImage,
                                              f[encodeFormatIndex]});

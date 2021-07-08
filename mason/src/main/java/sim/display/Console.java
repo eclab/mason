@@ -1007,7 +1007,7 @@ public class Console extends JFrame implements Controller
             });
         fileMenu.add(newMenu);
         openMenu = new JMenuItem("Open...");
-        if (SimApplet.isApplet) openMenu.setEnabled(false);
+        //if (SimApplet.isApplet) openMenu.setEnabled(false);
         openMenu.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -1017,7 +1017,7 @@ public class Console extends JFrame implements Controller
             });
         fileMenu.add(openMenu);
         saveMenu = new JMenuItem("Save");
-        if (SimApplet.isApplet) saveMenu.setEnabled(false);
+        //if (SimApplet.isApplet) saveMenu.setEnabled(false);
         saveMenu.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -1027,7 +1027,7 @@ public class Console extends JFrame implements Controller
             });
         fileMenu.add(saveMenu);
         saveAsMenu = new JMenuItem("Save As...");
-        if (SimApplet.isApplet) saveAsMenu.setEnabled(false);
+        //if (SimApplet.isApplet) saveAsMenu.setEnabled(false);
         saveAsMenu.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -1038,7 +1038,7 @@ public class Console extends JFrame implements Controller
         fileMenu.add(saveAsMenu);
 
         sweepMenu = new JMenuItem("Sweep Parameters");
-        if (SimApplet.isApplet) sweepMenu.setEnabled(false);
+        //if (SimApplet.isApplet) sweepMenu.setEnabled(false);
         sweepMenu.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -1054,8 +1054,10 @@ public class Console extends JFrame implements Controller
         	optMenu.setEnabled(false);
         	optMenu.setToolTipText("To use this, build and install the contrib/optimize package.");
         	}
+        /*
         else if (SimApplet.isApplet) 
         	optMenu.setEnabled(false);
+        */
         optMenu.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -1717,7 +1719,8 @@ public class Console extends JFrame implements Controller
                 else if (entries[x] != null && entries[x] instanceof SimpleController)  // might occur if weak?  dunno
                     ((SimpleController)(((Map.Entry)(entries[x])).getKey())).doClose();
 
-            if(!(SimApplet.isApplet))
+            //if(!(SimApplet.isApplet))
+            if (true)
                 try { System.exit(0); } catch (Exception e) { }
             isQuitting = false; // obviously if we've sucessfully exited this won't happen
             }
@@ -1761,7 +1764,8 @@ public class Console extends JFrame implements Controller
         sacrificial = Display2D.isMacOSX();  // sacrificial  -- something to force Display2D.class to load
                 
         // Okay here we go with the real code.
-        if (!doNew(null, true) && !SimApplet.isApplet) System.exit(0); // just a dummy JFrame
+        // if (!doNew(null, true) && !SimApplet.isApplet) System.exit(0); // just a dummy JFrame
+        if (!doNew(null, true)) System.exit(0); // just a dummy JFrame
         }               
     
     /** Pops up the about box */
@@ -1983,7 +1987,8 @@ public class Console extends JFrame implements Controller
             // check first for a default constructor
             java.lang.reflect.Constructor cons = Class.forName(className).getConstructor(new Class[] {});
             // okay, we're past that.  Now try to build the instance
-            final GUIState state = (GUIState)(Class.forName(className).newInstance());
+//            final GUIState state = (GUIState)(Class.forName(className).newInstance());
+            final GUIState state = (GUIState)(Class.forName(className).getDeclaredConstructor().newInstance());
                                                         
             // Now we create the controller, which calls init on the state.  If we were just started up,
             // doNew() is being called from main(), and thus from the main thread rather than the dispatch
