@@ -1885,7 +1885,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             BufferedImage img = insideDisplay.paint(g,true,false);  // notice we're painting to a non-shared buffer
             try
                 {
-                sacrificialObj = Class.forName("com.lowagie.text.Cell", true, Thread.currentThread().getContextClassLoader()).newInstance(); // sacrificial
+                sacrificialObj = Class.forName("com.lowagie.text.Cell", true, Thread.currentThread().getContextClassLoader()).getDeclaredConstructor().newInstance(); // sacrificial
                 // if we survived that, then iText is installed and we're good.
                 havePDF = true; 
                 }
