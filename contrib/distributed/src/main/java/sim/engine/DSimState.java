@@ -589,7 +589,7 @@ public class DSimState extends SimState
 								Stopping stopping = ((Stopping) a);
 
 								// stop agent in schedule, then migrate it
-								if (stopping.getStoppable() instanceof TentativeStep)
+								if (stopping.getStoppable() instanceof DistributedTentativeStep)
 								{
 									try
 									{
@@ -690,7 +690,7 @@ public class DSimState extends SimState
 									
 
 									// stop and migrate
-									if (stopping.getStoppable() instanceof TentativeStep)
+									if (stopping.getStoppable() instanceof DistributedTentativeStep)
 									{
 										stopping.getStoppable().stop();
 										transporter.migrateAgent(stopping, toP, p,

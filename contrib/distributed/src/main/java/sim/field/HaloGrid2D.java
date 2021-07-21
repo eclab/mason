@@ -856,6 +856,111 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		getQueue.clear();
 	}
 	
+	//syncHalo but does it using TransporterMPI
+	//public void rajSyncHalo() throws MPIException, RemoteException
+	/*
+	public void syncHalo2() throws MPIException, RemoteException
+	{
+		//System.exit(-1);
+
+		int numNeighbors = neighbors.size();
+		Serializable[] sendObjs = new Serializable[numNeighbors];
+		for (int i = 0; i < numNeighbors; i++) {
+			if (i != this.getPartition().getPID()) {
+			MPIParam mp = neighbors.get(i).sendParam;
+			for (final IntRect2D rect : mp.rects) {
+				if (localStorage instanceof ContinuousStorage)
+				{
+					ContinuousStorage st = (ContinuousStorage) localStorage;
+					for (Object obj : st.getObjects(rect.add(localStorage.getShape().ul())))
+					{
+						DObject obj_t = (DObject)obj;
+						
+						Stopping stopping = ((Stopping) obj_t);
+
+						
+						// stop agent in schedule, then migrate it
+						if (stopping.getStoppable() instanceof DistributedTentativeStep)
+						{
+							try
+							{
+								stopping.getStoppable().stop();
+								
+								//NumberND loc = ((NumberND)st.getLocations().get(obj_t.ID())).subtract(localStorage.getShape().ul()).subtract(rect.ul());
+								NumberND loc = ((NumberND)st.getLocations().get(obj_t.ID()));
+                                System.out.println(this.getHaloBounds());
+								System.out.println("sending to "+stopping+" partition "+i+" at "+loc);
+								System.exit(-1);
+								state.getTransporter().migrateAgent(stopping, i, loc,
+										this.getFieldIndex());
+
+							}
+							catch (Exception e)
+							{
+								System.out.println("PID: " + this.getPartition().getPID() + " exception on " + stopping);
+							}
+
+						}
+
+						// stop agent in schedule, then migrate it
+						if (stopping.getStoppable() instanceof IterativeRepeat)
+						{
+							
+							//NumberND loc = ((NumberND)st.getLocations().get(obj_t.ID())).subtract(localStorage.getShape().ul()).subtract(rect.ul());
+							NumberND loc = ((NumberND)st.getLocations().get(obj_t.ID()));
+
+							final IterativeRepeat iterativeRepeat = (IterativeRepeat) stopping.getStoppable();
+							final DistributedIterativeRepeat distributedIterativeRepeat = new DistributedIterativeRepeat(
+									stopping,
+									iterativeRepeat.getTime(), iterativeRepeat.getInterval(),
+									iterativeRepeat.getOrdering());
+
+							state.getTransporter().migrateRepeatingAgent(distributedIterativeRepeat, i, loc,
+									this.getFieldIndex());
+
+							iterativeRepeat.stop();
+						}
+						
+					}
+				}
+				else
+				{
+
+					System.out.println("not implemented yet");
+					System.exit(-1);
+				}
+			}
+			}
+			
+		}
+		
+		//empty objectQueue 
+		for (final PayloadWrapper payloadWrapper : state.getTransporter().objectQueue)
+		{
+
+
+			if (payloadWrapper.fieldIndex >= 0)
+			{
+				this.addPayload(payloadWrapper);
+				
+			}	
+		}
+		
+		// clear queue
+		state.getTransporter().objectQueue.clear();
+		
+		
+		for (Pair<Promised, NumberND> pair : getAllQueue)
+			pair.a.fulfill(getLocal(pair.b));
+		getAllQueue.clear();
+
+		for (Triplet<Promised, NumberND, Long> trip : getQueue)
+			trip.a.fulfill(getLocal(trip.b, trip.c));
+		getQueue.clear();
+		
+		
+	}
+	*/
 	
 	/*
 	public void loc_disagree_all_points(String s)
@@ -1098,25 +1203,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			
 			ArrayList<IntRect2D> recvOverlaps = generateOverlaps(haloBounds, neighborPart);
 
-			if (localBounds.contains(57,57))
-			{
-				
-				/*
-				for (IntRect2D r : sendOverlaps) {
-					System.out.println("send "+r);
-				}
-				System.out.println("----");
-				
-				for (IntRect2D r : recvOverlaps)
-				{
-					System.out.println("rec "+r);
-				}
-				*/
-				
-				//System.exit(-1);
-				
-				
-			}
+
 
 			
 			assert sendOverlaps.size() == recvOverlaps.size();
