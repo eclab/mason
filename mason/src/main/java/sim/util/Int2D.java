@@ -49,7 +49,6 @@ public final class Int2D extends NumberND
 	public int[] toArray() { return new int[] {x, y}; }
 	public double[] toArrayAsDouble() { return new double[] { x, y}; }
 
-
     public final int hashCode()
         {
         int y = this.y;
@@ -239,12 +238,20 @@ public final class Int2D extends NumberND
         return Math.abs((long)this.x-p.x) + Math.abs((long)this.y-p.y);
         }
         
-	/// FOR DISTRIBUTED CODE        
+	/// FOR DISTRIBUTED CODE    
+	/*    
     public Int2D add(int offset)
 		{
 		return new Int2D(x + offset, y + offset);
 		} 
+	*/
 
+    public Int2D add(int dx, int dy)
+		{
+		return new Int2D(x + dx, y + dy);
+		} 
+
+/*
 	public Int2D add(int dim, int offset)
 		{
 		if (dim == 0)
@@ -252,41 +259,47 @@ public final class Int2D extends NumberND
 		else
 			return new Int2D(x, y + offset);
 		} 
-	
+*/
+
+/*
+	public Int2D add(int[] offset)
+		{
+		return new Int2D(x + offset[0], y + offset[1]);
+		} 
+*/
+
 	public Int2D add(Int2D other)
 		{
 		return new Int2D(x + other.x, y + other.y);
 		} 
-	
+
+/*
+	public Int2D subtract(int[] offset)
+		{
+		return new Int2D(x - offset[0], y - offset[1]);
+		} 
+*/
+
 	public Int2D subtract(Int2D other)
 		{
 		return new Int2D(x - other.x, y - other.y);
 		} 
 
-	/*
-	public Int2D add(int[] offset)
+/*
+    public Int2D subtract(int offset)
 		{
-		return new Int2D(x + offset[0], y + offset[1]);
+		return new Int2D(x - offset, y - offset);
 		} 
-
-	public Int2D subtract(int[] offset)
+*/
+/*
+	public int compareTo(final Int2D other) 
 		{
-		return new Int2D(x - offset[0], y - offset[1]);
-		} 
-	*/
+		if (x == other.x)
+			return (y - other.y);
+		else return (x - other.x);
+		}
+*/
 
-//    public boolean equals(Int2D val)
-//        {
-//        return x == val.x && y == val.y;
-//        }
-//        
-//
-//	/** Returns true I am equal to val */
-//    public boolean equals(Double2D val)
-//        {
-//        return x == val.x && y == val.y;
-//        }
-    
 	public Int2D max(Int2D val)
 		{
 		return new Int2D(Math.max(x, val.x), Math.max(y, val.y));
@@ -295,5 +308,6 @@ public final class Int2D extends NumberND
 	public Int2D min(Int2D val)
 		{
 		return new Int2D(Math.min(x, val.x), Math.min(y, val.y));
-		}
+		} 
+
     }

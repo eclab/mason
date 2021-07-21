@@ -114,11 +114,13 @@ public class ParallelSequence extends Sequence
         threads = null;
         }
 
+/*
     protected void finalize() throws Throwable
         {
         try { cleanup(); } 
         finally { super.finalize(); }
         }
+*/
 
     /** Creates an immutable ParallelSequence with the specified number of threads, or if threads==ParallelSequence.CPUS, then the number of threads is determined
         at runtime based on the number of CPUs or cores on the system, or if threads == ParallelSequence.STEPPABLES, then the number of threads

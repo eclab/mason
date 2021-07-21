@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.*;
 import javax.swing.tree.*;
 import java.net.*;
+import java.lang.reflect.*;
 
 /* 
  * ParameterDatabase.java
@@ -425,15 +426,7 @@ import java.net.*;
  * <p><tt>foo</tt>
  *
  * This second macro is particularly useful for replacing groups of parameters which differ
- * based on some number.
- * <p>
- * <b>Note for JDK 1.1 </b>. Finally recovering from stupendous idiocy, JDK 1.2
- * included parseDouble() and parseFloat() commands; now you can READ A FLOAT
- * FROM A STRING without having to create a Float object first! Anyway, you will
- * need to modify the getFloat() method below if you're running on JDK 1.1, but
- * understand that large numbers of calls to the method may be inefficient.
- * Sample JDK 1.1 code is given with those methods, but is commented out.
- * 
+ * based on some number. 
  * 
  * @author Sean Luke
  * @version 1.0
@@ -452,10 +445,6 @@ public class ParameterDatabase implements Serializable
     public static final int PS_PRINT_PARAMS = 1;
     public int printState = PS_UNKNOWN;
     
-    // keeps track of the popped parameter parts while searching the database
-    private String popped = "";
-    private Hashtable aliases = new Hashtable();
-
     // A descriptive name of the parameter database
     String label;
 
@@ -523,7 +512,25 @@ public class ParameterDatabase implements Serializable
                     + parameter
                     + (defaultParameter == null ? "" : "\n     ALSO: "
                         + defaultParameter));
-            return c.newInstance();
+            return c.getDeclaredConstructor().newInstance();
+            } 
+        catch (NoSuchMethodException e) 
+            {
+            throw new ParamClassLoadException("Class not found: "
+                + getParam(p)
+                + "\nPARAMETER: "
+                + parameter
+                + (defaultParameter == null ? "" : "\n     ALSO: "
+                    + defaultParameter) + "\nEXCEPTION: \n\n" + e);
+            } 
+        catch (InvocationTargetException e) 
+            {
+            throw new ParamClassLoadException("Class not found: "
+                + getParam(p)
+                + "\nPARAMETER: "
+                + parameter
+                + (defaultParameter == null ? "" : "\n     ALSO: "
+                    + defaultParameter) + "\nEXCEPTION: \n\n" + e);
             } 
         catch (ClassNotFoundException e) 
             {
@@ -605,7 +612,25 @@ public class ParameterDatabase implements Serializable
                     + "\n     ALSO: "
                     + (defaultParameter == null ? "" : "\n     ALSO: "
                         + defaultParameter));
-            return c.newInstance();
+            return c.getDeclaredConstructor().newInstance();
+            } 
+        catch (NoSuchMethodException e) 
+            {
+            throw new ParamClassLoadException("Class not found: "
+                + getParam(p)
+                + "\nPARAMETER: "
+                + parameter
+                + (defaultParameter == null ? "" : "\n     ALSO: "
+                    + defaultParameter) + "\nEXCEPTION: \n\n" + e);
+            } 
+        catch (InvocationTargetException e) 
+            {
+            throw new ParamClassLoadException("Class not found: "
+                + getParam(p)
+                + "\nPARAMETER: "
+                + parameter
+                + (defaultParameter == null ? "" : "\n     ALSO: "
+                    + defaultParameter) + "\nEXCEPTION: \n\n" + e);
             } 
         catch (ClassNotFoundException e) 
             {
@@ -1488,7 +1513,7 @@ public class ParameterDatabase implements Serializable
      * or any of its doubles are out of bounds, or the list is not long enough or is  
      * too long or has garbage at the end of it, then this method returns null.
      * Otherwise the method returns the doubles in question.  The doubles may not
-     * be NaN, +Infinity, or -Infinity. The parameter chosen is
+     * be NaN. The parameter chosen is
      * marked "used" if it exists.
      */
 
@@ -1508,7 +1533,7 @@ public class ParameterDatabase implements Serializable
      * or any of its doubles are out of bounds, or the list is not long enough or is  
      * too long or has garbage at the end of it, then this method returns null.
      * Otherwise the method returns the doubles in question.  The doubles may not
-     * be NaN, +Infinity, or -Infinity. The parameter chosen is
+     * be NaN. The parameter chosen is
      * marked "used" if it exists.
      */
 
@@ -1528,7 +1553,7 @@ public class ParameterDatabase implements Serializable
      * or any of its doubles are out of bounds, or the list is not long enough or is  
      * too long or has garbage at the end of it, then this method returns null.
      * Otherwise the method returns the doubles in question.  The doubles may not
-     * be NaN, +Infinity, or -Infinity. The parameter chosen is
+     * be NaN. The parameter chosen is
      * marked "used" if it exists.
      */
 
@@ -1548,7 +1573,7 @@ public class ParameterDatabase implements Serializable
      * or any of its doubles are out of bounds, or the list is not long enough or is  
      * too long or has garbage at the end of it, then this method returns null.
      * Otherwise the method returns the doubles in question.  The doubles may not
-     * be NaN, +Infinity, or -Infinity. The parameter chosen is
+     * be NaN. The parameter chosen is
      * marked "used" if it exists.
      */
 
@@ -1568,7 +1593,7 @@ public class ParameterDatabase implements Serializable
      * or the list is not long enough or is  
      * too long or has garbage at the end of it, then this method returns null.
      * Otherwise the method returns the doubles in question.  The doubles may not
-     * be NaN, +Infinity, or -Infinity. The parameter chosen is
+     * be NaN. The parameter chosen is
      * marked "used" if it exists.
      */
 
@@ -1588,7 +1613,7 @@ public class ParameterDatabase implements Serializable
      * or the list is not long enough or is  
      * too long or has garbage at the end of it, then this method returns null.
      * Otherwise the method returns the doubles in question.  The doubles may not
-     * be NaN, +Infinity, or -Infinity. The parameter chosen is
+     * be NaN. The parameter chosen is
      * marked "used" if it exists.
      */
 
@@ -1602,6 +1627,115 @@ public class ParameterDatabase implements Serializable
         }
 
 
+
+
+
+
+
+    /**
+     * Searches down through databases to find a given parameter, whose value
+     * must be a space- or tab-delimited list of ints, each of which is >= minValue and <= maxValue,
+     * and which must be exactly expectedLength (> 0) long.  If the parameter does not exist,
+     * or any of its ints are out of bounds, or the list is not long enough or is  
+     * too long or has garbage at the end of it, then this method returns null.
+     * Otherwise the method returns the ints in question.  
+     * The parameter chosen is
+     * marked "used" if it exists.
+     */
+
+    public int[] getIntsWithMax(Parameter parameter, Parameter defaultParameter, int minValue, int maxValue, int expectedLength)
+        {
+        double[] val = getDoublesWithMax(parameter, defaultParameter, minValue, maxValue, expectedLength);
+        if (val == null) return null;
+        int[] ret = new int[val.length];
+        for(int i = 0; i < val.length; i++)
+            {
+            ret[i] = (int)val[i];
+            if (ret[i] != val[i]) // uh oh, a double with a decimal place, or infinity or NaN
+                return null;
+            }
+        return ret;
+        }
+
+    /**
+     * Searches down through databases to find a given parameter, whose value
+     * must be a space- or tab-delimited list of ints, each of which is >= minValue and <= maxValue,
+     * and which must be at least 1 number long.  If the parameter does not exist,
+     * or any of its ints are out of bounds, or the list is not long enough or is  
+     * too long or has garbage at the end of it, then this method returns null.
+     * Otherwise the method returns the ints in question.  
+     * The parameter chosen is
+     * marked "used" if it exists.
+     */
+
+    public int[] getIntsWithMax(Parameter parameter, Parameter defaultParameter, int minValue, int maxValue)
+        {
+        return getIntsWithMax(parameter, defaultParameter, minValue, maxValue, ARRAY_NO_EXPECTED_LENGTH);
+        }
+        
+    /**
+     * Searches down through databases to find a given parameter, whose value
+     * must be a space- or tab-delimited list of ints, each of which is >= minValue,
+     * and which must be exactly expectedLength (> 0) long.  If the parameter does not exist,
+     * or any of its ints are out of bounds, or the list is not long enough or is  
+     * too long or has garbage at the end of it, then this method returns null.
+     * Otherwise the method returns the ints in question.  
+     * The parameter chosen is
+     * marked "used" if it exists.
+     */
+
+    public int[] getInts(Parameter parameter, Parameter defaultParameter, int minValue, int expectedLength)
+        {
+        return getIntsWithMax(parameter, defaultParameter, minValue, Integer.MAX_VALUE, expectedLength);
+        }
+
+    /**
+     * Searches down through databases to find a given parameter, whose value
+     * must be a space- or tab-delimited list of ints, each of which is >= minValue,
+     * and which must be at least 1 number long.  If the parameter does not exist,
+     * or any of its ints are out of bounds, or the list is not long enough or is  
+     * too long or has garbage at the end of it, then this method returns null.
+     * Otherwise the method returns the ints in question.  
+     * The parameter chosen is
+     * marked "used" if it exists.
+     */
+
+    public int[] getInts(Parameter parameter, Parameter defaultParameter, int minValue)
+        {
+        return getInts(parameter, defaultParameter, minValue, ARRAY_NO_EXPECTED_LENGTH);
+        }
+
+    /**
+     * Searches down through databases to find a given parameter, whose value
+     * must be a space- or tab-delimited list of ints,
+     * and which must be exactly expectedLength (> 0) long.  If the parameter does not exist,
+     * or the list is not long enough or is  
+     * too long or has garbage at the end of it, then this method returns null.
+     * Otherwise the method returns the ints in question.  
+     * The parameter chosen is
+     * marked "used" if it exists.
+     */
+
+    public int[] getIntsUnconstrained(Parameter parameter, Parameter defaultParameter, int expectedLength)
+        {
+        return getIntsWithMax(parameter, defaultParameter, Integer.MIN_VALUE, Integer.MAX_VALUE, expectedLength);
+        }
+
+    /**
+     * Searches down through databases to find a given parameter, whose value
+     * must be a space- or tab-delimited list of ints,
+     * and which must be at least 1 number long.  If the parameter does not exist,
+     * or the list is not long enough or is  
+     * too long or has garbage at the end of it, then this method returns null.
+     * Otherwise the method returns the ints in question.  
+     * The parameter chosen is
+     * marked "used" if it exists.
+     */
+
+    public int[] getIntsUnconstrained(Parameter parameter, Parameter defaultParameter)
+        {
+        return getIntsUnconstrained(parameter, defaultParameter, ARRAY_NO_EXPECTED_LENGTH);
+        }
 
 
 
@@ -2378,7 +2512,8 @@ public class ParameterDatabase implements Serializable
         {
         try
             {
-            return _getInner(parameter);
+            HashSet set = new HashSet();
+            return _getInner(parameter, set);
             }
         catch (RuntimeException ex)
             {
@@ -2387,105 +2522,136 @@ public class ParameterDatabase implements Serializable
             }
         }
     
+/*
+
+  show();
+  import ec.util.*;
+  p = new ParameterDatabase(new File("ec/util/test.params"));
+  String g(String s) { return p.getString(new Parameter(s), null); }
+  p.list(new PrintWriter(System.out));
+  g("a.b.c.d.e");
+
+*/
+
+
+    int countDelimiters(String parameter)
+        {
+        if (parameter == null) return 0;
+        int count = 0;
+        for(int i = 0; i < parameter.length(); i++)
+            {
+            if (parameter.charAt(i) == '.')
+                count++;
+            }
+        return count;
+        }
+
     /** Private helper function */
-    synchronized String _getInner(String parameter) 
+    synchronized String _getInner(String parameter, HashSet set) 
         {
         if (parameter == null) 
             {
-            this.popped = "";
             return null;
             }
-        
-        String result = _getRecursive(parameter);
-        uncheck();
-        
-        int lastDelim = parameter.lastIndexOf(Parameter.delimiter);
-        String top = null;
 
-        if (result == null) 
+        if (set.contains(parameter))
             {
-            // if parameter not found and there are no more delimiters (can't search for alias or defaults)
-            if (lastDelim == -1) 
+            return null;
+            }
+        set.add(parameter);
+        
+        String result = _getRecursive(parameter);               // try concrete parameter
+        uncheck();
+        if (result != null)
+            {
+            return result;
+            }
+        else if (parameter.endsWith(".alias") || parameter.endsWith(".default") )  // don't allow macros inside macro definitions
+            {
+            return null;
+            }
+        else if (parameter.startsWith("parent."))
+            {
+            return null;
+            }
+        else if (parameter.equals(PRINT_PARAMS))
+            {
+            return null;
+            }
+        else
+            {
+            int count = countDelimiters(parameter);                         // this could be improved
+
+            // try top-level alias
+            String replace = _getInner(parameter + "." + V_ALIAS, set);
+            uncheck();
+            if (replace != null && countDelimiters(replace) > count)        // we don't allow macros to grow
                 {
-                aliases = new Hashtable();
-                return null;
+                replace = null;
                 }
 
-            else 
+            if (replace != null)
                 {
-                top = parameter.substring(lastDelim + 1);
-                parameter = parameter.substring(0, lastDelim);
-
-                // if you didn't find a parameter look for a default
-                if (!top.equals("default") && !top.equals("alias")) 
+                result = _getInner(replace, set);
+                uncheck();
+                if (result != null)
                     {
-                    if (this.popped.equals("")) 
-                        this.popped = top;
-                    else this.popped = top + Parameter.delimiter + this.popped;
-                    result = _getInner(parameter + Parameter.delimiter + "default");
+                    return result;
                     }
+                }
 
-                //if you just looked for a default and didn't find anything
-                else if (top.equals("default")) 
+            String extra = "";
+            while(true)
+                {
+                int lastDelim = parameter.lastIndexOf(Parameter.delimiter);
+                if (lastDelim <= 0 || lastDelim == parameter.length() - 1)  // fail if there is no dot, or if there is a dot at the beginning, or end
                     {
-                    // look for an alias
-                    if (aliases.get(parameter + Parameter.delimiter + "alias") == null) 
-                        {
-                        result = _getInner(parameter + Parameter.delimiter + "alias");
-                        } 
-                    else 
-                        {
-                        aliases = new Hashtable();
-                        return null;
-                        }
+                    return null;
                     }
-
-                // if you just looked for an alias and didn't find anything
-                else 
+                else
                     {
-                    //go one level higher and look for a default
-                    lastDelim = parameter.lastIndexOf(Parameter.delimiter);
-                    if (lastDelim==-1) 
+                    String head = parameter.substring(0, lastDelim);
+                    String tail = parameter.substring(lastDelim + 1);
+                                        
+                                        
+                    // try default
+                    replace = _getRecursive(head + "." + V_DEFAULT);                // we don't allow macros inside macro rules
+                    uncheck();
+                    if (replace != null && countDelimiters(replace) > count) // we don't allow macros to grow
                         {
-                        aliases = new Hashtable();
-                        return null;
-                        } 
-                    else 
-                        {
-                        top = parameter.substring(lastDelim+1);
-                        parameter = parameter.substring(0,lastDelim);
-                        this.popped = top + Parameter.delimiter + this.popped;
-                        result = _getInner(parameter + Parameter.delimiter + "default");
+                        replace = null;
                         }
+
+                    if (replace != null)
+                        {
+                        result = _getInner(replace + extra, set);
+                        uncheck();
+                        if (result != null)
+                            return result;
+                        }
+
+                    // try alias
+                    replace = _getRecursive(head + "." + V_ALIAS);          // we don't allow macros inside macro rules
+                    uncheck();
+                    if (replace != null && countDelimiters(replace) > count)        // we don't allow macros to grow
+                        {
+                        replace = null;
+                        }
+
+                    if (replace != null)
+                        {
+                        result = _getInner(replace + "." + tail + extra, set);
+                        uncheck();
+                        if (result != null)
+                            return result;
+                        }
+                                        
+                    extra = "." + tail + extra;
+                    parameter = head;
+                    count--;  // one less delimiter!
                     }
                 }
             }
-        else 
-            { // parameter found
-
-            top = parameter.substring(lastDelim + 1);
-            if (top.equals("alias")) 
-                {  
-                // if alias is found replace original parameter with aliased parameter and look again
-                aliases.put(parameter,result);
-                result = _getInner(result + Parameter.delimiter + this.popped); 
-                } 
-
-            else 
-                { // found an actual result
-                this.popped = "";
-                result = result.trim();
-                if (result.length() == 0) 
-                    {
-                    aliases = new Hashtable();
-                    result = null;
-                    }
-                }
-
-            }
-
-        aliases = new Hashtable();
-        return result;
         }
 
 
@@ -2675,6 +2841,11 @@ public class ParameterDatabase implements Serializable
         for (int x = 0; x < size; x++)
             ((ParameterDatabase) (parents.elementAt(x)))
                 .removeDeeply(parameter);
+        }
+    
+    public void prependParent(ParameterDatabase database)
+        {
+        parents.insertElementAt(database, 0);
         }
 
     public void addParent(ParameterDatabase database)

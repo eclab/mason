@@ -62,7 +62,6 @@ public final class Double3D extends NumberND
 
 	public double[] toArrayAsDouble() { return new double[] { x, y, z}; }
 
-
     public int hashCode()
         {
         double x = this.x;

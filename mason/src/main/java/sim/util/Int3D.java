@@ -50,7 +50,6 @@ public final class Int3D extends NumberND
     
 	public double[] toArrayAsDouble() { return new double[] { x, y, z}; }
 
-
 	public int hashCode()
         {
         int z = this.z;

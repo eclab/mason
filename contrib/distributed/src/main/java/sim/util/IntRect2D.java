@@ -251,8 +251,8 @@ public class IntRect2D implements Serializable
 		//return resize(vals);
 		
 		/// SEAN -- I *think* this is right?
-		//return new IntRect2D(ul.add(-val, -val), br.add(val, val));
-		return new IntRect2D(ul.add(-val), br.add(val));		
+		return new IntRect2D(ul.add(-val, -val), br.add(val, val));
+		//return new IntRect2D(ul.add(-val), br.add(val));		
 
 	}
 

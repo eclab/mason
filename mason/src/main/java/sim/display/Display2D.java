@@ -1127,13 +1127,15 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     
     
     
-    /** Quits the Display2D.  Okay, so finalize is evil and we're not supposed to rely on it.
+    /* Quits the Display2D.  Okay, so finalize is evil and we're not supposed to rely on it.
         We're not.  But it's an additional cargo-cult programming measure just in case. */
+/*
     protected void finalize() throws Throwable
         {
         super.finalize();
         quit();
         }
+*/
     
     /** Quits the Display2D.  Called by the Display2D's frame if the Display2D made the frame itself.
         Also called by finalize().  Otherwise you should call this method before destroying the Display2D. */
@@ -1862,6 +1864,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         {
         synchronized(Display2D.this.simulation.state.schedule)
             {
+            /*
             if (SimApplet.isApplet)
                 {
                 Object[] options = {"Oops"};
@@ -1872,6 +1875,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                     null, options, options[0]);
                 return;
                 }
+            */
 
             // do we have the PDFEncoder?
             boolean havePDF = false;
@@ -1881,7 +1885,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             BufferedImage img = insideDisplay.paint(g,true,false);  // notice we're painting to a non-shared buffer
             try
                 {
-                sacrificialObj = Class.forName("com.lowagie.text.Cell", true, Thread.currentThread().getContextClassLoader()).newInstance(); // sacrificial
+                sacrificialObj = Class.forName("com.lowagie.text.Cell", true, Thread.currentThread().getContextClassLoader()).getDeclaredConstructor().newInstance(); // sacrificial
                 // if we survived that, then iText is installed and we're good.
                 havePDF = true; 
                 }
@@ -1965,6 +1969,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         // isn't doing anything.
         synchronized(Display2D.this.simulation.state.schedule)
             {
+            /*
             // can't start a movie if we're in an applet
             if (SimApplet.isApplet)
                 {
@@ -1976,6 +1981,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                     null, options, options[0]);
                 return;
                 }
+            */
                         
             if (movieMaker != null) return;  // already running
             movieMaker = new MovieMaker(getFrame());

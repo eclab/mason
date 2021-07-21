@@ -159,7 +159,8 @@ public class BoxPlotGenerator extends ChartGenerator
         {
         ArrayList list = new ArrayList();
         for(int i = 0; i < vals.length; i++)
-            list.add(new Double(vals[i]));
+//            list.add(new Double(vals[i]));
+            list.add(Double.valueOf(vals[i]));
         return list;
         }
  

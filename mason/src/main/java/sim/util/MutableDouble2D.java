@@ -71,7 +71,6 @@ public final class MutableDouble2D extends MutableNumberND
 
 	public double[] toArrayAsDouble() { return new double[] { x, y}; }
 
-
     public Object clone()
         { 
         try 

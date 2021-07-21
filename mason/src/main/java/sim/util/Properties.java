@@ -237,7 +237,8 @@ public abstract class Properties implements java.io.Serializable
                 }
             else if ( type == Float.TYPE ) return _setValue(index,Float.valueOf(value));
             else if ( type == Double.TYPE ) return _setValue(index,betterDoubleValueOf(value));
-            else if ( type == Character.TYPE ) return _setValue(index,new Character(value.charAt(0)));
+//            else if ( type == Character.TYPE ) return _setValue(index,new Character(value.charAt(0)));
+            else if ( type == Character.TYPE ) return _setValue(index,Character.valueOf(value.charAt(0)));
             else if ( type == String.class ) return _setValue(index,value);
             else return null;
             }

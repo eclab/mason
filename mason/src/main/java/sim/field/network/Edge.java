@@ -106,7 +106,8 @@ public class Edge implements java.io.Serializable, Comparable
     /** Sets the weight of the edge to a java.lang.Double, discarding any previous weight or label.  */
     public void setWeight(double weight)
         {
-        info = new Double(weight);
+        //info = new Double(weight);
+        info = Double.valueOf(weight);
         }
 
     /**

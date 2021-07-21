@@ -19,7 +19,6 @@ public abstract class NumberND implements java.io.Serializable
     public abstract int numDimensions();
 
 	public abstract double[] toArrayAsDouble();
-    //public int getNd() { return getNumDimensions(); }
         
     /** Returns the value at position VAL in this NumberND  (val should 0, 1, or sometimes 2) */
     public abstract double getVal(int pos);
@@ -203,13 +202,21 @@ public abstract class NumberND implements java.io.Serializable
 
         }
 
-
 	public NumberND add(int offset)
 		{
 		if (this instanceof Int2D)
 			return ((Int2D)this).add(offset);
 		else if (this instanceof Double2D)
 			return ((Double2D)this).add(offset);
+		else return null;
+		} 
+
+	public NumberND add(int dim, int offset)
+		{
+		if (this instanceof Int2D)
+			return ((Int2D)this).add(dim, offset);
+		else if (this instanceof Double2D)
+			return ((Double2D)this).add(dim, offset);
 		else return null;
 		} 
 
@@ -222,16 +229,6 @@ public abstract class NumberND implements java.io.Serializable
 		else return null;
 		} 
 
-	public NumberND add(NumberND other)
-	{
-		
-	if ((this instanceof Int2D) && (other instanceof Int2D))
-		return ((Int2D)this).add((Int2D)other);
-	else if ((this instanceof Double2D) && (other instanceof Double2D))
-		return ((Double2D)this).add((Double2D) other);
-	else return null;
-	} 	
-
 	public NumberND subtract(Int2D offset)
 		{
 		if (this instanceof Int2D)
@@ -239,10 +236,7 @@ public abstract class NumberND implements java.io.Serializable
 		else if (this instanceof Double2D)
 			return ((Double2D)this).subtract(offset);
 		else return null;
-        } 
-     //---------------------------------------------------
-        
-        //public abstract double[] getOffsetsDouble(NdPoint that);
+		} 
 
 		public double[] getOffsets(final NumberND that) 
 			{
@@ -250,9 +244,21 @@ public abstract class NumberND implements java.io.Serializable
 			double[] ret = new double[d];
 			for(int i = 0; i < d; i++)
 				{
-				//System.out.println("getOffsetsDouble "+getVal(i)+" that "+that.getVal(i));
 				ret[i] = getVal(i) - that.getVal(i);
 				}
 			return ret;
 			}
-    } 
+
+		public double getDistanceSq(final NumberND that) 
+			{
+			final double[] a = that.toArrayAsDouble();
+			final double[] c = this.toArrayAsDouble();
+			int x = a.length;
+			double sum = 0;
+			if (c.length < x) x = c.length;
+			for(int i = 0; i < x; i++)
+				sum += (a[i] - c[i]) * (a[i] - c[i]);
+			return sum;
+			}
+    }
+        

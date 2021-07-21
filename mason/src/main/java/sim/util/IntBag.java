@@ -230,7 +230,8 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
 
     public Object setValue(final int index, final Object value)
         {
-        Integer old = new Integer(get(index));
+        //Integer old = new Integer(get(index));
+        Integer old = Integer.valueOf(get(index));
         Integer newval = null;
         try { newval = (Integer)value; }
         catch (ClassCastException e) { throw new IllegalArgumentException("Expected an Integer"); }
@@ -380,7 +381,8 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
         {
         Double[] o = new Double[numObjs];
         for(int i = 0; i < numObjs; i++)
-            o[i] = new Double(objs[i]);
+            // o[i] = new Double(objs[i]);
+            o[i] = Double.valueOf(objs[i]);
         return o;
         }
 

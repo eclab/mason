@@ -715,6 +715,9 @@ public strictfp class MersenneTwisterFast implements Serializable, Cloneable
         }
 
 
+    /** Returns a long drawn uniformly from 0 to n-1.  Suffice it to say,
+        n must be greater than 0, or an IllegalArgumentException is raised. */
+    
     public long nextLong()
         {
         int y;

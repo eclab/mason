@@ -83,7 +83,7 @@ public class Students extends SimState
                 studentB = students.get(random.nextInt(students.numObjs));
                 } while (student == studentB);
             double buddiness = random.nextDouble();
-            buddies.addEdge(student, studentB, new Double(buddiness));
+            buddies.addEdge(student, studentB, Double.valueOf(buddiness));
 
             // who does he dislike?
             do
@@ -91,7 +91,7 @@ public class Students extends SimState
                 studentB = students.get(random.nextInt(students.numObjs));
                 } while (student == studentB);
             buddiness = random.nextDouble();
-            buddies.addEdge(student, studentB, new Double( -buddiness));
+            buddies.addEdge(student, studentB, Double.valueOf( -buddiness));
             }
         }
         

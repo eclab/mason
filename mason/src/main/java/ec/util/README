@@ -1,8 +1,10 @@
 ec/util
 
-This package contains the MersenneTwisterFast random number generator, shared
-with ECJ, our evolutionary computation toolkit.
+This package contains classes copied from the the src/main/java/ec/util/ 
+directory of ECJ, our evolutionary computation toolkit.  You can download
+ECJ, if you so wished, at https://github.com/GMUEClab/ecj
 
+Notably this package contains the MersenneTwisterFast random number generator.
 
 MersenneTwisterFast.java
 

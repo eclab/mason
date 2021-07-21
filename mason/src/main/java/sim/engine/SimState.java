@@ -12,11 +12,16 @@ import java.text.*;
 import java.lang.reflect.*;
 
 /** SimState represents the simulation proper.  Your simulations generally will contain one top-level object which subclasses from SimState.
+
     <p>A SimState contains the random number generator and the simulator's schedule.  You should not change the schedule to another Schedule object.
+
     <p>When a simulation is begun, SimState's start() method is called.  Then the schedule is stepped some N times.  Last, the SimState's finish() method is called, and the simulation is over.
+
     <p>SimStates are serializable; if you wish to be able to checkpoint your simulation and read from checkpoints, you should endeavor to make all objects in the simulation serializable as well.  Prior to serializing to a checkpoint, preCheckpoint() is called.  Then after serialization, postCheckpoint() is called.  When a SimState is loaded from a checkpoint, awakeFromCheckpoint() is called to give you a chance to make any adjustments.  SimState also implements several methods which call these methods and then serialize the SimState to files and to streams.
+
     <p>SimState also maintains a private registry of AsynchronousSteppable objects, and handles pausing and resuming
     them during the checkpointing process, and killing them during finish() in case they had not completed yet.
+
     <p>If you override any of the methods foo() in SimState, should remember to <b>always</b> call super.foo() for any such method foo().
 */
 
@@ -764,7 +769,7 @@ public class SimState implements java.io.Serializable
 
 	PrintWriter writer = null;
 	
-	/** This is method is called to set the PrintWriter used in getDescription() [which is more important to you]. */ 
+	/** This method is called to set the PrintWriter used in getDescription() [which is more important to you]. */ 
     public void setDescription(PrintWriter writer)
     	{
     	this.writer = writer;
@@ -777,20 +782,20 @@ public class SimState implements java.io.Serializable
 		be run one final time with a PrintWriter description.  The description will be set prior to start()
 		and should not be saved nor written to after finish().  
 		*/ 
-    public PrintWriter getDescription()
+    public PrintWriter description()
     	{
     	return writer;
     	}
     
-    /** Returns true if the simulation is a remote proxy simulation. Ordinarily you should leave this
-    	alone: it's provided mostly for the distributed visualizer. */
-    public boolean isRemoteProxy()
+    /** Returns true if the simulation is a remote proxy simulation.  Don't override this: 
+    	it's provided mostly for the distributed visualizer. */
+    public boolean remoteProxy()
     	{
     	return false;
     	}
     	
-    /** Override this to revise the steps displayed in the Console.  Ordinarily you should leave this
-    	alone: it's provided mostly for the distributed visualizer. */
+    /** Override this to revise the steps displayed in the Console.  Don't override this: 
+    	it's provided mostly for the distributed visualizer. */
     public long remoteSteps()
     	{
     	return 0;
@@ -815,3 +820,4 @@ public class SimState implements java.io.Serializable
     	return null;
     	}
     }
+

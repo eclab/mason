@@ -166,7 +166,8 @@ public class SimpleProperties extends Properties implements java.io.Serializable
             {
             if (filterMap.containsKey(filter[i]))
                 throw new IllegalArgumentException("Array provided to SimpleProperties.setSortList has duplicate values.");
-            filterMap.put(filter[i], new Integer(i));
+            // filterMap.put(filter[i], new Integer(i));
+            filterMap.put(filter[i], Integer.valueOf(i));
             }
 
         return new Comparator()
@@ -248,7 +249,8 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         // sort the getMethods indices
         Integer[] index = new Integer[getMethods.size()];
         for(int i = 0; i < index.length; i++)
-            index[i] = new Integer(i);
+//            index[i] = new Integer(i);
+            index[i] = Integer.valueOf(i);
         
         final Comparator cc = c;
         Arrays.sort(index, new Comparator()  // this is a STABLE SORT, so elements not appearing in c's filter will return 0 resulting in no change we hope.

@@ -80,7 +80,6 @@ public final class MutableDouble3D extends MutableNumberND
 
 	public double[] toArrayAsDouble() { return new double[] { x, y, z}; }
 
-
     public Object clone()
         { 
         try 

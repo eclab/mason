@@ -25,7 +25,8 @@ public class MutableDouble extends Number implements Valuable, Cloneable /* auto
     public MutableDouble(double val) { this.val = val; }
     public MutableDouble(MutableDouble md) { this.val = md.val; }
 
-    public Double toDouble() { return new Double(val); }
+//    public Double toDouble() { return new Double(val); }
+    public Double toDouble() { return Double.valueOf(val); }
         
     // written to implement the Number abstract class
     public double doubleValue() { return val; }

@@ -51,10 +51,8 @@ public final class Double2D extends NumberND
     
     public java.awt.geom.Point2D.Double toPoint2D() { return new java.awt.geom.Point2D.Double(x,y); }
 
-
 	public double[] toArray() { return new double[] {x, y}; }
 	public double[] toArrayAsDouble() { return new double[] { x, y}; }
-
         
     public final int hashCode()
         {
@@ -315,13 +313,22 @@ public final class Double2D extends NumberND
         {
         return new Double2D(x + other.x, y + other.y);
         }
-
+    
+    public final Double2D add(Int2D other)
+    {
+    return new Double2D(x + other.x, y + other.y);
+    }
     /** Subtracts Double2D "other" from current Double2D using 
      * vector subtraction */
     public final Double2D subtract(Double2D other)
         {
         return new Double2D(x - other.x, y - other.y);
         }
+    
+    public final Double2D subtract(Int2D other)
+    {
+    return new Double2D(x - other.x, y - other.y);
+    }
         
     /** Returns the vector length of the Double2D */
     public final double length()
@@ -429,16 +436,60 @@ public final class Double2D extends NumberND
         }
 
 
-    
 
+	/** Returns true I am less than val in every dimension */
+    public boolean lt(Double2D val)
+    	{
+    	return x < val.x && y < val.y;
+    	}
+
+	/** Returns true I am greater than val in every dimension */
+    public boolean gt(Double2D val)
+    	{
+    	return x > val.x && y > val.y;
+    	}
+
+	/** Returns true I am less than or equal to than val in every dimension */
+    public boolean leq(Double2D val)
+    	{
+    	return x <= val.x && y <= val.y;
+    	}
+
+	/** Returns true I am greater than or equal to than val in every dimension */
+    public boolean geq(Double2D val)
+    	{
+    	return x >= val.x && y >= val.y;
+    	}
+
+	/** Returns true I am less than val in every dimension */
+    public boolean lt(Int2D val)
+    	{
+    	return x < val.x && y < val.y;
+    	}
+
+	/** Returns true I am greater than val in every dimension */
+    public boolean gt(Int2D val)
+    	{
+    	return x > val.x && y > val.y;
+    	}
+
+	/** Returns true I am less than or equal to than val in every dimension */
+    public boolean leq(Int2D val)
+    	{
+    	return x <= val.x && y <= val.y;
+    	}
+
+	/** Returns true I am greater than or equal to than val in every dimension */
+    public boolean geq(Int2D val)
+    	{
+    	return x >= val.x && y >= val.y;
+    	}
 
 	/** Returns true I am equal to val */
-    
     public final boolean equals(Int2D val)
         {
         return x == val.x && y == val.y;
         }
-        
 
 	/** Returns true I am equal to val */
     public final boolean equals(Double2D val)
@@ -455,79 +506,49 @@ public final class Double2D extends NumberND
 		{
 		return new Double2D(Math.min(x, val.x), Math.min(y, val.y));
 		} 
-	
-    public final Double2D add(Int2D other)
-	    {
-	    return new Double2D(x + other.x, y + other.y);
-	    }
 
+/*
 	public Double2D add(double offset)
 		{
 		return new Double2D(x + offset, y + offset);
 		} 
-	
-	public Double2D add(int offset)
+*/
+    public Double2D add(double dx, double dy)
 		{
-		return new Double2D(x + offset, y + offset);
+		return new Double2D(x + dx, y + dy);
 		} 
 
-	public Double2D add(int dim, int offset)
-		{
-		if (dim == 0)
-			return new Double2D(x + offset, y);
-		else
-			return new Double2D(x, y + offset);
-		} 
-	
-	public NumberND add(NumberND other) 
-		{ 
-		if (other instanceof Int2D)
-			return add((Int2D)other);
-		else if (other instanceof Double2D)
-			return add((Double2D)other);
-		else 
-			return null; 
-		}
-	
-	public NumberND subtract(Int2D other) 
-		{ 
-		return new Double2D(x - other.x, y - other.y);
-		} 
-	
-	/*
-	public Double2D add(int[] offset)
-		{
-		return new Double2D(x + offset[0], y + offset[1]);
-		}
-	
-	public Double2D subtract(int[] offset)
-		{
-		return new Double2D(x - offset[0], y - offset[1]);
-		} 
-	*/
-
-	public double[] getOffsets(final Double2D that)
-		{
-		return new double[] { x - that.x, y - that.y };
-		}
-
+/*
 	public Double2D add(int dim, double offset)
 		{
 		if (dim == 0)
 			return new Double2D(x + offset, y);
 		else
 			return new Double2D(x, y + offset);
-		}
-
-	/*
-    public Double2D add(double[] offset)
-		{
-		return new Double2D(x + offset[0], y + offset[1]);
 		} 
 
-    public Double2D subtract(double[] offset)
+	public Double2D add(Int2D offset)
 		{
-		return new Double2D(x - offset[0], y - offset[1]);
-		} 	
-	*/
+		return new Double2D(x + offset.x, y + offset.y);
+		} 
+
+	public Double2D subtract(Double2D offset)
+		{
+		return new Double2D(x - offset.x, y - offset.y);
+		} 
+*/
+
+/*
+	public Double2D subtract(double offset)
+		{
+		return new Double2D(x - offset, y - offset);
+		} 
+*/
+
+/*
+	public double[] getOffsets(final Double2D from)
+		{
+		return new double[] { x - from.x, y - from.y };
+		}
+*/
     }
