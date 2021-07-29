@@ -14,6 +14,7 @@ import java.util.HashMap;
 import mpi.Comm;
 import mpi.MPI;
 import mpi.MPIException;
+import sim.engine.DSimState;
 import sim.engine.DistributedIterativeRepeat;
 import sim.engine.Stopping;
 import sim.field.partitioning.Partition;
@@ -38,12 +39,9 @@ public class TransporterMPI
 
 	public ArrayList<PayloadWrapper> objectQueue; //things being moved are put here, and integrated into local storage in DSimState
 
-	protected boolean withRegistry;
-
 	public TransporterMPI(final Partition partition)
 	{
 		this.partition = partition;
-		this.withRegistry = false;
 		reload();
 
 		//unclear on exactly how this works, I assume it is just syncing before initializing?
@@ -320,12 +318,8 @@ public class TransporterMPI
 		// dst, which could be the diagonal processor
 		final PayloadWrapper wrapper = new PayloadWrapper(dst, obj, loc, fieldIndex);
 
-		if (withRegistry)
-		{
-			String name = DRegistry.getInstance().ifExportedThenAddMigratedName(obj);
-			if (name != null)
-				wrapper.setExportedName(name);
-		}
+		if (DSimState.withRegistry)		
+		DRegistry.getInstance().ifExportedThenAddMigratedName(obj);
 
 		assert dstMap.containsKey(dst);
 		try

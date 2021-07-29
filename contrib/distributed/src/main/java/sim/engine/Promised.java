@@ -3,7 +3,7 @@ package sim.engine;
 import java.io.*;
 import java.rmi.*;
 
-public interface Promised extends Serializable 
+public interface Promised extends Remote
 {
 	
 	public boolean isReady() throws RemoteException;

@@ -10,6 +10,25 @@ public class RemotePromise extends UnicastRemoteObject implements Promised {
 
 	boolean ready = false;
 	Serializable object = null;
+	public int tag; //tag used to understand which method to use to fill the promise
+	public Serializable args; // optional arguments that could be needed
+	public String promiseId; // id used to register the promise on the registry
+
+	public void setPromiseId(String id){
+		this.promiseId = id;
+	}
+	
+	public String getPromiseId(){
+		return promiseId;
+	}
+
+	public int getTag(){
+		return tag;
+	}
+	
+	public Serializable getArgs(){
+		return args;
+	}
 
 	/** Returns TRUE if the promised data is ready, else FALSE. */
 	public boolean isReady() throws RemoteException
@@ -38,13 +57,6 @@ public class RemotePromise extends UnicastRemoteObject implements Promised {
 		return (Double) object;
 	}
 
-//	/**
-//	 * Returns the author that have the data to fulfill the RemotePromise
-//	 */
-//	public Remote getAuthor() throws RemoteException {
-//		return author;
-//	}
-//	
 	/** Provides the data and makes the promise ready. */
 	public void fulfill(Serializable object) throws RemoteException {
 		ready = true;
@@ -64,6 +76,17 @@ public class RemotePromise extends UnicastRemoteObject implements Promised {
 	 */
 	public RemotePromise() throws RemoteException {
 		super();
+	}
+
+	/**
+	 * Constructs an unfulfilled promise
+	 * 
+	 * @throws RemoteException
+	 */
+	public RemotePromise(int tag, Serializable args, String id) throws RemoteException{
+		this.tag = tag;
+		this.args = args;
+		this.promiseId = id;
 	}
 
 	/**

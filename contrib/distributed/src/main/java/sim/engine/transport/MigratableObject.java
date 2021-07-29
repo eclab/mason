@@ -8,21 +8,10 @@ import java.io.Serializable;
  * @author Carmine Spagnuolo
  *
  */
-public abstract class MigratableObject implements Serializable
+public interface MigratableObject extends Serializable
 {
-	private static final long serialVersionUID = 1L;
-
-	private String export_name = null;
-
-	public void setExportedName(String export_name)
-	{
-		this.export_name = export_name;
-
-	}
-
-	public String getExportedName()
-	{
-		return this.export_name;
-	}
+	
+	public void setExportedName(String exportName);
+	public String getExportedName();
 
 }
