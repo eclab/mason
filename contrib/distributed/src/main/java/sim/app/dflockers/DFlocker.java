@@ -6,6 +6,7 @@
 
 package sim.app.dflockers;
 
+import java.rmi.Remote;
 import java.util.List;
 
 import ec.util.MersenneTwisterFast;
@@ -16,7 +17,7 @@ import sim.portrayal.Oriented2D;
 import sim.util.*;
 import java.util.*;
 
-public class DFlocker extends DSteppable implements Oriented2D
+public class DFlocker extends DSteppable implements Remote, Oriented2D
 {
 
 	private static final long serialVersionUID = 1;

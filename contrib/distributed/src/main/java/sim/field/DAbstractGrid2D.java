@@ -3,6 +3,7 @@ package sim.field;
 import sim.engine.DSimState;
 import sim.field.grid.*;
 
+import sim.field.partitioning.Partition;
 import sim.util.*;
 
 /**

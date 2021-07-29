@@ -74,21 +74,23 @@ public class DSimState extends SimState
 	// The RMI registry
 	protected DRegistry registry;
 
-	// Flag to understand if the registry is enabled
-	public static boolean withRegistry;
-
+	// FIXME: what is this for?
+	protected boolean withRegistry;
 
 	// The number of steps between load balances
 	protected int balanceInterval = 100;
 	// The current balance level FIXME: This looks primitive, and also requires that
 	// be properly in sync
 	int balancerLevel;
-	// Queue of RemotePromise to fill
-	static ArrayList<DObject> globalRemotePromises = new ArrayList<>();
-		
-	// Queue of RemotePromise to filled and to unregister
-	static ArrayList<RemotePromise> filledPromises = new ArrayList<>();
 
+	/** Queue of RemotePromise 
+		A (RemotePromise) is the promise, 
+		B (Integer) is the tag used to understand which method to use to fill the promise 
+		C (Serializable) is the argument passed to be used in the response method (optional)  
+		D (Distinguished) is the Distinguished that has the information needed
+	*/
+	static ArrayList<Quartet<RemotePromise, Integer, Serializable, Distinguished>> promises = new ArrayList<>();
+	
 	/**
 	 * Builds a new DSimState with the given random number SEED, the WIDTH and HEIGIHT of the entire model (not just the
 	 * partition), and the AREA OF INTEREST (AOI) for the halo field
@@ -232,17 +234,6 @@ public class DSimState extends SimState
 			// Wait for all agents globally to stop moving
 			MPI.COMM_WORLD.barrier();
 
-			if (withRegistry) {
-				try {
-					for (RemotePromise promisesFilled : filledPromises) {
-						this.getDRegistry().unRegisterObject(promisesFilled.getPromiseId());
-					}
-					filledPromises.clear();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
 			// give time for Visualizer
 			try
 			{
@@ -254,31 +245,24 @@ public class DSimState extends SimState
 				throw new RuntimeException(e1);
 			}
 
-			// check for RemotePromise to fill and fill them
-			if (withRegistry && !globalRemotePromises.isEmpty()) {				
-				// search for all the agent that has some promises to fill
-				
-				for(DObject objWithPromises : globalRemotePromises) {
-					// check if the agent is migrated or not
-					
-					if (!DRegistry.getInstance().getMigratedNames().contains(objWithPromises.getExportedName())) {
-						
-						// search for all the promises within the agent
-						for (RemotePromise promise : objWithPromises.getUnfilledPromises()){
-							// use the method of the remote interface to fill the promise
-							Serializable content = objWithPromises.fillRemotePromise(promise.getTag(), promise.getArgs());
-							
-							promise.fulfill(content);
-							// register the filled promise on the DRegistry
-							this.getDRegistry().registerObject(promise.getPromiseId(), promise);
-							// add the promise to the filledPromises queue
-							filledPromises.add(promise);
-						}
-						// all the promises of the object have been fulfilled
-						objWithPromises.getUnfilledPromises().clear();
-					}
+			// Check for RemotePromise to fill and fill them
+			// we need to do this before the synchronization TODO I guess
+			if (withRegistry && !promises.isEmpty()) {				
+				//MPI.COMM_WORLD.barrier();
+//				System.out.println("Promises are: " + promises.toString());
+				for(Quartet<RemotePromise, Integer, Serializable, Distinguished> promisesToFill : promises) {
+					// Get the object inside the RemotePromise that has the information needed
+					Distinguished author =  promisesToFill.d;
+					// Use the method of the remote interface to get the required information
+					// tag and argument are passed to specify what data is needed
+					// respondToRemote is implemented by the modeler
+					Serializable response = author.respondToRemote(promisesToFill.b, promisesToFill.c);
+					// Fulfill the promise with the data acquired
+					promisesToFill.a.fulfill(response);
 				}
-				globalRemotePromises.clear();
+				// clear the queue since all the promises have been fulfilled
+				promises.clear();
+				System.out.println("Promises queue cleared!");
 			}
 			
 			// Sync all the Remove and Add queues for RMI
@@ -316,45 +300,6 @@ public class DSimState extends SimState
 
 		for (final PayloadWrapper payloadWrapper : transporter.objectQueue)
 		{
-
-			// filling the remotePromise of migrated object
-			DObject mobj = null;
-
-			if(payloadWrapper.payload instanceof DistributedIterativeRepeat)
-				mobj = ((DObject) ((DistributedIterativeRepeat)payloadWrapper.payload).getSteppable());
-			else if ((payloadWrapper.payload instanceof AgentWrapper))
-				mobj = ((DObject) ((AgentWrapper)payloadWrapper.payload).agent);
-
-			if (withRegistry && mobj!=null)
-				{
-					
-					if (mobj.getExportedName() != null)
-					{
-						try
-						{
-							DRegistry.getInstance().registerObject(mobj.getExportedName(), (Remote) mobj);
-							DObject objWithPromises = (DObject) (mobj);
-							// search for all the promises within the agent
-							for (RemotePromise promise : objWithPromises.getUnfilledPromises()){
-								// use the method of the remote interface to fill the promise
-								Serializable content = objWithPromises.fillRemotePromise(promise.getTag(), promise.getArgs());
-								promise.fulfill(content);
-								// register the filled promise on the DRegistry
-								this.getDRegistry().registerObject(promise.getPromiseId(), promise);
-								
-								// add the promise to the filledPromises queue
-								filledPromises.add(promise);
-							}
-							// all the promises of the object have been fulfilled
-							objWithPromises.getUnfilledPromises().clear();
-						}
-						catch (RemoteException e)
-						{
-							e.printStackTrace();
-						}
-					}
-				}
-
 			/*
 			 * Assumptions about what is to be added to the field using addToField method rely on the fact that the wrapper
 			 * classes are not directly used By the modelers
@@ -387,6 +332,21 @@ public class DSimState extends SimState
 			{
 				final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
 
+				if (withRegistry)
+				{
+					if (agentWrapper.getExportedName() != null)
+					{
+						try
+						{
+							DRegistry.getInstance().registerObject(agentWrapper.getExportedName(),
+									(Remote) agentWrapper.agent);
+						}
+						catch (RemoteException e)
+						{
+							e.printStackTrace();
+						}
+					}
+				}
 				if (agentWrapper.time < 0)
 					schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
 				else
@@ -409,7 +369,7 @@ public class DSimState extends SimState
 		}
 
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
-		loadBalance();
+		//loadBalance();
 
 	}
 
@@ -491,11 +451,11 @@ public class DSimState extends SimState
 						// I am currently unclear on how this works
 						if (withRegistry)
 						{
-							if (((DObject)agentWrapper.agent).getExportedName() != null)
+							if (agentWrapper.getExportedName() != null)
 							{
 								try
 								{
-									DRegistry.getInstance().registerObject(((DObject)agentWrapper.agent).getExportedName(),
+									DRegistry.getInstance().registerObject(agentWrapper.getExportedName(),
 											(Remote) agentWrapper.agent);
 								}
 								catch (RemoteException e)
@@ -1259,6 +1219,37 @@ public class DSimState extends SimState
 		
 	}
 	
+	/**
+	 * Looks up for the object with name to get data
+	 * Creates an unfilled RemotePromise that contains the request of some processor.
+	 * Calls addRemotePromise to put the RemotePromise in the queue of its processor.
+	 * 
+	 * @param name is the name of the required object that has the data and has to fulfill the promise
+	 * @param tag is used to understand what data is required from the object  
+	 * 	(the designer can implement different methods and choose what to call using this)
+	 * @param argument is the optional argument to pass to the object from we want the data 
+	 * 
+	 * @return a RemotePromise that will be filled out
+	 */
+	public Promised contactRemoteObj(String name, Integer tag, Serializable argument) throws RemoteException, NotBoundException {
+		Distinguished remoteObject = (Distinguished) this.getDRegistry().getObject(name);
+		RemotePromise promiseUnfilled = new RemotePromise(); 
+		DSimState.addRemotePromise(promiseUnfilled, tag, argument, remoteObject);
+		return promiseUnfilled;
+	}
+	
+	/**
+	 * Add a RemotePromise to the queue.
+	 * The promise will be filled then.
+	 * The promise needs information about:
+	 * @param tag provides information about what data is required  
+	 * @param argument is the optional argument that could be needed in the method respondToRemote()
+	 * @param author that will fill the promise,
+	 */
+	public static void addRemotePromise(RemotePromise promise, Integer tag, Serializable argument, Distinguished author) {
+		promises.add(new Quartet<RemotePromise, Integer, Serializable, Distinguished>(promise, tag, argument, author));
+	}
+	
 	/*
 	public static void loc_disagree(Int2D p, DHeatBug h, Partition p2, String s)
 	{
@@ -1287,4 +1278,20 @@ public class DSimState extends SimState
 	
 	
 
+}
+
+class Quartet<A, B, C, D> implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	public final A a;
+	public final B b;
+	public final C c;
+	public final D d;
+
+	public Quartet(A a, B b, C c, D d) {
+		this.a = a;
+		this.b = b;
+		this.c = c;
+		this.d = d;
+	}
 }

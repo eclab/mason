@@ -9,7 +9,7 @@ import sim.util.*;
  * Used Internally
  *
  */
-public class PayloadWrapper implements Serializable
+public class PayloadWrapper extends MigratableObject
 {
 	private static final long serialVersionUID = 1L;
 
