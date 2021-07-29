@@ -369,7 +369,7 @@ public class DSimState extends SimState
 		}
 
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
-		loadBalance();
+		//loadBalance();
 
 	}
 
@@ -1087,6 +1087,16 @@ public class DSimState extends SimState
 
 			// partition.getCommunicator().gather(g, 1, MPI.DOUBLE, gg, 1, MPI.DOUBLE, 0); // fix type!
 			ArrayList<Object[]> gg = MPIUtil.gather(partition, g, 0);
+			
+			if (this.getPID() == 0) {
+                for (int i=0; i<gg.size(); i++) {
+                	System.out.println(i+"---");
+                	for (Object ggg: gg.get(i)){
+                		System.out.println(ggg);
+                	}
+                }
+			}
+
 
 			return gg;
 		}
@@ -1109,7 +1119,8 @@ public class DSimState extends SimState
 		try
 		{
 			// partition.getCommunicator().bcast(global, 1, MPI.DOUBLE, 0);
-			MPIUtil.bcast(partition, global, 0);
+			global = MPIUtil.bcast(partition.getCommunicator(), global, 0);
+			System.out.println("gl: "+global);
 			setPartitionGlobals(global);
 		}
 		catch (Exception e)

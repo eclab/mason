@@ -30,8 +30,8 @@ public class DPSO extends DSimState {
 
 
     
-    public int width = 11;
-    public int height = 11;
+    public int width = 10;
+    public int height = 10;
     
     public DContinuous2D<DParticle> space = new DContinuous2D<DParticle>(getPartition().getAOI(), this);;
 
@@ -39,7 +39,7 @@ public class DPSO extends DSimState {
     int prevSuccessCount = -1; 
     
     // public modifier values
-    public int numParticles = 1000;
+    public int numParticles = 10000;
     public int getNumParticles() { return numParticles; }
     public void setNumParticles(int val) { if (val >= 0) numParticles = val; }
 
@@ -96,7 +96,7 @@ public class DPSO extends DSimState {
         
     public DPSO(long seed)
         {
-        super(seed, 11, 11, 10);  //what should these be
+        super(seed, 10, 10, 1, false);  //what should these be
         }
     
     
@@ -199,9 +199,11 @@ public class DPSO extends DSimState {
 		for (Object p : particles) {
 			DParticle a = (DParticle) p;
 			//System.out.println(a.bestVal);
-			if (partition.getLocalBounds().contains(a.position)) {
+			
+			Double2D storagePos = masonSpaceToProblemBounds(a.position);
+			if (partition.getLocalBounds().contains(storagePos)) {
 				
-				  this.space.addAgent(new Double2D(a.position), a, 0, 0);
+				  this.space.addAgent(storagePos, a, 0, 0);
 			}
 		}
 		
@@ -241,6 +243,14 @@ public class DPSO extends DSimState {
         
         
         
+	}
+	
+	//Mason bounds top left is 0,0, while problems in dpso usually have 0,0 in the middle.
+	public Double2D masonSpaceToProblemBounds(MutableDouble2D p) {
+		
+		Double2D newPoint = new Double2D(p.getX()+ (width * 0.5), p.getY() + (height * 0.5));
+		return newPoint;
+		
 	}
 	
     protected Object[] getPartitionGlobals() {

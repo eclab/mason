@@ -6,6 +6,7 @@ import sim.engine.DObject;
 import sim.engine.DSteppable;
 import sim.engine.SimState;
 import sim.util.Double2D;
+import sim.util.IntRect2D;
 import sim.util.MutableDouble2D;
 
 public class DParticle extends DSteppable{
@@ -117,12 +118,21 @@ public class DParticle extends DSteppable{
     velocity.setTo(vx, vy);         
     }
     
-public void stepUpdatePosition()
+public void stepUpdatePosition(IntRect2D dpso_bounds, Double2D storagePos)
     {
     //System.out.println(
     //              "Best: " + n.bestVal + " (" + n.bestPosition.x + ", " + n.bestPosition.y + ")");
-    position.addIn(velocity);
-    //dpso.space.moveAgent(new Double2D(position), this); //Done in DPSO
+	double old_pos_x = position.x;
+	double old_pos_y = position.y;
+
+	
+    this.position.addIn(velocity);
+    
+    
+    if (!dpso_bounds.contains(storagePos)){
+    	this.position = new MutableDouble2D(old_pos_x, old_pos_y); //don't move to invalid location
+    }
+    
     }
 
 public void step(final SimState state) {
@@ -140,9 +150,12 @@ public void step(final SimState state) {
 	
 	//3
 	//System.out.println(this.position+" vel: "+this.velocity);
-	this.stepUpdatePosition();
+	IntRect2D dpso_bounds = dpso.getPartition().getWorldBounds();
+	//System.out.println(dpso_bounds);
+	//System.exit(-1);
+	this.stepUpdatePosition(dpso_bounds, dpso.masonSpaceToProblemBounds(this.position));
 	
-	dpso.space.moveAgent(new Double2D(this.position), this);
+	dpso.space.moveAgent(dpso.masonSpaceToProblemBounds(this.position), this);
 	
 	
 }

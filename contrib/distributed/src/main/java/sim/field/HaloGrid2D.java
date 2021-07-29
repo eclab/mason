@@ -73,8 +73,6 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		worldWidth = partition.getWorldWidth();
 		worldHeight = partition.getWorldHeight();
 
-//		List<GridStorage<T>> tempStor = new ArrayList<>();
-//		QuadTreePartition q = (QuadTreePartition) partition;
 
 		// register callbacks
 		partition.registerPreCommit(new Consumer()
@@ -100,7 +98,6 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 */
 	void reload()
 	{
-		//System.out.println("called reload");
 		
 		Partition partition = getPartition();
 		
@@ -108,53 +105,44 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		this.deleteHaloInfo();
 		
 		localBounds = partition.getLocalBounds();
+		
 		// Get the partition representing halo and local area by expanding the original
 		// partition by aoi at each dimension
 		haloBounds = localBounds.expand(partition.getAOI());
-		
-		//localStorage.setOffset(haloBounds.ul()); // moving local point calculation to GridStorage
-
-		
+				
 		localStorage.setShape(haloBounds);
 		
 		localStorage.setOffset(haloBounds.ul()); // moving local point calculation to GridStorage
-
-
-
-		// Get the partition representing private area by shrinking the original
-		// partition by aoi at each dimension
 
 		// Get the neighbors and create Neighbor objects
 		neighbors = new ArrayList<Neighbor>();
 		for (int id : partition.getNeighborPIDs())
 		{
 			neighbors.add(new Neighbor(partition.getLocalBounds(id)));
-		    //System.out.println(localBounds+" : "+partition.getLocalBounds(id));
-			//neighbors.add(new Neighbor(partition.getHaloBounds()));
 
 		}
 		
-		//System.exit(-1);
 	}
 
-	// Raj this deletes agents in the Halo before reloading, in order to prevent agents being moved to real space by bound changing
+	// this deletes agents in the Halo before reloading, in order to prevent agents being moved to real space by bound changing
 	void deleteHaloInfo() {
 		
 		if (this.haloBounds != null && this.localBounds != null) {
 		
-		for (Int2D a : this.haloBounds.getPointList()) {
+			//clear each point in halo
+			for (Int2D a : this.haloBounds.getPointList()) {
 			
-			if (!this.localBounds.contains(a)) {
+				if (!this.localBounds.contains(a)) {
 			
-				if (localStorage.getAllObjects(a) != null) {
+					if (localStorage.getAllObjects(a) != null) {
 					
-					localStorage.clear(a);
+						localStorage.clear(a);
 					
 					
+					}
 				}
-			}
 			
-		}
+			}
 		}
 	}
 
@@ -235,6 +223,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * @return a point wrapped around considering the toroidal halo region, if
 	 *         possible. If out of the halo region, returns null.
 	 */
+	//@TODO does this work correctly?
 	public Double2D toHaloToroidal(Double2D point)
 	{
 		if (inHalo(point))
@@ -661,89 +650,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		}
 	}
 
-//	TODO: Rajdeep - I don't know if we can remove the below method 
-	/**
-	 * Sends the local storage to the destination dst. All nodes will call this
-	 * together.
-	 * 
-	 * @param dst
-	 * @param fullField
-	 * 
-	 * @throws MPIException
-	 */
-//	public void collect(int dst, GridStorage fullField) throws MPIException {
-//		Serializable sendObj = localStorage.pack(new MPIParam(localBounds, haloBounds, MPIBaseType));
-//
-//		ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>gather(getPartition(), sendObj, dst);
-//
-//		if (getPartition().getPID() == dst)
-//			for (int i = 0; i < getPartition().getNumProcessors(); i++)
-//				fullField.unpack(new MPIParam(getPartition().getLocalBounds(i), world, MPIBaseType), recvObjs.get(i));
-//	}
 
-//	TODO: Rajdeep - I don't know if we can remove the below method 
-	/**
-	 * Sends the local storage to the group root. All nodes from group with
-	 * DQuadTreePartition will call this together.
-	 * 
-	 * @param level
-	 * @param groupField
-	 * @throws MPIException
-	 */
-//	public void collectGroup(int level, GridStorage groupField) throws MPIException {
-//		if (!(getPartition() instanceof QuadTreePartition))
-//			throw new UnsupportedOperationException(
-//					"Can only collect from group with DQuadTreePartition, got " + getPartition().getClass().getSimpleName());
-//
-//		QuadTreePartition qt = (QuadTreePartition) getPartition();
-//		GroupComm gc = qt.getGroupComm(level);
-//
-//		if (gc != null) {
-//			Serializable sendObj = localStorage.pack(new MPIParam(localBounds, haloBounds, MPIBaseType));
-//
-//			ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>gather(gc.comm, sendObj, gc.groupRoot);
-//
-//			if (qt.isGroupMaster(gc))
-//				for (int i = 0; i < recvObjs.size(); i++)
-//					groupField.unpack(new MPIParam(gc.leaves.get(i).getShape(), gc.master.getShape(), MPIBaseType),
-//							recvObjs.get(i));
-//		}
-//		MPI.COMM_WORLD.barrier();
-//	}
-
-//	TODO: Rajdeep - I don't know if we can remove the below method 
-	/**
-	 * The group root sends local storage for each node within a group. All nodes
-	 * from group with DQuadTreePartition will call this together.
-	 * 
-	 * @param level
-	 * @param groupField
-	 * @throws MPIException
-	 * @throws RemoteException
-	 */
-//	public void distributeGroup(int level, GridStorage groupField) throws MPIException, RemoteException {
-//		if (!(getPartition() instanceof QuadTreePartition))
-//			throw new UnsupportedOperationException(
-//					"Can only distribute to group with DQuadTreePartition, got "
-//							+ getPartition().getClass().getSimpleName());
-//
-//		QuadTreePartition qt = (QuadTreePartition) getPartition();
-//		GroupComm gc = qt.getGroupComm(level);
-//		Serializable[] sendObjs = null;
-//
-//		if (gc != null) {
-//			if (qt.isGroupMaster(gc)) {
-//				sendObjs = new Serializable[gc.leaves.size()];
-//				for (int i = 0; i < gc.leaves.size(); i++)
-//					sendObjs[i] = groupField
-//							.pack(new MPIParam(gc.leaves.get(i).getShape(), gc.master.getShape(), MPIBaseType));
-//			}
-//			Serializable recvObj = MPIUtil.<Serializable>scatter(gc.comm, sendObjs, gc.groupRoot);
-//
-//			localStorage.unpack(new MPIParam(localBounds, haloBounds, MPIBaseType), recvObj);
-//		}
-//		syncHalo();
-//	}
 
 	/**
 	 * Initializes the RMIProxy for this halogrid. Called by DSimState. Don't call
@@ -856,134 +763,16 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		getQueue.clear();
 	}
 	
-	//syncHalo but does it using TransporterMPI
-	//public void rajSyncHalo() throws MPIException, RemoteException
+	//TODO try implementing this if possible
+	//syncHalo but does it using TransporterMPI, DOESN'T CURRENTLY WORK
 	/*
 	public void syncHalo2() throws MPIException, RemoteException
 	{
-		//System.exit(-1);
-
-		int numNeighbors = neighbors.size();
-		Serializable[] sendObjs = new Serializable[numNeighbors];
-		for (int i = 0; i < numNeighbors; i++) {
-			if (i != this.getPartition().getPID()) {
-			MPIParam mp = neighbors.get(i).sendParam;
-			for (final IntRect2D rect : mp.rects) {
-				if (localStorage instanceof ContinuousStorage)
-				{
-					ContinuousStorage st = (ContinuousStorage) localStorage;
-					for (Object obj : st.getObjects(rect.add(localStorage.getShape().ul())))
-					{
-						DObject obj_t = (DObject)obj;
-						
-						Stopping stopping = ((Stopping) obj_t);
-
-						
-						// stop agent in schedule, then migrate it
-						if (stopping.getStoppable() instanceof DistributedTentativeStep)
-						{
-							try
-							{
-								stopping.getStoppable().stop();
-								
-								//NumberND loc = ((NumberND)st.getLocations().get(obj_t.ID())).subtract(localStorage.getShape().ul()).subtract(rect.ul());
-								NumberND loc = ((NumberND)st.getLocations().get(obj_t.ID()));
-                                System.out.println(this.getHaloBounds());
-								System.out.println("sending to "+stopping+" partition "+i+" at "+loc);
-								System.exit(-1);
-								state.getTransporter().migrateAgent(stopping, i, loc,
-										this.getFieldIndex());
-
-							}
-							catch (Exception e)
-							{
-								System.out.println("PID: " + this.getPartition().getPID() + " exception on " + stopping);
-							}
-
-						}
-
-						// stop agent in schedule, then migrate it
-						if (stopping.getStoppable() instanceof IterativeRepeat)
-						{
-							
-							//NumberND loc = ((NumberND)st.getLocations().get(obj_t.ID())).subtract(localStorage.getShape().ul()).subtract(rect.ul());
-							NumberND loc = ((NumberND)st.getLocations().get(obj_t.ID()));
-
-							final IterativeRepeat iterativeRepeat = (IterativeRepeat) stopping.getStoppable();
-							final DistributedIterativeRepeat distributedIterativeRepeat = new DistributedIterativeRepeat(
-									stopping,
-									iterativeRepeat.getTime(), iterativeRepeat.getInterval(),
-									iterativeRepeat.getOrdering());
-
-							state.getTransporter().migrateRepeatingAgent(distributedIterativeRepeat, i, loc,
-									this.getFieldIndex());
-
-							iterativeRepeat.stop();
-						}
-						
-					}
-				}
-				else
-				{
-
-					System.out.println("not implemented yet");
-					System.exit(-1);
-				}
-			}
-			}
-			
-		}
-		
-		//empty objectQueue 
-		for (final PayloadWrapper payloadWrapper : state.getTransporter().objectQueue)
-		{
-
-
-			if (payloadWrapper.fieldIndex >= 0)
-			{
-				this.addPayload(payloadWrapper);
-				
-			}	
-		}
-		
-		// clear queue
-		state.getTransporter().objectQueue.clear();
-		
-		
-		for (Pair<Promised, NumberND> pair : getAllQueue)
-			pair.a.fulfill(getLocal(pair.b));
-		getAllQueue.clear();
-
-		for (Triplet<Promised, NumberND, Long> trip : getQueue)
-			trip.a.fulfill(getLocal(trip.b, trip.c));
-		getQueue.clear();
-		
+     //Implement
 		
 	}
 	*/
-	
-	/*
-	public void loc_disagree_all_points(String s)
-	{
-		for (Int2D a : this.localBounds.getPointList())
-		{
-			if (localStorage.getAllObjects(a) != null)
-			{
-				for (T t : localStorage.getAllObjects(a))
-				{
-					if (t instanceof DHeatBug)
-					{
-						//System.out.println("in HaloGrid2D syncHalo");
-						//DHeatBug t2 = (DHeatBug)t;
-						//System.out.println(s+" "+t2 +" h_loc "+new Int2D(t2.loc_x, t2.loc_y)+" p "+ a );
 
-						DSimState.loc_disagree(a, (DHeatBug)t, getPartition(), s);
-					}
-				}
-			}
-		}
-	}
-	*/
 
 	/**
 	 * Adds an incoming to the field. Has cases for the type of object we are
@@ -996,7 +785,6 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		if (payloadWrapper.payload instanceof DistributedIterativeRepeat)
 		{
 			DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
-			// System.out.println((T) iterativeRepeat.getSteppable()+" being synced");
 			addLocal((NumberND) payloadWrapper.loc, (T) iterativeRepeat.getSteppable());
 		}
 		else if (payloadWrapper.payload instanceof AgentWrapper)

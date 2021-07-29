@@ -11,6 +11,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import mpi.Comm;
 import mpi.MPI;
 import mpi.MPIException;
 import sim.engine.DistributedIterativeRepeat;
@@ -35,7 +36,7 @@ public class TransporterMPI
 	Partition partition;
 	int[] neighbors;
 
-	public ArrayList<PayloadWrapper> objectQueue;
+	public ArrayList<PayloadWrapper> objectQueue; //things being moved are put here, and integrated into local storage in DSimState
 
 	protected boolean withRegistry;
 
@@ -45,6 +46,7 @@ public class TransporterMPI
 		this.withRegistry = false;
 		reload();
 
+		//unclear on exactly how this works, I assume it is just syncing before initializing?
 		partition.registerPreCommit(arg ->
 		{
 			try
@@ -58,6 +60,7 @@ public class TransporterMPI
 			}
 		});
 
+		//unclear on exactly how this works, I assume it is just syncing before initializing?
 		partition.registerPostCommit(arg ->
 		{
 			reload();
@@ -85,7 +88,7 @@ public class TransporterMPI
 		neighbors = partition.getNeighborPIDs();
 		numNeighbors = neighbors.length;
 
-		objectQueue = new ArrayList<>();
+		objectQueue = new ArrayList<>(); //reset this when reloading
 
 		src_count = new int[numNeighbors];
 		src_displ = new int[numNeighbors];
@@ -97,7 +100,7 @@ public class TransporterMPI
 		try
 		{
 			for (int i : neighbors)
-				dstMap.putIfAbsent(i, new RemoteOutputStream());
+				dstMap.putIfAbsent(i, new RemoteOutputStream()); //new streams
 		}
 		catch (final IOException e)
 		{
@@ -125,13 +128,15 @@ public class TransporterMPI
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
+	
+	//do we need to do byte stuff here?  Or can we use MPIUtil neighbor to neighbor
 	public void sync() throws MPIException, IOException, ClassNotFoundException
 	{
 		// Prepare data
 		for (int i = 0, total = 0; i < numNeighbors; i++)
 		{
 			RemoteOutputStream outputStream = dstMap.get(neighbors[i]);
-			outputStream.flush();
+			outputStream.flush(); //writes to ObjectOutputStream and removes from this stream
 			src_count[i] = outputStream.size();
 			src_displ[i] = total;
 			total += src_count[i];
@@ -147,7 +152,7 @@ public class TransporterMPI
 
 		
 		// TODO: we should not be calling MPI methods directly, this should be in MPIUtil 
-		
+		//Problem: How do we convert objstream to T[] sendObjs to call MPIUtil neighborAllToAll
 		
 		// First exchange count[] of the send byte buffers with neighbors so that we can
 		// setup recvbuf
@@ -164,8 +169,9 @@ public class TransporterMPI
 		partition.getCommunicator().neighborAllToAllv(sendbuf, src_count, src_displ, MPI.BYTE, recvbuf, dst_count,
 				dst_displ, MPI.BYTE);
 
+		
 		// read and handle incoming objects
-//		final ArrayList<PayloadWrapper> bufferList = new ArrayList<>();
+
 		for (int i = 0; i < numNeighbors; i++)
 		{
 			final byte[] data = new byte[dst_count[i]];
@@ -182,8 +188,7 @@ public class TransporterMPI
 					{
 						System.err.println("This is not the correct processor");
 						throw new RuntimeException("This is not the correct processor");
-//						assert dstMap.containsKey(wrapper.destination);
-//						bufferList.add(wrapper);
+
 					}
 					else
 						objectQueue.add(wrapper);
@@ -306,10 +311,10 @@ public class TransporterMPI
 	public void transportObject(final Serializable obj, final int dst, final NumberND loc,
 			final int fieldIndex)
 	{
+		//shouldn't be calling this if local move
 		if (partition.getPID() == dst)
 			throw new IllegalArgumentException("Destination cannot be local, must be remote");
 
-		// System.out.println("transporting: " + obj);
 
 		// Wrap the agent, this is important because we want to keep track of
 		// dst, which could be the diagonal processor
@@ -360,7 +365,6 @@ public class TransporterMPI
 
 		public void write(final Object obj) throws IOException
 		{
-			// os.writeObject(obj);
 			// virtual write really write only at the end of the simulation steps
 			this.obj.add(obj);
 		}

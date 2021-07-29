@@ -14,10 +14,14 @@ public class IntRect2D implements Serializable
 //// Zero-length rects are fine but they can't have a "center", which is one of the functions.
 	void verifyValidSize(Int2D ul, Int2D br)
 	{
-		if (ul.x >= br.x)
+		if (ul.x >= br.x) {
+			System.out.println("ul x : "+ul.x+ " br.x "+br.x);
 			throw new IllegalArgumentException("IntRect2D ul.x >= br.x");
-		if (ul.y >= br.y)
+		}
+		if (ul.y >= br.y) {
+			System.out.println("ul y : "+ul.y+ " br.y "+br.y);
 			throw new IllegalArgumentException("IntRect2D ul.y >= br.y");
+		}
 	}
 
 	public IntRect2D(Int2D ul, Int2D br)
