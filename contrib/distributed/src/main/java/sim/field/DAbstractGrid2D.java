@@ -26,7 +26,7 @@ public abstract class DAbstractGrid2D extends AbstractGrid2D
 		this.state = state;
 	}
 
-	protected void throwNotLocalException(NumberND p)
+	protected void throwNotLocalException(Number2D p)
 	{
 		throw new RuntimeException("Point: " + p + ", is Not Local");
 	}
@@ -52,7 +52,7 @@ public abstract class DAbstractGrid2D extends AbstractGrid2D
 		return getHaloGrid().inHalo(p);
 		}
 	
-	public boolean isHaloToroidal(NumberND p)
+	public boolean isHaloToroidal(Number2D p)
 		{
 		return getHaloGrid().inHaloToroidal(p);
 		}

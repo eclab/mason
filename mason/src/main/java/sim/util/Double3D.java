@@ -16,7 +16,7 @@ package sim.util;
    <p>Double3D.equals(...) can compare by value against other Int3Ds and Double3Ds.
 */
 
-public final class Double3D extends NumberND
+public final class Double3D extends Number3D
     {
     public int numDimensions() { return 3; }
     public double getVal(int val) { return (val == 0 ? x : val == 1 ? y : val == 2 ? z : Double.NaN); }
@@ -410,4 +410,9 @@ public final class Double3D extends NumberND
         {
         return new Double3D(-x, -y, -z);
         }
+    
+    public Double3D add(double dx, double dy, double dz)
+		{
+		return new Double3D(x + dx, y + dy, z + dz);
+		} 
     }

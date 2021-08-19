@@ -60,7 +60,7 @@ public class QuadTree
 		return allNodes.get(id);
 	}
 
-	public QuadTreeNode getLeafNode(final NumberND p)
+	public QuadTreeNode getLeafNode(final Number2D p)
 	{
 		return root.getLeafNode(p);
 	}

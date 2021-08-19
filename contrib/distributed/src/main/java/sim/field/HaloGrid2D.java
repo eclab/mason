@@ -22,7 +22,7 @@ import java.util.function.Consumer;
  * @param <S> The Type of Storage to use
  */
 public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
-		extends UnicastRemoteObject implements TransportRMIInterface<T, NumberND>, Synchronizable
+		extends UnicastRemoteObject implements TransportRMIInterface<T, Number2D>, Synchronizable
 		{
 	private static final long serialVersionUID = 1L;
 
@@ -45,22 +45,22 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	// My field's index
 	int fieldIndex;
 	// My RMI Proxy
-	RMIProxy<T, NumberND> proxy;
+	RMIProxy<T, Number2D> proxy;
 
 	// The following four queues are how RMI adds, removes, and fetches elements on
 	// behalf of remote processors.
 
 	// Queue of Promised results from getRMI
-	ArrayList<Pair<Promised, NumberND>> getAllQueue = new ArrayList<>();
-	ArrayList<Triplet<Promised, NumberND, Long>> getQueue = new ArrayList<>();
+	ArrayList<Pair<Promised, Number2D>> getAllQueue = new ArrayList<>();
+	ArrayList<Triplet<Promised, Number2D, Long>> getQueue = new ArrayList<>();
 
 	// Queue of requests to add things to the grid via RMI
-	ArrayList<Triplet<NumberND, T, double[]>> addQueue = new ArrayList<>();
+	ArrayList<Triplet<Number2D, T, double[]>> addQueue = new ArrayList<>();
 	// Queue of requests to remove things from the grid via RMI
-	ArrayList<Pair<NumberND, Long>> removeQueue = new ArrayList<>();
+	ArrayList<Pair<Number2D, Long>> removeQueue = new ArrayList<>();
 	// Queue of requests to remove all elements at certain locations from the grid
 	// via RMI
-	ArrayList<NumberND> removeAllQueue = new ArrayList<>();
+	ArrayList<Number2D> removeAllQueue = new ArrayList<>();
 
 	public HaloGrid2D(S storage, DSimState state) throws RemoteException
 	{
@@ -204,7 +204,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * @param point
 	 * @return true if point is local
 	 */
-	public boolean inLocal(NumberND point)
+	public boolean inLocal(Number2D point)
 	{
 		return localBounds.contains(point);
 	}
@@ -213,7 +213,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * @param point
 	 * @return true if point is local or in the halo
 	 */
-	public boolean inHalo(NumberND point)
+	public boolean inHalo(Number2D point)
 	{
 		return haloBounds.contains(point);
 	}
@@ -408,7 +408,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * @return true if point is local or in the halo considering toroidal
 	 *         wrap-around
 	 */
-	public boolean inHaloToroidal(NumberND point)
+	public boolean inHaloToroidal(Number2D point)
 	{
 		double[] p = point.toArrayAsDouble();
 		return inHaloToroidal(p[0], p[1]);
@@ -485,7 +485,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * Adds and schedules an agent remotely. Called by various fields. Don't call
 	 * this directly.
 	 */
-	public void addAgentToRemote(NumberND p, T t, int ordering, double time)
+	public void addAgentToRemote(Number2D p, T t, int ordering, double time)
 	{
 		if (!(t instanceof Stopping))
 			throw new IllegalArgumentException("t must be a Stopping");
@@ -497,6 +497,8 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			}
 		else // ...otherwise, RMI
 			{
+			System.out.println("using RMI");
+			//System.exit(-1);
 			try
 			{
 				// First, remove from schedule
@@ -516,7 +518,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * Adds and schedules an agent remotely repeating. Called by various fields.
 	 * Don't call this directly.
 	 */
-	public void addAgentToRemote(NumberND p, T t, int ordering, double time, double interval)
+	public void addAgentToRemote(Number2D p, T t, int ordering, double time, double interval)
 	{
 		if (!(t instanceof Stopping))
 			throw new IllegalArgumentException("t must be a Stopping");
@@ -549,7 +551,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * Returns a promise for a remote object at a certain location. Called by
 	 * various fields. Don't call this directly.
 	 */
-	public Promised getFromRemote(NumberND p)
+	public Promised getFromRemote(Number2D p)
 	{
 		try
 		{
@@ -571,7 +573,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * Returns a promise for a remote object by id. Called by various fields. Don't
 	 * call this directly.
 	 */
-	public Promised getFromRemote(NumberND p, long id)
+	public Promised getFromRemote(Number2D p, long id)
 	{
 		try
 		{
@@ -594,11 +596,20 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * Adds an object (not an agent) to a remote location. Called by various fields.
 	 * Don't call this directly.
 	 */
-	public void addToRemote(NumberND p, T t)
+	public void addToRemote(Number2D p, T t)
 	{
 		try
 		{
-			proxy.getField(getPartition().toPartitionPID(p)).addRMI(p, t);
+			// If local, then MPI
+			if (state.getTransporter().isNeighbor(getPartition().toPartitionPID(p)))
+				{
+				//state.getTransporter().migrateRepeatingAgent(iterativeRepeat, getPartition().toPartitionPID(p), p, this.fieldIndex);
+				state.getTransporter().transportObject(t, getPartition().toPartitionPID(p), p, this.fieldIndex);
+				}
+			
+			else {
+			    proxy.getField(getPartition().toPartitionPID(p)).addRMI(p, t);
+			}
 		}
 		catch (NullPointerException e)
 		{
@@ -614,7 +625,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * Removes an object (or an agent) from a remote location. Called by various
 	 * fields. Don't call this directly.
 	 */
-	public void removeFromRemote(NumberND p, long id)
+	public void removeFromRemote(Number2D p, long id)
 	{
 		try
 		{
@@ -634,7 +645,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * Removes all objects (and agents) from a remote location. Called by various
 	 * fields. Don't call this directly.
 	 */
-	public void removeAllFromRemote(NumberND p)
+	public void removeAllFromRemote(Number2D p)
 	{
 		try
 		{
@@ -671,7 +682,9 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 */
 	public void syncRemoveAndAdd() throws MPIException, RemoteException
 	{
-		for (Pair<NumberND, Long> pair : removeQueue)
+		//synchronized(removeRMILock) {
+
+		for (Pair<Number2D, Long> pair : removeQueue)
 		{
 			// remove from schedule
 			T t = getLocal(pair.a, pair.b);
@@ -683,8 +696,10 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			removeLocal(pair.a, pair.b);
 		}
 		removeQueue.clear();
+		
 
-		for (NumberND p : removeAllQueue)
+
+		for (Number2D p : removeAllQueue)
 		{
 			ArrayList<T> list = getLocal(p);
 			// Assumes that t is not an agent if it's not Stopping
@@ -694,8 +709,13 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			removeAllLocal(p);
 		}
 		removeAllQueue.clear();
+		//}
 
-		for (Triplet<NumberND, T, double[]> pair : addQueue)
+		//synchronized(addRMILock) {
+			
+
+		
+		for (Triplet<Number2D, T, double[]> pair : addQueue)
 		{
 			addLocal(pair.a, pair.b);
 			
@@ -718,7 +738,9 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		}
 		
 		addQueue.clear();
-	}
+		
+		}
+	//}
 
 	// TODO: Should we generalize this method for all grids
 	void unscheduleAgent(Stopping stopping)
@@ -754,13 +776,15 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		for (int i = 0; i < numNeighbors; i++)
 			localStorage.unpack(neighbors.get(i).recvParam, recvObjs.get(i));
 
-		for (Pair<Promised, NumberND> pair : getAllQueue)
+		//synchronized(getRMILock) {
+		for (Pair<Promised, Number2D> pair : getAllQueue)
 			pair.a.fulfill(getLocal(pair.b));
 		getAllQueue.clear();
 
-		for (Triplet<Promised, NumberND, Long> trip : getQueue)
+		for (Triplet<Promised, Number2D, Long> trip : getQueue)
 			trip.a.fulfill(getLocal(trip.b, trip.c));
 		getQueue.clear();
+		//}
 	}
 	
 	//TODO try implementing this if possible
@@ -785,16 +809,16 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		if (payloadWrapper.payload instanceof DistributedIterativeRepeat)
 		{
 			DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
-			addLocal((NumberND) payloadWrapper.loc, (T) iterativeRepeat.getSteppable());
+			addLocal((Number2D) payloadWrapper.loc, (T) iterativeRepeat.getSteppable());
 		}
 		else if (payloadWrapper.payload instanceof AgentWrapper)
 		{
 			AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
-			addLocal((NumberND) payloadWrapper.loc, (T) agentWrapper.agent);
+			addLocal((Number2D) payloadWrapper.loc, (T) agentWrapper.agent);
 		}
 		else
 		{
-			addLocal((NumberND) payloadWrapper.loc, (T) payloadWrapper.payload);
+			addLocal((Number2D) payloadWrapper.loc, (T) payloadWrapper.payload);
 		}
 	}
 
@@ -804,9 +828,18 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * time step, via addLocal(). This is called remotely via RMI, and is part of
 	 * the TransportRMIInterface. Don't call this directly.
 	 */
-	public void addRMI(NumberND p, T t) throws RemoteException
+	
+	Object addRMILock = new Object[0];
+	Object removeRMILock = new Object[0];
+	Object getRMILock = new Object[0];
+
+	
+	public void addRMI(Number2D p, T t) throws RemoteException
 	{
-		addQueue.add(new Triplet<>(p, t, null));
+		synchronized(addRMILock){
+			addQueue.add(new Triplet<>(p, t, null));
+
+		}
 	}
 	
 	/**
@@ -814,14 +847,20 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * time step, via addLocal(). This is called remotely via RMI, and is part of
 	 * the TransportRMIInterface. Don't call this directly.
 	 */
-	public void addRMI(NumberND p, T t, int ordering, double time) throws RemoteException
+	public void addRMI(Number2D p, T t, int ordering, double time) throws RemoteException
 	{
+		synchronized(addRMILock){
+
 		addQueue.add(new Triplet<>(p, t, new double[]{ordering, time}));
 	}
+	}
 	
-	public void addRMI(NumberND p, T t, int ordering, double time, double interval) throws RemoteException
+	public void addRMI(Number2D p, T t, int ordering, double time, double interval) throws RemoteException
 	{
+		synchronized(addRMILock){
+
 		addQueue.add(new Triplet<>(p, t, new double[]{ordering, time, interval}));
+	}
 	}
 
 
@@ -832,9 +871,12 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * with 0. This is called remotely via RMI, and is part of the
 	 * TransportRMIInterface. Don't call this directly.
 	 */
-	public void removeRMI(NumberND p, long id) throws RemoteException
+	public void removeRMI(Number2D p, long id) throws RemoteException
 	{
+		synchronized(removeRMILock){
+
 		removeQueue.add(new Pair<>(p, id));
+	}
 	}
 
 	/**
@@ -842,9 +884,12 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * time step. This is only used by DDenseGrid2D. This is called remotely via
 	 * RMI, and is part of the TransportRMIInterface. Don't call this directly.
 	 */
-	public void removeAllRMI(NumberND p) throws RemoteException
+	public void removeAllRMI(Number2D p) throws RemoteException
 	{
+		synchronized(removeRMILock){
+
 		removeAllQueue.add(p);
+		}
 	}
 
 	/**
@@ -854,14 +899,18 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * called remotely via RMI, and is part of the TransportRMIInterface. Don't call
 	 * this directly.
 	 */
-	public void getRMI(NumberND p, RemotePromise promise) throws RemoteException
+	public void getRMI(Number2D p, RemotePromise promise) throws RemoteException
 	{
 		// Make promise remote
 		// update promise remotely
 		// Must happen asynchronously
 		// Do it in the queue
 		// Add to a queue here
+		
+		synchronized(getRMILock){
+
 		getAllQueue.add(new Pair<>(promise, p));
+		}
 	}
 
 	/**
@@ -871,12 +920,16 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * called remotely via RMI, and is part of the TransportRMIInterface. Don't call
 	 * this directly.
 	 */
-	public void getRMI(NumberND p, long id, RemotePromise promise) throws RemoteException
+	public void getRMI(Number2D p, long id, RemotePromise promise) throws RemoteException
 	{
 		// Make promise remote
 		// update promise remotely
 		// Must happen asynchronously
+		synchronized(getRMILock){
+
+		
 		getQueue.add(new Triplet<>(promise, p, id));
+		}
 	}
 
 	//// LOCAL UPDATE METHODS CALLED BY THE RMI QUEUES
@@ -888,7 +941,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * @param t Object to add
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	void addLocal(NumberND p, T t)
+	void addLocal(Number2D p, T t)
 	{
 		if (localStorage instanceof ContinuousStorage)
 			((ContinuousStorage) localStorage).addObject(p, (DObject) t);
@@ -905,7 +958,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	ArrayList<T> getLocal(NumberND p)
+	ArrayList<T> getLocal(Number2D p)
 	{
 		if (localStorage instanceof ContinuousStorage)
 			return ((ContinuousStorage) localStorage).getAllObjects(p);
@@ -922,7 +975,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * @return Object with the given id at the point p
 	 */
 	@SuppressWarnings("unchecked")
-	T getLocal(NumberND p, long id)
+	T getLocal(Number2D p, long id)
 	{
 		if (localStorage instanceof ContinuousStorage)
 			return (T) ((ContinuousStorage<?>) localStorage).getObject(p, id);
@@ -935,7 +988,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * point. Note that this does not work for DIntGrid2D nor DDoubleGrid2D, which
 	 * will throw exceptions.
 	 */
-	void removeLocal(NumberND p, long id)
+	void removeLocal(Number2D p, long id)
 	{
 		if (localStorage instanceof ContinuousStorage)
 			((ContinuousStorage<?>) localStorage).removeObject(p, id);
@@ -944,7 +997,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	}
 
 	/** Clears all objects from the local storage at the given point. */
-	void removeAllLocal(NumberND p)
+	void removeAllLocal(Number2D p)
 	{
 		if (localStorage instanceof ContinuousStorage)
 			((ContinuousStorage<?>) localStorage).clear(p);
@@ -952,7 +1005,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			localStorage.clear(p);
 	}
 
-	public void removeAgent(NumberND p, long id)
+	public void removeAgent(Number2D p, long id)
 	{
 		if (inLocal(p))
 		{

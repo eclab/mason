@@ -39,7 +39,7 @@ public class DPSO extends DSimState {
     int prevSuccessCount = -1; 
     
     // public modifier values
-    public int numParticles = 10000;
+    public int numParticles = 100;
     public int getNumParticles() { return numParticles; }
     public void setNumParticles(int val) { if (val >= 0) numParticles = val; }
 
@@ -113,8 +113,7 @@ public class DPSO extends DSimState {
         best_y = currY;
         }
     
-    System.out.println("dpso updateBest called "+bestVal);
-    //System.exit(-1);
+    
     
     
     }
@@ -192,7 +191,7 @@ public class DPSO extends DSimState {
 		super.start(); // do not forget this line
 
 		bestVal = 0;  //how do I keep track of global?
-        System.out.println("best set to 0");
+        //System.out.println("best set to 0");
         
 		DParticle[] particles = (DParticle[]) getRootInfo("particles");
 		
@@ -200,10 +199,10 @@ public class DPSO extends DSimState {
 			DParticle a = (DParticle) p;
 			//System.out.println(a.bestVal);
 			
-			Double2D storagePos = masonSpaceToProblemBounds(a.position);
+			Double2D storagePos = problemSpaceToMasonStorageBounds(a.position);
 			if (partition.getLocalBounds().contains(storagePos)) {
 				
-				  this.space.addAgent(storagePos, a, 0, 0);
+				  this.space.addAgent(storagePos, a, 0, 0, 1);
 			}
 		}
 		
@@ -230,11 +229,11 @@ public class DPSO extends DSimState {
                     state.kill();
                 }
             
-        	System.out.println(getPID()+" before "+bestVal+" x: "+best_x+" y: "+best_y);
+        	//System.out.println(getPID()+" before "+bestVal+" x: "+best_x+" y: "+best_y);
 
         	updateGlobal();
         	
-        	System.out.println(getPID()+" after "+bestVal+" x: "+best_x+" y: "+best_y);
+        	//System.out.println(getPID()+" after "+bestVal+" x: "+best_x+" y: "+best_y);
         	//System.exit(-1);
 
             }
@@ -246,7 +245,8 @@ public class DPSO extends DSimState {
 	}
 	
 	//Mason bounds top left is 0,0, while problems in dpso usually have 0,0 in the middle.
-	public Double2D masonSpaceToProblemBounds(MutableDouble2D p) {
+	//input real problem value (center is 0.0), outputs storage location (top left is 0.0)
+	public Double2D problemSpaceToMasonStorageBounds(MutableDouble2D p) {
 		
 		Double2D newPoint = new Double2D(p.getX()+ (width * 0.5), p.getY() + (height * 0.5));
 		return newPoint;

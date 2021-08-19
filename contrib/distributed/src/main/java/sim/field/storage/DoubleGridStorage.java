@@ -72,13 +72,13 @@ public class DoubleGridStorage extends GridStorage<Double>
 	}
 
 
-	public void addObject(NumberND p, Double t)
+	public void addObject(Number2D p, Double t)
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 		set(local_p, t);
 	}
 
-	public Double getObject(NumberND p, long id)
+	public Double getObject(Number2D p, long id)
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 
@@ -86,7 +86,7 @@ public class DoubleGridStorage extends GridStorage<Double>
 	}
 
 	// Don't call this method, it'd be foolish
-	public ArrayList<Double> getAllObjects(NumberND p)
+	public ArrayList<Double> getAllObjects(Number2D p)
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 
@@ -95,7 +95,7 @@ public class DoubleGridStorage extends GridStorage<Double>
 		return list;
 	}
 
-	public boolean removeObject(NumberND p, long id)
+	public boolean removeObject(Number2D p, long id)
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 
@@ -103,7 +103,7 @@ public class DoubleGridStorage extends GridStorage<Double>
 		return true;
 	}
 
-	public void clear(NumberND p)
+	public void clear(Number2D p)
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 

@@ -1,10 +1,11 @@
 package sim.engine.rmi;
 
 import java.io.Serializable;
+
 import java.rmi.RemoteException;
 import sim.field.*;
 import sim.field.partitioning.*;
-import sim.util.NumberND;
+import sim.util.Number2D;
 
 /**
  * RMIProxy for using Java RMI. RMI is used for point to point communication
@@ -14,7 +15,7 @@ import sim.util.NumberND;
  * @param <T> The Type of Object in the field
  */
 @SuppressWarnings("rawtypes")
-public class RMIProxy<T extends Serializable, P extends NumberND>
+public class RMIProxy<T extends Serializable, P extends Number2D>
 {
 	private static final long serialVersionUID = 1L;
 

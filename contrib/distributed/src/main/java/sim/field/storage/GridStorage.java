@@ -49,7 +49,7 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	 * Adds or sets the given object at the given point. Dense and Continuous
 	 * storage add the object. Int, Object, and Double grid storage set it.
 	 */
-	public abstract void addObject(NumberND p, final T obj);
+	public abstract void addObject(Number2D p, final T obj);
 
 	/**
 	 * Object, Int, and Double grid storage ignore the id and return whatever is
@@ -57,14 +57,14 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	 * 
 	 * @throws Exception
 	 */
-	public abstract T getObject(NumberND p, long id);
+	public abstract T getObject(Number2D p, long id);
 
 	/**
 	 * Returns an ArrayList consisting of all the elements at a given location.
 	 * 
 	 * @throws Exception
 	 */
-	public abstract ArrayList<T> getAllObjects(NumberND p);
+	public abstract ArrayList<T> getAllObjects(Number2D p);
 
 	/**
 	 * Returns true if the object is at this location and was removed. Continuous
@@ -75,7 +75,7 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	 * 
 	 * @throws Exception
 	 */
-	public abstract boolean removeObject(NumberND p, long id);
+	public abstract boolean removeObject(Number2D p, long id);
 
 	/**
 	 * Clears all objects at the given point. Int and Double grid storage set all
@@ -83,7 +83,7 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 	 * 
 	 * @throws Exception
 	 */
-	public abstract void clear(NumberND p);
+	public abstract void clear(Number2D p);
 
 	/**
 	 * Clears all objects from the storage entirely. Int and Double grid storage set

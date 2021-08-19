@@ -1081,13 +1081,10 @@ public class DSimState extends SimState
 			// call getPartitionGlobals() for each partition
 			Object[] g = this.getPartitionGlobals();
 
-			// System.out.println(g[0]+" "+g[1]+" "+g[2]);
 
-			// Object[][] gg = new Object[partition.getNumProcessors()][g.length];
-
-			// partition.getCommunicator().gather(g, 1, MPI.DOUBLE, gg, 1, MPI.DOUBLE, 0); // fix type!
 			ArrayList<Object[]> gg = MPIUtil.gather(partition, g, 0);
 			
+			/*
 			if (this.getPID() == 0) {
                 for (int i=0; i<gg.size(); i++) {
                 	System.out.println(i+"---");
@@ -1096,6 +1093,7 @@ public class DSimState extends SimState
                 	}
                 }
 			}
+			*/
 
 
 			return gg;
@@ -1120,7 +1118,7 @@ public class DSimState extends SimState
 		{
 			// partition.getCommunicator().bcast(global, 1, MPI.DOUBLE, 0);
 			global = MPIUtil.bcast(partition.getCommunicator(), global, 0);
-			System.out.println("gl: "+global);
+			//System.out.println("gl: "+global);
 			setPartitionGlobals(global);
 		}
 		catch (Exception e)

@@ -215,7 +215,7 @@ public class TransporterMPI
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void migrateAgent(final Stopping agent, final int dst, final NumberND loc,
+	public void migrateAgent(final Stopping agent, final int dst, final Number2D loc,
 			final int fieldIndex)
 	{
 		AgentWrapper wrapper = new AgentWrapper(agent);
@@ -233,7 +233,7 @@ public class TransporterMPI
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void migrateAgent(final int ordering, final Stopping agent, final int dst, final NumberND loc,
+	public void migrateAgent(final int ordering, final Stopping agent, final int dst, final Number2D loc,
 			final int fieldIndex)
 	{
 		AgentWrapper wrapper = new AgentWrapper(ordering, agent);
@@ -253,7 +253,7 @@ public class TransporterMPI
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final int ordering, final double time, final Stopping agent, final int dst,
-			final NumberND loc, final int fieldIndex)
+			final Number2D loc, final int fieldIndex)
 	{
 		AgentWrapper wrapper = new AgentWrapper(ordering, time, agent);
 		migrateAgent(wrapper, dst, loc, fieldIndex);
@@ -269,7 +269,7 @@ public class TransporterMPI
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void migrateAgent(final AgentWrapper agentWrapper, final int dst, final NumberND loc,
+	public void migrateAgent(final AgentWrapper agentWrapper, final int dst, final Number2D loc,
 			final int fieldIndex)
 	{
 		// These methods differ in just the datatype of the WrappedObject
@@ -288,7 +288,7 @@ public class TransporterMPI
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateRepeatingAgent(final DistributedIterativeRepeat iterativeRepeat, final int dst,
-			final NumberND loc, final int fieldIndex)
+			final Number2D loc, final int fieldIndex)
 	{
 		// TODO: do we need to synchronize something to ensure that the stoppable is
 		// stopped before we transport?
@@ -308,7 +308,7 @@ public class TransporterMPI
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void transportObject(final Serializable obj, final int dst, final NumberND loc,
+	public void transportObject(final Serializable obj, final int dst, final Number2D loc,
 			final int fieldIndex)
 	{
 		//shouldn't be calling this if local move

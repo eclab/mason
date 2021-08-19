@@ -84,7 +84,7 @@ public class QuadTreePartition extends Partition
 		return qt.getNeighborPids(myLeafNode, aoi, toroidal);
 	}
 
-	public int toPartitionPID(final NumberND p)
+	public int toPartitionPID(final Number2D p)
 	{
 		return qt.getLeafNode(p).getProcessor();
 	}

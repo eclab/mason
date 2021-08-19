@@ -126,13 +126,13 @@ public class QuadTreeNode
 	}
 
 	// Get the immediate child node that contains the given point
-	public QuadTreeNode getChildNode(final NumberND p)
+	public QuadTreeNode getChildNode(final Number2D p)
 	{
 		return children.get(toChildIdx(p));
 	}
 
 	// Get the leaf node that contains the given point
-	public QuadTreeNode getLeafNode(final NumberND p)
+	public QuadTreeNode getLeafNode(final Number2D p)
 	{
 		QuadTreeNode curr = this;
 
@@ -314,7 +314,7 @@ public class QuadTreeNode
 	 * @param p
 	 * @return the index of my immediate child that contains the given point
 	 */
-	protected int toChildIdx(final NumberND p)
+	protected int toChildIdx(final Number2D p)
 	{
 		if (!shape.contains(p))
 			throw new IllegalArgumentException("p " + p + " must be inside the shape " + shape);

@@ -84,14 +84,14 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T>
 	}
 
 
-	public void addObject(NumberND p, T t)
+	public void addObject(Number2D p, T t)
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 
 		set(local_p, t);
 	}
 
-	public T getObject(NumberND p, long id)
+	public T getObject(Number2D p, long id)
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 		
@@ -99,7 +99,7 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T>
 	}
 
 	// Don't call this method, it'd be foolish
-	public ArrayList<T> getAllObjects(NumberND p)
+	public ArrayList<T> getAllObjects(Number2D p)
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 
@@ -109,14 +109,14 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T>
 		return list;
 	}
 
-	public boolean removeObject(NumberND p, long id)
+	public boolean removeObject(Number2D p, long id)
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 		set(local_p, null);
 		return true;
 	}
 
-	public void clear(NumberND p)
+	public void clear(Number2D p)
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 		set(local_p, null);

@@ -32,7 +32,7 @@ public class PayloadWrapper extends MigratableObject
 	 * <br>
 	 * Default: null
 	 */
-	public final NumberND loc;
+	public final Number2D loc;
 
 	/**
 	 * Internal field, do not set it explicitly <br>
@@ -42,7 +42,7 @@ public class PayloadWrapper extends MigratableObject
 	 */
 	public final int fieldIndex;
 
-	public PayloadWrapper(final int dst, final Serializable payload, final NumberND loc, final int fieldIndex)
+	public PayloadWrapper(final int dst, final Serializable payload, final Number2D loc, final int fieldIndex)
 	{
 		destination = dst;
 		this.payload = payload;

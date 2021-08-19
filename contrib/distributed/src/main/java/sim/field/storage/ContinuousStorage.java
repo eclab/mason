@@ -141,7 +141,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	 * Returns the cell which contains the given world point. Does not check to see
 	 * if the point is out of bounds.
 	 */
-	public HashMap<Long, T> getCell(final NumberND p)
+	public HashMap<Long, T> getCell(final Number2D p)
 	{
 		return getDiscretizedCell(discretize(buildDouble2D(p)));
 	}
@@ -161,7 +161,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	///// GRIDSTORAGE METHODS
 
 	// Put the object to the given point
-	public void addObject(NumberND p, T obj)
+	public void addObject(Number2D p, T obj)
 	{
 		Double2D p_double = buildDouble2D(p);
 //		System.out.println("add Object: " + m + "; " + obj);
@@ -172,7 +172,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 		getCell(p_double).put(obj.ID(), obj);
 	}
 
-	public T getObject(NumberND p, long id)
+	public T getObject(Number2D p, long id)
 	{
 		Double2D p_double = buildDouble2D(p);
 
@@ -184,7 +184,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	}
 
 	// Get all the objects at exactly the given point
-	public ArrayList<T> getAllObjects(final NumberND p)
+	public ArrayList<T> getAllObjects(final Number2D p)
 	{
 		Double2D p_double = buildDouble2D(p);
 
@@ -199,7 +199,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 		return objects;
 	}
 
-	public boolean removeObject(NumberND p, long id)
+	public boolean removeObject(Number2D p, long id)
 	{
 		// p is ignored.
 
@@ -228,7 +228,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 */
 
 	// Remove all the objects at the given point
-	public void clear(NumberND p)
+	public void clear(Number2D p)
 	{
 		Double2D p_double = buildDouble2D(p);
 		HashMap<Long, T> cell = getCell(p_double);
@@ -366,7 +366,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	}
 */
 
-	Double2D buildDouble2D(NumberND p)
+	Double2D buildDouble2D(Number2D p)
 	{
 		if (p instanceof Double2D)
 			return (Double2D) p;

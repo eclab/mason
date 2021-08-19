@@ -17,6 +17,7 @@ import sim.engine.Stopping;
 import sim.field.DAbstractGrid2D;
 import sim.field.HaloGrid2D;
 import sim.app.dflockers.DFlocker;
+import sim.app.dpso.DParticle;
 import sim.engine.*;
 import sim.field.partitioning.Partition;
 import sim.field.storage.ContinuousStorage;
@@ -439,12 +440,15 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 				Stoppable stop = a.getStoppable();
 				if (stop == null)
 					{
+					
 					// we're done, just move it but don't bother rescheduling
 					removeLocal(agent);
 					halo.addToRemote(to, agent);
 					}
 				else if (stop instanceof DistributedTentativeStep)
 					{
+                    //System.out.println("xy "+((DParticle)agent).position+" from"+getObjectLocationLocal(agent.ID())+" to "+to);
+                    
 					DistributedTentativeStep _stop = (DistributedTentativeStep)stop;
 					double time = _stop.getTime();
 					int ordering = _stop.getOrdering();
@@ -456,9 +460,14 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 						}
 					else	// this could theoretically happen because TentativeStep doesn't null out its agent after step()
 						{
+						
+                        //System.out.println("addToRemote");
+                        //System.exit(-1);
 						// we're done, just move it
 						removeLocal(agent);
-						halo.addToRemote(to, agent);
+						//halo.addToRemote(to, agent); 
+						halo.addAgentToRemote(to, agent, ordering, time); //should we use this one?  more agent friendly?
+
 						}
 					}
 				else if (stop instanceof DistributedIterativeRepeat)

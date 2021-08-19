@@ -121,7 +121,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 
 	///// GRIDSTORAGE GUNK
 
-	public void addObject(NumberND p, T t)
+	public void addObject(Number2D p, T t)
 	{
 		//System.out.println("adding obj "+t+" to"+p);
 		
@@ -144,7 +144,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 		
 	}
 
-	public T getObject(NumberND p, long id)
+	public T getObject(Number2D p, long id)
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 		ArrayList<T> ts = storage[getFlatIndex(local_p)];
@@ -157,7 +157,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 		return null;
 	}
 
-	public ArrayList<T> getAllObjects(NumberND p)
+	public ArrayList<T> getAllObjects(Number2D p)
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 		return storage[getFlatIndex(local_p)];
@@ -182,7 +182,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 		}
 */
 
-	public boolean removeObject(NumberND p, long id)
+	public boolean removeObject(Number2D p, long id)
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 		final ArrayList<T>[] array = storage;
@@ -206,7 +206,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 		return result;
 	}
 
-	public void clear(NumberND p)
+	public void clear(Number2D p)
 	{
 		Int2D local_p = toLocalPoint((Int2D) p);
 		final ArrayList<T>[] array = storage;

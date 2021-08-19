@@ -91,7 +91,7 @@ public class IntRect2D implements Serializable
 	}
 
 //// SEAN FIXME: we should try not to require this
-	public boolean contains(NumberND p)
+	public boolean contains(Number2D p)
 	{
 		double x = p.getVal(0);
 		double y = p.getVal(1);

@@ -112,7 +112,7 @@ public abstract class Partition
 	 * @param p
 	 * @return partition id (pid) for the point p
 	 */
-	public abstract int toPartitionPID(NumberND p);
+	public abstract int toPartitionPID(Number2D p);
 
 	/**
 	 *
