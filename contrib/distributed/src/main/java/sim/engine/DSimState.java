@@ -82,7 +82,7 @@ public class DSimState extends SimState
 	// The current balance level FIXME: This looks primitive, and also requires that
 	// be properly in sync
 	int balancerLevel;
-
+	
 	/** Queue of RemotePromise 
 		A (RemotePromise) is the promise, 
 		B (Integer) is the tag used to understand which method to use to fill the promise 
@@ -97,14 +97,7 @@ public class DSimState extends SimState
 	 */
 	public DSimState(long seed, int width, int height, int aoi)
 	{
-		super(seed, new MersenneTwisterFast(seed), new DistributedSchedule());
-		this.partition = new QuadTreePartition(width, height, true, aoi);
-		partition.initialize();
-		balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
-		transporter = new TransporterMPI(partition);
-		fieldList = new ArrayList<>();
-		rootInfo = new HashMap<>();
-		withRegistry = false;
+		this(seed, width, height, aoi, true);
 	}
 
 	public DSimState(long seed, int width, int height, int aoi, boolean isToroidal)
