@@ -246,10 +246,25 @@ public final class Int2D extends Number2D
 		} 
 	*/
 
-    public Int2D add(int dx, int dy)
+   public Double2D add(double dx, double dy)
+		{
+		return new Double2D(x + dx, y + dy);
+		} 
+		
+   public Int2D add(int dx, int dy)
 		{
 		return new Int2D(x + dx, y + dy);
 		} 
+		
+	public Double2D add(Double2D other)
+		{
+		return new Double2D(x + other.x, y + other.y);
+		}
+
+	public Double2D subtract(Double2D other)
+		{
+		return new Double2D(x - other.x, y - other.y);
+		}
 
 /*
 	public Int2D add(int dim, int offset)

@@ -313,22 +313,25 @@ public final class Double2D extends Number2D
         {
         return new Double2D(x + other.x, y + other.y);
         }
-    
-    public final Double2D add(Int2D other)
-    {
-    return new Double2D(x + other.x, y + other.y);
-    }
+
     /** Subtracts Double2D "other" from current Double2D using 
      * vector subtraction */
     public final Double2D subtract(Double2D other)
         {
         return new Double2D(x - other.x, y - other.y);
         }
-    
+
+    public final Double2D add(Int2D other)
+        {
+        return new Double2D(x + other.x, y + other.y);
+        }
+
+    /** Subtracts Int2D "other" from current Double2D using 
+     * vector subtraction */
     public final Double2D subtract(Int2D other)
-    {
-    return new Double2D(x - other.x, y - other.y);
-    }
+        {
+        return new Double2D(x - other.x, y - other.y);
+        }
         
     /** Returns the vector length of the Double2D */
     public final double length()
@@ -514,6 +517,11 @@ public final class Double2D extends Number2D
 		} 
 */
     public Double2D add(double dx, double dy)
+		{
+		return new Double2D(x + dx, y + dy);
+		} 
+
+    public Double2D add(int dx, int dy)
 		{
 		return new Double2D(x + dx, y + dy);
 		} 

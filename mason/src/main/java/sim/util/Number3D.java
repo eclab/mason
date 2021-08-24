@@ -1,23 +1,42 @@
 package sim.util;
 
-public abstract class Number3D extends NumberND{
+public abstract class Number3D extends NumberND
+	{
+		public abstract Number3D add(Int3D other);
+		public abstract Number3D subtract(Int3D other);
+		public abstract Double3D add(Double3D other);
+		public abstract Double3D subtract(Double3D other);
+		public abstract Double3D add(double x, double y, double z);
 
-	public Number3D add(int dx, int dy, int dz)
-	{
-	if (this instanceof Int3D)
-		return ((Int3D)this).add(dx, dy, dz);
-	else if (this instanceof Double3D)
-		return ((Double3D)this).add((double)dx, (double)dy, (double)dz);
-	else return null;
-	} 
-	
-	public Number3D add(Number3D offset)
-	{
-	if (this instanceof Int3D)
-		return ((Int3D)this).add(offset);
-	else if (this instanceof Double3D)
-		return ((Double3D)this).add(offset);
-	else return null;
-	} 
-	
-}
+	public Number3D add(Number3D other)
+		{
+		if (other instanceof Int3D)
+			{
+			return add((Int3D) other);
+			}
+		else if (other instanceof Double3D)
+			{
+			return add((Double3D) other);
+			}
+		else	// uh...
+			{
+			return add(other.getVal(0), other.getVal(1), other.getVal(2));
+			}
+		}
+
+	public Number3D subtract(Number3D other)
+		{
+		if (other instanceof Int3D)
+			{
+			return subtract((Int3D) other);
+			}
+		else if (other instanceof Double3D)
+			{
+			return subtract((Double3D) other);
+			}
+		else	// uh...
+			{
+			return add(0 - other.getVal(0), 0 - other.getVal(1), 0 - other.getVal(2));
+			}
+		}
+	}
