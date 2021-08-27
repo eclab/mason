@@ -9,13 +9,12 @@
 import sim.engine.*;
 import java.util.*;
 
-public abstract class BlockingProvider implements Steppable, Provider
+public abstract class BlockingProvider extends Provider implements Steppable
 	{
 	Resource typical;
 	Resource resource;
 	BlockList blocklist;
 	SimState state;
-	ArrayList<Receiver> receivers;
 	
 	protected void throwUnequalTypeException(Resource res)
 		{
@@ -108,11 +107,6 @@ public abstract class BlockingProvider implements Steppable, Provider
 			}
 		}
 		
-	public Resource provide()
-		{
-		return provide(1.0, 1.0);
-		} 
-
 	public Resource provideBlocking(Blockable blockable)
 		{
 		return provideBlocking(blockable, 1.0, 1.0);

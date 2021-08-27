@@ -7,9 +7,13 @@
 import sim.engine.*;
 import java.util.*;
 
+/// FIXME: Anylogic has delay times which can be distributions, we should do that too
+/// FIXME: we're going to have drifts in totalResource due to IEEE 754
+
 public class Delay extends BlockingProvider implements Receiver
 	{
 	Resource resource;		// this holds all the "ripe" resources from the list
+	double totalResource = 0.0;
 	
 	class Node
 		{
@@ -26,6 +30,12 @@ public class Delay extends BlockingProvider implements Receiver
 	LinkedList<Node> resources = new LinkedList<>();
 	double delay;
 	Provider provider;
+
+	double capacity = Double.POSITIVE_INFINITY;
+	/** Returns the maximum available resources that may be built up. */
+	public double getCapacity() { return capacity; }
+	/** Set the maximum available resources that may be built up. */
+	public void setCapacity(double d) { capacity = d; }
 
 	public Delay(SimState state, double delay, Resource typical)
 		{
@@ -53,7 +63,6 @@ public class Delay extends BlockingProvider implements Receiver
 		return avail;
 		}
 
-	/// CONCERN: we could see piling up of resources if nobody takes them
 	void acquire(double atLeast, double atMost)
 		{
 		if (resources.isEmpty())
@@ -81,15 +90,26 @@ public class Delay extends BlockingProvider implements Receiver
 		if (!blocklist.isEmpty()) return null;		// someone is ahead of us in the queue
 		// we always check the list so we avoid a leak
 		acquire(atLeast, atMost);
-		return resource.reduce(atLeast, atMost);
+		Resource res = resource.reduce(atLeast, atMost);
+		if (res != null) 
+			{
+			totalResource -= res.getAmount();
+			/// This hack makes sure that the drift doesn't drop us below 0
+			if (totalResource < 0) totalResource = 0;
+			}
+		return res;
 		}
 	
 	public boolean consider(Provider provider, double amount)
 		{
-		if (!typical.isSameType(provider.provides())) throwUnequalTypeException(provider.provides());
-		Resource token = provider.provide(0, amount);
+		if (!typical.isSameType(provider.provides())) 
+			throwUnequalTypeException(provider.provides());
+
+		double request = Math.max(amount, capacity - totalResource);  // request no more than our capacity
+		Resource token = provider.provide(0, request);
 		if (token != null)
 			{
+			totalResource += token.getAmount();
 			resources.addFirst(new Node(token, state.schedule.getTime() + delay));
 			informBlocked();
 			return true;

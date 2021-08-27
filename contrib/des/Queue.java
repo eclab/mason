@@ -6,6 +6,9 @@
 import sim.engine.*;
 import java.util.*;
 
+/// FIXME: Anylogic has queues with different ordering policies.  That doesn't
+/// make sense for us because we just have blobs, but maybe we should revisit this.
+
 public class Queue extends Source implements Receiver
 	{
 	Provider provider;
@@ -47,10 +50,14 @@ public class Queue extends Source implements Receiver
 		{
 		if (blocklist.isEmpty()) return;
 
+		// FIXME: this can cause lots of problems because it's O(n), and I'm not
+		// sure it's needed
+		//
+		//
 		// request from the provider?
-		double totalAtLeast = blocklist.getTotalAtLeast();
-		double totalAtMost = blocklist.getTotalAtMost();
-		acquire(totalAtLeast, totalAtMost);
+		//double totalAtLeast = blocklist.getTotalAtLeast();
+		//double totalAtMost = blocklist.getTotalAtMost();
+		//acquire(totalAtLeast, totalAtMost);
 		
 		super.informBlocked();
 		}
@@ -66,6 +73,7 @@ public class Queue extends Source implements Receiver
 			{
 			resource.add(token);
 			informBlocked();
+			informReceivers();
 			return true;
 			}
 		return false;
