@@ -362,7 +362,7 @@ public class DSimState extends SimState
 		}
 
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
-		//loadBalance();
+		loadBalance();
 
 	}
 
@@ -381,7 +381,7 @@ public class DSimState extends SimState
 				try
 				{
 
-
+                    //sync transporter (objects moved to transporter.objectQueue)
 					transporter.sync();
 					
 
@@ -475,9 +475,7 @@ public class DSimState extends SimState
 				{
 					MPI.COMM_WORLD.barrier();
 					
-					//for (Synchronizable field : fieldList) {
-					//     ((HaloGrid2D) field).loc_disagree_all_points("lb4");
-					//}
+
 					
 					syncFields();
 				}
@@ -524,14 +522,7 @@ public class DSimState extends SimState
 
 		int x = countTotalAgents(fieldList.get(0));
 
-		if (this.getPID() == 0) {
-			
-			System.out.println("field num of agents : "+x);
 
-			System.out.println("---");
-		}
-		
-		//System.out.println("balancing");
 		
 		final IntRect2D old_partition = partition.getLocalBounds();
 		final int old_pid = partition.getPID();
@@ -736,7 +727,6 @@ public class DSimState extends SimState
 					}
 				}
 				
-				//((HaloGrid2D) field).loc_disagree_all_points("bp3");
 
 
 			}
@@ -744,7 +734,6 @@ public class DSimState extends SimState
 		MPI.COMM_WORLD.barrier();
 		Timing.stop(Timing.LB_OVERHEAD);
 		
-		//System.out.println("done balancing");
 
 
 	}
@@ -1076,17 +1065,7 @@ public class DSimState extends SimState
 
 
 			ArrayList<Object[]> gg = MPIUtil.gather(partition, g, 0);
-			
-			/*
-			if (this.getPID() == 0) {
-                for (int i=0; i<gg.size(); i++) {
-                	System.out.println(i+"---");
-                	for (Object ggg: gg.get(i)){
-                		System.out.println(ggg);
-                	}
-                }
-			}
-			*/
+
 
 
 			return gg;

@@ -128,17 +128,14 @@ public void stepUpdatePosition(IntRect2D dpso_bounds, DPSO dpso)
 	
     this.position.addIn(velocity);
     
-    MutableDouble2D velocity2 = new MutableDouble2D(velocity.getX(), velocity.getY());
     
     Double2D storagePos = dpso.problemSpaceToMasonStorageBounds(this.position);
     
-    while (!dpso_bounds.contains(storagePos)){
+    if (!dpso_bounds.contains(storagePos)){
     	
     	this.position = new MutableDouble2D(old_pos_x, old_pos_y); 
-    	this.position.addIn(velocity2);
-    	storagePos = dpso.problemSpaceToMasonStorageBounds(this.position);
+  
     	
-    	velocity2 = velocity2.multiplyIn(.75);
     }
     
     
