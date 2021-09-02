@@ -67,7 +67,7 @@ public class UncountableResource extends Resource
 	*/
 	public void setAmount(double val)
 		{
-		if (!(val >= 0))					// negative or NaN
+		if (!isPositiveNonNaN(val))					// negative or NaN
 			throwInvalidNumberException(val);
 			
 		amount = val;
@@ -89,6 +89,7 @@ public class UncountableResource extends Resource
 			{
 			resources[i] = new UncountableResource(this, div);
 			}
+			
 		amount = amount - (div * (times - 1));		// we get the remainder
 		resources[resources.length - 1] = this;
 		return resources;
@@ -113,13 +114,13 @@ public class UncountableResource extends Resource
 	*/
 	public void scale(double value)
 		{
-		if (!(value >= 0))					// negative or NaN
+		if (!isPositiveNonNaN(value))					// negative or NaN
 			throwInvalidScalingException(value);
 
 		double val = amount * value;
 
 		// NaN can happen if amount = infinity and value = 0 for example
-		if (!(val >= 0))					// negative or NaN
+		if (!isPositiveNonNaN(val))					// negative or NaN
 			throwInvalidScalingException(amount, value);
 
 		amount = val;
@@ -138,7 +139,7 @@ public class UncountableResource extends Resource
 	*/
 	public boolean increase(double val)
 		{
-		if (!(val >= 0))					// negative or NaN
+		if (!isPositiveNonNaN(val))					// negative or NaN
 			throwInvalidNumberException(val);
 
 		double total = amount + val;
@@ -170,6 +171,16 @@ public class UncountableResource extends Resource
 	*/
 	public UncountableResource reduce(double atLeast, double atMost)
 		{
+		if (!isPositiveNonNaN(atMost))					// negative or NaN
+			{
+			throwInvalidNumberException(atLeast);
+			}
+		
+		if (!isPositiveNonNaN(atLeast))					// negative or NaN
+			{
+			throwInvalidNumberException(atMost);
+			}
+			
 		if (amount < atLeast) return null;
 		double sub = (amount >= atMost ? amount : atMost);
 		amount -= sub;
@@ -184,6 +195,9 @@ public class UncountableResource extends Resource
 	*/
 	public void add(UncountableResource other, double atMostThisMuch)
 		{
+		if (!isPositiveNonNaN(atMostThisMuch))					// negative or NaN
+			throwInvalidNumberException(atMostThisMuch);
+		
 		if (other == null)
 			throwNullPointerException();
 		if (other.type != type) 
@@ -195,6 +209,7 @@ public class UncountableResource extends Resource
 		other.amount -= atMostThisMuch;
 		}
 
+	/** Makes an exact copy of this resource */
 	public UncountableResource duplicate()
 		{
 		return new UncountableResource(this);

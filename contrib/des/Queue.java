@@ -1,6 +1,7 @@
 /** 
-	A resource queue or semaphore.  Resources placed in the queue are available 
-	immediately, but when the queue is empty 
+	A blocking resource queue with a capacity.  Resources placed in the queue are available 
+	immediately, but when the queue is empty, the Queue will attempt to satisfy
+	requests by requesting from its upstream Provider if any.
 */
 
 import sim.engine.*;
@@ -17,8 +18,17 @@ public class Queue extends Source implements Receiver
 		{
 		super(state, typical);
 		}
-		
+	
+	/** Gets the Queue's provider, if any.  Anyone can offer to the queue, but
+		this provider exists to provide additional resources if the queue cannot
+		provide enough immediately. Also every timestep the Queue will ask the
+		provider to provide it with resources up to its capacity. */
 	public Provider getProvider() { return provider; }
+
+	/** Sets the Queue's provider, if any.  Anyone can offer to the queue, but
+		this provider exists to provide additional resources if the queue cannot
+		provide enough immediately.  Also every timestep the Queue will ask the
+		provider to provide it with resources up to its capacity. */
 	public void setProvider(Provider provider) { this.provider = provider; }
 
 	protected double computeAvailable()
@@ -26,6 +36,7 @@ public class Queue extends Source implements Receiver
 		return resource.getAmount() + (provider == null ? 0 : provider.available());
 		}
 
+	/** Attempts to acquire the given resources, either directly or from the upstream provider. */
 	void acquire(double atLeast, double atMost)
 		{
 		if (provider != null)
@@ -46,22 +57,6 @@ public class Queue extends Source implements Receiver
 		return resource.reduce(atLeast, atMost);
 		}
 
-	protected void informBlocked()
-		{
-		if (blocklist.isEmpty()) return;
-
-		// FIXME: this can cause lots of problems because it's O(n), and I'm not
-		// sure it's needed
-		//
-		//
-		// request from the provider?
-		//double totalAtLeast = blocklist.getTotalAtLeast();
-		//double totalAtMost = blocklist.getTotalAtMost();
-		//acquire(totalAtLeast, totalAtMost);
-		
-		super.informBlocked();
-		}
-
 	public void consider(Provider provider, double amount)
 		{
 		Resource otherTyp = provider.getTypicalResource();
@@ -73,8 +68,8 @@ public class Queue extends Source implements Receiver
 		if (token != null)
 			{
 			resource.add(token);
-			informBlocked();
-			informReceivers();
+			offerBlocked();
+			offerReceivers();
 			}
 		}
 	

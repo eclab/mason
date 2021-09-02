@@ -31,11 +31,22 @@ public class Delay extends BlockingProvider implements Receiver
 	double delay;
 	Provider provider;
 
+	void throwInvalidNumberException(double capacity)
+		{
+		throw new RuntimeException("Capacities may not be negative or NaN.  capacity was: " + capacity);
+		}
+
 	double capacity = Double.POSITIVE_INFINITY;
+	
 	/** Returns the maximum available resources that may be built up. */
 	public double getCapacity() { return capacity; }
 	/** Set the maximum available resources that may be built up. */
-	public void setCapacity(double d) { capacity = d; }
+	public void setCapacity(double d) 
+		{ 
+		if (!Resource.isPositiveNonNaN(d))
+			throwInvalidNumberException(d); 
+		capacity = d; 
+		}
 
 	public Delay(SimState state, double delay, Resource typical)
 		{
@@ -45,8 +56,18 @@ public class Delay extends BlockingProvider implements Receiver
 		resource.setAmount(0.0);
 		}
 		
+	/** Gets the Delay's provider, if any.  Anyone can offer to the Delay, but
+		this provider exists to provide additional resources if the Delay cannot
+		provide enough immediately. Also every timestep the Delay will ask the
+		provider to provide it with resources up to its capacity. */
 	public Provider getProvider() { return provider; }
+
+	/** Sets the Delay's provider, if any.  Anyone can offer to the Delay, but
+		this provider exists to provide additional resources if the Delay cannot
+		provide enough immediately.  Also every timestep the Delay will ask the
+		provider to provide it with resources up to its capacity. */
 	public void setProvider(Provider provider) { this.provider = provider; }
+
 
 	protected double computeAvailable()
 		{
@@ -63,6 +84,7 @@ public class Delay extends BlockingProvider implements Receiver
 		return avail;
 		}
 
+	/** Attempts to acquire the given resources, either directly or from the upstream provider. */
 	void acquire(double atLeast, double atMost)
 		{
 		if (resources.isEmpty())
@@ -112,7 +134,7 @@ public class Delay extends BlockingProvider implements Receiver
 			{
 			totalResource += token.getAmount();
 			resources.addFirst(new Node(token, state.schedule.getTime() + delay));
-			informBlocked();
+			offerBlocked();
 			}
 		}
 

@@ -1,9 +1,11 @@
 
 /** 
-	An object responsible for blocking a Blockable.  Each BlockList has a BlockingProvider
-	which owns the BlockList.  The BlockingProvider is provided to the
-	Blockable so it knows (particularly during unblock()) who blocked it.  We
-	might eliminate this in the future if it proves useless.
+	A Provider which can give blocking provide requests.  
+	Each Provider has a blocklist, and if an incoming blocking request cannot be
+	fulfilled, its Blockable is put on the blocklist to wait until the requests
+	can be fulfilled later.  Requests are fulfilled in order to the waiting
+	Blockables on the blocklist, and only if they cannot accept available
+	resources are the resources offered to registered Receivers.
 */
 
 import sim.engine.*;
@@ -35,31 +37,34 @@ public abstract class BlockingProvider extends Provider implements Steppable
 		
 	protected abstract double computeAvailable();
 
-	protected void informBlocked()
+	/** Make offers to all the agents on the blocklist, in order. */
+	protected void offerBlocked()
 		{
 		int n = blocklist.getSize();
 		for(int i = 0; i < n; i++)			// we do no more than this to avoid starvation and infinite loops
 			{
-			double avail = available();
-//			if (avail < 0) break;			// FIXME, should we bother with this to avoid calling getLastAtLeast unnecessarily?
-			double atLeast = blocklist.getFirstAtLeast();
-//			if (atleast == NO_AMOUNT) break;		// FIXME: this should NEVER happen because it can only happen if the list is empty
-			if (avail >= atLeast)
-				{
-				blocklist.unblock();
-				}
-			else
-				{
+			if (!blocklist.unblock(available()))
 				break;
-				}
 			}
 		}
 		
+	/** Returns whether the blocklist is empty. */
+	public boolean isBlocklistEmpty() { return blocklist.isEmpty(); }
+
+	/** Removes the Blockable from the blocklist.  Does not call unblock() on the Blockable. 
+		Returns false if the blockable was not found on the blocklist. */
+	public boolean removeBlockable(Blockable blockable)
+		{
+		return blocklist.removeBlockable(blockable);
+		}
+		
+	/** Provide exactly 1.0 of a resource, in a blocking fashion, to a Blockable, else return null and put the Blockable on the block list. */
 	public Resource provideBlocking(Blockable blockable)
 		{
 		return provideBlocking(blockable, 1.0, 1.0);
 		}
 
+	/** Provide a resource, in a blocking fashion, to a Blockable, else return null and put the Blockable on the block list. */
 	public Resource provideBlocking(Blockable blockable, double atLeast, double atMost)
 		{
 		Resource r = provide(atLeast, atMost);
@@ -77,8 +82,9 @@ public abstract class BlockingProvider extends Provider implements Steppable
 
 	public void step(SimState state)
 		{
-		informBlocked();			// do this FIRST before calling super(), which calls informReceivers
-		super.step(state);
+		offerBlocked();			// do this FIRST before calling super(), which calls offerReceivers
+		if (isBlocklistEmpty()) 	// we ONLY call super(), which offers to the receivers, if we've satisfied all the blockables
+			super.step(state);
 		}
 
 	}

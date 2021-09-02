@@ -54,44 +54,6 @@ public class BlockList
 		return blocked.size();
 		}
 		
-	public double getFirstAtLeast()
-		{
-		if (blocked.isEmpty()) return NO_AMOUNT;
-		else return blocked.getLast().atLeast;
-		}
-
-	public double getFirstAtMost()
-		{
-		if (blocked.isEmpty()) return NO_AMOUNT;
-		else return blocked.getLast().atMost;
-		}
-
-	public Blockable getFirstBlockable()
-		{
-		if (blocked.isEmpty()) return null;
-		else return blocked.getLast().blockable;
-		}
-		
-	/// FIXME: this is O(n), can we cache this?  We can't maintain this list on the fly
-	public double getTotalAtLeast()
-		{
-		// we need a more accurate summing mechanism if we're summing reals
-		double total = 0.0;
-		for(Node node : blocked)
-			total += node.atLeast;
-		return total;
-		}
-		
-	/// FIXME: this is O(n), can we cache this?  We can't maintain this list on the fly
-	public double getTotalAtMost()
-		{
-		// we need a more accurate summing mechanism if we're summing reals
-		double total = 0.0;
-		for(Node node : blocked)
-			total += node.atMost;
-		return total;
-		}
-		
 	/** Blocks the given agent.  The agent is informed that he is
 		blocked and put on the BlockList.  Returns FALSE
 		if the agent was already on the BlockList.  */
@@ -103,14 +65,35 @@ public class BlockList
 		return true;
 		}
 	
-	/** Unblocks 1 agent.  The agent is informed that is is
+	/** Potentially unblocks 1 agent.  The agent is informed that is is
 		unblocked and removed from the BlockList.  Returns FALSE
-		if there were no agents to unblock.  */
-	public boolean unblock()
+		if an agent was not unblocked.  */
+	public boolean unblock(double amount)
 		{
 		if (blocked.isEmpty()) return false;
-		Node node = blocked.removeLast();
-		node.blockable.unblock(blockingProvider);
+		Node node = blocked.getLast();
+		if (node.atLeast <= amount)
+			{
+			blocked.remove();
+			node.blockable.unblock(blockingProvider, amount < node.atMost ? amount : node.atMost);
+			}
 		return true;
+		}
+
+	/** Removes the Blockable from the blocklist.  Does not call unblock() on the Blockable.
+		Returns false if the blockable was not found on the blocklist.  */
+	public boolean removeBlockable(Blockable blockable)
+		{
+		Iterator<Node> iter = blocked.iterator();
+		while(iter.hasNext())
+			{
+			Node n = iter.next();
+			if (n.blockable == blockable)
+				{
+				iter.remove();
+				return true;
+				}
+			}
+		return false;
 		}
 	}

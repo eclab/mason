@@ -1,6 +1,7 @@
 /** 
-	A source of resources.  You can subclass this to provide resources 
-	in your own fashion if you like.
+	A blocking source of resources.  You can subclass this to provide resources 
+	in your own fashion if you like, by overriding the update() and computeAvailable() methods.
+	Sources have a maximum CAPACITY, which by default is infinite.
 */
 
 
@@ -9,33 +10,54 @@ import java.util.*;
 
 public class Source extends BlockingProvider
 	{
+	void throwNonIntegerAmountException(double atLeast, double atMost)
+		{
+		throw new RuntimeException("Source provides countable Resources, but amounts requested are not integers. atLeast was: " + atLeast + " and atMost was: " + atMost);
+		}
+
+	void throwInvalidNumberException(double atLeast, double atMost)
+		{
+		throw new RuntimeException("Amounts may not be negative or NaN.  atLeast was: " + atLeast + " and atMost was: " + atMost);
+		}
+
+	void throwInvalidNumberException(double capacity)
+		{
+		throw new RuntimeException("Capacities may not be negative or NaN.  capacity was: " + capacity);
+		}
+
+
 	public Source(SimState state, Resource typical)
 		{
 		super(state, typical);
 		}
 		
 	double capacity = Double.POSITIVE_INFINITY;
+	
 	/** Returns the maximum available resources that may be built up. */
 	public double getCapacity() { return capacity; }
 	/** Set the maximum available resources that may be built up. */
-	public void setCapacity(double d) { capacity = d; }
-
-	void throwNonIntegerAmountException(double atLeast, double atMost)
-		{
-		throw new RuntimeException("Source provides countable Resources, but amounts requested are not integers. atLeast was: " + atLeast + " and atMost was: " + atMost);
+	public void setCapacity(double d) 
+		{ 
+		if (!Resource.isPositiveNonNaN(d))
+			throwInvalidNumberException(d); 
+		capacity = d; 
 		}
 
+	/** Provides a resource. */
 	public Resource provide(double atLeast, double atMost)
 		{
+		if (!Resource.isPositiveNonNaN(atLeast) || !Resource.isPositiveNonNaN(atMost)) 
+			throwInvalidNumberException(atLeast, atMost);
 		if (atLeast > atMost) throwInvalidProvisionException();
 		if (!blocklist.isEmpty()) return null;		// someone is ahead of us in the queue
+		
 		double totalAmount = resource.getAmount();
 		if (totalAmount < atLeast) return null;
 		double avail = (atMost > totalAmount ? totalAmount : atMost);
+		
 		if (typical.isCountable())
 			{
-			/// FIXME: this is wrong, don't use long, and also need to allow infinite for atMost 
-			if (atLeast != (long)atLeast || atMost != (long)atMost)
+			if (!Resource.isInteger(atLeast) || !Resource.isInteger(atMost)) 
 				throwNonIntegerAmountException(atLeast, atMost);
 			return new Resource(typical, avail);
 			}
@@ -56,8 +78,8 @@ public class Source extends BlockingProvider
 		Keep in mind the setting of capacity.  */
 	public void update()
 		{
-		if (resource.getAmount() >= capacity) return;
-		resource.increment();
+		if (resource.getAmount() <= capacity - 1)
+			resource.increment();
 		}
 		
 	public void step(SimState state)

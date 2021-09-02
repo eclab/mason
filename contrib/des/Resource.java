@@ -8,16 +8,22 @@
 
 public class Resource 
 	{
+	/** This is the largest possible integer that can be held in a double without skipping integers */
+    public static final double MAXIMUM_INTEGER = 9.007199254740992E15;
+
 	static int lastType = -1;
 	
 	double amount;
 	String name;
 	int type;
-    public static final double MAXIMUM_INTEGER = 9.007199254740992E15;
-
+	
+	/** Creates a new resource type.  Not threadsafe.  */
 	protected int getNextType() { return ++lastType; }
 	
+	/** Returns true if this is an instance of UncountableResource */
 	public boolean isUncountable() { return (this instanceof UncountableResource); }
+
+	/** Returns true if this is NOT an instance of UncountableResource */
 	public boolean isCountable() { return !(isUncountable()); }
 
 	void throwUncountableResourceException(Resource resource)
@@ -48,6 +54,11 @@ public class Resource
 	void throwInvalidNumberException(double amount)
 		{
 		throw new RuntimeException("Amounts may not be negative or NaN.  Amount provided was: " + amount);
+		}
+
+	public static boolean isPositiveNonNaN(double val)
+		{
+		return (val >= 0);
 		}
 
 	public static boolean isInteger(double val)
@@ -103,6 +114,9 @@ public class Resource
 		return "Resource[" + name + " (" + type + "), " + amount + "]";
 		}
 
+	/** 
+		Returns the amount of the resource.
+	*/
 	public double getAmount()
 		{
 		return amount;
@@ -110,17 +124,15 @@ public class Resource
 
 	/** 
 		Sets the amount of the resource.
-		Note that this changes the amount of the given resource available in the world.
+		Note that this changes the total amount of the given resource available in the world.
 	*/
 	public void setAmount(double val)
 		{
-		if (!(val >= 0))					// negative or NaN
+		if (!isPositiveNonNaN(val))					// negative or NaN
 			throwInvalidNumberException(val);
 
 		if (!isInteger(val))
-			{
 			throwNonIntegerAmountException(val);
-			}
 
 		amount = val;
 		}
@@ -159,8 +171,11 @@ public class Resource
 	*/
 	public boolean increase(double val)
 		{
-		if (!(val >= 0))					// negative or NaN
+		if (!isPositiveNonNaN(val))					// negative or NaN
 			throwInvalidNumberException(val);
+
+		if (!isInteger(val))
+			throwNonIntegerAmountException(val);
 
 		double total = amount + val;
 
@@ -201,25 +216,17 @@ public class Resource
 	*/
 	public Resource reduce(double atLeast, double atMost)
 		{
-		if (!(atMost >= 0))					// negative or NaN
-			{
+		if (!isPositiveNonNaN(atMost))					// negative or NaN
 			throwInvalidNumberException(atLeast);
-			}
 		
-		if (!(atLeast >= 0))					// negative or NaN
-			{
+		if (!isPositiveNonNaN(atLeast))					// negative or NaN
 			throwInvalidNumberException(atMost);
-			}
 			
 		if (!isInteger(atLeast))
-			{
 			throwNonIntegerAmountException(atLeast);
-			}
 
 		if (!isInteger(atMost))
-			{
 			throwNonIntegerAmountException(atMost);
-			}
 
 		if (amount < atLeast) return null;
 		double sub = (amount >= atMost ? amount : atMost);
@@ -253,12 +260,15 @@ public class Resource
 		{
 		if (other == null)
 			throwNullPointerException();
+			
 		if (other.type != type) 
 			throwUnequalTypeException(other);
+
+		if (!isPositiveNonNaN(atMostThisMuch))					// negative or NaN
+			throwInvalidNumberException(atMostThisMuch);
+		
 		if (!isInteger(atMostThisMuch))
-			{
 			throwNonIntegerAmountException(atMostThisMuch);
-			}
 			
 		if (atMostThisMuch > other.amount)
 			atMostThisMuch = other.amount;
@@ -350,6 +360,7 @@ public class Resource
 		return (other.amount >= amount);
 		}
 		
+	/** Makes an exact copy of this resource */
 	public Resource duplicate()
 		{
 		return new Resource(this);
@@ -408,7 +419,7 @@ public class Resource
 	*/
 	public Resource[] duplicate(int times)
 		{
-		Resource[] resources = new Resource[times];
+		Resource[] resources = new Resource[times];			// this will throw an exception for us
 		for(int i = 0; i < times; i++)
 			{
 			resources[i] = duplicate();

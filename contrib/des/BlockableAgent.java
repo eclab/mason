@@ -13,11 +13,13 @@ public abstract class BlockableAgent implements Steppable, Blockable
 	{
 	BlockingProvider blocker = null;
 	
+	/** Returns true if we're currently blocked. */
 	public boolean isBlocked()
 		{
 		return blocker != null;
 		}
 		
+	/** Returns the BlockingProvider which has blocked us. */
 	public BlockingProvider getBlocker()
 		{
 		return blocker;
@@ -28,7 +30,9 @@ public abstract class BlockableAgent implements Steppable, Blockable
 		this.blocker = blocker;
 		}
 		
-	public void unblock(BlockingProvider blocker)
+	/** Unblocks the agent.  Override this method to call blocker.provide(...),
+		but be sure to also call super(blocker, amount) */
+	public void unblock(BlockingProvider blocker, double amount)
 		{
 		this.blocker = null;
 		}
