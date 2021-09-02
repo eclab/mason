@@ -1,40 +1,58 @@
+/*
+  Copyright 2021 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
+	
 package sim.util;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
 
+/** A wrapper class for a fixed-length array of type E.
+	Why is this needed?  Because Java's generics are largely
+	broken with respect to arrays: you cannot easily make
+	or copy arrays of a generic type.  This allows us to get
+	around it in certain situations. */
+	
 public class GenericArray<E> implements Serializable
 {
-    private final Object[] arr;
+    Object[] arr;
     public final int length;
  
-    // constructor
     public GenericArray(int length)
     {
         // Creates a new object array of the specified length
         arr = new Object[length];
         this.length = length;
     }
+    
+    public int size()
+    	{
+    	return length;
+    	}
  
-    // Method to get object present at index `i` in the array
-    public E get(int i) {
+    public E get(int i) 
+    	{
         @SuppressWarnings("unchecked")
         final E e = (E)arr[i];
         return e;
     }
  
-    // Method to set a value `e` at index `i` in the array
-    public void set(int i, E e) {
+    public void set(int i, E e) 
+    	{
         arr[i] = e;
-    }
+    	}
     
-    public Object[] getArr() {
+    public Object[] getArray() 
+    	{
     	return arr;
-    }
+    	}
  
-    @Override
-    public String toString() {
+    public String toString() 
+    	{
         return Arrays.toString(arr);
-    }
+    	}
 }
