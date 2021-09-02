@@ -37,16 +37,11 @@ public class Sink implements Receiver
 			}
 		}
 
-	public boolean consider(Provider provider, double amount)
+	public void consider(Provider provider, double amount)
 		{
-		Resource providedType = provider.provides();
+		Resource providedType = provider.getTypicalResource();
 		if (!typical.isSameType(providedType)) throwUnequalTypeException(providedType);
 		Resource token = provider.provide(0, amount);
-		if (token != null)
-			{
-			return true;
-			}
-		return false;
 		}
 		
 	public boolean receive(Provider provider, Resource token)

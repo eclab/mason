@@ -11,8 +11,6 @@ import java.util.*;
 
 public abstract class BlockingProvider extends Provider implements Steppable
 	{
-	Resource typical;
-	Resource resource;
 	BlockList blocklist;
 	SimState state;
 	
@@ -27,52 +25,15 @@ public abstract class BlockingProvider extends Provider implements Steppable
 		throw new RuntimeException("provide(...) called with atLeast > atMost");
 		}
 
-	public Resource provides() { return typical; }
-
 	public BlockingProvider(SimState state, Resource typical)
 		{
-		this.typical = typical.duplicate();
-		this.typical.setAmount(0.0);
-		resource = typical.duplicate();
-		resource.setAmount(0.0);
+		super(state, typical);
 		this.state = state;
 		blocklist = new BlockList(this);
 		receivers = new ArrayList<Receiver>();
 		}
 		
-	public boolean registerReceiver(Receiver receiver)
-		{
-		if (receivers.contains(receiver)) return false;
-		receivers.add(receiver);
-		return true;
-		}
-		
-	public boolean unregisterReceiver(Receiver receiver)
-		{
-		if (receivers.contains(receiver)) return false;
-		receivers.remove(receiver);
-		return true;
-		}
-
 	protected abstract double computeAvailable();
-
-	// This could be costly to recompute over and over again (by pushing down to the provider)
-	// Perhaps we could compute it once and cache it...
-	double availableCacheTimestamp = Double.NaN;
-	double availableCache = 0;
-	public double available()
-		{
-		if (availableCacheTimestamp == state.schedule.getTime())
-			{
-			return availableCache;
-			}
-		else
-			{
-			availableCacheTimestamp = state.schedule.getTime();
-			availableCache = computeAvailable();
-			return availableCache;
-			}
-		}
 
 	protected void informBlocked()
 		{
@@ -91,19 +52,6 @@ public abstract class BlockingProvider extends Provider implements Steppable
 				{
 				break;
 				}
-			}
-		}
-		
-	protected void informReceivers()
-		{
-		double avail = available();
-		if (avail == 0) return;
-		for(Receiver r : receivers)
-			{
-			r.consider(this, avail);
-			avail = available();
-			if (avail == 0)
-				return;
 			}
 		}
 		
@@ -129,8 +77,8 @@ public abstract class BlockingProvider extends Provider implements Steppable
 
 	public void step(SimState state)
 		{
-		informBlocked();
-		informReceivers();
+		informBlocked();			// do this FIRST before calling super(), which calls informReceivers
+		super.step(state);
 		}
 
 	}

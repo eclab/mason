@@ -62,10 +62,11 @@ public class Queue extends Source implements Receiver
 		super.informBlocked();
 		}
 
-	public boolean consider(Provider provider, double amount)
+	public void consider(Provider provider, double amount)
 		{
-		if (!resource.isSameType(provider.provides())) 
-			throwUnequalTypeException(provider.provides());
+		Resource otherTyp = provider.getTypicalResource();
+		if (!resource.isSameType(otherTyp)) 
+			throwUnequalTypeException(otherTyp);
 		
 		double request = Math.max(amount, capacity - resource.getAmount());  // request no more than our capacity
 		Resource token = provider.provide(0, request);
@@ -74,9 +75,7 @@ public class Queue extends Source implements Receiver
 			resource.add(token);
 			informBlocked();
 			informReceivers();
-			return true;
 			}
-		return false;
 		}
 	
 	public void update()

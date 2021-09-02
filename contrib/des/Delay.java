@@ -100,11 +100,12 @@ public class Delay extends BlockingProvider implements Receiver
 		return res;
 		}
 	
-	public boolean consider(Provider provider, double amount)
+	public void consider(Provider provider, double amount)
 		{
-		if (!typical.isSameType(provider.provides())) 
-			throwUnequalTypeException(provider.provides());
-
+		Resource otherTyp = provider.getTypicalResource();
+		if (!resource.isSameType(otherTyp)) 
+			throwUnequalTypeException(otherTyp);
+		
 		double request = Math.max(amount, capacity - totalResource);  // request no more than our capacity
 		Resource token = provider.provide(0, request);
 		if (token != null)
@@ -112,9 +113,7 @@ public class Delay extends BlockingProvider implements Receiver
 			totalResource += token.getAmount();
 			resources.addFirst(new Node(token, state.schedule.getTime() + delay));
 			informBlocked();
-			return true;
 			}
-		return false;
 		}
 
 	public void step(SimState state)

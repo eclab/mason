@@ -5,7 +5,9 @@
 public interface Receiver
 	{
 	/**
-		An offer to accept up to a certain amount from a provider
+		An offer to accept up to a certain amount from a provider.
+		This amount must be equal to provider.available() and
+		ought to be > 0.
 	*/
-	public boolean consider(Provider provider, double amount);
+	public void consider(Provider provider, double amount);
 	}
