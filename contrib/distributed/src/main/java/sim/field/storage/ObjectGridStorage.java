@@ -27,8 +27,7 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T>
 	{
 		int width = shape.getWidth();
 		int height = shape.getHeight();
-		final StringBuffer buf = new StringBuffer(
-				String.format("ObjectGridStorage<%s>-%s\n", storage.getClass().getSimpleName(), shape));
+		StringBuffer buf = new StringBuffer(String.format("ObjectGridStorage<%s>-%s\n", storage.getClass().getSimpleName(), shape));
 
 		for (int i = 0; i < width; i++)
 		{
@@ -36,7 +35,6 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T>
 			{
 				//buf.append(String.format(" %8s ", storage[i * height + j]));
 				buf.append(String.format(" %8s ", storage.get(i * height + j)));
-
 			}
 			buf.append("\n");
 		}
@@ -49,13 +47,14 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T>
 		//final T[] objs = (T[]) new Object[mp.size];
 		//final T[] stor = storage;
 		
-		final GenericArray<T> objs = new GenericArray<T>(mp.size);
-		final GenericArray<T> stor = storage;
+		GenericArray<T> objs = new GenericArray<T>(mp.size);
+		GenericArray<T> stor = storage;
 		
 		int curr = 0;
 
 		for (final IntRect2D rect : mp.rects)
-			for (final Int2D p : rect.getPointList()) {
+			for (final Int2D p : rect.getPointList()) 
+			{
 				//objs[curr++] = stor[getFlatIndex(p)];
 				objs.set(curr++, stor.get(getFlatIndex(p)));
 			}
@@ -68,14 +67,16 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T>
 		//final T[] stor = (T[]) storage;
 		//final T[] objs = (T[]) buf;
 
-		final GenericArray<T> stor = storage;
-		final GenericArray<T> objs = (GenericArray<T>) buf;
+		 GenericArray<T> stor = storage;
+		 GenericArray<T> objs = (GenericArray<T>) buf;
 		int curr = 0;
 
 		for (final IntRect2D rect : mp.rects)
 			for (final Int2D p : rect.getPointList())
+				{
 				//stor[getFlatIndex(p)] = objs[curr++];
 				stor.set(getFlatIndex(p),objs.get(curr++));
+				}
 	}
 
 	public T get(Int2D p)
