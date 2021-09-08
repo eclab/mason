@@ -15,7 +15,7 @@ package sim.util;
 
     <p>Int2D.equals(...) can compare by value against other Int2Ds, MutableInt2Ds, Double2Ds, and MutableDouble2Ds.
 */
-public final class Int2D extends NumberND
+public final class Int2D extends Number2D
     {
     public int numDimensions() { return 2; }
     public double getVal(int val) { return (val == 0 ? x : val == 1 ? y : Double.NaN); }
@@ -246,10 +246,25 @@ public final class Int2D extends NumberND
 		} 
 	*/
 
-    public Int2D add(int dx, int dy)
+   public Double2D add(double dx, double dy)
+		{
+		return new Double2D(x + dx, y + dy);
+		} 
+		
+   public Int2D add(int dx, int dy)
 		{
 		return new Int2D(x + dx, y + dy);
 		} 
+		
+	public Double2D add(Double2D other)
+		{
+		return new Double2D(x + other.x, y + other.y);
+		}
+
+	public Double2D subtract(Double2D other)
+		{
+		return new Double2D(x - other.x, y - other.y);
+		}
 
 /*
 	public Int2D add(int dim, int offset)

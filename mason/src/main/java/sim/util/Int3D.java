@@ -15,7 +15,7 @@ package sim.util;
 
    <p>Int3D.equals(...) can compare by value against other Int3Ds, MutableInt2Ds, and Double3Ds.
 */
-public final class Int3D extends NumberND
+public final class Int3D extends Number3D
     {
     public int numDimensions() { return 3; }
     public double getVal(int val) { return (val == 0 ? x : val == 1 ? y : val == 2 ? z : Double.NaN); }
@@ -221,4 +221,35 @@ public final class Int3D extends NumberND
         {
         return Math.abs((long)this.x-p.x) + Math.abs((long)this.y-p.y) + Math.abs((long)this.z-p.z);
         }
+    
+    public Double3D add(double dx, double dy, double dz)
+		{
+		return new Double3D(x + dx, y + dy, z + dz);
+		} 
+
+    public Int3D add(int dx, int dy, int dz)
+		{
+		return new Int3D(x + dx, y + dy, z + dz);
+		} 
+
+	public Int3D add(Int3D other)
+		{
+		return new Int3D(x + other.x, y + other.y, z + other.z);
+		} 
+
+	public Int3D subtract(Int3D other)
+		{
+		return new Int3D(x - other.x, y - other.y, z - other.z);
+		} 
+
+	public Double3D add(Double3D other)
+		{
+		return new Double3D(x + other.x, y + other.y, z + other.z);
+		} 
+
+	public Double3D subtract(Double3D other)
+		{
+		return new Double3D(x - other.x, y - other.y, z - other.z);
+		} 
+    
     }

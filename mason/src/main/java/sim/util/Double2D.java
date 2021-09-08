@@ -15,7 +15,7 @@ package sim.util;
 
     <p>Double2D.equals(...) can compare by value against other Int2Ds and Double2Ds.
 */
-public final class Double2D extends NumberND
+public final class Double2D extends Number2D
     {
     public int numDimensions() { return 2; }
     public double getVal(int val) { return (val == 0 ? x : val == 1 ? y : Double.NaN); }
@@ -320,6 +320,18 @@ public final class Double2D extends NumberND
         {
         return new Double2D(x - other.x, y - other.y);
         }
+
+    public final Double2D add(Int2D other)
+        {
+        return new Double2D(x + other.x, y + other.y);
+        }
+
+    /** Subtracts Int2D "other" from current Double2D using 
+     * vector subtraction */
+    public final Double2D subtract(Int2D other)
+        {
+        return new Double2D(x - other.x, y - other.y);
+        }
         
     /** Returns the vector length of the Double2D */
     public final double length()
@@ -505,6 +517,11 @@ public final class Double2D extends NumberND
 		} 
 */
     public Double2D add(double dx, double dy)
+		{
+		return new Double2D(x + dx, y + dy);
+		} 
+
+    public Double2D add(int dx, int dy)
 		{
 		return new Double2D(x + dx, y + dy);
 		} 

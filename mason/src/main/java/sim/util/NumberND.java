@@ -202,6 +202,7 @@ public abstract class NumberND implements java.io.Serializable
 
         }
 
+    /*
 	public NumberND add(int offset)
 		{
 		if (this instanceof Int2D)
@@ -237,6 +238,7 @@ public abstract class NumberND implements java.io.Serializable
 			return ((Double2D)this).subtract(offset);
 		else return null;
 		} 
+		*/
 
 		public double[] getOffsets(final NumberND that) 
 			{

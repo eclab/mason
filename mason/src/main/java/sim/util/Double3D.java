@@ -16,7 +16,7 @@ package sim.util;
    <p>Double3D.equals(...) can compare by value against other Int3Ds and Double3Ds.
 */
 
-public final class Double3D extends NumberND
+public final class Double3D extends Number3D
     {
     public int numDimensions() { return 3; }
     public double getVal(int val) { return (val == 0 ? x : val == 1 ? y : val == 2 ? z : Double.NaN); }
@@ -333,7 +333,7 @@ public final class Double3D extends NumberND
         return dx + dy + dz;
         }
 
-    /** Adds Double3D "other" to current Double3D using 
+   /** Adds Double3D "other" to current Double3D using 
      * vector addition */
     public final Double3D add(Double3D other)
         {
@@ -347,6 +347,16 @@ public final class Double3D extends NumberND
         return new Double3D(x - other.x, y - other.y, z - other.z);
         }
         
+	public Double3D add(Int3D other)
+		{
+		return new Double3D(x + other.x, y + other.y, z + other.z);
+		} 
+
+	public Double3D subtract(Int3D other)
+		{
+		return new Double3D(x - other.x, y - other.y, z - other.z);
+		} 
+
     /** Returns the vector length of the Double3D */
     public final double length()
         {
@@ -410,4 +420,15 @@ public final class Double3D extends NumberND
         {
         return new Double3D(-x, -y, -z);
         }
+    
+    public Double3D add(double dx, double dy, double dz)
+		{
+		return new Double3D(x + dx, y + dy, z + dz);
+		} 
+
+    public Double3D add(int dx, int dy, int dz)
+		{
+		return new Double3D(x + dx, y + dy, z + dz);
+		} 
+
     }
