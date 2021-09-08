@@ -123,6 +123,15 @@ public class Resource
 		}
 
 	/** 
+		Sets the resource to zero.
+		Note that this changes the total amount of the given resource available in the world.
+	*/
+	public void clear()
+		{
+		amount = 0;
+		}
+
+	/** 
 		Sets the amount of the resource.
 		Note that this changes the total amount of the given resource available in the world.
 	*/
