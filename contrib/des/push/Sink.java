@@ -32,4 +32,9 @@ public class Sink implements Receiver
 		if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
 		amount.clear();			// accept all of it
 		}
+
+	public String getName()
+		{
+		return "";
+		}		
 	}

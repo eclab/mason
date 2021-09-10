@@ -1,5 +1,5 @@
 import sim.engine.*;
-import sim.util.;
+import sim.util.*;
 import java.util.*;
 
 /*
@@ -16,13 +16,12 @@ public class Unlock extends Provider implements Receiver
 		super(other.state, other.typical);
 		maxLocks = other.maxLocks;
 		locks = other.locks;
-		setOffersOnce(true);
 		}
 	
 	public void accept(Provider provider, Resource amount, double atLeast, double atMost)
 		{
 		if (locks.val == 0) return;
-		offerReceivers();
+		offerReceivers(amount);
 		locks.val++;			// we always increment even if we fail
 		if (locks.val > maxLocks.val)
 			locks.val = maxLocks.val;
@@ -33,4 +32,8 @@ public class Unlock extends Provider implements Receiver
 		// do nothing
 		}
 
+	public String getName()
+		{
+		return "";
+		}		
 	}

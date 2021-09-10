@@ -69,4 +69,9 @@ public class Lock extends Provider implements Receiver
 		{
 		// do nothing
 		}
+
+	public String getName()
+		{
+		return "";
+		}		
 	}

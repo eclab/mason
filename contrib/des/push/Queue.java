@@ -84,5 +84,10 @@ public class Queue extends Source implements Receiver
 		{
 		// do nothing
 		}
+
+	public String getName()
+		{
+		return "";
+		}		
 	}
 	

@@ -14,7 +14,7 @@ import java.util.*;
 	to use as they see fit.  
 */
 
-public abstract class Provider implements Steppable
+public abstract class Provider implements Named
 	{
 	protected void throwUnequalTypeException(Resource res)
 		{

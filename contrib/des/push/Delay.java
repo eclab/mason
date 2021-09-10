@@ -76,5 +76,10 @@ public class Delay extends Source implements Receiver
 			else break;		// don't process any more
 			}
 		}
+
+	public String getName()
+		{
+		return "";
+		}		
 	}
 	

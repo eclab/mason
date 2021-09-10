@@ -48,5 +48,9 @@ public class Source extends Provider
 		super.step(state);
 		}
 
+	public String getName()
+		{
+		return "";
+		}		
 	}
 	
