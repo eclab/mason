@@ -43,8 +43,11 @@ public class CampusWorldProxyWithUI extends GUIState
 	public GeomPlanarGraph network = new GeomPlanarGraph();
 	public GeomVectorField junctions = new GeomVectorField(DCampusWorld.width, DCampusWorld.height); // nodes for intersections
 
-    GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
+    //GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
 
+	ContinuousPortrayal2D agentPortrayal = new ContinuousPortrayal2D();
+	
+	
 	public static void main(String[] args)
 		{
 		new CampusWorldProxyWithUI().createController();
@@ -109,12 +112,19 @@ public class CampusWorldProxyWithUI extends GUIState
         roadsPortrayal.setField(roads);
         roadsPortrayal.setPortrayalForAll(new GeomPortrayal(Color.GRAY,true));
 
-		agentPortrayal.setField(((CampusWorldProxy) state).agentRepresentations);
+//		agentPortrayal.setField(((CampusWorldProxy) state).agentRepresentations);
+//		agentPortrayal.setField(((CampusWorldProxy) state).agentRepresentations);
+        
+        
+        
+        
 //		System.out.println(((CampusWorldProxy) state).agents.getGeometries().get(0));
-        agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,10.0,true));
+        //agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,10.0,true));
 //        agentPortrayal.setPortrayalForAll(new AdjustablePortrayal2D(new MovablePortrayal2D(basic)));
 
-//        agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,6.0));
+        
+        agentPortrayal.setPortrayalForAll(new MovablePortrayal2D(new sim.portrayal.simple.OvalPortrayal2D(Color.RED,6.0)));
+        
 //		agentPortrayal.setPortrayalForAll(new MovablePortrayal2D(new OvalPortrayal2D(Color.RED, 6.0)));
 
 		// reschedule the displayer

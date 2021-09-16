@@ -10,6 +10,7 @@
 package sim.field.geo;
 
 import com.vividsolutions.jts.algorithm.ConvexHull;
+
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import com.vividsolutions.jts.geom.prep.PreparedPoint;

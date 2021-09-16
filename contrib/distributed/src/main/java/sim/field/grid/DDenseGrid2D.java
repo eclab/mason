@@ -476,6 +476,9 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 					double time = _stop.getTime();
 					int ordering = _stop.getOrdering();
 					_stop.stop();
+					
+					//System.out.println(a+" addedAgent at"+ to+" (3)");
+
 					if (time > state.schedule.getTime())  // scheduled in the future
 						{
 						removeLocal(from, agent);

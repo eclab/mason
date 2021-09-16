@@ -271,7 +271,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	static final Int2D OFFSET = new Int2D(1,1);
 	
 	// Get all the objects inside the given rectangle
-	ArrayList<T> getObjects(final IntRect2D r)
+	protected ArrayList<T> getObjects(final IntRect2D r)
 	{
 		final ArrayList<T> objs = new ArrayList<T>();
 //		int[] offset = { 1, 1 };
@@ -366,7 +366,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	}
 */
 
-	Double2D buildDouble2D(Number2D p)
+	protected Double2D buildDouble2D(Number2D p)
 	{
 		if (p instanceof Double2D)
 			return (Double2D) p;

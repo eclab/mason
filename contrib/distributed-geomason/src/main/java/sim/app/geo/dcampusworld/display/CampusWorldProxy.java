@@ -32,10 +32,12 @@ public class CampusWorldProxy extends SimStateProxy
 	double discretization = 6;
 
 	/** Data is registered/transferred as Continuous2D **/
-	MyProxy agentProxy = new MyProxy(1, 1, 1);
+	//MyProxy agentProxy = new MyProxy(1, 1, 1);
+    public Continuous2DProxy agentProxy = new Continuous2DProxy(1, 1, 1);
 
 	/** Remote data is reloaded into this field for portrayal reasons **/
 	GeomVectorField agentRepresentations = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
+
 
 	ContinuousPortrayal2D agentPortrayal = new ContinuousPortrayal2D();
 
@@ -68,37 +70,37 @@ public class CampusWorldProxy extends SimStateProxy
             ContinuousStorage storage = (ContinuousStorage)(stateProxy.storage(proxyIndex));
 
 			
-//			Bag objs = getAllObjects(); // Bag of Long IDs of all agents
-//			System.out.println("Updating " + objs.numObjs + " objects");
-//			for (int i=0; i<objs.numObjs; i++)
-//			{
-//				System.out.println("proxy storage object #" + (i+1) + "/" + objs.numObjs + " = " + objs.objs[i].getClass() + ": " + objs.objs[i]);
-////				if (!(objs.objs[i] instanceof DAgent)) {
-//////					System.out.println("Skipped " + objs.objs[i].getClass());
-////					continue;
-////				}
-//            	DObject obj = storage.getObject(loc, objID); // <- getting nulls here so...
-//				((DAgent)objs.objs[i]).transfer(getObjectLocation(objs.objs[i]), agentRepresentations);
-//			}
-//			System.out.println("Done Updating agents: " + agentRepresentations.getGeometries().size());
+			Bag objs = getAllObjects(); // Bag of Long IDs of all agents
+			System.out.println("Updating " + objs.numObjs + " objects");
+			for (int i=0; i<objs.numObjs; i++)
+			{
+				System.out.println("proxy storage object #" + (i+1) + "/" + objs.numObjs + " = " + objs.objs[i].getClass() + ": " + objs.objs[i]);
+				if (!(objs.objs[i] instanceof DAgent)) {
+					System.out.println("Skipped " + objs.objs[i].getClass());
+					continue;
+				}
+            	//DObject obj = storage.getObject(loc, objID); // <- getting nulls here so...
+				((DAgent)objs.objs[i]).transfer(getObjectLocation(objs.objs[i]), agentRepresentations);
+			}
+			System.out.println("Done Updating agents: " + agentRepresentations.getGeometries().size());
 			
 			
 			// Alternative way?
 			// Move all agents into GeomVectorField
 //            ContinuousStorage storage = (ContinuousStorage)(stateProxy.storage(proxyIndex));
-            HashMap<Long, Double2D> map = storage.getLocations();
+//            HashMap<Long, Double2D> map = storage.getLocations();
             // ^ object ids? to locations
-			System.out.println("Updating " + map.entrySet().size() + " objects");
-            for (Entry<Long, Double2D> entry : map.entrySet()) {
-            	Long objID = entry.getKey(); // object ID?
-            	Double2D loc = entry.getValue(); // object location
-            	DObject obj = storage.getObject(loc, objID); // <- getting nulls here so...
-            	if (obj == null)
-            		continue;
-            	DAgent agent = (DAgent) obj;
-				agent.transfer(loc, agentRepresentations);
-            }
-			System.out.println("Done Updating agents: " + agentRepresentations.getGeometries().size());
+//			System.out.println("Updating " + map.entrySet().size() + " objects");
+//            for (Entry<Long, Double2D> entry : map.entrySet()) {
+ //           	Long objID = entry.getKey(); // object ID?
+ //           	Double2D loc = entry.getValue(); // object location
+ //           	DObject obj = storage.getObject(loc, objID); // <- getting nulls here so...
+ //           	if (obj == null)
+ //           		continue;
+ //           	DAgent agent = (DAgent) obj;
+//				agent.transfer(loc, agentRepresentations);
+ //           }
+//			System.out.println("Done Updating agents: " + agentRepresentations.getGeometries().size());
 		}
 		
 		

@@ -15,7 +15,7 @@ public abstract class GridStorage<T extends Serializable> implements java.io.Ser
 {
 	private static final long serialVersionUID = 1L;
 
-	IntRect2D shape;
+	protected IntRect2D shape;
 	int height; // this is the same as shape.getHeight(), to save a bit of computation
 	Int2D offset; // moved here
 
