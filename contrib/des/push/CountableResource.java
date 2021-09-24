@@ -105,9 +105,6 @@ public class CountableResource extends Resource
 		return new CountableResource(this);
 		}
 
-	/** 
-		Returns the amount of the countable resource.
-	*/
 	public double getAmount()
 		{
 		return amount;

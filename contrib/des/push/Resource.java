@@ -40,6 +40,11 @@ public abstract class Resource
 	public abstract boolean equals(Object other);
 
 	/** 
+		Returns the amount of the resource.
+	*/
+	public abstract double getAmount();
+
+	/** 
 		Returns true if the two objects are both Entitys with the same type.
 	*/
 	public boolean isSameType(Resource other)

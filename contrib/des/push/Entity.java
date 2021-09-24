@@ -1,14 +1,16 @@
+import sim.engine.*;
+import java.util.*;
 
-public class Entity<T> extends Resource
+public class Entity extends Resource
 	{
-	T storage;
+	Object storage;
 	
-	public T getStorage()
+	public Object getStorage()
 		{
 		return storage;
 		}
 	
-	public void setStorage(T val)
+	public void setStorage(Object val)
 		{
 		storage = val;
 		}
@@ -22,7 +24,7 @@ public class Entity<T> extends Resource
 		Returns a Entity of the same type, name, and amount as the provided resource.
 		This is essentially a clone of the resource.
 	*/
-	public Entity(Entity<T> other)
+	public Entity(Entity other)
 		{
 		super();
 		this.name = other.name;
@@ -30,14 +32,34 @@ public class Entity<T> extends Resource
 		this.storage = other.storage;
 		}
 		
+	public void compose(Resource[] resources)
+		{
+		storage = resources;
+		}
+	
+	public void compose(ArrayList<Resource> resources)
+		{
+		storage = resources.toArray(new Resource[resources.size()]);
+		}
+	
+	public Resource[] decompose()
+		{
+		return (Resource[]) storage;
+		}
+
 	public void clear()
 		{
 		storage = null;
 		}
 		
+	public double getAmount()
+		{
+		return 1.0;
+		}
+
 	public Resource duplicate()
 		{
-		return new Entity<T>(this);
+		return new Entity(this);
 		}
 
 	/**
