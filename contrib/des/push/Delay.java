@@ -27,6 +27,9 @@ public class Delay extends Source implements Receiver
 	double totalResource = 0.0;
 	LinkedList<Node> resources = new LinkedList<>();
 	double delay;
+	
+	public double getDelay() { return delay; }
+	public void setDelay(double delay) { this.delay = delay; }
 
 	void throwInvalidNumberException(double capacity)
 		{
@@ -39,39 +42,60 @@ public class Delay extends Source implements Receiver
 		this.delay = delay;
 		}
 		
-	public void accept(Provider provider, Resource amount, double atLeast, double atMost)
+	public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
 		{
 		if (!resource.isSameType(amount)) 
 			throwUnequalTypeException(amount);
 		
-		double maxIncoming = Math.min(capacity - totalResource, atMost);
-		if (maxIncoming < atLeast) return;
+		if (entities == null)
+			{
+			CountableResource cr = (CountableResource)amount;
+			double maxIncoming = Math.min(capacity - totalResource, atMost);
+			if (maxIncoming < atLeast) return false;
 		
-		Resource token = amount.duplicate();
-		token.setAmount(maxIncoming);
-		amount.decrease(maxIncoming);
-		resources.addFirst(new Node(token, state.schedule.getTime() + delay));
+			CountableResource token = (CountableResource)(cr.duplicate());
+			token.setAmount(maxIncoming);
+			cr.decrease(maxIncoming);
+			resources.add(new Node(token, state.schedule.getTime() + delay));
+			}
+		else
+			{
+			if (resources.size() >= capacity) return false;	// we're at capacity
+			resources.add(new Node(amount, state.schedule.getTime() + delay));
+			}
+		return true;
 		}
 
+	protected void drop()
+		{
+		if (entities == null)
+			resource.clear();
+		else
+			entities.clear();
+		}
+		
 	protected void update()
 		{
-		resource.clear();
-		
-		if (resources.isEmpty())
-			return;
-
+		drop();
 		double time = state.schedule.getTime();
 		
-		// acquire this amount
 		Iterator<Node> iterator = resources.descendingIterator();
 		while(iterator.hasNext())
 			{
 			Node node = iterator.next();
 			if (node.timestamp >= time)	// it's ripe
 				{
-				double amt = node.resource.getAmount();
-				resource.add(node.resource);
-				iterator.remove();
+				if (entities == null)
+					{
+					CountableResource res = ((CountableResource)(node.resource));
+					iterator.remove();
+					resource.add(res);
+					totalResource -= res.getAmount();
+					}
+				else
+					{
+					entities.add((Entity)(node.resource));
+					}
 				}
 			else break;		// don't process any more
 			}
@@ -79,7 +103,7 @@ public class Delay extends Source implements Receiver
 
 	public String getName()
 		{
-		return "";
+		return "Delay(" + typical.getName() + ")";
 		}		
 	}
 	

@@ -24,13 +24,15 @@ public abstract class Provider implements Named
 
 	/** The typical kind of resource the Provider provides.  This should always be zero and not used except for type checking. */
 	protected Resource typical;
-	/** A resource pool available to subclasses. By default, step() offers this resource to all receivers. */
-	protected Resource resource;
+	/** A resource pool available to subclasses.  null by default. */
+	protected CountableResource resource;
+	/** An entity pool available to subclasses.  null by default. */
+	protected LinkedList<Entity> entities;
 	/** The model. */
 	protected SimState state;
 	ArrayList<Receiver> receivers;
 	boolean shufflesReceivers;
-	boolean offersExactly;
+	boolean offersTakeItOrLeaveIt;
 	
 	/** 
 	Returns the typical kind of resource the Provider provides.  This should always be zero and not used except for type checking.
@@ -50,17 +52,17 @@ public abstract class Provider implements Named
 	/** 
 	Returns whether receivers are offered take-it-or-leave-it offers.
 	*/
-	public boolean getOffersExactly() { return offersExactly; }
+	public boolean getOffersTakeItOrLeaveIt() { return offersTakeItOrLeaveIt; }
 	
 	/** 
 	Sets whether receivers are offered take-it-or-leave-it offers.
 	*/
-	public void setOffersExactly(boolean val) { offersExactly = val; }
+	public void setOffersTakeItOrLeaveIt(boolean val) { offersTakeItOrLeaveIt = val; }
 
 	/** 
 	Registers a receiver with the Provider.  Returns false if the receiver was already registered.
 	*/
-	public boolean registerReceiver(Receiver receiver)
+	public boolean addReceiver(Receiver receiver)
 		{
 		if (receivers.contains(receiver)) return false;
 		receivers.add(receiver);
@@ -70,7 +72,7 @@ public abstract class Provider implements Named
 	/** 
 	Unregisters a receiver with the Provider.  Returns false if the receiver was not registered.
 	*/
-	public boolean unregisterReceiver(Receiver receiver)
+	public boolean removeReceiver(Receiver receiver)
 		{
 		if (receivers.contains(receiver)) return false;
 		receivers.remove(receiver);
@@ -82,15 +84,28 @@ public abstract class Provider implements Named
 	*/
 	public double getAvailable()
 		{
-		return resource.getAmount();
+		if (resource != null)
+			return resource.getAmount();
+		else if (entities != null)
+			return entities.size();
+		else
+			return 0;
 		}
 	
 	public Provider(SimState state, Resource typical)
 		{
 		this.typical = typical.duplicate();
-		this.typical.setAmount(0.0);
-		resource = typical.duplicate();
-		resource.setAmount(0.0);
+		this.typical.clear();
+		
+		if (typical instanceof Entity)
+			{
+			entities = new LinkedList<Entity>();
+			}
+		else
+			{
+			resource = (CountableResource) (typical.duplicate());
+			resource.setAmount(0.0);
+			}
 		this.state = state;
 		}
 	
@@ -127,37 +142,94 @@ public abstract class Provider implements Named
 		return ret;
 		}
 	
+	protected boolean offerReceiver(Receiver receiver)
+		{
+		if (entities == null)
+			{
+			CountableResource cr = (CountableResource) resource;
+			double amt = cr.getAmount();
+			return receiver.accept(this, cr, getOffersTakeItOrLeaveIt() ? amt : 0, amt);
+			}
+		else
+			{
+			Entity e = entities.getLast();
+			boolean result = receiver.accept(this, e, 0, 0);
+			if (result) entities.remove();
+			return result;
+			}
+		}
+	
 	/**
 	Call this to inform all receivers
 	*/
-	protected void offerReceivers(Resource amount)
+	protected boolean offerReceivers()
 		{
-		double amt = amount.getAmount();
+		boolean result = false;
+		CountableResource cr = (CountableResource) typical;
+		double amt = resource.getAmount();
 		if (shufflesReceivers)
 			{
 			shuffle();
 			while(true)
 				{
 				Receiver r = nextShuffledReceiver();
-				if (r == null) return;
-				r.accept(this, amount, offersExactly ? amount.getAmount() : 0, amount.getAmount());
-				if (amount.getAmount() == 0)
-					return;
+				if (r == null) break;
+				result = result || offerReceiver(r);
+				if (result && getOffersTakeItOrLeaveIt()) break;
 				}
 			}
 		else
 			{
 			for(Receiver r : receivers)
 				{
-				r.accept(this, amount, offersExactly ? amount.getAmount() : 0, amount.getAmount());
-				if (amount.getAmount() == 0)
-					return;
+				result = result || offerReceiver(r);
+				if (result && getOffersTakeItOrLeaveIt()) break;
 				}
 			}
+		return result;
 		}
-		
+	
+	public CountableResource provide(CountableResource type, double amount)
+		{
+		if (resource != null && 
+			typical.isSameType(type) &&
+			resource.getAmount() >= amount)
+			{
+			return resource.reduce(amount);
+			}
+		else return null;
+		}
+
+	public Entity[] provide(Entity type, int amount)
+		{
+		if (amount >= 0 &&
+			entities != null && 
+			typical.isSameType(type) &&
+			entities.size() >= amount)
+			{
+			Entity[] stuff = new Entity[amount];
+			for(int i = 0; i < amount; i++)
+				{
+				stuff[i] = entities.remove();
+				}
+			return stuff;
+			}
+		else return null;
+		}
+
+	public Entity provide(Entity type)
+		{
+		if (entities != null && 
+			typical.isSameType(type) &&
+			entities.size() >= 1)
+			{
+			return entities.remove();
+			}
+		else return null;
+		}
+	
 	public void step(SimState state)
 		{
-		offerReceivers(resource);
+		offerReceivers();
 		}
 	}

@@ -22,35 +22,54 @@ public class Source extends Provider
 		
 	double capacity = Double.POSITIVE_INFINITY;
 	
+	public static boolean isPositiveNonNaN(double val)
+		{
+		return (val >= 0);
+		}
+
 	/** Returns the maximum available resources that may be built up. */
 	public double getCapacity() { return capacity; }
 	/** Set the maximum available resources that may be built up. */
 	public void setCapacity(double d) 
 		{ 
-		if (!Resource.isPositiveNonNaN(d))
+		if (!isPositiveNonNaN(d))
 			throwInvalidNumberException(d); 
 		capacity = d; 
 		}
-		
+	
+	protected Entity buildEntity()
+		{
+		Entity ret = (Entity)(typical.duplicate());
+		ret.clear();
+		return ret;
+		}
+	
 	/** Override this method to add new resources to the *resource* variable.
 		This method is called once every time this Source is stepped. 
 		The default version simply adds 1.0 to the variable every step. 
 		Keep in mind the setting of capacity.  */
 	protected void update()
 		{
-		if (resource.getAmount() <= capacity - 1)
-			resource.increment();
+		if (entities != null)
+			{
+			entities.add(buildEntity());
+			}
+		else
+			{
+			if (resource.getAmount() <= capacity - 1)
+				resource.increment();
+			}
 		}
 		
 	public void step(SimState state)
 		{
 		update();
-		super.step(state);
+		super.step(state);		// offerReceivers();
 		}
 
 	public String getName()
 		{
-		return "";
+		return "Source(" + typical.getName() + ")";
 		}		
 	}
 	
