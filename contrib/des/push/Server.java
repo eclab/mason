@@ -3,16 +3,16 @@ import java.util.*;
 
 public class Server extends Macro
 	{
-	Delay delay;
+	SimpleDelay delay;
 	Lock lock;
 	Unlock unlock;
 	Pool pool;
 	
-	public Server(SimState state, Resource typical, Pool pool, double allocation, double delay)
+	public Server(SimState state, Resource typical, Pool pool, double allocation, double delayTime)
 		{
 		lock = new Lock(state, typical, pool, allocation);
 		unlock = new Unlock(lock);
-		this.delay = new Delay(state, delay, typical);
+		this.delay = new SimpleDelay(state, delayTime, typical);
 		addReceiver(lock);
 		addProvider(unlock);
 		add(this.delay);
@@ -21,13 +21,13 @@ public class Server extends Macro
 		this.pool = pool;
 		}
 
-	public Server(SimState state, Resource typical, int initialResourceAllocation, double delay)
+	public Server(SimState state, Resource typical, int initialResourceAllocation, double delayTime)
 		{
-		this(state, typical, new Pool(initialResourceAllocation), 1.0, delay);
+		this(state, typical, new Pool(initialResourceAllocation), 1.0, delayTime);
 		}
 		
 	public String getName()
 		{
-		return "Process(" + pool.getResource() + ", " + delay.getDelay() + ")";
+		return "Process(" + pool.getResource() + ", " + delay.getDelayTime() + ")";
 		}
 	}

@@ -30,24 +30,36 @@ public abstract class Provider implements Named
 	protected LinkedList<Entity> entities;
 	/** The model. */
 	protected SimState state;
-	ArrayList<Receiver> receivers;
+	protected ArrayList<Receiver> receivers;
+	
+	public static final int DISTRIBUTION_STRATEGY_OFFER_IN_ORDER = 0;
+	public static final int DISTRIBUTION_STRATEGY_OFFER_SHUFFLE = 1;
+	public static final int DISTRIBUTION_STRATEGY_OFFER_ONE_RANDOM = 2;
+	int distributionStrategy;
 	boolean shufflesReceivers;
 	boolean offersTakeItOrLeaveIt;
 	
+	
+	public void clear()
+		{
+		if (entities != null) entities.clear();
+		if (resource != null) resource.clear();
+		}
+		
 	/** 
 	Returns the typical kind of resource the Provider provides.  This should always be zero and not used except for type checking.
 	*/
 	public Resource getTypicalResource() { return typical; }
 	
 	/** 
-	Returns whether receivers are shuffled prior to being given offers.
+	Returns the distribution strategy.
 	*/
-	public boolean getShufflesReceivers() { return shufflesReceivers; }
+	public int getDistributionStrategy() { return distributionStrategy; }
 	
 	/** 
-	Sets whether receivers are shuffled prior to being given offers.
+	Sets the distribution strategy.
 	*/
-	public void setShufflesReceivers(boolean val) { shufflesReceivers = val; }
+	public void setDistributionStrategy(int val) { distributionStrategy = val; }
 
 	/** 
 	Returns whether receivers are offered take-it-or-leave-it offers.
@@ -165,26 +177,35 @@ public abstract class Provider implements Named
 	protected boolean offerReceivers()
 		{
 		boolean result = false;
-		CountableResource cr = (CountableResource) typical;
-		double amt = resource.getAmount();
-		if (shufflesReceivers)
+		switch(distributionStrategy)
 			{
-			shuffle();
-			while(true)
+			case DISTRIBUTION_STRATEGY_OFFER_IN_ORDER:
 				{
-				Receiver r = nextShuffledReceiver();
-				if (r == null) break;
-				result = result || offerReceiver(r);
-				if (result && getOffersTakeItOrLeaveIt()) break;
+				for(Receiver r : receivers)
+					{
+					result = result || offerReceiver(r);
+					if (result && getOffersTakeItOrLeaveIt()) break;
+					}
 				}
-			}
-		else
-			{
-			for(Receiver r : receivers)
+			break;
+			case DISTRIBUTION_STRATEGY_OFFER_SHUFFLE:
 				{
-				result = result || offerReceiver(r);
-				if (result && getOffersTakeItOrLeaveIt()) break;
+				shuffle();
+				while(true)
+					{
+					Receiver r = nextShuffledReceiver();
+					if (r == null) break;
+					result = result || offerReceiver(r);
+					if (result && getOffersTakeItOrLeaveIt()) break;
+					}
 				}
+			break;
+			case DISTRIBUTION_STRATEGY_OFFER_ONE_RANDOM:
+				{
+				Receiver r = receivers.get(state.random.nextInt(receivers.size()));
+				result = offerReceiver(r);
+				}
+			break;
 			}
 		return result;
 		}
