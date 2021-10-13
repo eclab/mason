@@ -19,24 +19,24 @@ public class RMIProxy<T extends Serializable, P extends Number2D>
 {
 	private static final long serialVersionUID = 1L;
 
-	TransportRMIInterface[] cache;
+	GridRMI[] cache;
 	int fieldId;
 
 	public RMIProxy(Partition ps, HaloGrid2D haloGrid)
 	{
 		this.fieldId = haloGrid.getFieldIndex();
-		this.cache = new TransportRMIInterface[ps.getNumProcessors()];
+		this.cache = new GridRMI[ps.getNumProcessors()];
 	}
 
 	@SuppressWarnings("unchecked")
-	public TransportRMIInterface<T, P> getField(int pid) throws RemoteException
+	public GridRMI<T, P> getField(int pid) throws RemoteException
 	{
-		TransportRMIInterface<T, P> transportRMI = cache[pid];
-		if (transportRMI == null)
+		GridRMI<T, P> grid = cache[pid];
+		if (grid == null)
 		{
-			transportRMI = RemoteProcessor.getProcessor(pid).getTransportRMI(fieldId);
-			cache[pid] = transportRMI;
+			grid = RemoteProcessor.getProcessor(pid).getGrid(fieldId);
+			cache[pid] = grid;
 		}
-		return transportRMI;
+		return grid;
 	}
 }

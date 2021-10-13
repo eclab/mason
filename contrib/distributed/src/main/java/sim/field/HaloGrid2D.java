@@ -22,7 +22,7 @@ import java.util.function.Consumer;
  * @param <S> The Type of Storage to use
  */
 public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
-		extends UnicastRemoteObject implements TransportRMIInterface<T, Number2D>, Synchronizable
+		extends UnicastRemoteObject implements GridRMI<T, Number2D>, Synchronizable
 		{
 	private static final long serialVersionUID = 1L;
 
@@ -821,12 +821,21 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			addLocal((Number2D) payloadWrapper.loc, (T) payloadWrapper.payload);
 		}
 	}
-
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/* RMI METHODS */
 	/**
 	 * This method queues an object t to be set at or added to point p at end of the
 	 * time step, via addLocal(). This is called remotely via RMI, and is part of
-	 * the TransportRMIInterface. Don't call this directly.
+	 * the GridRMI. Don't call this directly.
 	 */
 	
 	Object addRMILock = new Object[0];
@@ -845,7 +854,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	/**
 	 * This method queues an agent t and scheduling information to be set at or added to point p at end of the
 	 * time step, via addLocal(). This is called remotely via RMI, and is part of
-	 * the TransportRMIInterface. Don't call this directly.
+	 * the GridRMI. Don't call this directly.
 	 */
 	public void addRMI(Number2D p, T t, int ordering, double time) throws RemoteException
 	{
@@ -869,7 +878,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * the end of the time step via removeLocal(). For DObjectGrid2D the object is
 	 * replaced with null. For DIntGrid2D and DDoubleGrid2D the object is replaced
 	 * with 0. This is called remotely via RMI, and is part of the
-	 * TransportRMIInterface. Don't call this directly.
+	 * GridRMI. Don't call this directly.
 	 */
 	public void removeRMI(Number2D p, long id) throws RemoteException
 	{
@@ -882,7 +891,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	/**
 	 * This method queues all objects at a point p to be removed at the end of the
 	 * time step. This is only used by DDenseGrid2D. This is called remotely via
-	 * RMI, and is part of the TransportRMIInterface. Don't call this directly.
+	 * RMI, and is part of the GridRMI. Don't call this directly.
 	 */
 	public void removeAllRMI(Number2D p) throws RemoteException
 	{
@@ -896,7 +905,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * This method queues the get requests via RMI. From the Perspective of the
 	 * requesting node this grid is remote, it will add the result to a queue and
 	 * return all the objects in the queue after the current time step. This is
-	 * called remotely via RMI, and is part of the TransportRMIInterface. Don't call
+	 * called remotely via RMI, and is part of the GridRMI. Don't call
 	 * this directly.
 	 */
 	public void getRMI(Number2D p, RemotePromise promise) throws RemoteException
@@ -917,7 +926,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * This method entertains the get requests via RMI. From the Perspective of the
 	 * requesting node this grid is remote, it will add the result to a queue and
 	 * return all the objects in the queue after the current time step. This is
-	 * called remotely via RMI, and is part of the TransportRMIInterface. Don't call
+	 * called remotely via RMI, and is part of the GridRMI. Don't call
 	 * this directly.
 	 */
 	public void getRMI(Number2D p, long id, RemotePromise promise) throws RemoteException
