@@ -11,7 +11,6 @@ import sim.engine.Stopping;
  */
 public class AgentWrapper extends MigratableObject implements Serializable
 {
-
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -20,7 +19,7 @@ public class AgentWrapper extends MigratableObject implements Serializable
 	 * <br>
 	 * Default: 1
 	 */
-	public final int ordering;
+	public int ordering;
 
 	/**
 	 * time for the scheduler. Values less than zero are considered invalid <br>
@@ -28,41 +27,36 @@ public class AgentWrapper extends MigratableObject implements Serializable
 	 * <br>
 	 * Default: -1.0
 	 */
-	public final double time;
+	public double time;
 
-	public final Stopping agent;
-
-	public AgentWrapper(final Stopping agent)
-	{
-		ordering = 1;
-		time = -1.0;
-		this.agent = agent;
-	}
-
-	public AgentWrapper(final int ordering, final Stopping agent)
-	{
-		this.ordering = ordering;
-		time = -1.0;
-		this.agent = agent;
-	}
-
-	public AgentWrapper(final double time, final Stopping agent)
-	{
-		ordering = 1;
-		this.time = time;
-		this.agent = agent;
-	}
+	public Stopping agent;
+	
+	public double interval; 
 
 	public AgentWrapper(final int ordering, final double time, final Stopping agent)
 	{
 		this.ordering = ordering;
 		this.time = time;
 		this.agent = agent;
+		this.interval = -1;
 	}
+
+	public AgentWrapper(final int ordering, final double time, final Stopping agent, double interval)
+	{
+		this.ordering = ordering;
+		this.time = time;
+		this.agent = agent;
+		this.interval = interval;
+	}
+	
+	public boolean isRepeating()
+		{
+		return interval < 0;
+		}
 
 	public String toString()
 	{
-		return "AgentWrapper [ordering=" + ordering + ", time=" + time + ", agent=" + agent + "]";
+		return "AgentWrapper [ordering=" + ordering + ", time=" + time + ", agent=" + agent + ", interval=" + (interval < 0 ? "None" : interval) + "]";
 	}
 
 }

@@ -526,8 +526,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		// If local, then MPI
 		if (state.getTransporter().isNeighbor(getPartition().toPartitionPID(p)))
 			{
-			DistributedIterativeRepeat iterativeRepeat = new DistributedIterativeRepeat((Stopping) t, time, interval, ordering);
-			state.getTransporter().migrateRepeatingAgent(iterativeRepeat, getPartition().toPartitionPID(p), p, this.fieldIndex);
+			state.getTransporter().migrateAgent(ordering, time, interval, (Stopping) t, getPartition().toPartitionPID(p), p, this.fieldIndex);
 			}
 		else // ...otherwise, RMI
 			{
@@ -718,6 +717,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		for (Triplet<Number2D, T, double[]> pair : addQueue)
 		{
 			addLocal(pair.a, pair.b);
+			if (pair.b instanceof DObject) ((DObject)(pair.b)).migrated(state);
 			
 			// Reschedule
 			if (pair.c != null)
@@ -806,19 +806,19 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	@SuppressWarnings("unchecked")
 	public void addPayload(PayloadWrapper payloadWrapper)
 	{
-		if (payloadWrapper.payload instanceof DistributedIterativeRepeat)
-		{
-			DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
-			addLocal((Number2D) payloadWrapper.loc, (T) iterativeRepeat.getSteppable());
-		}
-		else if (payloadWrapper.payload instanceof AgentWrapper)
+		
+		if (payloadWrapper.payload instanceof AgentWrapper)
 		{
 			AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
 			addLocal((Number2D) payloadWrapper.loc, (T) agentWrapper.agent);
+			if (agentWrapper.agent instanceof DObject)
+				((DObject)(agentWrapper.agent)).migrated(state);
 		}
 		else
 		{
 			addLocal((Number2D) payloadWrapper.loc, (T) payloadWrapper.payload);
+			if (payloadWrapper.payload instanceof DObject)
+				((DObject)(payloadWrapper.payload)).migrated(state);
 		}
 	}
 	
