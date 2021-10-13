@@ -194,13 +194,13 @@ public class DSimState extends SimState
 	 */
 	void syncFields() throws MPIException, RemoteException
 	{
-		for (final Synchronizable haloField : fieldList)
+		for (HaloGrid2D haloField : fieldList)
 			haloField.syncHalo();
 	}
 
 	void syncRemoveAndAdd() throws MPIException, RemoteException
 	{
-		for (final HaloGrid2D<?, ?> haloField : fieldList)
+		for (HaloGrid2D haloField : fieldList)
 			haloField.syncRemoveAndAdd();
 	}
 
@@ -535,7 +535,7 @@ public class DSimState extends SimState
 		MPI.COMM_WORLD.barrier();
 
 		// Raj rewrite
-		for (Synchronizable field : fieldList)
+		for (HaloGrid2D field : fieldList)
 		{
 
 			
@@ -861,7 +861,7 @@ public class DSimState extends SimState
 		{
 			syncFields();
 
-			for (final Synchronizable haloField : fieldList)
+			for (HaloGrid2D haloField : fieldList)
 				haloField.initRemote();
 
 			if (partition.isRootProcessor())
@@ -1112,7 +1112,7 @@ public class DSimState extends SimState
 	}
 	
 	//testing method: counts agents in each storage (not in halo) and sums them.  Should remain constant!
-	protected int countTotalAgents(Synchronizable field) {
+	protected int countTotalAgents(HaloGrid2D field) {
 		
 	
 		int total = 0;
@@ -1133,16 +1133,15 @@ public class DSimState extends SimState
 
 	}
 	
-	protected int countLocal(Synchronizable field) {
+	protected int countLocal(HaloGrid2D field) {
 		
-		HaloGrid2D haloGrid2D = (HaloGrid2D) field;
 		int count = 0;
 
 		// ContinousStorage, do we need its own case anymore? We may be able to combine with else code.
-		if (haloGrid2D.getStorage() instanceof ContinuousStorage)
+		if (field.getStorage() instanceof ContinuousStorage)
 		{
 
-			ContinuousStorage st = (ContinuousStorage) haloGrid2D.getStorage();
+			ContinuousStorage st = (ContinuousStorage) field.getStorage();
 			// for cell
 			for (int i = 0; i < st.storage.length; i++)
 			{
@@ -1161,7 +1160,7 @@ public class DSimState extends SimState
 		
 		else {
 			
-			GridStorage st = ((HaloGrid2D) field).getStorage();
+			GridStorage st = field.getStorage();
 
 			// go by point here
 			for (Int2D p : st.getShape().getPointList())

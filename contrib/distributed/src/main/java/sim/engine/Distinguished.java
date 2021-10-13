@@ -15,7 +15,8 @@ import java.rmi.RemoteException;
  * The modeler needs to implement the method of the class based on needs
  */
 
-public interface Distinguished extends Remote {
+public interface Distinguished extends Remote 
+{
 	
 	/**
 	 * Respond to a remote request of some data.
@@ -26,5 +27,4 @@ public interface Distinguished extends Remote {
 	 */
 	
 	public Serializable respondToRemote(Integer tag, Serializable argument) throws RemoteException;
-	
 }

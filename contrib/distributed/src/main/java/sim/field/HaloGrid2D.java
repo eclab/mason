@@ -22,7 +22,7 @@ import java.util.function.Consumer;
  * @param <S> The Type of Storage to use
  */
 public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
-		extends UnicastRemoteObject implements GridRMI<T, Number2D>, Synchronizable
+		extends UnicastRemoteObject implements GridRMI<T, Number2D>
 		{
 	private static final long serialVersionUID = 1L;
 
