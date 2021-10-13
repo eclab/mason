@@ -3,7 +3,7 @@ package sim.field;
 import java.rmi.RemoteException;
 
 import mpi.MPIException;
-import sim.engine.transport.PayloadWrapper;
+import sim.engine.mpi.*;
 
 /**
  * A synchronizable object used by DSimSate.

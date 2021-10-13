@@ -1,4 +1,4 @@
-package sim.engine.transport;
+package sim.engine.mpi;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,7 +26,7 @@ import sim.util.*;
  * In Distributed Mason moving objects from one processor to another is called
  * transportation and transporting agents is called migration.
  */
-public class TransporterMPI
+public class Transporter
 {
 	int numNeighbors; // number of direct neighbors
 	int[] src_count, src_displ, dst_count, dst_displ;
@@ -40,7 +40,7 @@ public class TransporterMPI
 
 	protected boolean withRegistry;
 
-	public TransporterMPI(final Partition partition)
+	public Transporter(final Partition partition)
 	{
 		this.partition = partition;
 		this.withRegistry = false;

@@ -7,7 +7,7 @@ import java.util.*;
 import mpi.*;
 import sim.app.dheatbugs.DHeatBug;
 import sim.engine.*;
-import sim.engine.transport.*;
+import sim.engine.mpi.*;
 import sim.field.partitioning.*;
 import sim.field.storage.*;
 import sim.util.*;
@@ -45,7 +45,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	// My field's index
 	int fieldIndex;
 	// My RMI Proxy
-	RMIProxy<T, Number2D> proxy;
+	GridRMICache<T, Number2D> proxy;
 
 	// The following four queues are how RMI adds, removes, and fetches elements on
 	// behalf of remote processors.
@@ -664,13 +664,13 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 
 
 	/**
-	 * Initializes the RMIProxy for this halogrid. Called by DSimState. Don't call
+	 * Initializes the GridRMICache for this halogrid. Called by DSimState. Don't call
 	 * this directly.
 	 *
 	 */
 	public void initRemote()
 	{
-		proxy = new RMIProxy<>(getPartition(), this);
+		proxy = new GridRMICache<>(getPartition(), this);
 	}
 
 	/**
@@ -1100,6 +1100,35 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 
 			return overlaps;
 		}
+	}
+}
+
+
+// An GridRMICache holds a cache of GridRMI objects (RMI pointers to remote HaloGrids) for a given HaloGrid2D
+@SuppressWarnings("rawtypes")
+class GridRMICache<T extends Serializable, P extends Number2D>
+{
+	private static final long serialVersionUID = 1L;
+
+	GridRMI[] cache;
+	int fieldId;
+
+	public GridRMICache(Partition ps, HaloGrid2D haloGrid)
+	{
+		this.fieldId = haloGrid.getFieldIndex();
+		this.cache = new GridRMI[ps.getNumProcessors()];
+	}
+
+	@SuppressWarnings("unchecked")
+	public GridRMI<T, P> getField(int pid) throws RemoteException
+	{
+		GridRMI<T, P> grid = cache[pid];
+		if (grid == null)
+		{
+			grid = RemoteProcessor.getProcessor(pid).getGrid(fieldId);
+			cache[pid] = grid;
+		}
+		return grid;
 	}
 }
 

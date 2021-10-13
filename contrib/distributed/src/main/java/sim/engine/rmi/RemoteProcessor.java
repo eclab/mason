@@ -5,7 +5,6 @@ import java.rmi.server.*;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sim.engine.transport.*;
 import sim.display.*;
 import sim.field.storage.*;
 import sim.util.*;
@@ -13,7 +12,6 @@ import sim.engine.*;
 
 public class RemoteProcessor extends UnicastRemoteObject implements VisualizationProcessor
 {
-	// public class RemoteProcessor implements VisualizationProcessor {
 	private static final long serialVersionUID = 1L;
 
 	DSimState dSimState;

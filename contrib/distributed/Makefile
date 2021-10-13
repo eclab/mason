@@ -22,7 +22,8 @@ sim/app/dheatbugs/*.java \
 sim/app/dheatbugs/display/*.java \
 sim/app/dschelling/*.java \
 sim/engine/*.java \
-sim/engine/transport/*.java \
+sim/engine/mpi/*.java \
+sim/engine/rmi/*.java \
 sim/field/*.java \
 sim/field/continuous/*.java \
 sim/field/grid/*.java \

@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.logging.*;
 import ec.util.*;
 import mpi.*;
-import sim.engine.transport.*;
+import sim.engine.mpi.*;
 import sim.field.*;
 import sim.field.partitioning.*;
 import sim.field.storage.*;
@@ -46,8 +46,8 @@ public class DSimState extends SimState
 
 	/** The Partition of the DSimState */
 	protected QuadTreePartition partition;
-	/** The DSimState's TransporterMPI interface */
-	protected TransporterMPI transporter;
+	/** The DSimState's Transporter interface */
+	protected Transporter transporter;
 	HashMap<String, Serializable> rootInfo = null;
 	HashMap<String, Serializable>[] init = null;
 
@@ -106,7 +106,7 @@ public class DSimState extends SimState
 		this.partition = new QuadTreePartition(width, height, isToroidal, aoi);
 		partition.initialize();
 		balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
-		transporter = new TransporterMPI(partition);
+		transporter = new Transporter(partition);
 		fieldList = new ArrayList<>();
 		rootInfo = new HashMap<>();
 		withRegistry = false;
@@ -927,7 +927,7 @@ public class DSimState extends SimState
 	/*
 	 * @return the Transporter
 	 */
-	public TransporterMPI getTransporter()
+	public Transporter getTransporter()
 		{
 		return transporter;
 		}
