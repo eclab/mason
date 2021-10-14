@@ -1,14 +1,16 @@
 package sim.display;
 
-import sim.field.continuous.*;
-import sim.engine.*;
-import sim.field.storage.*;
-import sim.field.partitioning.*;
-import java.rmi.*;
-import java.util.*;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.Map.Entry;
 
-import sim.util.*;
+import sim.engine.DObject;
+import sim.field.continuous.Continuous2D;
+import sim.field.storage.ContinuousStorage;
+import sim.util.Double2D;
+import sim.util.Int2D;
+import sim.util.IntRect2D;
 
 @SuppressWarnings("rawtypes")
 public class Continuous2DProxy extends Continuous2D implements UpdatableProxy

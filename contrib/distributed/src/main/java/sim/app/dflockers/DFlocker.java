@@ -7,6 +7,7 @@
 package sim.app.dflockers;
 
 import java.rmi.Remote;
+import java.util.ArrayList;
 import java.util.List;
 
 import ec.util.MersenneTwisterFast;
@@ -14,8 +15,7 @@ import sim.engine.DSteppable;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
 import sim.portrayal.Oriented2D;
-import sim.util.*;
-import java.util.*;
+import sim.util.Double2D;
 
 public class DFlocker extends DSteppable implements Remote, Oriented2D
 {

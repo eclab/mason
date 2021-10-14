@@ -2,7 +2,6 @@ package sim.app.dpso;
 
 
 
-import sim.engine.DObject;
 import sim.engine.DSteppable;
 import sim.engine.SimState;
 import sim.util.Double2D;

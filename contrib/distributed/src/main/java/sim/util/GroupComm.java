@@ -2,7 +2,10 @@ package sim.util;
 
 import java.util.ArrayList;
 
-import mpi.*;
+import mpi.Comm;
+import mpi.Group;
+import mpi.MPI;
+import mpi.MPIException;
 import sim.field.partitioning.QuadTreeNode;
 
 /**

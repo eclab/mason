@@ -6,10 +6,9 @@
 
 package sim.app.dheatbugs.display;
 
-import sim.engine.*;
-import sim.field.grid.*;
-import sim.util.*;
-import sim.display.*;
+import sim.display.DenseGrid2DProxy;
+import sim.display.DoubleGrid2DProxy;
+import sim.display.SimStateProxy;
 
 public class HeatBugsProxy extends SimStateProxy
     {

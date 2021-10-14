@@ -13,7 +13,7 @@ import mpi.MPIException;
 import sim.engine.DSteppable;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
-import sim.util.*;
+import sim.util.Double2D;
 
 interface DFlockerDummyRemote extends Remote
 {

@@ -6,12 +6,15 @@
 
 package sim.app.dantsforage;
 
-import sim.portrayal.*;
-import sim.util.*;
-import sim.engine.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+
+import sim.engine.DSteppable;
+import sim.engine.SimState;
+import sim.portrayal.DrawInfo2D;
+import sim.util.Int2D;
 
 public class DAnt extends DSteppable implements Remote
 {

@@ -3,49 +3,68 @@ import java.util.*;
 
 public class Transformer extends Provider implements Receiver
     {
-
-	// Provider[] providers[];
-    // Resource[] input; // our stash of ingredients
-    // Resource[] output; // our stash of product
-    // Pair<Resource[], Resource[]> recipe;
-
     Resource typicalIn;
-    Double ratio; // ratio = output / input
-
+	Resource output;
+	double atLeastOut;
+    double atMostOut;
+    double ratioIn;
+    double ratioOut;
 	
-	public Transformer(SimState state, Resource typical, Resource typicalIn, Double ratio)
+	public Transformer(SimState state, Resource typicalOut, Resource typicalIn, double ratioIn, double ratioOut)
 		{
-            //typical being our output resource
-		    super(state, typical);
-            this.typicalIn = typicalIn;
-            this.ratio = ratio;
+		// typical being our output CountableResource
+		super(state, typicalOut);
+		this.typicalIn = typicalIn.duplicate();
+		this.ratioIn = ratioIn;
+		this.ratioOut = ratioOut;
+		output = typical.duplicate();
 		}
 
-    public void accept(Provider provider, Resource amount, double atLeast, double atMost)
-        {
-            double amt = amount.getAmount();
-            Resource output = typical.duplicate();
+	protected boolean offerReceiver(Receiver receiver)
+		{
+		return receiver.accept(this, output, atLeastOut, atMostOut);
+		}
 
+    public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
+        {       
+		if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
 
-
-            double leastOut = ratio * atLeast;
-            double mostOut = ratio * atMost;
-            output.setAmount(mostOut);
-            // offerReceivers(output, leastOut, mostOut);
-            offerReceivers(output);
-            // This comes into problems when we get to ratios with discrete objects..
-            // TODO: Fix this..
-            double diff = mostOut - output.getAmount();
-            if(diff == 0)
-                {
-                    amount.reduce(diff/ratio);
-                }
-
-
+		if (amount instanceof Entity)
+			{
+			if (typical instanceof Entity)
+				{
+            	atLeastOut = 0;
+            	atMostOut = 0;
+            	output = (Entity)(output.duplicate());
+            	return offerReceivers();
+				}
+			else
+				{
+            	atLeastOut = ratioOut / ratioIn;
+            	atMostOut = ratioOut / ratioIn;
+				((CountableResource)output).setAmount(ratioOut / ratioIn);
+            	return offerReceivers();
+				}
+			}
+		else
+			{
+            // FIXME:
+            // This comes into problems when we get to exchangeRates with discrete objects..
+            atLeastOut = (atLeast / ratioIn) * ratioOut;
+            atMostOut = (atMost / ratioIn) * ratioOut;
+            ((CountableResource)output).setAmount(atMostOut);
+            boolean retval = offerReceivers();
+            if (retval)
+            	{
+            	((CountableResource)amount).setAmount((((CountableResource)output).getAmount() * ratioIn) / ratioOut);			// is this right?
+            	}
+            return retval;
+			}
         }
+        
     public String getName()
         {
-            return "";
+		return "Transformer(" + typicalIn + " -> " + typical + ", " + ratioIn + "/" + ratioOut + ")";
         }
 
     }

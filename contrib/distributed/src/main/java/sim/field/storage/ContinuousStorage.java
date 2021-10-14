@@ -5,7 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import sim.engine.DObject;
-import sim.util.*;
+import sim.util.Double2D;
+import sim.util.Int2D;
+import sim.util.IntRect2D;
+import sim.util.MPIParam;
+import sim.util.Number2D;
 
 public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 {

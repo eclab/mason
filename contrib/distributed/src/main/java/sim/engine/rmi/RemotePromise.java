@@ -1,9 +1,11 @@
 package sim.engine.rmi;
 
-import java.io.*;
+import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import sim.engine.*;
-import java.rmi.*;
+
+import sim.engine.Promise;
+import sim.engine.Promised;
 
 public class RemotePromise extends UnicastRemoteObject implements Promised {
 	private static final long serialVersionUID = 1L;

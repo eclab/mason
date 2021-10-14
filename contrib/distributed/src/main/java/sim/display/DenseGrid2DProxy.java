@@ -1,11 +1,13 @@
 package sim.display;
-import sim.field.grid.*;
-import sim.engine.*;
-import sim.field.storage.*;
-import sim.field.partitioning.*;
-import java.rmi.*;
-import java.util.*;
-import sim.util.*;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+
+import sim.field.grid.DenseGrid2D;
+import sim.field.storage.DenseGridStorage;
+import sim.util.Bag;
+import sim.util.Int2D;
+import sim.util.IntRect2D;
 
 public class DenseGrid2DProxy extends DenseGrid2D implements UpdatableProxy
 	{

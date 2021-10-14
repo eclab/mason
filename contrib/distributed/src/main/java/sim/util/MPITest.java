@@ -3,7 +3,9 @@ package sim.util;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import mpi.*;
+import mpi.Comm;
+import mpi.MPI;
+import mpi.MPIException;
 
 /**
  * Internal distributed MASON class to test MPI functionality

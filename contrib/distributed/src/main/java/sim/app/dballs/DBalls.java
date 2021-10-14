@@ -8,12 +8,16 @@ import sim.engine.DSteppable;
 import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
-import sim.field.network.*;
+import sim.field.network.Network;
 import sim.util.Double2D;
 
 /*
  * Simulation based on MASON tutorial 5
  */
+
+import sim.app.dballs.*;
+
+
 public class DBalls extends DSimState {
 	private static final long serialVersionUID = 1;
 
@@ -33,7 +37,7 @@ public class DBalls extends DSimState {
 
 	public DBalls(final long seed) {
 		super(seed, 100, 100, 5);
-		enableRegistry(); // used to enable the object registry
+		//enableRegistry(); // used to enable the object registry
 
 		balls = new DContinuous2D<>(collisionDistance, this);
 		bands = new Network();

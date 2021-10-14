@@ -2,16 +2,12 @@ package sim.field.storage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.function.IntFunction;
 
-import sim.app.dheatbugs.DHeatBug;
-import sim.app.dheatbugs.DHeatBugs;
 import sim.engine.DObject;
-import sim.engine.DSimState;
-import sim.engine.DSteppable;
-import sim.engine.Steppable;
-import sim.engine.Stoppable;
-import sim.util.*;
+import sim.util.Int2D;
+import sim.util.IntRect2D;
+import sim.util.MPIParam;
+import sim.util.Number2D;
 
 /**
  * internal local storage for distributed grids.

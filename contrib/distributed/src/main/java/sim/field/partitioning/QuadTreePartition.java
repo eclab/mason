@@ -14,7 +14,13 @@ import mpi.Comm;
 import mpi.Info;
 import mpi.MPI;
 import mpi.MPIException;
-import sim.util.*;
+import sim.util.Double2D;
+import sim.util.GroupComm;
+import sim.util.Int2D;
+import sim.util.IntRect2D;
+import sim.util.MPITest;
+import sim.util.MPIUtil;
+import sim.util.Number2D;
 
 /**
  * Quad tree partition divides the world into partitions and arranging them as a

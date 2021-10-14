@@ -1,10 +1,15 @@
 package sim.field.storage;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
-import mpi.*;
-import sim.util.*;
-import java.util.*;
+import mpi.Datatype;
+import mpi.MPI;
+import mpi.MPIException;
+import sim.util.Int2D;
+import sim.util.IntRect2D;
+import sim.util.MPIParam;
+import sim.util.Number2D;
 
 /**
  * internal local storage for distributed grids.

@@ -1,9 +1,14 @@
 package sim.field.storage;
 
 import java.io.Serializable;
-import java.util.*;
-import mpi.*;
-import sim.util.*;
+import java.util.ArrayList;
+
+import mpi.MPI;
+import mpi.MPIException;
+import sim.util.Int2D;
+import sim.util.IntRect2D;
+import sim.util.MPIParam;
+import sim.util.Number2D;
 
 public class IntGridStorage extends GridStorage<Integer>
 {

@@ -1,4 +1,4 @@
-package sim.engine.transport;
+package sim.engine.mpi;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,7 +26,7 @@ import sim.util.*;
  * In Distributed Mason moving objects from one processor to another is called
  * transportation and transporting agents is called migration.
  */
-public class TransporterMPI
+public class Transporter
 {
 	int numNeighbors; // number of direct neighbors
 	int[] src_count, src_displ, dst_count, dst_displ;
@@ -40,7 +40,7 @@ public class TransporterMPI
 
 	protected boolean withRegistry;
 
-	public TransporterMPI(final Partition partition)
+	public Transporter(Partition partition)
 	{
 		this.partition = partition;
 		this.withRegistry = false;
@@ -102,7 +102,7 @@ public class TransporterMPI
 			for (int i : neighbors)
 				dstMap.putIfAbsent(i, new RemoteOutputStream()); //new streams
 		}
-		catch (final IOException e)
+		catch (IOException e)
 		{
 			e.printStackTrace();
 			System.exit(-1);
@@ -143,11 +143,11 @@ public class TransporterMPI
 		}
 
 		// Concat neighbor streams into one
-		final ByteArrayOutputStream objstream = new ByteArrayOutputStream();
+		ByteArrayOutputStream objstream = new ByteArrayOutputStream();
 		for (int i : neighbors)
 			objstream.write(dstMap.get(i).toByteArray());
 
-		final ByteBuffer sendbuf = ByteBuffer.allocateDirect(objstream.size());
+		ByteBuffer sendbuf = ByteBuffer.allocateDirect(objstream.size());
 		sendbuf.put(objstream.toByteArray()).flip();
 
 		
@@ -163,7 +163,7 @@ public class TransporterMPI
 			dst_displ[i] = total;
 			total += dst_count[i];
 		}
-		final ByteBuffer recvbuf = ByteBuffer.allocateDirect(dst_displ[numNeighbors - 1] + dst_count[numNeighbors - 1]);
+		ByteBuffer recvbuf = ByteBuffer.allocateDirect(dst_displ[numNeighbors - 1] + dst_count[numNeighbors - 1]);
 
 		// exchange the actual object bytes
 		partition.getCommunicator().neighborAllToAllv(sendbuf, src_count, src_displ, MPI.BYTE, recvbuf, dst_count,
@@ -174,16 +174,16 @@ public class TransporterMPI
 
 		for (int i = 0; i < numNeighbors; i++)
 		{
-			final byte[] data = new byte[dst_count[i]];
+			byte[] data = new byte[dst_count[i]];
 			recvbuf.position(dst_displ[i]);
 			recvbuf.get(data);
-			final ObjectInputStream inputStream = new ObjectInputStream(new ByteArrayInputStream(data));
+			ObjectInputStream inputStream = new ObjectInputStream(new ByteArrayInputStream(data));
 
 			while (true)
 			{
 				try
 				{
-					final PayloadWrapper wrapper = (PayloadWrapper) inputStream.readObject();
+					PayloadWrapper wrapper = (PayloadWrapper) inputStream.readObject();
 					if (partition.getPID() != wrapper.destination)
 					{
 						System.err.println("This is not the correct processor");
@@ -193,7 +193,7 @@ public class TransporterMPI
 					else
 						objectQueue.add(wrapper);
 				}
-				catch (final EOFException e)
+				catch (EOFException e)
 				{
 					break;
 				}
@@ -208,41 +208,6 @@ public class TransporterMPI
 	/**
 	 * Transports the Object as well as migrates it
 	 *
-	 * @param agent
-	 * @param dst        destination pId
-	 * @param loc
-	 * @param fieldIndex
-	 *
-	 * @throws IllegalArgumentException if destination (pid) is local
-	 */
-	public void migrateAgent(final Stopping agent, final int dst, final Number2D loc,
-			final int fieldIndex)
-	{
-		AgentWrapper wrapper = new AgentWrapper(agent);
-		migrateAgent(wrapper, dst, loc, fieldIndex);
-	}
-
-	/**
-	 * Transports the Object as well as migrates it
-	 *
-	 * @param ordering
-	 * @param agent
-	 * @param dst        destination pId
-	 * @param loc
-	 * @param fieldIndex
-	 *
-	 * @throws IllegalArgumentException if destination (pid) is local
-	 */
-	public void migrateAgent(final int ordering, final Stopping agent, final int dst, final Number2D loc,
-			final int fieldIndex)
-	{
-		AgentWrapper wrapper = new AgentWrapper(ordering, agent);
-		migrateAgent(wrapper, dst, loc, fieldIndex);
-	}
-
-	/**
-	 * Transports the Object as well as migrates it
-	 *
 	 * @param ordering
 	 * @param time
 	 * @param agent
@@ -252,28 +217,9 @@ public class TransporterMPI
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void migrateAgent(final int ordering, final double time, final Stopping agent, final int dst,
-			final Number2D loc, final int fieldIndex)
+	public void migrateAgent(int ordering, double time, Stopping agent, int dst, Number2D loc, int fieldIndex)
 	{
-		AgentWrapper wrapper = new AgentWrapper(ordering, time, agent);
-		migrateAgent(wrapper, dst, loc, fieldIndex);
-	}
-
-	/**
-	 * Transports the Object as well as migrates it
-	 *
-	 * @param agentWrapper
-	 * @param dst          destination pId
-	 * @param loc
-	 * @param fieldIndex
-	 *
-	 * @throws IllegalArgumentException if destination (pid) is local
-	 */
-	public void migrateAgent(final AgentWrapper agentWrapper, final int dst, final Number2D loc,
-			final int fieldIndex)
-	{
-		// These methods differ in just the datatype of the WrappedObject
-		transportObject(agentWrapper, dst, loc, fieldIndex);
+		transportObject(new AgentWrapper(ordering, time, agent), dst, loc, fieldIndex);
 	}
 
 	/**
@@ -287,14 +233,9 @@ public class TransporterMPI
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void migrateRepeatingAgent(final DistributedIterativeRepeat iterativeRepeat, final int dst,
-			final Number2D loc, final int fieldIndex)
+	public void migrateAgent(int ordering, double time, double interval, Stopping agent, int dst, Number2D loc, int fieldIndex)
 	{
-		// TODO: do we need to synchronize something to ensure that the stoppable is
-		// stopped before we transport?
-
-		// These methods differ in just the datatype of the WrappedObject
-		transportObject(iterativeRepeat, dst, loc, fieldIndex);
+		transportObject(new AgentWrapper(ordering, time, agent, interval), dst, loc, fieldIndex);
 	}
 
 	/**
@@ -308,8 +249,7 @@ public class TransporterMPI
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void transportObject(final Serializable obj, final int dst, final Number2D loc,
-			final int fieldIndex)
+	public void transportObject(Serializable obj, int dst, Number2D loc, int fieldIndex)
 	{
 		//shouldn't be calling this if local move
 		if (partition.getPID() == dst)
@@ -318,7 +258,7 @@ public class TransporterMPI
 
 		// Wrap the agent, this is important because we want to keep track of
 		// dst, which could be the diagonal processor
-		final PayloadWrapper wrapper = new PayloadWrapper(dst, obj, loc, fieldIndex);
+		PayloadWrapper wrapper = new PayloadWrapper(dst, obj, loc, fieldIndex);
 
 		if (withRegistry)
 		{
@@ -332,7 +272,7 @@ public class TransporterMPI
 		{
 			dstMap.get(dst).write(wrapper);
 		}
-		catch (final Exception e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 			System.exit(-1);
@@ -346,7 +286,7 @@ public class TransporterMPI
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public boolean isNeighbor(final int loc)
+	public boolean isNeighbor(int loc)
 	{
 		return dstMap.containsKey(loc);
 	}
@@ -363,7 +303,7 @@ public class TransporterMPI
 			os = new ObjectOutputStream(out);
 		}
 
-		public void write(final Object obj) throws IOException
+		public void write(Object obj) throws IOException
 		{
 			// virtual write really write only at the end of the simulation steps
 			this.obj.add(obj);

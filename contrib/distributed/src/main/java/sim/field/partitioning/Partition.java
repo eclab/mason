@@ -1,11 +1,14 @@
 package sim.field.partitioning;
 
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.function.Consumer;
-import sim.engine.*;
-import mpi.*;
-import sim.util.*;
+
+import mpi.Comm;
+import mpi.MPI;
+import mpi.MPIException;
+import sim.engine.DSimState;
+import sim.util.IntRect2D;
+import sim.util.Number2D;
 
 /**
  * An interface for dividing the world into multiple partitions. Each partition

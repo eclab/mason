@@ -15,11 +15,10 @@ import java.util.stream.IntStream;
 
 import mpi.MPI;
 import mpi.MPIException;
-import sim.app.dflockers.DFlockers;
 import sim.engine.DSimState;
 import sim.field.continuous.DContinuous2D;
+import sim.util.Double2D;
 import sim.util.Timing;
-import sim.util.*;
 
 public class DFlockersTest extends DSimState
 {

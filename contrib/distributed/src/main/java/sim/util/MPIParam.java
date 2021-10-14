@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import mpi.*;
+import mpi.Datatype;
+import mpi.MPI;
+import mpi.MPIException;
 import sim.field.storage.GridStorage;
-import sim.util.*;
 
 // TODO need to use generic for other type of rectangles
 /**

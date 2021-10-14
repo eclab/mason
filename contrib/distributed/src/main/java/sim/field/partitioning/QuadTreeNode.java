@@ -1,8 +1,11 @@
 package sim.field.partitioning;
 
-import java.awt.print.Printable;
 import java.util.ArrayList;
-import sim.util.*;
+
+import sim.util.Double2D;
+import sim.util.Int2D;
+import sim.util.IntRect2D;
+import sim.util.Number2D;
 
 // TODO Currently all shapes are restricted to IntRect2D - switch to NdRectangle once it is completed
 /**

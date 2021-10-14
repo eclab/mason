@@ -1,25 +1,13 @@
 package sim.app.dpso;
 
-import java.util.ArrayList;
-
 import java.util.List;
 
-import sim.app.dflockers.DFlocker;
-import sim.app.dflockers.DFlockers;
-import sim.app.dpso.Booth;
-import sim.app.dpso.Evaluatable;
-import sim.app.dpso.Griewangk;
-import sim.app.dpso.DParticle;
-import sim.app.dpso.Rastrigin;
-import sim.app.dpso.Rosenbrock;
 import sim.engine.DSimState;
 import sim.engine.DSteppable;
 import sim.engine.Schedule;
 import sim.engine.SimState;
-import sim.field.continuous.Continuous2D;
 import sim.field.continuous.DContinuous2D;
 import sim.util.Double2D;
-import sim.util.Int2D;
 import sim.util.MutableDouble2D;
 import sim.util.Timing;
 

@@ -1,18 +1,19 @@
 package sim.app.dflockers.dregistry;
 
 import java.rmi.AccessException;
+
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 import mpi.MPI;
 import mpi.MPIException;
-import sim.engine.DSteppable;
 import sim.engine.DSimState;
+import sim.engine.DSteppable;
 import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
+import sim.util.Double2D;
 import sim.util.Timing;
-import sim.util.*;
 
 public class DFlockersWithDRegistry extends DSimState
 {
@@ -36,7 +37,7 @@ public class DFlockersWithDRegistry extends DSimState
 	public DFlockersWithDRegistry(final long seed)
 	{
 		super(seed, DFlockersWithDRegistry.width, DFlockersWithDRegistry.height, (int) DFlockersWithDRegistry.neighborhood);
-		enableRegistry(); // used to enable the object registry
+		//enableRegistry(); // used to enable the object registry
 		// final double[] discretizations = new double[] {
 		// DFlockersWithDRegistry.neighborhood / 1.5,
 		// DFlockersWithDRegistry.neighborhood / 1.5 };

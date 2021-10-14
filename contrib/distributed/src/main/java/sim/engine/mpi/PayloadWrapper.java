@@ -1,4 +1,4 @@
-package sim.engine.transport;
+package sim.engine.mpi;
 
 import java.io.Serializable;
 import sim.util.*;

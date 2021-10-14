@@ -12,7 +12,7 @@ import java.util.List;
 
 import sim.engine.DSteppable;
 import sim.engine.SimState;
-import sim.util.*;
+import sim.util.Double2D;
 
 public class DAgent extends DSteppable implements Remote
 {

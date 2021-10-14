@@ -1,13 +1,22 @@
 package sim.field.grid;
 
 import java.rmi.RemoteException;
-
-import sim.engine.*;
-import sim.field.*;
-import sim.field.partitioning.*;
-import sim.field.storage.*;
-import sim.util.*;
 import java.util.ArrayList;
+
+import sim.engine.DObject;
+import sim.engine.DSimState;
+import sim.engine.DistributedIterativeRepeat;
+import sim.engine.DistributedTentativeStep;
+import sim.engine.Promise;
+import sim.engine.Promised;
+import sim.engine.Stoppable;
+import sim.engine.Stopping;
+import sim.field.DAbstractGrid2D;
+import sim.field.HaloGrid2D;
+import sim.field.storage.ObjectGridStorage;
+import sim.util.GenericArray;
+import sim.util.Int2D;
+import sim.util.IntBag;
 
 /**
  * A grid that contains objects of type T. Analogous to Mason's ObjectGrid2D

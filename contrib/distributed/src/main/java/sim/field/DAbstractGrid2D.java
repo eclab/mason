@@ -1,10 +1,11 @@
 package sim.field;
 
 import sim.engine.DSimState;
-import sim.field.grid.*;
-
-import sim.field.partitioning.Partition;
-import sim.util.*;
+import sim.field.grid.AbstractGrid2D;
+import sim.util.Double2D;
+import sim.util.Int2D;
+import sim.util.IntRect2D;
+import sim.util.Number2D;
 
 /**
  * A abstract distributed Grid2D. It wraps all methods of distributed grid.

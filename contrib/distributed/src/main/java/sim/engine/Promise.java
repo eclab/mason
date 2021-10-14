@@ -1,6 +1,6 @@
 package sim.engine;
 
-import java.io.*;
+import java.io.Serializable;
 
 /**
  * This class eventually provides data in the future (usually one MASON timestep

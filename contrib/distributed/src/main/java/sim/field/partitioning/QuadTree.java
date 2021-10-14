@@ -1,7 +1,15 @@
 package sim.field.partitioning;
 
-import java.util.*;
-import sim.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
+import sim.util.Int2D;
+import sim.util.IntRect2D;
+import sim.util.Number2D;
 
 public class QuadTree
 {

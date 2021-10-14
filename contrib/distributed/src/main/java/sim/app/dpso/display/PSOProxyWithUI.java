@@ -1,23 +1,15 @@
 package sim.app.dpso.display;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
-import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
-import sim.app.dflockers.display.FlockersProxy;
-import sim.app.dpso.DPSO;
-import sim.app.dpso.DParticle;
 import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.engine.SimState;
-import sim.portrayal.DrawInfo2D;
 import sim.portrayal.continuous.ContinuousPortrayal2D;
 import sim.portrayal.simple.MovablePortrayal2D;
-import sim.portrayal.simple.RectanglePortrayal2D;
-import sim.util.gui.SimpleColorMap;
 
 public class PSOProxyWithUI extends GUIState{
 

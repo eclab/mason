@@ -1,12 +1,11 @@
 package sim.display;
-import sim.field.grid.*;
-import sim.engine.*;
-import sim.field.storage.*;
-import sim.field.partitioning.*;
-import java.rmi.*;
-import java.util.ArrayList;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 
-import sim.util.*;
+import sim.field.grid.DoubleGrid2D;
+import sim.field.storage.DoubleGridStorage;
+import sim.util.Int2D;
+import sim.util.IntRect2D;
 
 public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
 	{

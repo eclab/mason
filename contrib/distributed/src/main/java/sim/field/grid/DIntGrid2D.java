@@ -1,11 +1,14 @@
 package sim.field.grid;
 
-import java.rmi.*;
-import sim.engine.*;
-import sim.field.*;
-import sim.field.partitioning.*;
-import sim.field.storage.*;
-import sim.util.*;
+import java.rmi.RemoteException;
+
+import sim.engine.DSimState;
+import sim.engine.Promise;
+import sim.engine.Promised;
+import sim.field.DAbstractGrid2D;
+import sim.field.HaloGrid2D;
+import sim.field.storage.IntGridStorage;
+import sim.util.Int2D;
 
 /**
  * A grid that contains integers. Analogous to Mason's IntGrid2D

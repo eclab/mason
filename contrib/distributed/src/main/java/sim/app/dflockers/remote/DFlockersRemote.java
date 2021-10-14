@@ -9,8 +9,8 @@ import java.util.Date;
 import mpi.MPIException;
 import sim.engine.DSimState;
 import sim.field.continuous.DContinuous2D;
+import sim.util.Double2D;
 import sim.util.Timing;
-import sim.util.*;
 
 public class DFlockersRemote extends DSimState {
 	private static final long serialVersionUID = 1;
@@ -36,7 +36,7 @@ public class DFlockersRemote extends DSimState {
 	/** Creates a Flockers simulation with the given random number seed. */
 	public DFlockersRemote(final long seed) {
 		super(seed, DFlockersRemote.width, DFlockersRemote.height, DFlockersRemote.neighborhood);
-		enableRegistry(); // used to enable the object registry
+		//enableRegistry(); // used to enable the object registry
 
 		flockers = new DContinuous2D<>((int) (neighborhood / 1.5), this);
 	}

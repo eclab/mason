@@ -1,7 +1,7 @@
 package sim.engine;
 
-import java.io.*;
-import java.rmi.*;
+import java.io.Serializable;
+import java.rmi.RemoteException;
 
 public interface Promised extends Serializable 
 {

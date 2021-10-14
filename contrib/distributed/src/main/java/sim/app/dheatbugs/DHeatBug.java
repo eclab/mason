@@ -6,7 +6,6 @@
 
 package sim.app.dheatbugs;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import sim.engine.DSteppable;

@@ -13,7 +13,7 @@ import ec.util.MersenneTwisterFast;
 import sim.engine.DSteppable;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
-import sim.util.*;
+import sim.util.Double2D;
 
 public class DFlocker extends DSteppable implements Remote
 {

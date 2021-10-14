@@ -1,27 +1,22 @@
 package sim.field.continuous;
 
-import java.io.Serializable;
-
-import java.rmi.*;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 
 import sim.engine.DObject;
 import sim.engine.DSimState;
 import sim.engine.DistributedIterativeRepeat;
 import sim.engine.DistributedTentativeStep;
+import sim.engine.Promise;
+import sim.engine.Promised;
 import sim.engine.Stoppable;
 import sim.engine.Stopping;
 import sim.field.DAbstractGrid2D;
 import sim.field.HaloGrid2D;
-import sim.app.dflockers.DFlocker;
-import sim.app.dpso.DParticle;
-import sim.engine.*;
-import sim.field.partitioning.Partition;
 import sim.field.storage.ContinuousStorage;
-import sim.util.*;
+import sim.util.Double2D;
+import sim.util.Int2D;
 
 /**
  * A continuous field that contains lists of objects of type T. Analogous to

@@ -5,10 +5,8 @@
 */
 
 package sim.app.dflockers.display;
-import sim.engine.*;
-import sim.util.*;
-import sim.field.continuous.*;
-import sim.display.*;
+import sim.display.Continuous2DProxy;
+import sim.display.SimStateProxy;
 
 public class FlockersProxy extends SimStateProxy
     {

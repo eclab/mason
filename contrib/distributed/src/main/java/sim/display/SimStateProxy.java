@@ -1,14 +1,12 @@
 package sim.display;
 
 import java.rmi.NotBoundException;
-
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 
 import ec.util.MersenneTwisterFast;
-import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.engine.Steppable;

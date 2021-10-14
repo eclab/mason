@@ -1,10 +1,11 @@
 package sim.display;
-import sim.field.grid.*;
-import sim.engine.*;
-import sim.field.storage.*;
-import sim.field.partitioning.*;
-import java.rmi.*;
-import sim.util.*;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+
+import sim.field.grid.ObjectGrid2D;
+import sim.field.storage.ObjectGridStorage;
+import sim.util.Int2D;
+import sim.util.IntRect2D;
 
 public class ObjectGrid2DProxy extends ObjectGrid2D implements UpdatableProxy
 	{

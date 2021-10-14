@@ -1,5 +1,6 @@
 package sim.display;
-import java.rmi.*;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 
 
 /**

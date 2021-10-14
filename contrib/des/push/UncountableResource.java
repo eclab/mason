@@ -5,7 +5,7 @@
 */
 
 
-public class UncountableResource extends Resource
+public class UncountableResource extends CountableResource
 	{
 	void throwNonPositiveIntegerException(int amount)
 		{
@@ -53,9 +53,6 @@ public class UncountableResource extends Resource
 		super(other, amount);
 		}
 		
-	/**
-		Prints the resource out in a pleasing manner. 
-	*/
 	public String toString()
 		{
 		return "UncountableResource[" + name + " (" + type + "), " + amount + "]";
@@ -126,12 +123,6 @@ public class UncountableResource extends Resource
 		amount = val;
 		}
 		
-	public boolean increment()
-		{
-		amount++;
-		return true;
-		}
-
 	/**
 		Increases the amount by the given value: if the value drops
 		to beneath 0, it is set to 0 and FALSE is returned.  Else TRUE is returned.
@@ -214,4 +205,20 @@ public class UncountableResource extends Resource
 		{
 		return new UncountableResource(this);
 		}
+
+	/**
+		Returns true if this CountableResource amount is greater than to the other.
+		A NullPointerException is thrown if the other is null.
+		A RuntimeException is thrown if the other is a CountableResource of a different type.
+	*/
+	public boolean equals(Object other)
+		{
+		if (other == this) return false;		
+		if (other == null) return false;
+		if (!(other instanceof UncountableResource)) return false;
+		UncountableResource c = (UncountableResource) other;
+		if (c.type != type) return false;			
+		return (c.amount == amount);
+		}
+
 	}

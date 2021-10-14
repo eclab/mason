@@ -96,4 +96,8 @@ public abstract class DObject implements java.io.Serializable
 
 		return this.getClass().getName() + ":" + toIDString() + "@" + pid;
 	}
+	
+	/** Called when an object has been migrated to a new partition.
+		Override this as you see fit.  The default version does nothing.  */
+	public void migrated(DSimState state)  { }
 }

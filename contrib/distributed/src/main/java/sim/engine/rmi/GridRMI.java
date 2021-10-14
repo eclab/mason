@@ -4,18 +4,9 @@ import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import sim.engine.*;
 
-/**
- * Implemented by fields that will be used for RMI
- *
- *
- * @param <P> The Type of PointND to use
- * @param <T> The Type of Object in the field
- */
-public interface TransportRMIInterface<T extends Serializable, P> extends Remote
+public interface GridRMI<T extends Serializable, P> extends Remote
 {
-
 	/**
 	 * Used internally for RMI
 	 *
@@ -88,16 +79,4 @@ public interface TransportRMIInterface<T extends Serializable, P> extends Remote
 	 *                         field
 	 */
 	public abstract void removeAllRMI(P p) throws RemoteException;
-
-//	/**
-//	 * Used internally for RMI
-//	 *
-//	 * @param fromP
-//	 * @param toP
-//	 * @param t
-//	 *
-//	 * @throws RemoteException If the points are not local to the remote field
-//	 */
-//	public abstract void moveRMI(final P fromP, final P toP, final T t) throws RemoteException;
-
 }

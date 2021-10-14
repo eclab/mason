@@ -6,9 +6,15 @@
 
 package sim.app.dantsforage;
 
-import sim.engine.*;
-import sim.field.grid.*;
-import sim.util.*;
+import sim.engine.DSimState;
+import sim.engine.DSteppable;
+import sim.engine.Schedule;
+import sim.engine.SimState;
+import sim.field.grid.DDenseGrid2D;
+import sim.field.grid.DDoubleGrid2D;
+import sim.field.grid.DIntGrid2D;
+import sim.util.Int2D;
+import sim.util.Interval;
 
 public /* strictfp */ class DAntsForage extends DSimState
 {

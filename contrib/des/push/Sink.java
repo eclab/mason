@@ -23,18 +23,28 @@ public class Sink implements Receiver
 		this.typical = typical;
 		}
 
-	public void step(SimState state)
+	public boolean accept(Provider provider, Resource resource, double atLeast, double atMost)
 		{
+		if (!typical.isSameType(resource)) throwUnequalTypeException(resource);
+	
+		if (resource instanceof CountableResource) 
+			{
+			((CountableResource) resource).reduce(atMost);
+			return true;
+			}
+		else
+			{
+			return true;
+			}
 		}
 
-	public void accept(Provider provider, Resource amount, double atLeast, double atMost)
+	public void step(SimState state)
 		{
-		if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
-		amount.clear();			// accept all of it
+		// do nothing
 		}
 
 	public String getName()
 		{
-		return "";
+		return "Sink(" + typical.getName() + ")";
 		}		
 	}

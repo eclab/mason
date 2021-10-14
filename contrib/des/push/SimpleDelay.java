@@ -5,16 +5,13 @@
 
 
 import sim.engine.*;
-import sim.util.*;
 import java.util.*;
 
 /// FIXME: Anylogic has delay times which can be distributions, we should do that too
 /// FIXME: we're going to have drifts in totalResource due to IEEE 754
 
-public class Delay extends Source implements Receiver
+public class SimpleDelay extends Source implements Receiver
 	{
-	Heap heap;
-	
 	class Node
 		{
 		public Resource resource;
@@ -28,26 +25,28 @@ public class Delay extends Source implements Receiver
 		}
 	
 	double totalResource = 0.0;
+	LinkedList<Node> resources = new LinkedList<>();
+	double delayTime;
+	
+	public void clear()
+		{
+		super.clear();
+		resources.clear();
+		totalResource = 0.0;
+		}
+		
+	public double getDelayTime() { return delayTime; }
+	public void setDelayTime(double delayTime) { this.delayTime = delayTime; }
 
 	void throwInvalidNumberException(double capacity)
 		{
 		throw new RuntimeException("Capacities may not be negative or NaN.  capacity was: " + capacity);
 		}
 
-	public Delay(SimState state, Resource typical)
+	public SimpleDelay(SimState state, double delayTime, Resource typical)
 		{
 		super(state, typical);
-		heap = new Heap();
-		}
-	
-	public void clear()
-		{
-		heap = new Heap();
-		}
-		
-	protected double getDelayTime(Provider provider, Resource amount)
-		{
-		return 1.0;
+		this.delayTime = delayTime;
 		}
 		
 	public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
@@ -64,12 +63,12 @@ public class Delay extends Source implements Receiver
 			CountableResource token = (CountableResource)(cr.duplicate());
 			token.setAmount(maxIncoming);
 			cr.decrease(maxIncoming);
-			heap.add(token, getDelayTime(provider, amount));
+			resources.add(new Node(token, state.schedule.getTime() + delayTime));
 			}
 		else
 			{
-			if (heap.size() >= capacity) return false;	// we're at capacity
-			heap.add(amount, getDelayTime(provider, amount));
+			if (resources.size() >= capacity) return false;	// we're at capacity
+			resources.add(new Node(amount, state.schedule.getTime() + delayTime));
 			}
 		return true;
 		}
@@ -87,25 +86,31 @@ public class Delay extends Source implements Receiver
 		drop();
 		double time = state.schedule.getTime();
 		
-		while(((double)heap.getMinKey()) >= time)
+		Iterator<Node> iterator = resources.descendingIterator();
+		while(iterator.hasNext())
 			{
-			Resource _res = (Resource)(heap.extractMin());
-			if (entities == null)
+			Node node = iterator.next();
+			if (node.timestamp >= time)	// it's ripe
 				{
-				CountableResource res = ((CountableResource)_res);
-				resource.add(res);
-				totalResource -= res.getAmount();
+				if (entities == null)
+					{
+					CountableResource res = ((CountableResource)(node.resource));
+					iterator.remove();
+					resource.add(res);
+					totalResource -= res.getAmount();
+					}
+				else
+					{
+					entities.add((Entity)(node.resource));
+					}
 				}
-			else
-				{
-				entities.add((Entity)(_res));
-				}
+			else break;		// don't process any more
 			}
 		}
 
 	public String getName()
 		{
-		return "Delay(" + typical.getName() + ")";
+		return "SimpleDelay(" + typical.getName() + ", " + delayTime + ")";
 		}		
 	}
 	

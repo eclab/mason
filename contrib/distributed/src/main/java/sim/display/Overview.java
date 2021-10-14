@@ -1,10 +1,18 @@
 package sim.display;
-import sim.field.partitioning.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import sim.util.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.util.ArrayList;
+import java.util.HashSet;
+
+import javax.swing.JComponent;
+
+import sim.util.IntRect2D;
 
 public class Overview extends JComponent
 	{

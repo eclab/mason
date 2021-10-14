@@ -7,20 +7,34 @@
 import sim.engine.*;
 import java.util.*;
 
-/// FIXME: Anylogic has queues with different ordering policies.  That doesn't
-/// make sense for us because we just have blobs, but maybe we should revisit this.
-
 public class Queue extends Source implements Receiver
 	{
 	public Queue(SimState state, Resource typical)
 		{
 		super(state, typical);
 		}
-	
-	public void accept(Provider provider, Resource amount, double atLeast, double atMost)
+
+	public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
 		{
 		if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
-		
+		if (entities == null)
+			{
+			return acceptCountable(provider, ((CountableResource)amount), atLeast, atMost);
+			}
+		else
+			{
+			if (capacity - entities.size() >= 1)
+				{
+				entities.add((Entity)amount);
+				offerReceivers();
+				return true;
+				}
+			else return false;
+			}
+		}
+	
+	boolean acceptCountable(Provider provider, CountableResource amount, double atLeast, double atMost)
+		{
 		// FOR NOW... 
 		//
 		// If my downstream receivers don't take anough of the offer,
@@ -38,7 +52,7 @@ public class Queue extends Source implements Receiver
 			// Load no more than atMost into my resource.  This may push me above capacity.
 			resource.add(amount, atMost);
 		
-			offerReceivers(resource);
+			offerReceivers();
 		
 			// Reduce to capacity
 			if (resource.getAmount() > capacity)
@@ -46,6 +60,8 @@ public class Queue extends Source implements Receiver
 				amount.increase(resource.getAmount() - capacity);
 				resource.setAmount(capacity);
 				}
+				
+			return true;
 			}
 		else if (resource.getAmount() >= atLeast)		// I can pay the offer back if nobody takes it
 			{
@@ -58,7 +74,7 @@ public class Queue extends Source implements Receiver
 			// Load no more than atMost into my resource.  This may push me above capacity.
 			resource.add(amount, atMost);
 
-			offerReceivers(resource);
+			offerReceivers();
 
 			// Reduce to capacity
 			if (resource.getAmount() > capacity)
@@ -72,11 +88,15 @@ public class Queue extends Source implements Receiver
 				{
 				amount.increase(originalAmount - finalAmount);
 				resource.decrease(originalAmount - finalAmount);
+				return false;
 				}
+			
+			return true;
 			}
 		else	
 			{
 			// oh well, cannot accept
+			return false;
 			}
 		}
 	
@@ -87,7 +107,7 @@ public class Queue extends Source implements Receiver
 
 	public String getName()
 		{
-		return "";
+		return "Queue(" + typical.getName() + ")";
 		}		
 	}
 	

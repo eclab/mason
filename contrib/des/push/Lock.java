@@ -8,61 +8,64 @@ LOCKS allow up to N resources to pass through before refusing any more
 
 public class Lock extends Provider implements Receiver
 	{
-	MutableDouble maxLocks;
-	MutableDouble locks;
+	Pool pool;
+	double allocation;
 	
-	public Lock(SimState state, Resource typical, int numLocks)
+	public Lock(SimState state, Resource typical, Pool pool, double allocation)
 		{
 		super(state, typical);
-		if (numLocks < 0) numLocks = 0;
-		maxLocks = new MutableDouble(numLocks);
-		locks = new MutableDouble(numLocks);
+		this.allocation = allocation;
+		this.pool = pool;
+		}
+	
+	public Lock(SimState state, Resource typical, Pool pool)
+		{
+		this(state, typical, pool, Double.POSITIVE_INFINITY);
+		}
+	
+	public Lock(SimState state, Resource typical, String name)
+		{
+		this(state, typical, new Pool(new CountableResource(name, 0.0), 1.0), Double.POSITIVE_INFINITY);
 		}
 	
 	public Lock(Lock other)
 		{
 		super(other.state, other.typical);
-		maxLocks = other.maxLocks;
-		locks = other.locks;
+		this.pool = other.pool;
+		this.allocation = other.allocation;
+		}
+		
+	public double getAllocation() { return allocation; }
+	public void setAllocation(double val) { allocation = val; }
+	
+	// Locks only make take-it-or-leave-it offers
+	public boolean getOffersTakeItOrLeaveIt() { return true; }
+
+	protected boolean offerReceiver(Receiver receiver)
+		{
+		return receiver.accept(this, _amount, _atLeast, _atMost);
 		}
 	
-	/**
-	Call this to inform all receivers
-	*/
-	void offerReceivers(Resource amount, double atLeast, double atMost)
+	double _atLeast;
+	double _atMost;
+	Resource _amount;
+	
+	public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
 		{
-		double amt = amount.getAmount();
-		if (shufflesReceivers)
-			{
-			shuffle();
-			while(true)
-				{
-				Receiver r = nextShuffledReceiver();
-				if (r == null) return;
-				r.accept(this, amount, atLeast, atMost);
-				if (amount.getAmount() != amt)
-					return;
-				}
-			}
-		else
-			{
-			for(Receiver r : receivers)
-				{
-				r.accept(this, amount, atLeast, atMost);
-				if (amount.getAmount() != amt)
-					return;
-				}
-			}
-		}
+		if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
 
-	public void accept(Provider provider, Resource amount, double atLeast, double atMost)
-		{
-		double amt = amount.getAmount();
-		offerReceivers(amount, atLeast, atMost);
-		if (amt != amount.getAmount())
+		if (pool.getResource().getAmount() < allocation) return false;
+
+		_amount = amount;
+		_atLeast = atLeast;
+		_atMost = atMost;
+		boolean result = offerReceivers();
+		
+		if (result)
 			{
-			locks.val++;
+			pool.getResource().decrease(allocation);
 			}
+		return result;
 		}
 
 	public void step(SimState state)
@@ -72,6 +75,6 @@ public class Lock extends Provider implements Receiver
 
 	public String getName()
 		{
-		return "";
+		return "Lock(" + typical.getName() + ", " + pool + ", " + allocation + ")";
 		}		
 	}

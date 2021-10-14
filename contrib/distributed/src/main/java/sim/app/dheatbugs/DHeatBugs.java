@@ -7,16 +7,16 @@
 package sim.app.dheatbugs;
 
 import java.util.ArrayList;
-
 import java.util.HashMap;
+
 import sim.engine.DSimState;
 import sim.engine.DSteppable;
 import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.field.grid.DDenseGrid2D;
 import sim.field.grid.DDoubleGrid2D;
+import sim.util.Int2D;
 import sim.util.Interval;
-import sim.util.*;
 
 public class DHeatBugs extends DSimState
 {

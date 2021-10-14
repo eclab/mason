@@ -9,7 +9,8 @@ import sim.engine.Distinguished;
 import sim.engine.Promised;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
-import sim.field.network.*;
+import sim.field.network.Edge;
+import sim.field.network.Network;
 import sim.util.Bag;
 import sim.util.Double2D;
 

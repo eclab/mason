@@ -1,9 +1,9 @@
 package sim.util;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
-import java.util.Arrays;
 
 /**
  * Internal distributed MASON class to time simulation steps

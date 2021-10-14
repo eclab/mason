@@ -9,7 +9,16 @@ import java.util.*;
 public interface Receiver extends Named
 	{
 	/**
-		Modifies the amount and returns the amount actually accepted.
+		Offers a resource from a Provider to a Receiver.
+		
+		<p>If the resource is a COUNTABLE or UNCOUNTABLE resource of some kind,
+		The provider may respond by removing between atLeast and atMost, inclusive,
+		from the given amount, and returning TRUE, or returning FALSE if it refuses
+		the offer.
+		
+		<p>If the resource is an ENTITY of some kind,
+		The provider may respond by taking the entitym and returning TRUE, 
+		or returning FALSE if it refuses the offer.
 	*/
-	public void accept(Provider provider, Resource amount, double atLeast, double atMost);
+	public boolean accept(Provider provider, Resource resource, double atLeast, double atMost);
 	}

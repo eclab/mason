@@ -1,6 +1,6 @@
 package sim.util;
 
-import java.io.*;
+import java.io.Serializable;
 
 public class IntRect2D implements Serializable
 {

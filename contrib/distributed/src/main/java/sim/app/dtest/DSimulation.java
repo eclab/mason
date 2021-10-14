@@ -16,9 +16,8 @@ import java.util.Date;
 
 import sim.engine.DSimState;
 import sim.field.continuous.DContinuous2D;
-import sim.field.storage.ContinuousStorage;
+import sim.util.Double2D;
 import sim.util.Timing;
-import sim.util.*;
 
 public class DSimulation extends DSimState
 {

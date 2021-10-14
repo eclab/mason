@@ -1,9 +1,14 @@
 package sim.field.storage;
 
 import java.io.Serializable;
-import java.util.*;
-import sim.engine.*;
-import sim.util.*;
+import java.util.ArrayList;
+
+import sim.engine.DObject;
+import sim.util.GenericArray;
+import sim.util.Int2D;
+import sim.util.IntRect2D;
+import sim.util.MPIParam;
+import sim.util.Number2D;
 
 /**
  * internal local storage for distributed grids.

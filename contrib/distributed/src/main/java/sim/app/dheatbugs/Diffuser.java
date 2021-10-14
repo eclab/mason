@@ -6,10 +6,8 @@
 
 package sim.app.dheatbugs;
 
-import sim.engine.DSimState;
 import sim.engine.DSteppable;
 import sim.engine.SimState;
-import sim.field.grid.DDoubleGrid2D;
 
 /**
  * This agent decreases evaporates and diffuses all the heat at each time step.

@@ -1,20 +1,10 @@
 package sim.app.dschelling;
 
-import java.util.ArrayList;
-
-import sim.app.dflockers.DFlocker;
-import sim.app.dflockers.DFlockers;
-import sim.app.dheatbugs.DHeatBug;
-import sim.app.dheatbugs.DHeatBugs;
 import sim.app.schelling.Agent;
 import sim.app.schelling.Schelling;
 import sim.engine.DSimState;
-import sim.field.grid.DDenseGrid2D;
-import sim.field.grid.DDoubleGrid2D;
 import sim.field.grid.DIntGrid2D;
-import sim.field.grid.IntGrid2D;
 import sim.util.Bag;
-import sim.util.Double2D;
 import sim.util.Int2D;
 import sim.util.Interval;
 

@@ -10,10 +10,11 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
 import sim.engine.DSimState;
 import sim.field.continuous.DContinuous2D;
+import sim.util.Double2D;
 import sim.util.Timing;
-import sim.util.*;
 
 public class DFlockers extends DSimState
 {

@@ -6,18 +6,17 @@
 
 package sim.app.dheatbugs.display;
 
-import sim.engine.*;
-import sim.display.*;
-import sim.portrayal.grid.*;
-import sim.portrayal.*;
-import java.awt.*;
-import javax.swing.*;
-import sim.field.grid.*;
-import sim.util.*;
-import javax.swing.event.*;
-import java.awt.event.*;
-import java.awt.geom.*;
-import sim.portrayal.simple.*;
+import java.awt.Color;
+
+import javax.swing.JFrame;
+
+import sim.display.Controller;
+import sim.display.Display2D;
+import sim.display.GUIState;
+import sim.engine.SimState;
+import sim.portrayal.grid.DenseGridPortrayal2D;
+import sim.portrayal.grid.FastValueGridPortrayal2D;
+import sim.portrayal.simple.MovablePortrayal2D;
 
 public class HeatBugsProxyWithUI extends GUIState
     {

@@ -10,12 +10,16 @@ import java.io.Serializable;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
+
 import ec.util.MersenneTwisterFast;
-import sim.engine.*;
+import sim.engine.DSteppable;
+import sim.engine.Distinguished;
+import sim.engine.Promised;
+import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
-import sim.util.*;
-import java.util.*;
+import sim.util.Double2D;
 
 public class DFlockerRemote extends DSteppable implements Distinguished{
 

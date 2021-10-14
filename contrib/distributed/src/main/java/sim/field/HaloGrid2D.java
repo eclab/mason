@@ -1,18 +1,33 @@
 package sim.field;
 
-import java.io.*;
-import java.rmi.*;
-import java.rmi.server.*;
-import java.util.*;
-import mpi.*;
-import sim.app.dheatbugs.DHeatBug;
-import sim.engine.*;
-import sim.engine.transport.*;
-import sim.field.partitioning.*;
-import sim.field.storage.*;
-import sim.util.*;
-import sim.engine.rmi.*;
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.function.Consumer;
+
+import mpi.MPIException;
+import sim.engine.DObject;
+import sim.engine.DSimState;
+import sim.engine.DistributedIterativeRepeat;
+import sim.engine.DistributedTentativeStep;
+import sim.engine.Promised;
+import sim.engine.Steppable;
+import sim.engine.Stoppable;
+import sim.engine.Stopping;
+import sim.engine.mpi.*;
+import sim.engine.rmi.GridRMI;
+import sim.engine.rmi.RemoteProcessor;
+import sim.engine.rmi.RemotePromise;
+import sim.field.partitioning.Partition;
+import sim.field.storage.ContinuousStorage;
+import sim.field.storage.GridStorage;
+import sim.util.Double2D;
+import sim.util.Int2D;
+import sim.util.IntRect2D;
+import sim.util.MPIParam;
+import sim.util.MPIUtil;
+import sim.util.Number2D;
 
 /**
  * All fields in distributed MASON must contain this class. Stores
@@ -22,7 +37,7 @@ import java.util.function.Consumer;
  * @param <S> The Type of Storage to use
  */
 public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
-		extends UnicastRemoteObject implements TransportRMIInterface<T, Number2D>, Synchronizable
+		extends UnicastRemoteObject implements GridRMI<T, Number2D>
 		{
 	private static final long serialVersionUID = 1L;
 
@@ -45,7 +60,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	// My field's index
 	int fieldIndex;
 	// My RMI Proxy
-	RMIProxy<T, Number2D> proxy;
+	GridRMICache<T, Number2D> proxy;
 
 	// The following four queues are how RMI adds, removes, and fetches elements on
 	// behalf of remote processors.
@@ -526,8 +541,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		// If local, then MPI
 		if (state.getTransporter().isNeighbor(getPartition().toPartitionPID(p)))
 			{
-			DistributedIterativeRepeat iterativeRepeat = new DistributedIterativeRepeat((Stopping) t, time, interval, ordering);
-			state.getTransporter().migrateRepeatingAgent(iterativeRepeat, getPartition().toPartitionPID(p), p, this.fieldIndex);
+			state.getTransporter().migrateAgent(ordering, time, interval, (Stopping) t, getPartition().toPartitionPID(p), p, this.fieldIndex);
 			}
 		else // ...otherwise, RMI
 			{
@@ -664,13 +678,13 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 
 
 	/**
-	 * Initializes the RMIProxy for this halogrid. Called by DSimState. Don't call
+	 * Initializes the GridRMICache for this halogrid. Called by DSimState. Don't call
 	 * this directly.
 	 *
 	 */
 	public void initRemote()
 	{
-		proxy = new RMIProxy<>(getPartition(), this);
+		proxy = new GridRMICache<>(getPartition(), this);
 	}
 
 	/**
@@ -718,6 +732,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		for (Triplet<Number2D, T, double[]> pair : addQueue)
 		{
 			addLocal(pair.a, pair.b);
+			if (pair.b instanceof DObject) ((DObject)(pair.b)).migrated(state);
 			
 			// Reschedule
 			if (pair.c != null)
@@ -806,27 +821,36 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	@SuppressWarnings("unchecked")
 	public void addPayload(PayloadWrapper payloadWrapper)
 	{
-		if (payloadWrapper.payload instanceof DistributedIterativeRepeat)
-		{
-			DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
-			addLocal((Number2D) payloadWrapper.loc, (T) iterativeRepeat.getSteppable());
-		}
-		else if (payloadWrapper.payload instanceof AgentWrapper)
+		
+		if (payloadWrapper.payload instanceof AgentWrapper)
 		{
 			AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
 			addLocal((Number2D) payloadWrapper.loc, (T) agentWrapper.agent);
+			if (agentWrapper.agent instanceof DObject)
+				((DObject)(agentWrapper.agent)).migrated(state);
 		}
 		else
 		{
 			addLocal((Number2D) payloadWrapper.loc, (T) payloadWrapper.payload);
+			if (payloadWrapper.payload instanceof DObject)
+				((DObject)(payloadWrapper.payload)).migrated(state);
 		}
 	}
-
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/* RMI METHODS */
 	/**
 	 * This method queues an object t to be set at or added to point p at end of the
 	 * time step, via addLocal(). This is called remotely via RMI, and is part of
-	 * the TransportRMIInterface. Don't call this directly.
+	 * the GridRMI. Don't call this directly.
 	 */
 	
 	Object addRMILock = new Object[0];
@@ -845,7 +869,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	/**
 	 * This method queues an agent t and scheduling information to be set at or added to point p at end of the
 	 * time step, via addLocal(). This is called remotely via RMI, and is part of
-	 * the TransportRMIInterface. Don't call this directly.
+	 * the GridRMI. Don't call this directly.
 	 */
 	public void addRMI(Number2D p, T t, int ordering, double time) throws RemoteException
 	{
@@ -869,7 +893,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * the end of the time step via removeLocal(). For DObjectGrid2D the object is
 	 * replaced with null. For DIntGrid2D and DDoubleGrid2D the object is replaced
 	 * with 0. This is called remotely via RMI, and is part of the
-	 * TransportRMIInterface. Don't call this directly.
+	 * GridRMI. Don't call this directly.
 	 */
 	public void removeRMI(Number2D p, long id) throws RemoteException
 	{
@@ -882,7 +906,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	/**
 	 * This method queues all objects at a point p to be removed at the end of the
 	 * time step. This is only used by DDenseGrid2D. This is called remotely via
-	 * RMI, and is part of the TransportRMIInterface. Don't call this directly.
+	 * RMI, and is part of the GridRMI. Don't call this directly.
 	 */
 	public void removeAllRMI(Number2D p) throws RemoteException
 	{
@@ -896,7 +920,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * This method queues the get requests via RMI. From the Perspective of the
 	 * requesting node this grid is remote, it will add the result to a queue and
 	 * return all the objects in the queue after the current time step. This is
-	 * called remotely via RMI, and is part of the TransportRMIInterface. Don't call
+	 * called remotely via RMI, and is part of the GridRMI. Don't call
 	 * this directly.
 	 */
 	public void getRMI(Number2D p, RemotePromise promise) throws RemoteException
@@ -917,7 +941,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 * This method entertains the get requests via RMI. From the Perspective of the
 	 * requesting node this grid is remote, it will add the result to a queue and
 	 * return all the objects in the queue after the current time step. This is
-	 * called remotely via RMI, and is part of the TransportRMIInterface. Don't call
+	 * called remotely via RMI, and is part of the GridRMI. Don't call
 	 * this directly.
 	 */
 	public void getRMI(Number2D p, long id, RemotePromise promise) throws RemoteException
@@ -1091,6 +1115,35 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 
 			return overlaps;
 		}
+	}
+}
+
+
+// An GridRMICache holds a cache of GridRMI objects (RMI pointers to remote HaloGrids) for a given HaloGrid2D
+@SuppressWarnings("rawtypes")
+class GridRMICache<T extends Serializable, P extends Number2D>
+{
+	private static final long serialVersionUID = 1L;
+
+	GridRMI[] cache;
+	int fieldId;
+
+	public GridRMICache(Partition ps, HaloGrid2D haloGrid)
+	{
+		this.fieldId = haloGrid.getFieldIndex();
+		this.cache = new GridRMI[ps.getNumProcessors()];
+	}
+
+	@SuppressWarnings("unchecked")
+	public GridRMI<T, P> getField(int pid) throws RemoteException
+	{
+		GridRMI<T, P> grid = cache[pid];
+		if (grid == null)
+		{
+			grid = RemoteProcessor.getProcessor(pid).getGrid(fieldId);
+			cache[pid] = grid;
+		}
+		return grid;
 	}
 }
 

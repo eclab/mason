@@ -4,7 +4,7 @@
 	a dollar would be 100.
 */
 
-public class Money extends Resource
+public class Money extends CountableResource
 	{
 	public Money(String currencySymbol, int initialAmount)
 		{

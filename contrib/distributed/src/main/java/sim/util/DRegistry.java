@@ -1,8 +1,6 @@
 package sim.util;
 
-import java.io.IOException;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -21,7 +19,6 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import mpi.MPI;
-import sim.util.MPIUtil;
 
 /**
  * This class enables agents access to the information of another agent in any
