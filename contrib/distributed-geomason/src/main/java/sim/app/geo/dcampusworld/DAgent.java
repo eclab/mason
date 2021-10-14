@@ -1,6 +1,7 @@
 package sim.app.geo.dcampusworld;
 
 import com.vividsolutions.jts.geom.Coordinate;
+
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
@@ -9,20 +10,24 @@ import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import com.vividsolutions.jts.planargraph.DirectedEdgeStar;
 import com.vividsolutions.jts.planargraph.Node;
 
+import sim.engine.DSimState;
 import sim.engine.DSteppable;
 import sim.engine.SimState;
+import sim.field.geo.GeomVectorContinuousStorage;
 import sim.field.geo.GeomVectorField;
 import sim.util.Double2D;
+import sim.util.geo.DGeomSteppable;
 import sim.util.geo.GeomPlanarGraphDirectedEdge;
 import sim.util.geo.GeomPlanarGraphEdge;
 import sim.util.geo.MasonGeometry;
 import sim.util.geo.PointMoveTo;
 
-public class DAgent extends DSteppable
+public class DAgent extends DGeomSteppable
 {
 	static final long serialVersionUID = 1L;
 	// the agent's geometry
-	transient MasonGeometry agentGeometry = null;
+	//transient MasonGeometry agentGeometry = null;
+	MasonGeometry agentGeometry = null;
 	// the JTS position of the agent
 	Double2D jtsCoordinate;
 	// The base speed of the agent.
@@ -82,10 +87,11 @@ public class DAgent extends DSteppable
 			Double2D initialLoc = jtsToPartitionSpace(state, c);
 			if (state.agentLocations.isLocal(initialLoc))
 			{
+				jtsCoordinate = new Double2D(c.x, c.y);
+
 				// agent needs to be added to storage before moving
 				state.agentLocations.addAgent(initialLoc, this, 0, 0, 1);
 				moveTo(state, c);
-				jtsCoordinate = new Double2D(c.x, c.y);
 				break;
 			}
 		}
@@ -95,21 +101,84 @@ public class DAgent extends DSteppable
 	/**
 	 * Return the geometry representing the agent, insuring it's never null
 	 */
+	
+	//Instead, due to how partitions handle geometries, we want to reset the coordinates when changing them, not now, as this creates
+	//an issue where we are returning a agentGeometry that is not in the storage!
+	
+	/*
+	 
 	public MasonGeometry getAgentGeometry()
 	{
-		if (agentGeometry == null ||
-				agentGeometry.getGeometry().getCoordinate().x != jtsCoordinate.x ||
+		if (agentGeometry == null || agentGeometry.getGeometry().getCoordinate().x != jtsCoordinate.x ||
 				agentGeometry.getGeometry().getCoordinate().y != jtsCoordinate.y)
 		{
+		
 			agentGeometry = new MasonGeometry(fact.createPoint(new Coordinate(jtsCoordinate.x, jtsCoordinate.y)));
 			agentGeometry.isMovable = true;
 			agentGeometry.addStringAttribute("TYPE", type);
 			agentGeometry.addIntegerAttribute("AGE", age);
 			agentGeometry.addDoubleAttribute("MOVE RATE", basemoveRate);
+			
+			
 		}
+
+			
+			
 		return agentGeometry;
 	}
+	*/
+	
 
+	//do this when jts is updated, need to be careful about storage issues!
+	public void updateAgentGeometry_with_new_point(GeomVectorContinuousStorage storage, Coordinate coordJTS) {
+
+			this.jtsCoordinate = new Double2D(coordJTS.x, coordJTS.y);
+			
+		    		    
+			agentGeometry = new MasonGeometry(fact.createPoint(new Coordinate(jtsCoordinate.x, jtsCoordinate.y)));
+			agentGeometry.isMovable = true;
+			agentGeometry.addStringAttribute("TYPE", type);
+			agentGeometry.addIntegerAttribute("AGE", age);
+			agentGeometry.addDoubleAttribute("MOVE RATE", basemoveRate);
+			
+
+		
+	}
+	
+	
+	//do this when jts is updated, need to be careful about storage issues!
+	public void updateAgentGeometry(DSimState state) {
+		if (agentGeometry == null || agentGeometry.getGeometry().getCoordinate().x != jtsCoordinate.x ||
+				agentGeometry.getGeometry().getCoordinate().y != jtsCoordinate.y)
+		{
+			DCampusWorld state2 = (DCampusWorld)state;
+		    state2.agentLocations.getStorage().getGeomVectorField().removeGeometry(agentGeometry);
+		    		    
+			agentGeometry = new MasonGeometry(fact.createPoint(new Coordinate(jtsCoordinate.x, jtsCoordinate.y)));
+			agentGeometry.isMovable = true;
+			agentGeometry.addStringAttribute("TYPE", type);
+			agentGeometry.addIntegerAttribute("AGE", age);
+			agentGeometry.addDoubleAttribute("MOVE RATE", basemoveRate);
+			
+		    state2.agentLocations.getStorage().getGeomVectorField().addGeometry(agentGeometry);
+
+		}
+	}
+	
+	public MasonGeometry getAgentGeometry()
+	{
+
+		return agentGeometry;
+	}
+	
+	public MasonGeometry getMasonGeometry() {
+		
+		return this.getAgentGeometry();
+		
+		
+	}
+	
+	
 	/**
 	 * true if the agent has arrived at the target intersection
 	 */
@@ -166,14 +235,15 @@ public class DAgent extends DSteppable
 				{
 					if (endPoint.equals(getAgentGeometry().geometry))
 						setNewRoute(state, newRoute, false);
-					else
+					else {
 						System.err.println("Where am I?");
+					}
 				}
 			}
 		}
 		else
 		{
-			System.err.println("No Junction Found");
+			//System.err.println("No Junction Found");
 		}
 	}
 
@@ -221,7 +291,21 @@ public class DAgent extends DSteppable
 	/**
 	 * Return a mapping from JTS's UTM coords -> our world coords
 	 */
-	Double2D jtsToPartitionSpace(DCampusWorld cw, Coordinate coordJTS)
+	
+	
+	
+	public Double2D jtsToPartitionSpace(DSimState cw, Coordinate coordJTS)
+	{
+		return jtsToPartitionSpace((DCampusWorld)cw, coordJTS);
+	}
+	
+	/**
+	 * Return a mapping from our world coords -> JTS's UTM coords
+	 */
+
+	
+	
+	public Double2D jtsToPartitionSpace(DCampusWorld cw, Coordinate coordJTS)
 	{
 		double xJTS = coordJTS.x - cw.MBR.getMinX();
 		double yJTS = coordJTS.y - cw.MBR.getMinY();
@@ -238,7 +322,7 @@ public class DAgent extends DSteppable
 	/**
 	 * Return a mapping from our world coords -> JTS's UTM coords
 	 */
-	Coordinate partitionSpaceToJTS(Double2D d)
+	public Coordinate partitionSpaceToJTS(Double2D d)
 	{
 		double xP = d.x - DCampusWorld.width;
 		double yP = d.y - DCampusWorld.height;
@@ -258,6 +342,11 @@ public class DAgent extends DSteppable
 	public void moveTo(DCampusWorld state, Coordinate c)
 	{
 		jtsCoordinate = new Double2D(c.x, c.y);
+		
+		//unlike it regular geomason, we need to make sure we update the MasonGeometry here and update it in storage
+		//regular Agent in CampusWorld updates its MasonGeometry in getGeometry, but we do it here so we can update 
+		//state storage as well
+		updateAgentGeometry(state);
 
 		Double2D toP = jtsToPartitionSpace(state, c);
 
@@ -269,6 +358,7 @@ public class DAgent extends DSteppable
 	 */
 	public void transfer(Double2D point, GeomVectorField g)
 	{
+
 		Coordinate jtsCoordinate = partitionSpaceToJTS(point);
 //		pointMoveTo.setCoordinate(new Coordinate(point.x, point.y));
 		pointMoveTo.setCoordinate(jtsCoordinate);
@@ -300,7 +390,7 @@ public class DAgent extends DSteppable
 	// move agent along current line segment
 	private void moveAlongPath(DCampusWorld state)
 	{
-		System.out.println("Moving along Path: " + System.identityHashCode(this));
+		//System.out.println("Moving along Path: " + System.identityHashCode(this));
 		currentIndex += moveRate;
 
 		// Truncate movement to end of line segment

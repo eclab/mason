@@ -1,6 +1,8 @@
 package sim.display;
 
 import sim.field.continuous.*;
+import sim.field.geo.DGeomVectorField;
+import sim.field.geo.GeomVectorContinuousStorage;
 import sim.field.geo.GeomVectorField;
 import sim.app.geo.dcampusworld.display.CampusWorldProxy;
 import sim.engine.*;
@@ -11,18 +13,19 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import sim.util.*;
+import sim.util.geo.MasonGeometry;
 
 @SuppressWarnings("rawtypes")
-public class GeomVectorFieldProxy extends GeomVectorField implements UpdatableProxy
+public class GeomVectorContinuousStorageProxy extends GeomVectorField implements UpdatableProxy
 {
 	private static final long serialVersionUID = 1L;
 
-    public GeomVectorFieldProxy()
+    public GeomVectorContinuousStorageProxy()
     {
         super();
     }
     
-    public GeomVectorFieldProxy(int w, int h)
+    public GeomVectorContinuousStorageProxy(int w, int h)
     {
     	super(w, h);
     }
@@ -58,6 +61,8 @@ public class GeomVectorFieldProxy extends GeomVectorField implements UpdatablePr
 		//if (width != this.width || height != this.height)
 		reshape(width, height);
 		
+		System.out.println("objs : "+this.getGeometries().size());
+		
 		//for (int p = 0; p < stateProxy.numProcessors; p++) {
 		for (int p : quad_tree_partitions)
 		{
@@ -77,9 +82,31 @@ public class GeomVectorFieldProxy extends GeomVectorField implements UpdatablePr
             int partition_height_high_ind =  partBound.br().getY()-halo_size;   //partition bounds 
             
             
+            GeomVectorContinuousStorage storage = (GeomVectorContinuousStorage)(stateProxy.storage(proxyIndex));
+            
+            System.out.println(p+" : "+storage.getGeomVectorField().getGeometries().size());
 
+            for (Object a : storage.getGeomVectorField().getGeometries()) {
+            	
+            	//System.out.println(p);
+
+            	
+            	
+            	this.addGeometry((MasonGeometry)a);
+            	
+            }
+            
+            System.out.println(p+" : "+"hashmap size :"+storage.locations.keySet().size()); 
+            	
+            	
+            
+            
+	
             
 		}
+		
+		System.out.println("objs 2 : "+this.getGeometries().size());
+
 		
 		
 		
@@ -91,6 +118,7 @@ public class GeomVectorFieldProxy extends GeomVectorField implements UpdatablePr
 	{
 		   setFieldWidth(w);
 		   setFieldHeight(h);
+		   this.clear();
 	}
 
 //	public void update(SimStateProxy stateProxy, int proxyIndex) throws RemoteException, NotBoundException {

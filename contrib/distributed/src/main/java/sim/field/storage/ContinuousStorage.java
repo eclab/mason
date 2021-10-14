@@ -241,6 +241,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	@SuppressWarnings("unchecked")
 	public void clear()
 	{
+        System.out.println("clear clear clear ------------------------------------------");
 		width = (int) Math.ceil(shape.getWidth() / (double) discretization) + 1;
 		height = (int) Math.ceil(shape.getHeight() / (double) discretization) + 1;
 		this.locations = new HashMap<>();
@@ -333,13 +334,14 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 		// shift the rect with local coordinates back to global coordinates
 		for (final IntRect2D rect : mp.rects)
 			removeObjects(rect.add(shape.ul()));
-
+        
 		for (int k = 0; k < mp.rects.size(); k++)
 			for (int i = 0; i < objs.get(k).size(); i += 2)
 				addObject(
 						//// FIXME: This looks VERY inefficient, with lots of array allocations
 						((Double2D) objs.get(k).get(i + 1)).add(mp.rects.get(k).ul()).add(shape.ul()),
 						(T) objs.get(k).get(i));
+		
 
 /*
 		int sum = 0;

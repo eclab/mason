@@ -26,11 +26,11 @@ import sim.portrayal.simple.OvalPortrayal2D;
 import sim.util.Bag;
 import sim.util.geo.GeomPlanarGraph;
 
-public class CampusWorldProxyWithUI extends GUIState
-{
+public class CampusWorldProxyWithUI extends GUIState {
 	public Display2D display;
 	public JFrame displayFrame;
-	
+
+
 	public GeomVectorField walkways = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
 	public GeomVectorField roads = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
 	public GeomVectorField buildings = new GeomVectorField(DCampusWorld.width, DCampusWorld.height);
@@ -39,47 +39,35 @@ public class CampusWorldProxyWithUI extends GUIState
     GeomVectorFieldPortrayal walkwaysPortrayal = new GeomVectorFieldPortrayal();
     GeomVectorFieldPortrayal buildingPortrayal = new GeomVectorFieldPortrayal();
     GeomVectorFieldPortrayal roadsPortrayal = new GeomVectorFieldPortrayal();
+    
 
 	public GeomPlanarGraph network = new GeomPlanarGraph();
 	public GeomVectorField junctions = new GeomVectorField(DCampusWorld.width, DCampusWorld.height); // nodes for intersections
 
-    //GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
+	//ContinuousPortrayal2D agentPortrayal = new ContinuousPortrayal2D();
+    private GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
 
-	ContinuousPortrayal2D agentPortrayal = new ContinuousPortrayal2D();
-	
-	
-	public static void main(String[] args)
-		{
-		new CampusWorldProxyWithUI().createController();
-		}
 
-	public CampusWorldProxyWithUI()
-		{
-		super(new CampusWorldProxy(System.currentTimeMillis()));
+	public static void main(String[] args) { new CampusWorldProxyWithUI().createController(); }
+
+	public CampusWorldProxyWithUI() { 
+		super(new CampusWorldProxy(System.currentTimeMillis())); 
 		loadStatic();
 		}
 
-	public CampusWorldProxyWithUI(SimState state)
-		{
-		super(state);
-		loadStatic();
-		}
+	public CampusWorldProxyWithUI(SimState state) { super(state); 
+	loadStatic();
+	}
 
-	public static String getName()
-		{
-		return "CampusWorld Proxy";
-		}
+	public static String getName() { return "CampusWorld Proxy"; }
 
-	public Object getSimulationInspectedObject()
-		{
-		return state; // non-volatile
-		}
+	// TODO What is this?
+	public Object getSimulationInspectedObject() { return state; } // non-volatile
 
 	// TODO?
 	// public Controller createController() {//...}
 
-	public void start()
-	{
+	public void start() {
 		super.start();
 		setupPortrayals();
 		// TODO: How to update display bounds
@@ -92,16 +80,15 @@ public class CampusWorldProxyWithUI extends GUIState
 //		} catch (RemoteException | NotBoundException e) {
 //			throw new RuntimeException(e);
 //		}
+
 	}
 
-	public void load(SimState state)
-	{
+	public void load(SimState state) {
 		super.load(state);
 		setupPortrayals();
 	}
 
-	public void setupPortrayals()
-	{
+	public void setupPortrayals() {
         walkwaysPortrayal.setField(walkways);
         walkwaysPortrayal.setPortrayalForAll(new GeomPortrayal(Color.CYAN,true));
 
@@ -112,20 +99,12 @@ public class CampusWorldProxyWithUI extends GUIState
         roadsPortrayal.setField(roads);
         roadsPortrayal.setPortrayalForAll(new GeomPortrayal(Color.GRAY,true));
 
-//		agentPortrayal.setField(((CampusWorldProxy) state).agentRepresentations);
-//		agentPortrayal.setField(((CampusWorldProxy) state).agentRepresentations);
-        
-        
-        
-        
-//		System.out.println(((CampusWorldProxy) state).agents.getGeometries().get(0));
-        //agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,10.0,true));
+		agentPortrayal.setField(((CampusWorldProxy) state).agents);
+//        agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,10.0,true));
 //        agentPortrayal.setPortrayalForAll(new AdjustablePortrayal2D(new MovablePortrayal2D(basic)));
 
-        
-        agentPortrayal.setPortrayalForAll(new MovablePortrayal2D(new sim.portrayal.simple.OvalPortrayal2D(Color.RED,6.0)));
-        
-//		agentPortrayal.setPortrayalForAll(new MovablePortrayal2D(new OvalPortrayal2D(Color.RED, 6.0)));
+//        agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,6.0));
+		agentPortrayal.setPortrayalForAll(new MovablePortrayal2D(new OvalPortrayal2D(Color.RED, 6.0)));
 
 		// reschedule the displayer
 		display.reset();
@@ -135,8 +114,7 @@ public class CampusWorldProxyWithUI extends GUIState
 		display.repaint();
 	}
 
-	public void init(final Controller c)
-	{
+	public void init(final Controller c) {
 		super.init(c);
 
 		// Make the Display2D
@@ -157,8 +135,7 @@ public class CampusWorldProxyWithUI extends GUIState
 		display.setBackdrop(Color.WHITE);
 	}
 
-	public void quit()
-	{
+	public void quit() {
 		super.quit();
 
 		if (displayFrame != null)

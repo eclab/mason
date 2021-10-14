@@ -2,6 +2,8 @@ package sim.field.geo;
 
 import java.rmi.RemoteException;
 
+
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -20,17 +22,18 @@ import sim.field.storage.ContinuousStorage;
 import sim.field.storage.DenseGridStorage;
 import sim.util.Double2D;
 import sim.util.Int2D;
-import sim.util.geo.MasonGeometryWrapper;
+import sim.util.geo.DGeomObject;
+import sim.util.geo.MasonGeometry;
 
 //public class DGeomVectorField<T extends DObject> //extends DAbstractGrid2D 
-public class DGeomVectorField extends DAbstractGrid2D 
+public class DGeomVectorField<T extends DGeomObject> extends DAbstractGrid2D 
 
 {
 	private static final long serialVersionUID = 1L;
 
 	
-	private HaloGrid2D<MasonGeometryWrapper, GeomVectorContinuousStorage> halo;
-	GeomVectorContinuousStorage storage;
+	private HaloGrid2D<T, GeomVectorContinuousStorage<T>> halo;
+	GeomVectorContinuousStorage<T> storage;
 	
 	//T will be MasonGeometry which is not DOBject
 	//Should T be some thing that keeps track of MasonGeometry?
@@ -48,7 +51,7 @@ public class DGeomVectorField extends DAbstractGrid2D
 	
 		try 
 		{
-			halo = new HaloGrid2D<>(storage, state);
+			halo = new HaloGrid2D<T, GeomVectorContinuousStorage<T>>(storage, state);
 		}	 
 		catch (RemoteException e) 
 		{
@@ -57,7 +60,7 @@ public class DGeomVectorField extends DAbstractGrid2D
 	}
 
 
-	public ContinuousStorage getStorage()
+	public GeomVectorContinuousStorage getStorage()
 	{
 		return storage;
 	}
@@ -89,13 +92,13 @@ public class DGeomVectorField extends DAbstractGrid2D
 		}
 
 	/** Returns the local (including halo region) location of the given object, if any, else null.*/
-	public Double2D getObjectLocationLocal(MasonGeometryWrapper t)
+	public Double2D getObjectLocationLocal(T t)
 		{
 		return getObjectLocationLocal(t.ID());
 		}
 
 	/** Returns true if the object is located locally, including in the halo region.  */
-	public boolean containsLocal(MasonGeometryWrapper t) 
+	public boolean containsLocal(T t) 
 		{
 		return (getObjectLocationLocal(t.ID()) != null);
 		}
@@ -113,14 +116,14 @@ public class DGeomVectorField extends DAbstractGrid2D
 		}
 
 	/** Returns true if the object is located exactly at the given point locally, including the halo region. */
-	public boolean containsLocal(Double2D p, MasonGeometryWrapper t) 
+	public boolean containsLocal(Double2D p, T t) 
 		{
 		return containsLocal(p, t.ID());
 		}
 
 	/** Returns all the local data located in discretized cell in the <i>vicinity</i> of the given point.  This point
 		must lie within the halo region or an exception will be thrown.  */
-	public HashMap<Long, MasonGeometryWrapper> getCellLocal(Double2D p) 
+	public HashMap<Long, T> getCellLocal(Double2D p) 
 		{
 		if (!isHalo(p)) throwNotLocalException(p);
 		return storage.getCell(p);
@@ -144,7 +147,7 @@ public class DGeomVectorField extends DAbstractGrid2D
 */
 		
 	/** Returns the object associated with the given ID if it stored within the halo region, else null. */
-	public MasonGeometryWrapper getLocal(long id)
+	public T getLocal(long id)
 		{
 		Double2D loc = getObjectLocationLocal(id);
 		if (loc != null)
@@ -153,7 +156,7 @@ public class DGeomVectorField extends DAbstractGrid2D
 		}
 
 	/** Returns the object associated with the given ID only if it stored within the halo region at exactly the given point p, else null. */
-	public MasonGeometryWrapper getLocal(Double2D p, long id)
+	public T getLocal(Double2D p, long id)
 		{
 		Double2D loc = getObjectLocationLocal(id);
 		if (p.equals(loc))
@@ -163,15 +166,14 @@ public class DGeomVectorField extends DAbstractGrid2D
 			
 	/** Sets or moves the given object.  The given point must be local.  If the object
 		exists at another local point, it will be removed from that point and moved to the new point. */
-	public void addLocal(Double2D p, MasonGeometryWrapper t) 
+	public void addLocal(Double2D p, T t) 
 		{
 //		System.out.println("agent: " + t);
 //		System.out.println("map: " + this.storage.getLocations());
-		
-		
+
 		if (!isLocal(p)) throwNotLocalException(p);	
 		Double2D oldLoc = getObjectLocationLocal(t);
-		HashMap<Long, MasonGeometryWrapper> newCell = getCellLocal(p);
+		HashMap<Long, T> newCell = getCellLocal(p);
 		
 
 		
@@ -179,7 +181,7 @@ public class DGeomVectorField extends DAbstractGrid2D
 			{
 			
 
-			HashMap<Long, MasonGeometryWrapper> oldCell = getCellLocal(oldLoc);
+			HashMap<Long, T> oldCell = getCellLocal(oldLoc);
 //			System.out.println("oldcell: " + oldCell);
 			if (oldCell == newCell)
 				{
@@ -192,10 +194,34 @@ public class DGeomVectorField extends DAbstractGrid2D
 					{
 					
 					oldCell.remove(t.ID());
+					
+					int oldsize = storage.getGeomVectorField().getGeometries().size(); //remove this
+					
+					MasonGeometry m = t.getMasonGeometry();
+					
+					//This one works correctly!!!
+					storage.getGeomVectorField().removeGeometry(m);
+					
+					
+					int newsize = storage.getGeomVectorField().getGeometries().size(); //remove this
+					
+					//System.out.println("before "+oldsize+" "+" after: "+newsize);
+					//System.exit(-1);
+					
+					/*
+					if (newsize == oldsize) {
+						System.out.println("SAME: before "+oldsize+" "+" after: "+newsize);
+						System.exit(-1);
+
+
+					}
+					*/
+					
+					
 					if (oldCell.isEmpty() && storage.removeEmptyBags)
 						{
 						//storage.setCell(oldLoc, null);
-						storage.setCell(oldLoc, new HashMap<Long, MasonGeometryWrapper>());
+						storage.setCell(oldLoc, new HashMap<Long, T>());
 						}
 					
 					}
@@ -209,6 +235,11 @@ public class DGeomVectorField extends DAbstractGrid2D
 				
 				
 				newCell.put(t.ID(), t);
+				
+				MasonGeometry m = t.getMasonGeometry();
+				storage.getGeomVectorField().addGeometry(m);
+				
+				
 				}
 			
 
@@ -224,6 +255,10 @@ public class DGeomVectorField extends DAbstractGrid2D
 				}
 			newCell.put(t.ID(), t);
 			
+			MasonGeometry m = t.getMasonGeometry();
+			storage.getGeomVectorField().addGeometry(m);
+			
+			
 			}
 
 		
@@ -236,24 +271,34 @@ public class DGeomVectorField extends DAbstractGrid2D
 	/** Removes the object of the given id, which must be local.  If it does not exist locally, this method returns FALSE. */
 	public boolean removeLocal(long id)
 		{
-		return removeLocal(storage.getObjectLocation(id), id);
+		
+		
+		boolean removed = removeLocal(storage.getObjectLocation(id), id);		
+		return removed;
 		}
 		
 	/** Removes the object, which must be local.  If it doesn't exist, returns FALSE. */
-	public boolean removeLocal(MasonGeometryWrapper t)
+	public boolean removeLocal(T t)
 		{
 		if (t == null) return false;
 		Double2D loc = getObjectLocationLocal(t);
 		if (loc == null) return false;
 		else
 			{
-			HashMap<Long, MasonGeometryWrapper> cell = getCellLocal(loc);
-			if (cell != null)
+			HashMap<Long, T> cell = getCellLocal(loc);
+			if (cell != null) {
 				cell.remove(t.ID());
+				
+				MasonGeometry m = t.getMasonGeometry();
+				storage.getGeomVectorField().removeGeometry(m);
+				
+				
+			}
+			
 			if (cell.isEmpty() && storage.removeEmptyBags)
 			{
 				//storage.setCell(loc, null);
-				storage.setCell(loc, new HashMap<Long, MasonGeometryWrapper>());
+				storage.setCell(loc, new HashMap<Long, T>());
 			}
 
 			return true;
@@ -265,17 +310,23 @@ public class DGeomVectorField extends DAbstractGrid2D
 		{
 		if (!p.equals(getObjectLocationLocal(id)))
 			return false;
-		HashMap<Long, MasonGeometryWrapper> cell = getCellLocal(p);
-		MasonGeometryWrapper t = cell.get(id);
+		HashMap<Long, T> cell = getCellLocal(p);
+		T t = cell.get(id);
 		if (t == null) return false;
 		else
 			{
-			if (cell != null)
+			if (cell != null) {
 				cell.remove(t.ID());
+				
+				MasonGeometry m = t.getMasonGeometry();
+				storage.getGeomVectorField().removeGeometry(m);
+				
+				
+			}
 			if (cell.isEmpty() && storage.removeEmptyBags)
 			{
 				//storage.setCell(p, null);
-     			storage.setCell(p, new HashMap<Long, MasonGeometryWrapper>());
+     			storage.setCell(p, new HashMap<Long, T>());
 			}
 
 			return true;
@@ -283,7 +334,7 @@ public class DGeomVectorField extends DAbstractGrid2D
 		}
 
 	/** Removes the object, which must be local and exactly at the given location.  If it doesn't exist, returns FALSE. */
-	public boolean removeLocal(Double2D p, MasonGeometryWrapper t)
+	public boolean removeLocal(Double2D p, T t)
 		{
 		return removeLocal(t.ID());
 		}
@@ -301,7 +352,7 @@ public class DGeomVectorField extends DAbstractGrid2D
 
 	/** Adds the data to the given point.  This point can be outside
 		the local and halo regions; if so, it will be added after the end of this timestep.  */
-	public void add(Double2D p, MasonGeometryWrapper t) 
+	public void add(Double2D p, T t) 
 		{
 		if (isLocal(p))
 			addLocal(p, t);
@@ -321,7 +372,7 @@ public class DGeomVectorField extends DAbstractGrid2D
 
 	/** Removes the data (which must be a DObject) from the given point.  This point can be outside
 		the local and halo regions. */
-	public void remove(Double2D p, MasonGeometryWrapper t) 
+	public void remove(Double2D p, T t) 
 		{
 		remove(p, t.ID());
 		}
@@ -329,7 +380,7 @@ public class DGeomVectorField extends DAbstractGrid2D
 
 	/** Adds an agent to the given point and schedules it.  This point can be outside
 		the local and halo regions; if so, it will be set after the end of this timestep.  */
-	public void addAgent(Double2D p, MasonGeometryWrapper agent, double time, int ordering) 
+	public void addAgent(Double2D p, T agent, double time, int ordering) 
 		{
 //		System.out.println("addAgent");
 		if (agent == null)
@@ -350,7 +401,7 @@ public class DGeomVectorField extends DAbstractGrid2D
 		
 	/** Adds an agent to the given point and schedules it repeating.  This point can be outside
 		the local and halo regions; if so, it will be set after the end of this timestep.  */
-	public void addAgent(Double2D p, MasonGeometryWrapper agent, double time, int ordering, double interval) 
+	public void addAgent(Double2D p, T agent, double time, int ordering, double interval) 
 		{
 //		System.out.println("addAgent");
 		if (agent == null)
@@ -373,7 +424,7 @@ public class DGeomVectorField extends DAbstractGrid2D
 		the local and halo regions; if so, it will be set after the end of this timestep.  
 		The agent must be a DObject and a Stopping: realistically this means it should
 		be a DSteppable. */ 
-	public void removeAgent(Double2D p, MasonGeometryWrapper agent) 
+	public void removeAgent(Double2D p, T agent) 
 		{
 		if (agent == null) return;
 		
@@ -411,7 +462,7 @@ public class DGeomVectorField extends DAbstractGrid2D
 	  	The [from] location must be local, but the [to] location can be outside
 		the local and halo regions; if so, it will be set and rescheduled after the end of this timestep.
 		If the agent is not presently AT from, then the from location is undisturbed. */
-	public void moveAgent(Double2D to, MasonGeometryWrapper agent) 
+	public void moveAgent(Double2D to, T agent) 
 		{
 //		System.out.println("moveAgent getHaloGrid: " + getHaloGrid());
 //    	System.out.println("moveAgent getHaloBounds: " + getHaloGrid().getHaloBounds());
@@ -429,18 +480,11 @@ public class DGeomVectorField extends DAbstractGrid2D
 				addLocal(to, agent);
 				}
 			// otherwise, within the aoi
+			
+			
 			else
 				{
-				
-				/*
-				System.out.println("moveAgent getHaloGrid: " + getHaloGrid());
-		    	System.out.println("moveAgent getHaloBounds: " + getHaloGrid().getHaloBounds());
-		    	System.out.println("moveAgent getLocalBounds: " + getHaloGrid().getLocalBounds());
-		    	System.out.println("moveAgent m: " + this.storage.m);
-		    	System.out.println("moveAgent cells: " + this.storage.storage);
-		    	
-				System.out.println(agent+" moving remote to "+to);
-				*/
+		        
 				
 				// Here we have to move the agent remotely and reschedule him
 				Stopping a = (Stopping) agent;			// may throw exception if it's not really an agent
@@ -505,25 +549,17 @@ public class DGeomVectorField extends DAbstractGrid2D
 					{
 					throw new RuntimeException("Cannot move agent " + a + " from " + p + " to " + to + " because it is wrapped in a Stoppable other than a DistributedIterativeRepeat or DistributedTenativeStep.  This should not happen.");
 					}
+					
 				}
+				
 			}
+			
 		else
 			{
-			/*
-	    	System.out.println("agent: " + agent);
-            System.out.println("agent loc from"+((DFlocker)agent).loc);
-            System.out.println("agent to"+to);
 
-	    	System.out.println("map: " + this.getStorage().getLocations());
-
-			System.out.println("moveAgent getHaloGrid: " + getHaloGrid());
-	    	System.out.println("moveAgent getHaloBounds: " + getHaloGrid().getHaloBounds());
-	    	System.out.println("moveAgent getLocalBounds: " + getHaloGrid().getLocalBounds());
-	    	
-	    	System.exit(-1);
-	    	*/
 			throw new RuntimeException("Cannot move agent " + agent + " to " + to + " because agent is not local.");
 			}
+			
 		}
 
 
@@ -688,7 +724,7 @@ public class DGeomVectorField extends DAbstractGrid2D
         to within the boundaries before computation.
     */
 
-    public ArrayList<MasonGeometryWrapper> getNeighborsExactlyWithinDistance(Double2D position, double distance)
+    public ArrayList<T> getNeighborsExactlyWithinDistance(Double2D position, double distance)
         {
         return getNeighborsExactlyWithinDistance(position, distance, true, true, null);
         }
@@ -706,20 +742,20 @@ public class DGeomVectorField extends DAbstractGrid2D
         to within the boundaries before computation.
     */
 
-    public ArrayList<MasonGeometryWrapper> getNeighborsExactlyWithinDistance(Double2D position, double distance, 
-    	boolean radial, boolean inclusive, ArrayList<MasonGeometryWrapper> result)
+    public ArrayList<T> getNeighborsExactlyWithinDistance(Double2D position, double distance, 
+    	boolean radial, boolean inclusive, ArrayList<T> result)
         {
         if (distance > halo.getPartition().getAOI()) throw new RuntimeException("Distance " + distance + " is larger than AOI " + halo.getPartition().getAOI());
 
         int expectedBagSize = 1;  // in the future, pick a smarter bag size?
 
-		ArrayList<MasonGeometryWrapper> objs = getNeighborsWithinDistance(position, distance, null);
-		if (result == null) result = new ArrayList<MasonGeometryWrapper>(expectedBagSize);
+		ArrayList<T> objs = getNeighborsWithinDistance(position, distance, null);
+		if (result == null) result = new ArrayList<T>(expectedBagSize);
 		else result.clear();
 		
         double distsq = distance*distance;
         if (radial) 
-            for(MasonGeometryWrapper obj : objs)
+            for(T obj : objs)
                 {
                 double d = 0;
                 Double2D loc = storage.getObjectLocation(obj);
@@ -728,7 +764,7 @@ public class DGeomVectorField extends DAbstractGrid2D
                     result.add(obj);
                 }
         else 
-            for(MasonGeometryWrapper obj : objs)
+            for(T obj : objs)
                 {
                 Double2D loc = storage.getObjectLocation(obj);
                 double minx = 0;
@@ -755,7 +791,7 @@ public class DGeomVectorField extends DAbstractGrid2D
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
         to within the boundaries before computation.
     */
-    public ArrayList<MasonGeometryWrapper> getNeighborsWithinDistance(Double2D position, double distance)
+    public ArrayList<T> getNeighborsWithinDistance(Double2D position, double distance)
         {
     	return getNeighborsWithinDistance(position,distance, null);
     	}
@@ -778,14 +814,14 @@ public class DGeomVectorField extends DAbstractGrid2D
         to within the boundaries before computation.
     */
     
-    public ArrayList<MasonGeometryWrapper> getNeighborsWithinDistance(Double2D position, double distance, ArrayList<MasonGeometryWrapper> result)
+    public ArrayList<T> getNeighborsWithinDistance(Double2D position, double distance, ArrayList<T> result)
         {
         if (distance > halo.getPartition().getAOI()) throw new RuntimeException("Distance " + distance + " is larger than AOI " + halo.getPartition().getAOI());
         
         int expectedBagSize = 1;  // in the future, pick a smarter bag size?
         if (result!=null) result.clear();
-        else result = new ArrayList<MasonGeometryWrapper>(expectedBagSize);
-        ArrayList<MasonGeometryWrapper> temp;
+        else result = new ArrayList<T>(expectedBagSize);
+        ArrayList<T> temp;
     
     	Int2D min = storage.discretize(new Double2D(position.x - distance, position.y - distance));
     	Int2D max = storage.discretize(new Double2D(position.x + distance, position.y + distance));
@@ -798,9 +834,9 @@ public class DGeomVectorField extends DAbstractGrid2D
 		for(int x = minX; x<= maxX; x++)
 			for(int y = minY ; y <= maxY; y++)
 				{
-				HashMap<Long, MasonGeometryWrapper> cell = storage.getDiscretizedCell(x, y);
+				HashMap<Long, T> cell = storage.getDiscretizedCell(x, y);
 
-				for(MasonGeometryWrapper t : cell.values())
+				for(T t : cell.values())
 					{
 					result.add(t);
 					}
@@ -809,10 +845,10 @@ public class DGeomVectorField extends DAbstractGrid2D
         return result;
         }
     
-    public ArrayList<MasonGeometryWrapper> getAllAgentsInStorage(){
-    	ArrayList<MasonGeometryWrapper> allAgents = new ArrayList<MasonGeometryWrapper>();
+    public ArrayList<T> getAllAgentsInStorage(){
+    	ArrayList<T> allAgents = new ArrayList<T>();
     	for (int i=0; i<this.storage.storage.length; i++) {
-    		for (MasonGeometryWrapper t :this.storage.storage[i].values()) {
+    		for (T t :this.storage.storage[i].values()) {
     			allAgents.add(t);
     		}
     	}

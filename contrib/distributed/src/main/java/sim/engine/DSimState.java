@@ -362,7 +362,15 @@ public class DSimState extends SimState
 		}
 
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
-		loadBalance();
+		//loadBalance();
+		
+		int x = countTotalAgents(fieldList.get(0));
+        System.out.println(partition.getPID()+" : "+x);
+        if (x>4) {
+        	System.exit(-1);
+        }
+		
+
 
 	}
 
@@ -376,22 +384,29 @@ public class DSimState extends SimState
 			try
 			{
 				// Balance the partitions for the given level migrating the agents
+				
+				int x = countTotalAgents(fieldList.get(0));
+		        System.out.println(partition.getPID()+" : "+x);
+				
 				balancePartitions(balancerLevel);
 
+		        
 				try
 				{
 
                     //sync transporter (objects moved to transporter.objectQueue)
 					transporter.sync();
 					
-
+					int x2 = countTotalAgents(fieldList.get(0));
+			        System.out.println(partition.getPID()+"B : "+x2);
 					
-					
+										
 				}
 				catch (ClassNotFoundException | IOException e1)
 				{
 					throw new RuntimeException(e1);
 				}
+				
 
 				// being transported from elsewhere, needs to be added to this partition's
 				// HaloGrid and schedule
@@ -468,7 +483,8 @@ public class DSimState extends SimState
 
 				}
 
-
+				int x3 = countTotalAgents(fieldList.get(0));
+		        System.out.println(partition.getPID()+"C : "+x3);
 				
 				// Wait that all nodes have registered their new objects in the distributed registry.
 				try
@@ -483,6 +499,10 @@ public class DSimState extends SimState
 				{
 					throw new RuntimeException(e);
 				}
+				
+				int x4 = countTotalAgents(fieldList.get(0));
+		        System.out.println(partition.getPID()+"D : "+x4);
+		        //System.exit(-1);
 
 				// clear queue
 				transporter.objectQueue.clear();
@@ -520,7 +540,9 @@ public class DSimState extends SimState
 	{
 		
 
-		int x = countTotalAgents(fieldList.get(0));
+		//int x = countTotalAgents(fieldList.get(0));
+        //System.out.println(partition.getPID()+" : "+x);
+		
 
 
 		
@@ -1118,6 +1140,7 @@ public class DSimState extends SimState
 		int total = 0;
 
 		try {
+			//System.out.println(partition.getPID()+"-----");
 			int count = countLocal(field);
 			ArrayList<Integer> counts = MPIUtil.gather(partition, count, 0);
 		

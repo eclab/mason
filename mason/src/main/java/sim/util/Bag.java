@@ -339,11 +339,18 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         int numObjs = this.numObjs;
         Object[] objs = this.objs;
         for(int x=0;x<numObjs;x++)
+        {
+        	//System.out.println(x+"----");
+        	//System.out.println("o "+o);
+        	//System.out.println("objs "+objs[x]);
+        	
             if (o==null ?  objs[x]==null :  o==objs[x] || o.equals(objs[x])) 
                 {
+            	//System.out.println("got here");
                 remove(x);
                 return true;
                 }
+        }
         return false;
         }
         

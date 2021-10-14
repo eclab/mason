@@ -1,6 +1,8 @@
 package sim.app.geo.dcampusworld;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,11 +12,19 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.planargraph.Node;
 
 import sim.app.geo.dcampusworld.data.DCampusWorldData;
+import sim.engine.DObject;
 import sim.engine.DSimState;
+import sim.field.HaloGrid2D;
+import sim.field.Synchronizable;
 import sim.field.continuous.DContinuous2D;
+import sim.field.geo.DGeomVectorField;
+import sim.field.geo.GeomVectorContinuousStorage;
 import sim.field.geo.GeomVectorField;
+import sim.field.storage.ContinuousStorage;
 import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
+import sim.util.Double2D;
+import sim.util.IntRect2D;
 import sim.util.geo.GeomPlanarGraph;
 import sim.util.geo.MasonGeometry;
 
@@ -26,14 +36,14 @@ public class DCampusWorld extends DSimState
 	public static final int height = 300;
 	public static final int aoi = 1;// TODO what value???
 	public static final int discretization = 6;
-	public static final int numAgents = 100; // 1000
+	public static final int numAgents = 1; // 1000
 
 	/** Convex hull of all static JTS objects **/
 	public Envelope MBR;
 
 	/** Distributed locations of each agent across all partitions **/
-	public final DContinuous2D<DAgent> agentLocations;// = new DContinuous2D<>(discretization, this);
-
+	//public final DContinuous2D<DAgent> agentLocations;// = new DContinuous2D<>(discretization, this);
+    public final DGeomVectorField<DAgent> agentLocations;
 	// TODO Remove these
 	// NOT distributed. Load these remotely in a distributed way.
 	/** Fields to hold the associated GIS information */
@@ -54,7 +64,8 @@ public class DCampusWorld extends DSimState
 	public DCampusWorld(final long seed)
 	{
 		super(seed, width, height, aoi);
-		agentLocations = new DContinuous2D<>(discretization, this);
+		//agentLocations = new DContinuous2D<>(discretization, this);
+		agentLocations = new DGeomVectorField<DAgent>(discretization, this);;
 //		balanceInterval = 100000;
 	}
 
@@ -178,6 +189,53 @@ public class DCampusWorld extends DSimState
 			final Node node = nodeIterator.next();
 			junctions.addGeometry(new MasonGeometry(geometryFactory.createPoint(node.getCoordinate())));
 		}
+	}
+	
+	//for testing
+	protected int countLocal(Synchronizable field) {
+		
+		HaloGrid2D haloGrid2D = (HaloGrid2D) field;
+		int count = 0;
+
+		// ContinousStorage, do we need its own case anymore? We may be able to combine with else code.
+		if (haloGrid2D.getStorage() instanceof GeomVectorContinuousStorage)
+		{
+
+			GeomVectorContinuousStorage st = (GeomVectorContinuousStorage) haloGrid2D.getStorage();
+			
+			for (Object x: st.getGeomVectorField().getGeometries()) {
+				//System.out.println(this.getPID()+": "+x);
+			}
+			
+			// for cell
+
+			
+			for (int i = 0; i < st.storage.length; i++)
+			{
+				HashSet agents = new HashSet(((HashMap) st.storage[i]).values());
+
+				for (Object a : agents) {
+					Double2D loc = st.getObjectLocation((DObject) a);
+					
+					if (partition.getLocalBounds().contains(loc)) {
+						count = count + 1;
+					}
+					
+					//System.out.println(this.getPID()+" storage : "+((DAgent)a).getAgentGeometry());
+					
+					
+
+				}
+			}
+			
+			return st.getGeomVectorField().getGeometries().size();
+
+			
+		}
+		
+
+		
+		return count;
 	}
 
 	public static void main(final String[] args)
