@@ -353,6 +353,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 			}
 		else
 			{
+			System.out.println("remote?");
 			halo.addAgentToRemote(p, agent, ordering, time, interval);
 			}
 		}
@@ -435,13 +436,14 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 				Stoppable stop = a.getStoppable();
 				if (stop == null)
 					{
-					
+
 					// we're done, just move it but don't bother rescheduling
 					removeLocal(agent);
 					halo.addToRemote(to, agent);
 					}
 				else if (stop instanceof DistributedTentativeStep)
 					{
+					
                     //System.out.println("xy "+((DParticle)agent).position+" from"+getObjectLocationLocal(agent.ID())+" to "+to);
                     
 					DistributedTentativeStep _stop = (DistributedTentativeStep)stop;
@@ -468,6 +470,8 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 				else if (stop instanceof DistributedIterativeRepeat)
 					{
 					
+
+					
 					DistributedIterativeRepeat _stop = (DistributedIterativeRepeat)stop;
 					double time = _stop.getTime();
 					int ordering = _stop.getOrdering();
@@ -486,6 +490,8 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
 						time = time + interval;					// advance to next
 						}
 					removeLocal(agent);
+					
+        
 					halo.addAgentToRemote(to, agent, ordering, time, interval);
 					
 					}

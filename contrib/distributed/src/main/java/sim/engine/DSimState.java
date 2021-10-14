@@ -370,6 +370,7 @@ public class DSimState extends SimState
 					}
 				}
 */
+
 				if (agentWrapper.isRepeating())
 					{
 					schedule.scheduleRepeating(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent, agentWrapper.interval);
@@ -400,13 +401,10 @@ public class DSimState extends SimState
 		}
 
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
-		//loadBalance();
+		loadBalance();
 		
 		int x = countTotalAgents(fieldList.get(0));
-        System.out.println(partition.getPID()+" : "+x);
-        if (x>4) {
-        	System.exit(-1);
-        }
+
 		
 
 

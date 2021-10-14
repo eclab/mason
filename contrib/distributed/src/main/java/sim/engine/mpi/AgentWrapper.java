@@ -51,7 +51,7 @@ public class AgentWrapper extends MigratableObject implements Serializable
 	
 	public boolean isRepeating()
 		{
-		return interval < 0;
+		return (interval >= 0);
 		}
 
 	public String toString()

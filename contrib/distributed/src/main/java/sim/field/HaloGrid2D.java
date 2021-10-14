@@ -545,6 +545,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			}
 		else // ...otherwise, RMI
 			{
+
 			try
 			{
 				// First, remove from schedule
