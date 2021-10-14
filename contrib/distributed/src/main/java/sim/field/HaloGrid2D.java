@@ -508,7 +508,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		// If local, then MPI
 		if (state.getTransporter().isNeighbor(getPartition().toPartitionPID(p)))
 			{
-			state.getTransporter().migrateAgent(ordering, time, (Stopping) t, getPartition().toPartitionPID(p), p, this.fieldIndex);
+			state.getTransporter().transport((DObject) t, getPartition().toPartitionPID(p), p, this.fieldIndex, ordering, time);
 			}
 		else // ...otherwise, RMI
 			{
@@ -541,7 +541,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		// If local, then MPI
 		if (state.getTransporter().isNeighbor(getPartition().toPartitionPID(p)))
 			{
-			state.getTransporter().migrateAgent(ordering, time, interval, (Stopping) t, getPartition().toPartitionPID(p), p, this.fieldIndex);
+			state.getTransporter().transport((DObject) t, getPartition().toPartitionPID(p), p, this.fieldIndex, ordering, time, interval);
 			}
 		else // ...otherwise, RMI
 			{
@@ -618,8 +618,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			// If local, then MPI
 			if (state.getTransporter().isNeighbor(getPartition().toPartitionPID(p)))
 				{
-				//state.getTransporter().migrateRepeatingAgent(iterativeRepeat, getPartition().toPartitionPID(p), p, this.fieldIndex);
-				state.getTransporter().transportObject(t, getPartition().toPartitionPID(p), p, this.fieldIndex);
+				state.getTransporter().transport((DObject) t, getPartition().toPartitionPID(p), p, this.fieldIndex);
 				}
 			
 			else {
@@ -822,20 +821,8 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	@SuppressWarnings("unchecked")
 	public void addPayload(PayloadWrapper payloadWrapper)
 	{
-		
-		if (payloadWrapper.payload instanceof AgentWrapper)
-		{
-			AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
-			addLocal((Number2D) payloadWrapper.loc, (T) agentWrapper.agent);
-			if (agentWrapper.agent instanceof DObject)
-				((DObject)(agentWrapper.agent)).migrated(state);
-		}
-		else
-		{
-			addLocal((Number2D) payloadWrapper.loc, (T) payloadWrapper.payload);
-			if (payloadWrapper.payload instanceof DObject)
-				((DObject)(payloadWrapper.payload)).migrated(state);
-		}
+	addLocal((Number2D) payloadWrapper.loc, (T) payloadWrapper.payload);
+	payloadWrapper.payload.migrated(state);
 	}
 	
 	

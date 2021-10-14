@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SocketHandler;
+import java.rmi.Remote;
 
 import ec.util.MersenneTwisterFast;
 import mpi.MPI;
@@ -262,10 +263,9 @@ public class DSimState extends SimState
 
 			// Check for RemotePromise to fill and fill them
 			// we need to do this before the synchronization TODO I guess
-//			if (withRegistry && 
+//			if (withRegistry && !promises.isEmpty()) {				
 			if (!promises.isEmpty()) {				
 				//MPI.COMM_WORLD.barrier();
-//				System.out.println("Promises are: " + promises.toString());
 				for(Quartet<RemotePromise, Integer, Serializable, Distinguished> promisesToFill : promises) {
 					// Get the object inside the RemotePromise that has the information needed
 					Distinguished author =  promisesToFill.d;
@@ -286,8 +286,7 @@ public class DSimState extends SimState
 			
 			transporter.sync();
 
-/*
-			if (withRegistry)
+//			if (withRegistry)
 			{
 				// All nodes have finished the synchronization and can unregister exported objects.
 				MPI.COMM_WORLD.barrier();
@@ -308,7 +307,7 @@ public class DSimState extends SimState
 				DRegistry.getInstance().clearMigratedNames();
 				MPI.COMM_WORLD.barrier();
 			}
-*/
+
 		}
 		catch (ClassNotFoundException | MPIException | IOException e)
 		{
@@ -328,40 +327,22 @@ public class DSimState extends SimState
 			 * Improperly using the wrappers and/or fieldIndex will cause Class cast exceptions to be thrown
 			 */
 
-			if (payloadWrapper.fieldIndex >= 0)
+//			if (payloadWrapper.fieldIndex >= 0)
 			{
 				// add the object to the field
 				fieldList.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
 			}
 
-			/*
-			if (payloadWrapper.payload instanceof DistributedIterativeRepeat)
+			if (payloadWrapper.isAgent())
 			{
-				final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
 
-				// TODO: how to schedule for a specified time?
-				// Not adding it to specific time because we get an error -
-				// "the time provided (-1.0000000000000002) is < EPOCH (0.0)"
-
-				Stopping stopping = iterativeRepeat.getSteppable();
-				stopping.setStoppable(
-						schedule.scheduleRepeating(stopping, iterativeRepeat.getOrdering(), iterativeRepeat.interval));
-			}
-			*/
-			
-			if (payloadWrapper.payload instanceof AgentWrapper)
-			{
-				final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
-
-/*
-				if (withRegistry)
+//				if (withRegistry)
 				{
-					if (agentWrapper.getExportedName() != null)
+					if (payloadWrapper.getExportedName() != null)
 					{
 						try
 						{
-							DRegistry.getInstance().registerObject(agentWrapper.getExportedName(),
-									(Remote) agentWrapper.agent);
+							DRegistry.getInstance().registerObject(payloadWrapper.getExportedName(), (Remote) payloadWrapper.payload);
 						}
 						catch (RemoteException e)
 						{
@@ -369,19 +350,14 @@ public class DSimState extends SimState
 						}
 					}
 				}
-*/
 
-				if (agentWrapper.isRepeating())
+				if (payloadWrapper.isRepeating())
 					{
-					schedule.scheduleRepeating(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent, agentWrapper.interval);
+					schedule.scheduleRepeating(payloadWrapper.time, payloadWrapper.ordering, (Steppable)(payloadWrapper.payload), payloadWrapper.interval);
 					}
 				else
 					{
-					// This should NEVER EVER HAPPEN
-					//if (agentWrapper.time < 0)
-					//	schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
-					//else
-						schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
+					schedule.scheduleOnce(payloadWrapper.time, payloadWrapper.ordering, (Steppable)(payloadWrapper.payload));
 					}
 			}
 		}
@@ -425,7 +401,6 @@ public class DSimState extends SimState
 		        System.out.println(partition.getPID()+" : "+x);
 				
 				balancePartitions(balancerLevel);
-
 		        
 				try
 				{
@@ -460,46 +435,25 @@ public class DSimState extends SimState
 					 */
 
 					// add payload into correct HaloGrid
-					if (payloadWrapper.fieldIndex >= 0)
+//					if (payloadWrapper.fieldIndex >= 0)
 					{
 						// add the object to the field
 						fieldList.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
 						//verify it was added to the correct location!
 					}
 					
-					
-
-					
-
-					// DistributedIterativeRepeat
-					if (payloadWrapper.payload instanceof DistributedIterativeRepeat)
+					if (payloadWrapper.isAgent())
 					{
-						final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
 
-						// TODO: how to schedule for a specified time?
-						// Not adding it to specific time because we get an error -
-						// "the time provided (-1.0000000000000002) is < EPOCH (0.0)"
-
-						// add back to schedule
-						Stopping stopping = iterativeRepeat.getSteppable();
-						stopping.setStoppable(schedule.scheduleRepeating(stopping, iterativeRepeat.getOrdering(),
-								iterativeRepeat.interval));
-
-					}
-					else if (payloadWrapper.payload instanceof AgentWrapper)
-					{
-						final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
-
-/*
 						// I am currently unclear on how this works
-						if (withRegistry)
+//						if (withRegistry)
 						{
-							if (agentWrapper.getExportedName() != null)
+							if (payloadWrapper.getExportedName() != null)
 							{
 								try
 								{
-									DRegistry.getInstance().registerObject(agentWrapper.getExportedName(),
-											(Remote) agentWrapper.agent);
+									DRegistry.getInstance().registerObject(payloadWrapper.getExportedName(),
+											(Remote) payloadWrapper.payload);
 								}
 								catch (RemoteException e)
 								{
@@ -507,19 +461,14 @@ public class DSimState extends SimState
 								}
 							}
 						}
-*/
 
-					if (agentWrapper.isRepeating())
+					if (payloadWrapper.isRepeating())
 						{
-						schedule.scheduleRepeating(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent, agentWrapper.interval);
+						schedule.scheduleRepeating(payloadWrapper.time, payloadWrapper.ordering, (Steppable)(payloadWrapper.payload), payloadWrapper.interval);
 						}
 					else
 						{
-						// This should NEVER EVER HAPPEN
-						//if (agentWrapper.time < 0)
-						//	schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
-						//else
-							schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
+						schedule.scheduleOnce(payloadWrapper.time, payloadWrapper.ordering, (Steppable)(payloadWrapper.payload));
 						}
 					}
 					
@@ -639,7 +588,7 @@ public class DSimState extends SimState
 								{
 									DistributedTentativeStep step = (DistributedTentativeStep) stoppable;
 									stoppable.stop();
-									transporter.migrateAgent(step.getOrdering(), step.getTime(), stopping, locToP, loc, ((HaloGrid2D) field).getFieldIndex());
+									transporter.transport((DObject)stopping, locToP, loc, ((HaloGrid2D) field).getFieldIndex(), step.getOrdering(), step.getTime());
 
 								}
 
@@ -648,7 +597,7 @@ public class DSimState extends SimState
 								{
 									final DistributedIterativeRepeat step = (DistributedIterativeRepeat) stopping.getStoppable();
 									stoppable.stop();
-									transporter.migrateAgent(step.getOrdering(), step.getTime(), step.getInterval(), stopping, locToP, loc, ((HaloGrid2D) field).getFieldIndex());
+									transporter.transport((DObject)stopping, locToP, loc, ((HaloGrid2D) field).getFieldIndex(), step.getOrdering(), step.getTime(), step.getInterval());
 								}
 
 								// keeps track of agents being moved so not added again
@@ -662,7 +611,7 @@ public class DSimState extends SimState
 							else if (old_partition.contains(loc) && !partition.getLocalBounds().contains(loc))
 							{
 								final int locToP = partition.toPartitionPID(loc); // we need to use this, not toP
-								transporter.transportObject((Serializable) a, locToP, loc, ((HaloGrid2D) field).getFieldIndex());
+								transporter.transport((DObject) a, locToP, loc, ((HaloGrid2D) field).getFieldIndex());
 							}
 						}
 					}
@@ -688,17 +637,6 @@ public class DSimState extends SimState
 						if (a_list != null)
 						{
 
-							/*
-							 * ArrayList<Serializable> a_list_copy = new ArrayList(); for (int i = 0; i < ((ArrayList)
-							 * a_list).size(); i++) { Serializable a = ((ArrayList<Serializable>) a_list).get(i);
-							 * a_list_copy.add(a); }
-							 * 
-							 * 
-							 * for (int i = 0; i < a_list_copy.size(); i++) {
-							 * 
-							 * Serializable a = a_list_copy.get(i);
-							 */
-
 							// go backwards, so removing is safe
 							for (int i = ((ArrayList<Serializable>) a_list).size() - 1; i >= 0; i--)
 							{
@@ -715,41 +653,30 @@ public class DSimState extends SimState
 									{
 									DistributedTentativeStep step = (DistributedTentativeStep) stoppable;
 									stoppable.stop();
-									transporter.migrateAgent(step.getOrdering(), step.getTime(), stopping, toP, p, ((HaloGrid2D) field).getFieldIndex());
+									transporter.transport((DObject)stopping, toP, p, ((HaloGrid2D) field).getFieldIndex(), step.getOrdering(), step.getTime());
 									}
 
 									// stop and migrate
 								else if (stoppable instanceof DistributedIterativeRepeat)
-								{
+									{
 									final DistributedIterativeRepeat step = (DistributedIterativeRepeat) stopping.getStoppable();
 									stoppable.stop();
-									transporter.migrateAgent(step.getOrdering(), step.getTime(), step.getInterval(), stopping, toP, p, ((HaloGrid2D) field).getFieldIndex());
-								}
+									transporter.transport((DObject)stopping, toP, p, ((HaloGrid2D) field).getFieldIndex(), step.getOrdering(), step.getTime(), step.getInterval());
+									}
 
 									migratedAgents.add(stopping);
-									System.out.println(
-											"PID: " + partition.getPID() + " processor " + old_pid + " move " + stopping
-													+ " from " + p + " (point " + p + ") to processor " + toP+ " "+partition.getLocalBounds(toP));
 
 									// here the agent is removed from the old location TOCHECK!!!
 									// haloGrid2D.removeLocal(p, stopping.ID());
 									
 									st.removeObject(p, stopping.ID());
-									
-						
-									
-
-
-
 								}
 
 								// not stoppable (transport a double or something) transporter call transportObject?
 								else if (old_partition.contains(p) && !partition.getLocalBounds().contains(p) && !migratedAgents.contains(a))
 								{
-									transporter.transportObject((Serializable) a, toP, p,
-											((HaloGrid2D) field).getFieldIndex());
+									transporter.transport((DObject) a, toP, p,((HaloGrid2D) field).getFieldIndex());
 								}
-
 								else
 								{
 									System.out.println(a + " not moved over");
@@ -870,15 +797,12 @@ public class DSimState extends SimState
 	public void start()
 	{
 		super.start();
-//		RMIProxy.init();
 
-/*
-		if (withRegistry)
+//		if (withRegistry)
 		{
 			// distributed registry inizialization
 			registry = DRegistry.getInstance();
 		}
-*/
 
 		try
 		{
