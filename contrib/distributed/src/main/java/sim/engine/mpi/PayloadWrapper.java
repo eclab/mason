@@ -14,8 +14,13 @@ public class PayloadWrapper extends MigratableObject
 {
 	private static final long serialVersionUID = 1L;
 
+	/** Set the INTERVAL to this to indicate that the object is NOT a REPEATING AGENT */
 	public static final int NON_REPEATING_INTERVAL = -1;
+
+	/** Set the TIME to this to indicate that the object is NOT an AGENT */
 	public static final double NON_AGENT_TIME = -1;
+
+	/** Set the ORDERING to this to indicate that the object is NOT an AGENT (though it doesn't matter) */
 	public static final int NON_AGENT_ORDERING = 0;		// doesn't really matter
 	
 	/**
