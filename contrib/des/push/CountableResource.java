@@ -105,6 +105,14 @@ public class CountableResource extends Resource
 		return new CountableResource(this);
 		}
 
+	public CountableResource duplicate0()
+		{
+		CountableResource ret = new CountableResource(this);
+		ret.clear();
+		return ret;
+		}
+	
+
 	public double getAmount()
 		{
 		return amount;
