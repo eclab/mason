@@ -39,12 +39,12 @@ public class Transporter
 
 	public ArrayList<PayloadWrapper> objectQueue; //things being moved are put here, and integrated into local storage in DSimState
 
-	protected boolean withRegistry;
+	// protected boolean withRegistry;
 
 	public Transporter(Partition partition)
 	{
 		this.partition = partition;
-		this.withRegistry = false;
+		// this.withRegistry = false;
 		reload();
 
 		//unclear on exactly how this works, I assume it is just syncing before initializing?
@@ -237,12 +237,13 @@ public class Transporter
 		// dst, which could be the diagonal processor
 		PayloadWrapper wrapper = new PayloadWrapper(obj, dst, loc, fieldIndex, ordering, time, interval);
 
-		if (withRegistry)
-		{
-			String name = DRegistry.getInstance().ifExportedThenAddMigratedName(obj);
-			if (name != null)
-				wrapper.setExportedName(name);
-		}
+		// if (withRegistry)
+		// {
+			// String name = 
+		DRegistry.getInstance().ifExportedThenAddMigratedName(obj);
+			// if (name != null)
+			// obj.distinguishedName(name);
+		// }
 
 		assert dstMap.containsKey(dst);
 		try

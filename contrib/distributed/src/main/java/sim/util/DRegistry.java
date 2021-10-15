@@ -19,6 +19,8 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import mpi.MPI;
+import sim.engine.DObject;
+import sim.engine.Distinguished;
 
 /**
  * This class enables agents access to the information of another agent in any
@@ -44,7 +46,7 @@ public class DRegistry
 	 static Registry registry;
 	 static HashMap<String, Remote> exported_names = new HashMap<>();
 	 static HashMap<Remote, String> exported_objects = new HashMap<>();
-	 static ArrayList<String> migrated_names = new ArrayList<>();
+	 static ArrayList<String> migrated_names = new ArrayList<String>();
 
 	/**
 	 * Clear the list of the registered agent’s keys on the registry
@@ -195,18 +197,22 @@ public class DRegistry
 	 * @throws AccessException
 	 * @throws RemoteException
 	 */
-	public boolean registerObject(String name, Remote obj) throws AccessException, RemoteException
+	public boolean registerObject(String name, Distinguished obj) throws AccessException, RemoteException
 	{
 		if (!exported_names.containsKey(name))
 		{
 			try
 			{
+			
 				Remote stub = UnicastRemoteObject.exportObject(obj, 0);
+				((DObject) obj).distinguishedName(name,stub);
 				registry.bind(name, stub);
+
 				exported_names.put(name, obj);
 				exported_objects.put(obj, name);
+				
 			}
-			catch (AlreadyBoundException e)
+			catch (Exception e)
 			{
 				return false;
 			}
@@ -215,7 +221,6 @@ public class DRegistry
 		return false;
 
 	}
-
 	/**
 	 * Register an already exported UnicastRemoteObject obj with key name on the
 	 * registry
@@ -237,6 +242,7 @@ public class DRegistry
 				registry.bind(name, stub);
 				exported_names.put(name, obj);
 				exported_objects.put(obj, name);
+				
 			}
 			catch (AlreadyBoundException e)
 			{
@@ -285,7 +291,6 @@ public class DRegistry
 	{
 		return (T) registry.lookup(name);
 	}
-
 	/**
 	 * Remove the object with key name from the registry
 	 * 

@@ -1,13 +1,11 @@
 package sim.app.dschelling;
 
-import java.rmi.Remote;
-
 import sim.engine.DSteppable;
 import sim.engine.SimState;
 import sim.util.Int2D;
 import sim.util.IntBag;
 
-public class Agent extends DSteppable implements Remote
+public class Agent extends DSteppable
 {
 	
     private static final long serialVersionUID = 1;

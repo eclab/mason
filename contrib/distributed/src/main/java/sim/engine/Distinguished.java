@@ -26,5 +26,5 @@ public interface Distinguished extends Remote
 	 * 
 	 */
 	
-	public Serializable respondToRemote(Integer tag, Serializable argument) throws RemoteException;
+	public Serializable remote(Integer tag, Serializable argument) throws RemoteException;
 }

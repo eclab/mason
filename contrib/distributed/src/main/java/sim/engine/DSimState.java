@@ -38,6 +38,7 @@ import sim.util.Double2D;
 import sim.util.Int2D;
 import sim.util.IntRect2D;
 import sim.util.MPIUtil;
+import sim.engine.DObject;
 
 
 import sim.util.Timing;
@@ -264,35 +265,35 @@ public class DSimState extends SimState
 			// Check for RemotePromise to fill and fill them
 			// we need to do this before the synchronization TODO I guess
 //			if (withRegistry && !promises.isEmpty()) {				
-			if (!promises.isEmpty()) {				
-				//MPI.COMM_WORLD.barrier();
-				for(Quartet<RemotePromise, Integer, Serializable, Distinguished> promisesToFill : promises) {
-					// Get the object inside the RemotePromise that has the information needed
-					Distinguished author =  promisesToFill.d;
-					// Use the method of the remote interface to get the required information
-					// tag and argument are passed to specify what data is needed
-					// respondToRemote is implemented by the modeler
-					Serializable response = author.respondToRemote(promisesToFill.b, promisesToFill.c);
-					// Fulfill the promise with the data acquired
-					promisesToFill.a.fulfill(response);
-				}
-				// clear the queue since all the promises have been fulfilled
-				promises.clear();
-				System.out.println("Promises queue cleared!");
-			}
+			// if (!promises.isEmpty()) {				
+			// 	//MPI.COMM_WORLD.barrier();
+			// 	for(Quartet<RemotePromise, Integer, Serializable, Distinguished> promisesToFill : promises) {
+			// 		// Get the object inside the RemotePromise that has the information needed
+			// 		Distinguished author =  promisesToFill.d;
+			// 		// Use the method of the remote interface to get the required information
+			// 		// tag and argument are passed to specify what data is needed
+			// 		// respondToRemote is implemented by the modeler
+			// 		Serializable response = author.askToRemote(promisesToFill.b, promisesToFill.c);
+			// 		// Fulfill the promise with the data acquired
+			// 		promisesToFill.a.fulfill(response);
+			// 	}
+			// 	// clear the queue since all the promises have been fulfilled
+			// 	promises.clear();
+			// 	System.out.println("Promises queue cleared!");
+			// }
 			
 			// Sync all the Remove and Add queues for RMI
 			syncRemoveAndAdd();
 			
 			transporter.sync();
 
-//			if (withRegistry)
-			{
+//			if (withRegistry)// {
 				// All nodes have finished the synchronization and can unregister exported objects.
-				MPI.COMM_WORLD.barrier();
+				//MPI.COMM_WORLD.barrier(); //not useful
 
 				// After the synchronization we can unregister migrated object!
 				// remove exported-migrated object from local node
+				
 				for (String mo : DRegistry.getInstance().getMigratedNames())
 				{
 					try
@@ -305,8 +306,9 @@ public class DSimState extends SimState
 					}
 				}
 				DRegistry.getInstance().clearMigratedNames();
+				//wait all nodes to finish the unregister phase.
 				MPI.COMM_WORLD.barrier();
-			}
+			// }
 
 		}
 		catch (ClassNotFoundException | MPIException | IOException e)
@@ -338,11 +340,13 @@ public class DSimState extends SimState
 
 //				if (withRegistry)
 				{
-					if (payloadWrapper.getExportedName() != null)
+					if (payloadWrapper.payload.distinguishedName() != null)
 					{
 						try
 						{
-							DRegistry.getInstance().registerObject(payloadWrapper.getExportedName(), (Remote) payloadWrapper.payload);
+							DRegistry.getInstance().registerObject(
+								payloadWrapper.payload.distinguishedName() ,
+									(Distinguished) payloadWrapper.payload);
 						}
 						catch (RemoteException e)
 						{
@@ -376,12 +380,12 @@ public class DSimState extends SimState
 			e.printStackTrace();
 		}
 
+
+		
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
 		loadBalance();
 		
 		int x = countTotalAgents(fieldList.get(0));
-
-		
 
 
 	}
@@ -448,12 +452,13 @@ public class DSimState extends SimState
 						// I am currently unclear on how this works
 //						if (withRegistry)
 						{
-							if (payloadWrapper.getExportedName() != null)
+							if (payloadWrapper.payload.distinguishedName() != null)
 							{
 								try
 								{
-									DRegistry.getInstance().registerObject(payloadWrapper.getExportedName(),
-											(Remote) payloadWrapper.payload);
+									DRegistry.getInstance().registerObject(
+										payloadWrapper.payload.distinguishedName(),
+											(Distinguished)payloadWrapper.payload);
 								}
 								catch (RemoteException e)
 								{
@@ -482,9 +487,6 @@ public class DSimState extends SimState
 				try
 				{
 					MPI.COMM_WORLD.barrier();
-					
-
-					
 					syncFields();
 				}
 				catch (MPIException e)
@@ -532,8 +534,6 @@ public class DSimState extends SimState
 	{
 
 		int x = countTotalAgents(fieldList.get(0));
-
-
 		
 		final IntRect2D old_partition = partition.getLocalBounds();
 		final int old_pid = partition.getPID();
