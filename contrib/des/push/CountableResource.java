@@ -1,9 +1,21 @@
 /** 
-	A CountableResource is an entity which can be merged with resources of the same type.  Resources
-	have AMOUNTS, which must be integers >= 0.  These amounts are stored as doubles
-	for two bad reasons: first, to allow UnResource to cleanly subclass from
-	Resource, and second, because double has a large range of integers than int
-	does.
+	A CountableResource is an Resource which can be merged with resources of the same type.  Resources
+	have AMOUNTS, which must be integers >= 0.  CountableResources are thus finite-ly divisible.
+	You can also split a CountableResource into a group of smaller CountableResources, and can 
+	compare their amounts against each other.
+	
+	<p>Examples of CountableResources might be: cars, bricks, workers, and so on.  Money is also
+	a countableResource as it is not infinitely divisible: but we have a special subclass for
+	Money so it prints out in a cute way.
+	
+	<p>These amounts are stored as doubles for two bad reasons: first, to allow 
+	UncountableResource to cleanly subclass from Resource, and second, because double has a 
+	larger range of integers than int does.
+	
+	<p>CountableResource has a subclass called UncountableResource, which represents infinitely
+	divisible resources (like water or gasoline).  This subclass arrangement may seem strange at
+	first, but it makes sense given that UncountableResources can do everything CountableResources
+	can do, plus some extra things.
 */
 
 public class CountableResource extends Resource
@@ -17,7 +29,7 @@ public class CountableResource extends Resource
 	public boolean isUncountable() { return false; }
 
 	/** Returns true if this is NOT an instance of UncountableResource */
-	public boolean isCountable() { return false; }
+	public boolean isCountable() { return true; }
 
 	void throwNotCountableResourceException(Object resource)
 		{
@@ -97,7 +109,7 @@ public class CountableResource extends Resource
 		
 	public String toString()
 		{
-		return "CountableResource[" + name + " (" + type + "), " + amount + "]";
+		return "CountableResource[" + name + " (" + type + "), " + (long)amount + "]";
 		}
 
 	public Resource duplicate()

@@ -1,12 +1,31 @@
+/**
+	The top level abstract superclass of things that can be handed from one node to another.
+	Resouces have TYPES (unique integers) and NAMES (which you can specify and which don't
+	have to be unique).  You create a new kind of resource with new Resource(name).  You
+	create more than one of the same kind of resoure by duplicating an existing Resource
+	or using a copy constuctor found in a resource subclass.
+	
+	<p>Note that type allocation is not threadsafe unless DSimState.isMultiThreaded() 
+	returns true.
+**/
+
 
 public abstract class Resource 
 	{
-	static int lastType = -1;
+	static int typeCounter = 0;
+	static final AtomicInteger threadSafeCounter = new AtomicInteger();
+	 
 	int type;
 	String name;
 	
-	/** Creates a new resource type.  Not threadsafe.  */
-	protected int getNextType() { return ++lastType; }
+	/** Creates a new resource type. */
+	static int getNextType() 
+		{ 
+		if (DSimState.isMultiThreaded())
+			return threadSafeCounter.getAndIncrement();
+		else
+			return typeCounter++;
+		}
 	
 	/** 
 		Returns a new kind of Entity with a given name, and initial amount.

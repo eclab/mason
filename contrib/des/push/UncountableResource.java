@@ -1,7 +1,6 @@
 /** 
-	A resource which can be merged with resources of the same type.  UncountableResources
-	have AMOUNTS, which must be doubles >= 0.0.  UncountableResources can be infinitely
-	divisible or scalable.
+	An UncountableResource represents an infinitely divisible and mergeable version of CountableResource.
+	Examples of UncountableResources might be oxygen, water, gasoline, electricity, heat, and so on.
 */
 
 
@@ -21,6 +20,12 @@ public class UncountableResource extends CountableResource
 		{
 		throw new RuntimeException("Scaling may not result in NaN.  Current amount is " + amount + " and scaling is " + scaling);
 		}
+
+	/** Returns true if this is an instance of UncountableResource */
+	public boolean isUncountable() { return true; }
+
+	/** Returns true if this is NOT an instance of UncountableResource */
+	public boolean isCountable() { return false; }
 
 	/** 
 		Returns a new kind of Resource with a given name, and initial amount.

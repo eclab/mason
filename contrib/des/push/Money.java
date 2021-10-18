@@ -1,7 +1,7 @@
 /** 
-	A CountableResource with a cute toString().  Money is assumed to be countable and thus have a
-	minimum atomic value: for example the value "1" for US Dollars would be 1 penny, whereas
-	a dollar would be 100.
+	A CountableResource with a cute toString() to print it nicely.  Money is assumed to be countable 
+	and thus have a minimum atomic value: for example the value "1" for US Dollars would be 1 penny,
+	whereas a dollar would be 100.
 */
 
 public class Money extends CountableResource
