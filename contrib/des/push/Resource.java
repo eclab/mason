@@ -1,3 +1,5 @@
+import java.util.concurrent.atomic.*;
+
 /**
 	The top level abstract superclass of things that can be handed from one node to another.
 	Resouces have TYPES (unique integers) and NAMES (which you can specify and which don't
@@ -13,7 +15,7 @@
 public abstract class Resource 
 	{
 	static int typeCounter = 0;
-	static final AtomicInteger threadSafeCounter = new AtomicInteger();
+	//static final AtomicInteger threadSafeCounter = new AtomicInteger();
 	 
 	int type;
 	String name;
@@ -21,9 +23,9 @@ public abstract class Resource
 	/** Creates a new resource type. */
 	static int getNextType() 
 		{ 
-		if (DSimState.isMultiThreaded())
-			return threadSafeCounter.getAndIncrement();
-		else
+		//if (DSimState.isMultiThreaded())
+		//	return threadSafeCounter.getAndIncrement();
+		//else
 			return typeCounter++;
 		}
 	

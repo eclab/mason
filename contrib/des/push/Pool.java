@@ -26,8 +26,7 @@ public class Pool
 		if (resource instanceof UncountableResource)
 			this.maximum = Double.POSITIVE_INFINITY;
 		else
-			this.maximum = Double.POSITIVE_INFINITY;
-		this.resource = CountableResource.MAXIMUM_INTEGER;
+			this.maximum =  CountableResource.MAXIMUM_INTEGER;
 		}
 	
 	public Pool(int initialResourceAllocation)
