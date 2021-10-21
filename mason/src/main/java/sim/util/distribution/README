@@ -1,0 +1,37 @@
+This is a package of distributions, drawn from the CERN distribution collection.
+
+Each distribution is represented by a class, which you instantiate by passing
+in certain parameters appropriate to the distribution, plus a MersenneTwisterFast
+random number generator (you probably should use the variable "random" from your
+SimState subclass).
+
+All distributions are one of two kinds:
+
+	AbstractDiscreteDistribution	(distributions over the integers)
+	AbstractContinuousDistribution	(distributions over the reals)
+
+These two superclasses are in turn subclasses of AbstractDistribution.
+
+AbstractContinuousDistribution sublasses override the method nextDouble(),
+which returns a random real-valued number drawn from the distribution.
+
+AbstractDiscreteDistribution subclasses override a method nextInt(),
+which returns a random integer drawn from from the distribution.  These
+classes also override nextDouble(), but just have it call nextInt().
+
+There are also four more utility classes, which you can ignore:
+
+DISTRIBUTION.JAVA
+Each distribution has its own class.  Some distributions are stateful and
+actually require instances; but others are just simple stubs that in turn
+call an equivalent static method in the Distributions.java class.
+
+FUN.JAVA
+Utility functions for the distributions to use.
+
+CONSTANTS.JAVA
+What it says on the tin: a collection of constants for the distributions
+to use.
+
+PROBABILITY.JAVA
+More utility functions for the distributions to use.
