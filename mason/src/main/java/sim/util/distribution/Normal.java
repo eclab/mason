@@ -37,7 +37,7 @@ import ec.util.MersenneTwisterFast;
    @author wolfgang.hoschek@cern.ch
    @version 1.0, 09/24/99
 */
-public class Normal extends AbstractContinousDistribution {
+public class Normal extends AbstractContinuousDistribution {
     private static final long serialVersionUID = 1;
 
     protected double mean;
