@@ -13,17 +13,26 @@ public class PowLaw extends AbstractContinuousDistribution
 	{
 	double alpha;
 	double cut;
-	MersenneTwisterFast random;
 	
 	public PowLaw(double alpha, double cut, MersenneTwisterFast random)
 		{
-		this.alpha = cut;
-		this.alpha = cut;
-		this.random = random;
+		setState(alpha, cut);
+		setRandomGenerator(random);
 		}
 	
 	public double nextDouble()
 		{
-		return Distributions.nextPowLaw(alpha, cut, random);
+		return Distributions.nextPowLaw(alpha, cut, randomGenerator);
 		}
+
+	public void setState(double alpha, double cut)
+		{
+		this.alpha = alpha;
+		this.cut = cut;
+		}
+
+    public String toString() 
+    	{
+        return this.getClass().getName()+"("+alpha+", " + cut + ")";
+        }
 	}

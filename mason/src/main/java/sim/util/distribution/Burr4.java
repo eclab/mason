@@ -13,18 +13,27 @@ public class Burr4 extends AbstractContinuousDistribution
 	{
 	double r;
 	double k;
-	MersenneTwisterFast random;
 	
 	public Burr4(double r, double k, MersenneTwisterFast random)
 		{
-		this.r = r;
-		this.k = k;
-		this.random = random;
+		setState(r, k);
+		setRandomGenerator(random);
 		}
 	
 	public double nextDouble()
 		{
 		// yes, *Burr2*
-		return Distributions.nextBurr2(r, k, 4, random);
+		return Distributions.nextBurr2(r, k, 4, randomGenerator);
 		}
+
+	public void setState(double r, double k)
+		{
+		this.r = r;
+		this.k = k;
+		}
+
+    public String toString() 
+    	{
+        return this.getClass().getName()+"("+r + ", " + k + ")";
+        }
 	}

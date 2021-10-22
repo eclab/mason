@@ -11,15 +11,18 @@ import ec.util.MersenneTwisterFast;
 
 public class Cauchy extends AbstractContinuousDistribution
 	{
-	MersenneTwisterFast random;
-	
 	public Cauchy(MersenneTwisterFast random)
 		{
-		this.random = random;
+		setRandomGenerator(random);
 		}
 	
 	public double nextDouble()
 		{
-		return Distributions.nextCauchy(random);
+		return Distributions.nextCauchy(randomGenerator);
 		}
+
+    public String toString() 
+    	{
+        return this.getClass().getName()+"()";
+        }
 	}

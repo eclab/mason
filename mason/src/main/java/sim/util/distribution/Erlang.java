@@ -13,17 +13,26 @@ public class Erlang extends AbstractContinuousDistribution
 	{
 	double variance;
 	double mean;
-	MersenneTwisterFast random;
 	
 	public Erlang(double variance, double mean, MersenneTwisterFast random)
 		{
-		this.variance = variance;
-		this.mean = mean;
-		this.random = random;
+		setState(variance, mean);
+		setRandomGenerator(random);
 		}
 	
 	public double nextDouble()
 		{
-		return Distributions.nextErlang(variance, mean, random);
+		return Distributions.nextErlang(variance, mean, randomGenerator);
 		}
+
+	public void setState(double variance, double mean)
+		{
+		this.variance = variance;
+		this.mean = mean;
+		}
+
+    public String toString() 
+    	{
+        return this.getClass().getName()+"("+variance+", " + mean + ")";
+        }
 	}

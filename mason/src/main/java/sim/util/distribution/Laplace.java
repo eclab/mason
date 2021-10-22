@@ -11,15 +11,18 @@ import ec.util.MersenneTwisterFast;
 
 public class Laplace extends AbstractContinuousDistribution
 	{
-	MersenneTwisterFast random;
-	
 	public Laplace(MersenneTwisterFast random)
 		{
-		this.random = random;
+		setRandomGenerator(random);
 		}
 	
 	public double nextDouble()
 		{
-		return Distributions.nextLaplace(random);
+		return Distributions.nextLaplace(randomGenerator);
 		}
+
+    public String toString() 
+    	{
+        return this.getClass().getName()+"()";
+        }
 	}

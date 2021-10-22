@@ -11,15 +11,18 @@ import ec.util.MersenneTwisterFast;
 
 public class Logistic extends AbstractContinousDistribution
 	{
-	MersenneTwisterFast random;
-	
 	public Logistic(MersenneTwisterFast random)
 		{
-		this.random = random;
+		setRandomGenerator(random);
 		}
 	
 	public double nextDouble()
 		{
-		return Distributions.nextLogistic(random);
+		return Distributions.nextLogistic(randomGenerator);
 		}
+
+    public String toString() 
+    	{
+        return this.getClass().getName()+"()";
+        }
 	}

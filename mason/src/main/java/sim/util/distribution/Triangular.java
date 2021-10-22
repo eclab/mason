@@ -11,15 +11,18 @@ import ec.util.MersenneTwisterFast;
 
 public class Triangular extends AbstractContinuousDistribution
 	{
-	MersenneTwisterFast random;
-	
 	public Triangular(MersenneTwisterFast random)
 		{
-		this.random = random;
+		setRandomGenerator(random);
 		}
 	
 	public double nextDouble()
 		{
-		return Distributions.nextTriangular(random);
+		return Distributions.nextTriangular(randomGenerator);
 		}
+
+    public String toString() 
+    	{
+        return this.getClass().getName()+"()";
+        }
 	}

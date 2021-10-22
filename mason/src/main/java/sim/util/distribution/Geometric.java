@@ -12,16 +12,25 @@ import ec.util.MersenneTwisterFast;
 public class Geometric extends AbstractContinuousDistribution
 	{
 	double p;
-	MersenneTwisterFast random;
 	
 	public Geometric(double p, MersenneTwisterFast random)
 		{
-		this.p = p;
-		this.random = random;
+		setState(p);
+		setRandomGenerator(random);
 		}
 	
 	public double nextDouble()
 		{
-		return Distributions.nextGeometric(p, random);
+		return Distributions.nextGeometric(p, randomGenerator);
 		}
+
+	public void setState(double p)
+		{
+		this.p = p;
+		}
+
+    public String toString() 
+    	{
+        return this.getClass().getName()+"("+p + ")";
+        }
 	}

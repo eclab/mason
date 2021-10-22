@@ -13,17 +13,26 @@ public class Weibull extends AbstractContinuousDistribution
 	{
 	double alpha;
 	double beta;
-	MersenneTwisterFast random;
 	
 	public Weibull(double alpha, double beta, MersenneTwisterFast random)
 		{
-		this.alpha = alpha;
-		this.beta = beta;
-		this.random = random;
+		setState(alpha, beta);
+		setRandomGenerator(random);
 		}
 	
 	public double nextDouble()
 		{
-		return Distributions.nextWeibull(alpha, beta, random);
+		return Distributions.nextWeibull(alpha, beta, randomGenerator);
 		}
+
+	public void setState(double alpha, double beta)
+		{
+		this.alpha = alpha;
+		this.beta = beta;
+		}
+
+    public String toString() 
+    	{
+        return this.getClass().getName()+"("+alpha+", " + beta + ")";
+        }
 	}

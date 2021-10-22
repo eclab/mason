@@ -12,17 +12,26 @@ import ec.util.MersenneTwisterFast;
 public class Burr2 extends AbstractContinuousDistribution
 	{
 	double r;
-	MersenneTwisterFast random;
 	
 	public Burr2(double r, MersenneTwisterFast random)
 		{
-		this.r = r;
-		this.random = random;
+		setState(r);
+		setRandomGenerator(random);
 		}
 	
 	public double nextDouble()
 		{
 		// yes, *Burr1*
-		return Distributions.nextBurr1(r, 2, random);
+		return Distributions.nextBurr1(r, 2, randomGenerator);
 		}
+
+	public void setState(double r)
+		{
+		this.r = r;
+		}
+
+    public String toString() 
+    	{
+        return this.getClass().getName()+"("+r + ")";
+        }
 	}

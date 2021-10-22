@@ -13,17 +13,26 @@ public class Lambda extends AbstractContinuousDistribution
 	{
 	double l3;
 	double l4;
-	MersenneTwisterFast random;
 	
 	public Lambda(double l3, double l4, MersenneTwisterFast random)
 		{
-		this.l3 = l3;
-		this.l4 = l4;
-		this.random = random;
+		setState(l3, l4);
+		setRandomGenerator(random);
 		}
 	
 	public double nextDouble()
 		{
-		return Distributions.nextLambda(l3, l4, random);
+		return Distributions.nextLambda(l3, l4, randomGenerator);
 		}
+
+	public void setState(double l3, double l4)
+		{
+		this.l3 = l3;
+		this.l4 = l4;
+		}
+
+    public String toString() 
+    	{
+        return this.getClass().getName()+"("+l3+", " + l4 + ")";
+        }
 	}
