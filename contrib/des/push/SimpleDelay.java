@@ -7,8 +7,9 @@
 import sim.engine.*;
 import java.util.*;
 
-/// FIXME: Anylogic has delay times which can be distributions, we should do that too
-/// FIXME: we're going to have drifts in totalResource due to IEEE 754
+/**
+	A simple linked list-based delay with a fixed delay time for all submitted elements.
+*/
 
 public class SimpleDelay extends Source implements Receiver
 	{

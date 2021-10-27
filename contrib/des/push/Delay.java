@@ -5,11 +5,17 @@
 
 
 import sim.engine.*;
+import sim.util.distribution.*;
 import sim.util.*;
 import java.util.*;
 
-/// FIXME: Anylogic has delay times which can be distributions, we should do that too
-/// FIXME: we're going to have drifts in totalResource due to IEEE 754
+
+/**
+	A heap-based delay which allows different submitted elements to have different
+	delay times.  Delay times can be based on a provided distribution, or you can override
+	the method getDelay(...) to customize delay times entirely based on the provide
+	and resource being provided. 
+*/
 
 public class Delay extends Source implements Receiver
 	{
@@ -28,6 +34,7 @@ public class Delay extends Source implements Receiver
 		}
 	
 	double totalResource = 0.0;
+	AbstractDistribution distribution = null;
 
 	void throwInvalidNumberException(double capacity)
 		{
@@ -44,10 +51,24 @@ public class Delay extends Source implements Receiver
 		{
 		heap = new Heap();
 		}
-		
-	protected double getDelayTime(Provider provider, Resource amount)
+	
+	public void setDelayDistribution(AbstractDistribution distribution)
 		{
-		return 1.0;
+		this.distribution = distribution;
+		}
+		
+	public AbstractDistribution getDelayDistribution()
+		{
+		return this.distribution;
+		}
+		
+	/** By default, provides Math.abs(getDelayDistribution().nextDouble()), or 1.0 if there is
+		no provided distribution.  Override this to provide a custom delay given the 
+		provider and resource amount or type. */
+	protected double getDelay(Provider provider, Resource amount)
+		{
+		if (distribution == null) return 1.0;
+		else return Math.abs(distribution.nextDouble());
 		}
 		
 	public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
@@ -64,12 +85,12 @@ public class Delay extends Source implements Receiver
 			CountableResource token = (CountableResource)(cr.duplicate());
 			token.setAmount(maxIncoming);
 			cr.decrease(maxIncoming);
-			heap.add(token, getDelayTime(provider, amount));
+			heap.add(token, state.schedule.getTime() + getDelay(provider, amount));
 			}
 		else
 			{
 			if (heap.size() >= capacity) return false;	// we're at capacity
-			heap.add(amount, getDelayTime(provider, amount));
+			heap.add(amount, getDelay(provider, amount));
 			}
 		return true;
 		}
