@@ -32,13 +32,31 @@ public abstract class Provider implements Named
 	protected SimState state;
 	protected ArrayList<Receiver> receivers;
 	
-	public static final int DISTRIBUTION_STRATEGY_OFFER_IN_ORDER = 0;
-	public static final int DISTRIBUTION_STRATEGY_OFFER_SHUFFLE = 1;
-	public static final int DISTRIBUTION_STRATEGY_OFFER_ONE_RANDOM = 2;
-	int distributionStrategy;
-	boolean shufflesReceivers;
+	/** Offer Policy: offers are made to the first receiver, then the second, and so on, until available resources or receivers are exhausted. */
+	public static final int OFFER_POLICY_FORWARD = 0;
+	/** Offer Policy: offers are made to the last receiver, then the second to last, and so on, until available resources or receivers are exhausted. */
+	public static final int OFFER_POLICY_BACKWARD = 1;
+	/** Offer Policy: offers are made to the least recent receiver, then next, and so on, until available resources or receivers are exhausted. */
+	public static final int OFFER_POLICY_ROUND_ROBIN = 2;
+	/** Offer Policy: offers are made to the receivers in a randomly shuffled order, until available resources or receivers are exhausted. */
+	public static final int OFFER_POLICY_SHUFFLE = 3;
+	/** Offer Policy: offers are made to only one random receiver. */
+	public static final int OFFER_POLICY_ONE_RANDOM = 4;
+	int offerPolicy;
+	int roundRobinPosition = 0;
 	boolean offersTakeItOrLeaveIt;
-	
+
+	/** Sets the receiver offer policy */
+	public void setOfferPolicy(int offerPolicy) 
+		{ 
+		if (offerPolicy < OFFER_POLICY_FORWARD || offerPolicy > OFFER_POLICY_ONE_RANDOM)
+			throw new IllegalArgumentException("Offer Policy " + offerPolicy + " out of bounds.");
+		this.offerPolicy = offerPolicy; 
+		roundRobinPosition = 0; 
+		}
+		
+	/** Returns the receiver offer policy */
+	public int getOfferPolicy() { return offerPolicy; }
 	
 	public void clear()
 		{
@@ -51,16 +69,6 @@ public abstract class Provider implements Named
 	*/
 	public Resource getTypicalResource() { return typical; }
 	
-	/** 
-	Returns the distribution strategy.
-	*/
-	public int getDistributionStrategy() { return distributionStrategy; }
-	
-	/** 
-	Sets the distribution strategy.
-	*/
-	public void setDistributionStrategy(int val) { distributionStrategy = val; }
-
 	/** 
 	Returns whether receivers are offered take-it-or-leave-it offers.
 	*/
@@ -177,9 +185,9 @@ public abstract class Provider implements Named
 	protected boolean offerReceivers()
 		{
 		boolean result = false;
-		switch(distributionStrategy)
+		switch(offerPolicy)
 			{
-			case DISTRIBUTION_STRATEGY_OFFER_IN_ORDER:
+			case OFFER_POLICY_FORWARD:
 				{
 				for(Receiver r : receivers)
 					{
@@ -188,7 +196,46 @@ public abstract class Provider implements Named
 					}
 				}
 			break;
-			case DISTRIBUTION_STRATEGY_OFFER_SHUFFLE:
+			case OFFER_POLICY_BACKWARD:
+				{
+				for(int i = receivers.size() - 1; i >= 0; i--)
+					{
+					Receiver r = receivers.get(i);
+					result = result || offerReceiver(r);
+					if (result && getOffersTakeItOrLeaveIt()) break;
+					}
+				}
+			break;
+			case OFFER_POLICY_ROUND_ROBIN:
+				{
+				if (receivers.size() == 0) 
+					break;
+					
+				if (roundRobinPosition >= receivers.size())
+					roundRobinPosition = 0;
+					
+				int oldRoundRobinPosition = roundRobinPosition;
+				while(true)
+					{
+					Receiver r = receivers.get(roundRobinPosition);
+					result = result || offerReceiver(r);
+					if (result && getOffersTakeItOrLeaveIt()) 
+						{
+						roundRobinPosition++;		// we have to advance the round robin pointer anyway
+						break;
+						}
+					else
+						{
+						roundRobinPosition++;
+						}
+												
+					if (roundRobinPosition >= receivers.size())
+						roundRobinPosition = 0;
+					if (roundRobinPosition == oldRoundRobinPosition) break;		// all done!
+					}
+				}
+			break;
+			case OFFER_POLICY_SHUFFLE:
 				{
 				shuffle();
 				while(true)
@@ -200,7 +247,7 @@ public abstract class Provider implements Named
 					}
 				}
 			break;
-			case DISTRIBUTION_STRATEGY_OFFER_ONE_RANDOM:
+			case OFFER_POLICY_ONE_RANDOM:
 				{
 				Receiver r = receivers.get(state.random.nextInt(receivers.size()));
 				result = offerReceiver(r);
