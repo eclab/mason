@@ -6,6 +6,7 @@
 
 
 import sim.engine.*;
+import sim.util.distribution.*;
 import java.util.*;
 
 public class Source extends Provider
@@ -21,6 +22,8 @@ public class Source extends Provider
 		}
 		
 	double capacity = Double.POSITIVE_INFINITY;
+	AbstractDistribution CreateDistribution = null;
+	AbstractDistribution AmountDistribution = null;
 	
 	public static boolean isPositiveNonNaN(double val)
 		{
@@ -36,6 +39,26 @@ public class Source extends Provider
 			throwInvalidNumberException(d); 
 		capacity = d; 
 		}
+
+
+	public void setCreateDistribution(AbstractDistribution d)
+	{
+		this.CreateDistribution = d;
+	}
+	public AbstractDistribution getCreateDistribution()
+	{
+		return this.CreateDistribution;
+	}
+
+	public void setAmountDistribution(AbstractDistribution d)
+	{
+		this.AmountDistribution = d;
+	}
+	public AbstractDistribution getAmonutDistribution()
+	{
+		return this.AmountDistribution;
+	}
+
 	
 	protected Entity buildEntity()
 		{
@@ -56,8 +79,13 @@ public class Source extends Provider
 			}
 		else
 			{
-			if (resource.getAmount() <= capacity - 1)
-				resource.increment();
+			
+			if (this.CreateDistribution.nextDouble() > 0.5)
+			{
+
+				if (resource.getAmount() <= capacity - 1)
+					resource.increase(this.AmountDistribution.nextDouble());
+				}
 			}
 		}
 		
