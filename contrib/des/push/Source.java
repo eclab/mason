@@ -23,6 +23,7 @@ public class Source extends Provider
 		
 	double capacity = Double.POSITIVE_INFINITY;
 	AbstractDistribution createDistribution = null;
+	double createThreshold;
 	AbstractDistribution amountDistribution = null;
 	
 	public static boolean isPositiveNonNaN(double val)
@@ -41,18 +42,21 @@ public class Source extends Provider
 		}
 
 
-	public void setcreateDistribution(AbstractDistribution d)
+	public void setcreateDistribution(AbstractDistribution createDistribution, double createThreshold)
 	{
-		this.createDistribution = d;
+		this.createDistribution = amountDistribution;
 	}
 	public AbstractDistribution getcreateDistribution()
 	{
 		return this.createDistribution;
 	}
-
-	public void setamountDistribution(AbstractDistribution d)
+	public double getCreateThreshold()
 	{
-		this.amountDistribution = d;
+		return this.createThreshold;
+	}
+	public void setamountDistribution(AbstractDistribution amountDistribution)
+	{
+		this.amountDistribution = amountDistribution;
 	}
 	public AbstractDistribution getAmonutDistribution()
 	{
@@ -80,11 +84,18 @@ public class Source extends Provider
 		else
 			{
 			
-			if (this.createDistribution.nextDouble() > 0.5)
+			if (this.createDistribution == null || this.createDistribution.nextDouble() > this.createThreshold)
 			{
 
 				if (resource.getAmount() <= capacity - 1)
-					resource.increase(this.amountDistribution.nextDouble());
+					if (this.createDistribution == null)
+					{
+						resource.increment();
+					}
+					else 
+					{
+						resource.increase(this.amountDistribution.nextDouble());
+					}
 				}
 			}
 		}
