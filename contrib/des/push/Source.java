@@ -184,7 +184,7 @@ public class Source extends Provider
                 
     protected void update()
         {
-        // check for capacityh
+        // check for capacity
         if (entities != null)
         	{
         	if (entities.size() >= capacity)
@@ -204,7 +204,7 @@ public class Source extends Provider
             ((successCriterion == CRITERION_LESS) && (successDistribution.nextDouble() < successThreshold)) ||
             ((successCriterion == CRITERION_LESS_OR_EQUAL) && (successDistribution.nextDouble() <= successThreshold)))
             {
-            double amt = 1.0;
+            double amt = productionAmount;
             if (amountDistribution != null)
                 {
                 amt = produceAmount();
