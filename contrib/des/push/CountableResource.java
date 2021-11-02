@@ -325,6 +325,33 @@ public class CountableResource extends Resource
         }
 
 
+    public final int hashCode()
+        {
+        double amount = this.amount;
+                
+        // push -0.0 to 0.0 for purposes of hashing.  Note that equals() has also been modified
+        // to consider -0.0 to be equal to 0.0.  Hopefully cute Java compilers won't try to optimize this out.
+        if (amount == -0.0) amount = 0.0;
+                
+        long key = Double.doubleToLongBits(amount);
+            
+        key += ~(key << 32);
+        key ^= (key >>> 22);
+        key += ~(key << 13);
+        key ^= (key >>> 8);
+        key += (key << 3);
+        key ^= (key >>> 15);
+        key += ~(key << 27);
+        key ^= (key >>> 31);
+        
+        // nifty!  Now mix in type
+        
+        int res = (int)(key ^ (key >> 32));
+        return res ^ this.type;
+        }
+
+
+
     /**
        Returns true if this CountableResource amount is greater than to the other.
        A NullPointerException is thrown if the other is null.

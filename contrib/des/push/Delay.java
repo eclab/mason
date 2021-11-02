@@ -11,45 +11,31 @@ import java.util.*;
 
 
 /**
-   A heap-based delay which allows different submitted elements to have different
+   A Heap-based delay which allows different submitted elements to have different
    delay times.  Delay times can be based on a provided distribution, or you can override
    the method getDelay(...) to customize delay times entirely based on the provide
    and resource being provided. 
 */
 
-public class Delay extends Source implements Receiver
+public class Delay extends SimpleDelay
     {
-    Heap heap;
-        
-    class Node
-        {
-        public Resource resource;
-        public double timestamp;
-                
-        public Node(Resource resource, double timestamp)
-            {
-            this.resource = resource;
-            this.timestamp = timestamp;
-            }
-        }
-        
-    double totalResource = 0.0;
+    Heap delayHeap;
     AbstractDistribution distribution = null;
 
-    void throwInvalidNumberException(double capacity)
-        {
-        throw new RuntimeException("Capacities may not be negative or NaN.  capacity was: " + capacity);
-        }
-
+	protected void buildDelay()
+		{
+        delayHeap = new Heap();
+		}
+		
     public Delay(SimState state, Resource typical)
         {
-        super(state, typical);
-        heap = new Heap();
+        super(state, 1.0, typical);
         }
         
     public void clear()
         {
-        heap = new Heap();
+        delayHeap = new Heap();
+        totalResource = 0.0;
         }
         
     public void setDelayDistribution(AbstractDistribution distribution)
@@ -67,7 +53,7 @@ public class Delay extends Source implements Receiver
         provider and resource amount or type. */
     protected double getDelay(Provider provider, Resource amount)
         {
-        if (distribution == null) return 1.0;
+        if (distribution == null) return getDelayTime();
         else return Math.abs(distribution.nextDouble());
         }
                 
@@ -85,32 +71,24 @@ public class Delay extends Source implements Receiver
             CountableResource token = (CountableResource)(cr.duplicate());
             token.setAmount(maxIncoming);
             cr.decrease(maxIncoming);
-            heap.add(token, state.schedule.getTime() + getDelay(provider, amount));
+            delayHeap.add(token, state.schedule.getTime() + getDelay(provider, amount));
             }
         else
             {
-            if (heap.size() >= capacity) return false;      // we're at capacity
-            heap.add(amount, getDelay(provider, amount));
+            if (delayHeap.size() >= capacity) return false;      // we're at capacity
+            delayHeap.add(amount, getDelay(provider, amount));
             }
         return true;
         }
 
-    protected void drop()
-        {
-        if (entities == null)
-            resource.clear();
-        else
-            entities.clear();
-        }
-                
     protected void update()
         {
         drop();
         double time = state.schedule.getTime();
                 
-        while(((double)heap.getMinKey()) >= time)
+        while(((double)delayHeap.getMinKey()) >= time)
             {
-            Resource _res = (Resource)(heap.extractMin());
+            Resource _res = (Resource)(delayHeap.extractMin());
             if (entities == null)
                 {
                 CountableResource res = ((CountableResource)_res);

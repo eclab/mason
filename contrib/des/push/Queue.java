@@ -14,7 +14,33 @@ public class Queue extends Source implements Receiver
         super(state, typical);
         }
 
-    public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
+   public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
+        {
+        if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
+        if (entities == null)
+            {
+            if (capacity - resource.getAmount() >= atLeast)
+            	{
+            	double transfer = Math.min(capacity - resource.getAmount(), atMost);
+            	resource.increase(transfer);
+            	((CountableResource)amount).decrease(transfer);
+            	return true;
+            	}
+            else return false;
+            }
+        else
+            {
+            if (capacity - entities.size() >= 1)
+                {
+                entities.add((Entity)amount);
+                return true;
+                }
+            else return false;
+            }
+        }
+
+ /*
+   public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
         if (entities == null)
@@ -99,6 +125,7 @@ public class Queue extends Source implements Receiver
             return false;
             }
         }
+*/
         
     public void update()
         {

@@ -60,6 +60,11 @@ public abstract class Resource
     */
     public abstract boolean equals(Object other);
 
+	/**
+		Returns a suitable hash code.
+	*/
+	public abstract int hashCode();
+
     /** 
         Returns the amount of the resource.
     */

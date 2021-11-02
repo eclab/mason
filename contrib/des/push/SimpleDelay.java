@@ -26,13 +26,13 @@ public class SimpleDelay extends Source implements Receiver
         }
         
     double totalResource = 0.0;
-    LinkedList<Node> resources = new LinkedList<>();
+    LinkedList<Node> delayQueue = new LinkedList<>();
     double delayTime;
         
     public void clear()
         {
         super.clear();
-        resources.clear();
+        delayQueue.clear();
         totalResource = 0.0;
         }
                 
@@ -44,12 +44,18 @@ public class SimpleDelay extends Source implements Receiver
         throw new RuntimeException("Capacities may not be negative or NaN.  capacity was: " + capacity);
         }
 
+	protected void buildDelay()
+		{
+        delayQueue = new LinkedList<>();
+		}
+		
     public SimpleDelay(SimState state, double delayTime, Resource typical)
         {
         super(state, typical);
         this.delayTime = delayTime;
+        buildDelay();
         }
-                
+
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (!resource.isSameType(amount)) 
@@ -64,12 +70,12 @@ public class SimpleDelay extends Source implements Receiver
             CountableResource token = (CountableResource)(cr.duplicate());
             token.setAmount(maxIncoming);
             cr.decrease(maxIncoming);
-            resources.add(new Node(token, state.schedule.getTime() + delayTime));
+            delayQueue.add(new Node(token, state.schedule.getTime() + delayTime));
             }
         else
             {
-            if (resources.size() >= capacity) return false; // we're at capacity
-            resources.add(new Node(amount, state.schedule.getTime() + delayTime));
+            if (delayQueue.size() >= capacity) return false; // we're at capacity
+            delayQueue.add(new Node(amount, state.schedule.getTime() + delayTime));
             }
         return true;
         }
@@ -87,7 +93,7 @@ public class SimpleDelay extends Source implements Receiver
         drop();
         double time = state.schedule.getTime();
                 
-        Iterator<Node> iterator = resources.descendingIterator();
+        Iterator<Node> iterator = delayQueue.descendingIterator();
         while(iterator.hasNext())
             {
             Node node = iterator.next();

@@ -62,17 +62,11 @@ public class Entity extends Resource
         return new Entity(this);
         }
 
-    /**
-       Prints the resource out in a pleasing manner. 
-    */
     public String toString()
         {
         return "Entity[" + name + " (" + type + ")]";
         }
 
-    /** 
-        Returns true if the two objects are both Entitys with the same type and amount.
-    */
     public boolean equals(Object other)
         {
         if (other == this) return true;
@@ -83,5 +77,10 @@ public class Entity extends Resource
             return (res.type == type);
             }
         else return false;
+        }
+        
+    public final int hashCode()
+        {
+        return type;
         }
     }
