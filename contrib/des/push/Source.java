@@ -184,6 +184,20 @@ public class Source extends Provider
                 
     protected void update()
         {
+        // check for capacityh
+        if (entities != null)
+        	{
+        	if (entities.size() >= capacity)
+        		return;
+        	}
+        else
+        	{
+			CountableResource res = (CountableResource)resource;
+        	if (res.getAmount() >= capacity)
+        		return;
+        	}
+        	
+        	
         if (successDistribution == null || 
             ((successCriterion == CRITERION_GREATER) && (successDistribution.nextDouble() > successThreshold)) ||
             ((successCriterion == CRITERION_GREATER_OR_EQUAL) && (successDistribution.nextDouble() >= successThreshold)) ||
@@ -212,7 +226,7 @@ public class Source extends Provider
                     amt = Math.round(amt);
                                         
                 res.increase(amt);
-                if (res.getAmount() > capacity)
+                if (res.getAmount() < capacity)
                     res.setAmount(capacity);
                 }               
             }
