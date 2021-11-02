@@ -226,7 +226,7 @@ public class Source extends Provider
                     amt = Math.round(amt);
                                         
                 res.increase(amt);
-                if (res.getAmount() < capacity)
+                if (res.getAmount() > capacity)
                     res.setAmount(capacity);
                 }               
             }
