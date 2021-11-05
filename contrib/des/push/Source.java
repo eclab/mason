@@ -21,16 +21,6 @@ public class Source extends Provider
         throw new RuntimeException("Production amounts may not be negative, infinite, or NaN.  capacity was: " + capacity);
         }
 
-    void throwNANException(double threshold)
-        {
-        throw new RuntimeException("Threshold may not be NaN.  threshold was: " + threshold);
-        }
-
-    void throwCriterionExceptionException(int criterion)
-        {
-        throw new RuntimeException("Success criterion is not valid: " + criterion);
-        }
-
     public Source(SimState state, Resource typical)
         {
         super(state, typical);
@@ -40,11 +30,6 @@ public class Source extends Provider
     AbstractDistribution successDistribution = null;
     double successThreshold;
     int successCriterion;
-        
-    public static final int CRITERION_GREATER = 0;
-    public static final int CRITERION_GREATER_OR_EQUAL = 1;
-    public static final int CRITERION_LESS = 2;
-    public static final int CRITERION_LESS_OR_EQUAL = 3;
         
     public static final int REJECTION_TRIES = 20;
         
@@ -74,7 +59,7 @@ public class Source extends Provider
             throwNANException(threshold);
         successThreshold = threshold;
         if (criterion < CRITERION_GREATER || criterion > CRITERION_LESS_OR_EQUAL)
-            throwCriterionExceptionException(criterion);
+            throwCriterionException(criterion);
         successCriterion = criterion;
         }
         
