@@ -78,8 +78,8 @@ public class Wanderer extends DSteppable implements Distinguished {
 		}
 	}
 
-	public Serializable remoteMessage(Integer tag, Serializable argument) throws RemoteException {
-		switch (tag) {
+	public Serializable remoteMessage(int message, Serializable argument) throws RemoteException {
+		switch (message) {
 			case 0:
 				return DSimState.getPID();
 			default:

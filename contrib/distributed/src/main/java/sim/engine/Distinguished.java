@@ -25,5 +25,5 @@ public interface Distinguished extends Remote
 	 * 
 	 */
 	
-	public Serializable remoteMessage(Integer message, Serializable arguments) throws RemoteException;
+	public Serializable remoteMessage(int message, Serializable arguments) throws RemoteException;
 }
