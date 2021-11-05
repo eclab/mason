@@ -37,7 +37,7 @@ public class Transporter
 	Partition partition;
 	int[] neighbors;
 
-	public ArrayList<PayloadWrapper> objectQueue; //things being moved are put here, and integrated into local storage in DSimState
+	public ArrayList<PayloadWrapper> objectQueue; // things being moved are put here, and integrated into local storage in DSimState
 
 	// protected boolean withRegistry;
 
@@ -167,12 +167,9 @@ public class Transporter
 		ByteBuffer recvbuf = ByteBuffer.allocateDirect(dst_displ[numNeighbors - 1] + dst_count[numNeighbors - 1]);
 
 		// exchange the actual object bytes
-		partition.getCommunicator().neighborAllToAllv(sendbuf, src_count, src_displ, MPI.BYTE, recvbuf, dst_count,
-				dst_displ, MPI.BYTE);
-
+		partition.getCommunicator().neighborAllToAllv(sendbuf, src_count, src_displ, MPI.BYTE, recvbuf, dst_count, dst_displ, MPI.BYTE);
 		
 		// read and handle incoming objects
-
 		for (int i = 0; i < numNeighbors; i++)
 		{
 			byte[] data = new byte[dst_count[i]];
@@ -187,9 +184,7 @@ public class Transporter
 					PayloadWrapper wrapper = (PayloadWrapper) inputStream.readObject();
 					if (partition.getPID() != wrapper.destination)
 					{
-						System.err.println("This is not the correct processor");
 						throw new RuntimeException("This is not the correct processor");
-
 					}
 					else
 						objectQueue.add(wrapper);
@@ -231,7 +226,6 @@ public class Transporter
 		//shouldn't be calling this if local move
 		if (partition.getPID() == dst)
 			throw new IllegalArgumentException("Destination cannot be local, must be remote");
-
 
 		// Wrap the agent, this is important because we want to keep track of
 		// dst, which could be the diagonal processor

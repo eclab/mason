@@ -621,9 +621,10 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 				state.getTransporter().transport((DObject) t, getPartition().toPartitionPID(p), p, this.fieldIndex);
 				}
 			
-			else {
+			else 
+				{
 			    proxy.getField(getPartition().toPartitionPID(p)).addRMI(p, t);
-			}
+				}
 		}
 		catch (NullPointerException e)
 		{
@@ -791,7 +792,6 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		for (int i = 0; i < numNeighbors; i++)
 			localStorage.unpack(neighbors.get(i).recvParam, recvObjs.get(i));
 
-		//synchronized(getRMILock) {
 		for (Pair<Promised, Number2D> pair : getAllQueue)
 			pair.a.fulfill(getLocal(pair.b));
 		getAllQueue.clear();
@@ -799,19 +799,8 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 		for (Triplet<Promised, Number2D, Long> trip : getQueue)
 			trip.a.fulfill(getLocal(trip.b, trip.c));
 		getQueue.clear();
-		//}
 	}
 	
-	//TODO try implementing this if possible
-	//syncHalo but does it using TransporterMPI, DOESN'T CURRENTLY WORK
-	/*
-	public void syncHalo2() throws MPIException, RemoteException
-	{
-     //Implement
-		
-	}
-	*/
-
 
 	/**
 	 * Adds an incoming to the field. Has cases for the type of object we are
