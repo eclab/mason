@@ -60,13 +60,8 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 
 		for (final IntRect2D rect : mp.rects)
 		{
-			//System.out.println("packing "+rect);
 			for (final Int2D p : rect.getPointList())
 			{
-				
-				//local_p = toLocalPoint(p);
-
-				
 				objs[curr++] = stor[getFlatIndex(p)];
 			}
 		}
@@ -82,36 +77,33 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 
 		for (final IntRect2D rect : mp.rects)
 		{
-			//System.out.println("unpacking "+rect);
 			for (final Int2D p : rect.getPointList())
 			{
-				
-
-				
-
 				stor[getFlatIndex(p)] = objs[curr++];
-				
-				/*
-				stor[getFlatIndex(p)] = objs[curr];
-				
-				if (stor[getFlatIndex(p)] != null) {
-					for (T t : stor[getFlatIndex(p)]) {
-						if (t instanceof Stoppable) {
-							((Stoppable)t).stop();
-						}
-					}
-				}
-				curr++;
-				*/
-				
-				
-				
-
 			}
 		}
-
-		//return curr;
 	}
+
+	public ArrayList<T> get(Int2D p)
+	{
+		return storage[getFlatIndex((Int2D) p)];
+	}
+
+	public void set(Int2D p, ArrayList<T> t)
+	{
+		storage[getFlatIndex((Int2D) p)] = t;
+	}
+
+	public ArrayList<T> get(int x, int y)
+	{
+		return storage[getFlatIndex(x, y)];
+	}
+
+	public void set(int x, int y, ArrayList<T> t)
+	{
+		storage[getFlatIndex(x, y)] = t;
+	}
+
 
 
 
@@ -167,16 +159,6 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 			list.set(pos, list.get(top));
 		return list.remove(top) != null;
 		}
-
-/*
-	boolean removeFast(ArrayList<T> list, T t)
-		{
-		int pos = list.indexOf(t);
-		if (pos >= 0)
-			return removeFast(list, pos);
-		else return (pos >= 0);
-		}
-*/
 
 	public boolean removeObject(Number2D p, long id)
 	{
