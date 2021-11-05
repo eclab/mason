@@ -45,7 +45,7 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
         setTo(values);
         }
 
-	// sets to all 0    
+    // sets to all 0    
     public void reshape(int width, int height)
         {
         super.reshape(width, height);
