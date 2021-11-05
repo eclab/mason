@@ -1425,16 +1425,16 @@ public class Display3D extends JPanel implements Steppable
     public void takeSnapshot()
         {
         /*
-        if (SimApplet.isApplet())
-            {
-            Object[] options = {"Oops"};
-            JOptionPane.showOptionDialog(
-                this, "You cannot save snapshots from an applet.",
-                "MASON Applet Restriction",
-                JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
-                null, options, options[0]);
-            return;
-            }
+          if (SimApplet.isApplet())
+          {
+          Object[] options = {"Oops"};
+          JOptionPane.showOptionDialog(
+          this, "You cannot save snapshots from an applet.",
+          "MASON Applet Restriction",
+          JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
+          null, options, options[0]);
+          return;
+          }
         */
 
         // start the image
@@ -1474,15 +1474,15 @@ public class Display3D extends JPanel implements Steppable
         /*
         // can't start a movie if we're in an applet
         if (SimApplet.isApplet())
-            {
-            Object[] options = {"Oops"};
-            JOptionPane.showOptionDialog(
-                this, "You cannot create movies from an applet.",
-                "MASON Applet Restriction",
-                JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
-                null, options, options[0]);
-            return;
-            }
+        {
+        Object[] options = {"Oops"};
+        JOptionPane.showOptionDialog(
+        this, "You cannot create movies from an applet.",
+        "MASON Applet Restriction",
+        JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
+        null, options, options[0]);
+        return;
+        }
         */
 
         if (movieMaker!=null) return;  // already running
@@ -1558,13 +1558,13 @@ public class Display3D extends JPanel implements Steppable
         }
         
     /* Quits the Display3D.  Okay, so finalize is evil and we're not supposed to rely on it.
-        We're not.  But it's an additional cargo-cult programming measure just in case. */
+       We're not.  But it's an additional cargo-cult programming measure just in case. */
 /*
-    protected void finalize() throws Throwable
-        {
-        super.finalize();
-        quit();
-        }
+  protected void finalize() throws Throwable
+  {
+  super.finalize();
+  quit();
+  }
 */
         
     JCheckBox orbitRotateXCheckBox = new JCheckBox("Rotate Left/Right");
