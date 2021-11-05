@@ -2740,8 +2740,8 @@ There are two kinds of distributions: (1) distributions which require their own 
 \item Breit-Wigner (Lorentz)\hspace{\fill} \Class{sim.util.distribution.BreitWigner}
 \item Mean-Square Breit-Wigner\hspace{\fill} \Class{sim.util.distribution.BreitWignerMeanSquare}
 \item Chi-Square\hspace{\fill} \Class{sim.util.distribution.ChiSquare}
-\item Empirical\hspace{\fill} \Class{sim.util.distribution.Empirical}
-\item Discrete Emperical\hspace{\fill} \Class{sim.util.distribution.EmpiricalWalker}
+\item Empirical\,---\,distributions loaded from histograms\hspace{\fill} \Class{sim.util.distribution.Empirical}
+\item Empirical Walker\,---\,distributions loaded from histograms\hspace{\fill} \Class{sim.util.distribution.EmpiricalWalker} 
 \item Exponential\hspace{\fill} \Class{sim.util.distribution.Exponential}
 \item Exponential Power\hspace{\fill} \Class{sim.util.distribution.ExponentialPower}
 \item Gamma\hspace{\fill} \Class{sim.util.distribution.Gamma}
@@ -2757,7 +2757,7 @@ There are two kinds of distributions: (1) distributions which require their own 
 \item Zeta\hspace{\fill} \Class{sim.util.distribution.Zeta}
 \end{itemize}
 
-The second group are just function calls from the \Class{sim.util.distribution.Distributions} class:
+The second group are just function calls from the \Class{sim.util.distribution.Distributions} class.  MASON has set up stub classes like the above ones which just call these functions for your convenience.
 
 \begin{itemize}
 \item Burr (various kinds)
@@ -2770,7 +2770,7 @@ The second group are just function calls from the \Class{sim.util.distribution.D
 \item Power-Law
 \item Triangular
 \item Weibull
-\item Zipf
+\item Zipf (``Zipfian'')
 \end{itemize}
 
 \subsection{Distributions with Apache Commons Math}
