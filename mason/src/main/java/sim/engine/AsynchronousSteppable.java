@@ -351,11 +351,11 @@ public class AsynchronousSteppable implements Stoppable
         }
         
 /*
-    protected void finalize() throws Throwable
-        {
-        try { stop(); } 
-        finally { super.finalize(); }
-        }
+  protected void finalize() throws Throwable
+  {
+  try { stop(); } 
+  finally { super.finalize(); }
+  }
 */
         
     /** Call this method to get a Steppable, which when called, executes top() on the AsynchornousSteppable.

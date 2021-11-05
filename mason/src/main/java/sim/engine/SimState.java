@@ -352,26 +352,26 @@ public class SimState implements java.io.Serializable
     /** Calls doLoop(MakesSimState,args), passing in a MakesSimState which creates
         SimStates of the provided Class c, using the constructor new <simState>(<random seed>). */
     public static void doLoop(final Class c, String[] args) 
-    	{
+        {
         doLoop(new MakesSimState() 
-        	{
-			public SimState newInstance(long seed, String[] args) 
-				{
-				try {
-					return (SimState)(c.getConstructor(new Class[] { Long.TYPE }).newInstance(new Object[] { Long.valueOf(seed) } ));
-					}
-				catch (Exception e) 
-					{
-					if (e instanceof InvocationTargetException)
-						e.getCause().printStackTrace();
-					throw new RuntimeException("Exception occurred while trying to construct the simulation " + c, e);
-					}
-				}
-				
-			public Class simulationClass() { return c; }
+            {
+            public SimState newInstance(long seed, String[] args) 
+                {
+                try {
+                    return (SimState)(c.getConstructor(new Class[] { Long.TYPE }).newInstance(new Object[] { Long.valueOf(seed) } ));
+                    }
+                catch (Exception e) 
+                    {
+                    if (e instanceof InvocationTargetException)
+                        e.getCause().printStackTrace();
+                    throw new RuntimeException("Exception occurred while trying to construct the simulation " + c, e);
+                    }
+                }
+                                
+            public Class simulationClass() { return c; }
 
-			public Constructor[] getConstructors() { return c.getConstructors(); }
-			}, args);
+            public Constructor[] getConstructors() { return c.getConstructors(); }
+            }, args);
         }
     
     /** A convenient top-level loop for the simulation command-line.  Takes a MakesSimState which is
@@ -745,79 +745,79 @@ public class SimState implements java.io.Serializable
     
     
     /** Override this method to return a multiobjective optimization assessment of
-    	the simulation run.  You should return an assessment of the model performance
-    	for each of some N >= 1 objectives (N is the length of the array).  For each
-    	objective i, the returned assessment[i] should be between 0 (the lowest quality)
-    	and 1 (the highest quality) inclusive.  The default version of this method simply
-    	returns all 0, meaning a horrible, no good, very bad simulation run.
-    	
-    	<p>This method is only used by the distributed optimization facility
-    	and will be called, possibly repeatedly, after start() and before finish().  If you're
-    	not doing distributed optimization, it'll never be called, so you can ignore this method.
-    	By default the method nonsensically always returns an optimimum score, that is, it 
-    	suggests that the model is ideally calibrated. 
-    	*/ 
+        the simulation run.  You should return an assessment of the model performance
+        for each of some N >= 1 objectives (N is the length of the array).  For each
+        objective i, the returned assessment[i] should be between 0 (the lowest quality)
+        and 1 (the highest quality) inclusive.  The default version of this method simply
+        returns all 0, meaning a horrible, no good, very bad simulation run.
+        
+        <p>This method is only used by the distributed optimization facility
+        and will be called, possibly repeatedly, after start() and before finish().  If you're
+        not doing distributed optimization, it'll never be called, so you can ignore this method.
+        By default the method nonsensically always returns an optimimum score, that is, it 
+        suggests that the model is ideally calibrated. 
+    */ 
     public double[] assess(int numObjectives)
-    	{
-    	double[] assessment = new double[numObjectives];
-    	for(int i = 0; i < assessment.length; i++)
-    		{
-    		assessment[i] = 0.0;
-    		}
-    	return assessment;
-    	}
+        {
+        double[] assessment = new double[numObjectives];
+        for(int i = 0; i < assessment.length; i++)
+            {
+            assessment[i] = 0.0;
+            }
+        return assessment;
+        }
 
-	PrintWriter writer = null;
-	
-	/** This method is called to set the PrintWriter used in getDescription() [which is more important to you]. */ 
+    PrintWriter writer = null;
+        
+    /** This method is called to set the PrintWriter used in getDescription() [which is more important to you]. */ 
     public void setDescription(PrintWriter writer)
-    	{
-    	this.writer = writer;
-    	}
+        {
+        this.writer = writer;
+        }
     
-	/** Returns the PrintWriter used to describe a high-quality assessed SimState.  If getDescription() 
-		returns a PrintWriter (as opposed to null), you can use this to write out descriptive statistics,
-		indeed anything you like, as the simulation is running to describe it.  This is done at the end
-		of optimization, when one or more SimState models, typically the best one discovered, will
-		be run one final time with a PrintWriter description.  The description will be set prior to start()
-		and should not be saved nor written to after finish().  
-		*/ 
+    /** Returns the PrintWriter used to describe a high-quality assessed SimState.  If getDescription() 
+        returns a PrintWriter (as opposed to null), you can use this to write out descriptive statistics,
+        indeed anything you like, as the simulation is running to describe it.  This is done at the end
+        of optimization, when one or more SimState models, typically the best one discovered, will
+        be run one final time with a PrintWriter description.  The description will be set prior to start()
+        and should not be saved nor written to after finish().  
+    */ 
     public PrintWriter description()
-    	{
-    	return writer;
-    	}
+        {
+        return writer;
+        }
     
     /** Returns true if the simulation is a remote proxy simulation.  Don't override this: 
-    	it's provided mostly for the distributed visualizer. */
+        it's provided mostly for the distributed visualizer. */
     public boolean remoteProxy()
-    	{
-    	return false;
-    	}
-    	
+        {
+        return false;
+        }
+        
     /** Override this to revise the steps displayed in the Console.  Don't override this: 
-    	it's provided mostly for the distributed visualizer. */
+        it's provided mostly for the distributed visualizer. */
     public long remoteSteps()
-    	{
-    	return 0;
-    	}
+        {
+        return 0;
+        }
     
     /** Override this to revise the time displayed in the Console.  Ordinarily you should leave this
-    	alone: it's provided mostly for the distributed visualizer. */
+        alone: it's provided mostly for the distributed visualizer. */
     public double remoteTime()
-    	{
-    	return 0;
-    	}
+        {
+        return 0;
+        }
 
-	/** Override this to add a tab to the Console. Normally you'd not do this from the SimState, but the Distributed code needs to use this. */
+    /** Override this to add a tab to the Console. Normally you'd not do this from the SimState, but the Distributed code needs to use this. */
     public javax.swing.JComponent provideAdditionalTab()
-    	{
-    	return null;
-    	}
+        {
+        return null;
+        }
     
-	/** Override this to add a tab name to the Console. Normally you'd not do this from the SimState, but the Distributed code needs to use this.  */
+    /** Override this to add a tab name to the Console. Normally you'd not do this from the SimState, but the Distributed code needs to use this.  */
     public String provideAdditionalTabName()
-    	{
-    	return null;
-    	}
+        {
+        return null;
+        }
     }
 

@@ -540,7 +540,7 @@ public class Schedule implements java.io.Serializable
             // bump up time to the next possible item, unless we're at infinity already (AFTER_SIMULATION)
             {
             key.time = Math.nextUp(key.time);  //Double.longBitsToDouble(Double.doubleToRawLongBits(t)+1L);
-			t = key.time; 
+            t = key.time; 
             }
 
         if (sealed || t >= AFTER_SIMULATION)             // situations where no further events can be added
@@ -593,6 +593,11 @@ public class Schedule implements java.io.Serializable
         and event, schedules the event and returns a Stoppable, else returns null.
         The recurrence will continue until getTime() >= AFTER_SIMULATION, the Schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
+        
+        <p><b>WARNING:</b>Use of this method in start() might lead to confusion.  At start(), the timestep is -1
+        because the first actual timestep in the simulation is 0.  This means that if you schedule an agent
+        with this method for interval 10 (say), it won't start at 0 but rather will start at <b>9</b>.  
+        Instead you might want to use <tt>scheduleRepeating(0, event, interval).</tt>
 
         <p>This method at present returns null if the schedule cannot
         schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
@@ -617,6 +622,11 @@ public class Schedule implements java.io.Serializable
         and event, schedules the event and returns a Stoppable, else returns null.
         The recurrence will continue until getTime() >= AFTER_SIMULATION, the Schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
+
+        <p><b>WARNING:</b>Use of this method in start() might lead to confusion.  At start(), the timestep is -1
+        because the first actual timestep in the simulation is 0.  This means that if you schedule an agent
+        with this method for interval 10 (say), it won't start at 0 but rather will start at <b>9</b>.  
+        Instead you might want to use <tt>scheduleRepeating(0, event, ordering, interval).</tt>
 
         <p>This method at present returns null if the schedule cannot
         schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
