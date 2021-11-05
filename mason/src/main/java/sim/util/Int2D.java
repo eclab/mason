@@ -46,8 +46,8 @@ public final class Int2D extends Number2D
     public String toCoordinates() { return "(" + x + ", " + y + ")"; }
 
 
-	public int[] toArray() { return new int[] {x, y}; }
-	public double[] toArrayAsDouble() { return new double[] { x, y}; }
+    public int[] toArray() { return new int[] {x, y}; }
+    public double[] toArrayAsDouble() { return new double[] { x, y}; }
 
     public final int hashCode()
         {
@@ -121,13 +121,13 @@ public final class Int2D extends Number2D
         else return false;
         }
 
-	/** Returns true I am equal to val */
+    /** Returns true I am equal to val */
     public boolean equals(Int2D val)
         {
         return x == val.x && y == val.y;
         }
         
-	/** Returns true I am equal to val */
+    /** Returns true I am equal to val */
     public boolean equals(Double2D val)
         {
         return x == val.x && y == val.y;
@@ -238,91 +238,91 @@ public final class Int2D extends Number2D
         return Math.abs((long)this.x-p.x) + Math.abs((long)this.y-p.y);
         }
         
-	/// FOR DISTRIBUTED CODE    
-	/*    
-    public Int2D add(int offset)
-		{
-		return new Int2D(x + offset, y + offset);
-		} 
-	*/
+    /// FOR DISTRIBUTED CODE    
+    /*    
+          public Int2D add(int offset)
+          {
+          return new Int2D(x + offset, y + offset);
+          } 
+    */
 
-   public Double2D add(double dx, double dy)
-		{
-		return new Double2D(x + dx, y + dy);
-		} 
-		
-   public Int2D add(int dx, int dy)
-		{
-		return new Int2D(x + dx, y + dy);
-		} 
-		
-	public Double2D add(Double2D other)
-		{
-		return new Double2D(x + other.x, y + other.y);
-		}
+    public Double2D add(double dx, double dy)
+        {
+        return new Double2D(x + dx, y + dy);
+        } 
+                
+    public Int2D add(int dx, int dy)
+        {
+        return new Int2D(x + dx, y + dy);
+        } 
+                
+    public Double2D add(Double2D other)
+        {
+        return new Double2D(x + other.x, y + other.y);
+        }
 
-	public Double2D subtract(Double2D other)
-		{
-		return new Double2D(x - other.x, y - other.y);
-		}
+    public Double2D subtract(Double2D other)
+        {
+        return new Double2D(x - other.x, y - other.y);
+        }
 
 /*
-	public Int2D add(int dim, int offset)
-		{
-		if (dim == 0)
-			return new Int2D(x + offset, y);
-		else
-			return new Int2D(x, y + offset);
-		} 
+  public Int2D add(int dim, int offset)
+  {
+  if (dim == 0)
+  return new Int2D(x + offset, y);
+  else
+  return new Int2D(x, y + offset);
+  } 
 */
 
 /*
-	public Int2D add(int[] offset)
-		{
-		return new Int2D(x + offset[0], y + offset[1]);
-		} 
+  public Int2D add(int[] offset)
+  {
+  return new Int2D(x + offset[0], y + offset[1]);
+  } 
 */
 
-	public Int2D add(Int2D other)
-		{
-		return new Int2D(x + other.x, y + other.y);
-		} 
+    public Int2D add(Int2D other)
+        {
+        return new Int2D(x + other.x, y + other.y);
+        } 
 
 /*
-	public Int2D subtract(int[] offset)
-		{
-		return new Int2D(x - offset[0], y - offset[1]);
-		} 
+  public Int2D subtract(int[] offset)
+  {
+  return new Int2D(x - offset[0], y - offset[1]);
+  } 
 */
 
-	public Int2D subtract(Int2D other)
-		{
-		return new Int2D(x - other.x, y - other.y);
-		} 
+    public Int2D subtract(Int2D other)
+        {
+        return new Int2D(x - other.x, y - other.y);
+        } 
 
 /*
-    public Int2D subtract(int offset)
-		{
-		return new Int2D(x - offset, y - offset);
-		} 
+  public Int2D subtract(int offset)
+  {
+  return new Int2D(x - offset, y - offset);
+  } 
 */
 /*
-	public int compareTo(final Int2D other) 
-		{
-		if (x == other.x)
-			return (y - other.y);
-		else return (x - other.x);
-		}
+  public int compareTo(final Int2D other) 
+  {
+  if (x == other.x)
+  return (y - other.y);
+  else return (x - other.x);
+  }
 */
 
-	public Int2D max(Int2D val)
-		{
-		return new Int2D(Math.max(x, val.x), Math.max(y, val.y));
-		} 
+    public Int2D max(Int2D val)
+        {
+        return new Int2D(Math.max(x, val.x), Math.max(y, val.y));
+        } 
 
-	public Int2D min(Int2D val)
-		{
-		return new Int2D(Math.min(x, val.x), Math.min(y, val.y));
-		} 
+    public Int2D min(Int2D val)
+        {
+        return new Int2D(Math.min(x, val.x), Math.min(y, val.y));
+        } 
 
     }

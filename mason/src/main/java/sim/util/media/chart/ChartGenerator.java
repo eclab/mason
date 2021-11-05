@@ -254,15 +254,15 @@ public abstract class ChartGenerator extends JPanel
         /*
         // can't start a movie if we're in an applet
         if (SimApplet.isApplet())
-            {
-            Object[] options = {"Oops"};
-            JOptionPane.showOptionDialog(
-                this, "You cannot create movies from an applet.",
-                "MASON Applet Restriction",
-                JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
-                null, options, options[0]);
-            return;
-            }
+        {
+        Object[] options = {"Oops"};
+        JOptionPane.showOptionDialog(
+        this, "You cannot create movies from an applet.",
+        "MASON Applet Restriction",
+        JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
+        null, options, options[0]);
+        return;
+        }
         */
                                         
         if (movieMaker != null) return;  // already running

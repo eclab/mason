@@ -48,9 +48,9 @@ public final class Int3D extends Number3D
     public String toString() { return "Int3D["+x+","+y+","+z+"]"; }
     public String toCoordinates() { return "(" + x + ", " + y + ", " + z + ")"; }    
     
-	public double[] toArrayAsDouble() { return new double[] { x, y, z}; }
+    public double[] toArrayAsDouble() { return new double[] { x, y, z}; }
 
-	public int hashCode()
+    public int hashCode()
         {
         int z = this.z;
         
@@ -223,33 +223,33 @@ public final class Int3D extends Number3D
         }
     
     public Double3D add(double dx, double dy, double dz)
-		{
-		return new Double3D(x + dx, y + dy, z + dz);
-		} 
+        {
+        return new Double3D(x + dx, y + dy, z + dz);
+        } 
 
     public Int3D add(int dx, int dy, int dz)
-		{
-		return new Int3D(x + dx, y + dy, z + dz);
-		} 
+        {
+        return new Int3D(x + dx, y + dy, z + dz);
+        } 
 
-	public Int3D add(Int3D other)
-		{
-		return new Int3D(x + other.x, y + other.y, z + other.z);
-		} 
+    public Int3D add(Int3D other)
+        {
+        return new Int3D(x + other.x, y + other.y, z + other.z);
+        } 
 
-	public Int3D subtract(Int3D other)
-		{
-		return new Int3D(x - other.x, y - other.y, z - other.z);
-		} 
+    public Int3D subtract(Int3D other)
+        {
+        return new Int3D(x - other.x, y - other.y, z - other.z);
+        } 
 
-	public Double3D add(Double3D other)
-		{
-		return new Double3D(x + other.x, y + other.y, z + other.z);
-		} 
+    public Double3D add(Double3D other)
+        {
+        return new Double3D(x + other.x, y + other.y, z + other.z);
+        } 
 
-	public Double3D subtract(Double3D other)
-		{
-		return new Double3D(x - other.x, y - other.y, z - other.z);
-		} 
+    public Double3D subtract(Double3D other)
+        {
+        return new Double3D(x - other.x, y - other.y, z - other.z);
+        } 
     
     }
