@@ -44,16 +44,16 @@ public class DRegistry
 	 static int rank;
 
 	 static Registry registry;
-	 static HashMap<String, Remote> exported_names = new HashMap<>();
-	 static HashMap<Remote, String> exported_objects = new HashMap<>();
-	 static ArrayList<String> migrated_names = new ArrayList<String>();
+	 static HashMap<String, Remote> exportedNames = new HashMap<>();
+	 static HashMap<Remote, String> exportedObjects = new HashMap<>();
+	 static ArrayList<String> migratedNames = new ArrayList<String>();
 
 	/**
 	 * Clear the list of the registered agent’s keys on the registry
 	 */
 	public void clearMigratedNames()
 	{
-		migrated_names.clear();
+		migratedNames.clear();
 	}
 
 	/**
@@ -61,12 +61,12 @@ public class DRegistry
 	 */
 	public ArrayList<String> getMigratedNames()
 	{
-		return migrated_names;
+		return migratedNames;
 	}
 
 	public void addMigratedName(Object obj)
 	{
-		migrated_names.add(exported_objects.get(obj));
+		migratedNames.add(exportedObjects.get(obj));
 	}
 
 	/**
@@ -78,9 +78,9 @@ public class DRegistry
 	 */
 	public String ifExportedThenAddMigratedName(Object obj)
 	{
-		String name = exported_objects.get(obj);
+		String name = exportedObjects.get(obj);
 		if (name != null)
-			migrated_names.add(name);
+			migratedNames.add(name);
 		return name;
 	}
 
@@ -199,17 +199,16 @@ public class DRegistry
 	 */
 	public boolean registerObject(String name, Distinguished obj) throws AccessException, RemoteException
 	{
-		if (!exported_names.containsKey(name))
+		if (!exportedNames.containsKey(name))
 		{
 			try
 			{
-			
 				Remote stub = UnicastRemoteObject.exportObject(obj, 0);
 				((DObject) obj).distinguishedName(name,stub);
 				registry.bind(name, stub);
 
-				exported_names.put(name, obj);
-				exported_objects.put(obj, name);
+				exportedNames.put(name, obj);
+				exportedObjects.put(obj, name);
 				
 			}
 			catch (Exception e)
@@ -221,6 +220,7 @@ public class DRegistry
 		return false;
 
 	}
+	
 	/**
 	 * Register an already exported UnicastRemoteObject obj with key name on the
 	 * registry
@@ -234,14 +234,14 @@ public class DRegistry
 	 */
 	public boolean registerObject(String name, UnicastRemoteObject obj) throws AccessException, RemoteException
 	{
-		if (!exported_names.containsKey(name))
+		if (!exportedNames.containsKey(name))
 		{
 			try
 			{
 				Remote stub = UnicastRemoteObject.toStub(obj);
 				registry.bind(name, stub);
-				exported_names.put(name, obj);
-				exported_objects.put(obj, name);
+				exportedNames.put(name, obj);
+				exportedObjects.put(obj, name);
 				
 			}
 			catch (AlreadyBoundException e)
@@ -256,7 +256,7 @@ public class DRegistry
 
 	public String getLocalExportedName(Object obj)
 	{
-		return exported_objects.get(obj);
+		return exportedObjects.get(obj);
 	}
 
 	/**
@@ -301,14 +301,14 @@ public class DRegistry
 	 * @throws RemoteException
 	 * @throws NotBoundException
 	 */
-	public boolean unRegisterObject(String name) throws AccessException, RemoteException, NotBoundException
+	public boolean unregisterObject(String name) throws AccessException, RemoteException, NotBoundException
 	{
-		Remote remote = exported_names.remove(name);
+		Remote remote = exportedNames.remove(name);
 		if (remote != null)
 		{
 			registry.unbind(name);
 			UnicastRemoteObject.unexportObject(remote, true);
-			exported_objects.remove(remote);
+			exportedObjects.remove(remote);
 			return true;
 		}
 		return false;
@@ -320,7 +320,7 @@ public class DRegistry
 	 */
 	public boolean isExported(Object agent)
 	{
-		return exported_objects.containsKey(agent);
+		return exportedObjects.containsKey(agent);
 	}
 
 }

@@ -69,9 +69,10 @@ public class DSimState extends SimState
 	static Logger logger;
 
 	/** The Partition of the DSimState */
-	protected QuadTreePartition partition;
+	QuadTreePartition partition;
 	/** The DSimState's Transporter interface */
-	protected Transporter transporter;
+	
+	Transporter transporter;
 	HashMap<String, Serializable> rootInfo = null;
 	HashMap<String, Serializable>[] init = null;
 
@@ -96,7 +97,7 @@ public class DSimState extends SimState
 	ArrayList<HaloGrid2D<?, ?>> fieldList;
 
 	// The RMI registry
-	protected DRegistry registry;
+	DRegistry registry;
 
 	// FIXME: what is this for?
 //	protected boolean withRegistry;
@@ -298,7 +299,7 @@ public class DSimState extends SimState
 				{
 					try
 					{
-						DRegistry.getInstance().unRegisterObject(mo);
+						DRegistry.getInstance().unregisterObject(mo);
 					}
 					catch (NotBoundException e)
 					{
@@ -538,8 +539,7 @@ public class DSimState extends SimState
 		final IntRect2D old_partition = partition.getLocalBounds();
 		final int old_pid = partition.getPID();
 
-		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage(); // used to compute the position of the new
-																					// centroids
+		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage(); // used to compute the position of the new centroids
 		Timing.start(Timing.LB_OVERHEAD);
 
 		((QuadTreePartition) partition).balance(runtime, level); // balance the partition moving the centroid for the given level
@@ -1021,12 +1021,7 @@ public class DSimState extends SimState
 		{
 			// call getPartitionGlobals() for each partition
 			Object[] g = this.getPartitionGlobals();
-
-
 			ArrayList<Object[]> gg = MPIUtil.gather(partition, g, 0);
-
-
-
 			return gg;
 		}
 		catch (Exception e)
@@ -1071,9 +1066,8 @@ public class DSimState extends SimState
 	}
 	
 	//testing method: counts agents in each storage (not in halo) and sums them.  Should remain constant!
-	protected int countTotalAgents(HaloGrid2D field) {
-		
-	
+	int countTotalAgents(HaloGrid2D field) 
+	{
 		int total = 0;
 
 		try {
@@ -1093,8 +1087,9 @@ public class DSimState extends SimState
 
 	}
 	
-	protected int countLocal(HaloGrid2D field) {
-		
+	protected int countLocal(HaloGrid2D field) 
+	{
+
 		int count = 0;
 
 		// ContinousStorage, do we need its own case anymore? We may be able to combine with else code.
@@ -1107,19 +1102,20 @@ public class DSimState extends SimState
 			{
 				HashSet agents = new HashSet(((HashMap) st.storage[i]).values());
 
-				for (Object a : agents) {
+				for (Object a : agents) 
+				{
 					Double2D loc = st.getObjectLocation((DObject) a);
 					
-					if (partition.getLocalBounds().contains(loc)) {
+					if (partition.getLocalBounds().contains(loc)) 
+					{
 						count = count + 1;
 					}
 
 				}
 			}
 		}
-		
-		else {
-			
+		else 
+		{
 			GridStorage st = field.getStorage();
 
 			// go by point here
@@ -1136,10 +1132,6 @@ public class DSimState extends SimState
 					{
 						count = count + ((ArrayList<Serializable>) a_list).size();
 					}
-					
-			
-			
-			
 				}
 			}
 		}
@@ -1160,7 +1152,8 @@ public class DSimState extends SimState
 	 * 
 	 * @return a RemotePromise that will be filled out
 	 */
-	public Promised contactRemoteObj(String name, Integer tag, Serializable argument) throws RemoteException, NotBoundException {
+	public Promised contactDistinguishedObject(String name, int tag, Serializable argument) throws RemoteException, NotBoundException 
+	{
 		Distinguished remoteObject = (Distinguished) this.getDRegistry().getObject(name);
 		RemotePromise promiseUnfilled = new RemotePromise(); 
 		DSimState.addRemotePromise(promiseUnfilled, tag, argument, remoteObject);
@@ -1175,7 +1168,8 @@ public class DSimState extends SimState
 	 * @param argument is the optional argument that could be needed in the method respondToRemote()
 	 * @param author that will fill the promise,
 	 */
-	public static void addRemotePromise(RemotePromise promise, Integer tag, Serializable argument, Distinguished author) {
+	static void addRemotePromise(RemotePromise promise, Integer tag, Serializable argument, Distinguished author) 
+	{
 		promises.add(new Quartet<RemotePromise, Integer, Serializable, Distinguished>(promise, tag, argument, author));
 	}
 	
@@ -1209,7 +1203,8 @@ public class DSimState extends SimState
 
 }
 
-class Quartet<A, B, C, D> implements Serializable {
+class Quartet<A, B, C, D> implements Serializable 
+{
 	private static final long serialVersionUID = 1L;
 
 	public final A a;
@@ -1217,7 +1212,8 @@ class Quartet<A, B, C, D> implements Serializable {
 	public final C c;
 	public final D d;
 
-	public Quartet(A a, B b, C c, D d) {
+	public Quartet(A a, B b, C c, D d) 
+	{
 		this.a = a;
 		this.b = b;
 		this.c = c;

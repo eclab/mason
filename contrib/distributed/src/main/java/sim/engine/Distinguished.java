@@ -17,7 +17,6 @@ import java.rmi.RemoteException;
 
 public interface Distinguished extends Remote 
 {
-	
 	/**
 	 * Respond to a remote request of some data.
 	 * The method is used to fulfill a RemotePromise.
@@ -26,5 +25,5 @@ public interface Distinguished extends Remote
 	 * 
 	 */
 	
-	public Serializable remote(Integer tag, Serializable argument) throws RemoteException;
+	public Serializable remoteMessage(Integer message, Serializable arguments) throws RemoteException;
 }

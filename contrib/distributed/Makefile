@@ -33,7 +33,7 @@ sim/util/*.java \
 sim/display/*.java \
 sim/app/dflockers/display/*.java \
 sim/app/dheatbugs/display/*.java \
-
+sim/app/dwanderer/*.java \
 
 RSRCROOT=src/main/resources/
 SRCROOT=src/main/java/

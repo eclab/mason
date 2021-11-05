@@ -52,7 +52,7 @@ public class Wanderers extends DSimState {
 
 		for (Object obj : agents) {
 			Wanderer agent = (Wanderer) obj;
-			if (partition.getLocalBounds().contains(agent.loc)){
+			if (getPartition().getLocalBounds().contains(agent.loc)){
 				try {
 					this.getDRegistry().registerObject(agent.name, agent);
 				} catch (Exception e) {

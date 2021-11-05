@@ -67,7 +67,7 @@ public class Wanderer extends DSteppable implements Distinguished {
 			" on proc "+ DSimState.getPID() +
 			" my friend is " + otherAgentID +
 			" on proc "+
-			((Distinguished)DRegistry.getInstance().getObject(otherAgentID)).remote(0, null));
+			((Distinguished)DRegistry.getInstance().getObject(otherAgentID)).remoteMessage(0, null));
 
 			wanderersState.wanderers.moveAgent(loc, this);
 			myPID = wanderersState.getPartition().getPID();
@@ -78,7 +78,7 @@ public class Wanderer extends DSteppable implements Distinguished {
 		}
 	}
 
-	public Serializable remote(Integer tag, Serializable argument) throws RemoteException {
+	public Serializable remoteMessage(Integer tag, Serializable argument) throws RemoteException {
 		switch (tag) {
 			case 0:
 				return DSimState.getPID();
