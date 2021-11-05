@@ -10,30 +10,30 @@ import ec.util.MersenneTwisterFast;
 /** This stub class simply calls the equivalent function in Distributions.java */
 
 public class Burr4 extends AbstractContinuousDistribution
-	{
-	double r;
-	double k;
-	
-	public Burr4(double r, double k, MersenneTwisterFast random)
-		{
-		setState(r, k);
-		setRandomGenerator(random);
-		}
-	
-	public double nextDouble()
-		{
-		// yes, *Burr2*
-		return Distributions.nextBurr2(r, k, 4, randomGenerator);
-		}
+    {
+    double r;
+    double k;
+        
+    public Burr4(double r, double k, MersenneTwisterFast random)
+        {
+        setState(r, k);
+        setRandomGenerator(random);
+        }
+        
+    public double nextDouble()
+        {
+        // yes, *Burr2*
+        return Distributions.nextBurr2(r, k, 4, randomGenerator);
+        }
 
-	public void setState(double r, double k)
-		{
-		this.r = r;
-		this.k = k;
-		}
+    public void setState(double r, double k)
+        {
+        this.r = r;
+        this.k = k;
+        }
 
     public String toString() 
-    	{
+        {
         return this.getClass().getName()+"("+r + ", " + k + ")";
         }
-	}
+    }

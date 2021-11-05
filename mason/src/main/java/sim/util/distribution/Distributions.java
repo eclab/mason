@@ -89,7 +89,7 @@ public class Distributions  implements java.io.Serializable {
  *                unsigned long integer *seed.                    *
  *                                                                *
  ******************************************************************/
-		if (r < 0) throw new IllegalArgumentException("r must be >= 0");
+        if (r < 0) throw new IllegalArgumentException("r must be >= 0");
 
         double y;
         y=Math.exp(Math.log(randomGenerator.nextDouble())/r);                                /* y=u^(1/r) */
@@ -139,10 +139,10 @@ public class Distributions  implements java.io.Serializable {
  *                unsigned long integer *seed.                    *
  *                                                                *
  ******************************************************************/
- 		if (r < 0) throw new IllegalArgumentException("r must be >= 0");
-		if (k < 0) throw new IllegalArgumentException("k must be >= 0");
+        if (r < 0) throw new IllegalArgumentException("r must be >= 0");
+        if (k < 0) throw new IllegalArgumentException("k must be >= 0");
 
-       double y,u;
+        double y,u;
         u = randomGenerator.nextDouble();                     // U(0/1)       
         y = Math.exp(-Math.log(u)/r)-1.0;              // u^(-1/r) - 1 
         switch (nr) {
@@ -237,9 +237,9 @@ public class Distributions  implements java.io.Serializable {
  *                unsigned long integer *seed.                    *
  *                                                                *
  ******************************************************************/
-  		if (p <= 0 || p >= 1) throw new IllegalArgumentException("p must be between 0 and 1 exclusive");
+        if (p <= 0 || p >= 1) throw new IllegalArgumentException("p must be between 0 and 1 exclusive");
 
-       double u = randomGenerator.nextDouble();
+        double u = randomGenerator.nextDouble();
         return (int)(Math.log(u)/Math.log(1.0-p));
         }
 /**
@@ -340,7 +340,7 @@ public class Distributions  implements java.io.Serializable {
  * @returns a zipfian distributed number in the closed interval <tt>[1,Integer.MAX_VALUE]</tt>.
  */
     public static int nextZipfInt(double z, MersenneTwisterFast randomGenerator) {   
-  		if (z <= 1) throw new IllegalArgumentException("z must be > 1");
+        if (z <= 1) throw new IllegalArgumentException("z must be > 1");
 
         /* Algorithm from page 551 of:
          * Devroye, Luc (1986) `Non-uniform random variate generation',

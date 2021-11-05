@@ -10,19 +10,19 @@ import ec.util.MersenneTwisterFast;
 /** This stub class simply calls the equivalent function in Distributions.java */
 
 public class Cauchy extends AbstractContinuousDistribution
-	{
-	public Cauchy(MersenneTwisterFast random)
-		{
-		setRandomGenerator(random);
-		}
-	
-	public double nextDouble()
-		{
-		return Distributions.nextCauchy(randomGenerator);
-		}
+    {
+    public Cauchy(MersenneTwisterFast random)
+        {
+        setRandomGenerator(random);
+        }
+        
+    public double nextDouble()
+        {
+        return Distributions.nextCauchy(randomGenerator);
+        }
 
     public String toString() 
-    	{
+        {
         return this.getClass().getName()+"()";
         }
-	}
+    }

@@ -10,19 +10,19 @@ import ec.util.MersenneTwisterFast;
 /** This stub class simply calls the equivalent function in Distributions.java */
 
 public class Laplace extends AbstractContinuousDistribution
-	{
-	public Laplace(MersenneTwisterFast random)
-		{
-		setRandomGenerator(random);
-		}
-	
-	public double nextDouble()
-		{
-		return Distributions.nextLaplace(randomGenerator);
-		}
+    {
+    public Laplace(MersenneTwisterFast random)
+        {
+        setRandomGenerator(random);
+        }
+        
+    public double nextDouble()
+        {
+        return Distributions.nextLaplace(randomGenerator);
+        }
 
     public String toString() 
-    	{
+        {
         return this.getClass().getName()+"()";
         }
-	}
+    }

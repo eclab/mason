@@ -10,19 +10,19 @@ import ec.util.MersenneTwisterFast;
 /** This stub class simply calls the equivalent function in Distributions.java */
 
 public class Triangular extends AbstractContinuousDistribution
-	{
-	public Triangular(MersenneTwisterFast random)
-		{
-		setRandomGenerator(random);
-		}
-	
-	public double nextDouble()
-		{
-		return Distributions.nextTriangular(randomGenerator);
-		}
+    {
+    public Triangular(MersenneTwisterFast random)
+        {
+        setRandomGenerator(random);
+        }
+        
+    public double nextDouble()
+        {
+        return Distributions.nextTriangular(randomGenerator);
+        }
 
     public String toString() 
-    	{
+        {
         return this.getClass().getName()+"()";
         }
-	}
+    }

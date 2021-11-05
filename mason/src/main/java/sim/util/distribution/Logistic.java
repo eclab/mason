@@ -10,19 +10,19 @@ import ec.util.MersenneTwisterFast;
 /** This stub class simply calls the equivalent function in Distributions.java */
 
 public class Logistic extends AbstractContinousDistribution
-	{
-	public Logistic(MersenneTwisterFast random)
-		{
-		setRandomGenerator(random);
-		}
-	
-	public double nextDouble()
-		{
-		return Distributions.nextLogistic(randomGenerator);
-		}
+    {
+    public Logistic(MersenneTwisterFast random)
+        {
+        setRandomGenerator(random);
+        }
+        
+    public double nextDouble()
+        {
+        return Distributions.nextLogistic(randomGenerator);
+        }
 
     public String toString() 
-    	{
+        {
         return this.getClass().getName()+"()";
         }
-	}
+    }

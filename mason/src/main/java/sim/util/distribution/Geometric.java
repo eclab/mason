@@ -10,27 +10,27 @@ import ec.util.MersenneTwisterFast;
 /** This stub class simply calls the equivalent function in Distributions.java */
 
 public class Geometric extends AbstractContinuousDistribution
-	{
-	double p;
-	
-	public Geometric(double p, MersenneTwisterFast random)
-		{
-		setState(p);
-		setRandomGenerator(random);
-		}
-	
-	public double nextDouble()
-		{
-		return Distributions.nextGeometric(p, randomGenerator);
-		}
+    {
+    double p;
+        
+    public Geometric(double p, MersenneTwisterFast random)
+        {
+        setState(p);
+        setRandomGenerator(random);
+        }
+        
+    public double nextDouble()
+        {
+        return Distributions.nextGeometric(p, randomGenerator);
+        }
 
-	public void setState(double p)
-		{
-		this.p = p;
-		}
+    public void setState(double p)
+        {
+        this.p = p;
+        }
 
     public String toString() 
-    	{
+        {
         return this.getClass().getName()+"("+p + ")";
         }
-	}
+    }
