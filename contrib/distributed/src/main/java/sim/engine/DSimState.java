@@ -20,7 +20,6 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SocketHandler;
-import java.rmi.Remote;
 
 import ec.util.MersenneTwisterFast;
 import mpi.MPI;
@@ -28,7 +27,6 @@ import mpi.MPIException;
 import sim.display.Stat;
 import sim.engine.mpi.*;
 import sim.engine.rmi.RemoteProcessor;
-import sim.engine.rmi.RemotePromise;
 import sim.field.HaloGrid2D;
 import sim.field.partitioning.QuadTreePartition;
 import sim.field.storage.ContinuousStorage;
@@ -38,12 +36,9 @@ import sim.util.Double2D;
 import sim.util.Int2D;
 import sim.util.IntRect2D;
 import sim.util.MPIUtil;
-import sim.engine.DObject;
 
 
 import sim.util.Timing;
-
-import sim.engine.*;
 
 /**
  * Analogous to Mason's SimState. This class represents the entire distributed simulation.
@@ -107,14 +102,6 @@ public class DSimState extends SimState
 	// The current balance level FIXME: This looks primitive, and also requires that
 	// be properly in sync
 	int balancerLevel;
-	
-	/** Queue of RemotePromise 
-		A (RemotePromise) is the promise, 
-		B (Integer) is the tag used to understand which method to use to fill the promise 
-		C (Serializable) is the argument passed to be used in the response method (optional)  
-		D (Distinguished) is the Distinguished that has the information needed
-	*/
-	static ArrayList<Quartet<RemotePromise, Integer, Serializable, Distinguished>> promises = new ArrayList<>();
 	
 	/**
 	 * Builds a new DSimState with the given random number SEED, the WIDTH and HEIGIHT of the entire model (not just the
@@ -262,26 +249,6 @@ public class DSimState extends SimState
 			{
 				throw new RuntimeException(e1);
 			}
-
-			// Check for RemotePromise to fill and fill them
-			// we need to do this before the synchronization TODO I guess
-//			if (withRegistry && !promises.isEmpty()) {				
-			// if (!promises.isEmpty()) {				
-			// 	//MPI.COMM_WORLD.barrier();
-			// 	for(Quartet<RemotePromise, Integer, Serializable, Distinguished> promisesToFill : promises) {
-			// 		// Get the object inside the RemotePromise that has the information needed
-			// 		Distinguished author =  promisesToFill.d;
-			// 		// Use the method of the remote interface to get the required information
-			// 		// tag and argument are passed to specify what data is needed
-			// 		// respondToRemote is implemented by the modeler
-			// 		Serializable response = author.askToRemote(promisesToFill.b, promisesToFill.c);
-			// 		// Fulfill the promise with the data acquired
-			// 		promisesToFill.a.fulfill(response);
-			// 	}
-			// 	// clear the queue since all the promises have been fulfilled
-			// 	promises.clear();
-			// 	System.out.println("Promises queue cleared!");
-			// }
 			
 			// Sync all the Remove and Add queues for RMI
 			syncRemoveAndAdd();
@@ -1140,39 +1107,6 @@ public class DSimState extends SimState
 		
 	}
 	
-	/**
-	 * Looks up for the object with name to get data
-	 * Creates an unfilled RemotePromise that contains the request of some processor.
-	 * Calls addRemotePromise to put the RemotePromise in the queue of its processor.
-	 * 
-	 * @param name is the name of the required object that has the data and has to fulfill the promise
-	 * @param tag is used to understand what data is required from the object  
-	 * 	(the designer can implement different methods and choose what to call using this)
-	 * @param argument is the optional argument to pass to the object from we want the data 
-	 * 
-	 * @return a RemotePromise that will be filled out
-	 */
-	public Promised contactDistinguishedObject(String name, int tag, Serializable argument) throws RemoteException, NotBoundException 
-	{
-		Distinguished remoteObject = (Distinguished) this.getDRegistry().getObject(name);
-		RemotePromise promiseUnfilled = new RemotePromise(); 
-		DSimState.addRemotePromise(promiseUnfilled, tag, argument, remoteObject);
-		return promiseUnfilled;
-	}
-	
-	/**
-	 * Add a RemotePromise to the queue.
-	 * The promise will be filled then.
-	 * The promise needs information about:
-	 * @param tag provides information about what data is required  
-	 * @param argument is the optional argument that could be needed in the method respondToRemote()
-	 * @param author that will fill the promise,
-	 */
-	static void addRemotePromise(RemotePromise promise, Integer tag, Serializable argument, Distinguished author) 
-	{
-		promises.add(new Quartet<RemotePromise, Integer, Serializable, Distinguished>(promise, tag, argument, author));
-	}
-	
 	/*
 	public static void loc_disagree(Int2D p, DHeatBug h, Partition p2, String s)
 	{
@@ -1199,24 +1133,4 @@ public class DSimState extends SimState
 	}
     */
 	
-	
-
-}
-
-class Quartet<A, B, C, D> implements Serializable 
-{
-	private static final long serialVersionUID = 1L;
-
-	public final A a;
-	public final B b;
-	public final C c;
-	public final D d;
-
-	public Quartet(A a, B b, C c, D d) 
-	{
-		this.a = a;
-		this.b = b;
-		this.c = c;
-		this.d = d;
-	}
 }

@@ -8,8 +8,6 @@ package sim.engine;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.rmi.Remote;
-import java.io.Serializable;
-import java.rmi.RemoteException;
 
 /**
  * A superclass for objects that may be accessed and queried remotely. To do

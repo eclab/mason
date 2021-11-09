@@ -19,7 +19,6 @@ public interface Distinguished extends Remote
 {
 	/**
 	 * Respond to a remote request of some data.
-	 * The method is used to fulfill a RemotePromise.
 	 * @param tag is the tag used to understand which method to use to fill the promise  
 	 * @param argument is the optional argument that could be needed
 	 * 
