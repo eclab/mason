@@ -44,6 +44,8 @@ public class Unlock extends Lock
         {
         if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
 
+        if (isOffering()) throwCyclicOffers();  // cycle
+        
         if (pool.getMaximum() - pool.getResource().getAmount() < allocation) return false;
 
         _amount = amount;

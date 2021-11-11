@@ -17,6 +17,11 @@ import sim.util.distribution.*;
 
 public abstract class Provider implements Named
     {
+    protected void throwCyclicOffers()
+        {
+        throw new RuntimeException("Zero-time cycle found among offers including this one." );
+        }
+
     protected void throwUnequalTypeException(Resource res)
         {
         throw new RuntimeException("Expected resource type " + this.typical.getName() + "(" + this.typical.getType() + ")" +
@@ -67,6 +72,9 @@ public abstract class Provider implements Named
     int offerPolicy;
     int roundRobinPosition = 0;
     boolean offersTakeItOrLeaveIt;
+    
+    boolean offering;
+    public boolean isOffering() { return offering; }
 
     /** Sets the receiver offer policy */
     public void setOfferPolicy(int offerPolicy) 
@@ -242,6 +250,8 @@ public abstract class Provider implements Named
     */
     protected boolean offerReceivers()
         {
+        offering = true;
+        
         boolean result = false;
         switch(offerPolicy)
             {
@@ -335,6 +345,8 @@ public abstract class Provider implements Named
                 }
             break;
             }
+            
+        offering = false;
         return result;
         }
         

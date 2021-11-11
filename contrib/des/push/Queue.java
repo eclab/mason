@@ -16,6 +16,8 @@ public class Queue extends Source implements Receiver
 
    public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
+        if (isOffering()) throwCyclicOffers();  // cycle
+        
         if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
         if (entities == null)
             {

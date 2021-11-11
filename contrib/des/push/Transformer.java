@@ -29,6 +29,8 @@ public class Transformer extends Provider implements Receiver
         {       
         if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
 
+        if (isOffering()) throwCyclicOffers();  // cycle
+        
         if (amount instanceof Entity)
             {
             if (typical instanceof Entity)

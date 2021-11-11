@@ -54,6 +54,8 @@ public class Lock extends Provider implements Receiver
         {
         if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
 
+        if (isOffering()) throwCyclicOffers();  // cycle
+        
         if (pool.getResource().getAmount() < allocation) return false;
 
         _amount = amount;

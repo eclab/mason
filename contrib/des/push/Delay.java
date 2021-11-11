@@ -62,6 +62,10 @@ public class Delay extends SimpleDelay
         if (!resource.isSameType(amount)) 
             throwUnequalTypeException(amount);
                 
+        if (isOffering()) throwCyclicOffers();  // cycle
+        
+        double nextTime = state.schedule.getTime() + getDelay(provider, amount);
+
         if (entities == null)
             {
             CountableResource cr = (CountableResource)amount;
@@ -71,13 +75,16 @@ public class Delay extends SimpleDelay
             CountableResource token = (CountableResource)(cr.duplicate());
             token.setAmount(maxIncoming);
             cr.decrease(maxIncoming);
-            delayHeap.add(token, state.schedule.getTime() + getDelay(provider, amount));
+            delayHeap.add(token, nextTime);
             }
         else
             {
             if (delayHeap.size() >= capacity) return false;      // we're at capacity
-            delayHeap.add(amount, getDelay(provider, amount));
+            delayHeap.add(amount, nextTime);
             }
+       
+        if (getAutoSchedules()) state.schedule.scheduleOnce(nextTime, getOrdering(), this);
+        
         return true;
         }
 

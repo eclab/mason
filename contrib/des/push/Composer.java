@@ -71,6 +71,8 @@ public class Composer extends Provider implements Receiver
                                 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
+        if (isOffering()) throwCyclicOffers();  // cycle
+        
         Node total = mappedTotals.get(amount.getType());
         if (total == null) throwNotComposableResource(amount);
         

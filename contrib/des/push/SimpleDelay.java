@@ -28,6 +28,11 @@ public class SimpleDelay extends Source implements Receiver
     double totalResource = 0.0;
     LinkedList<Node> delayQueue = new LinkedList<>();
     double delayTime;
+    int ordering = 0;
+    boolean autoSchedules = true;
+    
+    public boolean getAutoSchedules() { return autoSchedules; }
+    public void setAutoScheduled(boolean val) { autoSchedules = val; }
         
     public void clear()
         {
@@ -38,6 +43,9 @@ public class SimpleDelay extends Source implements Receiver
                 
     public double getDelayTime() { return delayTime; }
     public void setDelayTime(double delayTime) { this.delayTime = delayTime; }
+
+	public int getOrdering() { return ordering; }
+	public void setOrdering(int ordering) { this.ordering = ordering; }
 
     void throwInvalidNumberException(double capacity)
         {
@@ -60,7 +68,10 @@ public class SimpleDelay extends Source implements Receiver
         {
         if (!resource.isSameType(amount)) 
             throwUnequalTypeException(amount);
-                
+        
+        if (isOffering()) throwCyclicOffers();  // cycle
+        
+        double nextTime = state.schedule.getTime() + delayTime;
         if (entities == null)
             {
             CountableResource cr = (CountableResource)amount;
@@ -70,13 +81,14 @@ public class SimpleDelay extends Source implements Receiver
             CountableResource token = (CountableResource)(cr.duplicate());
             token.setAmount(maxIncoming);
             cr.decrease(maxIncoming);
-            delayQueue.add(new Node(token, state.schedule.getTime() + delayTime));
+            delayQueue.add(new Node(token, nextTime));
             }
         else
             {
             if (delayQueue.size() >= capacity) return false; // we're at capacity
-            delayQueue.add(new Node(amount, state.schedule.getTime() + delayTime));
+            delayQueue.add(new Node(amount, nextTime));
             }
+        if (getAutoSchedules()) state.schedule.scheduleOnce(nextTime, getOrdering(), this);
         return true;
         }
 

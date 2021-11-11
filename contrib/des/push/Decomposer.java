@@ -53,6 +53,8 @@ public class Decomposer extends Provider implements Receiver
         {       
         if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
 
+        if (isOffering()) throwCyclicOffers();  // cycle
+        
         // unpack
         Entity entity = (Entity)amount;
                 
