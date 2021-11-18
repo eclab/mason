@@ -162,9 +162,17 @@ public class CampusWorld extends SimState
         super.start();
 
         agents.clear(); // clear any existing agents from previous runs
+        
+
+        
         addAgents();
+        
+
         agents.setMBR(buildings.getMBR());
 
+		
+
+        
         // Ensure that the spatial index is made aware of the new agent
         // positions.  Scheduled to guaranteed to run after all agents moved.
         schedule.scheduleRepeating( agents.scheduleSpatialIndexUpdater(), Integer.MAX_VALUE, 1.0);

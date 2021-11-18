@@ -5,7 +5,7 @@ import sim.util.Double2D;
 
 public abstract class DGeomObject extends DObject{
 
-	MasonGeometry mg;
+	protected MasonGeometry mg;
 	Double2D jtsCoordinate; //can we align this with DGeomVectorField continuous half?
 
 	

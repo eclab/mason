@@ -1,5 +1,7 @@
 package sim.app.dpso;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import sim.engine.DSimState;
@@ -219,7 +221,7 @@ public class DPSO extends DSimState {
             
         	//System.out.println(getPID()+" before "+bestVal+" x: "+best_x+" y: "+best_y);
 
-        	updateGlobal();
+        	updateGlobals();
         	
         	//System.out.println(getPID()+" after "+bestVal+" x: "+best_x+" y: "+best_y);
         	//System.exit(-1);
@@ -241,13 +243,39 @@ public class DPSO extends DSimState {
 		
 	}
 	
-    protected Object[] getPartitionGlobals() {
+	
+	//we want to keep track of best point, so each partion gives an array where:
+	//index 0 is the value
+	//index 1 and 2 are position values (x and y)
+	//we want to pick the best index 0 and its corresponding x and y
+
+	protected Serializable[] arbitrateGlobals(ArrayList<Serializable[]> global)
+	{
+		int chosen_index = 0;
+		Object chosen_item = global.get(0)[0];
+
+		double best_val = (double) chosen_item; // make type invariant
+
+		for (int i = 0; i < partition.getNumProcessors(); i++)
+		{
+			if ((double) global.get(i)[0] > best_val)
+			{
+				best_val = (double) global.get(i)[0];
+				chosen_index = i;
+			}
+		}
+
+		return global.get(chosen_index);
+	}
+	
+	
+    protected Serializable[] getPartitionGlobals() {
     	
     	//first element is score
     	//second element is x
     	//third element is y
     	
-    	Object[] o = new Object[3];
+    	Serializable[] o = new Serializable[3];
         o[0] = bestVal;
         o[1] = best_x;
         o[2] = best_y;
@@ -259,7 +287,7 @@ public class DPSO extends DSimState {
     }
 
     
-    protected void setPartitionGlobals(Object[] o) {
+    protected void setPartitionGlobals(Serializable[] o) {
     	
     	bestVal = (double) o[0];
     	best_x = (double) o[1];

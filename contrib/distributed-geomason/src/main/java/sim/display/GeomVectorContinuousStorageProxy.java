@@ -12,6 +12,8 @@ import java.rmi.*;
 import java.util.*;
 import java.util.Map.Entry;
 
+import com.vividsolutions.jts.geom.Envelope;
+
 import sim.util.*;
 import sim.util.geo.MasonGeometry;
 
@@ -19,6 +21,7 @@ import sim.util.geo.MasonGeometry;
 public class GeomVectorContinuousStorageProxy extends GeomVectorField implements UpdatableProxy
 {
 	private static final long serialVersionUID = 1L;
+	
 
     public GeomVectorContinuousStorageProxy()
     {
@@ -36,6 +39,11 @@ public class GeomVectorContinuousStorageProxy extends GeomVectorField implements
 	{		
 		int halo_size = 0;
 
+		//setViewRect();
+		//port.getViewRect()
+		
+		
+		/*
 		IntRect2D[] rect_list = new IntRect2D[quad_tree_partitions.length];
 		for (int p_ind = 0; p_ind < quad_tree_partitions.length; p_ind++)
 		{
@@ -43,11 +51,22 @@ public class GeomVectorContinuousStorageProxy extends GeomVectorField implements
 			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
 			halo_size = vp1.getAOI();
 
-			rect_list[p_ind] = vp1.getStorageBounds();
+			rect_list[p_ind] = vp1.getStorageBounds();  //use getWorldBounds() 
 		    
 		}
 		
+		
 		IntRect2D fullBounds = IntRect2D.getBoundingRect(rect_list);
+		*/
+		
+		int p0 = quad_tree_partitions[0];
+		VisualizationProcessor vp0 = stateProxy.visualizationProcessor(p0);
+		halo_size = vp0.getAOI();
+
+		IntRect2D fullBounds = vp0.getWorldBounds();
+		
+
+		
 		Int2D new_ul = fullBounds.ul().add(halo_size,halo_size); //remove halo
 		Int2D new_br = fullBounds.br().add(-1 * halo_size, -1 * halo_size); //remove halo
 		fullBounds = new IntRect2D(new_ul, new_br);
@@ -57,55 +76,76 @@ public class GeomVectorContinuousStorageProxy extends GeomVectorField implements
 		int width = fullBounds.br().x - fullBounds.ul().x;
 		int height = fullBounds.br().y - fullBounds.ul().y;
 		
+		System.out.println("width : "+width);
+		System.out.println("height : "+height);
 
 		//if (width != this.width || height != this.height)
+		
 		reshape(width, height);
+
+		
+		
+		GeomVectorContinuousStorage st = (GeomVectorContinuousStorage)(stateProxy.storage(proxyIndex));
 		
 		System.out.println("objs : "+this.getGeometries().size());
 		
 		//for (int p = 0; p < stateProxy.numProcessors; p++) {
 		for (int p : quad_tree_partitions)
 		{
+			
 
 			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
-			//int halo_size = vp1.getAOI();
 		    IntRect2D partBound = vp1.getStorageBounds();
 		    
-		    System.out.println(partBound);
+		    System.out.println("partBound : "+partBound);
 		    
-		    
-			//remove halo bounds using bounds.ul offset, assumption is offset from 0,0 is halo size
-		    
-            int partition_width_low_ind = partBound.ul().getX()+halo_size;  //partition bounds, subtract to remove halo
-            int partition_width_high_ind = partBound.br().getX()-halo_size;  //partition bounds, add to remove halo
-            int partition_height_low_ind =  partBound.ul().getY()+halo_size;  //partition bounds
-            int partition_height_high_ind =  partBound.br().getY()-halo_size;   //partition bounds 
+
             
             
             GeomVectorContinuousStorage storage = (GeomVectorContinuousStorage)(stateProxy.storage(proxyIndex));
             
-            System.out.println(p+" : "+storage.getGeomVectorField().getGeometries().size());
+
+            
+            //this.getMBR().expandToInclude(storage.getGeomVectorField().MBR);
+            System.out.println("env : "+this.getMBR().getMinX()+" "+this.getMBR().getMaxX()+" "+this.getMBR().getMinY()+" "+this.getMBR().getMaxY());
+            
 
             for (Object a : storage.getGeomVectorField().getGeometries()) {
             	
-            	//System.out.println(p);
 
+            	MasonGeometry b = (MasonGeometry)a;
             	
-            	
-            	this.addGeometry((MasonGeometry)a);
+            	System.out.println("point "+b.getGeometry().getEnvelopeInternal());
+
+            	this.addGeometry(b);
+              // }
             	
             }
             
-            System.out.println(p+" : "+"hashmap size :"+storage.locations.keySet().size()); 
-            	
+            //System.out.println(p+" : "+"hashmap size :"+storage.locations.keySet().size()); 
             	
             
+			System.out.println("aaa "+this.getMBR());
+            	
+			System.out.println("this parts env: "+storage.getGeomVectorField().MBR);
+            //this.getMBR().expandToInclude(storage.getGeomVectorField().MBR);
+			
+			if (storage.globalEnvelope != null) {
+	            this.getMBR().expandToInclude(storage.globalEnvelope);
+
+			}
+			
+			
+			System.out.println("bbb "+this.getMBR());
+            //System.exit(-1);
             
 	
             
 		}
 		
-		System.out.println("objs 2 : "+this.getGeometries().size());
+		//this.setMBR(st.getGeomVectorField().getMBR()); 
+		
+		//System.out.println("objs 2 : "+this.getGeometries().size());
 
 		
 		
@@ -119,6 +159,8 @@ public class GeomVectorContinuousStorageProxy extends GeomVectorField implements
 		   setFieldWidth(w);
 		   setFieldHeight(h);
 		   this.clear();
+		   
+		   
 	}
 
 //	public void update(SimStateProxy stateProxy, int proxyIndex) throws RemoteException, NotBoundException {

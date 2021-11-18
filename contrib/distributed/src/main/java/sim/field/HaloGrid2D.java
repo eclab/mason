@@ -782,25 +782,39 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	 */
 	public void syncHalo() throws MPIException, RemoteException
 	{
+		//((ContinuousStorage)localStorage).geomvecAndContinuousStorageMatch("syncHalo beginning"); 
 		int numNeighbors = neighbors.size();
 		Serializable[] sendObjs = new Serializable[numNeighbors];
 		for (int i = 0; i < numNeighbors; i++)
 			sendObjs[i] = localStorage.pack(neighbors.get(i).sendParam);
 
+		//((ContinuousStorage)localStorage).geomvecAndContinuousStorageMatch("syncHalo after all packs"); 
+
 		ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>neighborAllToAll(getPartition(), sendObjs);
 
-		for (int i = 0; i < numNeighbors; i++)
+		for (int i = 0; i < numNeighbors; i++) {
 			localStorage.unpack(neighbors.get(i).recvParam, recvObjs.get(i));
+			//System.exit(-1);
+		}
+		
+		//((ContinuousStorage)localStorage).geomvecAndContinuousStorageMatch("syncHalo after all unpacks"); 
+
 
 		//synchronized(getRMILock) {
 		for (Pair<Promised, Number2D> pair : getAllQueue)
 			pair.a.fulfill(getLocal(pair.b));
 		getAllQueue.clear();
+		
+		//((ContinuousStorage)localStorage).geomvecAndContinuousStorageMatch("syncHalo rmi stuff 1"); 
+
 
 		for (Triplet<Promised, Number2D, Long> trip : getQueue)
 			trip.a.fulfill(getLocal(trip.b, trip.c));
 		getQueue.clear();
 		//}
+		
+		//((ContinuousStorage)localStorage).geomvecAndContinuousStorageMatch("syncHalo rmi stuff 2"); 
+
 	}
 	
 	//TODO try implementing this if possible
@@ -968,8 +982,9 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	void addLocal(Number2D p, T t)
 	{
-		if (localStorage instanceof ContinuousStorage)
+		if (localStorage instanceof ContinuousStorage) {
 			((ContinuousStorage) localStorage).addObject(p, (DObject) t);
+		}
 		else
 			localStorage.addObject(p, t);
 	}

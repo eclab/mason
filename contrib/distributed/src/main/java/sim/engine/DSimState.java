@@ -216,8 +216,15 @@ public class DSimState extends SimState
 	 */
 	void syncFields() throws MPIException, RemoteException
 	{
-		for (HaloGrid2D haloField : fieldList)
+		
+		for (HaloGrid2D haloField : fieldList) {
+			//((ContinuousStorage)haloField.getStorage()).geomvecAndContinuousStorageMatch("syncFields beginning"); 
+
 			haloField.syncHalo();
+			
+			//((ContinuousStorage)haloField.getStorage()).geomvecAndContinuousStorageMatch("syncFields end"); 
+
+		}
 	}
 
 	void syncRemoveAndAdd() throws MPIException, RemoteException
@@ -244,10 +251,15 @@ public class DSimState extends SimState
 		Timing.stop(Timing.LB_RUNTIME);
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
 		
+		//dsimstate_geomvecAndContinuousStorageMatch("presched beginning");
+		
 		try
 		{
 			// Wait for all agents globally to stop moving
 			MPI.COMM_WORLD.barrier();
+			
+			//dsimstate_geomvecAndContinuousStorageMatch("presched after barrier");
+
 
 			// give time for Visualizer
 			try
@@ -281,10 +293,17 @@ public class DSimState extends SimState
 				System.out.println("Promises queue cleared!");
 			}
 			
+			//dsimstate_geomvecAndContinuousStorageMatch("presched after promises");
+
 			// Sync all the Remove and Add queues for RMI
 			syncRemoveAndAdd();
 			
+			//dsimstate_geomvecAndContinuousStorageMatch("presched after syncRemoveAndAdd");
+
+			
 			transporter.sync();
+
+			//dsimstate_geomvecAndContinuousStorageMatch("presched after transporter sync");
 
 /*
 			if (withRegistry)
@@ -327,27 +346,20 @@ public class DSimState extends SimState
 			 *
 			 * Improperly using the wrappers and/or fieldIndex will cause Class cast exceptions to be thrown
 			 */
+			
+			//dsimstate_geomvecAndContinuousStorageMatch("presched add payload beginning");
+
 
 			if (payloadWrapper.fieldIndex >= 0)
 			{
 				// add the object to the field
-				fieldList.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
+				fieldList.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);  //HERE is the problem in GeomVecField
 			}
+			
 
-			/*
-			if (payloadWrapper.payload instanceof DistributedIterativeRepeat)
-			{
-				final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
 
-				// TODO: how to schedule for a specified time?
-				// Not adding it to specific time because we get an error -
-				// "the time provided (-1.0000000000000002) is < EPOCH (0.0)"
+			
 
-				Stopping stopping = iterativeRepeat.getSteppable();
-				stopping.setStoppable(
-						schedule.scheduleRepeating(stopping, iterativeRepeat.getOrdering(), iterativeRepeat.interval));
-			}
-			*/
 			
 			if (payloadWrapper.payload instanceof AgentWrapper)
 			{
@@ -384,15 +396,24 @@ public class DSimState extends SimState
 						schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
 					}
 			}
+			
+
 		}
 
 		transporter.objectQueue.clear();
+		
+
 
 		// Wait that all nodes have registered their new objects in the distributed
 		// registry.
 		try
 		{
+
+
+			
 			MPI.COMM_WORLD.barrier();
+			
+
 			syncFields();
 		}
 		catch (MPIException | RemoteException e)
@@ -422,7 +443,6 @@ public class DSimState extends SimState
 				// Balance the partitions for the given level migrating the agents
 				
 				int x = countTotalAgents(fieldList.get(0));
-		        System.out.println(partition.getPID()+" : "+x);
 				
 				balancePartitions(balancerLevel);
 
@@ -434,7 +454,6 @@ public class DSimState extends SimState
 					transporter.sync();
 					
 					int x2 = countTotalAgents(fieldList.get(0));
-			        System.out.println(partition.getPID()+"B : "+x2);
 					
 										
 				}
@@ -467,7 +486,7 @@ public class DSimState extends SimState
 						//verify it was added to the correct location!
 					}
 					
-					
+
 
 					
 
@@ -527,11 +546,12 @@ public class DSimState extends SimState
 				}
 
 				int x3 = countTotalAgents(fieldList.get(0));
-		        System.out.println(partition.getPID()+"C : "+x3);
 				
 				// Wait that all nodes have registered their new objects in the distributed registry.
 				try
 				{
+					
+
 					MPI.COMM_WORLD.barrier();
 					
 
@@ -544,8 +564,7 @@ public class DSimState extends SimState
 				}
 				
 				int x4 = countTotalAgents(fieldList.get(0));
-		        System.out.println(partition.getPID()+"D : "+x4);
-		        //System.exit(-1);
+
 
 				// clear queue
 				transporter.objectQueue.clear();
@@ -1053,49 +1072,50 @@ public class DSimState extends SimState
 	// 1) gather each best score and corresponding x and y from each parition (gatherGlobals())
 	// 2) arbitrate (pick the best score and its x and y out of the partition candidates (arbitrateGlobal)
 	// 3) distributed the winner back to each partition, each partition keeps track of the global
-	protected void updateGlobal()
+	protected void updateGlobals()
 	{
-		Object[] g = null;
+		Serializable[] g = null;
 
-		ArrayList<Object[]> gg = gatherGlobals();
+		ArrayList<Serializable[]> gg = gatherGlobals();
 
 		if (partition.isRootProcessor())
 		{
-			g = arbitrateGlobal(gg);
+			g = arbitrateGlobals(gg);
 		}
 
 		distributeGlobals(g);
 	}
 
 	// this one creates the best global out of the globals from each partiton (gg) should override in subclass
-	// this version picks based on the highest value of index 0
 	// TODO should we make this one throw an exception and force specific agent to implement its own?
-	Object[] arbitrateGlobal(ArrayList<Object[]> gg)
-	{
-		int chosen_index = 0;
-		Object chosen_item = gg.get(0)[0];
+	protected Serializable[] arbitrateGlobals(ArrayList<Serializable[]> global)
+    {
+		// default
+		return global.get(0);
 
-		double best_val = (double) chosen_item; // make type invariant
-
-		for (int i = 0; i < partition.getNumProcessors(); i++)
-		{
-			if ((double) gg.get(i)[0] > best_val)
-			{
-				best_val = (double) gg.get(i)[0];
-				chosen_index = i;
-			}
-		}
-
-		return gg.get(chosen_index);
-	}
+    //Example that arbitrates by returning the highest value of each global, assuming they're all doubles:
+    // Object[] best = globals.get(0);   // we start by putting partition 0's values in the best
+    //   for(Object[] current : globals)
+    //         {
+    //           for(int i = 0; i < current.length; i++)
+    //                   {
+    //                  if (((double)current[i]) > ((double)best[i]))
+    //                          {
+    //                          best[i] = current[i];
+    //                          }
+    //                   }
+    //           }
+    //  return best;
+    }
 
 	// takes the set of globals from each partition the set of variables this is is implemented in getPartitionGlobals(),
 	// implemented in the specific subclass
-	ArrayList gatherGlobals()
+	private ArrayList gatherGlobals()
 	{
 		try
 		{
 			// call getPartitionGlobals() for each partition
+			//this should be implemented in the specific subclass, with the variables we want to pass over
 			Object[] g = this.getPartitionGlobals();
 
 
@@ -1118,14 +1138,14 @@ public class DSimState extends SimState
 
 	// after determining the overall global using arbitration, send that one back to each partition
 	// uses setPartitionGlobals(), should be implemented in subclass (to match getPartititonGlobals())
-	void distributeGlobals(Object[] global)
+	private void distributeGlobals(Serializable[] global)
 	{
 		// need to do typing
 		try
 		{
-			// partition.getCommunicator().bcast(global, 1, MPI.DOUBLE, 0);
 			global = MPIUtil.bcast(partition.getCommunicator(), global, 0);
-			//System.out.println("gl: "+global);
+			
+			//this should be implemented in the specific subclass, with the variables we to reset as the global picked one
 			setPartitionGlobals(global);
 		}
 		catch (Exception e)
@@ -1135,13 +1155,13 @@ public class DSimState extends SimState
 	}
 
 	// implement in subclass
-	protected Object[] getPartitionGlobals()
+	protected Serializable[] getPartitionGlobals()
 	{
 		throw new RuntimeException("getPartitionGlobals() should be implemented in subclass");
 	}
 
 	// implement in subclass
-	protected void setPartitionGlobals(Object[] o)
+	protected void setPartitionGlobals(Serializable[] o)
 	{
 		throw new RuntimeException("setPartitionGlobals() should be implemented in subclass");
 	}
@@ -1280,6 +1300,15 @@ public class DSimState extends SimState
 		
 	}
     */
+	
+	/*
+	public void dsimstate_geomvecAndContinuousStorageMatch(String s) {
+		for (HaloGrid2D haloField : fieldList) {
+			((ContinuousStorage)haloField.getStorage()).geomvecAndContinuousStorageMatch(s); 
+		}
+
+	}
+	*/
 	
 	
 

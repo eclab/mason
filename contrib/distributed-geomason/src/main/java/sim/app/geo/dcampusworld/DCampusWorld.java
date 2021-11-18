@@ -15,7 +15,7 @@ import sim.app.geo.dcampusworld.data.DCampusWorldData;
 import sim.engine.DObject;
 import sim.engine.DSimState;
 import sim.field.HaloGrid2D;
-import sim.field.Synchronizable;
+//import sim.field.Synchronizable;
 import sim.field.continuous.DContinuous2D;
 import sim.field.geo.DGeomVectorField;
 import sim.field.geo.GeomVectorContinuousStorage;
@@ -36,7 +36,7 @@ public class DCampusWorld extends DSimState
 	public static final int height = 300;
 	public static final int aoi = 1;// TODO what value???
 	public static final int discretization = 6;
-	public static final int numAgents = 1; // 1000
+	public static final int numAgents = 1000; // 1000
 
 	/** Convex hull of all static JTS objects **/
 	public Envelope MBR;
@@ -63,7 +63,7 @@ public class DCampusWorld extends DSimState
 
 	public DCampusWorld(final long seed)
 	{
-		super(seed, width, height, aoi);
+		super(seed, width, height, aoi, false);
 		//agentLocations = new DContinuous2D<>(discretization, this);
 		agentLocations = new DGeomVectorField<DAgent>(discretization, this);;
 //		balanceInterval = 100000;
@@ -113,6 +113,8 @@ public class DCampusWorld extends DSimState
 			ShapeFileImporter.read(walkWayGeometry, walkWayDB, walkways);
 
 			MBR.expandToInclude(walkways.getMBR());
+			
+			//MBR.expandToInclude(agentLocations.getStorage().getGeomVectorField().getMBR());
 
 			System.out.println("Done reading data");
 
@@ -150,26 +152,30 @@ public class DCampusWorld extends DSimState
 		// dump static info to each partition here at start of sim
 		loadStatic();// TODO Remove this
 		
-		
-		
-		
-		
-//		ArrayList<DAgent> agents = (ArrayList<DAgent>) getRootInfo("agents");
-//		for (Object p : agents) {
-//			DFlocker a = (DFlocker) p;
-//			if (partition.getLocalBounds().contains(a.loc))
-//				flockers.addAgent(a.loc, a, 0, 0, 1);
-//		}
+
 
 		
 		
-		
+		System.out.println("buildings: "+buildings.getMBR());
+
+		System.out.println("super before setting: "+agentLocations.getStorage().getGeomVectorField().getMBR());
+
 		// add agents (when created, the agent adds itself to agentLocations)
-		for (int i = 0; i < numAgents; i++)
-			new DAgent(this);
+		for (int i = 0; i < numAgents; i++) {
+
+		}
 		
-		//System.out.println("storage map size after start(): " + agentLocations.getStorage().getStorageMap().keySet().size());
-		//System.out.println("One of the agents: " + agentLocations.getStorage().getStorageMap().keySet().iterator().next().getClass());
+		System.out.println("before setting: "+agentLocations.getStorage().getGeomVectorField().getMBR());
+		
+		
+		agentLocations.getStorage().getGeomVectorField().getMBR().expandToInclude(buildings.getMBR());  //currently incorrect
+		
+		
+		agentLocations.getStorage().globalEnvelope = agentLocations.getStorage().getGeomVectorField().getMBR(); //this is hacky, figure out better way
+		
+		
+		System.out.println("after setting: "+agentLocations.getStorage().getGeomVectorField().getMBR());
+
 	}
 
 	/**
@@ -192,7 +198,7 @@ public class DCampusWorld extends DSimState
 	}
 	
 	//for testing
-	protected int countLocal(Synchronizable field) {
+	protected int countLocal(HaloGrid2D field) {
 		
 		HaloGrid2D haloGrid2D = (HaloGrid2D) field;
 		int count = 0;
@@ -221,7 +227,6 @@ public class DCampusWorld extends DSimState
 						count = count + 1;
 					}
 					
-					//System.out.println(this.getPID()+" storage : "+((DAgent)a).getAgentGeometry());
 					
 					
 

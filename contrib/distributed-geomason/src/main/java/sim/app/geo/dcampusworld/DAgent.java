@@ -27,7 +27,6 @@ public class DAgent extends DGeomSteppable
 	static final long serialVersionUID = 1L;
 	// the agent's geometry
 	//transient MasonGeometry agentGeometry = null;
-	MasonGeometry agentGeometry = null;
 	// the JTS position of the agent
 	Double2D jtsCoordinate;
 	// The base speed of the agent.
@@ -56,7 +55,7 @@ public class DAgent extends DGeomSteppable
 	public DAgent(DCampusWorld state)
 	{
 		MBR = state.MBR;
-		agentGeometry = new MasonGeometry(fact.createPoint(new Coordinate()));
+		mg = new MasonGeometry(fact.createPoint(new Coordinate()));
 		// Set up attributes for this agent
 		if (state.random.nextBoolean())
 		{
@@ -71,10 +70,10 @@ public class DAgent extends DGeomSteppable
 		// Not everyone walks at the same speed
 		basemoveRate *= Math.abs(state.random.nextGaussian());
 
-		agentGeometry.isMovable = true;
-		agentGeometry.addStringAttribute("TYPE", type);
-		agentGeometry.addIntegerAttribute("AGE", age);
-		agentGeometry.addDoubleAttribute("MOVE RATE", basemoveRate);
+		mg.isMovable = true;
+		mg.addStringAttribute("TYPE", type);
+		mg.addIntegerAttribute("AGE", age);
+		mg.addDoubleAttribute("MOVE RATE", basemoveRate);
 
 		//TODO this is hacky
 		// Now set the location of the agent
@@ -82,12 +81,16 @@ public class DAgent extends DGeomSteppable
 		{
 			// Find the first line segment and set our position over the start coordinate.
 			walkway = state.random.nextInt(state.walkways.getGeometries().numObjs);
-			MasonGeometry mg = (MasonGeometry) state.walkways.getGeometries().objs[walkway];
-			Coordinate c = initiateRoute((LineString) mg.getGeometry());
+			MasonGeometry walkway_mg = (MasonGeometry) state.walkways.getGeometries().objs[walkway];
+			Coordinate c = initiateRoute((LineString) walkway_mg.getGeometry());
 			Double2D initialLoc = jtsToPartitionSpace(state, c);
 			if (state.agentLocations.isLocal(initialLoc))
 			{
 				jtsCoordinate = new Double2D(c.x, c.y);
+				
+		        pointMoveTo.setCoordinate(c);
+		        mg.getGeometry().apply(pointMoveTo);
+		        mg.geometry.geometryChanged();
 
 				// agent needs to be added to storage before moving
 				state.agentLocations.addAgent(initialLoc, this, 0, 0, 1);
@@ -95,7 +98,6 @@ public class DAgent extends DGeomSteppable
 				break;
 			}
 		}
-		//System.out.println("size of agentLocations: " + state.agentLocations.getStorage().getStorageMap().keySet().size());
 	}
 
 	/**
@@ -104,79 +106,19 @@ public class DAgent extends DGeomSteppable
 	
 	//Instead, due to how partitions handle geometries, we want to reset the coordinates when changing them, not now, as this creates
 	//an issue where we are returning a agentGeometry that is not in the storage!
-	
-	/*
-	 
-	public MasonGeometry getAgentGeometry()
-	{
-		if (agentGeometry == null || agentGeometry.getGeometry().getCoordinate().x != jtsCoordinate.x ||
-				agentGeometry.getGeometry().getCoordinate().y != jtsCoordinate.y)
-		{
-		
-			agentGeometry = new MasonGeometry(fact.createPoint(new Coordinate(jtsCoordinate.x, jtsCoordinate.y)));
-			agentGeometry.isMovable = true;
-			agentGeometry.addStringAttribute("TYPE", type);
-			agentGeometry.addIntegerAttribute("AGE", age);
-			agentGeometry.addDoubleAttribute("MOVE RATE", basemoveRate);
-			
-			
-		}
 
-			
-			
-		return agentGeometry;
-	}
-	*/
 	
 
-	//do this when jts is updated, need to be careful about storage issues!
-	public void updateAgentGeometry_with_new_point(GeomVectorContinuousStorage storage, Coordinate coordJTS) {
 
-			this.jtsCoordinate = new Double2D(coordJTS.x, coordJTS.y);
-			
-		    		    
-			agentGeometry = new MasonGeometry(fact.createPoint(new Coordinate(jtsCoordinate.x, jtsCoordinate.y)));
-			agentGeometry.isMovable = true;
-			agentGeometry.addStringAttribute("TYPE", type);
-			agentGeometry.addIntegerAttribute("AGE", age);
-			agentGeometry.addDoubleAttribute("MOVE RATE", basemoveRate);
-			
-
-		
-	}
 	
 	
-	//do this when jts is updated, need to be careful about storage issues!
-	public void updateAgentGeometry(DSimState state) {
-		if (agentGeometry == null || agentGeometry.getGeometry().getCoordinate().x != jtsCoordinate.x ||
-				agentGeometry.getGeometry().getCoordinate().y != jtsCoordinate.y)
-		{
-			DCampusWorld state2 = (DCampusWorld)state;
-		    state2.agentLocations.getStorage().getGeomVectorField().removeGeometry(agentGeometry);
-		    		    
-			agentGeometry = new MasonGeometry(fact.createPoint(new Coordinate(jtsCoordinate.x, jtsCoordinate.y)));
-			agentGeometry.isMovable = true;
-			agentGeometry.addStringAttribute("TYPE", type);
-			agentGeometry.addIntegerAttribute("AGE", age);
-			agentGeometry.addDoubleAttribute("MOVE RATE", basemoveRate);
-			
-		    state2.agentLocations.getStorage().getGeomVectorField().addGeometry(agentGeometry);
 
-		}
-	}
 	
-	public MasonGeometry getAgentGeometry()
-	{
 
-		return agentGeometry;
-	}
 	
-	public MasonGeometry getMasonGeometry() {
-		
-		return this.getAgentGeometry();
-		
-		
-	}
+
+	
+
 	
 	
 	/**
@@ -209,7 +151,7 @@ public class DAgent extends DGeomSteppable
 //		);
 				
 		// find all the adjacent junctions
-		Node currentJunction = state.network.findNode(getAgentGeometry().getGeometry().getCoordinate());
+		Node currentJunction = state.network.findNode(getMasonGeometry().getGeometry().getCoordinate());
 		if (currentJunction != null)
 		{
 			DirectedEdgeStar directedEdgeStar = currentJunction.getOutEdges();
@@ -227,13 +169,13 @@ public class DAgent extends DGeomSteppable
 				Point startPoint = newRoute.getStartPoint();
 				Point endPoint = newRoute.getEndPoint();
 
-				if (startPoint.equals(getAgentGeometry().geometry))
+				if (startPoint.equals(getMasonGeometry().geometry))
 				{
 					setNewRoute(state, newRoute, true);
 				}
 				else
 				{
-					if (endPoint.equals(getAgentGeometry().geometry))
+					if (endPoint.equals(getMasonGeometry().geometry))
 						setNewRoute(state, newRoute, false);
 					else {
 						System.err.println("Where am I?");
@@ -346,8 +288,12 @@ public class DAgent extends DGeomSteppable
 		//unlike it regular geomason, we need to make sure we update the MasonGeometry here and update it in storage
 		//regular Agent in CampusWorld updates its MasonGeometry in getGeometry, but we do it here so we can update 
 		//state storage as well
-		updateAgentGeometry(state);
-
+		
+		
+        pointMoveTo.setCoordinate(c);
+        mg.getGeometry().apply(pointMoveTo);
+        mg.geometry.geometryChanged();
+		
 		Double2D toP = jtsToPartitionSpace(state, c);
 
 		state.agentLocations.moveAgent(toP, this);
@@ -362,9 +308,9 @@ public class DAgent extends DGeomSteppable
 		Coordinate jtsCoordinate = partitionSpaceToJTS(point);
 //		pointMoveTo.setCoordinate(new Coordinate(point.x, point.y));
 		pointMoveTo.setCoordinate(jtsCoordinate);
-		getAgentGeometry().getGeometry().apply(pointMoveTo);
-		getAgentGeometry().geometry.geometryChanged();
-		g.setGeometryLocation(getAgentGeometry(), pointMoveTo);
+		getMasonGeometry().getGeometry().apply(pointMoveTo);
+		getMasonGeometry().geometry.geometryChanged();
+		g.setGeometryLocation(getMasonGeometry(), pointMoveTo);
 	}
 	
 
@@ -413,8 +359,8 @@ public class DAgent extends DGeomSteppable
 		{
 			// Find the first line segment and set our position over the start coordinate.
 //			int walkway = state.random.nextInt(state.walkways.getGeometries().numObjs);
-			MasonGeometry mg = (MasonGeometry) state.walkways.getGeometries().objs[walkway];
-			segment = new LengthIndexedLine((LineString) mg.getGeometry());
+			MasonGeometry walkway_mg = (MasonGeometry) state.walkways.getGeometries().objs[walkway];
+			segment = new LengthIndexedLine((LineString) walkway_mg.getGeometry());
 //			setNewRoute(state, (LineString) mg.getGeometry(), true);
 			// TODO ^ why is this commented out?....
 		}

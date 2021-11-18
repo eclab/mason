@@ -7,6 +7,9 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
+import sim.app.geo.dcampusworld.DCampusWorld;
 import sim.engine.DObject;
 import sim.engine.DSimState;
 import sim.engine.DistributedIterativeRepeat;
@@ -563,7 +566,38 @@ public class DGeomVectorField<T extends DGeomObject> extends DAbstractGrid2D
 		}
 
 
+	public Double2D convertJTSToPartitionSpace(Coordinate coordJTS)
+	{
+		
+		
+		double xJTS = coordJTS.x - this.getStorage().getGeomVectorField().MBR.getMinX();
+		double yJTS = coordJTS.y - this.getStorage().getGeomVectorField().MBR.getMinY();
 
+		double wP = xJTS / this.getStorage().getGeomVectorField().MBR.getWidth();
+		double hP = yJTS / this.getStorage().getGeomVectorField().MBR.getHeight();
+
+		double partX = this.getStorage().getGeomVectorField().getFieldWidth() * wP;
+		double partY = this.getStorage().getGeomVectorField().getFieldHeight() * hP;
+		
+		//is this offset by partition?  I don't think so!
+
+		return new Double2D(partX, partY);
+	}
+	
+
+	public Coordinate convertPartitionSpaceToJTS(Double2D d)
+	{
+		double xP = d.x - this.getStorage().getGeomVectorField().getFieldWidth();
+		double yP = d.y - this.getStorage().getGeomVectorField().MBR.getHeight();
+		
+		double wJTS = xP / this.getStorage().getGeomVectorField().getFieldWidth();
+		double hJTS = yP / this.getStorage().getGeomVectorField().MBR.getHeight();
+		
+		double partX = this.getStorage().getGeomVectorField().MBR.getWidth() * wJTS;
+		double partY = this.getStorage().getGeomVectorField().MBR.getHeight() * hJTS;
+		
+		return new Coordinate(partX, partY);
+	}
 
 
 

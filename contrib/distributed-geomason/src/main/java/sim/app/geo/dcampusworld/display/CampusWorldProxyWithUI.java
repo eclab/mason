@@ -74,7 +74,6 @@ public class CampusWorldProxyWithUI extends GUIState {
 		// What happens when balancing changes the bounds?
 
 //		try {
-//			System.out.println("Hi");
 //			bounds = ((CampusWorldProxy) state).bounds();
 //			display.setSize(bounds.getWidth(), bounds.getHeight());
 //		} catch (RemoteException | NotBoundException e) {
@@ -89,6 +88,8 @@ public class CampusWorldProxyWithUI extends GUIState {
 	}
 
 	public void setupPortrayals() {
+		
+		
         walkwaysPortrayal.setField(walkways);
         walkwaysPortrayal.setPortrayalForAll(new GeomPortrayal(Color.CYAN,true));
 
@@ -186,9 +187,9 @@ public class CampusWorldProxyWithUI extends GUIState {
 			System.out.println("Done reading data");
 
 			// Now synchronize the MBR for all GeomFields to ensure they cover the same area
-			buildings.setMBR(MBR);
-			roads.setMBR(MBR);
-			walkways.setMBR(MBR);
+			//buildings.setMBR(MBR);
+			//roads.setMBR(MBR);
+			//walkways.setMBR(MBR);
 
 			network.createFromGeomField(walkways);
 

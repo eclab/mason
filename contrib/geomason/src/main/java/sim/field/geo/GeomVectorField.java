@@ -118,8 +118,10 @@ public class GeomVectorField extends GeomField
      */
     public void addGeometry(final MasonGeometry g)
     {
+
         Envelope e = g.getGeometry().getEnvelopeInternal();
         MBR.expandToInclude(e);
+
         spatialIndex.insert(e, g);
         geometries.add(g);
     }
@@ -566,6 +568,7 @@ public class GeomVectorField extends GeomField
      */
     public void updateSpatialIndex()
     {
+    	
         if (needToRebuildIndex)
         {
             spatialIndex = new Quadtree();
@@ -577,6 +580,8 @@ public class GeomVectorField extends GeomField
 
             needToRebuildIndex = false;
         }
+        
+
     }
 
 
