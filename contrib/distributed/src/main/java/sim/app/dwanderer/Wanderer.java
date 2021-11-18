@@ -23,9 +23,11 @@ public class Wanderer extends DSteppable implements Distinguished {
 
 	public String name = null;
 
+	public String remoteMessage = null;
 
-	public Wanderer(final Double2D location) {
+	public Wanderer(final Double2D location, String name) {
 		this.loc = location;
+		this.name = name;
 	}
 	
 	public void step(final SimState state) {
@@ -36,41 +38,37 @@ public class Wanderer extends DSteppable implements Distinguished {
 		// moving the agents clockwise to go to the center of another area
 		// in this way the agents are always in different processors
 
-		// proc A: center (50,50), field (0<x<100)-(0<y<100)
-		// proc B: center (150,50), field (100<x<200)-(0<y<100)
-		// proc C: center (150,150), field (100<x<200)-(100<y<200)
-		// proc D: center (50,150), field (0<x<100)-(100<y<200)
-		// Double2D oldLoc = loc;
-
 		if ((loc.x >= 50 && loc.x < 150) && (loc.y == 50)) {
-			// System.out.println("I am heading east from A to B with position: " + loc + ".
-			// Proc: " + wanderersState.getPartition().getPID());
 			loc = new Double2D(loc.x + 5, loc.y);
 		} else if ((loc.x == 150) && (loc.y >= 50 && loc.y < 150)) {
-			// System.out.println("I am heading south from B to C with position: " + loc +
-			// ". Proc: " + wanderersState.getPartition().getPID());
 			loc = new Double2D(loc.x, loc.y + 5);
 		} else if ((loc.x > 50 && loc.x <= 150) && (loc.y == 150)) {
-			// System.out.println("I am heading west from C to D with position: " + loc + ".
-			// Proc: " + wanderersState.getPartition().getPID());
 			loc = new Double2D(loc.x - 5, loc.y);
 		} else if ((loc.x == 50) && (loc.y > 50 && loc.y <= 150)) {
-			// System.out.println("I am heading north from D to A with position: " + loc +
-			// ". Proc: " + wanderersState.getPartition().getPID());
 			loc = new Double2D(loc.x, loc.y - 5);
 		}
 	
 		try {
-			System.out.println(
-			state.schedule.getSteps()+"]"+
-			"I am " + name + 
-			" on proc "+ DSimState.getPID() +
-			" my friend is " + otherAgentID +
-			" on proc "+
-			((Distinguished)DRegistry.getInstance().getObject(otherAgentID)).remoteMessage(0, null));
+			// check the previous iteration step result of remote method invocation
+			if (remoteMessage != null) {
+				// if I have the ID of the remote message I take it from the DRegistry
+				DistinguishedRemoteMessage remoteMessageObject =
+					((DistinguishedRemoteMessage) DRegistry.getInstance().getObject(remoteMessage));
+				if (remoteMessageObject.isReady()) { // check if the remoteMessage is filled and use it
+					System.out.println(
+						state.schedule.getSteps() + "]" +
+						"I am " + name + " my friend " + otherAgentID +
+						" was on proc " + remoteMessageObject.getValue());
+				}
+			}
+
+			// ask for a remoteMessage to otherAgentID with tag 0 and no arguments
+			// this message will be fulfilled in the next step
+			remoteMessage =
+				((DistinguishedRemote) DRegistry.getInstance().getObject(otherAgentID))
+					.remoteMessage(0, null);
 
 			wanderersState.wanderers.moveAgent(loc, this);
-			myPID = wanderersState.getPartition().getPID();
 		} catch (Exception e) {
 			System.err.println("Error on agent " + this + " in step " + wanderersState.schedule.getSteps() + "on PID "
 					+ wanderersState.getPartition().getPID());
@@ -78,6 +76,7 @@ public class Wanderer extends DSteppable implements Distinguished {
 		}
 	}
 
+	// method implemented by the modeler that will fill the remoteMessage
 	public Serializable remoteMessage(int message, Serializable argument) throws RemoteException {
 		switch (message) {
 			case 0:
@@ -86,5 +85,8 @@ public class Wanderer extends DSteppable implements Distinguished {
 				return null;
 		}
 	}
-
+	
+	public String getName() {
+		return this.name;
+	}
 }

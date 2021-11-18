@@ -34,10 +34,8 @@ public class Wanderers extends DSimState {
 		
 		ArrayList<Wanderer> agents = new ArrayList<Wanderer>();
 
-		Wanderer agentA = new Wanderer(new Double2D(50.0, 50.0));
-		Wanderer agentB = new Wanderer(new Double2D(150.0, 150.0));
-		agentA.name = "A";
-		agentB.name = "B";
+		Wanderer agentA = new Wanderer(new Double2D(50.0, 50.0), "A");
+		Wanderer agentB = new Wanderer(new Double2D(150.0, 150.0), "B");
 	
 		agents.add(agentA);
 		agents.add(agentB);
@@ -54,7 +52,7 @@ public class Wanderers extends DSimState {
 			Wanderer agent = (Wanderer) obj;
 			if (getPartition().getLocalBounds().contains(agent.loc)){
 				try {
-					this.getDRegistry().registerObject(agent.name, agent);
+					this.getDRegistry().registerObject(agent);
 				} catch (Exception e) {
 					e.printStackTrace();
 				} 

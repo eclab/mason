@@ -1,7 +1,6 @@
 package sim.engine.mpi;
 
 import sim.engine.*;
-import java.io.Serializable;
 import sim.util.*;
 
 //This class is not supposed to be used by the modelers

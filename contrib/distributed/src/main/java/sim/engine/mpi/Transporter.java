@@ -6,16 +6,12 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import mpi.Comm;
 import mpi.MPI;
 import mpi.MPIException;
-import sim.engine.DistributedIterativeRepeat;
-import sim.engine.Stopping;
 import sim.field.partitioning.Partition;
 import sim.util.*;
 import sim.engine.*;
@@ -234,7 +230,13 @@ public class Transporter
 		// if (withRegistry)
 		// {
 			// String name = 
-		DRegistry.getInstance().ifExportedThenAddMigratedName(obj);
+			// check if the agent is exported, if so add it to the migrated group
+			// therefore the DSimState can unregister it
+			if (obj instanceof Distinguished){
+					DRegistry.getInstance().
+						ifExportedThenAddMigratedName((Distinguished) obj);
+			}
+	
 			// if (name != null)
 			// obj.distinguishedName(name);
 		// }

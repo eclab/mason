@@ -13,14 +13,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import mpi.MPI;
-import sim.engine.DObject;
 import sim.engine.Distinguished;
+import sim.engine.DistinguishedObject;
 
 /**
  * This class enables agents access to the information of another agent in any
@@ -46,43 +47,10 @@ public class DRegistry
 	 static Registry registry;
 	 static HashMap<String, Remote> exportedNames = new HashMap<>();
 	 static HashMap<Remote, String> exportedObjects = new HashMap<>();
-	 static ArrayList<String> migratedNames = new ArrayList<String>();
-
-	/**
-	 * Clear the list of the registered agent’s keys on the registry
-	 */
-	public void clearMigratedNames()
-	{
-		migratedNames.clear();
-	}
-
-	/**
-	 * @return the List of the agent’s keys on the registry.
-	 */
-	public ArrayList<String> getMigratedNames()
-	{
-		return migratedNames;
-	}
-
-	public void addMigratedName(Object obj)
-	{
-		migratedNames.add(exportedObjects.get(obj));
-	}
-
-	/**
-	 * If Object obj isExported is True then, add its name to migrated names and
-	 * return the name. Returns null if isExported is False.
-	 * 
-	 * @param obj
-	 * @return Object name if isExported is True, null otherwise.
-	 */
-	public String ifExportedThenAddMigratedName(Object obj)
-	{
-		String name = exportedObjects.get(obj);
-		if (name != null)
-			migratedNames.add(name);
-		return name;
-	}
+	 /* ID of the migrated objects */
+	 static List<String> migratedNames = new ArrayList<String>();
+	 /* ID of the object that has to be unregistered by the DSimState */
+	 static List<String> toUnregister = new ArrayList<String>();
 
 	 static void initLocalLogger(final String loggerName)
 	 {
@@ -197,29 +165,119 @@ public class DRegistry
 	 * @throws AccessException
 	 * @throws RemoteException
 	 */
-	public boolean registerObject(String name, Distinguished obj) throws AccessException, RemoteException
+	public boolean registerObject(Distinguished obj) throws AccessException, RemoteException
 	{
+		String name = obj.getName();
+		
 		if (!exportedNames.containsKey(name))
 		{
 			try
 			{
-				Remote stub = UnicastRemoteObject.exportObject(obj, 0);
-				((DObject) obj).distinguishedName(name,stub);
+				DistinguishedObject remoteObj = new DistinguishedObject(obj);
+				Remote stub = UnicastRemoteObject.exportObject(remoteObj, 0);
 				registry.bind(name, stub);
-
-				exportedNames.put(name, obj);
-				exportedObjects.put(obj, name);
-				
+				exportedNames.put(name, remoteObj);
+				exportedObjects.put(remoteObj, name);
 			}
 			catch (Exception e)
 			{
+				e.printStackTrace();
 				return false;
 			}
 			return true;
 		}
 		return false;
-
 	}
+	/**
+	 * Remove the object with key name from the registry
+	 * 
+	 * @param name
+	 * 
+	 * @return true if successful
+	 * @throws AccessException
+	 * @throws RemoteException
+	 * @throws NotBoundException
+	 */
+	public boolean unregisterObject(Distinguished obj) throws AccessException, RemoteException, NotBoundException
+	{
+		String name = obj.getName();
+		Remote remote = exportedNames.remove(name);
+		if (remote != null)
+		{
+			registry.unbind(name);
+			UnicastRemoteObject.unexportObject(remote, true);
+			exportedObjects.remove(remote);
+			return true;
+		}
+		return false;
+	}
+	
+	public List<DistinguishedObject> getAllLocalExportedObjects(){
+		List<DistinguishedObject> tor = new ArrayList<DistinguishedObject>();
+		
+		for (Remote obj : exportedNames.values()) {
+			if (obj instanceof DistinguishedObject){
+				tor.add((DistinguishedObject) obj);
+			}
+		}
+		return tor;
+	}
+	/**
+	 * Register a generic object
+	 * registry
+	 * 
+	 * @param name
+	 * @param obj
+	 * 
+	 * @return true if successful
+	 * @throws AccessException
+	 * @throws RemoteException
+	 */
+	public boolean registerObject(String name, Remote remoteObj) throws AccessException, RemoteException
+	{
+		if (!exportedNames.containsKey(name))
+		{
+			try
+			{
+				Remote stub = UnicastRemoteObject.exportObject(remoteObj, 0);
+				exportedNames.put(name, remoteObj);
+				registry.bind(name, stub);
+			}
+			catch (AlreadyBoundException e)
+			{
+				e.printStackTrace();
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	// add the id of the remote object in the toUnregister queue
+	// they will be removed by the unregisterObjects
+	public void lazyUnregisterObject(String name) throws AccessException, RemoteException, NotBoundException
+	{
+		// needs to be synchronized to avoid concurrentModificationException
+		synchronized(toUnregister){
+			toUnregister.add(name);
+		}	
+	}
+	
+	// clear the DRegistry removing all the registered objects
+	// iterating on toUnregister queue
+	public void unregisterObjects() throws AccessException, RemoteException, NotBoundException
+	{
+		// needs to be synchronized to avoid concurrentModificationException
+		synchronized(toUnregister){ 
+			for(String name : toUnregister){
+				registry.unbind(name);
+				UnicastRemoteObject.unexportObject(exportedNames.get(name), true);
+				exportedNames.remove(name);
+			}
+			toUnregister.clear();
+		}
+	}
+
 	
 	/**
 	 * Register an already exported UnicastRemoteObject obj with key name on the
@@ -246,17 +304,13 @@ public class DRegistry
 			}
 			catch (AlreadyBoundException e)
 			{
+				e.printStackTrace();
 				return false;
 			}
 			return true;
 		}
 		return false;
 
-	}
-
-	public String getLocalExportedName(Object obj)
-	{
-		return exportedObjects.get(obj);
 	}
 
 	/**
@@ -271,7 +325,6 @@ public class DRegistry
 	{
 		return registry.lookup(name);
 	}
-
 	/**
 	 * This method unchecked casts the return Remote Object to type T. <br>
 	 * To ensure type safety make sure that the Object bound to the give "name" is
@@ -292,35 +345,59 @@ public class DRegistry
 		return (T) registry.lookup(name);
 	}
 	/**
-	 * Remove the object with key name from the registry
-	 * 
-	 * @param name
-	 * 
-	 * @return true if successful
-	 * @throws AccessException
-	 * @throws RemoteException
-	 * @throws NotBoundException
-	 */
-	public boolean unregisterObject(String name) throws AccessException, RemoteException, NotBoundException
-	{
-		Remote remote = exportedNames.remove(name);
-		if (remote != null)
-		{
-			registry.unbind(name);
-			UnicastRemoteObject.unexportObject(remote, true);
-			exportedObjects.remove(remote);
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * @param agent
 	 * @return True if the object agent is registered on the registry.
 	 */
-	public boolean isExported(Object agent)
+	public boolean isExported(Distinguished agent)
 	{
 		return exportedObjects.containsKey(agent);
+	}
+	/**
+	 * @param agent
+	 * @return True if the object agent is migrated
+	 */
+	public boolean isMigrated(Distinguished agent)
+	{
+		return migratedNames.contains(agent.getName());
+	}
+	/**
+	 * Clear the list of the registered agent’s keys on the registry
+	 */
+	public void clearMigratedNames()
+	{
+		migratedNames.clear();
+	}
+
+	/**
+	 * @return the List of the agent’s keys on the registry.
+	 */
+	public List<String> getMigratedNames()
+	{
+		return migratedNames;
+	}
+
+	/* 
+	Add the name of the migrated agent to the list of the migrated agent’s keys on the registry.
+	*/
+	public void addMigratedName(Distinguished obj)
+	{
+		migratedNames.add(exportedObjects.get(obj));
+	}
+
+	/**
+	 * If Object obj isExported is True then, add its name to migrated names and
+	 * return the name. Returns null if isExported is False.
+	 * 
+	 * @param obj
+	 * @return Object name if isExported is True, null otherwise.
+	 */
+	public String ifExportedThenAddMigratedName(Distinguished obj)
+	{
+		String name = obj.getName();
+		Remote remote = exportedNames.get(name);
+		if (remote != null)
+			migratedNames.add(name);
+		return name;
 	}
 
 }

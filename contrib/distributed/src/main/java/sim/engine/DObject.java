@@ -7,7 +7,6 @@
 package sim.engine;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.rmi.Remote;
 
 /**
  * A superclass for objects that may be accessed and queried remotely. To do
@@ -23,9 +22,6 @@ public abstract class DObject implements java.io.Serializable
 
 	private static int idCounter = 0;
 	private static final AtomicInteger threadSafeCounter = new AtomicInteger();
-
-	private String distinguishedName = null;
-	private Remote stub = null;
 
 	static int nextCounter()
 	{
@@ -105,13 +101,4 @@ public abstract class DObject implements java.io.Serializable
 		Override this as you see fit.  The default version does nothing.  */
 	public void migrated(DSimState state)  { }
 	
-	/** Returns the desired distinguished name of the DObject, if it has one.
-		By default this method returns null.  */
-	public String distinguishedName() { return distinguishedName; }
-	public Remote distinguishedStub() { return stub; }
-
-	public void distinguishedName(String distinguished_name, Remote stub){
-		this.distinguishedName = distinguished_name;
-		this.stub = stub;
-	}
 }

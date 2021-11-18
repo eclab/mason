@@ -245,7 +245,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	@SuppressWarnings("unchecked")
 	public void clear()
 	{
-        //System.out.println("clear clear clear ------------------------------------------");
+        System.out.println("clear clear clear ------------------------------------------");
 		width = (int) Math.ceil(shape.getWidth() / (double) discretization) + 1;
 		height = (int) Math.ceil(shape.getHeight() / (double) discretization) + 1;
 		this.locations = new HashMap<>();
@@ -398,13 +398,4 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	{
 		return p;
 	}
-	
-	
-	//remove
-	/*
-	public void geomvecAndContinuousStorageMatch(String s) {
-		System.out.println("dont use this");
-	}
-	*/
-	
 }
