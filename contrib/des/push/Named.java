@@ -4,6 +4,6 @@ import java.util.*;
 
 
 public interface Named extends Steppable
-	{
-	public String getName();
-	}
+    {
+    public String getName();
+    }

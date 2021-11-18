@@ -1,111 +1,117 @@
 /** 
-	A delay pipeline.  Elements placed in the delay are only available
-	after a fixed amount of time.
+    A delay pipeline.  Elements placed in the delay are only available
+    after a fixed amount of time.
 */
 
 
 import sim.engine.*;
+import sim.util.distribution.*;
 import sim.util.*;
 import java.util.*;
 
-/// FIXME: Anylogic has delay times which can be distributions, we should do that too
-/// FIXME: we're going to have drifts in totalResource due to IEEE 754
 
-public class Delay extends Source implements Receiver
-	{
-	Heap heap;
-	
-	class Node
-		{
-		public Resource resource;
-		public double timestamp;
-		
-		public Node(Resource resource, double timestamp)
-			{
-			this.resource = resource;
-			this.timestamp = timestamp;
-			}
-		}
-	
-	double totalResource = 0.0;
+/**
+   A Heap-based delay which allows different submitted elements to have different
+   delay times.  Delay times can be based on a provided distribution, or you can override
+   the method getDelay(...) to customize delay times entirely based on the provide
+   and resource being provided. 
+*/
 
-	void throwInvalidNumberException(double capacity)
-		{
-		throw new RuntimeException("Capacities may not be negative or NaN.  capacity was: " + capacity);
-		}
+public class Delay extends SimpleDelay
+    {
+    Heap delayHeap;
+    AbstractDistribution distribution = null;
 
-	public Delay(SimState state, Resource typical)
+	protected void buildDelay()
 		{
-		super(state, typical);
-		heap = new Heap();
-		}
-	
-	public void clear()
-		{
-		heap = new Heap();
+        delayHeap = new Heap();
 		}
 		
-	protected double getDelayTime(Provider provider, Resource amount)
-		{
-		return 1.0;
-		}
-		
-	public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
-		{
-		if (!resource.isSameType(amount)) 
-			throwUnequalTypeException(amount);
-		
-		if (entities == null)
-			{
-			CountableResource cr = (CountableResource)amount;
-			double maxIncoming = Math.min(capacity - totalResource, atMost);
-			if (maxIncoming < atLeast) return false;
-		
-			CountableResource token = (CountableResource)(cr.duplicate());
-			token.setAmount(maxIncoming);
-			cr.decrease(maxIncoming);
-			heap.add(token, getDelayTime(provider, amount));
-			}
-		else
-			{
-			if (heap.size() >= capacity) return false;	// we're at capacity
-			heap.add(amount, getDelayTime(provider, amount));
-			}
-		return true;
-		}
+    public Delay(SimState state, Resource typical)
+        {
+        super(state, 1.0, typical);
+        }
+        
+    public void clear()
+        {
+        delayHeap = new Heap();
+        totalResource = 0.0;
+        }
+        
+    public void setDelayDistribution(AbstractDistribution distribution)
+        {
+        this.distribution = distribution;
+        }
+                
+    public AbstractDistribution getDelayDistribution()
+        {
+        return this.distribution;
+        }
+                
+    /** By default, provides Math.abs(getDelayDistribution().nextDouble()), or 1.0 if there is
+        no provided distribution.  Override this to provide a custom delay given the 
+        provider and resource amount or type. */
+    protected double getDelay(Provider provider, Resource amount)
+        {
+        if (distribution == null) return getDelayTime();
+        else return Math.abs(distribution.nextDouble());
+        }
+                
+    public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
+        {
+        if (!resource.isSameType(amount)) 
+            throwUnequalTypeException(amount);
+                
+        if (isOffering()) throwCyclicOffers();  // cycle
+        
+        double nextTime = state.schedule.getTime() + getDelay(provider, amount);
 
-	protected void drop()
-		{
-		if (entities == null)
-			resource.clear();
-		else
-			entities.clear();
-		}
-		
-	protected void update()
-		{
-		drop();
-		double time = state.schedule.getTime();
-		
-		while(((double)heap.getMinKey()) >= time)
-			{
-			Resource _res = (Resource)(heap.extractMin());
-			if (entities == null)
-				{
-				CountableResource res = ((CountableResource)_res);
-				resource.add(res);
-				totalResource -= res.getAmount();
-				}
-			else
-				{
-				entities.add((Entity)(_res));
-				}
-			}
-		}
+        if (entities == null)
+            {
+            CountableResource cr = (CountableResource)amount;
+            double maxIncoming = Math.min(capacity - totalResource, atMost);
+            if (maxIncoming < atLeast) return false;
+                
+            CountableResource token = (CountableResource)(cr.duplicate());
+            token.setAmount(maxIncoming);
+            cr.decrease(maxIncoming);
+            delayHeap.add(token, nextTime);
+            }
+        else
+            {
+            if (delayHeap.size() >= capacity) return false;      // we're at capacity
+            delayHeap.add(amount, nextTime);
+            }
+       
+        if (getAutoSchedules()) state.schedule.scheduleOnce(nextTime, getOrdering(), this);
+        
+        return true;
+        }
 
-	public String getName()
-		{
-		return "Delay(" + typical.getName() + ")";
-		}		
-	}
-	
+    protected void update()
+        {
+        drop();
+        double time = state.schedule.getTime();
+                
+        while(((double)delayHeap.getMinKey()) >= time)
+            {
+            Resource _res = (Resource)(delayHeap.extractMin());
+            if (entities == null)
+                {
+                CountableResource res = ((CountableResource)_res);
+                resource.add(res);
+                totalResource -= res.getAmount();
+                }
+            else
+                {
+                entities.add((Entity)(_res));
+                }
+            }
+        }
+
+    public String getName()
+        {
+        return "Delay(" + typical.getName() + ")";
+        }               
+    }
+        

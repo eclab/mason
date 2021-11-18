@@ -28,4 +28,5 @@ public abstract class DSteppable extends DObject implements Stopping
 		{
 		return stop == null;
 		}
+
 }

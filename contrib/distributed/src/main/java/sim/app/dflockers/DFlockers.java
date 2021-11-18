@@ -75,8 +75,7 @@ public class DFlockers extends DSimState
 		for (Object p : agents)
 		{
 			DFlocker a = (DFlocker) p;
-			if (partition.getLocalBounds().contains(a.loc)) {
-
+			if (getPartition().getLocalBounds().contains(a.loc)) {
 				flockers.addAgent(a.loc, a, 0, 0, 1);
 			}
 		}

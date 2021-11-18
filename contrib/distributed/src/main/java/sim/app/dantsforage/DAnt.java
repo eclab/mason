@@ -16,7 +16,7 @@ import sim.engine.SimState;
 import sim.portrayal.DrawInfo2D;
 import sim.util.Int2D;
 
-public class DAnt extends DSteppable implements Remote
+public class DAnt extends DSteppable
 {
 	private static final long serialVersionUID = 1;
 

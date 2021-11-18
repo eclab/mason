@@ -1,5 +1,6 @@
 package sim.engine.mpi;
 
+import sim.engine.*;
 import java.io.Serializable;
 import sim.util.*;
 
@@ -13,17 +14,26 @@ public class PayloadWrapper extends MigratableObject
 {
 	private static final long serialVersionUID = 1L;
 
+	/** Set the INTERVAL to this to indicate that the object is NOT a REPEATING AGENT */
+	public static final int NON_REPEATING_INTERVAL = -1;
+
+	/** Set the TIME to this to indicate that the object is NOT an AGENT */
+	public static final double NON_AGENT_TIME = -1;
+
+	/** Set the ORDERING to this to indicate that the object is NOT an AGENT (though it doesn't matter) */
+	public static final int NON_AGENT_ORDERING = 0;		// doesn't really matter
+	
 	/**
 	 * The is the Object to be transported<br>
 	 * Required to be set by the caller
 	 */
-	public final Serializable payload;
+	public DObject payload;
 
 	/**
 	 * The is the pId of the destination<br>
 	 * Required to be set by the caller
 	 */
-	public final int destination;
+	public int destination;
 
 	/**
 	 * Location of the Object in the field <br>
@@ -32,37 +42,58 @@ public class PayloadWrapper extends MigratableObject
 	 * <br>
 	 * Default: null
 	 */
-	public final Number2D loc;
+	public Number2D loc;
 
 	/**
 	 * Internal field, do not set it explicitly <br>
 	 * It is set by the field, if a field is used to migrate an Object <br>
-	 * <br>
-	 * Default: -1
 	 */
-	public final int fieldIndex;
+	public int fieldIndex;
 
-	public PayloadWrapper(final int dst, final Serializable payload, final Number2D loc, final int fieldIndex)
+	/**
+	 * Ordering for the scheduler <br>
+	 * Optional field <br>
+	 * <br>
+	 * Default: 1
+	 */
+	public int ordering;
+
+	/**
+	 * time for the scheduler. Values less than zero are considered invalid <br>
+	 * Optional field <br>
+	 * <br>
+	 * Default: -1.0
+	 */
+	public double time;
+	
+	public double interval; 
+
+	public PayloadWrapper(DObject payload, int dst, Number2D loc, int fieldIndex, int ordering, double time, double interval)
 	{
-		destination = dst;
+		this.destination = dst;
 		this.payload = payload;
 		this.loc = loc;
 		this.fieldIndex = fieldIndex;
-	}
-    
-	public PayloadWrapper(final int dst, final Serializable payload)
-	{
-		destination = dst;
-		this.payload = payload;
-		loc = null;
-		fieldIndex = -1;
+		this.ordering = ordering;
+		this.time = time;
+		this.interval = interval;
 	}
 	
+	public boolean isRepeating()
+		{
+		return (interval != NON_REPEATING_INTERVAL);
+		}
+
+	public boolean isAgent()
+		{
+		return (time != NON_AGENT_TIME);
+		}
 
 	public String toString()
 	{
-		return "PayloadWrapper [payload=" + payload + ", destination=" + destination + ", loc=" + loc + ", fieldIndex="
-				+ fieldIndex + "]";
+		return "PayloadWrapper<" + payload + ", to=" + destination + ", at=" + loc + ", field=" + fieldIndex + 
+			(isAgent() ? ", time=" + time + ", ord=" + ordering + 
+				(isRepeating() ? ", int=" + interval : "") : "" ) + ">";
 	}
 
 }

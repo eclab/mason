@@ -40,13 +40,6 @@ public class RemotePromise extends UnicastRemoteObject implements Promised {
 		return (Double) object;
 	}
 
-//	/**
-//	 * Returns the author that have the data to fulfill the RemotePromise
-//	 */
-//	public Remote getAuthor() throws RemoteException {
-//		return author;
-//	}
-//	
 	/** Provides the data and makes the promise ready. */
 	public void fulfill(Serializable object) throws RemoteException {
 		ready = true;

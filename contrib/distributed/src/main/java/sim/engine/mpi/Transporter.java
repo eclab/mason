@@ -18,6 +18,7 @@ import sim.engine.DistributedIterativeRepeat;
 import sim.engine.Stopping;
 import sim.field.partitioning.Partition;
 import sim.util.*;
+import sim.engine.*;
 
 /**
  * This class contains the methods for moving objects and agents between
@@ -36,14 +37,14 @@ public class Transporter
 	Partition partition;
 	int[] neighbors;
 
-	public ArrayList<PayloadWrapper> objectQueue; //things being moved are put here, and integrated into local storage in DSimState
+	public ArrayList<PayloadWrapper> objectQueue; // things being moved are put here, and integrated into local storage in DSimState
 
-	protected boolean withRegistry;
+	// protected boolean withRegistry;
 
 	public Transporter(Partition partition)
 	{
 		this.partition = partition;
-		this.withRegistry = false;
+		// this.withRegistry = false;
 		reload();
 
 		//unclear on exactly how this works, I assume it is just syncing before initializing?
@@ -166,12 +167,9 @@ public class Transporter
 		ByteBuffer recvbuf = ByteBuffer.allocateDirect(dst_displ[numNeighbors - 1] + dst_count[numNeighbors - 1]);
 
 		// exchange the actual object bytes
-		partition.getCommunicator().neighborAllToAllv(sendbuf, src_count, src_displ, MPI.BYTE, recvbuf, dst_count,
-				dst_displ, MPI.BYTE);
-
+		partition.getCommunicator().neighborAllToAllv(sendbuf, src_count, src_displ, MPI.BYTE, recvbuf, dst_count, dst_displ, MPI.BYTE);
 		
 		// read and handle incoming objects
-
 		for (int i = 0; i < numNeighbors; i++)
 		{
 			byte[] data = new byte[dst_count[i]];
@@ -186,9 +184,7 @@ public class Transporter
 					PayloadWrapper wrapper = (PayloadWrapper) inputStream.readObject();
 					if (partition.getPID() != wrapper.destination)
 					{
-						System.err.println("This is not the correct processor");
 						throw new RuntimeException("This is not the correct processor");
-
 					}
 					else
 						objectQueue.add(wrapper);
@@ -206,66 +202,42 @@ public class Transporter
 	}
 
 	/**
-	 * Transports the Object as well as migrates it
-	 *
-	 * @param ordering
-	 * @param time
-	 * @param agent
-	 * @param dst        destination pId
-	 * @param loc
-	 * @param fieldIndex
-	 *
-	 * @throws IllegalArgumentException if destination (pid) is local
-	 */
-	public void migrateAgent(int ordering, double time, Stopping agent, int dst, Number2D loc, int fieldIndex)
-	{
-		transportObject(new AgentWrapper(ordering, time, agent), dst, loc, fieldIndex);
-	}
-
-	/**
-	 * Transports the Object as well as migrates it. Does not stop() the repeating
-	 * object. Thus, call stop on iterativeRepeat after calling this function
-	 *
-	 * @param iterativeRepeat
-	 * @param dst             destination pId
-	 * @param loc
-	 * @param fieldIndex
-	 *
-	 * @throws IllegalArgumentException if destination (pid) is local
-	 */
-	public void migrateAgent(int ordering, double time, double interval, Stopping agent, int dst, Number2D loc, int fieldIndex)
-	{
-		transportObject(new AgentWrapper(ordering, time, agent, interval), dst, loc, fieldIndex);
-	}
-
-	/**
 	 * Transports the Object but doesn't schedule it. Does not stop() the repeating
 	 * object. Thus, call stop on iterativeRepeat after calling this function
-	 *
-	 * @param obj        Object to be transported
-	 * @param dst        destination pId
-	 * @param loc
-	 * @param fieldIndex
-	 *
-	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void transportObject(Serializable obj, int dst, Number2D loc, int fieldIndex)
+	public void transport(DObject obj, int dst, Number2D loc, int fieldIndex)
+	{
+		transport(obj, dst, loc, fieldIndex, PayloadWrapper.NON_AGENT_ORDERING, PayloadWrapper.NON_AGENT_TIME, PayloadWrapper.NON_REPEATING_INTERVAL);
+	}
+
+	/**
+	 * Transports the (non-repeating) Agent as well as migrates it.
+	 */
+	public void transport(DObject obj, int dst, Number2D loc, int fieldIndex, int ordering, double time)
+	{
+		transport(obj, dst, loc, fieldIndex, ordering, time, PayloadWrapper.NON_REPEATING_INTERVAL);
+	}
+	
+	/**
+	 * Transports the repeating Agent as well as migrates it
+	 */
+	public void transport(DObject obj, int dst, Number2D loc, int fieldIndex, int ordering, double time, double interval)
 	{
 		//shouldn't be calling this if local move
 		if (partition.getPID() == dst)
 			throw new IllegalArgumentException("Destination cannot be local, must be remote");
 
-
 		// Wrap the agent, this is important because we want to keep track of
 		// dst, which could be the diagonal processor
-		PayloadWrapper wrapper = new PayloadWrapper(dst, obj, loc, fieldIndex);
+		PayloadWrapper wrapper = new PayloadWrapper(obj, dst, loc, fieldIndex, ordering, time, interval);
 
-		if (withRegistry)
-		{
-			String name = DRegistry.getInstance().ifExportedThenAddMigratedName(obj);
-			if (name != null)
-				wrapper.setExportedName(name);
-		}
+		// if (withRegistry)
+		// {
+			// String name = 
+		DRegistry.getInstance().ifExportedThenAddMigratedName(obj);
+			// if (name != null)
+			// obj.distinguishedName(name);
+		// }
 
 		assert dstMap.containsKey(dst);
 		try

@@ -27,7 +27,6 @@ import mpi.MPIException;
 import sim.display.Stat;
 import sim.engine.mpi.*;
 import sim.engine.rmi.RemoteProcessor;
-import sim.engine.rmi.RemotePromise;
 import sim.field.HaloGrid2D;
 import sim.field.partitioning.QuadTreePartition;
 import sim.field.storage.ContinuousStorage;
@@ -40,8 +39,6 @@ import sim.util.MPIUtil;
 
 
 import sim.util.Timing;
-
-import sim.engine.*;
 
 /**
  * Analogous to Mason's SimState. This class represents the entire distributed simulation.
@@ -69,7 +66,8 @@ public class DSimState extends SimState
 	/** The Partition of the DSimState */
 	protected QuadTreePartition partition;
 	/** The DSimState's Transporter interface */
-	protected Transporter transporter;
+	
+	Transporter transporter;
 	HashMap<String, Serializable> rootInfo = null;
 	HashMap<String, Serializable>[] init = null;
 
@@ -94,7 +92,7 @@ public class DSimState extends SimState
 	ArrayList<HaloGrid2D<?, ?>> fieldList;
 
 	// The RMI registry
-	protected DRegistry registry;
+	DRegistry registry;
 
 	// FIXME: what is this for?
 //	protected boolean withRegistry;
@@ -104,14 +102,6 @@ public class DSimState extends SimState
 	// The current balance level FIXME: This looks primitive, and also requires that
 	// be properly in sync
 	int balancerLevel;
-	
-	/** Queue of RemotePromise 
-		A (RemotePromise) is the promise, 
-		B (Integer) is the tag used to understand which method to use to fill the promise 
-		C (Serializable) is the argument passed to be used in the response method (optional)  
-		D (Distinguished) is the Distinguished that has the information needed
-	*/
-	static ArrayList<Quartet<RemotePromise, Integer, Serializable, Distinguished>> promises = new ArrayList<>();
 	
 	/**
 	 * Builds a new DSimState with the given random number SEED, the WIDTH and HEIGIHT of the entire model (not just the
@@ -271,27 +261,6 @@ public class DSimState extends SimState
 			{
 				throw new RuntimeException(e1);
 			}
-
-			// Check for RemotePromise to fill and fill them
-			// we need to do this before the synchronization TODO I guess
-//			if (withRegistry && 
-			if (!promises.isEmpty()) {				
-				//MPI.COMM_WORLD.barrier();
-//				System.out.println("Promises are: " + promises.toString());
-				for(Quartet<RemotePromise, Integer, Serializable, Distinguished> promisesToFill : promises) {
-					// Get the object inside the RemotePromise that has the information needed
-					Distinguished author =  promisesToFill.d;
-					// Use the method of the remote interface to get the required information
-					// tag and argument are passed to specify what data is needed
-					// respondToRemote is implemented by the modeler
-					Serializable response = author.respondToRemote(promisesToFill.b, promisesToFill.c);
-					// Fulfill the promise with the data acquired
-					promisesToFill.a.fulfill(response);
-				}
-				// clear the queue since all the promises have been fulfilled
-				promises.clear();
-				System.out.println("Promises queue cleared!");
-			}
 			
 			//dsimstate_geomvecAndContinuousStorageMatch("presched after promises");
 
@@ -303,21 +272,19 @@ public class DSimState extends SimState
 			
 			transporter.sync();
 
-			//dsimstate_geomvecAndContinuousStorageMatch("presched after transporter sync");
 
-/*
-			if (withRegistry)
-			{
+//			if (withRegistry)// {
 				// All nodes have finished the synchronization and can unregister exported objects.
-				MPI.COMM_WORLD.barrier();
+				//MPI.COMM_WORLD.barrier(); //not useful
 
 				// After the synchronization we can unregister migrated object!
 				// remove exported-migrated object from local node
+				
 				for (String mo : DRegistry.getInstance().getMigratedNames())
 				{
 					try
 					{
-						DRegistry.getInstance().unRegisterObject(mo);
+						DRegistry.getInstance().unregisterObject(mo);
 					}
 					catch (NotBoundException e)
 					{
@@ -325,9 +292,10 @@ public class DSimState extends SimState
 					}
 				}
 				DRegistry.getInstance().clearMigratedNames();
+				//wait all nodes to finish the unregister phase.
 				MPI.COMM_WORLD.barrier();
-			}
-*/
+			// }
+
 		}
 		catch (ClassNotFoundException | MPIException | IOException e)
 		{
@@ -350,7 +318,7 @@ public class DSimState extends SimState
 			//dsimstate_geomvecAndContinuousStorageMatch("presched add payload beginning");
 
 
-			if (payloadWrapper.fieldIndex >= 0)
+//			if (payloadWrapper.fieldIndex >= 0)
 			{
 				// add the object to the field
 				fieldList.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);  //HERE is the problem in GeomVecField
@@ -358,22 +326,18 @@ public class DSimState extends SimState
 			
 
 
-			
-
-			
-			if (payloadWrapper.payload instanceof AgentWrapper)
+			if (payloadWrapper.isAgent())
 			{
-				final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
 
-/*
-				if (withRegistry)
+//				if (withRegistry)
 				{
-					if (agentWrapper.getExportedName() != null)
+					if (payloadWrapper.payload.distinguishedName() != null)
 					{
 						try
 						{
-							DRegistry.getInstance().registerObject(agentWrapper.getExportedName(),
-									(Remote) agentWrapper.agent);
+							DRegistry.getInstance().registerObject(
+								payloadWrapper.payload.distinguishedName() ,
+									(Distinguished) payloadWrapper.payload);
 						}
 						catch (RemoteException e)
 						{
@@ -381,19 +345,14 @@ public class DSimState extends SimState
 						}
 					}
 				}
-*/
 
-				if (agentWrapper.isRepeating())
+				if (payloadWrapper.isRepeating())
 					{
-					schedule.scheduleRepeating(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent, agentWrapper.interval);
+					schedule.scheduleRepeating(payloadWrapper.time, payloadWrapper.ordering, (Steppable)(payloadWrapper.payload), payloadWrapper.interval);
 					}
 				else
 					{
-					// This should NEVER EVER HAPPEN
-					//if (agentWrapper.time < 0)
-					//	schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
-					//else
-						schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
+					schedule.scheduleOnce(payloadWrapper.time, payloadWrapper.ordering, (Steppable)(payloadWrapper.payload));
 					}
 			}
 			
@@ -421,12 +380,12 @@ public class DSimState extends SimState
 			e.printStackTrace();
 		}
 
+
+		
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
 		loadBalance();
 		
 		int x = countTotalAgents(fieldList.get(0));
-
-		
 
 
 	}
@@ -445,7 +404,6 @@ public class DSimState extends SimState
 				int x = countTotalAgents(fieldList.get(0));
 				
 				balancePartitions(balancerLevel);
-
 		        
 				try
 				{
@@ -479,7 +437,7 @@ public class DSimState extends SimState
 					 */
 
 					// add payload into correct HaloGrid
-					if (payloadWrapper.fieldIndex >= 0)
+//					if (payloadWrapper.fieldIndex >= 0)
 					{
 						// add the object to the field
 						fieldList.get(payloadWrapper.fieldIndex).addPayload(payloadWrapper);
@@ -487,38 +445,19 @@ public class DSimState extends SimState
 					}
 					
 
-
-					
-
-					// DistributedIterativeRepeat
-					if (payloadWrapper.payload instanceof DistributedIterativeRepeat)
+					if (payloadWrapper.isAgent())
 					{
-						final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
 
-						// TODO: how to schedule for a specified time?
-						// Not adding it to specific time because we get an error -
-						// "the time provided (-1.0000000000000002) is < EPOCH (0.0)"
-
-						// add back to schedule
-						Stopping stopping = iterativeRepeat.getSteppable();
-						stopping.setStoppable(schedule.scheduleRepeating(stopping, iterativeRepeat.getOrdering(),
-								iterativeRepeat.interval));
-
-					}
-					else if (payloadWrapper.payload instanceof AgentWrapper)
-					{
-						final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
-
-/*
 						// I am currently unclear on how this works
-						if (withRegistry)
+//						if (withRegistry)
 						{
-							if (agentWrapper.getExportedName() != null)
+							if (payloadWrapper.payload.distinguishedName() != null)
 							{
 								try
 								{
-									DRegistry.getInstance().registerObject(agentWrapper.getExportedName(),
-											(Remote) agentWrapper.agent);
+									DRegistry.getInstance().registerObject(
+										payloadWrapper.payload.distinguishedName(),
+											(Distinguished)payloadWrapper.payload);
 								}
 								catch (RemoteException e)
 								{
@@ -526,19 +465,14 @@ public class DSimState extends SimState
 								}
 							}
 						}
-*/
 
-					if (agentWrapper.isRepeating())
+					if (payloadWrapper.isRepeating())
 						{
-						schedule.scheduleRepeating(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent, agentWrapper.interval);
+						schedule.scheduleRepeating(payloadWrapper.time, payloadWrapper.ordering, (Steppable)(payloadWrapper.payload), payloadWrapper.interval);
 						}
 					else
 						{
-						// This should NEVER EVER HAPPEN
-						//if (agentWrapper.time < 0)
-						//	schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
-						//else
-							schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
+						schedule.scheduleOnce(payloadWrapper.time, payloadWrapper.ordering, (Steppable)(payloadWrapper.payload));
 						}
 					}
 					
@@ -553,9 +487,6 @@ public class DSimState extends SimState
 					
 
 					MPI.COMM_WORLD.barrier();
-					
-
-					
 					syncFields();
 				}
 				catch (MPIException e)
@@ -602,14 +533,11 @@ public class DSimState extends SimState
 	{
 
 		int x = countTotalAgents(fieldList.get(0));
-
-
 		
 		final IntRect2D old_partition = partition.getLocalBounds();
 		final int old_pid = partition.getPID();
 
-		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage(); // used to compute the position of the new
-																					// centroids
+		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage(); // used to compute the position of the new centroids
 		Timing.start(Timing.LB_OVERHEAD);
 
 		((QuadTreePartition) partition).balance(runtime, level); // balance the partition moving the centroid for the given level
@@ -658,7 +586,7 @@ public class DSimState extends SimState
 								{
 									DistributedTentativeStep step = (DistributedTentativeStep) stoppable;
 									stoppable.stop();
-									transporter.migrateAgent(step.getOrdering(), step.getTime(), stopping, locToP, loc, ((HaloGrid2D) field).getFieldIndex());
+									transporter.transport((DObject)stopping, locToP, loc, ((HaloGrid2D) field).getFieldIndex(), step.getOrdering(), step.getTime());
 
 								}
 
@@ -667,7 +595,7 @@ public class DSimState extends SimState
 								{
 									final DistributedIterativeRepeat step = (DistributedIterativeRepeat) stopping.getStoppable();
 									stoppable.stop();
-									transporter.migrateAgent(step.getOrdering(), step.getTime(), step.getInterval(), stopping, locToP, loc, ((HaloGrid2D) field).getFieldIndex());
+									transporter.transport((DObject)stopping, locToP, loc, ((HaloGrid2D) field).getFieldIndex(), step.getOrdering(), step.getTime(), step.getInterval());
 								}
 
 								// keeps track of agents being moved so not added again
@@ -681,7 +609,7 @@ public class DSimState extends SimState
 							else if (old_partition.contains(loc) && !partition.getLocalBounds().contains(loc))
 							{
 								final int locToP = partition.toPartitionPID(loc); // we need to use this, not toP
-								transporter.transportObject((Serializable) a, locToP, loc, ((HaloGrid2D) field).getFieldIndex());
+								transporter.transport((DObject) a, locToP, loc, ((HaloGrid2D) field).getFieldIndex());
 							}
 						}
 					}
@@ -707,17 +635,6 @@ public class DSimState extends SimState
 						if (a_list != null)
 						{
 
-							/*
-							 * ArrayList<Serializable> a_list_copy = new ArrayList(); for (int i = 0; i < ((ArrayList)
-							 * a_list).size(); i++) { Serializable a = ((ArrayList<Serializable>) a_list).get(i);
-							 * a_list_copy.add(a); }
-							 * 
-							 * 
-							 * for (int i = 0; i < a_list_copy.size(); i++) {
-							 * 
-							 * Serializable a = a_list_copy.get(i);
-							 */
-
 							// go backwards, so removing is safe
 							for (int i = ((ArrayList<Serializable>) a_list).size() - 1; i >= 0; i--)
 							{
@@ -734,41 +651,30 @@ public class DSimState extends SimState
 									{
 									DistributedTentativeStep step = (DistributedTentativeStep) stoppable;
 									stoppable.stop();
-									transporter.migrateAgent(step.getOrdering(), step.getTime(), stopping, toP, p, ((HaloGrid2D) field).getFieldIndex());
+									transporter.transport((DObject)stopping, toP, p, ((HaloGrid2D) field).getFieldIndex(), step.getOrdering(), step.getTime());
 									}
 
 									// stop and migrate
 								else if (stoppable instanceof DistributedIterativeRepeat)
-								{
+									{
 									final DistributedIterativeRepeat step = (DistributedIterativeRepeat) stopping.getStoppable();
 									stoppable.stop();
-									transporter.migrateAgent(step.getOrdering(), step.getTime(), step.getInterval(), stopping, toP, p, ((HaloGrid2D) field).getFieldIndex());
-								}
+									transporter.transport((DObject)stopping, toP, p, ((HaloGrid2D) field).getFieldIndex(), step.getOrdering(), step.getTime(), step.getInterval());
+									}
 
 									migratedAgents.add(stopping);
-									System.out.println(
-											"PID: " + partition.getPID() + " processor " + old_pid + " move " + stopping
-													+ " from " + p + " (point " + p + ") to processor " + toP+ " "+partition.getLocalBounds(toP));
 
 									// here the agent is removed from the old location TOCHECK!!!
 									// haloGrid2D.removeLocal(p, stopping.ID());
 									
 									st.removeObject(p, stopping.ID());
-									
-						
-									
-
-
-
 								}
 
 								// not stoppable (transport a double or something) transporter call transportObject?
 								else if (old_partition.contains(p) && !partition.getLocalBounds().contains(p) && !migratedAgents.contains(a))
 								{
-									transporter.transportObject((Serializable) a, toP, p,
-											((HaloGrid2D) field).getFieldIndex());
+									transporter.transport((DObject) a, toP, p,((HaloGrid2D) field).getFieldIndex());
 								}
-
 								else
 								{
 									System.out.println(a + " not moved over");
@@ -889,15 +795,12 @@ public class DSimState extends SimState
 	public void start()
 	{
 		super.start();
-//		RMIProxy.init();
 
-/*
-		if (withRegistry)
+//		if (withRegistry)
 		{
 			// distributed registry inizialization
 			registry = DRegistry.getInstance();
 		}
-*/
 
 		try
 		{
@@ -1117,12 +1020,7 @@ public class DSimState extends SimState
 			// call getPartitionGlobals() for each partition
 			//this should be implemented in the specific subclass, with the variables we want to pass over
 			Object[] g = this.getPartitionGlobals();
-
-
 			ArrayList<Object[]> gg = MPIUtil.gather(partition, g, 0);
-
-
-
 			return gg;
 		}
 		catch (Exception e)
@@ -1167,9 +1065,8 @@ public class DSimState extends SimState
 	}
 	
 	//testing method: counts agents in each storage (not in halo) and sums them.  Should remain constant!
-	protected int countTotalAgents(HaloGrid2D field) {
-		
-	
+	int countTotalAgents(HaloGrid2D field) 
+	{
 		int total = 0;
 
 		try {
@@ -1189,8 +1086,9 @@ public class DSimState extends SimState
 
 	}
 	
-	protected int countLocal(HaloGrid2D field) {
-		
+	protected int countLocal(HaloGrid2D field) 
+	{
+
 		int count = 0;
 
 		// ContinousStorage, do we need its own case anymore? We may be able to combine with else code.
@@ -1203,19 +1101,20 @@ public class DSimState extends SimState
 			{
 				HashSet agents = new HashSet(((HashMap) st.storage[i]).values());
 
-				for (Object a : agents) {
+				for (Object a : agents) 
+				{
 					Double2D loc = st.getObjectLocation((DObject) a);
 					
-					if (partition.getLocalBounds().contains(loc)) {
+					if (partition.getLocalBounds().contains(loc)) 
+					{
 						count = count + 1;
 					}
 
 				}
 			}
 		}
-		
-		else {
-			
+		else 
+		{
 			GridStorage st = field.getStorage();
 
 			// go by point here
@@ -1232,47 +1131,12 @@ public class DSimState extends SimState
 					{
 						count = count + ((ArrayList<Serializable>) a_list).size();
 					}
-					
-			
-			
-			
 				}
 			}
 		}
 		
 		return count;
 		
-	}
-	
-	/**
-	 * Looks up for the object with name to get data
-	 * Creates an unfilled RemotePromise that contains the request of some processor.
-	 * Calls addRemotePromise to put the RemotePromise in the queue of its processor.
-	 * 
-	 * @param name is the name of the required object that has the data and has to fulfill the promise
-	 * @param tag is used to understand what data is required from the object  
-	 * 	(the designer can implement different methods and choose what to call using this)
-	 * @param argument is the optional argument to pass to the object from we want the data 
-	 * 
-	 * @return a RemotePromise that will be filled out
-	 */
-	public Promised contactRemoteObj(String name, Integer tag, Serializable argument) throws RemoteException, NotBoundException {
-		Distinguished remoteObject = (Distinguished) this.getDRegistry().getObject(name);
-		RemotePromise promiseUnfilled = new RemotePromise(); 
-		DSimState.addRemotePromise(promiseUnfilled, tag, argument, remoteObject);
-		return promiseUnfilled;
-	}
-	
-	/**
-	 * Add a RemotePromise to the queue.
-	 * The promise will be filled then.
-	 * The promise needs information about:
-	 * @param tag provides information about what data is required  
-	 * @param argument is the optional argument that could be needed in the method respondToRemote()
-	 * @param author that will fill the promise,
-	 */
-	public static void addRemotePromise(RemotePromise promise, Integer tag, Serializable argument, Distinguished author) {
-		promises.add(new Quartet<RemotePromise, Integer, Serializable, Distinguished>(promise, tag, argument, author));
 	}
 	
 	/*
@@ -1301,31 +1165,5 @@ public class DSimState extends SimState
 	}
     */
 	
-	/*
-	public void dsimstate_geomvecAndContinuousStorageMatch(String s) {
-		for (HaloGrid2D haloField : fieldList) {
-			((ContinuousStorage)haloField.getStorage()).geomvecAndContinuousStorageMatch(s); 
-		}
 
-	}
-	*/
-	
-	
-
-}
-
-class Quartet<A, B, C, D> implements Serializable {
-	private static final long serialVersionUID = 1L;
-
-	public final A a;
-	public final B b;
-	public final C c;
-	public final D d;
-
-	public Quartet(A a, B b, C c, D d) {
-		this.a = a;
-		this.b = b;
-		this.c = c;
-		this.d = d;
-	}
 }
