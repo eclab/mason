@@ -11,7 +11,7 @@ import java.util.*;
    A simple linked list-based delay with a fixed delay time for all submitted elements.
 */
 
-public class SimpleDelay extends Source implements Receiver
+public class SimpleDelay extends Source implements Receiver, Steppable
     {
     class Node
         {
@@ -130,6 +130,11 @@ public class SimpleDelay extends Source implements Receiver
     public String getName()
         {
         return "SimpleDelay(" + typical.getName() + ", " + delayTime + ")";
-        }               
+        }  
+                     
+    public void step(SimState state)
+        {
+        offerReceivers();
+        }
     }
         

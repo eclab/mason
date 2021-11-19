@@ -38,13 +38,13 @@ public class Sink implements Receiver
             }
         }
 
-    public void step(SimState state)
-        {
-        // do nothing
-        }
-
     public String getName()
         {
         return "Sink(" + typical.getName() + ")";
         }               
+
+	public void step(SimState state)
+		{
+		// do nothing
+		}
     }

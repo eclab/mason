@@ -70,14 +70,13 @@ public class Transformer extends Provider implements Receiver
             }
         }
         
-    public void step(SimState state)
-        {
-        // do nothing
-        }
-
     public String getName()
         {
         return "Transformer(" + typicalIn + " -> " + typical + ", " + ratioIn + "/" + ratioOut + ")";
         }
 
+	public void step(SimState state)
+		{
+		// do nothing
+		}
     }

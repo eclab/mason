@@ -76,13 +76,13 @@ public class Lock extends Provider implements Receiver
         return result;
         }
 
-    public void step(SimState state)
-        {
-        // do nothing
-        }
-
     public String getName()
         {
         return "Lock(" + typical.getName() + ", " + pool + ", " + allocation + ")";
-        }               
+        }  
+                     
+	public void step(SimState state)
+		{
+		// do nothing
+		}
     }

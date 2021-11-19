@@ -66,11 +66,6 @@ public class Unlock extends Lock
         return result;
         }
 
-    public void step(SimState state)
-        {
-        // do nothing
-        }
-
     public String getName()
         {
         return "Unlock(" + typical.getName() + ", " + pool + ", " + allocation + ")";

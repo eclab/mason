@@ -1,16 +1,16 @@
 import sim.engine.*;
 import java.util.*;
 
-public abstract class Macro implements Named
+public abstract class Macro implements Named, Steppable
     {
-    ArrayList<Named> named = new ArrayList<>();
+    ArrayList<Steppable> steppables = new ArrayList<>();
     ArrayList<Receiver> receivers = new ArrayList<>();
     ArrayList<Provider> providers = new ArrayList<>();
 
-    protected void add(Named step)
+    protected void add(Steppable step)
         {
-        if (!named.contains(step))
-            named.add(step);
+        if (!steppables.contains(step))
+            steppables.add(step);
         }
 
     protected void addReceiver(Receiver recv)
@@ -51,10 +51,9 @@ public abstract class Macro implements Named
                 
     public void step(SimState state)
         {
-        for(Steppable step : named)
+        for(Steppable step : steppables)
             {
             step.step(state);
             }
         }
-        
     }

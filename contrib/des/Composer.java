@@ -125,6 +125,7 @@ public class Composer extends Provider implements Receiver
         	if (total.maximum - total.entityCount > 0)
         		{
         		total.entity[total.entityCount++] = (Entity)amount;
+        		deploy();
         		return true;
         		}
         	else return false;
@@ -139,6 +140,7 @@ public class Composer extends Provider implements Receiver
 				double amt = Math.min(total.maximum - res.getAmount(), atMost);
 				res.increase(amt);
 				((CountableResource)amount).decrease(amt);
+				deploy();
 				return true;
 				}
         	}
@@ -173,14 +175,13 @@ public class Composer extends Provider implements Receiver
 			}
     	}
         
-    public void step(SimState state)
-        {
-        deploy();
-        }
-        
     public String getName()
         {
         return "Composer(" + typical + ")";
         }
 
+	public void step(SimState state)
+		{
+		// do nothing
+		}
     }

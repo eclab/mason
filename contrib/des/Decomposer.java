@@ -89,4 +89,8 @@ public class Decomposer extends Provider implements Receiver
         return "Unpacker(" + typical + ")";
         }
 
+	public void step(SimState state)
+		{
+		// do nothing
+		}
     }

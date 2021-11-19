@@ -9,7 +9,7 @@ import sim.engine.*;
 import sim.util.distribution.*;
 import java.util.*;
 
-public class Source extends Provider
+public class Source extends Provider implements Steppable
     {
     void throwInvalidCapacityException(double capacity)
         {
@@ -286,7 +286,7 @@ public class Source extends Provider
     public void step(SimState state)
         {
         update();
-        super.step(state);              // offerReceivers();
+		offerReceivers();
         }
 
     public String getName()
