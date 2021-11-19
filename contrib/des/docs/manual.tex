@@ -300,7 +300,7 @@ An object which can {\it receive} an offer from a Provider.  That is, the Provid
 
 \subsection{Sink}
 
-A Receiver which accepts all offers (of the appropriate Resource type) and throws the resulting Resource away.
+A Receiver which accepts all offers (of the appropriate Resource type) and throws the resulting Resource away.  {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
 
 \subsection{Provider}
 
@@ -320,11 +320,11 @@ Both a Receiver and Provider.  When a SimpleDelay receives a Resource, it adds i
 
 \subsection{Delay}
 
-Both a Receiver and Provider.  This is just like a SimpleDelay, except that the delay time for each object received can be {\it different}, so some Resources can move through the Delay faster than others.  Thus the SimpleDelay is implemented using a heap rather than a linked list.
+A subclass of SimpleDelay.  This is just like a SimpleDelay, except that the delay time for each object received can be {\it different}, so some Resources can move through the Delay faster than others.  Thus the SimpleDelay is implemented using a heap rather than a linked list.
 
 \subsection{Transformer}
 
-Both a Receiver and Provider.  Upon receiving a Resource, it {\bf transforms} the Resource into a different one according to a certain rule, then immediately offers it to downstream receivers.  If they do not accept, then the Resource is discarded.
+Both a Receiver and Provider.  Upon receiving a Resource, it {\bf transforms} the Resource into a different one according to a certain rule, then immediately offers it to downstream receivers.  If they do not accept, then the Resource is discarded.  {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
 
 \subsection{Composer}
 
@@ -332,19 +332,19 @@ Both a Receiver and Provider.  Upon receiving a Resource, it adds it to a collec
 
 \subsection{Decomposer}
 
-Both a Receiver and Provider.  Upon receiving a Composed Entity, it decomposes it and offers each of its Resources to various downstream receivers, one registered for each Resource type. If they do not accept, then that Resource is discarded.  
+Both a Receiver and Provider.  Upon receiving a Composed Entity, it decomposes it and offers each of its Resources to various downstream receivers, one registered for each Resource type. If they do not accept, then that Resource is discarded.  {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
 
 \subsection{Lock}
 
-Both a Receiver and Provider.  Upon receiving a Resource, it attempts to {\bf allocate} some amount of {\it a different} Resource from a {\bf Pool}.  If successful, it then offers the original Resource to downstream receivers. If they do not accept, then that Resource is discarded.  
+Both a Receiver and Provider.  Upon receiving a Resource, it attempts to {\bf allocate} some amount of {\it a different} Resource from a {\bf Pool}.  If successful, it then offers the original Resource to downstream receivers. If they do not accept, then that Resource is discarded.  {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
 
 \subsection{Unlock}
 
-Both a Receiver and Provider.  Upon receiving a Resource, it {\bf provides} some amount of {\it a different} Resource to a {\bf Pool}.  Regardless of whether the Pool accepts this generosity, Unlock then offers the original Resource to downstream receivers. If they do not accept, then that Resource is discarded.  
+A subclass of Lock, but only for convenience's sake.  Upon receiving a Resource, it {\bf provides} some amount of {\it a different} Resource to a {\bf Pool}.  Regardless of whether the Pool accepts this generosity, Unlock then offers the original Resource to downstream receivers. If they do not accept, then that Resource is discarded.  {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
 
 \subsection{Pool}
 
-A shared pool of a Resources which may be allocated or provided by Lock and Unlock objects.
+A shared pool of a Resources which may be allocated or provided by Lock and Unlock objects.  {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
 
 \subsection{Macro}
 
@@ -355,10 +355,10 @@ An object which can store a {\bf subgraph} of the DES graph.  This subgraph cons
 A simple example of a common Macro consisting of a Lock, then a SimpleDelay, then an Unlock.
 
 
-\cleardoublepage
-\footnotesize
-\addcontentsline{toc}{chapter}{Index}
-\printindex
+%\cleardoublepage
+%\footnotesize
+%\addcontentsline{toc}{chapter}{Index}
+%\printindex
 
 \end{document}
 

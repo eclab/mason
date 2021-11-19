@@ -3,11 +3,11 @@ import java.util.*;
 
 public abstract class Macro implements Named, Steppable
     {
-    ArrayList<Steppable> steppables = new ArrayList<>();
+    ArrayList<Named> steppables = new ArrayList<>();
     ArrayList<Receiver> receivers = new ArrayList<>();
     ArrayList<Provider> providers = new ArrayList<>();
 
-    protected void add(Steppable step)
+    protected void add(Named step)
         {
         if (!steppables.contains(step))
             steppables.add(step);
