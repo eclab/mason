@@ -56,7 +56,7 @@ public abstract class Provider implements Named
     AbstractDistribution offerDistribution = null;
     double offerThreshold = 0;
     int offerCriterion = CRITERION_GREATER;
-        
+    
     /** Offer Policy: offers are made to the first receiver, then the second, and so on, until available resources or receivers are exhausted. */
     public static final int OFFER_POLICY_FORWARD = 0;
     /** Offer Policy: offers are made to the last receiver, then the second to last, and so on, until available resources or receivers are exhausted. */
@@ -350,6 +350,12 @@ public abstract class Provider implements Named
         return result;
         }
         
+    public boolean provide(Receiver receiver)
+    	{
+		return offerReceiver(receiver);
+    	}
+        
+    /*
     public CountableResource provide(CountableResource type, double amount)
         {
         if (resource != null && 
@@ -388,6 +394,7 @@ public abstract class Provider implements Named
             }
         else return null;
         }
+    */
         
     public void step(SimState state)
         {

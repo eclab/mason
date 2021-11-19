@@ -33,6 +33,12 @@ public class Unlock extends Lock
         return receiver.accept(this, _amount, _atLeast, _atMost);
         }
         
+    /** Returns false always and does nothing: Unlock is push-only. */
+    public boolean provide(Receiver receiver)
+    	{
+		return false;
+    	}
+
     // Unlocks only make take-it-or-leave-it offers
     public boolean getOffersTakeItOrLeaveIt() { return true; }
 

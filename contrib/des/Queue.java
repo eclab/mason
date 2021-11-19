@@ -7,8 +7,41 @@
 import sim.engine.*;
 import java.util.*;
 
-public class Queue extends Source implements Receiver
+public class Queue extends Provider implements Receiver
     {
+    void throwInvalidCapacityException(double capacity)
+        {
+        throw new RuntimeException("Capacities may not be negative or NaN.  capacity was: " + capacity);
+        }
+
+    public static boolean isPositiveNonNaN(double val)
+        {
+        return (val >= 0);
+        }
+
+    double capacity = Double.POSITIVE_INFINITY;    
+
+    /** Returns the maximum available resources that may be built up. */
+    public double getCapacity() { return capacity; }
+    /** Set the maximum available resources that may be built up. */
+    public void setCapacity(double d) 
+        { 
+        if (!isPositiveNonNaN(d))
+            throwInvalidCapacityException(d); 
+        capacity = d; 
+        }
+
+
+    boolean offersImmediately = true;
+    
+    /** Returns whether the Middleman offers items immediately upon accepting (when possible), without
+    	waiting for a timestep. */
+    public boolean getOffersImmediately() { return offersImmediately; }
+
+    /** Sets whether the Middleman offers items immediately upon accepting (when possible), without
+    	waiting for a timestep. */
+    public void setOffersImmediately(boolean val) { offersImmediately = val; }
+
     public Queue(SimState state, Resource typical)
         {
         super(state, typical);
@@ -26,6 +59,7 @@ public class Queue extends Source implements Receiver
             	double transfer = Math.min(capacity - resource.getAmount(), atMost);
             	resource.increase(transfer);
             	((CountableResource)amount).decrease(transfer);
+            	 if (getOffersImmediately()) offerReceivers(); 
             	return true;
             	}
             else return false;
@@ -35,6 +69,7 @@ public class Queue extends Source implements Receiver
             if (capacity - entities.size() >= 1)
                 {
                 entities.add((Entity)amount);
+            	 if (getOffersImmediately()) offerReceivers(); 
                 return true;
                 }
             else return false;

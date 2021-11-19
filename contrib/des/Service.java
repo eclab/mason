@@ -1,14 +1,14 @@
 import sim.engine.*;
 import java.util.*;
 
-public class Server extends Macro
+public class Service extends Macro
     {
     SimpleDelay delay;
     Lock lock;
     Unlock unlock;
     Pool pool;
         
-    public Server(SimState state, Resource typical, Pool pool, double allocation, double delayTime)
+    public Service(SimState state, Resource typical, Pool pool, double allocation, double delayTime)
         {
         lock = new Lock(state, typical, pool, allocation);
         unlock = new Unlock(lock);
@@ -21,13 +21,13 @@ public class Server extends Macro
         this.pool = pool;
         }
 
-    public Server(SimState state, Resource typical, int initialResourceAllocation, double delayTime)
+    public Service(SimState state, Resource typical, int initialResourceAllocation, double delayTime)
         {
         this(state, typical, new Pool(initialResourceAllocation), 1.0, delayTime);
         }
                 
     public String getName()
         {
-        return "Process(" + pool.getResource() + ", " + delay.getDelayTime() + ")";
+        return "Service(" + pool.getResource() + ", " + delay.getDelayTime() + ")";
         }
     }

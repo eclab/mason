@@ -16,28 +16,61 @@ public class Composer extends Provider implements Receiver
     class Node
         {
         // The resource we'll send out at the end of the day.  We fill up its amount.
-        public Resource resource;
-        // The maximum amount we fill up to before we become full
-        public double maximum;
-        // Have we accepted at least one of these resources so far?
-        public boolean loaded;
-                
-        public Node(Resource resource, double maximum)
+         CountableResource resource = null;
+         Entity[] entity = null;
+        // The maximum amount we fill up
+         double maximum;
+        // The minimum amount we fill up
+         double minimum;
+         int entityCount = 0;
+    	
+    	 double spaceLeft()
+    		{
+    		if (entity != null)
+    			{
+    			return maximum - entityCount;
+    			}
+    		else
+    			{
+    			return maximum - resource.getAmount();
+    			}
+    		}
+    		
+    	 boolean getMeetsMinimum()
+    		{
+    		if (entity != null)
+    			{
+    			return minimum <= entityCount;
+    			}
+    		else
+    			{
+    			return minimum <= resource.getAmount();
+    			}
+    		}
+    		
+         Node(Resource resource, double minimum, double maximum)
             {
-            this.resource = resource;
             this.maximum = maximum;
-            this.loaded = false;
+            this.minimum = minimum;
+            if (resource instanceof CountableResource)
+            	{
+            	this.resource = (CountableResource)resource;
+            	}
+            else
+            	{
+            	entity = new Entity[(int)maximum];
+            	this.entityCount = 0;
+            	}
             }
         }
     
     // This is a mapping of types to total-nodes
     HashMap<Integer, Node> mappedTotals;
-    // This is the same set of total-nodes organized as an array for fast scanning
-    Node[] totals;
-    // Do we send when we're completely full up or when we have received at least 1 of each item?
-    boolean sendsOnlyWhenFull = true;
     
-    public Composer(SimState state, Entity typical, Resource[] maximums)
+    // This is the same set of total-nodes organized as an array for faster scanning
+    Node[] totals;
+    
+    public Composer(SimState state, Entity typical, Resource[] minimums, Resource[] maximums)
         {
         super(state, typical);
     	mappedTotals = new HashMap<Integer, Node>();
@@ -45,48 +78,59 @@ public class Composer extends Provider implements Receiver
     	
         for(int i = 0; i < maximums.length; i++)
             {
-            if (mappedTotals.get(maximums[i].getType()) != null)  // uh oh
+            if (mappedTotals.get(maximums[i].getType()) != null)  // uh oh, already have one!
             	throwDuplicateType(maximums[i]);
             else
             	{
-            	// The provided maximums[] array contains resources which have
-            	// maximum amounts in them.  We need to set these aside in the
-            	// separate maximum variable, then make a copy of these elements
-            	// and clear them out so their values are 0 so we can start using
-            	// them.  Note that the maximum for an Entity should be set to 1.0,
-            	// since this is the amount of an Entity.  
-            	
-				double maximum = maximums[i].getAmount();
 				Resource res = maximums[i].duplicate();
 				res.clear();		// so it's 0.0 if a CountableResource
-				Node node = new Node(res, maximum);
+				Node node = new Node(res, maximums[i].getAmount(), minimums[i].getAmount());
             	mappedTotals.put(maximums[i].getType(), node);
             	totals[i] = node;
 	            }
             }
         }
-        
-    public boolean getSendsOnlyWhenFull() { return sendsOnlyWhenFull; }
-    public void setSendsOnlyWhenFull(boolean val) { sendsOnlyWhenFull = val; }
+
+    public Composer(SimState state, Entity typical, double[] minimums, Resource[] maximums)
+        {
+        super(state, typical);
+    	mappedTotals = new HashMap<Integer, Node>();
+    	totals = new Node[maximums.length];
+    	
+        for(int i = 0; i < maximums.length; i++)
+            {
+            if (mappedTotals.get(maximums[i].getType()) != null)  // uh oh, already have one!
+            	throwDuplicateType(maximums[i]);
+            else
+            	{
+				Resource res = maximums[i].duplicate();
+				res.clear();		// so it's 0.0 if a CountableResource
+				Node node = new Node(res, maximums[i].getAmount(), minimums[i]);
+            	mappedTotals.put(maximums[i].getType(), node);
+            	totals[i] = node;
+	            }
+            }
+        }
                                 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (isOffering()) throwCyclicOffers();  // cycle
         
+        // Find the appropriate node
         Node total = mappedTotals.get(amount.getType());
         if (total == null) throwNotComposableResource(amount);
         
-        if (total.resource instanceof Entity)
+        if (total.entity != null)
         	{
-        	// We just check to see if we got one yet
-        	if (total.loaded)
-        		return false;  // we've already got one
-        	else total.loaded = true;
-        	return true;
+        	if (total.maximum - total.entityCount > 0)
+        		{
+        		total.entity[total.entityCount++] = (Entity)amount;
+        		return true;
+        		}
+        	else return false;
         	}
         else
         	{
-        	// We can load this multiple times to fill it up
         	CountableResource res = (CountableResource)(total.resource);
         	if (total.maximum - res.getAmount() < atLeast)	// cannot accept
         		return false;
@@ -95,36 +139,21 @@ public class Composer extends Provider implements Receiver
 				double amt = Math.min(total.maximum - res.getAmount(), atMost);
 				res.increase(amt);
 				((CountableResource)amount).decrease(amt);
-				total.loaded = true;
 				return true;
 				}
         	}
         }
         
-    public void step(SimState state)
-        {
-        // are we done yet?
-
-        if (sendsOnlyWhenFull)
-        	{
-        	for(int i = 0; i < totals.length; i++)
-        		{
-				if (!totals[i].loaded)
-					return;			// this could happen for Entities 
-        		if (totals[i].resource.getAmount() < totals[i].maximum) 
-        			return;
-        		}
-        	}
-        else
-        	{
-        	for(int i = 0; i < totals.length; i++)
-        		{
-        		if (!totals[i].loaded) 
-        			return;
-        		}
-        	}
-
-		// do a load
+    void deploy()
+    	{
+    	// have we met the minimum counts yet?
+    	for(int i = 0; i < totals.length; i++)
+    		{
+    		if (!totals[i].getMeetsMinimum()) // crap, failed
+    			return;
+    		}
+    		
+		// do a load into entities
 		entities.clear();
 		Entity entity = (Entity)(typical.duplicate());
 		Resource[] resources = new Resource[totals.length];
@@ -136,9 +165,17 @@ public class Composer extends Provider implements Receiver
 		// reset totals
 		for(int i = 0; i < totals.length; i++)
 			{
-			totals[i].loaded = false;
-			totals[i].resource.clear();
+			totals[i].entityCount = 0;
+			if (totals[i].resource != null)
+				{
+				totals[i].resource.clear();
+				}
 			}
+    	}
+        
+    public void step(SimState state)
+        {
+        deploy();
         }
         
     public String getName()

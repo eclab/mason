@@ -41,6 +41,12 @@ public class Lock extends Provider implements Receiver
     // Locks only make take-it-or-leave-it offers
     public boolean getOffersTakeItOrLeaveIt() { return true; }
 
+    /** Returns false always and does nothing: Lock is push-only. */
+    public boolean provide(Receiver receiver)
+    	{
+		return false;
+    	}
+
     protected boolean offerReceiver(Receiver receiver)
         {
         return receiver.accept(this, _amount, _atLeast, _atMost);

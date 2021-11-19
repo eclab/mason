@@ -20,6 +20,12 @@ public class Transformer extends Provider implements Receiver
         output = typical.duplicate();
         }
 
+    /** Returns false always and does nothing: Transformer is push-only. */
+    public boolean provide(Receiver receiver)
+    	{
+		return false;
+    	}
+
     protected boolean offerReceiver(Receiver receiver)
         {
         return receiver.accept(this, output, atLeastOut, atMostOut);
@@ -64,6 +70,11 @@ public class Transformer extends Provider implements Receiver
             }
         }
         
+    public void step(SimState state)
+        {
+        // do nothing
+        }
+
     public String getName()
         {
         return "Transformer(" + typicalIn + " -> " + typical + ", " + ratioIn + "/" + ratioOut + ")";
