@@ -1,81 +1,142 @@
 /** 
-	A blocking resource queue with a capacity.  Resources placed in the queue are available 
-	immediately, but when the queue is empty, the Queue will attempt to satisfy
-	requests by requesting from its upstream Provider if any.
+    A blocking resource queue with a capacity.  Resources placed in the queue are available 
+    immediately, but when the queue is empty, the Queue will attempt to satisfy
+    requests by requesting from its upstream Provider if any.
 */
 
 import sim.engine.*;
 import java.util.*;
 
-/// FIXME: Anylogic has queues with different ordering policies.  That doesn't
-/// make sense for us because we just have blobs, but maybe we should revisit this.
-
 public class Queue extends Source implements Receiver
-	{
-	Provider provider;
-	
-	public Queue(SimState state, Resource typical)
-		{
-		super(state, typical);
-		}
-	
-	/** Gets the Queue's provider, if any.  Anyone can offer to the queue, but
-		this provider exists to provide additional resources if the queue cannot
-		provide enough immediately. Also every timestep the Queue will ask the
-		provider to provide it with resources up to its capacity. */
-	public Provider getProvider() { return provider; }
+    {
+    public Queue(SimState state, Resource typical)
+        {
+        super(state, typical);
+        }
 
-	/** Sets the Queue's provider, if any.  Anyone can offer to the queue, but
-		this provider exists to provide additional resources if the queue cannot
-		provide enough immediately.  Also every timestep the Queue will ask the
-		provider to provide it with resources up to its capacity. */
-	public void setProvider(Provider provider) { this.provider = provider; }
+   public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
+        {
+        if (isOffering()) throwCyclicOffers();  // cycle
+        
+        if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
+        if (entities == null)
+            {
+            if (capacity - resource.getAmount() >= atLeast)
+            	{
+            	double transfer = Math.min(capacity - resource.getAmount(), atMost);
+            	resource.increase(transfer);
+            	((CountableResource)amount).decrease(transfer);
+            	return true;
+            	}
+            else return false;
+            }
+        else
+            {
+            if (capacity - entities.size() >= 1)
+                {
+                entities.add((Entity)amount);
+                return true;
+                }
+            else return false;
+            }
+        }
 
-	protected double computeAvailable()
-		{
-		return resource.getAmount() + (provider == null ? 0 : provider.available());
-		}
+ /*
+   public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
+        {
+        if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
+        if (entities == null)
+            {
+            return acceptCountable(provider, ((CountableResource)amount), atLeast, atMost);
+            }
+        else
+            {
+            if (capacity - entities.size() >= 1)
+                {
+                entities.add((Entity)amount);
+                offerReceivers();
+                return true;
+                }
+            else return false;
+            }
+        }
+        
+    boolean acceptCountable(Provider provider, CountableResource amount, double atLeast, double atMost)
+        {
+        // FOR NOW... 
+        //
+        // If my downstream receivers don't take anough of the offer,
+        // (1) I need to have atLeast extra capacity so I can take the offer myself
+        // OR
+        // (2) I need to have atLeast in my resource so I can refuse the offer and pay it back
+        //
+        // Otherwise I have to query downstream and I don't want to do that
+        //
+        // FIXME: should we query the downstream receivers for how much they can accept?
+        // May be costly.
+                
+        if (capacity - resource.getAmount() >= atLeast)         // I can cover the offer myself
+            {
+            // Load no more than atMost into my resource.  This may push me above capacity.
+            resource.add(amount, atMost);
+                
+            offerReceivers();
+                
+            // Reduce to capacity
+            if (resource.getAmount() > capacity)
+                {
+                amount.increase(resource.getAmount() - capacity);
+                resource.setAmount(capacity);
+                }
+                                
+            return true;
+            }
+        else if (resource.getAmount() >= atLeast)               // I can pay the offer back if nobody takes it
+            {
+            double originalAmount = amount.getAmount();
+            double maximumRemaining = originalAmount - atLeast;
+                        
+            // I need to squirrel away the amount to pay back
+            resource.decrease(atLeast);
+                        
+            // Load no more than atMost into my resource.  This may push me above capacity.
+            resource.add(amount, atMost);
 
-	/** Attempts to acquire the given resources, either directly or from the upstream provider. */
-	void acquire(double atLeast, double atMost)
-		{
-		if (provider != null)
-			{
-			double avail = resource.getAmount();
-			if (avail < atMost)
-				{
-				Resource r = provider.provide(atLeast - avail < 0 ? 0 : atLeast - avail, atMost - avail);		// we are conservative, we don't request the max available
-				if (r != null) resource.add(r);
-				}
-			}
-		}
+            offerReceivers();
 
-	public Resource provide(double atLeast, double atMost)
-		{
-		if (!blocklist.isEmpty()) return null;		// someone is ahead of us in the queue
-		acquire(atLeast, atMost);
-		return resource.reduce(atLeast, atMost);
-		}
+            // Reduce to capacity
+            if (resource.getAmount() > capacity)
+                {
+                amount.increase(resource.getAmount() - capacity);
+                resource.setAmount(capacity);
+                }
+                        
+            double finalAmount = amount.getAmount();
+            if (finalAmount > maximumRemaining)             // I didn't take enough, put it all back
+                {
+                amount.increase(originalAmount - finalAmount);
+                resource.decrease(originalAmount - finalAmount);
+                return false;
+                }
+                        
+            return true;
+            }
+        else    
+            {
+            // oh well, cannot accept
+            return false;
+            }
+        }
+*/
+        
+    public void update()
+        {
+        // do nothing
+        }
 
-	public void consider(Provider provider, double amount)
-		{
-		Resource otherTyp = provider.getTypicalResource();
-		if (!resource.isSameType(otherTyp)) 
-			throwUnequalTypeException(otherTyp);
-		
-		double request = Math.max(amount, capacity - resource.getAmount());  // request no more than our capacity
-		Resource token = provider.provide(0, request);
-		if (token != null)
-			{
-			resource.add(token);
-			offerBlocked();
-			offerReceivers();
-			}
-		}
-	
-	public void update()
-		{
-		acquire(0, capacity - resource.getAmount());
-		}
-	}
-	
+    public String getName()
+        {
+        return "Queue(" + typical.getName() + ")";
+        }               
+    }
+        

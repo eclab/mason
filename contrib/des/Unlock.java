@@ -1,47 +1,72 @@
 import sim.engine.*;
+import sim.util.*;
 import java.util.*;
 
 /*
-UNLOCKS allow up to N resources to pass through before refusing any more
+  UNLOCKS allow up to N resources to pass through before refusing any more
 */
 
-public class Unlock extends Provider implements Receiver
-	{
-	Provider provider = null;		// this is temporary
-	double offer = 0.0;
-	
-	public Unlock(Lock other)
-		{
-		super(other.state, other.typical);
-		resource = other.resource;
-		}
-	
-	public Resource provide(double atLeast, double atMost)
-		{
-		if (provider == null) return null;
-		// I can only provide up to remainder
-		double remainder = resource.getAmount();
-		if (remainder < atLeast) return null;
-		if (atMost > remainder) atMost = remainder;
-		Resource result = provider.provide(atLeast, atMost);
-		offer -= result.getAmount();		// FIXME:  better not go negative!
-		resource.decrease(result.getAmount());		// FIXME:  better not go negative!
-		return result;
-		}
+public class Unlock extends Lock
+    {
+    public Unlock(SimState state, Resource typical, Pool pool, double allocation)
+        {
+        super(state, typical, pool, allocation);
+        }
+        
+    public Unlock(SimState state, Resource typical, Pool pool)
+        {
+        super(state, typical, pool);
+        }
+        
+    public Unlock(SimState state, Resource typical, String name)
+        {
+        super(state, typical, name);
+        }
+        
+    public Unlock(Lock other)
+        {
+        super(other);
+        }
 
-	public double available() { return computeAvailable(); } // bypass cache
-	protected double computeAvailable() 
-		{
-		double amt = resource.getAmount();
-		return (offer > amt ? amt : offer); 
-	 	}
-	
-	public void consider(Provider provider, double amount)
-		{
-		this.provider = provider;
-		offer = amount;
-		offerReceivers();
-		}
+    protected boolean offerReceiver(Receiver receiver)
+        {
+        return receiver.accept(this, _amount, _atLeast, _atMost);
+        }
+        
+    // Unlocks only make take-it-or-leave-it offers
+    public boolean getOffersTakeItOrLeaveIt() { return true; }
 
-	// FIXME: should we allow super.step() to call offerReceivers()?
-	}
+    double _atLeast;
+    double _atMost;
+    Resource _amount;
+        
+    public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
+        {
+        if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
+
+        if (isOffering()) throwCyclicOffers();  // cycle
+        
+        if (pool.getMaximum() - pool.getResource().getAmount() < allocation) return false;
+
+        _amount = amount;
+        _atLeast = atLeast;
+        _atMost = atMost;
+        boolean result = offerReceivers();
+                
+        if (true)                               // we always increment even if we fail
+            {
+            pool.getResource().increase(allocation);
+            }
+        return result;
+        }
+
+    public void step(SimState state)
+        {
+        // do nothing
+        }
+
+    public String getName()
+        {
+        return "Unlock(" + typical.getName() + ", " + pool + ", " + allocation + ")";
+        }               
+    }

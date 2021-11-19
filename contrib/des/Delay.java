@@ -1,152 +1,117 @@
 /** 
-	A delay pipeline.  Elements placed in the delay are only available
-	after a fixed amount of time.
+    A delay pipeline.  Elements placed in the delay are only available
+    after a fixed amount of time.
 */
 
 
 import sim.engine.*;
+import sim.util.distribution.*;
+import sim.util.*;
 import java.util.*;
 
-/// FIXME: Anylogic has delay times which can be distributions, we should do that too
-/// FIXME: we're going to have drifts in totalResource due to IEEE 754
 
-public class Delay extends BlockingProvider implements Receiver
-	{
-	Resource resource;		// this holds all the "ripe" resources from the list
-	double totalResource = 0.0;
-	
-	class Node
+/**
+   A Heap-based delay which allows different submitted elements to have different
+   delay times.  Delay times can be based on a provided distribution, or you can override
+   the method getDelay(...) to customize delay times entirely based on the provide
+   and resource being provided. 
+*/
+
+public class Delay extends SimpleDelay
+    {
+    Heap delayHeap;
+    AbstractDistribution distribution = null;
+
+	protected void buildDelay()
 		{
-		public Resource resource;
-		public double timestamp;
-		
-		public Node(Resource resource, double timestamp)
-			{
-			this.resource = resource;
-			this.timestamp = timestamp;
-			}
-		}
-	
-	LinkedList<Node> resources = new LinkedList<>();
-	double delay;
-	Provider provider;
-
-	void throwInvalidNumberException(double capacity)
-		{
-		throw new RuntimeException("Capacities may not be negative or NaN.  capacity was: " + capacity);
-		}
-
-	double capacity = Double.POSITIVE_INFINITY;
-	
-	/** Returns the maximum available resources that may be built up. */
-	public double getCapacity() { return capacity; }
-	/** Set the maximum available resources that may be built up. */
-	public void setCapacity(double d) 
-		{ 
-		if (!Resource.isPositiveNonNaN(d))
-			throwInvalidNumberException(d); 
-		capacity = d; 
-		}
-
-	public Delay(SimState state, double delay, Resource typical)
-		{
-		super(state, typical);
-		this.delay = delay;
-		resource = typical.duplicate();
-		resource.setAmount(0.0);
+        delayHeap = new Heap();
 		}
 		
-	/** Gets the Delay's provider, if any.  Anyone can offer to the Delay, but
-		this provider exists to provide additional resources if the Delay cannot
-		provide enough immediately. Also every timestep the Delay will ask the
-		provider to provide it with resources up to its capacity. */
-	public Provider getProvider() { return provider; }
+    public Delay(SimState state, Resource typical)
+        {
+        super(state, 1.0, typical);
+        }
+        
+    public void clear()
+        {
+        delayHeap = new Heap();
+        totalResource = 0.0;
+        }
+        
+    public void setDelayDistribution(AbstractDistribution distribution)
+        {
+        this.distribution = distribution;
+        }
+                
+    public AbstractDistribution getDelayDistribution()
+        {
+        return this.distribution;
+        }
+                
+    /** By default, provides Math.abs(getDelayDistribution().nextDouble()), or 1.0 if there is
+        no provided distribution.  Override this to provide a custom delay given the 
+        provider and resource amount or type. */
+    protected double getDelay(Provider provider, Resource amount)
+        {
+        if (distribution == null) return getDelayTime();
+        else return Math.abs(distribution.nextDouble());
+        }
+                
+    public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
+        {
+        if (!resource.isSameType(amount)) 
+            throwUnequalTypeException(amount);
+                
+        if (isOffering()) throwCyclicOffers();  // cycle
+        
+        double nextTime = state.schedule.getTime() + getDelay(provider, amount);
 
-	/** Sets the Delay's provider, if any.  Anyone can offer to the Delay, but
-		this provider exists to provide additional resources if the Delay cannot
-		provide enough immediately.  Also every timestep the Delay will ask the
-		provider to provide it with resources up to its capacity. */
-	public void setProvider(Provider provider) { this.provider = provider; }
+        if (entities == null)
+            {
+            CountableResource cr = (CountableResource)amount;
+            double maxIncoming = Math.min(capacity - totalResource, atMost);
+            if (maxIncoming < atLeast) return false;
+                
+            CountableResource token = (CountableResource)(cr.duplicate());
+            token.setAmount(maxIncoming);
+            cr.decrease(maxIncoming);
+            delayHeap.add(token, nextTime);
+            }
+        else
+            {
+            if (delayHeap.size() >= capacity) return false;      // we're at capacity
+            delayHeap.add(amount, nextTime);
+            }
+       
+        if (getAutoSchedules()) state.schedule.scheduleOnce(nextTime, getOrdering(), this);
+        
+        return true;
+        }
 
+    protected void update()
+        {
+        drop();
+        double time = state.schedule.getTime();
+                
+        while(((double)delayHeap.getMinKey()) >= time)
+            {
+            Resource _res = (Resource)(delayHeap.extractMin());
+            if (entities == null)
+                {
+                CountableResource res = ((CountableResource)_res);
+                resource.add(res);
+                totalResource -= res.getAmount();
+                }
+            else
+                {
+                entities.add((Entity)(_res));
+                }
+            }
+        }
 
-	protected double computeAvailable()
-		{
-		double avail = 0;
-		Iterator<Node> iterator = resources.descendingIterator();
-		while(iterator.hasNext())
-			{
-			Node node = iterator.next();
-			if (node.timestamp <= state.schedule.getTime())
-				{
-				avail += node.resource.getAmount();
-				}
-			}
-		return avail;
-		}
-
-	/** Attempts to acquire the given resources, either directly or from the upstream provider. */
-	void acquire(double atLeast, double atMost)
-		{
-		if (resources.isEmpty())
-			return;
-
-		double time = state.schedule.getTime();
-		
-		// acquire this amount
-		Iterator<Node> iterator = resources.descendingIterator();
-		while(iterator.hasNext())
-			{
-			Node node = iterator.next();
-			if (node.timestamp >= time)	// it's ripe
-				{
-				double amt = node.resource.getAmount();
-				resource.add(node.resource);
-				iterator.remove();
-				}
-			else break;		// don't process any more
-			}
-		}
-
-	public Resource provide(double atLeast, double atMost)
-		{
-		if (!blocklist.isEmpty()) return null;		// someone is ahead of us in the queue
-		// we always check the list so we avoid a leak
-		acquire(atLeast, atMost);
-		Resource res = resource.reduce(atLeast, atMost);
-		if (res != null) 
-			{
-			totalResource -= res.getAmount();
-			/// This hack makes sure that the drift doesn't drop us below 0
-			if (totalResource < 0) totalResource = 0;
-			}
-		return res;
-		}
-	
-	public void consider(Provider provider, double amount)
-		{
-		Resource otherTyp = provider.getTypicalResource();
-		if (!resource.isSameType(otherTyp)) 
-			throwUnequalTypeException(otherTyp);
-		
-		double request = Math.max(amount, capacity - totalResource);  // request no more than our capacity
-		Resource token = provider.provide(0, request);
-		if (token != null)
-			{
-			totalResource += token.getAmount();
-			resources.addFirst(new Node(token, state.schedule.getTime() + delay));
-			offerBlocked();
-			}
-		}
-
-	public void step(SimState state)
-		{
-		if (provider != null) 
-			{
-			Resource res = provider.provide(0, Double.POSITIVE_INFINITY);
-			if (res != null)
-				resources.addFirst(new Node(res, state.schedule.getTime() + delay));
-			}
-		super.step(state);
-		}
-	}
-	
+    public String getName()
+        {
+        return "Delay(" + typical.getName() + ")";
+        }               
+    }
+        
