@@ -59,14 +59,14 @@ public class Decomposer extends Provider implements Receiver
         Entity entity = (Entity)amount;
                 
         boolean accepted = false;
-        if (entity.getStorage() == null)
+        if (!entity.isComposite())
             {
             throwNotCompositeEntity(entity);
             return false;                                           // not reachable, Java is stupid
             }
         else if (entity.getStorage() instanceof Resource[])
             {
-            Resource[] res = entity.decompose();
+            Resource[] res = entity.getStorage();
             for(int i = 0; i < res.length; i++)
                 {
                 Receiver recv = output.get(res[i].getType());

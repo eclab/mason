@@ -161,7 +161,7 @@ public class Composer extends Provider implements Receiver
 		Resource[] resources = new Resource[totals.length];
 		for(int i = 0; i < totals.length; i++)
 			resources[i] = totals[i].resource.duplicate();
-		entity.compose(resources);
+		entity.setStorage(resources);
 		entities.add(entity);
 		
 		// reset totals

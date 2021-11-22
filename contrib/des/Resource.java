@@ -7,8 +7,8 @@ import java.util.concurrent.atomic.*;
    create more than one of the same kind of resoure by duplicating an existing Resource
    or using a copy constuctor found in a resource subclass.
         
-   <p>Note that type allocation is not threadsafe unless DSimState.isMultiThreaded() 
-   returns true.
+   <p>Note that type allocation is not threadsafe.
+   	<!-- unless DSimState.isMultiThreaded() returns true. -->
 **/
 
 
@@ -109,11 +109,6 @@ public abstract class Resource
     public int getType()
         {
         return type;
-        }
-                
-    protected void setType(int type)
-        {
-        this.type = type;
         }
                 
     /**

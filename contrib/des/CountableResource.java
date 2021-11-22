@@ -61,12 +61,12 @@ public class CountableResource extends Resource
         throw new RuntimeException("Amounts may not be negative or NaN.  Amount provided was: " + amount);
         }
 
-    public static boolean isPositiveNonNaN(double val)
+    static boolean isPositiveNonNaN(double val)
         {
         return (val >= 0);
         }
 
-    public static boolean isInteger(double val)
+ 	static boolean isInteger(double val)
         {
         return (val <= MAXIMUM_INTEGER && val == (long) val);
         }
@@ -86,7 +86,6 @@ public class CountableResource extends Resource
     /** 
         Returns a CountableResource of the same type, name, and amount as the provided CountableResource.
         This is essentially a clone of the CountableResource.
-        Note that this changes the amount of the given countable resource available in the world.
     */
     public CountableResource(CountableResource other)
         {
@@ -99,7 +98,6 @@ public class CountableResource extends Resource
 
     /** 
         Returns a CountableResource of the same type, name, as the provided CountableResource, but a different amount.
-        Note that this changes the amount of the given countable resource available in the world.
     */
     public CountableResource(CountableResource other, double amount)
         {
@@ -112,18 +110,14 @@ public class CountableResource extends Resource
         return "CountableResource[" + name + " (" + type + "), " + (long)amount + "]";
         }
 
+    /** 
+        Returns a CountableResource of the same type, name, and amount as the provided CountableResource.
+        This is essentially a clone of the CountableResource.
+    */
     public Resource duplicate()
         {
         return new CountableResource(this);
         }
-
-    public CountableResource duplicate0()
-        {
-        CountableResource ret = new CountableResource(this);
-        ret.clear();
-        return ret;
-        }
-        
 
     public double getAmount()
         {
@@ -132,7 +126,6 @@ public class CountableResource extends Resource
 
     /** 
         Sets the amount to zero.
-        Note that this changes the total amount of the given countable resource available in the world.
     */
     public void clear()
         {
@@ -141,7 +134,6 @@ public class CountableResource extends Resource
 
     /** 
         Sets the amount.
-        Note that this changes the total amount of the given countable resource available in the world.
     */
     public void setAmount(double val)
         {
@@ -156,7 +148,6 @@ public class CountableResource extends Resource
 
     /**
        Increments the amount by 1.0.
-       Note that this changes the amount of the given countable resource available in the world.
     */
     public boolean increment()
         {
@@ -169,7 +160,6 @@ public class CountableResource extends Resource
     /**
        Decrements the amount by 1.0: if the value drops
        to beneath 0, it is set to 0 and FALSE is returned.  Else TRUE is returned.
-       Note that this changes the amount of the given countable resource available in the world.
     */
     public boolean decrement()
         {
@@ -184,7 +174,6 @@ public class CountableResource extends Resource
     /**
        Increases the amount by the given value: if the value drops
        to beneath 0, it is set to 0 and FALSE is returned.  Else TRUE is returned.
-       Note that this changes the amount of the given countable resource available in the world.
     */
     public boolean increase(double val)
         {
@@ -210,7 +199,6 @@ public class CountableResource extends Resource
     /**
        Decreases the amount by the given value: if the value drops
        to beneath 0, it is set to 0 and FALSE is returned.  Else TRUE is returned.
-       Note that this changes the amount of the given countable resource available in the world.
     */
     public boolean decrease(double val)
         {
