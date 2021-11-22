@@ -44,9 +44,9 @@ public class Source extends Provider implements Steppable
         return (val >= 0);
         }
 
-	/** 
-		Builds a source with the given typical resource type.
-		*/
+    /** 
+        Builds a source with the given typical resource type.
+    */
     public Source(SimState state, Resource typical)
         {
         super(state, typical);
@@ -78,34 +78,34 @@ public class Source extends Provider implements Steppable
     double production = 1.0;
         
     /** Sets the distribution used to determine the rate at which the source produces resources.
-    	When the source is update()ed (via a step() method), it draws from this distribution the
-    	next time at which it should schedule itself to be stepped() again.  If this distribution
-    	is null, it instead uses getRate() to deterministically acquire the next timestep.  Note that
-    	the if the time is currently Schedule.EPOCH, no resources will be produced this timestep.  
-    	*/
+        When the source is update()ed (via a step() method), it draws from this distribution the
+        next time at which it should schedule itself to be stepped() again.  If this distribution
+        is null, it instead uses getRate() to deterministically acquire the next timestep.  Note that
+        the if the time is currently Schedule.EPOCH, no resources will be produced this timestep.  
+    */
     public void setRateDistribution(AbstractDistribution rateDistribution)
         {
         this.rateDistribution = rateDistribution;
         }
         
     /** Returns the distribution used to determine the rate at which the source produces resources.
-    	When the source is update()ed (via a step() method), it draws from this distribution the
-    	next time at which it should schedule itself to be stepped() again.  If this distribution
-    	is null, it instead uses getRate() to deterministically acquire the next timestep.  Note that
-    	the if the time is currently Schedule.EPOCH, no resources will be produced this timestep.  
-    	*/
+        When the source is update()ed (via a step() method), it draws from this distribution the
+        next time at which it should schedule itself to be stepped() again.  If this distribution
+        is null, it instead uses getRate() to deterministically acquire the next timestep.  Note that
+        the if the time is currently Schedule.EPOCH, no resources will be produced this timestep.  
+    */
     public AbstractDistribution getRateDistribution()
         {
         return this.rateDistribution;
         }
 
     /** Sets the deterministic rate and potential random offset for producing resources.  If the rate
-    distribution is null, then the deterministic rate and random offset are used instead as follows.
-    If the Source is initially scheduled for Schedule.EPOCH, then at that time it does not produce
-    any resources, but rather determines the initial time to reschedule itself.  If the random offset
-    is TRUE then the initial time will be the EPOCH plus a uniform random value between 0 and the
-    deterministic rate.  If the random offset is FALSE then the initial time will simply be the EPOCH plus
-    the deterministic rate.  Thereafter the next scheduled time will be the current time plus the rate. 
+        distribution is null, then the deterministic rate and random offset are used instead as follows.
+        If the Source is initially scheduled for Schedule.EPOCH, then at that time it does not produce
+        any resources, but rather determines the initial time to reschedule itself.  If the random offset
+        is TRUE then the initial time will be the EPOCH plus a uniform random value between 0 and the
+        deterministic rate.  If the random offset is FALSE then the initial time will simply be the EPOCH plus
+        the deterministic rate.  Thereafter the next scheduled time will be the current time plus the rate. 
     */
     public void setRate(double rate, boolean randomOffset)
         {
@@ -116,12 +116,12 @@ public class Source extends Provider implements Steppable
         }
 
     /** Returns the deterministic rate for producing resources.  If the rate
-    distribution is null, then the deterministic rate and random offset are used instead as follows.
-    If the Source is initially scheduled for Schedule.EPOCH, then at that time it does not produce
-    any resources, but rather determines the initial time to reschedule itself.  If the random offset
-    is TRUE then the initial time will be the EPOCH plus a uniform random value between 0 and the
-    deterministic rate.  If the random offset is FALSE then the initial time will simply be the EPOCH plus
-    the deterministic rate.  Thereafter the next scheduled time will be the current time plus the rate. 
+        distribution is null, then the deterministic rate and random offset are used instead as follows.
+        If the Source is initially scheduled for Schedule.EPOCH, then at that time it does not produce
+        any resources, but rather determines the initial time to reschedule itself.  If the random offset
+        is TRUE then the initial time will be the EPOCH plus a uniform random value between 0 and the
+        deterministic rate.  If the random offset is FALSE then the initial time will simply be the EPOCH plus
+        the deterministic rate.  Thereafter the next scheduled time will be the current time plus the rate. 
     */
     public double getRate()
         {
@@ -129,69 +129,69 @@ public class Source extends Provider implements Steppable
         }
         
     /** Returns the random offset for producing resources.  If the rate
-    distribution is null, then the deterministic rate and random offset are used instead as follows.
-    If the Source is initially scheduled for Schedule.EPOCH, then at that time it does not produce
-    any resources, but rather determines the initial time to reschedule itself.  If the random offset
-    is TRUE then the initial time will be the EPOCH plus a uniform random value between 0 and the
-    deterministic rate.  If the random offset is FALSE then the initial time will simply be the EPOCH plus
-    the deterministic rate.  Thereafter the next scheduled time will be the current time plus the rate. 
+        distribution is null, then the deterministic rate and random offset are used instead as follows.
+        If the Source is initially scheduled for Schedule.EPOCH, then at that time it does not produce
+        any resources, but rather determines the initial time to reschedule itself.  If the random offset
+        is TRUE then the initial time will be the EPOCH plus a uniform random value between 0 and the
+        deterministic rate.  If the random offset is FALSE then the initial time will simply be the EPOCH plus
+        the deterministic rate.  Thereafter the next scheduled time will be the current time plus the rate. 
     */
     public boolean getRandomOffset()
-    	{
-    	return randomOffset;
-    	}
+        {
+        return randomOffset;
+        }
 
     /** Sets whether the Source reschedules itself automatically using either a deterministic or distribution-based
-    	rate scheme.  If FALSE, you are responsible for scheduling the Source as you see fit. If TRUE,
-    	then the ordering used when scheduling is set to 0.
+        rate scheme.  If FALSE, you are responsible for scheduling the Source as you see fit. If TRUE,
+        then the ordering used when scheduling is set to 0.
     */
-	public void setAutoSchedules(boolean val)
-		{
-		autoSchedules = val;
-		rescheduleOrdering = 0;
-		}
+    public void setAutoSchedules(boolean val)
+        {
+        autoSchedules = val;
+        rescheduleOrdering = 0;
+        }
 
     /** Returns whether the Source reschedules itself automatically using either a deterministic or distribution-based
-    	rate scheme.
+        rate scheme.
     */
-	public boolean getAutoSchedules()
-		{
-		return autoSchedules;
-		}
+    public boolean getAutoSchedules()
+        {
+        return autoSchedules;
+        }
 
     /** Returns the reschedule ordering. */
-	public int getRescheduleOrdering() { return rescheduleOrdering; }
+    public int getRescheduleOrdering() { return rescheduleOrdering; }
 
     /** Returns the reschedule ordering and clears the delay entirely. */
-	public void setRescheduleOrdering(int ordering) { this.rescheduleOrdering = ordering; }
+    public void setRescheduleOrdering(int ordering) { this.rescheduleOrdering = ordering; }
 
     double getNextProductionTime()
         {
         double currentTime = state.schedule.getTime();
         if (currentTime < Schedule.EPOCH) 
-        	currentTime = Schedule.EPOCH;
+            currentTime = Schedule.EPOCH;
         double val = 0;
         if (rateDistribution != null)
-        	{
-        	val = rateDistribution.nextDouble() + nextTime;
-        	}
+            {
+            val = rateDistribution.nextDouble() + nextTime;
+            }
         else if (currentTime == Schedule.EPOCH)
-			{
-			val = (randomOffset ? state.random.nextDouble() * rate : 0.0) + nextTime;
-			}
-		else
-			{
-			val = rate + nextTime;
-			}
-				
+            {
+            val = (randomOffset ? state.random.nextDouble() * rate : 0.0) + nextTime;
+            }
+        else
+            {
+            val = rate + nextTime;
+            }
+                                
         if (val == currentTime) 
-        	val = Math.nextUp(currentTime); 
+            val = Math.nextUp(currentTime); 
         return val;
         }
     
     
     /** Sets the distribution used to determine how much resource is produced each time the Source
-    	decides to produce resources.  If this is null, then the determinstic production value is used instead.
+        decides to produce resources.  If this is null, then the determinstic production value is used instead.
     */
     public void setProductionDistribution(AbstractDistribution productionDistribution)
         {
@@ -199,7 +199,7 @@ public class Source extends Provider implements Steppable
         }
         
     /** Returns the distribution used to determine how much resource is produced each time the Source
-    	decides to produce resources.  If this is null, then the determinstic production value is used instead.
+        decides to produce resources.  If this is null, then the determinstic production value is used instead.
     */
     public AbstractDistribution getProductionDistribution()
         {
@@ -207,7 +207,7 @@ public class Source extends Provider implements Steppable
         }
 
     /** Sets the deterministic production value used to determine how much resource is produced each time the Source
-    	decides to produce resources (only when there is no distribution provided).
+        decides to produce resources (only when there is no distribution provided).
     */
     public void setProduction(double amt)
         {
@@ -217,7 +217,7 @@ public class Source extends Provider implements Steppable
         }
 
     /** Returns the deterministic production value used to determine how much resource is produced each time the Source
-    	decides to produce resources (only when there is no distribution provided).
+        decides to produce resources (only when there is no distribution provided).
     */
     public double getProduction()
         {
@@ -278,37 +278,37 @@ public class Source extends Provider implements Steppable
         <p>update() then works as follows.
         
         <ol>
-        	<li>First, if we are rescheduling by rate...
-        	<ol>
-			<li>First we must determine if we are producing anything at all this go-around.
-			<ul>
-				<li>If we are at the Schedule.EPOCH, we produce nothing and return immediately.
-				<li>If we are scheduled to produce something at a future time, and have not reached it yet,
-				again, we produce nothing and return immediately.
-				<li>Else we'll produce something.
-			</ul>
-		
-			<li>If we've gotten this far, we next compute the next time we should produce something.
-			<ul>
-				<li>If we are at the Schedule.EPOCH, and we are producing at a deterministic rate, then
-					the next time is just the previous determined time plus either the rate or (if we are using a
-					random offset) the rate time a random number between 0 and 1.
-				<li>If we are NOT at the Schedule.EPOCH, and we are producing at a deterministic rate, then
-					the next time is just the previous determined time plus either the rate.
-				<li>If we are producing at a rate determined by a distribution, then the next time is 
-					the previous determined time plus a random value under this distribution.
-			</ul>
-		
-			<li>Now we next reschedule ourselves at the next time and ordering.
-        	</ol>
+        <li>First, if we are rescheduling by rate...
+        <ol>
+        <li>First we must determine if we are producing anything at all this go-around.
+        <ul>
+        <li>If we are at the Schedule.EPOCH, we produce nothing and return immediately.
+        <li>If we are scheduled to produce something at a future time, and have not reached it yet,
+        again, we produce nothing and return immediately.
+        <li>Else we'll produce something.
+        </ul>
+                
+        <li>If we've gotten this far, we next compute the next time we should produce something.
+        <ul>
+        <li>If we are at the Schedule.EPOCH, and we are producing at a deterministic rate, then
+        the next time is just the previous determined time plus either the rate or (if we are using a
+        random offset) the rate time a random number between 0 and 1.
+        <li>If we are NOT at the Schedule.EPOCH, and we are producing at a deterministic rate, then
+        the next time is just the previous determined time plus either the rate.
+        <li>If we are producing at a rate determined by a distribution, then the next time is 
+        the previous determined time plus a random value under this distribution.
+        </ul>
+                
+        <li>Now we next reschedule ourselves at the next time and ordering.
+        </ol>
 
         <li>Now we determine how much to produce.
-			<ul>
-				<li>If we are producing a deterministic production amount, then we use the production amount.
-				<li>If we are producing an amount determined by a distribution, then we select a random value 
-				under this distribution.
-			</ul>
-		</ol>
+        <ul>
+        <li>If we are producing a deterministic production amount, then we use the production amount.
+        <li>If we are producing an amount determined by a distribution, then we select a random value 
+        under this distribution.
+        </ul>
+        </ol>
                     
         <p>New entities are produced by calling the method buildEntity().
                 
@@ -318,73 +318,73 @@ public class Source extends Provider implements Steppable
     protected void update()
         {
         if (!autoSchedules)
-        	{
-			double time = state.schedule.getTime();
-			if (time == Schedule.EPOCH)
-				{
-				nextTime = getNextProductionTime();
-				state.schedule.scheduleOnce(nextTime, rescheduleOrdering, this);
-				return;		// we produce NOTHING the first time
-				}
-			else if (time < nextTime)		// not ready yet -- FIXME, how could this possibly happen?
-				{
-				return;
-				}
-		
-			// at this point we're ready to produce!
-			// First compute a new time beyond this one
-			nextTime = getNextProductionTime();
-			state.schedule.scheduleOnce(nextTime, rescheduleOrdering, this);
-			}
+            {
+            double time = state.schedule.getTime();
+            if (time == Schedule.EPOCH)
+                {
+                nextTime = getNextProductionTime();
+                state.schedule.scheduleOnce(nextTime, rescheduleOrdering, this);
+                return;         // we produce NOTHING the first time
+                }
+            else if (time < nextTime)               // not ready yet -- FIXME, how could this possibly happen?
+                {
+                return;
+                }
+                
+            // at this point we're ready to produce!
+            // First compute a new time beyond this one
+            nextTime = getNextProductionTime();
+            state.schedule.scheduleOnce(nextTime, rescheduleOrdering, this);
+            }
         
         // check for capacity
         if (entities != null)
-        	{
-        	if (entities.size() >= capacity)
-        		return;
-        	}
+            {
+            if (entities.size() >= capacity)
+                return;
+            }
         else
-        	{
-			CountableResource res = (CountableResource)resource;
-        	if (res.getAmount() >= capacity)
-        		return;
-        	}
-        	
-		double amt = production;
-		if (productionDistribution != null)
-			{
-			amt = produceAmount();
-			}
-							
-		if (entities != null)
-			{
-			for(int i = 0; i < Math.round(amt); i++)
-				{
-				if (entities.size() < capacity)
-					entities.add(buildEntity());
-				else break;
-				}
-			}       
-		else
-			{
-			CountableResource res = (CountableResource)resource;
-			if (res.isCountable())
-				amt = Math.round(amt);
-									
-			res.increase(amt);
-			if (res.getAmount() > capacity)
-				res.setAmount(capacity);
-			}               
+            {
+            CountableResource res = (CountableResource)resource;
+            if (res.getAmount() >= capacity)
+                return;
+            }
+                
+        double amt = production;
+        if (productionDistribution != null)
+            {
+            amt = produceAmount();
+            }
+                                                        
+        if (entities != null)
+            {
+            for(int i = 0; i < Math.round(amt); i++)
+                {
+                if (entities.size() < capacity)
+                    entities.add(buildEntity());
+                else break;
+                }
+            }       
+        else
+            {
+            CountableResource res = (CountableResource)resource;
+            if (res.isCountable())
+                amt = Math.round(amt);
+                                                                        
+            res.increase(amt);
+            if (res.getAmount() > capacity)
+                res.setAmount(capacity);
+            }               
         }
                 
-	/** Upon being stepped, the Source updates its resources (potentially building some new ones), then
-		makes offers to registered receivers.  If you are automatically rescheduling, you don't have to
-		schedule the Source at all; it'll handle it. */
-		
+    /** Upon being stepped, the Source updates its resources (potentially building some new ones), then
+        makes offers to registered receivers.  If you are automatically rescheduling, you don't have to
+        schedule the Source at all; it'll handle it. */
+                
     public void step(SimState state)
         {
         update();
-		offerReceivers();
+        offerReceivers();
         }
 
     public String toString()

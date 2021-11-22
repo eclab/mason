@@ -58,13 +58,13 @@ public class Pool implements Named
         return "Pool@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + resource + ", " + (long)maximum + ")";
         }               
 
-	String name;
-	public String getName() { return name; }
-	public void setName(String name) { this.name = name; }
+    String name;
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-	/** Does nothing.  Don't bother scheduling Pool. */
-	public void step(SimState state)
-		{
-		// does nothing
-		}
+    /** Does nothing.  Don't bother scheduling Pool. */
+    public void step(SimState state)
+        {
+        // does nothing
+        }
     }

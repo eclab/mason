@@ -11,8 +11,8 @@ import sim.util.*;
 import java.util.*;
 
 /**
-    A receiver of resources.  Receivers can ACCEPT offers from providers (or refuse them).
-   	Receivers can also register themselves with providers to be informed of offers.
+   A receiver of resources.  Receivers can ACCEPT offers from providers (or refuse them).
+   Receivers can also register themselves with providers to be informed of offers.
 */
 
 public interface Receiver extends Named

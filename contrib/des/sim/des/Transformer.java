@@ -30,9 +30,9 @@ public class Transformer extends Provider implements Receiver
 
     /** Returns false always and does nothing: Transformer is push-only. */
     public boolean provide(Receiver receiver)
-    	{
-		return false;
-    	}
+        {
+        return false;
+        }
 
     protected boolean offerReceiver(Receiver receiver)
         {
@@ -83,8 +83,8 @@ public class Transformer extends Provider implements Receiver
         return "Transformer@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typicalIn + " -> " + typical + ", " + ratioIn + "/" + ratioOut + ")";
         }
 
-	public void step(SimState state)
-		{
-		// do nothing
-		}
+    public void step(SimState state)
+        {
+        // do nothing
+        }
     }

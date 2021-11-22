@@ -97,8 +97,8 @@ public class Decomposer extends Provider implements Receiver
         return "Unpacker@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical + ")";
         }
 
-	public void step(SimState state)
-		{
-		// do nothing
-		}
+    public void step(SimState state)
+        {
+        // do nothing
+        }
     }

@@ -35,13 +35,13 @@ public class SimpleDelay extends Source implements Receiver, Steppable
     boolean autoSchedules = true;
     
     /** Returns whether the SimpleDelay schedules itself on the Schedule automatically to handle
-    	the next timestep at which a delayed resource will become available.  If you turn this
-    	off you will have to schedule the SimpleDelay yourself. */
+        the next timestep at which a delayed resource will become available.  If you turn this
+        off you will have to schedule the SimpleDelay yourself. */
     public boolean getAutoSchedules() { return autoSchedules; }
 
     /** Sets whether the SimpleDelay schedules itself on the Schedule automatically to handle
-    	the next timestep at which a delayed resource will become available.  If you turn this
-    	off you will have to schedule the SimpleDelay yourself. */
+        the next timestep at which a delayed resource will become available.  If you turn this
+        off you will have to schedule the SimpleDelay yourself. */
     public void setAutoScheduled(boolean val) { autoSchedules = val; }
         
     /** Clears all resources currently in the SimpleDelay. */
@@ -59,10 +59,10 @@ public class SimpleDelay extends Source implements Receiver, Steppable
     public void setDelayTime(double delayTime) { clear(); this.delayTime = delayTime; }
 
     /** Returns the delay ordering. */
-	public int getRescheduleOrdering() { clear(); return rescheduleOrdering; }
+    public int getRescheduleOrdering() { clear(); return rescheduleOrdering; }
 
     /** Returns the delay ordering and clears the delay entirely. */
-	public void setRescheduleOrdering(int ordering) { this.rescheduleOrdering = ordering; }
+    public void setRescheduleOrdering(int ordering) { this.rescheduleOrdering = ordering; }
 
     void throwInvalidNumberException(double capacity)
         {
@@ -70,11 +70,11 @@ public class SimpleDelay extends Source implements Receiver, Steppable
         }
 
     /** Builds the delay structure. */
-	protected void buildDelay()
-		{
+    protected void buildDelay()
+        {
         delayQueue = new LinkedList<>();
-		}
-		
+        }
+                
     /** Creates a SimpleDelay with a given delayTime, 0 ordering, and typical resource. */
     public SimpleDelay(SimState state, double delayTime, Resource typical)
         {
@@ -84,7 +84,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable
         }
 
     /** Accepts up to CAPACITY of the given resource and places it in the delay,
-    	then auto-reschedules the delay if that feature is on.. */
+        then auto-reschedules the delay if that feature is on.. */
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (!resource.isSameType(amount)) 
@@ -123,8 +123,8 @@ public class SimpleDelay extends Source implements Receiver, Steppable
         }
                 
     /** Deletes exiting ripe resources, then 
-    	checks the delay pipeline to determine if any resources have come ripe, and makes
-    	them available to registered receivers in zero time. */
+        checks the delay pipeline to determine if any resources have come ripe, and makes
+        them available to registered receivers in zero time. */
     protected void update()
         {
         drop();
@@ -157,9 +157,9 @@ public class SimpleDelay extends Source implements Receiver, Steppable
         return "SimpleDelay@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ", " + delayTime + ")";
         }  
                      
-	/** Upon being stepped, the Delay calls update() to reap all ripe resources.  It then
-		calls offerReceivers to make offers to registered receivers.  You don't have to
-		schedule the Delay at all, unless you have turned off auto-scheduling. */
+    /** Upon being stepped, the Delay calls update() to reap all ripe resources.  It then
+        calls offerReceivers to make offers to registered receivers.  You don't have to
+        schedule the Delay at all, unless you have turned off auto-scheduling. */
 
     public void step(SimState state)
         {

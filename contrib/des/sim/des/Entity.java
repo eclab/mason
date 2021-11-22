@@ -56,11 +56,11 @@ public class Entity extends Resource
         }
         
     /** Returns true if the Entity is composite. */
-	public boolean isComposite()
-		{
-		return (storage != null);
-		}
-		
+    public boolean isComposite()
+        {
+        return (storage != null);
+        }
+                
     /** Removes the Entity's storage. */
     public void clear()
         {
@@ -73,7 +73,7 @@ public class Entity extends Resource
         return 1.0;
         }
 
-	/** Returns a Entity of the same type, name, and amount as the provided Entity.
+    /** Returns a Entity of the same type, name, and amount as the provided Entity.
         Note that the copy of the Entity's storage is just a pointer copy: you may
         want to copy the storage more properly. */
     public Resource duplicate()

@@ -46,22 +46,22 @@ public class Queue extends Provider implements Receiver, Steppable
     boolean offersImmediately = true;
     
     /** Returns whether the Queue offers items immediately upon accepting (when possible) in zero time,
-    	as opposed to when it is stepped. */
+        as opposed to when it is stepped. */
     public boolean getOffersImmediately() { return offersImmediately; }
 
     /** Sets whether the Queue offers items immediately upon accepting (when possible) in zero time,
-    	as opposed to when it is stepped. */
+        as opposed to when it is stepped. */
     public void setOffersImmediately(boolean val) { offersImmediately = val; }
 
-	/** 
-		Builds a queue with the given typical resource type.
-		*/
+    /** 
+        Builds a queue with the given typical resource type.
+    */
     public Queue(SimState state, Resource typical)
         {
         super(state, typical);
         }
 
-   public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
+    public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (isOffering()) throwCyclicOffers();  // cycle
         
@@ -69,13 +69,13 @@ public class Queue extends Provider implements Receiver, Steppable
         if (entities == null)
             {
             if (capacity - resource.getAmount() >= atLeast)
-            	{
-            	double transfer = Math.min(capacity - resource.getAmount(), atMost);
-            	resource.increase(transfer);
-            	((CountableResource)amount).decrease(transfer);
-            	 if (getOffersImmediately()) offerReceivers(); 
-            	return true;
-            	}
+                {
+                double transfer = Math.min(capacity - resource.getAmount(), atMost);
+                resource.increase(transfer);
+                ((CountableResource)amount).decrease(transfer);
+                if (getOffersImmediately()) offerReceivers(); 
+                return true;
+                }
             else return false;
             }
         else
@@ -83,7 +83,7 @@ public class Queue extends Provider implements Receiver, Steppable
             if (capacity - entities.size() >= 1)
                 {
                 entities.add((Entity)amount);
-            	 if (getOffersImmediately()) offerReceivers(); 
+                if (getOffersImmediately()) offerReceivers(); 
                 return true;
                 }
             else return false;
@@ -95,9 +95,9 @@ public class Queue extends Provider implements Receiver, Steppable
         return "Queue@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ")";
         }               
 
-	/** Upon being stepped, the Queue offers to registered receivers.  You don't have to
-		schedule the Queue at all; in which case this method would never be called. */
-		
+    /** Upon being stepped, the Queue offers to registered receivers.  You don't have to
+        schedule the Queue at all; in which case this method would never be called. */
+                
     public void step(SimState state)
         {
         offerReceivers();

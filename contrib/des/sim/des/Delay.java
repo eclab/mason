@@ -30,11 +30,11 @@ public class Delay extends SimpleDelay
     Heap delayHeap;
     AbstractDistribution distribution = null;
 
-	protected void buildDelay()
-		{
+    protected void buildDelay()
+        {
         delayHeap = new Heap();
-		}
-		
+        }
+                
     /** Creates a Delay with a 0 ordering and typical resource. */
     public Delay(SimState state, Resource typical)
         {
@@ -48,14 +48,14 @@ public class Delay extends SimpleDelay
         }
         
     /** Sets the distribution used to independently select the delay time for each separate incoming 
-    	resource.  If null, 1.0 will be used. */
+        resource.  If null, 1.0 will be used. */
     public void setDelayDistribution(AbstractDistribution distribution)
         {
         this.distribution = distribution;
         }
                 
     /** Returns the distribution used to independently select the delay time for each separate incoming 
-    	resource.  If null, 1.0 will be used. */
+        resource.  If null, 1.0 will be used. */
     public AbstractDistribution getDelayDistribution()
         {
         return this.distribution;

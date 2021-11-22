@@ -11,8 +11,8 @@ import sim.util.*;
 import java.util.*;
 
 /**
-  Upon receiving an offer, first tries to LOCK (acquire) N resources from a Pool, and if successful,
-  accepts the offer and offers it in turn to registered receivers.
+   Upon receiving an offer, first tries to LOCK (acquire) N resources from a Pool, and if successful,
+   accepts the offer and offers it in turn to registered receivers.
 */
 
 public class Lock extends Provider implements Receiver
@@ -53,9 +53,9 @@ public class Lock extends Provider implements Receiver
 
     /** Returns false always and does nothing. */
     public boolean provide(Receiver receiver)
-    	{
-		return false;
-    	}
+        {
+        return false;
+        }
 
     protected boolean offerReceiver(Receiver receiver)
         {
@@ -92,8 +92,8 @@ public class Lock extends Provider implements Receiver
         }  
                      
     /** Does nothing. */
-	public void step(SimState state)
-		{
-		// do nothing
-		}
+    public void step(SimState state)
+        {
+        // do nothing
+        }
     }

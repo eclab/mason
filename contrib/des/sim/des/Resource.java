@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.*;
    or using a copy constuctor found in a resource subclass.
         
    <p>Note that type allocation is not threadsafe.
-   	<!-- unless DSimState.isMultiThreaded() returns true. -->
+   <!-- unless DSimState.isMultiThreaded() returns true. -->
 **/
 
 
@@ -68,10 +68,10 @@ public abstract class Resource
     */
     public abstract boolean equals(Object other);
 
-	/**
-		Returns a suitable hash code.
-	*/
-	public abstract int hashCode();
+    /**
+       Returns a suitable hash code.
+    */
+    public abstract int hashCode();
 
     /** 
         Returns the amount of the resource.

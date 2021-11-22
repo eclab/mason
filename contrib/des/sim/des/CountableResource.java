@@ -74,7 +74,7 @@ public class CountableResource extends Resource
         return (val >= 0);
         }
 
- 	static boolean isInteger(double val)
+    static boolean isInteger(double val)
         {
         return (val <= MAXIMUM_INTEGER && val == (long) val);
         }
