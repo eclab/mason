@@ -11,56 +11,37 @@ import sim.util.*;
 import java.util.*;
 
 /*
-  UNLOCKS allow up to N resources to pass through before refusing any more
+  Upon receiving an offer, UNLOCKS up to N resources and returns then to a Pool, then accepts
+  the offer and offers it in turn to registered receivers.
 */
 
 public class Unlock extends Lock
     {
-    public Unlock(SimState state, Resource typical, Pool pool, double allocation)
+    /** Builds an Unlock attached to the given pool and with the given amount of resources released each time. */
+    public Unlock(SimState state, Resource typical, Pool pool, double numResources)
         {
-        super(state, typical, pool, allocation);
+        super(state, typical, pool, numResources);
         }
         
+    /** Builds an Unlock attached to the given pool and with 1.0 of the resource returned each time. */
     public Unlock(SimState state, Resource typical, Pool pool)
         {
-        super(state, typical, pool);
+        this(state, typical, pool, 1.0);
         }
         
-    public Unlock(SimState state, Resource typical, String name)
-        {
-        super(state, typical, name);
-        }
-        
+    /** Builds an Unlock with the same parameters as the provided Lock. */
     public Unlock(Lock other)
         {
         super(other);
         }
 
-    protected boolean offerReceiver(Receiver receiver)
-        {
-        return receiver.accept(this, _amount, _atLeast, _atMost);
-        }
-        
-    /** Returns false always and does nothing: Unlock is push-only. */
-    public boolean provide(Receiver receiver)
-    	{
-		return false;
-    	}
-
-    // Unlocks only make take-it-or-leave-it offers
-    public boolean getOffersTakeItOrLeaveIt() { return true; }
-
-    double _atLeast;
-    double _atMost;
-    Resource _amount;
-        
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
-        if (pool.getMaximum() - pool.getResource().getAmount() < allocation) return false;
+        if (pool.getMaximum() - pool.getResource().getAmount() < numResources) return false;
 
         _amount = amount;
         _atLeast = atLeast;
@@ -69,13 +50,13 @@ public class Unlock extends Lock
                 
         if (true)                               // we always increment even if we fail
             {
-            pool.getResource().increase(allocation);
+            pool.getResource().increase(numResources);
             }
         return result;
         }
 
     public String getName()
         {
-        return "Unlock(" + typical.getName() + ", " + pool + ", " + allocation + ")";
+        return "Unlock(" + typical.getName() + ", " + pool + ", " + numResources + ")";
         }               
     }

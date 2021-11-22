@@ -5,18 +5,13 @@
 */
 
 package sim.des;
-
-/** 
-    A delay pipeline.  Elements placed in the delay are only available
-    after a fixed amount of time.
-*/
-
-
 import sim.engine.*;
 import java.util.*;
 
-/**
-   A simple linked list-based delay with a fixed delay time for all submitted elements.
+/** 
+    A simple deterministic delay pipeline.  Elements placed in the delay are only available
+    after a fixed amount of time which is always the same regardless of the element and its
+    provider.  Unless you turn off auto-scheduling 
 */
 
 public class SimpleDelay extends Source implements Receiver, Steppable
@@ -36,12 +31,20 @@ public class SimpleDelay extends Source implements Receiver, Steppable
     double totalResource = 0.0;
     LinkedList<Node> delayQueue = new LinkedList<>();
     double delayTime;
-    int ordering = 0;
+    int rescheduleOrdering = 0;
     boolean autoSchedules = true;
     
+    /** Returns whether the SimpleDelay schedules itself on the Schedule automatically to handle
+    	the next timestep at which a delayed resource will become available.  If you turn this
+    	off you will have to schedule the SimpleDelay yourself. */
     public boolean getAutoSchedules() { return autoSchedules; }
+
+    /** Sets whether the SimpleDelay schedules itself on the Schedule automatically to handle
+    	the next timestep at which a delayed resource will become available.  If you turn this
+    	off you will have to schedule the SimpleDelay yourself. */
     public void setAutoScheduled(boolean val) { autoSchedules = val; }
         
+    /** Clears all resources currently in the SimpleDelay. */
     public void clear()
         {
         super.clear();
@@ -49,22 +52,30 @@ public class SimpleDelay extends Source implements Receiver, Steppable
         totalResource = 0.0;
         }
                 
+    /** Returns the delay time. */
     public double getDelayTime() { return delayTime; }
-    public void setDelayTime(double delayTime) { this.delayTime = delayTime; }
 
-	public int getOrdering() { return ordering; }
-	public void setOrdering(int ordering) { this.ordering = ordering; }
+    /** Sets the delay time and clears the delay entirely. */
+    public void setDelayTime(double delayTime) { clear(); this.delayTime = delayTime; }
+
+    /** Returns the delay ordering. */
+	public int getRescheduleOrdering() { clear(); return rescheduleOrdering; }
+
+    /** Returns the delay ordering and clears the delay entirely. */
+	public void setRescheduleOrdering(int ordering) { this.rescheduleOrdering = ordering; }
 
     void throwInvalidNumberException(double capacity)
         {
         throw new RuntimeException("Capacities may not be negative or NaN.  capacity was: " + capacity);
         }
 
+    /** Builds the delay structure. */
 	protected void buildDelay()
 		{
         delayQueue = new LinkedList<>();
 		}
 		
+    /** Creates a SimpleDelay with a given delayTime, 0 ordering, and typical resource. */
     public SimpleDelay(SimState state, double delayTime, Resource typical)
         {
         super(state, typical);
@@ -72,6 +83,8 @@ public class SimpleDelay extends Source implements Receiver, Steppable
         buildDelay();
         }
 
+    /** Accepts up to CAPACITY of the given resource and places it in the delay,
+    	then auto-reschedules the delay if that feature is on.. */
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (!resource.isSameType(amount)) 
@@ -96,10 +109,11 @@ public class SimpleDelay extends Source implements Receiver, Steppable
             if (delayQueue.size() >= capacity) return false; // we're at capacity
             delayQueue.add(new Node(amount, nextTime));
             }
-        if (getAutoSchedules()) state.schedule.scheduleOnce(nextTime, getOrdering(), this);
+        if (getAutoSchedules()) state.schedule.scheduleOnce(nextTime, getRescheduleOrdering(), this);
         return true;
         }
 
+    /** Removes all currently ripe resources. */
     protected void drop()
         {
         if (entities == null)
@@ -108,6 +122,9 @@ public class SimpleDelay extends Source implements Receiver, Steppable
             entities.clear();
         }
                 
+    /** Deletes exiting ripe resources, then 
+    	checks the delay pipeline to determine if any resources have come ripe, and makes
+    	them available to registered receivers in zero time. */
     protected void update()
         {
         drop();
@@ -140,8 +157,13 @@ public class SimpleDelay extends Source implements Receiver, Steppable
         return "SimpleDelay(" + typical.getName() + ", " + delayTime + ")";
         }  
                      
+	/** Upon being stepped, the Delay calls update() to reap all ripe resources.  It then
+		calls offerReceivers to make offers to registered receivers.  You don't have to
+		schedule the Delay at all, unless you have turned off auto-scheduling. */
+
     public void step(SimState state)
         {
+        update();
         offerReceivers();
         }
     }

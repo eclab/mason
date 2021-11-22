@@ -258,6 +258,7 @@ public abstract class Provider implements Named
     
     // only warn about problems with the distribution a single time
     boolean warned = false; 
+    
     /**
 		Makes offers to the receivers according to the current offer policy.	
 		Returns true if at least one offer was accepted.

@@ -10,46 +10,48 @@ import sim.engine.*;
 import sim.util.*;
 import java.util.*;
 
-/*
-  LOCKS allow up to N resources to pass through before refusing any more
+/**
+  Upon receiving an offer, first tries to LOCK (acquire) N resources from a Pool, and if successful,
+  accepts the offer and offers it in turn to registered receivers.
 */
 
 public class Lock extends Provider implements Receiver
     {
     Pool pool;
-    double allocation;
-        
-    public Lock(SimState state, Resource typical, Pool pool, double allocation)
+    double numResources;
+    
+    /** Builds a lock attached to the given pool and with the given amount of resources acquired each time. */
+    public Lock(SimState state, Resource typical, Pool pool, double numResources)
         {
         super(state, typical);
-        this.allocation = allocation;
+        this.numResources = numResources;
         this.pool = pool;
         }
         
+    /** Builds a lock attached to the given pool and with 1.0 of the resource acquired each time. */
     public Lock(SimState state, Resource typical, Pool pool)
         {
-        this(state, typical, pool, Double.POSITIVE_INFINITY);
+        this(state, typical, pool, 1.0);
         }
         
-    public Lock(SimState state, Resource typical, String name)
-        {
-        this(state, typical, new Pool(new CountableResource(name, 0.0), 1.0), Double.POSITIVE_INFINITY);
-        }
-        
+    /** Builds a Lock with the same parameters as the provided Lock. */
     public Lock(Lock other)
         {
         super(other.state, other.typical);
         this.pool = other.pool;
-        this.allocation = other.allocation;
+        this.numResources = other.numResources;
         }
                 
-    public double getAllocation() { return allocation; }
-    public void setAllocation(double val) { allocation = val; }
+    /** Returns the number of resources allocated each time */
+    public double getNumResources() { return numResources; }
+    
+    /** Sets the number of resources allocated each time */
+    public void setNumResources(double val) { numResources = val; }
         
-    // Locks only make take-it-or-leave-it offers
+    /** Always returns true: locks only make take-it-or-leave-it offers */
     public boolean getOffersTakeItOrLeaveIt() { return true; }
 
-    /** Returns false always and does nothing: Lock is push-only. */
+    /** Returns false always and does nothing. */
     public boolean provide(Receiver receiver)
     	{
 		return false;
@@ -70,7 +72,7 @@ public class Lock extends Provider implements Receiver
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
-        if (pool.getResource().getAmount() < allocation) return false;
+        if (pool.getResource().getAmount() < numResources) return false;
 
         _amount = amount;
         _atLeast = atLeast;
@@ -79,16 +81,17 @@ public class Lock extends Provider implements Receiver
                 
         if (result)
             {
-            pool.getResource().decrease(allocation);
+            pool.getResource().decrease(numResources);
             }
         return result;
         }
 
     public String getName()
         {
-        return "Lock(" + typical.getName() + ", " + pool + ", " + allocation + ")";
+        return "Lock(" + typical.getName() + ", " + pool + ", " + numResources + ")";
         }  
                      
+    /** Does nothing. */
 	public void step(SimState state)
 		{
 		// do nothing

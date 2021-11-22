@@ -9,6 +9,10 @@ package sim.des;
 import sim.engine.*;
 import java.util.*;
 
+/**
+	A composer
+**/
+
 public class Composer extends Provider implements Receiver
     {
     protected void throwDuplicateType(Resource res)

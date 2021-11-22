@@ -19,9 +19,9 @@ import java.util.*;
 
 
 /**
-   A Heap-based delay which allows different submitted elements to have different
-   delay times.  Delay times can be based on a provided distribution, or you can override
-   the method getDelay(...) to customize delay times entirely based on the provide
+   A delay pipeline which allows different submitted elements to have different
+   delay times.  Delay times are normally based on a provided distribution, or you can override
+   the method getDelay(...) to customize delay times entirely based on the provider
    and resource being provided. 
 */
 
@@ -35,6 +35,7 @@ public class Delay extends SimpleDelay
         delayHeap = new Heap();
 		}
 		
+    /** Creates a Delay with a 0 ordering and typical resource. */
     public Delay(SimState state, Resource typical)
         {
         super(state, 1.0, typical);
@@ -46,11 +47,15 @@ public class Delay extends SimpleDelay
         totalResource = 0.0;
         }
         
+    /** Sets the distribution used to independently select the delay time for each separate incoming 
+    	resource.  If null, 1.0 will be used. */
     public void setDelayDistribution(AbstractDistribution distribution)
         {
         this.distribution = distribution;
         }
                 
+    /** Returns the distribution used to independently select the delay time for each separate incoming 
+    	resource.  If null, 1.0 will be used. */
     public AbstractDistribution getDelayDistribution()
         {
         return this.distribution;
@@ -91,7 +96,7 @@ public class Delay extends SimpleDelay
             delayHeap.add(amount, nextTime);
             }
        
-        if (getAutoSchedules()) state.schedule.scheduleOnce(nextTime, getOrdering(), this);
+        if (getAutoSchedules()) state.schedule.scheduleOnce(nextTime, getRescheduleOrdering(), this);
         
         return true;
         }
