@@ -1,3 +1,11 @@
+/*
+  Copyright 2021 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
+package sim.des;
+
 /** 
     A blocking resource queue with a capacity.  Resources placed in the queue are available 
     immediately, but when the queue is empty, the Queue will attempt to satisfy

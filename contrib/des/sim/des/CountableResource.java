@@ -1,3 +1,11 @@
+/*
+  Copyright 2021 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
+package sim.des;
+
 /** 
     A CountableResource is an Resource which can be merged with resources of the same type.  Resources
     have AMOUNTS, which must be integers >= 0.  CountableResources are thus finite-ly divisible.

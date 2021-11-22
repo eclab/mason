@@ -1,3 +1,11 @@
+/*
+  Copyright 2021 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
+package sim.des;
+
 /** 
     A blocking source of resources.  You can subclass this to provide resources 
     in your own fashion if you like, by overriding the update() and computeAvailable() methods.

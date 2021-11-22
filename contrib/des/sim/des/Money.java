@@ -1,3 +1,11 @@
+/*
+  Copyright 2021 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
+package sim.des;
+
 /** 
     A CountableResource with a cute toString() to print it nicely.  Money is assumed to be countable 
     and thus have a minimum atomic value: for example the value "1" for US Dollars would be 1 penny,

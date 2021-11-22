@@ -1,42 +1,47 @@
+/*
+  Copyright 2021 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
+package sim.des;
+
 import sim.engine.*;
 import java.util.*;
 import sim.util.distribution.*;
 
 /**
-   A non-blocking provider of resources.  A provider can be attached
-   to any number of Receivers.  If a provider can make offers, it will
-   do so to all the receivers, either in the order in which they were
-   registered with the Provider, or in random shuffled order. 
-   Providers also have a TYPICAL resource, 
+   A provider of resources. Providers also have a TYPICAL resource, 
    which exists only to provide a resource type.  Providers also have
    a RESOURCE, initially zero, of the same type, which is used as a 
    pool for resources.  The Provider class does not use the resource
    variable, and only makes it available as a convenience for subclasses
    to use as they see fit.  
+   
+   <p>A provider has any number of RECEIVERS which register
+   themselves with it.  When a provider is ready to make an offer, it will
+   do so using the offerReceivers() method, which offers to the receivers
+   using one of several POLICIES.  Offers can be normal or TAKE-IT-OR-LEAVE-IT
+   offers.
 */
 
 public abstract class Provider implements Named
     {
+    /** Throws an exception indicating that an offer cycle was detected. */
     protected void throwCyclicOffers()
         {
         throw new RuntimeException("Zero-time cycle found among offers including this one." );
         }
 
+    /** Throws an exception indicating that the given resource does not match the Provider's typical resource. */
     protected void throwUnequalTypeException(Resource res)
         {
         throw new RuntimeException("Expected resource type " + this.typical.getName() + "(" + this.typical.getType() + ")" +
             " but got resource type " + res.getName() + "(" + res.getType() + ")" );
         }
 
-    protected void throwNANException(double threshold)
-        {
-        throw new RuntimeException("Threshold may not be NaN.  threshold was: " + threshold);
-        }
-
-    protected void throwCriterionException(int criterion)
-        {
-        throw new RuntimeException("Criterion is not valid: " + criterion);
-        }
+	// receivers registered with the provider
+    ArrayList<Receiver> receivers;
 
     /** The typical kind of resource the Provider provides.  This should always be zero and not used except for type checking. */
     protected Resource typical;
@@ -46,17 +51,7 @@ public abstract class Provider implements Named
     protected LinkedList<Entity> entities;
     /** The model. */
     protected SimState state;
-    protected ArrayList<Receiver> receivers;
-    
-    public static final int CRITERION_GREATER = 0;
-    public static final int CRITERION_GREATER_OR_EQUAL = 1;
-    public static final int CRITERION_LESS = 2;
-    public static final int CRITERION_LESS_OR_EQUAL = 3;
         
-    AbstractDistribution offerDistribution = null;
-    double offerThreshold = 0;
-    int offerCriterion = CRITERION_GREATER;
-    
     /** Offer Policy: offers are made to the first receiver, then the second, and so on, until available resources or receivers are exhausted. */
     public static final int OFFER_POLICY_FORWARD = 0;
     /** Offer Policy: offers are made to the last receiver, then the second to last, and so on, until available resources or receivers are exhausted. */
@@ -65,21 +60,22 @@ public abstract class Provider implements Named
     public static final int OFFER_POLICY_ROUND_ROBIN = 2;
     /** Offer Policy: offers are made to the receivers in a randomly shuffled order, until available resources or receivers are exhausted. */
     public static final int OFFER_POLICY_SHUFFLE = 3;
-    /** Offer Policy: offers are made to only one random receiver, chosen uniformly. */
-    public static final int OFFER_POLICY_ONE_RANDOM = 4;
-    /** Offer Policy: offers are made randomly to the first receiver, and if not, then randomly to the next receiver, and if not then to the third receiver, and so on, using a distribution. */
-    public static final int OFFER_POLICY_RANDOM_DISTRIBUTION = 5;
+    /** Offer Policy: offers are made to only one random receiver, chosen via an offer distribution or, if the offer distribution is null, chosen uniformly. */
+    public static final int OFFER_POLICY_RANDOM = 4;
     int offerPolicy;
     int roundRobinPosition = 0;
     boolean offersTakeItOrLeaveIt;
+    AbstractDiscreteDistribution offerDistribution;
     
     boolean offering;
-    public boolean isOffering() { return offering; }
+    /** Returns true if the Provider is currently making an offer to a receiver (this is meant to allow you
+    	to check for offer cycles. */
+    protected boolean isOffering() { return offering; }
 
     /** Sets the receiver offer policy */
     public void setOfferPolicy(int offerPolicy) 
         { 
-        if (offerPolicy < OFFER_POLICY_FORWARD || offerPolicy > OFFER_POLICY_RANDOM_DISTRIBUTION)
+        if (offerPolicy < OFFER_POLICY_FORWARD || offerPolicy > OFFER_POLICY_RANDOM)
             throw new IllegalArgumentException("Offer Policy " + offerPolicy + " out of bounds.");
         this.offerPolicy = offerPolicy; 
         roundRobinPosition = 0; 
@@ -88,42 +84,46 @@ public abstract class Provider implements Named
     /** Returns the receiver offer policy */
     public int getOfferPolicy() { return offerPolicy; }
          
-	/** Sets the receiver offer policy to OFFER_POLICY_RANDOM_DISTRIBUTION, and
-		sets the appropriate distribution, threshold, and criterion for meeting the threshold. 
-		If the distribution is null, then the threshold will always be met. */
-    public void setOfferRandom(AbstractDistribution distribution, double threshold, int criterion)
+	/** Sets the receiver offer policy to OFFER_POLICY_RANDOM, and
+		sets the appropriate distribution for selecting a receiver.  If null is provided 
+		for the distribution, receivers are selected randomly.  Selection via an offer
+		distribution works as follows: a random integer is selected from the distribution.
+		If this integer is < 0 or >= the number of receivers registered, then a warning
+		is produced and no offer is made (this should NOT happen).  Otherwise an offer
+		is made to the registered receiver corresponding to the selected integer.
+		*/
+    public void setOfferDistribution(AbstractDiscreteDistribution distribution)
     	{
+    	setOfferPolicy(OFFER_POLICY_RANDOM);
     	offerDistribution = distribution;
-        if (threshold != threshold)
-            throwNANException(threshold);
-    	offerThreshold = threshold;
-        if (criterion < CRITERION_GREATER || criterion > CRITERION_LESS_OR_EQUAL)
-            throwCriterionException(criterion);
-    	offerCriterion = criterion;
-    	setOfferPolicy(OFFER_POLICY_RANDOM_DISTRIBUTION);
     	}
     	
-	/** Returns the offer criterion for meeting the threshold, assuming
-		that the offer policy is presently OFFER_POLICY_RANDOM_DISTRIBUTION. */
-    public int getOfferRandomCriterion()
+	/** Sets the receiver offer policy to OFFER_POLICY_RANDOM, and
+		sets the appropriate distribution for selecting a receiver.  If null is provided 
+		for the distribution, receivers are selected randomly.  Selection via an offer
+		distribution works as follows: a random integer is selected from the distribution.
+		An offer is made to the registered receiver corresponding to the index of the 
+		selected slot in the distribution.  The distribution must exactly match the size
+		of the number of registered receivers.
+		*/
+    public void setOfferDistribution(double[] distribution)
     	{
-    	return offerCriterion;
+    	setOfferDistribution(new EmpiricalWalker(distribution, Empirical.NO_INTERPOLATION, state.random));
     	}
     	
-	/** Returns the offer threshold, assuming
-		that the offer policy is presently OFFER_POLICY_RANDOM_DISTRIBUTION. */
-    public double getOfferRandomThreshold()
-    	{
-    	return offerThreshold;
-    	}
-    
-	/** Returns the offer distribution, assuming
-		that the offer policy is presently OFFER_POLICY_RANDOM_DISTRIBUTION. */
+
+	/** Returns the receiver offer policy to OFFER_POLICY_RANDOM, and
+		sets the appropriate distribution for selecting a receiver.  If the distribution
+		is set to null, receivers are selected randomly.
+		*/
     public AbstractDistribution getOfferRandomDistribution()
     	{
     	return offerDistribution;
     	}
     
+	/** 
+		Clears any current entites and resources ready to be provided.
+		*/
     public void clear()
         {
         if (entities != null) entities.clear();
@@ -135,13 +135,17 @@ public abstract class Provider implements Named
     */
     public Resource getTypicalResource() { return typical; }
         
-    /** 
+    /**  
         Returns whether receivers are offered take-it-or-leave-it offers.
+        A take-it-or-leave-it offer requires the Receiver to accept all of the offered Resource,
+        or else reject it all.
     */
     public boolean getOffersTakeItOrLeaveIt() { return offersTakeItOrLeaveIt; }
         
     /** 
         Sets whether receivers are offered take-it-or-leave-it offers.
+        A take-it-or-leave-it offer requires the Receiver to accept all of the offered Resource,
+        or else reject it all.
     */
     public void setOffersTakeItOrLeaveIt(boolean val) { offersTakeItOrLeaveIt = val; }
 
@@ -178,6 +182,9 @@ public abstract class Provider implements Named
             return 0;
         }
         
+	/** 
+		Builds a provider with the given typical resource type.
+		*/
     public Provider(SimState state, Resource typical)
         {
         this.typical = typical.duplicate();
@@ -228,33 +235,40 @@ public abstract class Provider implements Named
         return ret;
         }
         
+	/** 
+		Makes an offer to the given receiver.
+		Returns true if the offer was accepted.
+		*/
     protected boolean offerReceiver(Receiver receiver)
         {
         if (entities == null)
             {
             CountableResource cr = (CountableResource) resource;
             double amt = cr.getAmount();
-            return receiver.accept(this, cr, getOffersTakeItOrLeaveIt() ? amt : 0, amt);
-            }
-        else
-            {
-            Entity e = entities.getLast();
-            boolean result = receiver.accept(this, e, 0, 0);
-            if (result) entities.remove();
-            return result;
-            }
+				return receiver.accept(this, cr, getOffersTakeItOrLeaveIt() ? amt : 0, amt);
+				}
+			else
+				{
+				Entity e = entities.getLast();
+				boolean result = receiver.accept(this, e, 0, 0);
+				if (result) entities.remove();
+				return result;
+				}
         }
-        
+    
+    // only warn about problems with the distribution a single time
+    boolean warned = false; 
     /**
-       Call this to inform all receivers
+		Makes offers to the receivers according to the current offer policy.	
+		Returns true if at least one offer was accepted.
     */
     protected boolean offerReceivers()
         {
         offering = true;
-        
-        boolean result = false;
-        switch(offerPolicy)
-            {
+			boolean result = false;
+			
+			switch(offerPolicy)
+				{            
             case OFFER_POLICY_FORWARD:
                 {
                 for(Receiver r : receivers)
@@ -315,33 +329,33 @@ public abstract class Provider implements Named
                     }
                 }
             break;
-            case OFFER_POLICY_ONE_RANDOM:
+            case OFFER_POLICY_RANDOM:
                 {
-                if (receivers.size() == 0) 
+                int size = receivers.size();
+                if (size == 0) 
                     break;
-                                        
-                Receiver r = receivers.get(state.random.nextInt(receivers.size()));
-                result = offerReceiver(r);
-                }
-            break;
-            case OFFER_POLICY_RANDOM_DISTRIBUTION:
-                {
-                if (receivers.size() == 0) 
-                    break;
-                                        
-                Receiver last = receivers.get(receivers.size() - 1);
-                for(Receiver r : receivers)
-                    {
-					if (offerDistribution == null || 
-						((offerCriterion == CRITERION_GREATER) && (offerDistribution.nextDouble() > offerThreshold)) ||
-						((offerCriterion == CRITERION_GREATER_OR_EQUAL) && (offerDistribution.nextDouble() >= offerThreshold)) ||
-						((offerCriterion == CRITERION_LESS) && (offerDistribution.nextDouble() < offerThreshold)) ||
-						((offerCriterion == CRITERION_LESS_OR_EQUAL) && (offerDistribution.nextDouble() <= offerThreshold)))
+                
+                if (offerDistribution == null)	// select uniformly
+                	{
+                	result = offerReceiver(receivers.get(state.random.nextInt(size)));
+                	}
+                else
+                	{
+                	int val = offerDistribution.nextInt();
+                	if (val < 0 || val >= size )
+                		{
+                		if (!warned)
+                			{
+                			new RuntimeException("Warning: Offer distribution for Provider " + this + " returned a value outside the Receiver range: " + val);
+                			warned = true;
+                			}
+                		result = false;
+                		}
+					else
 						{
-                    	result = offerReceiver(r);
-                    	break;
+						result = offerReceiver(receivers.get(val));
 						}
-                    }
+                	}
                 }
             break;
             }
@@ -350,6 +364,12 @@ public abstract class Provider implements Named
         return result;
         }
         
+    /**
+		Asks the Provider to make a unilateral offer to the given Receiver.  This can be used to implement
+		a simple pull. The Receiver does not need to be registered with the Provider.
+		Returns true if the offer was accepted; though since the Receiver itself likely made this call, 
+		it's unlikely that this would ever return anything other than TRUE in a typical simulation.
+    */
     public boolean provide(Receiver receiver)
     	{
 		return offerReceiver(receiver);

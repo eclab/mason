@@ -1,9 +1,18 @@
+/*
+  Copyright 2021 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
+package sim.des;
+
 import sim.engine.*;
 import sim.util.*;
 import java.util.*;
 
 /**
-   A non-blocking receiver of resources.  
+   A non-blocking receiver of resources.  Receivers can ACCEPT offers from providers (or refuse them).
+   	Receivers can also register themselves with providers to be informed of offers.
 */
 
 public interface Receiver extends Named
