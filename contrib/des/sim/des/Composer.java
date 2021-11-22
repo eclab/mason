@@ -187,9 +187,9 @@ public class Composer extends Provider implements Receiver
 			}
     	}
         
-    public String getName()
+    public String toString()
         {
-        return "Composer(" + typical + ")";
+        return "Composer@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical + ")";
         }
 
 	public void step(SimState state)

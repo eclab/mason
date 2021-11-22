@@ -11,7 +11,7 @@ import sim.util.*;
 import java.util.*;
 
 /**
-   A non-blocking receiver of resources.  Receivers can ACCEPT offers from providers (or refuse them).
+    A receiver of resources.  Receivers can ACCEPT offers from providers (or refuse them).
    	Receivers can also register themselves with providers to be informed of offers.
 */
 

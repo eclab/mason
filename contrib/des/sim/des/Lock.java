@@ -86,9 +86,9 @@ public class Lock extends Provider implements Receiver
         return result;
         }
 
-    public String getName()
+    public String toString()
         {
-        return "Lock(" + typical.getName() + ", " + pool + ", " + numResources + ")";
+        return "Lock@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical.getName() + ", " + pool + ", " + numResources + ")";
         }  
                      
     /** Does nothing. */

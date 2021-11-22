@@ -78,9 +78,9 @@ public class Transformer extends Provider implements Receiver
             }
         }
         
-    public String getName()
+    public String toString()
         {
-        return "Transformer(" + typicalIn + " -> " + typical + ", " + ratioIn + "/" + ratioOut + ")";
+        return "Transformer@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typicalIn + " -> " + typical + ", " + ratioIn + "/" + ratioOut + ")";
         }
 
 	public void step(SimState state)

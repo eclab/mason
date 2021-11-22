@@ -34,8 +34,8 @@ public class Service extends Macro
         this(state, typical, new Pool(initialResourceAllocation), 1.0, delayTime);
         }
                 
-    public String getName()
+    public String toString()
         {
-        return "Service(" + pool.getResource() + ", " + delay.getDelayTime() + ")";
+        return "Service@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + pool.getResource() + ", " + delay.getDelayTime() + ")";
         }
     }

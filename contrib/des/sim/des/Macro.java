@@ -64,4 +64,9 @@ public abstract class Macro implements Named, Steppable
             step.step(state);
             }
         }
+
+	String name;
+	public String getName() { return name; }
+	public void setName(String name) { this.name = name; }
+
     }

@@ -92,9 +92,9 @@ public class Decomposer extends Provider implements Receiver
             }
         }
         
-    public String getName()
+    public String toString()
         {
-        return "Unpacker(" + typical + ")";
+        return "Unpacker@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical + ")";
         }
 
 	public void step(SimState state)

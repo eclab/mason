@@ -387,9 +387,9 @@ public class Source extends Provider implements Steppable
 		offerReceivers();
         }
 
-    public String getName()
+    public String toString()
         {
-        return "Source(" + typical.getName() + ")";
+        return "Source@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ")";
         }               
     }
         

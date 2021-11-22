@@ -122,9 +122,9 @@ public class Delay extends SimpleDelay
             }
         }
 
-    public String getName()
+    public String toString()
         {
-        return "Delay(" + typical.getName() + ")";
+        return "Delay@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical.getName() + ")";
         }               
     }
         

@@ -18,7 +18,7 @@ import java.util.*;
 */
 
 
-public class Pool
+public class Pool implements Named
     {
     CountableResource resource;
     double maximum;
@@ -53,8 +53,18 @@ public class Pool
     public double getMaximum() { return maximum; }
     public void setMaximum(double val) { maximum = val; }
 
-    public String getName()
+    public String toString()
         {
-        return "Pool(" + resource + ", " + (long)maximum + ")";
+        return "Pool@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + resource + ", " + (long)maximum + ")";
         }               
+
+	String name;
+	public String getName() { return name; }
+	public void setName(String name) { this.name = name; }
+
+	/** Does nothing.  Don't bother scheduling Pool. */
+	public void step(SimState state)
+		{
+		// does nothing
+		}
     }

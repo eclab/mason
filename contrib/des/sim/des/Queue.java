@@ -90,9 +90,9 @@ public class Queue extends Provider implements Receiver, Steppable
             }
         }
         
-    public String getName()
+    public String toString()
         {
-        return "Queue(" + typical.getName() + ")";
+        return "Queue@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ")";
         }               
 
 	/** Upon being stepped, the Queue offers to registered receivers.  You don't have to

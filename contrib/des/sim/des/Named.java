@@ -10,8 +10,19 @@ import sim.engine.*;
 import sim.util.*;
 import java.util.*;
 
+/**
+  A simple interface for objects which have names.
+*/
 
 public interface Named extends Steppable
     {
+	/**
+	  Returns the object's name.
+	*/
     public String getName();
+
+	/**
+	  Sets the object's name.
+	*/
+    public void setName(String name);
     }

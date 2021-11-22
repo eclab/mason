@@ -152,9 +152,9 @@ public class SimpleDelay extends Source implements Receiver, Steppable
             }
         }
 
-    public String getName()
+    public String toString()
         {
-        return "SimpleDelay(" + typical.getName() + ", " + delayTime + ")";
+        return "SimpleDelay@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ", " + delayTime + ")";
         }  
                      
 	/** Upon being stepped, the Delay calls update() to reap all ripe resources.  It then

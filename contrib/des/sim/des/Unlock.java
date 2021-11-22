@@ -55,8 +55,8 @@ public class Unlock extends Lock
         return result;
         }
 
-    public String getName()
+    public String toString()
         {
-        return "Unlock(" + typical.getName() + ", " + pool + ", " + numResources + ")";
+        return "Unlock@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ", " + pool + ", " + numResources + ")";
         }               
     }

@@ -46,13 +46,17 @@ public class Sink implements Receiver
             }
         }
 
-    public String getName()
+    public String toString()
         {
-        return "Sink(" + typical.getName() + ")";
+        return "Sink@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ")";
         }               
 
 	public void step(SimState state)
 		{
 		// do nothing
 		}
+
+	String name;
+	public String getName() { return name; }
+	public void setName(String name) { this.name = name; }
     }
