@@ -52,11 +52,11 @@ public class Extractor extends Source implements Receiver
                 
     boolean offersImmediately = true;
     
-    /** Returns whether the Queue offers items immediately upon accepting (when possible) in zero time,
+    /** Returns whether the Extractor offers items immediately upon accepting (when possible) in zero time,
         as opposed to when it is stepped. */
     public boolean getOffersImmediately() { return offersImmediately; }
 
-    /** Sets whether the Queue offers items immediately upon accepting (when possible) in zero time,
+    /** Sets whether the Extractor offers items immediately upon accepting (when possible) in zero time,
         as opposed to when it is stepped. */
     public void setOffersImmediately(boolean val) { offersImmediately = val; }
 
