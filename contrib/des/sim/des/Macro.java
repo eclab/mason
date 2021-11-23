@@ -27,17 +27,17 @@ import java.util.*;
 public class Macro implements Named
     {
     class Node
-    	{
-    	Named object;
-    	boolean shouldStep;
-    	public Node(Named obj, boolean b) { object = obj; shouldStep = b; }
-    	};
-    	
+        {
+        Named object;
+        boolean shouldStep;
+        public Node(Named obj, boolean b) { object = obj; shouldStep = b; }
+        };
+        
     ArrayList<Node> steppables = new ArrayList<>();
     ArrayList<Receiver> receivers = new ArrayList<>();
     ArrayList<Provider> providers = new ArrayList<>();
 
-	/** Adds the object to the graph and indicates whether it should be stepped when Macro is stepped. */
+    /** Adds the object to the graph and indicates whether it should be stepped when Macro is stepped. */
     public boolean add(Named obj, boolean step)
         {
         if (!steppables.contains(obj))
@@ -48,34 +48,34 @@ public class Macro implements Named
         else return false;
         }
 
-	/** Adds the public (world-facing) receiver to the graph and indicates whether it should be stepped when Macro is stepped. */
+    /** Adds the public (world-facing) receiver to the graph and indicates whether it should be stepped when Macro is stepped. */
     public boolean addReceiver(Receiver recv, boolean step)
         {
         if (!receivers.contains(recv))
             {
             receivers.add(recv);
-       		add(recv, step);
-       		return true;
-       		}
-       	else return false;
+            add(recv, step);
+            return true;
+            }
+        else return false;
         }
                 
-	/** Adds the public (world-facing) provider to the graph and indicates whether it should be stepped when Macro is stepped. */
+    /** Adds the public (world-facing) provider to the graph and indicates whether it should be stepped when Macro is stepped. */
     public boolean addProvider(Provider prov, boolean step)
         {
         if (!providers.contains(prov))
-        	{
+            {
             providers.add(prov);
-        	add(prov, step);
-        	return true;
-        	}
+            add(prov, step);
+            return true;
+            }
         else return false;
         }
         
-	/** Returns all receivers */
+    /** Returns all receivers */
     public Receiver[] getReceivers() { return receivers.toArray(new Receiver[receivers.size()]); }
         
-	/** Returns the names of all receivers. */
+    /** Returns the names of all receivers. */
     public String[] getReceiverNames() 
         { 
         Receiver[] recv = getReceivers();
@@ -85,10 +85,10 @@ public class Macro implements Named
         return retval;
         }
                 
-	/** Returns all providers */
+    /** Returns all providers */
     public Provider[] getProviders() { return providers.toArray(new Provider[providers.size()]); }
                 
-	/** Returns the names of all providers. */
+    /** Returns the names of all providers. */
     public String[] getProviderNames() 
         { 
         Provider[] prov = getProviders();
@@ -98,15 +98,15 @@ public class Macro implements Named
         return retval;
         }
                 
-	/** Steps all registered objects in turn. */
+    /** Steps all registered objects in turn. */
     public void step(SimState state)
         {
         for(Node node : steppables)
             {
             if (node.shouldStep)
-            	{
-            	node.object.step(state);
-            	}
+                {
+                node.object.step(state);
+                }
             }
         }
 

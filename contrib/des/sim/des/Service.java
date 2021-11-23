@@ -42,7 +42,7 @@ public class Service extends Macro
         }
 
     /** Creates a service with a brand new pool, initial resources in the pool, and delay time. 
-    	Allocation is assumed to be 1.0.  */
+        Allocation is assumed to be 1.0.  */
     public Service(SimState state, Resource typical, int initialResourceAllocation, double delayTime)
         {
         this(state, typical, new Pool(initialResourceAllocation), 1.0, delayTime);

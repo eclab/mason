@@ -31,6 +31,6 @@ public interface Receiver extends Named
     */
     public boolean accept(Provider provider, Resource resource, double atLeast, double atMost);
 
-	/** Returns the typical kind of resource the receiver can accept. */
+    /** Returns the typical kind of resource the receiver can accept. */
     public Resource getTypical();
     }

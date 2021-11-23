@@ -261,10 +261,10 @@ public abstract class Provider implements Named
     
     /** Simply calls offerReceivers(receivers). */
     protected boolean offerReceivers()
-		{
-		return offerReceivers(receivers);
-		}
-		
+        {
+        return offerReceivers(receivers);
+        }
+                
     /**
        Makes offers to the receivers according to the current offer policy.    
        Returns true if at least one offer was accepted.

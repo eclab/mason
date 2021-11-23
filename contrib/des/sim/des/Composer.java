@@ -23,22 +23,22 @@ public class Composer extends Provider implements Receiver
     {
     public Resource getTypical() { return typical; }
 
-     void throwDuplicateType(Resource res)
+    void throwDuplicateType(Resource res)
         {
         throw new RuntimeException("Resource " + res + " may not be provided multiple times with identical types.");
         }
 
-     void throwNotComposableResource(Resource res)
+    void throwNotComposableResource(Resource res)
         {
         throw new RuntimeException("Provided resource " + res + " is not among the ones listed as valid for composition by this Composer.");
         }
 
-     void throwInvalidMinMax(Resource min, double max)
+    void throwInvalidMinMax(Resource min, double max)
         {
         throw new RuntimeException("Resource " + min + " has a minimum of " + min.getAmount() + " but a maximum of " + max + ", which is not permitted.");
         }
 
-     void throwInvalidEntityMax(Entity e, double max)
+    void throwInvalidEntityMax(Entity e, double max)
         {
         throw new RuntimeException("Resource " + e + " is an entity but has a real-valued maximum " + max);
         }
@@ -99,11 +99,11 @@ public class Composer extends Provider implements Receiver
     boolean offersImmediately = true;
     
     /** Returns whether the Composer offers Entities immediately in zero time upon accepting the last resource
-    	necessary to build them, as opposed to only when it is stepped. The default is TRUE.  */
+        necessary to build them, as opposed to only when it is stepped. The default is TRUE.  */
     public boolean getOffersImmediately() { return offersImmediately; }
 
     /** Sets whether the Composer offers Entities immediately in zero time upon accepting the last resource
-    	necessary to build them, as opposed to only when it is stepped. The default is TRUE.   */
+        necessary to build them, as opposed to only when it is stepped. The default is TRUE.   */
     public void setOffersImmediately(boolean val) { offersImmediately = val; }
 
     // This is a mapping of types to total-nodes
@@ -113,9 +113,9 @@ public class Composer extends Provider implements Receiver
     Node[] totals;
     
     /** Builds a composer which outputs composite entities of the given type.  Each entity
-    	consists of resources with the given minimums and maximums.  If a resource is an
-    	entity, and its maximum (which must be an integer) is larger than 1, this 
-    	indicates that you want more than one of this entity present in the composition. */
+        consists of resources with the given minimums and maximums.  If a resource is an
+        entity, and its maximum (which must be an integer) is larger than 1, this 
+        indicates that you want more than one of this entity present in the composition. */
     public Composer(SimState state, Entity typical, Resource[] minimums, double[] maximums)
         {
         super(state, typical);
@@ -127,14 +127,14 @@ public class Composer extends Provider implements Receiver
             if (mappedTotals.get(minimums[i].getType()) != null)  // uh oh, already have one!
                 throwDuplicateType(minimums[i]);
             else if (minimums[i].getAmount() < 0 || maximums[i] < minimums[i].getAmount() || 
-            		maximums[i] != maximums[i] || minimums[i].getAmount() != minimums[i].getAmount())
-            	{
-            	throwInvalidMinMax(minimums[i], maximums[i]);
-            	}
-            else if (minimums[i] instanceof Entity && maximums[i] != (int)maximums[i])	// it's not an integer
-            	{
-            	throwInvalidEntityMax((Entity)minimums[i], maximums[i]);
-            	}
+                maximums[i] != maximums[i] || minimums[i].getAmount() != minimums[i].getAmount())
+                {
+                throwInvalidMinMax(minimums[i], maximums[i]);
+                }
+            else if (minimums[i] instanceof Entity && maximums[i] != (int)maximums[i])  // it's not an integer
+                {
+                throwInvalidEntityMax((Entity)minimums[i], maximums[i]);
+                }
             else
                 {
                 Resource res = minimums[i].duplicate();
@@ -214,7 +214,7 @@ public class Composer extends Provider implements Receiver
         return "Composer@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical + ")";
         }
 
-	/** If stepped, offers the composed entity if it is ready. */
+    /** If stepped, offers the composed entity if it is ready. */
     public void step(SimState state)
         {
         deploy();

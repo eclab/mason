@@ -11,8 +11,8 @@ import sim.util.*;
 import java.util.*;
 
 /*
-	A Unlock unlocks (releases) resources to a pool before permitting resources to pass through it
-	from a provider to its receivers.
+  A Unlock unlocks (releases) resources to a pool before permitting resources to pass through it
+  from a provider to its receivers.
   Upon receiving an offer, UNLOCKS up to N resources and returns then to a Pool, then accepts
   the offer and offers it in turn to registered receivers.
 */

@@ -20,12 +20,12 @@ public class Decomposer extends Provider implements Receiver
     
     public Resource getTypical() { return typical; }
 
-     void throwNotCompositeEntity(Entity res)
+    void throwNotCompositeEntity(Entity res)
         {
         throw new RuntimeException("The provided entity " + res + " was not composite (its storage didn't consist of an array of Resources).");
         }
 
-     void throwDoNotUse()
+    void throwDoNotUse()
         {
         throw new RuntimeException("Decomposers do not respond to addReceiver(Receiver).  Instead, use addReceiver(Receiver, Resource).");
         }
@@ -36,11 +36,11 @@ public class Decomposer extends Provider implements Receiver
         output = new HashMap<Integer, Receiver>();
         }
                 
-	/**
-	   Registers a receiver.  Only one receiver may be registered for a given type.
-	   If a receiver cannot be registered because another has already been registered
-	   for that type, FALSE is returned.
-	**/
+    /**
+       Registers a receiver.  Only one receiver may be registered for a given type.
+       If a receiver cannot be registered because another has already been registered
+       for that type, FALSE is returned.
+    **/
     public boolean addReceiver(Receiver receiver)
         {
         Integer type = receiver.getTypical().getType();
@@ -67,10 +67,10 @@ public class Decomposer extends Provider implements Receiver
         return super.removeReceiver(receiver);
         }
 
-	/**
-	   Accepts the resource, which must be a composite Entity, and offers the resources in its
-	   storage to downstream receivers.
-	**/
+    /**
+       Accepts the resource, which must be a composite Entity, and offers the resources in its
+       storage to downstream receivers.
+    **/
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {       
         if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
@@ -111,7 +111,7 @@ public class Decomposer extends Provider implements Receiver
         return "Unpacker@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical + ")";
         }
 
-	/** Does nothing.  There's no reason to step a Decomposer. */
+    /** Does nothing.  There's no reason to step a Decomposer. */
     public void step(SimState state)
         {
         // do nothing

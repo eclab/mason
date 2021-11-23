@@ -11,8 +11,8 @@ import sim.util.*;
 import java.util.*;
 
 /**
-	A Lock locks (seizes, acquires) resources from a pool before permitting resources to pass through it
-	from a provider to its receivers.
+   A Lock locks (seizes, acquires) resources from a pool before permitting resources to pass through it
+   from a provider to its receivers.
    Upon receiving an offer, first tries to LOCK (acquire) N resources from a Pool, and if successful,
    accepts the offer and offers it in turn to registered receivers.
 */

@@ -245,19 +245,32 @@ public class Source extends Provider implements Steppable
         warned = true;
         }
         
-    double produceAmount()
-        {
-        for(int i = 0; i < REJECTION_TRIES; i++)
-            {
-            double amt = productionDistribution.nextDouble();
-            if (amt >= 0)
-                {
-                return amt;
-                }
-            }
-        warnRejectionFailed();
-        return 0;
-        }
+    /** Builds *amt* number of Entities and adds them to the entities list.  
+    	The amount could be a real-value, in which it should be
+    	simply rounded down to the nearest positive integer >= 0.  By default this
+    	generates entities using buildEntity().  */
+    protected void buildEntities(double amt)
+    	{
+		for(int i = 0; i < Math.round(amt); i++)
+			{
+			if (entities.size() < capacity)
+				entities.add(buildEntity());
+			else break;
+			}
+    	}
+    	
+    /** Builds *amt* of Countable or Uncountable Resource and adds it to the resource pool. 
+    	By default this simply adds resource out of thin air. */
+    protected void buildResource(double amt)
+    	{
+		CountableResource res = (CountableResource)resource;
+		if (res.isCountable())
+			amt = Math.round(amt);
+																	
+		res.increase(amt);
+		if (res.getAmount() > capacity)
+			res.setAmount(capacity);
+    	}
         
         
     /** This method is called once every time this Source is stepped, and is used to produce new
@@ -350,30 +363,33 @@ public class Source extends Provider implements Steppable
                 return;
             }
                 
+        // determine how much to produce
         double amt = production;
         if (productionDistribution != null)
             {
-            amt = produceAmount();
+            // produce
+			for(int i = 0; i < REJECTION_TRIES; i++)
+				{
+				amt = productionDistribution.nextDouble();
+				if (amt >= 0)
+					break;
+				}
+				
+			if (amt < 0)
+				{
+				warnRejectionFailed();
+        		amt = 0;
+        		}
             }
-                                                        
+    
+    	// produce it                                      
         if (entities != null)
             {
-            for(int i = 0; i < Math.round(amt); i++)
-                {
-                if (entities.size() < capacity)
-                    entities.add(buildEntity());
-                else break;
-                }
+            buildEntities(amt);
             }       
         else
             {
-            CountableResource res = (CountableResource)resource;
-            if (res.isCountable())
-                amt = Math.round(amt);
-                                                                        
-            res.increase(amt);
-            if (res.getAmount() > capacity)
-                res.setAmount(capacity);
+            buildResource(amt);
             }               
         }
                 
