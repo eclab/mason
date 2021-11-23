@@ -259,11 +259,17 @@ public abstract class Provider implements Named
     // only warn about problems with the distribution a single time
     boolean warned = false; 
     
+    /** Simply calls offerReceivers(receivers). */
+    protected boolean offerReceivers()
+		{
+		return offerReceivers(receivers);
+		}
+		
     /**
        Makes offers to the receivers according to the current offer policy.    
        Returns true if at least one offer was accepted.
     */
-    protected boolean offerReceivers()
+    protected boolean offerReceivers(ArrayList<Receiver> receivers)
         {
         offering = true;
         boolean result = false;

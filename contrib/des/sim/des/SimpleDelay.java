@@ -16,6 +16,8 @@ import java.util.*;
 
 public class SimpleDelay extends Source implements Receiver, Steppable
     {
+    public Resource getTypical() { return typical; }
+
     class Node
         {
         public Resource resource;

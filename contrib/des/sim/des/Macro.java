@@ -9,34 +9,73 @@ package sim.des;
 import sim.engine.*;
 import java.util.*;
 
-public abstract class Macro implements Named, Steppable
+/**
+   A Macro encapsulates a subgraph of DES objects.  This subgraph consists of objects of three types.
+   First there are receivers that the outside world might send resources to.  Second there are
+   providers that might provide resources to the outside world.  Third, there are the "middlemen"
+   in the graph which do not interact with the outside world.  To add an outside-world receiver
+   to the graph, call addReceiver().  To add an outside-world provider to the graph, call addProvider().
+   To add a middleman, call add().  You are responsible for wiring your graph up internally.  Macro
+   at present does not have a way to clone its subgraphs.
+   
+   <p>When a Macro is stepped, it simply steps all of its steppables in turn.  Named objects are only
+   stepped if you have indicated that they should be so when adding them to the Macro.  
+   You technically don't need to add objects which aren't
+   going to be stepped at all, presuming you have wired them up yourself.
+*/
+
+public class Macro implements Named
     {
-    ArrayList<Named> steppables = new ArrayList<>();
+    class Node
+    	{
+    	Named object;
+    	boolean shouldStep;
+    	public Node(Named obj, boolean b) { object = obj; shouldStep = b; }
+    	};
+    	
+    ArrayList<Node> steppables = new ArrayList<>();
     ArrayList<Receiver> receivers = new ArrayList<>();
     ArrayList<Provider> providers = new ArrayList<>();
 
-    protected void add(Named step)
+	/** Adds the object to the graph and indicates whether it should be stepped when Macro is stepped. */
+    public boolean add(Named obj, boolean step)
         {
-        if (!steppables.contains(step))
-            steppables.add(step);
+        if (!steppables.contains(obj))
+            {
+            steppables.add(new Node(obj, step));
+            return true;
+            }
+        else return false;
         }
 
-    protected void addReceiver(Receiver recv)
+	/** Adds the public (world-facing) receiver to the graph and indicates whether it should be stepped when Macro is stepped. */
+    public boolean addReceiver(Receiver recv, boolean step)
         {
         if (!receivers.contains(recv))
+            {
             receivers.add(recv);
-        add(recv);
+       		add(recv, step);
+       		return true;
+       		}
+       	else return false;
         }
                 
-    protected void addProvider(Provider prov)
+	/** Adds the public (world-facing) provider to the graph and indicates whether it should be stepped when Macro is stepped. */
+    public boolean addProvider(Provider prov, boolean step)
         {
         if (!providers.contains(prov))
+        	{
             providers.add(prov);
-        add(prov);
+        	add(prov, step);
+        	return true;
+        	}
+        else return false;
         }
         
+	/** Returns all receivers */
     public Receiver[] getReceivers() { return receivers.toArray(new Receiver[receivers.size()]); }
         
+	/** Returns the names of all receivers. */
     public String[] getReceiverNames() 
         { 
         Receiver[] recv = getReceivers();
@@ -46,8 +85,10 @@ public abstract class Macro implements Named, Steppable
         return retval;
         }
                 
+	/** Returns all providers */
     public Provider[] getProviders() { return providers.toArray(new Provider[providers.size()]); }
                 
+	/** Returns the names of all providers. */
     public String[] getProviderNames() 
         { 
         Provider[] prov = getProviders();
@@ -57,11 +98,15 @@ public abstract class Macro implements Named, Steppable
         return retval;
         }
                 
+	/** Steps all registered objects in turn. */
     public void step(SimState state)
         {
-        for(Steppable step : steppables)
+        for(Node node : steppables)
             {
-            step.step(state);
+            if (node.shouldStep)
+            	{
+            	node.object.step(state);
+            	}
             }
         }
 

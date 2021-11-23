@@ -18,6 +18,8 @@ public class Transformer extends Provider implements Receiver
     double ratioIn;
     double ratioOut;
         
+    public Resource getTypical() { return typical; }
+
     public Transformer(SimState state, Resource typicalOut, Resource typicalIn, double ratioIn, double ratioOut)
         {
         // typical being our output CountableResource

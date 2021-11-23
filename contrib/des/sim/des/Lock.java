@@ -11,6 +11,8 @@ import sim.util.*;
 import java.util.*;
 
 /**
+	A Lock locks (seizes, acquires) resources from a pool before permitting resources to pass through it
+	from a provider to its receivers.
    Upon receiving an offer, first tries to LOCK (acquire) N resources from a Pool, and if successful,
    accepts the offer and offers it in turn to registered receivers.
 */
@@ -20,6 +22,8 @@ public class Lock extends Provider implements Receiver
     Pool pool;
     double numResources;
     
+    public Resource getTypical() { return typical; }
+
     /** Builds a lock attached to the given pool and with the given amount of resources acquired each time. */
     public Lock(SimState state, Resource typical, Pool pool, double numResources)
         {

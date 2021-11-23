@@ -6,19 +6,21 @@
 
 package sim.des;
 
-/** 
-    A resource sink. 
-*/
-
 import sim.engine.*;
 import java.util.*;
 
+
+/**
+   A Sink accepts all incoming offers of resources matching a given type, then throws them away.
+*/
 
 public class Sink implements Receiver
     {
     SimState state;
     Resource typical;
         
+    public Resource getTypical() { return typical; }
+
     void throwUnequalTypeException(Resource resource)
         {
         throw new RuntimeException("Expected resource type " + this.typical.getName() + "(" + this.typical.getType() + ")" +

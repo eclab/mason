@@ -20,6 +20,8 @@ import java.util.*;
 
 public class Queue extends Provider implements Receiver, Steppable
     {
+    public Resource getTypical() { return typical; }
+
     void throwInvalidCapacityException(double capacity)
         {
         throw new RuntimeException("Capacities may not be negative or NaN.  capacity was: " + capacity);

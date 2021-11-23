@@ -10,19 +10,37 @@ import sim.engine.*;
 import java.util.*;
 
 /**
-   A composer
+   A composer composes multiple resources received from a provider into a single Entity to offer to
+   downstream receivers.  To do this you provide a TEMPLATE for the composer, which specifies which
+   entities must be present in the composition, and how much (min, max) of each.  When this template
+   is filled properly, the composer can build the entity and send it on.  It will send it on
+   immediately, upon receiving the last resource, if getOffersImmediately() is true (by default it is).
+   Othewise it will wait until step() is called.  Thus you only need (and only should) schedule
+   the Composer if you have turned off setOffersImmediately(false).
 **/
 
 public class Composer extends Provider implements Receiver
     {
-    protected void throwDuplicateType(Resource res)
+    public Resource getTypical() { return typical; }
+
+     void throwDuplicateType(Resource res)
         {
         throw new RuntimeException("Resource " + res + " may not be provided multiple times with identical types.");
         }
 
-    protected void throwNotComposableResource(Resource res)
+     void throwNotComposableResource(Resource res)
         {
         throw new RuntimeException("Provided resource " + res + " is not among the ones listed as valid for composition by this Composer.");
+        }
+
+     void throwInvalidMinMax(Resource min, double max)
+        {
+        throw new RuntimeException("Resource " + min + " has a minimum of " + min.getAmount() + " but a maximum of " + max + ", which is not permitted.");
+        }
+
+     void throwInvalidEntityMax(Entity e, double max)
+        {
+        throw new RuntimeException("Resource " + e + " is an entity but has a real-valued maximum " + max);
         }
         
     class Node
@@ -36,6 +54,7 @@ public class Composer extends Provider implements Receiver
         double minimum;
         int entityCount = 0;
         
+        // Compute the space left for this resource
         double spaceLeft()
             {
             if (entity != null)
@@ -48,6 +67,7 @@ public class Composer extends Provider implements Receiver
                 }
             }
                 
+        // Compute the space left for this resource
         boolean getMeetsMinimum()
             {
             if (entity != null)
@@ -76,49 +96,51 @@ public class Composer extends Provider implements Receiver
             }
         }
     
+    boolean offersImmediately = true;
+    
+    /** Returns whether the Composer offers Entities immediately in zero time upon accepting the last resource
+    	necessary to build them, as opposed to only when it is stepped. The default is TRUE.  */
+    public boolean getOffersImmediately() { return offersImmediately; }
+
+    /** Sets whether the Composer offers Entities immediately in zero time upon accepting the last resource
+    	necessary to build them, as opposed to only when it is stepped. The default is TRUE.   */
+    public void setOffersImmediately(boolean val) { offersImmediately = val; }
+
     // This is a mapping of types to total-nodes
     HashMap<Integer, Node> mappedTotals;
     
     // This is the same set of total-nodes organized as an array for faster scanning
     Node[] totals;
     
-    public Composer(SimState state, Entity typical, Resource[] minimums, Resource[] maximums)
+    /** Builds a composer which outputs composite entities of the given type.  Each entity
+    	consists of resources with the given minimums and maximums.  If a resource is an
+    	entity, and its maximum (which must be an integer) is larger than 1, this 
+    	indicates that you want more than one of this entity present in the composition. */
+    public Composer(SimState state, Entity typical, Resource[] minimums, double[] maximums)
         {
         super(state, typical);
         mappedTotals = new HashMap<Integer, Node>();
-        totals = new Node[maximums.length];
+        totals = new Node[minimums.length];
         
-        for(int i = 0; i < maximums.length; i++)
+        for(int i = 0; i < minimums.length; i++)
             {
-            if (mappedTotals.get(maximums[i].getType()) != null)  // uh oh, already have one!
-                throwDuplicateType(maximums[i]);
+            if (mappedTotals.get(minimums[i].getType()) != null)  // uh oh, already have one!
+                throwDuplicateType(minimums[i]);
+            else if (minimums[i].getAmount() < 0 || maximums[i] < minimums[i].getAmount() || 
+            		maximums[i] != maximums[i] || minimums[i].getAmount() != minimums[i].getAmount())
+            	{
+            	throwInvalidMinMax(minimums[i], maximums[i]);
+            	}
+            else if (minimums[i] instanceof Entity && maximums[i] != (int)maximums[i])	// it's not an integer
+            	{
+            	throwInvalidEntityMax((Entity)minimums[i], maximums[i]);
+            	}
             else
                 {
-                Resource res = maximums[i].duplicate();
+                Resource res = minimums[i].duplicate();
                 res.clear();            // so it's 0.0 if a CountableResource
-                Node node = new Node(res, maximums[i].getAmount(), minimums[i].getAmount());
-                mappedTotals.put(maximums[i].getType(), node);
-                totals[i] = node;
-                }
-            }
-        }
-
-    public Composer(SimState state, Entity typical, double[] minimums, Resource[] maximums)
-        {
-        super(state, typical);
-        mappedTotals = new HashMap<Integer, Node>();
-        totals = new Node[maximums.length];
-        
-        for(int i = 0; i < maximums.length; i++)
-            {
-            if (mappedTotals.get(maximums[i].getType()) != null)  // uh oh, already have one!
-                throwDuplicateType(maximums[i]);
-            else
-                {
-                Resource res = maximums[i].duplicate();
-                res.clear();            // so it's 0.0 if a CountableResource
-                Node node = new Node(res, maximums[i].getAmount(), minimums[i]);
-                mappedTotals.put(maximums[i].getType(), node);
+                Node node = new Node(res, minimums[i].getAmount(), maximums[i]);
+                mappedTotals.put(minimums[i].getType(), node);
                 totals[i] = node;
                 }
             }
@@ -137,7 +159,7 @@ public class Composer extends Provider implements Receiver
             if (total.maximum - total.entityCount > 0)
                 {
                 total.entity[total.entityCount++] = (Entity)amount;
-                deploy();
+                if (getOffersImmediately()) deploy();
                 return true;
                 }
             else return false;
@@ -152,7 +174,7 @@ public class Composer extends Provider implements Receiver
                 double amt = Math.min(total.maximum - res.getAmount(), atMost);
                 res.increase(amt);
                 ((CountableResource)amount).decrease(amt);
-                deploy();
+                if (getOffersImmediately()) deploy();
                 return true;
                 }
             }
@@ -192,8 +214,9 @@ public class Composer extends Provider implements Receiver
         return "Composer@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical + ")";
         }
 
+	/** If stepped, offers the composed entity if it is ready. */
     public void step(SimState state)
         {
-        // do nothing
+        deploy();
         }
     }
