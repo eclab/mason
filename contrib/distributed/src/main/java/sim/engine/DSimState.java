@@ -65,7 +65,7 @@ public class DSimState extends SimState
 	static Logger logger;
 
 	/** The Partition of the DSimState */
-	QuadTreePartition partition;
+	protected QuadTreePartition partition;
 	/** The DSimState's Transporter interface */
 	
 	Transporter transporter;
@@ -100,6 +100,9 @@ public class DSimState extends SimState
 
 	// The number of steps between load balances
 	protected int balanceInterval = 100;
+	
+	protected int updateGlobalsInterval = 100;
+	
 	// The current balance level FIXME: This looks primitive, and also requires that
 	// be properly in sync
 	int balancerLevel;
@@ -375,6 +378,8 @@ public class DSimState extends SimState
 		
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
 		loadBalance();
+		
+		updateGlobals(); //only happens every updateGlobalInterval steps
 		
 		int x = countTotalAgents(fieldList.get(0));
 
@@ -964,27 +969,69 @@ public class DSimState extends SimState
 	// 1) gather each best score and corresponding x and y from each parition (gatherGlobals())
 	// 2) arbitrate (pick the best score and its x and y out of the partition candidates (arbitrateGlobal)
 	// 3) distributed the winner back to each partition, each partition keeps track of the global
-	protected void updateGlobal()
+	private void updateGlobals()
 	{
-		Object[] g = null;
+		
+		if (schedule.getSteps() > 0 && (schedule.getSteps() % updateGlobalsInterval == 0)) {
+			Serializable[] g = null;
 
-		ArrayList<Object[]> gg = gatherGlobals();
+			ArrayList<Serializable[]> gg = gatherGlobals();
+		
+			//gg will be null if gatherPartitionGlobals is not implemented
+			if (gg != null) {
 
-		if (partition.isRootProcessor())
-		{
-			g = arbitrateGlobal(gg);
+				if (partition.isRootProcessor())
+				{
+					g = arbitrateGlobal(gg);
+				}
+
+				distributeGlobals(g);
+			}	
 		}
-
-		distributeGlobals(g);
 	}
 
+
+
+	// takes the set of globals from each partition the set of variables this is is implemented in getPartitionGlobals(),
+	// implemented in the specific subclass
+	private ArrayList<Serializable[]> gatherGlobals()
+	{
+		try
+		{
+			// call getPartitionGlobals() for each partition
+			Serializable[] g = this.getPartitionGlobals();
+			
+			//should be null when getPartitionGlobals() not implemented in subclass
+			if (g == null) {
+				return null;
+			}
+			
+			else {
+			
+				ArrayList<Serializable[]> gg = MPIUtil.gather(partition, g, 0);
+				return gg;
+			}
+		}
+		catch (Exception e)
+		{
+			System.out.println("error in gatherGlobals");
+			System.out.println(e);
+			System.exit(-1);
+
+		}
+
+		return null;
+	}
+	
+	
+	
 	// this one creates the best global out of the globals from each partiton (gg) should override in subclass
 	// this version picks based on the highest value of index 0
 	// TODO should we make this one throw an exception and force specific agent to implement its own?
-	Object[] arbitrateGlobal(ArrayList<Object[]> gg)
+	protected Serializable[] arbitrateGlobal(ArrayList<Serializable[]> gg)
 	{
 		int chosen_index = 0;
-		Object chosen_item = gg.get(0)[0];
+		Serializable chosen_item = gg.get(0)[0];
 
 		double best_val = (double) chosen_item; // make type invariant
 
@@ -999,32 +1046,11 @@ public class DSimState extends SimState
 
 		return gg.get(chosen_index);
 	}
-
-	// takes the set of globals from each partition the set of variables this is is implemented in getPartitionGlobals(),
-	// implemented in the specific subclass
-	ArrayList gatherGlobals()
-	{
-		try
-		{
-			// call getPartitionGlobals() for each partition
-			Object[] g = this.getPartitionGlobals();
-			ArrayList<Object[]> gg = MPIUtil.gather(partition, g, 0);
-			return gg;
-		}
-		catch (Exception e)
-		{
-			System.out.println("error in gatherGlobals");
-			System.out.println(e);
-			System.exit(-1);
-
-		}
-
-		return null;
-	}
+	
 
 	// after determining the overall global using arbitration, send that one back to each partition
 	// uses setPartitionGlobals(), should be implemented in subclass (to match getPartititonGlobals())
-	void distributeGlobals(Object[] global)
+	private void distributeGlobals(Serializable[] global)
 	{
 		// need to do typing
 		try
@@ -1041,15 +1067,18 @@ public class DSimState extends SimState
 	}
 
 	// implement in subclass
-	protected Object[] getPartitionGlobals()
+	protected Serializable[] getPartitionGlobals()
 	{
-		throw new RuntimeException("getPartitionGlobals() should be implemented in subclass");
+		//getPartitionGlobals() should be implemented in subclass
+		return null;
+
 	}
 
 	// implement in subclass
-	protected void setPartitionGlobals(Object[] o)
+	protected void setPartitionGlobals(Serializable[] o)
 	{
-		throw new RuntimeException("setPartitionGlobals() should be implemented in subclass");
+		//setPartitionGlobals() should be implemented in subclass
+		return;
 	}
 	
 	//testing method: counts agents in each storage (not in halo) and sums them.  Should remain constant!

@@ -221,7 +221,7 @@ public class DPSO extends DSimState {
             
         	//System.out.println(getPID()+" before "+bestVal+" x: "+best_x+" y: "+best_y);
 
-        	updateGlobals();
+        	//updateGlobals();
         	
         	//System.out.println(getPID()+" after "+bestVal+" x: "+best_x+" y: "+best_y);
         	//System.exit(-1);
