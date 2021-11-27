@@ -41,7 +41,7 @@ public abstract class Provider implements Named
         }
 
     // receivers registered with the provider
-    ArrayList<Receiver> receivers;
+    ArrayList<Receiver> receivers = new ArrayList<Receiver>();
 
     /** The typical kind of resource the Provider provides.  This should always be zero and not used except for type checking. */
     protected Resource typical;
