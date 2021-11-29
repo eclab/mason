@@ -87,6 +87,8 @@ public class Lock extends Provider implements Receiver
             {
             pool.getResource().decrease(numResources);
             }
+
+        _amount = null;		/// let it gc
         return result;
         }
 

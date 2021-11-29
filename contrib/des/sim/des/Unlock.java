@@ -54,6 +54,8 @@ public class Unlock extends Lock
             {
             pool.getResource().increase(numResources);
             }
+
+        _amount = null;		/// let it gc
         return result;
         }
 
