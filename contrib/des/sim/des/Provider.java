@@ -64,6 +64,25 @@ public abstract class Provider implements Named, Resettable
     /** The model. */
     protected SimState state;
         
+        
+    /** First in First Out Offer Order for entities. */
+    public static final int OFFER_ORDER_FIFO = 0;
+    /** Last in First Out Offer Order for entities. */
+    public static final int OFFER_ORDER_LIFO = 1;
+    public int offerOrder = OFFER_ORDER_FIFO;
+    
+	public void setOfferOrder(int offerOrder)
+		{
+        if (offerOrder < OFFER_ORDER_FIFO || offerOrder > OFFER_ORDER_LIFO)
+            throw new IllegalArgumentException("Offer Order " + offerOrder + " out of bounds.");
+		this.offerOrder = offerOrder;
+		}
+		
+	public int getOfferOrder()
+		{
+		return offerOrder;
+		}
+
     /** Offer Policy: offers are made to the first receiver, then the second, and so on, until available resources or receivers are exhausted. */
     public static final int OFFER_POLICY_FORWARD = 0;
     /** Offer Policy: offers are made to the last receiver, then the second to last, and so on, until available resources or receivers are exhausted. */
@@ -78,7 +97,7 @@ public abstract class Provider implements Named, Resettable
     int roundRobinPosition = 0;
     boolean offersTakeItOrLeaveIt;
     AbstractDiscreteDistribution offerDistribution;
-    
+
     boolean offering;
     /** Returns true if the Provider is currently making an offer to a receiver (this is meant to allow you
         to check for offer cycles. */
@@ -250,6 +269,13 @@ public abstract class Provider implements Named, Resettable
     /** 
         Makes an offer to the given receiver.
         Returns true if the offer was accepted.
+        
+        <p>If the resource in question is an ENTITY, then it is removed
+        according to the current OFFER ORDER.  If the offer order is FIFO
+        (default), then the entity is removed from the FRONT of the entities 
+        linked list (normally entities are added to the END of the linked list
+        via entities.add()).  If the offer order is LIFO, then the entity
+        is removed from the END of the entities linked list.
     */
     protected boolean offerReceiver(Receiver receiver)
         {
@@ -259,14 +285,21 @@ public abstract class Provider implements Named, Resettable
             double amt = cr.getAmount();
             return receiver.accept(this, cr, getOffersTakeItOrLeaveIt() ? amt : 0, amt);
             }
-        else
+        else if (offerOrder == OFFER_ORDER_FIFO)
+            {
+            Entity e = entities.getFirst();
+            boolean result = receiver.accept(this, e, 0, 0);
+            if (result) entities.removeFirst();
+            return result;
+            }
+         else // if (offerOrder == OFFER_ORDER_LIFO)
             {
             Entity e = entities.getLast();
             boolean result = receiver.accept(this, e, 0, 0);
-            if (result) entities.remove();
+            if (result) entities.removeLast();
             return result;
             }
-        }
+       }
     
     // only warn about problems with the distribution a single time
     boolean warned = false; 
