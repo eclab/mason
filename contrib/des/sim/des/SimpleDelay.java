@@ -100,6 +100,9 @@ public class SimpleDelay extends Source implements Receiver, Steppable
         
         if (isOffering()) throwCyclicOffers();  // cycle
         
+        if (!(atLeast >= 0 && atMost >= atLeast))
+        	throwInvalidAtLeastAtMost(atLeast, atMost);
+
         double nextTime = state.schedule.getTime() + delayTime;
         if (entities == null)
             {

@@ -89,7 +89,12 @@ public class Extractor extends Source implements Receiver
     public boolean accept(Provider provider, Resource res, double atLeast, double atMost)
     	{
         if (!typical.isSameType(res)) throwUnequalTypeException(res);
+
+        if (isOffering()) throwCyclicOffers();  // cycle
         
+        if (!(atLeast >= 0 && atMost >= atLeast))
+        	throwInvalidAtLeastAtMost(atLeast, atMost);
+
     	if (acceptValue < atLeast || acceptValue > atMost) return false;		// Also if it's == OFF, which is -1
 
         if (res instanceof CountableResource) 

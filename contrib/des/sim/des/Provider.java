@@ -25,8 +25,14 @@ import sim.util.distribution.*;
    offers.
 */
 
-public abstract class Provider implements Named
+public abstract class Provider implements Named, Resettable
     {
+    /** Throws an exception indicating that an offer cycle was detected. */
+    protected void throwInvalidMinMax()
+        {
+        throw new RuntimeException("accept(...) was called with atLeast > atMost." );
+        }
+
     /** Throws an exception indicating that an offer cycle was detected. */
     protected void throwCyclicOffers()
         {
@@ -38,6 +44,12 @@ public abstract class Provider implements Named
         {
         throw new RuntimeException("Expected resource type " + this.typical.getName() + "(" + this.typical.getType() + ")" +
             " but got resource type " + res.getName() + "(" + res.getType() + ")" );
+        }
+
+	/** Throws an exception indicating that atLeast and atMost are out of legal bounds. */
+    protected void throwInvalidAtLeastAtMost(double atLeast, double atMost)
+        {
+        throw new RuntimeException("Requested resource amounts are between " + atLeast + " and " + atMost + ", which is out of bounds.");
         }
 
     // receivers registered with the provider
@@ -72,7 +84,7 @@ public abstract class Provider implements Named
         to check for offer cycles. */
     protected boolean isOffering() { return offering; }
 
-    /** Sets the receiver offer policy */
+    /** Sets the receiver offer policy.  Throws IllegalArgumentException if the policy is out of bounds. */
     public void setOfferPolicy(int offerPolicy) 
         { 
         if (offerPolicy < OFFER_POLICY_FORWARD || offerPolicy > OFFER_POLICY_RANDOM)
@@ -385,5 +397,9 @@ public abstract class Provider implements Named
     String name;
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-
+    
+    public void reset(SimState state) 
+    	{
+    	clear();
+    	}
     }

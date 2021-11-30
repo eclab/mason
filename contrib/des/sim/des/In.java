@@ -44,6 +44,9 @@ public class In extends Provider implements Receiver
     	{
         if (isOffering()) throwCyclicOffers();  // cycle
 
+        if (!(atLeast >= 0 && atMost >= atLeast))
+        	throwInvalidAtLeastAtMost(atLeast, atMost);
+
         _amount = amount;
         _atLeast = atLeast;
         _atMost = atMost;

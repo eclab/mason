@@ -81,6 +81,9 @@ public class Delay extends SimpleDelay
                 
         if (isOffering()) throwCyclicOffers();  // cycle
         
+        if (!(atLeast >= 0 && atMost >= atLeast))
+        	throwInvalidAtLeastAtMost(atLeast, atMost);
+
         double nextTime = state.schedule.getTime() + getDelay(provider, amount);
 
         if (entities == null)
@@ -132,5 +135,10 @@ public class Delay extends SimpleDelay
         {
         return "Delay@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical.getName() + ")";
         }               
+
+	public void reset()
+		{
+		clear();
+		}
     }
         

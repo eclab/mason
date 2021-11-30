@@ -21,12 +21,14 @@ import java.util.*;
 public class Pool implements Named
     {
     CountableResource resource;
+    CountableResource initial;
     double maximum;
         
     public Pool(CountableResource resource, double maximum)
         {
         this.maximum = maximum;
         this.resource = resource;
+        this.initial = (CountableResource)(resource.duplicate());
         }
 
     public Pool(CountableResource resource)
@@ -67,4 +69,10 @@ public class Pool implements Named
         {
         // does nothing
         }
+
+	/** Resets the pool's resource to its initial value */
+    public void reset(SimState state) 
+    	{ 
+        this.resource = (CountableResource)(initial.duplicate());
+    	}
     }

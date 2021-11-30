@@ -106,6 +106,8 @@ public class Source extends Provider implements Steppable
         is TRUE then the initial time will be the EPOCH plus a uniform random value between 0 and the
         deterministic rate.  If the random offset is FALSE then the initial time will simply be the EPOCH plus
         the deterministic rate.  Thereafter the next scheduled time will be the current time plus the rate. 
+        
+        <p>Throws a runtime exception if the rate is negative or NaN.
     */
     public void setRate(double rate, boolean randomOffset)
         {
@@ -208,6 +210,8 @@ public class Source extends Provider implements Steppable
 
     /** Sets the deterministic production value used to determine how much resource is produced each time the Source
         decides to produce resources (only when there is no distribution provided).
+
+        <p>Throws a runtime exception if the rate is negative or NaN.
     */
     public void setProduction(double amt)
         {

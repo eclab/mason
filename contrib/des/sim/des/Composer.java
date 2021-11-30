@@ -115,7 +115,12 @@ public class Composer extends Provider implements Receiver
     /** Builds a composer which outputs composite entities of the given type.  Each entity
         consists of resources with the given minimums and maximums.  If a resource is an
         entity, and its maximum (which must be an integer) is larger than 1, this 
-        indicates that you want more than one of this entity present in the composition. */
+        indicates that you want more than one of this entity present in the composition. 
+        
+        <p>Throws a RuntimeException if there is a duplicate among the provided resources, or
+        	if a minimum is > its maximum, or if a resource is an Entity but its maximum is
+        	not an integer.
+        */
     public Composer(SimState state, Entity typical, Resource[] minimums, double[] maximums)
         {
         super(state, typical);
@@ -146,10 +151,32 @@ public class Composer extends Provider implements Receiver
             }
         }
                                 
+    /**
+       Offers a resource from a Provider to a Receiver.
+                       
+       <p>The resource must be an ENTITY.
+       The provider may respond by taking the entity and returning TRUE, 
+       or returning FALSE if it refuses the offer.
+       
+       <p>May throw a RuntimeException if the resource does not
+       match the typical resource of the receiver, or if a cycle was detected in accepting
+       offers (A offers to B, which offers to C, which then offers to A).
+       At present does not check that atLeast and atMost are valid.
+       
+       <p>Will also throw an exception if the provided resource, which must be an entity,
+       is not composite.
+    */
+
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (isOffering()) throwCyclicOffers();  // cycle
         
+        if (!(atLeast >= 0 && atMost >= atLeast))
+        	throwInvalidAtLeastAtMost(atLeast, atMost);
+
+         if (!(atLeast >= 0 && atMost >= atLeast))
+        	throwInvalidAtLeastAtMost(atLeast, atMost);
+       
         // Find the appropriate node
         Node total = mappedTotals.get(amount.getType());
         if (total == null) throwNotComposableResource(amount);
@@ -197,7 +224,13 @@ public class Composer extends Provider implements Receiver
             resources[i] = totals[i].resource.duplicate();
         entity.setStorage(resources);
         entities.add(entity);
-                
+             
+        resetTotals();   
+        }
+    
+
+	void resetTotals()
+		{
         // reset totals
         for(int i = 0; i < totals.length; i++)
             {
@@ -207,7 +240,13 @@ public class Composer extends Provider implements Receiver
                 totals[i].resource.clear();
                 }
             }
-        }
+		}
+		
+    public void clear()
+    	{
+    	super.clear();
+    	resetTotals();
+    	}
         
     public String toString()
         {

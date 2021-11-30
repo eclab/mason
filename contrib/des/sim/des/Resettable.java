@@ -11,20 +11,10 @@ import sim.util.*;
 import java.util.*;
 
 /**
-   A simple interface for objects which have names.
+   Things that can be reset.
 */
 
-public interface Named extends Steppable
+public interface Resettable
     {
-    /**
-       Returns the object's name.
-    */
-    public String getName();
-
-    /**
-       Sets the object's name.
-    */
-    public void setName(String name);
-    
     public void reset(SimState state);
     }
