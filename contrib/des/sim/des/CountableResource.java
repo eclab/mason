@@ -224,7 +224,7 @@ public class CountableResource extends Resource
             }       
         else
             {
-            setAmount(val);                 // this does too many checks but whatever...
+            setAmount(total);                 // this does too many checks but whatever...
             return true;
             }
         }
