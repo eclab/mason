@@ -54,8 +54,11 @@ public class SimpleDelay extends Source implements Receiver, Steppable
         totalResource = 0.0;
         }
 
-	/** Returns the number of items currently being delayed */
+	/** Returns the number of items currently being delayed. */
 	public double getSize() { return delayQueue.size(); }
+
+	/** Returns the number AMOUNT of resource currently being delayed. */
+	public double getTotal() { if (entities == null) return totalResource; else return delayQueue.size(); }
 
     /** Returns the delay time. */
     public double getDelayTime() { return delayTime; }
@@ -89,7 +92,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable
         }
 
     /** Accepts up to CAPACITY of the given resource and places it in the delay,
-        then auto-reschedules the delay if that feature is on.. */
+        then auto-reschedules the delay if that feature is on. */
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (!resource.isSameType(amount)) 

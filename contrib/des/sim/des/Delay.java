@@ -41,8 +41,9 @@ public class Delay extends SimpleDelay
         super(state, 1.0, typical);
         }
         
-	/** Returns the number of items currently being delayed */
 	public double getSize() { return delayHeap.size(); }
+
+	public double getTotal() { if (entities == null) return totalResource; else return delayHeap.size(); }
 
     public void clear()
         {
