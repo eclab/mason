@@ -105,8 +105,9 @@ public class Delay extends SimpleDelay
         {
         drop();
         double time = state.schedule.getTime();
-                
-        while(((double)delayHeap.getMinKey()) >= time)
+        
+        Double minKey = (Double)delayHeap.getMinKey();
+        while(minKey != null && minKey >= time)
             {
             Resource _res = (Resource)(delayHeap.extractMin());
             if (entities == null)
@@ -119,6 +120,7 @@ public class Delay extends SimpleDelay
                 {
                 entities.add((Entity)(_res));
                 }
+ 			minKey = (Double)delayHeap.getMinKey();		// grab the next one
             }
         }
 
