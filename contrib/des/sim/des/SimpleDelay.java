@@ -53,7 +53,10 @@ public class SimpleDelay extends Source implements Receiver, Steppable
         delayQueue.clear();
         totalResource = 0.0;
         }
-                
+
+	/** Returns the number of items currently being delayed */
+	public double getSize() { return delayQueue.size(); }
+
     /** Returns the delay time. */
     public double getDelayTime() { return delayTime; }
 
