@@ -9,8 +9,8 @@ import java.util.*;
    as the number of offers made, the sum total resource flow, mean resource flow, maximum resource
    offered, and so on.  
    
-   <p>A Probe can also detatch an IN.  This is a Probe "helper" which is also inserted between
-   a provider and a receiver somewhere UPSTREAM of the Probe.  With the IN installed, a Probe
+   <p>A Probe can also detatch a LEAD.  This is a Probe "helper" which is also inserted between
+   a provider and a receiver somewhere UPSTREAM of the Probe.  With the LEAD installed, a Probe
    can also be used to measure the utilization, average idle time, current sum resources between
    the In and the Probe, and so on.
 */
@@ -25,10 +25,10 @@ public class Probe extends Provider implements Receiver
     double sumThru;
     double maxThru;				// FIXME: should we have a minThru?
     
-    // From the In
-    In in;
-    double lastInTime;
-	double lastInThru;
+    // From the Lead
+    Lead lead;
+    double lastLeadTime;
+	double lastLeadThru;
 	double current;
 	double sumCurrent;
 	double utilized;
@@ -41,13 +41,13 @@ public class Probe extends Provider implements Receiver
     	reset();
     	}
     
-    public In buildIn() 
+    public Lead buildLead() 
     	{ 
-    	if (in == null) in = new In(this);
-    	return getIn();
+    	if (lead == null) lead = new Lead(this);
+    	return getLead();
     	}
     	
-    public In getIn() { return in; }
+    public Lead getLead() { return lead; }
 
     public void reset()
     	{
@@ -55,8 +55,8 @@ public class Probe extends Provider implements Receiver
     	lastTime = Schedule.BEFORE_SIMULATION;
     	lastThru = 0;
     	maxThru = 0;
-    	lastInTime = Schedule.BEFORE_SIMULATION;
-    	lastInThru = 0;
+    	lastLeadTime = Schedule.BEFORE_SIMULATION;
+    	lastLeadThru = 0;
     	current = 0;
     	sumCurrent = 0;
     	utilized = 0;
@@ -129,18 +129,18 @@ public class Probe extends Provider implements Receiver
 		if (!processed)
 			{
 			if (current > 0)
-				utilized += (lastTime - lastInTime);
+				utilized += (lastTime - lastLeadTime);
 			else
-				idle += (lastTime - lastInTime);
+				idle += (lastTime - lastLeadTime);
 			processed = false;
 			}
 		}
 
-	void updateFromIn(double amt)
+	void updateFromLead(double amt)
 		{
-		lastInTime = state.schedule.getTime();
-		lastInThru = amt;
-		current += lastInThru;
+		lastLeadTime = state.schedule.getTime();
+		lastLeadThru = amt;
+		current += lastLeadThru;
 		sumCurrent += current;
 		processed = false;
 		}
@@ -200,7 +200,7 @@ public class Probe extends Provider implements Receiver
     public String toString()
         {
         return "Probe@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + 
-        	(in == null ? "" : ("In@"+ System.identityHashCode(in) + "(" + (in.getName() == null ? "" : in.getName()) + ")"));
+        	(lead == null ? "" : ("In@"+ System.identityHashCode(lead) + "(" + (lead.getName() == null ? "" : lead.getName()) + ")"));
         }  
                      
     /** Does nothing. */
