@@ -148,7 +148,7 @@ public class UncountableResource extends CountableResource
             }       
         else
             {
-            setAmount(val);                 // this does too many checks but whatever...
+            setAmount(total);                 // this does too many checks but whatever...
             return true;
             }
         }
@@ -166,7 +166,7 @@ public class UncountableResource extends CountableResource
             }       
         else
             {
-            setAmount(val);                 // this does too many checks but whatever...
+            setAmount(total);                 // this does too many checks but whatever...
             return true;
             }
         }
