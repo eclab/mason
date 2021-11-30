@@ -4,6 +4,17 @@ import sim.engine.*;
 import sim.util.*;
 import java.util.*;
 
+/**
+   A Probe can be inserted between a provider and a receiver to gather statistical information such
+   as the number of offers made, the sum total resource flow, mean resource flow, maximum resource
+   offered, and so on.  
+   
+   <p>A Probe can also detatch an IN.  This is a Probe "helper" which is also inserted between
+   a provider and a receiver somewhere UPSTREAM of the Probe.  With the IN installed, a Probe
+   can also be used to measure the utilization, average idle time, current sum resources between
+   the In and the Probe, and so on.
+*/
+
 public class Probe extends Provider implements Receiver
     {
     static final Resource DEFAULT_TYPICAL = new Entity("Probe");
@@ -177,6 +188,11 @@ public class Probe extends Provider implements Receiver
          _amount = null;		// let it gc
          return val;
     	}
+
+    public boolean provide(Receiver receiver)
+        {
+        return false;
+        }
 
     public String toString()
         {

@@ -135,11 +135,6 @@ public class UncountableResource extends CountableResource
         amount = val;
         }
                 
-    /**
-       Increases the amount by the given value: if the value drops
-       to beneath 0, it is set to 0 and FALSE is returned.  Else TRUE is returned.
-       Note that this changes the amount of the given resource available in the world.
-    */
     public boolean increase(double val)
         {
         if (!isPositiveNonNaN(val))                                     // negative or NaN
@@ -147,7 +142,25 @@ public class UncountableResource extends CountableResource
 
         double total = amount + val;
 
-        if (total < 0) 
+        if (total < 0) 						// FIXME: this can never happen?
+            {
+            return false;
+            }       
+        else
+            {
+            setAmount(val);                 // this does too many checks but whatever...
+            return true;
+            }
+        }
+
+    public boolean decrease(double val)
+        {
+        if (!isPositiveNonNaN(val))                                     // negative or NaN
+            throwInvalidNumberException(val);
+
+        double total = amount - val;
+
+        if (total < 0)
             {
             return false;
             }       

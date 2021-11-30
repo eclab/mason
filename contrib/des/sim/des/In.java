@@ -4,6 +4,18 @@ import sim.engine.*;
 import sim.util.*;
 import java.util.*;
 
+/**
+   An IN is attached between a provider and a receiver somewhere UPSTREAM of its associated
+   PROBE.   With the IN installed, a Probe
+   can also be used to measure the utilization, average idle time, current sum resources between
+   the In and the Probe, and so on.
+   
+   <p> You should attach an In upstream of a Probe and generally in such a position that the Probe cannot
+   receive any resources via some route other than through the In, and similarly the In cannot send
+   resources out via any route other than through the Probe.  Otherwise resource statistics will be lost
+   between the two and I'm not positive what the behavior would be.
+   */
+
 public class In extends Provider implements Receiver
     {
     Probe probe;
@@ -66,6 +78,11 @@ public class In extends Provider implements Receiver
          _amount = null;		// let it gc
          return val;
     	}
+
+    public boolean provide(Receiver receiver)
+        {
+        return false;
+        }
 
     public String toString()
         {

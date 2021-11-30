@@ -193,7 +193,7 @@ public class CountableResource extends Resource
 
         double total = amount + val;
 
-        if (total < 0 || !isInteger(total)) 
+        if (total < 0 || !isInteger(total))		// FIXME: is it possible for total < 0 ?
             {
             return false;
             }       
@@ -210,7 +210,23 @@ public class CountableResource extends Resource
     */
     public boolean decrease(double val)
         {
-        return increase(0 - val);
+        if (!isPositiveNonNaN(val))                                     // negative or NaN
+            throwInvalidNumberException(val);
+
+        if (!isInteger(val))
+            throwNonIntegerAmountException(val);
+
+        double total = amount - val;
+
+        if (total < 0 || !isInteger(total)) 
+            {
+            return false;
+            }       
+        else
+            {
+            setAmount(val);                 // this does too many checks but whatever...
+            return true;
+            }
         }
 
     /** 
