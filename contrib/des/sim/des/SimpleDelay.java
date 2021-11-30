@@ -67,10 +67,10 @@ public class SimpleDelay extends Source implements Receiver, Steppable
     public void setDelayTime(double delayTime) { clear(); this.delayTime = delayTime; }
 
     /** Returns the delay ordering. */
-    public int getRescheduleOrdering() { clear(); return rescheduleOrdering; }
+    public int getRescheduleOrdering() { return rescheduleOrdering; }
 
     /** Returns the delay ordering and clears the delay entirely. */
-    public void setRescheduleOrdering(int ordering) { this.rescheduleOrdering = ordering; }
+    public void setRescheduleOrdering(int ordering) { clear();  this.rescheduleOrdering = ordering; }
 
     void throwInvalidNumberException(double capacity)
         {
