@@ -299,6 +299,7 @@ public abstract class Provider implements Named, Resettable
             CountableResource cr = (CountableResource) resource;
             double amt = cr.getAmount();
             if (amt > atMost) amt = atMost;
+            if (amt <= 0) return false;
             return receiver.accept(this, cr, getOffersTakeItOrLeaveIt() ? amt : 0, amt);
             }
         else if (offerOrder == OFFER_ORDER_FIFO)
