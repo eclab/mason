@@ -27,11 +27,6 @@ public class Queue extends Provider implements Receiver, Steppable
         throw new RuntimeException("Capacities may not be negative or NaN.  capacity was: " + capacity);
         }
 
-    boolean isPositiveNonNaN(double val)
-        {
-        return (val >= 0);
-        }
-
     double capacity = Double.POSITIVE_INFINITY;    
 
     /** Returns the maximum available resources that may be aquired by the Queue. */

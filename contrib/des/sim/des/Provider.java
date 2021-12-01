@@ -52,6 +52,20 @@ public abstract class Provider implements Named, Resettable
         throw new RuntimeException("Requested resource amounts are between " + atLeast + " and " + atMost + ", which is out of bounds.");
         }
 
+	/** Tests if val is non-NaN and positive. */
+    protected boolean isPositiveNonNaN(double val)
+        {
+        return (val >= 0);
+        }
+
+	/** Throws an exception indicating that atMost is illegal. */
+    void throwInvalidNumberException(double amount)
+        {
+        throw new RuntimeException("atMost may not be negative or NaN.  Amount provided was: " + amount);
+        }
+
+
+
     // receivers registered with the provider
     ArrayList<Receiver> receivers = new ArrayList<Receiver>();
 
@@ -267,7 +281,8 @@ public abstract class Provider implements Named, Resettable
         }
         
     /** 
-        Makes an offer to the given receiver.
+        Makes an offer of up to the given amount to the given receiver.
+        If the typical resource is an ENTITY, then atMost is ignored.
         Returns true if the offer was accepted.
         
         <p>If the resource in question is an ENTITY, then it is removed
@@ -277,12 +292,13 @@ public abstract class Provider implements Named, Resettable
         via entities.add()).  If the offer order is LIFO, then the entity
         is removed from the END of the entities linked list.
     */
-    protected boolean offerReceiver(Receiver receiver)
+    protected boolean offerReceiver(Receiver receiver, double atMost)
         {
         if (entities == null)
             {
             CountableResource cr = (CountableResource) resource;
             double amt = cr.getAmount();
+            if (amt > atMost) amt = atMost;
             return receiver.accept(this, cr, getOffersTakeItOrLeaveIt() ? amt : 0, amt);
             }
         else if (offerOrder == OFFER_ORDER_FIFO)
@@ -325,7 +341,7 @@ public abstract class Provider implements Named, Resettable
                 {
                 for(Receiver r : receivers)
                     {
-                    result = result || offerReceiver(r);
+                    result = result || offerReceiver(r, Double.POSITIVE_INFINITY);
                     if (result && getOffersTakeItOrLeaveIt()) break;
                     }
                 }
@@ -335,7 +351,7 @@ public abstract class Provider implements Named, Resettable
                 for(int i = receivers.size() - 1; i >= 0; i--)
                     {
                     Receiver r = receivers.get(i);
-                    result = result || offerReceiver(r);
+                    result = result || offerReceiver(r, Double.POSITIVE_INFINITY);
                     if (result && getOffersTakeItOrLeaveIt()) break;
                     }
                 }
@@ -352,7 +368,7 @@ public abstract class Provider implements Named, Resettable
                 while(true)
                     {
                     Receiver r = receivers.get(roundRobinPosition);
-                    result = result || offerReceiver(r);
+                    result = result || offerReceiver(r, Double.POSITIVE_INFINITY);
                     if (result && getOffersTakeItOrLeaveIt()) 
                         {
                         roundRobinPosition++;           // we have to advance the round robin pointer anyway
@@ -376,7 +392,7 @@ public abstract class Provider implements Named, Resettable
                     {
                     Receiver r = nextShuffledReceiver();
                     if (r == null) break;
-                    result = result || offerReceiver(r);
+                    result = result || offerReceiver(r, Double.POSITIVE_INFINITY);
                     if (result && getOffersTakeItOrLeaveIt()) break;
                     }
                 }
@@ -389,7 +405,7 @@ public abstract class Provider implements Named, Resettable
                 
                 if (offerDistribution == null)  // select uniformly
                     {
-                    result = offerReceiver(receivers.get(state.random.nextInt(size)));
+                    result = offerReceiver(receivers.get(state.random.nextInt(size)), Double.POSITIVE_INFINITY);
                     }
                 else
                     {
@@ -405,7 +421,7 @@ public abstract class Provider implements Named, Resettable
                         }
                     else
                         {
-                        result = offerReceiver(receivers.get(val));
+                        result = offerReceiver(receivers.get(val), Double.POSITIVE_INFINITY);
                         }
                     }
                 }
@@ -424,7 +440,21 @@ public abstract class Provider implements Named, Resettable
     */
     public boolean provide(Receiver receiver)
         {
-        return offerReceiver(receiver);
+        return provide(receiver, Double.POSITIVE_INFINITY);
+        }
+
+    /**
+       Asks the Provider to make a unilateral offer of up to the given amount to the given Receiver.  
+       If the typical resource is an ENTITY, then atMost is ignored. This can be used to implement
+       a simple pull. The Receiver does not need to be registered with the Provider.
+       Returns true if the offer was accepted; though since the Receiver itself likely made this call, 
+       it's unlikely that this would ever return anything other than TRUE in a typical simulation.
+    */
+    public boolean provide(Receiver receiver, double atMost)
+        {
+        if (!isPositiveNonNaN(atMost))
+        	throwInvalidNumberException(atMost);
+        return offerReceiver(receiver, atMost);
         }
 
     String name;

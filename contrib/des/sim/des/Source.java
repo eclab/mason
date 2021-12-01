@@ -39,11 +39,6 @@ public class Source extends Provider implements Steppable
         throw new RuntimeException("Production amounts and rates may not be negative or NaN.  Was was: " + amt);
         }
 
-    boolean isPositiveNonNaN(double val)
-        {
-        return (val >= 0);
-        }
-
     /** 
         Builds a source with the given typical resource type.
     */
