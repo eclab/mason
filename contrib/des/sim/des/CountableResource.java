@@ -258,7 +258,7 @@ public class CountableResource extends Resource
             throwNonIntegerAmountException(atMost);
 
         if (amount < atLeast) return null;
-        double sub = (amount >= atMost ? amount : atMost);
+        double sub = (amount <= atMost ? amount : atMost);
         amount -= sub;
         return new CountableResource(this, sub);
         }

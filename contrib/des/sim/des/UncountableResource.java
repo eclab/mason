@@ -198,7 +198,7 @@ public class UncountableResource extends CountableResource
             }
                         
         if (amount < atLeast) return null;
-        double sub = (amount >= atMost ? amount : atMost);
+        double sub = (amount <= atMost ? amount : atMost);
         amount -= sub;
         return new UncountableResource(this, sub);
         }
