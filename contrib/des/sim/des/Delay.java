@@ -122,8 +122,8 @@ public class Delay extends SimpleDelay
             if (entities == null)
                 {
                 CountableResource res = ((CountableResource)_res);
-                resource.add(res);
                 totalResource -= res.getAmount();
+                resource.add(res);
                 }
             else
                 {

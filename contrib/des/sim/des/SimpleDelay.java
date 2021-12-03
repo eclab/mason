@@ -153,8 +153,8 @@ public class SimpleDelay extends Source implements Receiver, Steppable
                     {
                     CountableResource res = ((CountableResource)(node.resource));
                     iterator.remove();
-                    resource.add(res);
                     totalResource -= res.getAmount();
+                    resource.add(res);
                     }
                 else
                     {
