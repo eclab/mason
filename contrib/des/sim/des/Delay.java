@@ -96,11 +96,13 @@ public class Delay extends SimpleDelay
             token.setAmount(maxIncoming);
             cr.decrease(maxIncoming);
             delayHeap.add(token, nextTime);
+			totalResource += maxIncoming;            
             }
         else
             {
             if (delayHeap.size() >= capacity) return false;      // we're at capacity
             delayHeap.add(amount, nextTime);
+			totalResource += 1;            
             }
        
         if (getAutoSchedules()) state.schedule.scheduleOnce(nextTime, getRescheduleOrdering(), this);
@@ -126,6 +128,7 @@ public class Delay extends SimpleDelay
             else
                 {
                 entities.add((Entity)(_res));
+				totalResource--;            
                 }
  			minKey = (Double)delayHeap.getMinKey();		// grab the next one
             }

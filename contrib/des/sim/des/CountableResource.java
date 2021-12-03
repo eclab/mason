@@ -8,7 +8,7 @@ package sim.des;
 
 /** 
     A CountableResource is an Resource which can be merged with resources of the same type.  Resources
-    have AMOUNTS, which must be integers >= 0.  CountableResources are thus finite-ly divisible.
+    have AMOUNTS, which must be integers >= 0.  CountableResources are thus finitely divisible.
     You can also split a CountableResource into a group of smaller CountableResources, and can 
     compare their amounts against each other.
         
@@ -24,6 +24,7 @@ package sim.des;
     divisible resources (like water or gasoline).  This subclass arrangement may seem strange at
     first, but it makes sense given that UncountableResources can do everything CountableResources
     can do, plus some extra things.
+    
 */
 
 public class CountableResource extends Resource
