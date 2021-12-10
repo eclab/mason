@@ -2,10 +2,11 @@ package sim.engine;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.rmi.Remote;
 
-public interface Promised extends Serializable 
+public interface Promised extends Remote
 {
-	
+
 	public boolean isReady() throws RemoteException;
 
 	/** Returns the data. This data is only valid if isReady() is TRUE. */

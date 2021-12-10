@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import sim.engine.*;
+import sim.engine.rmi.RemotePromise;
 import sim.util.*;
 
 public class Wanderer extends DSteppable implements Distinguished {
@@ -23,7 +24,8 @@ public class Wanderer extends DSteppable implements Distinguished {
 
 	public String name = null;
 
-	public String remoteMessage = null;
+	private RemotePromise remote_result;
+
 
 	public Wanderer(final Double2D location, String name) {
 		this.loc = location;
@@ -49,25 +51,16 @@ public class Wanderer extends DSteppable implements Distinguished {
 		}
 	
 		try {
-			// check the previous iteration step result of remote method invocation
-			if (remoteMessage != null) {
-				// if I have the ID of the remote message I take it from the DRegistry
-				DistinguishedRemoteMessage remoteMessageObject =
-					((DistinguishedRemoteMessage) DRegistry.getInstance().getObject(remoteMessage));
-				if (remoteMessageObject.isReady()) { // check if the remoteMessage is filled and use it
-					System.out.println(
-						state.schedule.getSteps() + "]" +
-						"I am " + name + " my friend " + otherAgentID +
-						" was on proc " + remoteMessageObject.getValue());
-				}
+			//check if i have a message to read
+			if(remote_result != null && remote_result.isReady()) {
+				System.out.println(
+					state.schedule.getSteps() + "]" +
+					"I am " + name + " my friend " + otherAgentID +
+					" was on proc " + remote_result.get());
 			}
-
-			// ask for a remoteMessage to otherAgentID with tag 0 and no arguments
-			// this message will be fulfilled in the next step
-			remoteMessage =
-				((DistinguishedRemote) DRegistry.getInstance().getObject(otherAgentID))
-					.remoteMessage(0, null);
-
+			
+			//send remote message to another agent 
+			remote_result = ((DSimState)state).sendRemoteMessage(otherAgentID, 0, null);
 			wanderersState.wanderers.moveAgent(loc, this);
 		} catch (Exception e) {
 			System.err.println("Error on agent " + this + " in step " + wanderersState.schedule.getSteps() + "on PID "
@@ -77,8 +70,8 @@ public class Wanderer extends DSteppable implements Distinguished {
 	}
 
 	// method implemented by the modeler that will fill the remoteMessage
-	public Serializable remoteMessage(int message, Serializable argument) throws RemoteException {
-		switch (message) {
+	public Serializable remoteMessage(int tag, Serializable argument) throws RemoteException {
+		switch (tag) {
 			case 0:
 				return DSimState.getPID();
 			default:

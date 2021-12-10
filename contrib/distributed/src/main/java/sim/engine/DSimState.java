@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SocketHandler;
+import java.rmi.server.UnicastRemoteObject;
 
 import ec.util.MersenneTwisterFast;
 import mpi.MPI;
@@ -28,6 +29,7 @@ import mpi.MPIException;
 import sim.display.Stat;
 import sim.engine.mpi.*;
 import sim.engine.rmi.RemoteProcessor;
+import sim.engine.rmi.RemotePromise;
 import sim.field.HaloGrid2D;
 import sim.field.partitioning.QuadTreePartition;
 import sim.field.storage.ContinuousStorage;
@@ -220,15 +222,34 @@ public class DSimState extends SimState
 			haloField.syncRemoveAndAdd();
 	}
 
+	/*
+	Arraylist where the RemoteMessage are stored
+	the methods invoked on it have to be synchronized to avoid concurrent modification
+	*/
+	private ArrayList<DistinguishedRemoteMessage> messages_queue = 
+			new ArrayList<DistinguishedRemoteMessage>();
+
 	/**
-	 * This method is called immediately before after the schedule. At present it is empty. Nonetheless, if you override this
-	 * method, you absolutely need to call super.postSchedule() first.
+	 * Export a Promise on the registry 
+	 * 
+	 * @param name 
+	 * @param tag
+	 * @param arguments
+	 * 
+	 * @return Promised
+	 * @throws AccessException
+	 * @throws RemoteException
+	 * @throws NotBoundException
 	 */
-	public void postSchedule()
-	{
-		// does nothing
-		 try {
-			DRegistry.getInstance().unregisterObjects();
+	public RemotePromise sendRemoteMessage(String name, int tag, Serializable arguments) throws RemoteException{
+
+		RemotePromise callback = new RemotePromise();
+		try {
+			// DRegistry.getInstance().registerObject("0", callback);
+			UnicastRemoteObject.exportObject(callback, 0);
+			((DistinguishedRemote) DRegistry.getInstance().getObject(name))
+						.remoteMessage(tag, arguments, callback);
+			return callback;
 		} catch (AccessException e) {
 			e.printStackTrace();
 		} catch (RemoteException e) {
@@ -236,6 +257,28 @@ public class DSimState extends SimState
 		} catch (NotBoundException e) {
 			e.printStackTrace();
 		}
+		return null;
+	}
+
+	
+	/**
+	 * Add a DistinguishedRemoteMessage on the DSimstate messages_queue
+	 * 
+	 * @param message 
+	 * 
+	 */
+    public void addRemoteMessage(DistinguishedRemoteMessage message){
+		synchronized(this.messages_queue){
+			messages_queue.add(message);
+		}
+	}
+	/**
+	 * This method is called immediately before after the schedule. At present it is empty. Nonetheless, if you override this
+	 * method, you absolutely need to call super.postSchedule() first.
+	 */
+	public void postSchedule()
+	{
+		
 	}
 
 	/**
@@ -277,8 +320,6 @@ public class DSimState extends SimState
 				for (DistinguishedObject exportedObj : 
 							DRegistry.getInstance().getAllLocalExportedObjects())
 				{
-					// fulfill the remoteMessage requested by the RemoteObject
-					exportedObj.parseQueueMessage();
 					try
 					{
 						// if the object is migrated unregister it
@@ -342,7 +383,7 @@ public class DSimState extends SimState
 					{
 						try
 						{
-							DRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload);
+							DRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload, this);
 						}
 						catch (RemoteException e)
 						{
@@ -383,6 +424,28 @@ public class DSimState extends SimState
 		
 		int x = countTotalAgents(fieldList.get(0));
 
+		/* we invoke the fullfill for every messagge in the messages_queue
+		   to make the Promise ready
+		*/
+		try {
+			synchronized(this.messages_queue){
+			   for(DistinguishedRemoteMessage message: messages_queue){
+				   Serializable data =
+					   message.object.remoteMessage(message.tag, message.arguments);
+				   message.callback.fulfill(data);
+			   }
+			   messages_queue.clear();
+		   }
+		   
+		   DRegistry.getInstance().unregisterObjects();
+	   } catch (AccessException e) {
+		   e.printStackTrace();
+	   } catch (RemoteException e) {
+		   e.printStackTrace();
+	   } catch (NotBoundException e) {
+		   e.printStackTrace();
+	   }
+		
 	}
 
 	void loadBalance()
@@ -451,7 +514,7 @@ public class DSimState extends SimState
 							{
 								try
 								{
-									DRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload);
+									DRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload, this);
 								}
 								catch (RemoteException e)
 								{
