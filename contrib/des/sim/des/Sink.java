@@ -16,7 +16,7 @@ import java.util.*;
 
 public class Sink implements Receiver
     {
-    SimState state;
+    protected SimState state;
     Resource typical;
         
     public Resource getTypical() { return typical; }

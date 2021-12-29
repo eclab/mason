@@ -59,14 +59,20 @@ public class Delay extends SimpleDelay
         }
                 
     /** Returns the distribution used to independently select the delay time for each separate incoming 
-        resource.  If null, 1.0 will be used. */
+        resource.  If null, 1.0 will be used.  When a value is drawn from this distribution to determine
+        delay, it will be put through Absolute Value first to make it positive.  Note that if your 
+        distribution covers negative regions, you need to consider what will happen as a result and 
+        make sure it's okay (or if you should be considering a positive-only distribution).  */
     public AbstractDistribution getDelayDistribution()
         {
         return this.distribution;
         }
                 
     /** By default, provides Math.abs(getDelayDistribution().nextDouble()), or 1.0 if there is
-        no provided distribution.  Override this to provide a custom delay given the 
+        no provided distribution.  The point here is to guarantee that the delay will be positive;
+        but note that if your distribution covers negative regions, you need to consider what
+        will happen as a result and make sure it's okay (or if you should be considering
+        a positive-only distribution).  Override this to provide a custom delay given the 
         provider and resource amount or type. */
     protected double getDelay(Provider provider, Resource amount)
         {

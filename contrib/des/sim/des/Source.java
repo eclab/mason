@@ -66,7 +66,7 @@ public class Source extends Provider implements Steppable
     double nextTime;
     boolean autoSchedules = false;
     int rescheduleOrdering = 0;
-        
+    
     public static final int REJECTION_TRIES = 20;
         
     AbstractDistribution productionDistribution = null;
@@ -88,6 +88,11 @@ public class Source extends Provider implements Steppable
         next time at which it should schedule itself to be stepped() again.  If this distribution
         is null, it instead uses getRate() to deterministically acquire the next timestep.  Note that
         the if the time is currently Schedule.EPOCH, no resources will be produced this timestep.  
+        
+        <p>When a value is drawn from this distribution to determine
+        delay, it will be put through Absolute Value first to make it positive.  Note that if your 
+        distribution covers negative regions, you need to consider what will happen as a result and 
+        make sure it's okay (or if you should be considering a positive-only distribution).  
     */
     public AbstractDistribution getRateDistribution()
         {
@@ -197,6 +202,14 @@ public class Source extends Provider implements Steppable
         
     /** Returns the distribution used to determine how much resource is produced each time the Source
         decides to produce resources.  If this is null, then the determinstic production value is used instead.
+        
+        <p>Depending on your needs, you might wish to select a discrete distribution rather than 
+        a continuous one.
+        
+        <p>When a value is drawn from this distribution to determine
+        delay, it will be put through Absolute Value first to make it positive.  Note that if your 
+        distribution covers negative regions, you need to consider what will happen as a result and 
+        make sure it's okay (or if you should be considering a positive-only distribution).  
     */
     public AbstractDistribution getProductionDistribution()
         {
@@ -235,6 +248,7 @@ public class Source extends Provider implements Steppable
         return ret;
         }
         
+    /*
     boolean warned = false;
     void warnRejectionFailed()
         {
@@ -243,6 +257,7 @@ public class Source extends Provider implements Steppable
             " tries, and was forced to use 0.0.  That's not good.\nSource: " + this + "\nDistribution: " + productionDistribution);
         warned = true;
         }
+    */
         
     /** Builds *amt* number of Entities and adds them to the entities list.  
     	The amount could be a real-value, in which it should be
@@ -324,7 +339,12 @@ public class Source extends Provider implements Steppable
                     
         <p>New entities are produced by calling the method buildEntity().
                 
-        Total production cannot exceed the stated capacity. 
+        <p>Total production cannot exceed the stated capacity. 
+        
+        <p>Note that when a value is drawn from either the RATE or PRODUCTION distributions, 
+        it will be put through Absolute Value first to make it positive.  Note that if your 
+        distribution covers negative regions, you need to consider what will happen as a result and 
+        make sure it's okay (or if you should be considering a positive-only distribution).  
     */
                 
     protected void update()
@@ -366,6 +386,9 @@ public class Source extends Provider implements Steppable
         double amt = production;
         if (productionDistribution != null)
             {
+			amt = Math.abs(productionDistribution.nextDouble());
+            
+            /*
             // produce
 			for(int i = 0; i < REJECTION_TRIES; i++)
 				{
@@ -379,6 +402,7 @@ public class Source extends Provider implements Steppable
 				warnRejectionFailed();
         		amt = 0;
         		}
+        	*/
             }
     
     	// produce it                                      
