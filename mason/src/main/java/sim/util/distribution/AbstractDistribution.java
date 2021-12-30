@@ -50,7 +50,7 @@ public abstract class AbstractDistribution implements java.io.Serializable {
 /**
  * Makes this class non instantiable, but still let's others inherit from it.
  */
-    protected AbstractDistribution() {}
+//    protected AbstractDistribution() {}
 /**
    Equivalent to <tt>nextDouble()</tt>.
    This has the effect that distributions can now be used as function objects, returning a random number upon function evaluation.
