@@ -7,7 +7,7 @@
   It is provided "as is" without expressed or implied warranty.
 */
 
-//// Contributions 
+/// Contributions by Vladimir Menkov (nextTriangular(min, mode, max, random)) under the same license
 
 package sim.util.distribution;
 import ec.util.MersenneTwisterFast;

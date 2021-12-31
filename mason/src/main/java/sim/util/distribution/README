@@ -19,22 +19,29 @@ AbstractDiscreteDistribution subclasses override a method nextInt(),
 which returns a random integer drawn from from the distribution.  These
 classes also override nextDouble(), but just have it call nextInt().
 
-There are also several utility classes, which you can ignore:
+There are also several utility classes:
+
+SCALE.JAVA
+A helpful utility for converting one distribution into another by multiplying
+it by a constant and adding a constant.
 
 DISTRIBUTION.JAVA
-Each distribution has its own class.  Some distributions are stateful and
-actually require instances; but others are just simple stubs that in turn
+Each distribution has its own class.  Some distribution classess are stateful
+and actually require instances; but others are just simple stubs that in turn
 call an equivalent static method in the Distributions.java class.
 
 FUN.JAVA
 Utility functions for the distributions to use.
+You can ignore this.
 
 CONSTANTS.JAVA
-What it says on the tin: a collection of constants for the distributions
-to use.
+A collection of constants for the distributions to use.
+You can ignore this.
 
 PROBABILITY.JAVA
 More utility functions for the distributions to use.
+You can ignore this.
 
 POLYNOMIAL.JAVA
 More constants.
+You can ignore this.
