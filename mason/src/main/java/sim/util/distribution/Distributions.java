@@ -7,6 +7,8 @@
   It is provided "as is" without expressed or implied warranty.
 */
 
+//// Contributions 
+
 package sim.util.distribution;
 import ec.util.MersenneTwisterFast;
 
@@ -319,6 +321,28 @@ public class Distributions  implements java.io.Serializable {
         if (u<=0.5) return(Math.sqrt(2.0*u)-1.0);                      /* -1 <= x <= 0 */
         else return(1.0-Math.sqrt(2.0*(1.0-u)));                 /*  0 <= x <= 1 */
         }
+
+
+
+    /** Returns a random number from the Triangular distribution with a given min, max, and mode (peak). 
+        It is required that the min &lt;= mode &lt;= max, or a RuntimeException will likely occur. */
+    public static double nextTriangular(double min, double mode, double max, MersenneTwisterFast random) 
+        {
+        double u = random.nextDouble();
+        //if (min==mode) return max + (mode-max)*Math.sqrt(1-u); 
+        //else if (mode==max) return min + (mode-min)*Math.sqrt(u); 
+        //else 
+        if (u * (max - min) < (mode - min)) // In the left wing
+            { 
+            return min + Math.sqrt(u * (mode - min) * (max - min));
+            } 
+        else  // In the right wing
+            {
+            return max - Math.sqrt((1 - u) * (max - mode) * (max - min));
+            }
+        }
+
+
 /**
  * Returns a weibull distributed random number. 
  * Polar method.
