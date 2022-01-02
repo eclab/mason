@@ -122,7 +122,7 @@ public class Delay extends SimpleDelay
         double time = state.schedule.getTime();
         
         Double minKey = (Double)delayHeap.getMinKey();
-        while(minKey != null && minKey >= time)
+        while(minKey != null && minKey <= time)
             {
             Resource _res = (Resource)(delayHeap.extractMin());
             if (entities == null)
