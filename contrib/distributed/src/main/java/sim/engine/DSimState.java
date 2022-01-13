@@ -395,9 +395,7 @@ public class DSimState extends SimState
 			try
 			{
 				// Balance the partitions for the given level migrating the agents
-				
-				int x = countTotalAgents(fieldList.get(0));
-		        System.out.println(partition.getPID()+" : "+x);
+
 				
 				balancePartitions(balancerLevel);
 		        
@@ -408,7 +406,6 @@ public class DSimState extends SimState
 					transporter.sync();
 					
 					int x2 = countTotalAgents(fieldList.get(0));
-			        System.out.println(partition.getPID()+"B : "+x2);
 					
 										
 				}
@@ -474,7 +471,6 @@ public class DSimState extends SimState
 				}
 
 				int x3 = countTotalAgents(fieldList.get(0));
-		        System.out.println(partition.getPID()+"C : "+x3);
 				
 				// Wait that all nodes have registered their new objects in the distributed registry.
 				try
@@ -488,7 +484,6 @@ public class DSimState extends SimState
 				}
 				
 				int x4 = countTotalAgents(fieldList.get(0));
-		        System.out.println(partition.getPID()+"D : "+x4);
 		        //System.exit(-1);
 
 				// clear queue
@@ -965,8 +960,10 @@ public class DSimState extends SimState
 	// for communicating global variables (usually best) at each time step
 	// takes set of variables from each partition, picks the best from them in some
 	// way, then distributes the best back to each partition.
+	// To use, user must implement getPartitionGlobals, arbitrateGlobals, and setGlobals in subclass
+	// this method is called every "updateGlobalsInterval" steps, which is a field that can be changed by user
 	// Example: DPSO has a best fitness score and an x and y associated with that score
-	// 1) gather each best score and corresponding x and y from each parition (gatherGlobals())
+	// 1) gather each best score and corresponding x and y from each partition (gatherGlobals())
 	// 2) arbitrate (pick the best score and its x and y out of the partition candidates (arbitrateGlobal)
 	// 3) distributed the winner back to each partition, each partition keeps track of the global
 	private void updateGlobals()

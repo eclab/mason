@@ -31,6 +31,7 @@ public class DFlockers extends DSimState
 	public final static double deadFlockerProbability = 0;
 	public final static int neighborhood = 6; // aoi
 	public final static double jump = 0.7; // how far do we move in a time step?
+	
 
 	public final DContinuous2D<DFlocker> flockers;
 
@@ -44,6 +45,9 @@ public class DFlockers extends DSimState
 		super(seed, DFlockers.width, DFlockers.height, DFlockers.neighborhood);
 
 		flockers = new DContinuous2D<>((int) (DFlockers.neighborhood / 1.5), this);
+		
+		this.recordStats = true;
+
 
 	}
 

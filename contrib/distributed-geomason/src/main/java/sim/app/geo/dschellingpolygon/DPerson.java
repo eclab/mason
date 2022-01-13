@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import sim.engine.DSimState;
 import sim.engine.DSteppable;
 import sim.engine.SimState;
+import sim.util.geo.DGeomSteppable;
 
 
 public class DPerson{
@@ -155,6 +156,9 @@ public class DPerson{
 	        }
 
 	    }
+
+
+
 
 	}
 

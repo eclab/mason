@@ -142,7 +142,7 @@ public class SimStateProxy extends SimState
 	
 	/** Ordered stat data (or placeholder if no data) for each processor from the earliest timestep saved in the queues {@link SimStateProxy#statsSmallestTimestep} to the current one
 	<p> TODO WELL atm, it's really this: ArrayList&ltArrayList&ltInteger | Stat&gt&gt */
-	ArrayList<ArrayList<Object>> statQueues;
+	ArrayList<ArrayList<Object>> statQueues = new ArrayList<ArrayList<Object>>();
 	
 	/** Registers a field proxy with the SimState.  Each timestep or whatnot the proxy will get updated,
 		which causes it to go out and load information remotely.  The order in which the fields are registered
@@ -236,6 +236,8 @@ public class SimStateProxy extends SimState
 				{
 				public void step(SimState state)
 					{
+					
+					System.out.println("stepping...");
 					// First we sleep a little bit so we don't just constantly poll
 					try
 						{
@@ -250,6 +252,7 @@ public class SimStateProxy extends SimState
 					long cur = System.currentTimeMillis();
 					if (cur - refresh >= stepSize)
 						{
+						
 						refresh = cur;
 						try
 							{
@@ -264,6 +267,9 @@ public class SimStateProxy extends SimState
 							long steps = vp.getSteps();
 							if (steps > lastSteps)
 								{
+								
+
+								
 								// Okay it's worth updating, so let's grab the data
 								vp.lock();
 								
@@ -291,17 +297,26 @@ public class SimStateProxy extends SimState
 								// Determine if any stats are registered (on *any* processor)
 								boolean statsExist = false; // flag for if any stats are registered
 								ArrayList<ArrayList<Stat>> allStats = new ArrayList<>();
+								System.out.println("num processors :"+numProcessors);
 								for (int p = 0; p < numProcessors; p++)
 								{
 									VisualizationProcessor vp1 = visualizationProcessor(p);
 									ArrayList<Stat> statList = vp1.getStatList();
+									
+									System.out.println("size of statList : "+statList.size());
+									
 									allStats.add(statList);
 									if (!statsExist && !statList.isEmpty())
 										statsExist = true;
 								}
 								
+								System.out.println("num processors :"+numProcessors);
+
+
+								
 								if (statsExist)
 								{
+									System.out.println("statsExist");
 									// Find minimum step over all processor stats
 									long minStep = Long.MAX_VALUE;
 									long maxStep = Long.MIN_VALUE;
@@ -421,6 +436,8 @@ public class SimStateProxy extends SimState
 									// <<<<<<Stats & Debug
 									}
 //									}
+								
+
 								}
 							lastSteps = steps;
 							}

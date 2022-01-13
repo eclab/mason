@@ -3,13 +3,12 @@
 package sim.app.geo.dschellingpolygon;
 
 import java.net.URL;
+
 import java.util.ArrayList;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
-import sim.app.dflockers.DFlocker;
-import sim.app.geo.dcampusworld.DAgent;
-import sim.app.geo.dcampusworld.DCampusWorld;
+
 import sim.app.geo.schellingpolygon.data.SchellingPolygonData;
 import sim.engine.DSimState;
 import sim.field.geo.DGeomVectorField;
@@ -23,6 +22,12 @@ public class DPolySchelling extends DSimState{
 
 	
 	private static final long serialVersionUID = 1L;
+	
+	public static final int width = 100;
+	public static final int height = 100;
+	public static final int aoi = 1;// TODO what value???
+	
+	
     // storing the data
     public DGeomVectorField world;
     ArrayList<DPolygon> polys = new ArrayList<DPolygon>();
@@ -34,9 +39,9 @@ public class DPolySchelling extends DSimState{
 
     
     
-    public DPolySchelling(long seed, int width, int height, int aoi) {
+    public DPolySchelling(long seed) {
 		super(seed, width, height, aoi);
-		world = new DGeomVectorField<DAgent>(discretization, this);;
+		world = new DGeomVectorField<DPolygon>(discretization, this);;
 	}
 
 
@@ -145,7 +150,7 @@ public class DPolySchelling extends DSimState{
 
 	public static void main(final String[] args)
 	{
-		doLoopDistributed(DCampusWorld.class, args);
+		doLoopDistributed(DPolySchelling.class, args);
 		System.exit(0);
 	}
 
