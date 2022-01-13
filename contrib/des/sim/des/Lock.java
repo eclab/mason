@@ -76,6 +76,9 @@ public class Lock extends Provider implements Receiver
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
+        if (!(atLeast >= 0 && atMost >= atLeast))
+        	throwInvalidAtLeastAtMost(atLeast, atMost);
+
         if (pool.getResource().getAmount() < numResources) return false;
 
         _amount = amount;
@@ -87,6 +90,8 @@ public class Lock extends Provider implements Receiver
             {
             pool.getResource().decrease(numResources);
             }
+
+        _amount = null;		/// let it gc
         return result;
         }
 

@@ -47,6 +47,9 @@ public class Transformer extends Provider implements Receiver
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
+        if (!(atLeast >= 0 && atMost >= atLeast))
+        	throwInvalidAtLeastAtMost(atLeast, atMost);
+
         if (amount instanceof Entity)
             {
             if (typical instanceof Entity)

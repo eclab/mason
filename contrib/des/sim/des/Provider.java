@@ -25,8 +25,14 @@ import sim.util.distribution.*;
    offers.
 */
 
-public abstract class Provider implements Named
+public abstract class Provider implements Named, Resettable
     {
+    /** Throws an exception indicating that an offer cycle was detected. */
+    protected void throwInvalidMinMax()
+        {
+        throw new RuntimeException("accept(...) was called with atLeast > atMost." );
+        }
+
     /** Throws an exception indicating that an offer cycle was detected. */
     protected void throwCyclicOffers()
         {
@@ -40,8 +46,28 @@ public abstract class Provider implements Named
             " but got resource type " + res.getName() + "(" + res.getType() + ")" );
         }
 
+	/** Throws an exception indicating that atLeast and atMost are out of legal bounds. */
+    protected void throwInvalidAtLeastAtMost(double atLeast, double atMost)
+        {
+        throw new RuntimeException("Requested resource amounts are between " + atLeast + " and " + atMost + ", which is out of bounds.");
+        }
+
+	/** Tests if val is non-NaN and positive. */
+    protected boolean isPositiveNonNaN(double val)
+        {
+        return (val >= 0);
+        }
+
+	/** Throws an exception indicating that atMost is illegal. */
+    void throwInvalidNumberException(double amount)
+        {
+        throw new RuntimeException("atMost may not be negative or NaN.  Amount provided was: " + amount);
+        }
+
+
+
     // receivers registered with the provider
-    ArrayList<Receiver> receivers;
+    ArrayList<Receiver> receivers = new ArrayList<Receiver>();
 
     /** The typical kind of resource the Provider provides.  This should always be zero and not used except for type checking. */
     protected Resource typical;
@@ -52,6 +78,25 @@ public abstract class Provider implements Named
     /** The model. */
     protected SimState state;
         
+        
+    /** First in First Out Offer Order for entities. */
+    public static final int OFFER_ORDER_FIFO = 0;
+    /** Last in First Out Offer Order for entities. */
+    public static final int OFFER_ORDER_LIFO = 1;
+    public int offerOrder = OFFER_ORDER_FIFO;
+    
+	public void setOfferOrder(int offerOrder)
+		{
+        if (offerOrder < OFFER_ORDER_FIFO || offerOrder > OFFER_ORDER_LIFO)
+            throw new IllegalArgumentException("Offer Order " + offerOrder + " out of bounds.");
+		this.offerOrder = offerOrder;
+		}
+		
+	public int getOfferOrder()
+		{
+		return offerOrder;
+		}
+
     /** Offer Policy: offers are made to the first receiver, then the second, and so on, until available resources or receivers are exhausted. */
     public static final int OFFER_POLICY_FORWARD = 0;
     /** Offer Policy: offers are made to the last receiver, then the second to last, and so on, until available resources or receivers are exhausted. */
@@ -66,13 +111,13 @@ public abstract class Provider implements Named
     int roundRobinPosition = 0;
     boolean offersTakeItOrLeaveIt;
     AbstractDiscreteDistribution offerDistribution;
-    
+
     boolean offering;
     /** Returns true if the Provider is currently making an offer to a receiver (this is meant to allow you
         to check for offer cycles. */
     protected boolean isOffering() { return offering; }
 
-    /** Sets the receiver offer policy */
+    /** Sets the receiver offer policy.  Throws IllegalArgumentException if the policy is out of bounds. */
     public void setOfferPolicy(int offerPolicy) 
         { 
         if (offerPolicy < OFFER_POLICY_FORWARD || offerPolicy > OFFER_POLICY_RANDOM)
@@ -236,25 +281,42 @@ public abstract class Provider implements Named
         }
         
     /** 
-        Makes an offer to the given receiver.
+        Makes an offer of up to the given amount to the given receiver.
+        If the typical resource is an ENTITY, then atMost is ignored.
         Returns true if the offer was accepted.
+        
+        <p>If the resource in question is an ENTITY, then it is removed
+        according to the current OFFER ORDER.  If the offer order is FIFO
+        (default), then the entity is removed from the FRONT of the entities 
+        linked list (normally entities are added to the END of the linked list
+        via entities.add()).  If the offer order is LIFO, then the entity
+        is removed from the END of the entities linked list.
     */
-    protected boolean offerReceiver(Receiver receiver)
+    protected boolean offerReceiver(Receiver receiver, double atMost)
         {
         if (entities == null)
             {
             CountableResource cr = (CountableResource) resource;
             double amt = cr.getAmount();
+            if (amt > atMost) amt = atMost;
+            if (amt <= 0) return false;
             return receiver.accept(this, cr, getOffersTakeItOrLeaveIt() ? amt : 0, amt);
             }
-        else
+        else if (offerOrder == OFFER_ORDER_FIFO)
+            {
+            Entity e = entities.getFirst();
+            boolean result = receiver.accept(this, e, 0, 0);
+            if (result) entities.removeFirst();
+            return result;
+            }
+         else // if (offerOrder == OFFER_ORDER_LIFO)
             {
             Entity e = entities.getLast();
             boolean result = receiver.accept(this, e, 0, 0);
-            if (result) entities.remove();
+            if (result) entities.removeLast();
             return result;
             }
-        }
+       }
     
     // only warn about problems with the distribution a single time
     boolean warned = false; 
@@ -280,7 +342,7 @@ public abstract class Provider implements Named
                 {
                 for(Receiver r : receivers)
                     {
-                    result = result || offerReceiver(r);
+                    result = result || offerReceiver(r, Double.POSITIVE_INFINITY);
                     if (result && getOffersTakeItOrLeaveIt()) break;
                     }
                 }
@@ -290,7 +352,7 @@ public abstract class Provider implements Named
                 for(int i = receivers.size() - 1; i >= 0; i--)
                     {
                     Receiver r = receivers.get(i);
-                    result = result || offerReceiver(r);
+                    result = result || offerReceiver(r, Double.POSITIVE_INFINITY);
                     if (result && getOffersTakeItOrLeaveIt()) break;
                     }
                 }
@@ -307,7 +369,7 @@ public abstract class Provider implements Named
                 while(true)
                     {
                     Receiver r = receivers.get(roundRobinPosition);
-                    result = result || offerReceiver(r);
+                    result = result || offerReceiver(r, Double.POSITIVE_INFINITY);
                     if (result && getOffersTakeItOrLeaveIt()) 
                         {
                         roundRobinPosition++;           // we have to advance the round robin pointer anyway
@@ -331,7 +393,7 @@ public abstract class Provider implements Named
                     {
                     Receiver r = nextShuffledReceiver();
                     if (r == null) break;
-                    result = result || offerReceiver(r);
+                    result = result || offerReceiver(r, Double.POSITIVE_INFINITY);
                     if (result && getOffersTakeItOrLeaveIt()) break;
                     }
                 }
@@ -344,7 +406,7 @@ public abstract class Provider implements Named
                 
                 if (offerDistribution == null)  // select uniformly
                     {
-                    result = offerReceiver(receivers.get(state.random.nextInt(size)));
+                    result = offerReceiver(receivers.get(state.random.nextInt(size)), Double.POSITIVE_INFINITY);
                     }
                 else
                     {
@@ -360,7 +422,7 @@ public abstract class Provider implements Named
                         }
                     else
                         {
-                        result = offerReceiver(receivers.get(val));
+                        result = offerReceiver(receivers.get(val), Double.POSITIVE_INFINITY);
                         }
                     }
                 }
@@ -379,11 +441,29 @@ public abstract class Provider implements Named
     */
     public boolean provide(Receiver receiver)
         {
-        return offerReceiver(receiver);
+        return provide(receiver, Double.POSITIVE_INFINITY);
+        }
+
+    /**
+       Asks the Provider to make a unilateral offer of up to the given amount to the given Receiver.  
+       If the typical resource is an ENTITY, then atMost is ignored. This can be used to implement
+       a simple pull. The Receiver does not need to be registered with the Provider.
+       Returns true if the offer was accepted; though since the Receiver itself likely made this call, 
+       it's unlikely that this would ever return anything other than TRUE in a typical simulation.
+    */
+    public boolean provide(Receiver receiver, double atMost)
+        {
+        if (!isPositiveNonNaN(atMost))
+        	throwInvalidNumberException(atMost);
+        return offerReceiver(receiver, atMost);
         }
 
     String name;
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-
+    
+    public void reset(SimState state) 
+    	{
+    	clear();
+    	}
     }

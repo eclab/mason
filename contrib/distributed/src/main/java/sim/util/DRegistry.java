@@ -22,6 +22,8 @@ import java.util.logging.Logger;
 import mpi.MPI;
 import sim.engine.Distinguished;
 import sim.engine.DistinguishedObject;
+import sim.engine.DSimState;
+
 
 /**
  * This class enables agents access to the information of another agent in any
@@ -158,14 +160,14 @@ public class DRegistry
 	/**
 	 * Register an object obj with key name on the registry
 	 * 
-	 * @param name
-	 * @param obj
+	 * @param obj 
+	 * @param simstate
 	 * 
 	 * @return true if successful
 	 * @throws AccessException
 	 * @throws RemoteException
 	 */
-	public boolean registerObject(Distinguished obj) throws AccessException, RemoteException
+	public boolean registerObject(Distinguished obj, DSimState simstate) throws AccessException, RemoteException
 	{
 		String name = obj.getName();
 		
@@ -173,7 +175,7 @@ public class DRegistry
 		{
 			try
 			{
-				DistinguishedObject remoteObj = new DistinguishedObject(obj);
+				DistinguishedObject remoteObj = new DistinguishedObject(obj, simstate);
 				Remote stub = UnicastRemoteObject.exportObject(remoteObj, 0);
 				registry.bind(name, stub);
 				exportedNames.put(name, remoteObj);

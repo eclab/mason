@@ -10,7 +10,6 @@ import java.io.Serializable;
 
 public class Promise implements Promised
 {
-	private static final long serialVersionUID = 1L;
 
 	boolean ready = false;
 	Serializable object = null;

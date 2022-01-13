@@ -8,7 +8,7 @@ package sim.des;
 
 /** 
     A CountableResource is an Resource which can be merged with resources of the same type.  Resources
-    have AMOUNTS, which must be integers >= 0.  CountableResources are thus finite-ly divisible.
+    have AMOUNTS, which must be integers >= 0.  CountableResources are thus finitely divisible.
     You can also split a CountableResource into a group of smaller CountableResources, and can 
     compare their amounts against each other.
         
@@ -24,6 +24,7 @@ package sim.des;
     divisible resources (like water or gasoline).  This subclass arrangement may seem strange at
     first, but it makes sense given that UncountableResources can do everything CountableResources
     can do, plus some extra things.
+    
 */
 
 public class CountableResource extends Resource
@@ -193,13 +194,13 @@ public class CountableResource extends Resource
 
         double total = amount + val;
 
-        if (total < 0 || !isInteger(total)) 
+        if (total < 0 || !isInteger(total))		// FIXME: is it possible for total < 0 ?
             {
             return false;
             }       
         else
             {
-            setAmount(val);                 // this does too many checks but whatever...
+            setAmount(total);                 // this does too many checks but whatever...
             return true;
             }
         }
@@ -210,7 +211,23 @@ public class CountableResource extends Resource
     */
     public boolean decrease(double val)
         {
-        return increase(0 - val);
+        if (!isPositiveNonNaN(val))                                     // negative or NaN
+            throwInvalidNumberException(val);
+
+        if (!isInteger(val))
+            throwNonIntegerAmountException(val);
+
+        double total = amount - val;
+
+        if (total < 0 || !isInteger(total)) 
+            {
+            return false;
+            }       
+        else
+            {
+            setAmount(total);                 // this does too many checks but whatever...
+            return true;
+            }
         }
 
     /** 
@@ -242,7 +259,7 @@ public class CountableResource extends Resource
             throwNonIntegerAmountException(atMost);
 
         if (amount < atLeast) return null;
-        double sub = (amount >= atMost ? amount : atMost);
+        double sub = (amount <= atMost ? amount : atMost);
         amount -= sub;
         return new CountableResource(this, sub);
         }

@@ -20,10 +20,10 @@ public interface Distinguished
 	/**
 	 * Respond to a remote request of some data.
 	 * @param tag is the tag used to understand which method to use to fill the RemoteMessage  
-	 * @param argument is the optional argument that could be needed
+	 * @param arguments is the optional argument that could be needed
 	 * 
 	 */
-	public Serializable remoteMessage(int message, Serializable arguments) throws RemoteException;
+	public Serializable remoteMessage(int tag, Serializable arguments) throws RemoteException;
 	
 	/**
 	 * Return the name of the remote object.

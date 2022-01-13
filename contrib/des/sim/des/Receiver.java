@@ -15,7 +15,7 @@ import java.util.*;
    Receivers can also register themselves with providers to be informed of offers.
 */
 
-public interface Receiver extends Named
+public interface Receiver extends Named, Resettable
     {
     /**
        Offers a resource from a Provider to a Receiver.
@@ -26,8 +26,13 @@ public interface Receiver extends Named
        the offer.
                 
        <p>If the resource is an ENTITY of some kind,
-       The provider may respond by taking the entitym and returning TRUE, 
+       The provider may respond by taking the entity and returning TRUE, 
        or returning FALSE if it refuses the offer.
+       
+       <p>May throw a RuntimeException if the resource does not
+       match the typical resource of the receiver, or if a cycle was detected in accepting
+       offers (A offers to B, which offers to C, which then offers to A).
+      	At present does not check that atLeast and atMost are valid.
     */
     public boolean accept(Provider provider, Resource resource, double atLeast, double atMost);
 

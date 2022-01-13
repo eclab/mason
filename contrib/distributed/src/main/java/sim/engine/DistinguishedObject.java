@@ -1,11 +1,9 @@
 package sim.engine;
 
 import java.rmi.RemoteException;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.io.Serializable;
 
-import sim.util.DRegistry;
+import sim.engine.rmi.RemotePromise;
 
 /*
  * Wrapper of the Remote Object containing
@@ -18,32 +16,22 @@ public class DistinguishedObject implements DistinguishedRemote {
 	
 	// real object within the field
 	protected Distinguished object;
+	protected DSimState simstate;
 
 	// queue of remoteMessage
-	private Queue<DistinguishedRemoteMessageObject> queue = new ConcurrentLinkedQueue<DistinguishedRemoteMessageObject>();
+	//private Queue<DistinguishedRemoteMessageObject> queue = new ConcurrentLinkedQueue<DistinguishedRemoteMessageObject>();
 
-	public DistinguishedObject(Distinguished object) {
+
+	public DistinguishedObject(Distinguished object, DSimState simstate) {
 		this.object = object;
+		this.simstate = simstate;
 	}
 
-	// read all the messages in the queue and fulfill them using the remoteMessage()
-	// implemented by the modeler
-	// used in DSimState in the preSchedule()
-	protected void parseQueueMessage() throws RemoteException{
-		while (!queue.isEmpty()) {
-			DistinguishedRemoteMessageObject remoteMessage = queue.remove();
-			remoteMessage.setValue(this.object.remoteMessage(remoteMessage.message, remoteMessage.arguments));
-		}
+	// add a Promise that has been exported on the Dregistry on the queue on DSimstate
+	public void remoteMessage(int tag, Serializable arguments, Promised callback) throws RemoteException {
+		DistinguishedRemoteMessage remoteMessage 
+			= new DistinguishedRemoteMessage(object, tag, arguments, callback);
+        simstate.addRemoteMessage(remoteMessage);
 	}
-
-	// create a remoteMessage, put it in the queue, and register it on the DRegistry
-	// returns the id of the message in order to retrieve it from the DRegistry
-	public String remoteMessage(int message, Serializable arguments) throws RemoteException {
-		DistinguishedRemoteMessageObject remoteMessage = new DistinguishedRemoteMessageObject(message, arguments);
-        this.queue.add(remoteMessage);
-        DRegistry.getInstance().registerObject(remoteMessage.getId(), remoteMessage);
-		return remoteMessage.getId();
-	}
-
 
 }

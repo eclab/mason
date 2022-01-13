@@ -1,17 +1,32 @@
 package sim.engine;
 
 import java.io.Serializable;
-import java.rmi.NotBoundException;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
+
+import sim.engine.rmi.RemotePromise;
 
 /*
-* Interface of the RemoteMessage required to make it a Remote Object
-* and be able to be registered on the DRegistry
+* Message used to exchange information between Remote Objects
+* Has a specific atomic ID used for the register on DRegistry
 */
 
-public interface DistinguishedRemoteMessage extends Remote{
-    public Serializable getValue() throws RemoteException, NotBoundException; 
-    public String getId() throws RemoteException; 
-    public boolean isReady() throws RemoteException; 
+public class DistinguishedRemoteMessage {
+        
+    /* Tag used to understand which method to use to fill the RemoteMessage */
+    public int tag; 
+    /* Optional argument that could be needed */
+    public Serializable arguments;
+    public Distinguished object;
+    public Promised callback;
+    
+    protected DistinguishedRemoteMessage(
+                Distinguished object, 
+                int tag, 
+                Serializable arguments,
+                Promised callback) {
+        this.tag = tag;
+        this.arguments = arguments;
+        this.object = object;
+        this.callback = callback;
+    }
+
 }

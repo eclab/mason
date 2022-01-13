@@ -16,7 +16,7 @@ import java.util.*;
 
 public class Sink implements Receiver
     {
-    SimState state;
+    protected SimState state;
     Resource typical;
         
     public Resource getTypical() { return typical; }
@@ -25,6 +25,11 @@ public class Sink implements Receiver
         {
         throw new RuntimeException("Expected resource type " + this.typical.getName() + "(" + this.typical.getType() + ")" +
             " but got resource type " + resource.getName() + "(" + resource.getType() + ")" );
+        }
+
+    void throwInvalidAtLeastAtMost(double atLeast, double atMost)
+        {
+        throw new RuntimeException("Requested resource amounts are between " + atLeast + " and " + atMost + ", which is out of bounds.");
         }
 
     public Sink(SimState state, Resource typical)
@@ -37,6 +42,9 @@ public class Sink implements Receiver
         {
         if (!typical.isSameType(resource)) throwUnequalTypeException(resource);
         
+        if (!(atLeast >= 0 && atMost >= atLeast))
+        	throwInvalidAtLeastAtMost(atLeast, atMost);
+
         if (resource instanceof CountableResource) 
             {
             ((CountableResource) resource).reduce(atMost);
@@ -61,4 +69,6 @@ public class Sink implements Receiver
     String name;
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-    }
+   
+    public void reset(SimState state) { }
+ 	}

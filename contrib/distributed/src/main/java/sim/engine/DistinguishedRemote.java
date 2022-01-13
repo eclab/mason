@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import sim.engine.rmi.RemotePromise;
+
 
 /*
  * Interface that should be implemented by a class that needs to be a remote (Distinguish) Object
@@ -14,11 +16,12 @@ public interface DistinguishedRemote extends Remote
 {
 	/**
 	 * Respond to a remote request of some data.
-	 * @param message is the tag used to understand which method to use to fill the RemoteMessage  
-	 * @param argument is the optional argument that could be needed
+	 * @param tag is the tag used to understand which method to use to fill the RemoteMessage  
+	 * @param arguments is the optional argument that could be needed
+	 * @param callback Promised callback that has to be fullfilled
 	 * 
 	 * 
 	 * @return the id of the message used to register it on the DRegistry
 	 */
-	public String remoteMessage(int message, Serializable arguments) throws RemoteException;
+	public void remoteMessage(int tag, Serializable arguments, Promised callback) throws RemoteException;
 }
