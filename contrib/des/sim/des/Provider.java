@@ -117,7 +117,7 @@ public abstract class Provider implements Named, Resettable
     
     double totalAcceptedOfferResource;
     public double getTotalOfferResource() { return totalAcceptedOfferResource; }
-    public double getOfferResourceRate() { double time = state.schedule.time(); if (time <= 0) return 0; else return totalAcceptedOfferResource / time; }
+    public double getOfferResourceRate() { double time = state.schedule.getTime(); if (time <= 0) return 0; else return totalAcceptedOfferResource / time; }
     
         
     /** First in First Out Offer Order for entities. */

@@ -18,7 +18,7 @@ import java.util.*;
     make an offer if possible to any Receiver that requests one via provide(...). 
 */
 
-public class Queue extends Provider implements Receiver, Steppable
+public class Queue extends Provider implements Receiver, Steppable, StatReceiver
     {
     public Resource getTypical() { return typical; }
 
@@ -55,7 +55,7 @@ public class Queue extends Provider implements Receiver, Steppable
 
     double totalReceivedResource;
     public double getTotalReceivedResource() { return totalReceivedResource; }
-    public double getReceiverResourceRate() { double time = state.schedule.time(); if (time <= 0) return 0; else return totalReceivedResource / time; }
+    public double getReceiverResourceRate() { double time = state.schedule.getTime(); if (time <= 0) return 0; else return totalReceivedResource / time; }
 
     /** 
         Builds a queue with the given typical resource type.

@@ -14,14 +14,14 @@ import java.util.*;
    A Sink accepts all incoming offers of resources matching a given type, then throws them away.
 */
 
-public class Sink implements Receiver
+public class Sink implements Receiver, StatReceiver
     {
     protected SimState state;
     Resource typical;
         
     double totalReceivedResource;
     public double getTotalReceivedResource() { return totalReceivedResource; }
-    public double getReceiverResourceRate() { double time = state.schedule.time(); if (time <= 0) return 0; else return totalReceivedResource / time; }
+    public double getReceiverResourceRate() { double time = state.schedule.getTime(); if (time <= 0) return 0; else return totalReceivedResource / time; }
 
     public Resource getTypical() { return typical; }
 
