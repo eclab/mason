@@ -53,6 +53,10 @@ public class Queue extends Provider implements Receiver, Steppable
         as opposed to when it is stepped. */
     public void setOffersImmediately(boolean val) { offersImmediately = val; }
 
+    double totalReceivedResource;
+    public double getTotalReceivedResource() { return totalReceivedResource; }
+    public double getReceiverResourceRate() { double time = state.schedule.time(); if (time <= 0) return 0; else return totalReceivedResource / time; }
+
     /** 
         Builds a queue with the given typical resource type.
     */
@@ -77,6 +81,7 @@ public class Queue extends Provider implements Receiver, Steppable
                 double transfer = Math.min(capacity - resource.getAmount(), atMost);
                 resource.increase(transfer);
                 ((CountableResource)amount).decrease(transfer);
+				totalReceivedResource += atMost;
                 if (getOffersImmediately()) offerReceivers(); 
                 return true;
                 }
@@ -87,6 +92,7 @@ public class Queue extends Provider implements Receiver, Steppable
             if (capacity - entities.size() >= 1)
                 {
                 entities.add((Entity)amount);
+				totalReceivedResource += 1.0;
                 if (getOffersImmediately()) offerReceivers(); 
                 return true;
                 }
@@ -106,5 +112,11 @@ public class Queue extends Provider implements Receiver, Steppable
         {
         offerReceivers();
         }
+
+    public void reset(SimState state) 
+    	{
+    	super.reset(state);
+		totalReceivedResource = 0; 
+    	}
     }
         

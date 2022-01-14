@@ -19,6 +19,10 @@ public class Sink implements Receiver
     protected SimState state;
     Resource typical;
         
+    double totalReceivedResource;
+    public double getTotalReceivedResource() { return totalReceivedResource; }
+    public double getReceiverResourceRate() { double time = state.schedule.time(); if (time <= 0) return 0; else return totalReceivedResource / time; }
+
     public Resource getTypical() { return typical; }
 
     void throwUnequalTypeException(Resource resource)
@@ -47,11 +51,13 @@ public class Sink implements Receiver
 
         if (resource instanceof CountableResource) 
             {
+			totalReceivedResource += atMost;
             ((CountableResource) resource).reduce(atMost);
             return true;
             }
         else
             {
+			totalReceivedResource += 1.0;
             return true;
             }
         }
@@ -70,5 +76,5 @@ public class Sink implements Receiver
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
    
-    public void reset(SimState state) { }
+    public void reset(SimState state) { totalReceivedResource = 0; }
  	}

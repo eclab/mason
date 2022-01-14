@@ -72,6 +72,10 @@ public class SimpleDelay extends Source implements Receiver, Steppable
     /** Returns the delay ordering and clears the delay entirely. */
     public void setRescheduleOrdering(int ordering) { clear();  this.rescheduleOrdering = ordering; }
 
+    double totalReceivedResource;
+    public double getTotalReceivedResource() { return totalReceivedResource; }
+    public double getReceiverResourceRate() { double time = state.schedule.time(); if (time <= 0) return 0; else return totalReceivedResource / time; }
+
     void throwInvalidNumberException(double capacity)
         {
         throw new RuntimeException("Capacities may not be negative or NaN.  capacity was: " + capacity);
@@ -115,12 +119,14 @@ public class SimpleDelay extends Source implements Receiver, Steppable
             cr.decrease(maxIncoming);
             delayQueue.add(new Node(token, nextTime));
 			totalResource += maxIncoming;            
+			totalReceivedResource += maxIncoming;
             }
         else
             {
             if (delayQueue.size() >= capacity) return false; // we're at capacity
             delayQueue.add(new Node(amount, nextTime));
 			totalResource += 1;            
+			totalReceivedResource += 1.0;
             }
         if (getAutoSchedules()) state.schedule.scheduleOnce(nextTime, getRescheduleOrdering(), this);
         return true;
@@ -180,5 +186,11 @@ public class SimpleDelay extends Source implements Receiver, Steppable
         update();
         offerReceivers();
         }
+
+	public void reset()
+		{
+		clear();
+		totalReceivedResource = 0; 
+		}
     }
         
