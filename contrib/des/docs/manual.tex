@@ -279,7 +279,7 @@ An UncountableResource is a CountableResource which can be subdivided infinitely
 
 \clearpage
 \begin{figure}[t]
-\centering\includegraphics[width=5in]{Processes.pdf}
+\centering\includegraphics[width=6in]{Processes.pdf}
 \end{figure}
 
 \section{Processes}
@@ -293,6 +293,10 @@ An object which can be placed on MASON's schedule to be stepped in the future.
 \subsection{Named}
 
 A Steppable which also has a {\bf name} (a String).
+
+\subsection{Resettable}
+
+An object which can be {\bf reset} by a {\bf Reset} object.
 
 \subsection{Receiver}
 
@@ -346,6 +350,17 @@ Both a Receiver and Provider.  Upon receiving a Resource, it attempts to {\bf al
 
 A subclass of Lock, but only for convenience's sake.  Upon receiving a Resource, it {\bf provides} some amount of {\it a different} Resource to a {\bf Pool}.  Regardless of whether the Pool accepts this generosity, Unlock then offers the original Resource to downstream receivers. If they do not accept, then that Resource is discarded.  {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
 
+\subsection{Probe}
+
+An object which gathers statistics on the resources which pass through it.  A Probe can also be used in conjunction with a {\bf Lead}.
+
+\subsection{Lead}
+
+An object detached from Probe with can be used in combination with it to determine the amount of resources in a DES subgraph between them.
+
+
+\section{Process Utilities}
+
 \subsection{Pool}
 
 A shared pool of a Resources which may be allocated or provided by Lock and Unlock objects.  {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
@@ -357,6 +372,11 @@ An object which can store a {\bf subgraph} of the DES graph.  This subgraph cons
 \subsection{Service}
 
 A simple example of a common Macro consisting of a Lock, then a SimpleDelay, then an Unlock.
+
+\subsection{Reset}
+
+Collects a bunch of {\bf Resettable} objects and allows you to easily {\bf reset} all of them.  This way you can create your DES graph in the model's constructor, then reset it each time you {\bf start()} the model, by just calling {\bf reset()} on your Reset in the body of the start() method.
+
 
 
 %\cleardoublepage
