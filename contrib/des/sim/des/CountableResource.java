@@ -27,13 +27,15 @@ package sim.des;
     
 */
 
-public class CountableResource extends Resource
+public class CountableResource extends Resource implements sim.util.Valuable
     {
     /** This is the largest possible integer that can be held in a double without skipping integers */
     public static final double MAXIMUM_INTEGER = 9.007199254740992E15;
 
     double amount;
         
+    public double doubleValue() { return amount; }
+    
     /** Returns true if this is an instance of UncountableResource */
     public boolean isUncountable() { return false; }
 

@@ -77,7 +77,48 @@ public abstract class Provider implements Named, Resettable
     protected LinkedList<Entity> entities;
     /** The model. */
     protected SimState state;
-        
+    
+    
+    
+    ////// OFFER STATISTICS
+    //////
+    ////// These methods maintain the most recent offers made, which can be used to update graphical
+    ////// interface information regarding offers between nodes.
+    
+    /// The most recent offers
+    ArrayList<Resource> lastAcceptedOffers = new ArrayList<Resource>();
+    /// The most receivers for the most recent offers
+    ArrayList<Receiver> lastAcceptedOfferReceivers = new ArrayList<Receiver>();
+    /// The timestampof the most recent offers
+    double lastAcceptedOfferTime = Schedule.BEFORE_SIMULATION;
+    /** Returns the most recent offers made. */
+    public ArrayList<Resource> getLastAcceptedOffers() { return lastAcceptedOffers; }
+    /** Returns the receivers for the most recent offers made. */
+    public ArrayList<Receiver> getLastAcceptedOfferReceivers() { return lastAcceptedOfferReceivers; }
+    /** Returns the timestamp for the most recent offers made. */
+    public double getLastAcceptedOfferTime() { return lastAcceptedOfferTime; }
+    
+    // Clears the last accepted offers, and sets the time the given time.
+    void clearLastAcceptedOffers(double newTime) { lastAcceptedOffers.clear(); lastAcceptedOfferReceivers.clear(); lastAcceptedOfferTime = newTime; }
+    
+    // If the last offer time is less than the current time, clears the offers to the current time.
+    // Adds the given resource and receiver to the new offers.
+    void updateLastAcceptedOffers(Resource resourceDuplicate, Receiver receiver)
+    	{
+		double currentTime = state.schedule.getTime();
+		if (currentTime > getLastAcceptedOfferTime())
+			{
+			clearLastAcceptedOffers(currentTime);
+			}
+		lastAcceptedOffers.add(resourceDuplicate);
+		lastAcceptedOfferReceivers.add(receiver);
+		totalAcceptedOfferResource += resourceDuplicate.getAmount();
+    	}
+    
+    double totalAcceptedOfferResource;
+    public double getTotalOfferResource() { return totalAcceptedOfferResource; }
+    public double getOfferResourceRate() { double time = state.schedule.getTime(); if (time <= 0) return 0; else return totalAcceptedOfferResource / time; }
+    
         
     /** First in First Out Offer Order for entities. */
     public static final int OFFER_ORDER_FIFO = 0;
@@ -300,13 +341,24 @@ public abstract class Provider implements Named, Resettable
             double amt = cr.getAmount();
             if (amt > atMost) amt = atMost;
             if (amt <= 0) return false;
-            return receiver.accept(this, cr, getOffersTakeItOrLeaveIt() ? amt : 0, amt);
-            }
+            boolean result = receiver.accept(this, cr, getOffersTakeItOrLeaveIt() ? amt : 0, amt);
+            if (result)
+            	{
+            	CountableResource removed = (CountableResource)(resource.duplicate());
+            	removed.setAmount(amt - cr.getAmount());
+            	updateLastAcceptedOffers(removed, receiver);
+            	}
+             return result;
+           }
         else if (offerOrder == OFFER_ORDER_FIFO)
             {
             Entity e = entities.getFirst();
             boolean result = receiver.accept(this, e, 0, 0);
             if (result) entities.removeFirst();
+            if (result)
+            	{
+            	updateLastAcceptedOffers(e.duplicate(), receiver);
+            	}
             return result;
             }
          else // if (offerOrder == OFFER_ORDER_LIFO)
@@ -314,10 +366,14 @@ public abstract class Provider implements Named, Resettable
             Entity e = entities.getLast();
             boolean result = receiver.accept(this, e, 0, 0);
             if (result) entities.removeLast();
+            if (result)
+            	{
+            	updateLastAcceptedOffers(e.duplicate(), receiver);
+            	}
             return result;
             }
        }
-    
+       
     // only warn about problems with the distribution a single time
     boolean warned = false; 
     
@@ -465,5 +521,7 @@ public abstract class Provider implements Named, Resettable
     public void reset(SimState state) 
     	{
     	clear();
+    	clearLastAcceptedOffers(Schedule.BEFORE_SIMULATION);
+    	totalAcceptedOfferResource = 0;
     	}
     }

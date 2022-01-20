@@ -103,12 +103,14 @@ public class Delay extends SimpleDelay
             cr.decrease(maxIncoming);
             delayHeap.add(token, nextTime);
 			totalResource += maxIncoming;            
+			totalReceivedResource += maxIncoming;
             }
         else
             {
             if (delayHeap.size() >= capacity) return false;      // we're at capacity
             delayHeap.add(amount, nextTime);
 			totalResource += 1;            
+			totalReceivedResource += 1.0;
             }
        
         if (getAutoSchedules()) state.schedule.scheduleOnce(nextTime, getRescheduleOrdering(), this);
@@ -144,10 +146,5 @@ public class Delay extends SimpleDelay
         {
         return "Delay@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical.getName() + ")";
         }               
-
-	public void reset()
-		{
-		clear();
-		}
     }
         
