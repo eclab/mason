@@ -703,7 +703,7 @@ public class DSimState extends SimState
 									{
 									DistributedTentativeStep step = (DistributedTentativeStep) stoppable;
 									stoppable.stop();
-									transporter.transport((DObject)stopping, toP, p, ((HaloGrid2D) field).getFieldIndex(), step.getOrdering(), step.getTime());
+									transporter.transport(stopping, toP, p, ((HaloGrid2D) field).getFieldIndex(), step.getOrdering(), step.getTime());
 									}
 
 									// stop and migrate
@@ -711,7 +711,7 @@ public class DSimState extends SimState
 									{
 									final DistributedIterativeRepeat step = (DistributedIterativeRepeat) stopping.getStoppable();
 									stoppable.stop();
-									transporter.transport((DObject)stopping, toP, p, ((HaloGrid2D) field).getFieldIndex(), step.getOrdering(), step.getTime(), step.getInterval());
+									transporter.transport(stopping, toP, p, ((HaloGrid2D) field).getFieldIndex(), step.getOrdering(), step.getTime(), step.getInterval());
 									}
 
 									migratedAgents.add(stopping);
@@ -725,7 +725,7 @@ public class DSimState extends SimState
 								// not stoppable (transport a double or something) transporter call transportObject?
 								else if (old_partition.contains(p) && !partition.getLocalBounds().contains(p) && !migratedAgents.contains(a))
 								{
-									transporter.transport((DObject) a, toP, p,((HaloGrid2D) field).getFieldIndex());
+									transporter.transport(a, toP, p,((HaloGrid2D) field).getFieldIndex());
 								}
 								else
 								{

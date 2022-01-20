@@ -1,5 +1,7 @@
 package sim.engine.mpi;
 
+import java.io.Serializable;
+
 import sim.engine.*;
 import sim.util.*;
 
@@ -26,7 +28,7 @@ public class PayloadWrapper extends MigratableObject
 	 * The is the Object to be transported<br>
 	 * Required to be set by the caller
 	 */
-	public DObject payload;
+	public Serializable payload;
 
 	/**
 	 * The is the pId of the destination<br>
@@ -67,10 +69,10 @@ public class PayloadWrapper extends MigratableObject
 	
 	public double interval; 
 
-	public PayloadWrapper(DObject payload, int dst, Number2D loc, int fieldIndex, int ordering, double time, double interval)
+	public PayloadWrapper(Serializable obj, int dst, Number2D loc, int fieldIndex, int ordering, double time, double interval)
 	{
 		this.destination = dst;
-		this.payload = payload;
+		this.payload = obj;
 		this.loc = loc;
 		this.fieldIndex = fieldIndex;
 		this.ordering = ordering;

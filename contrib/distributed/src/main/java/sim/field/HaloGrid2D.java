@@ -811,7 +811,11 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 	public void addPayload(PayloadWrapper payloadWrapper)
 	{
 	addLocal((Number2D) payloadWrapper.loc, (T) payloadWrapper.payload);
-	payloadWrapper.payload.migrated(state);
+	
+	if (payloadWrapper.payload instanceof DObject) {
+		((DObject)payloadWrapper.payload).migrated(state);
+	}
+
 	}
 	
 	

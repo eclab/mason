@@ -6,6 +6,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -201,15 +202,15 @@ public class Transporter
 	 * Transports the Object but doesn't schedule it. Does not stop() the repeating
 	 * object. Thus, call stop on iterativeRepeat after calling this function
 	 */
-	public void transport(DObject obj, int dst, Number2D loc, int fieldIndex)
+	public void transport(Serializable a, int dst, Number2D loc, int fieldIndex)
 	{
-		transport(obj, dst, loc, fieldIndex, PayloadWrapper.NON_AGENT_ORDERING, PayloadWrapper.NON_AGENT_TIME, PayloadWrapper.NON_REPEATING_INTERVAL);
+		transport(a, dst, loc, fieldIndex, PayloadWrapper.NON_AGENT_ORDERING, PayloadWrapper.NON_AGENT_TIME, PayloadWrapper.NON_REPEATING_INTERVAL);
 	}
 
 	/**
 	 * Transports the (non-repeating) Agent as well as migrates it.
 	 */
-	public void transport(DObject obj, int dst, Number2D loc, int fieldIndex, int ordering, double time)
+	public void transport(Serializable obj, int dst, Number2D loc, int fieldIndex, int ordering, double time)
 	{
 		transport(obj, dst, loc, fieldIndex, ordering, time, PayloadWrapper.NON_REPEATING_INTERVAL);
 	}
@@ -217,7 +218,7 @@ public class Transporter
 	/**
 	 * Transports the repeating Agent as well as migrates it
 	 */
-	public void transport(DObject obj, int dst, Number2D loc, int fieldIndex, int ordering, double time, double interval)
+	public void transport(Serializable obj, int dst, Number2D loc, int fieldIndex, int ordering, double time, double interval)
 	{
 		//shouldn't be calling this if local move
 		if (partition.getPID() == dst)
