@@ -120,6 +120,10 @@ public class DenseGrid2DProxy extends DenseGrid2D implements UpdatableProxy
 						for(int i = 0; i < sz; i++)
 							{
 							fieldx[y - fullBounds_offset.getY()].add(list.get(i));
+							
+							
+
+							
 							}
 						}
 					}

@@ -1,12 +1,14 @@
 package sim.display;
 
 import java.rmi.Remote;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import sim.engine.rmi.GridRMI;
 import sim.field.storage.GridStorage;
 import sim.util.IntRect2D;
+import sim.util.Properties;
 
 /**
  * This is implemented by a single object for each processor and added to the
@@ -80,6 +82,9 @@ public interface VisualizationProcessor extends Remote
 	public void stopStat() throws RemoteException;
 	
 	public void stopDebug() throws RemoteException;
+	
+	public Properties getProperties() throws RemoteException; //added by Raj
+	
 
 	// TODO: Adding here for now
 	// Not sure if one class can implement two remote interfaces

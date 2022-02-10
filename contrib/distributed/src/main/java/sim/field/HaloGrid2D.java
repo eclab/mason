@@ -618,7 +618,7 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
 			// If local, then MPI
 			if (state.getTransporter().isNeighbor(getPartition().toPartitionPID(p)))
 				{
-				state.getTransporter().transport((DObject) t, getPartition().toPartitionPID(p), p, this.fieldIndex);
+				state.getTransporter().transport((Serializable) t, getPartition().toPartitionPID(p), p, this.fieldIndex);
 				}
 			
 			else 

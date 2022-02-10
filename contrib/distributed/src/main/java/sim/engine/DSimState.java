@@ -7,6 +7,7 @@
 package sim.engine;
 
 import java.io.IOException;
+
 import java.io.Serializable;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
@@ -39,8 +40,7 @@ import sim.util.Double2D;
 import sim.util.Int2D;
 import sim.util.IntRect2D;
 import sim.util.MPIUtil;
-
-
+import sim.util.Properties;
 import sim.util.Timing;
 
 /**
@@ -104,6 +104,8 @@ public class DSimState extends SimState
 	protected int balanceInterval = 100;
 	
 	protected int updateGlobalsInterval = 100;
+	
+	protected int maxStatSize = 10000;
 	
 	// The current balance level FIXME: This looks primitive, and also requires that
 	// be properly in sync
@@ -458,6 +460,9 @@ public class DSimState extends SimState
 			try
 			{
 				// Balance the partitions for the given level migrating the agents
+				
+				emptyStats();
+
 
 				
 				balancePartitions(balancerLevel);
@@ -985,6 +990,17 @@ public class DSimState extends SimState
 				statList.add(new Stat(data, schedule.getSteps()));
 		}
 	}
+	
+	public void emptyStats() {
+		
+		if (recordStats) {
+			
+			if (statList.size() > maxStatSize) {
+				statList = new ArrayList<>();
+
+			}
+		}
+	}
 
 	/**
 	 * Log debug statistics data for this timestep. This data will then be sent to a remote statistics computer.
@@ -1214,6 +1230,16 @@ public class DSimState extends SimState
 		
 		return count;
 		
+	}
+	
+	//override this, for now
+	//may do reflection things here?
+	public Properties getProperties() {
+		Properties p = sim.util.Properties.getProperties(this);
+		System.out.println(p);
+		System.out.println("dog");
+		System.exit(-1);
+		return p;
 	}
 	
 	/*

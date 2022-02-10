@@ -14,6 +14,7 @@ import sim.engine.rmi.RemoteProcessor;
 import sim.field.partitioning.QuadTreeNode;
 import sim.field.storage.GridStorage;
 import sim.util.IntRect2D;
+import sim.util.Properties;
 
 /**
 	A subclass of SimState designed to visualize remote distributed models.
@@ -571,6 +572,23 @@ public class SimStateProxy extends SimState
 		return ret;
 	}
 	
+	public ArrayList<Object> getStatsAligned()
+	{
+		ArrayList<Object> ret2 = new ArrayList<Object>();
+		ArrayList<ArrayList<Object>> ret = statQueues;
+		
+		for (int i=0; i<ret.size(); i++) {
+			for (int j=0; j<ret.get(i).size(); j++) {
+				
+				ret2.add(ret.get(i).get(j));
+				
+			}
+		}
+		
+		statQueues = new ArrayList<>();
+		return ret2;
+	}
+	
 	public SimStateProxy(long seed)
 		{
 		super(seed);
@@ -607,6 +625,24 @@ public class SimStateProxy extends SimState
 	    	}
     	}
     
+    //should we instead tabulate each partition's properties?  unsure
+    public Properties getProperties(int partition) {
+    	try {
+    	VisualizationProcessor vp1 = visualizationProcessor(partition);
+    	return vp1.getProperties();
+    	//return null;
+    	
+    	}
+    	
+    	catch(Exception e) {
+    		System.out.println("cat");
+    		System.out.println(e);
+    		System.exit(-1);
+    	    return null;	
+    	}
+    	
+    }
+    
     //return list of partitions from the node in the tree
     public int[] buildPartitionsList(QuadTreeNode chosenNode)
     {
@@ -632,5 +668,8 @@ public class SimStateProxy extends SimState
     	{
     	return "Overview";
     	}
+    
+    
+    
 	}
 	

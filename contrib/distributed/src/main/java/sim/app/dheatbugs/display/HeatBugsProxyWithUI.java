@@ -13,10 +13,14 @@ import javax.swing.JFrame;
 import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
+import sim.display.SimStateProxy;
 import sim.engine.SimState;
+import sim.portrayal.Inspector;
 import sim.portrayal.grid.DenseGridPortrayal2D;
 import sim.portrayal.grid.FastValueGridPortrayal2D;
 import sim.portrayal.simple.MovablePortrayal2D;
+import sim.util.Bag;
+import sim.util.Properties;
 
 public class HeatBugsProxyWithUI extends GUIState
     {
@@ -58,6 +62,26 @@ public class HeatBugsProxyWithUI extends GUIState
         super.start();
         // set up our portrayals
         setupPortrayals();
+        
+        //Inspector ins = Inspector.getInspector(((SimStateProxy)state).getStats(), this, "Properties");   
+        //Inspector ins = Inspector.getInspector(((SimStateProxy)state).getStatsAligned(), this, "Properties");   
+        //call a SimStateProxy getProperties I think (implement this, make it return a property object with all values
+        
+        Properties prop_test = ((SimStateProxy)state).getProperties(0);  //null for some reason?
+        System.out.println(prop_test.numProperties());
+        System.exit(-1);
+        
+        
+        Inspector ins = Inspector.getInspector(((SimStateProxy)state).getProperties(0), this, "Properties");   
+
+        
+        Bag insBag = new Bag();
+        Bag insName = new Bag();
+        insBag.add(ins);
+        insName.add("stats_inspector : "+state);
+        this.controller.setInspectors(insBag, insName);
+        
+        
         }
     
     public void load(SimState state)
@@ -104,6 +128,9 @@ public class HeatBugsProxyWithUI extends GUIState
 
         // specify the backdrop color  -- what gets painted behind the displays
         display.setBackdrop(Color.black);
+        
+
+        
         }
         
     public void quit()

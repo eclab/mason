@@ -1,6 +1,7 @@
 package sim.engine.rmi;
 
 import java.rmi.NotBoundException;
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import sim.engine.DSimState;
 import sim.field.storage.GridStorage;
 import sim.util.DRegistry;
 import sim.util.IntRect2D;
+import sim.util.Properties;
 
 /***
 	REMOTE PROCESSOR
@@ -242,6 +244,11 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	public void stopDebug() throws RemoteException
 	{
 		state.recordDebug = false;
+	}
+
+	@Override
+	public Properties getProperties() {
+		return state.getProperties();		
 	}
 
 //	// TODO: do we extend this to other Remote objects?

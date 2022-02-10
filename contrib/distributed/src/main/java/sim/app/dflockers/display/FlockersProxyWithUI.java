@@ -12,7 +12,9 @@ import javax.swing.JFrame;
 import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
+import sim.display.SimStateProxy;
 import sim.engine.SimState;
+import sim.portrayal.Inspector;
 import sim.portrayal.continuous.ContinuousPortrayal2D;
 import sim.portrayal.simple.MovablePortrayal2D;
 
@@ -108,6 +110,9 @@ public class FlockersProxyWithUI extends GUIState
                         
             flockersPortrayal.setPortrayalForAll(new MovablePortrayal2D(new sim.portrayal.simple.OvalPortrayal2D(Color.white)));
             //trailsPortrayal.setPortrayalForAll( basic );
+            
+
+            
         
          /*
         // update the size of the display appropriately.
@@ -130,6 +135,8 @@ public class FlockersProxyWithUI extends GUIState
     public void init(Controller c)
         {
         super.init(c);
+        
+        
 
         // make the displayer
         display = new Display2D(750,750,this);
