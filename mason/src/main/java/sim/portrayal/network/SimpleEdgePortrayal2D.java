@@ -109,14 +109,17 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
     GeneralPath precisePoly = new GeneralPath();
     
     /** Returns a weight appropriate to scale the edge.  This weight must be >= 0.
-        By default, this returns 1.0 of adjustsThickness() is false or if edge.info
-        cannot be converted into a weight, else converts edge.info and returns the absolute value. */
+        By default, this returns 1.0 of adjustsThickness() is false or if edge.getInfo()
+        cannot be converted into a weight, else 0.0 if edge.getInfo() is null, 
+        else converts edge.getInfo() and returns the absolute value. */
     protected double getPositiveWeight(Object edge, EdgeDrawInfo2D info)
         {
         if (getAdjustsThickness())              
             {
             Object obj = edge;              // it's possible for the SimpleEdgePortrayal to be used for non-edges, as in TrailedPortrayal
             if (edge instanceof Edge) obj = ((Edge)edge).info;
+            if (obj == null)
+            	return 0.0;
             if (obj instanceof Number)
                 return Math.abs(((Number)obj).doubleValue());
             else if (obj instanceof Valuable)
@@ -126,11 +129,11 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
         }
 
     /** Returns a name appropriate for the edge.  By default, this returns 
-        (edge.info == null ? "" : "" + edge.info).
+        (edge.getInfo() == null ? "" : "" + edge.getInfo()).
         Override this to make a more customized label to display for the edge on-screen. */
     public String getLabel(Edge edge, EdgeDrawInfo2D info)
         {
-        Object obj = edge.info;
+        Object obj = edge.getInfo();
         if (obj == null) return "";
         return "" + obj;
         }
