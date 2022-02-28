@@ -13,7 +13,7 @@ import ec.util.MersenneTwisterFast;
  * Binomial distribution; See the <A HREF="http://www.cern.ch/RD11/rkb/AN16pp/node19.html#SECTION000190000000000000000"> math definition</A>
  * and <A HREF="http://www.statsoft.com/textbook/glosb.html#Binomial Distribution"> animated definition</A>.
  * <p>
- * <tt>p(k) = c * p^k * (1-p)^(n-k)</tt> with <tt>c = n! / (k! * (n-k)!)</tt>.
+ * <tt>p(k) = C(n,k) * p^k * (1-p)^(n-k)</tt> with <tt>C(n,k) = n! / (k! * (n-k)!)</tt>.
  * <p>
  * Instance methods operate on a user supplied uniform random number generator; they are unsynchronized.
  * <dt>

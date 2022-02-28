@@ -13951,7 +13951,7 @@ This example simply builds a new MASON model, loads it with parameters as specif
 
 \chapter{Distributed MASON}
 
-{\bf \color{red} Warning.  Distributed MASON is in early testing stages.  We're including documentation here for you in case you'd like to try it out, but do not be surprised if everything is modified many times before things settle down.}
+{\bf \color{red} Warning.  Distributed MASON is in early testing stages.  It's in our development branch ({\tt distributed-3.0/contrib/distributed}). We're including documentation here for you in case you'd like to try it out, but do not be surprised if everything is modified many times before things settle down.}
 
 Distributed MASON allows you to create large MASON models which run over a potentially very large number of machines in compute farms or cloud computing services.  To do this will require some modifications to the classes you use in your model and some tweaking on your part, but we have tried hard to keep this to a minimum.
 
@@ -14512,18 +14512,24 @@ Distributed MASON was co-designed by ISISLAB-UNISA (University of Salerno) and G
 
 \begin{itemize}
 	\item \package{sim.engine}
-	\item \package{sim.engine.transport} subpackage
-	\item \package{sim.engine.rmi} subpackage
+\begin{itemize}
+	\item \package{sim.engine.transport}
+	\item \package{sim.engine.mpi}
+\end{itemize}
 	\item \package{sim.field}
-	\item \package{sim.field.continuous} subpackage
-	\item \package{sim.field.grid} subpackage
-	\item \package{sim.field.storage} subpackage
-	\item \package{sim.field.partitioning} subpackage
-	\item \package{sim.display} package
+\begin{itemize}
+	\item \package{sim.field.continuous}
+	\item \package{sim.field.grid}
+	\item \package{sim.field.storage}
+	\item \package{sim.field.partitioning}
+\end{itemize}
+	\item \package{sim.display}
 	\item \package{sim.util}
 \end{itemize}
 
-\paragraph{The sim.engine package} contains top-level versions of Distributed MASON's SimState, Schedule, and various agents and objects.  It consists of the following classes:
+\subsection{The sim.engine package} 
+
+This contains top-level versions of Distributed MASON's SimState, Schedule, and various agents and objects.  It consists of the following classes:
 
 \begin{itemize}
     \item \Class{sim.engine.DSimState}: the distributed version of SimState.
@@ -14538,22 +14544,26 @@ Distributed MASON was co-designed by ISISLAB-UNISA (University of Salerno) and G
 \end{itemize}
 
 
-\paragraph{The sim.engine.rmi package} contains code for moving data from processor to processor, or from a processor to a remote visualization process, using Java RMI.  It contains the following classes:
-
+\paragraph{The sim.engine.rmi package} contains code for accessing, changing, or moving data between two processors, or from a processor to a remote visualization computer, using Java RMI (Remote Method Invocation).  It contains the following classes:
 
 \begin{itemize}
-    \item \Class{sim.engine.rmi.RemoteProcessor}: an interface for remote visualization and statistics tools to access the distributed model at runtime.
-    \item \Class{sim.engine.rmi.RMIProxy}: a Java RMI object for accessing the a processor's fields from another processor.
+    \item \Class{sim.engine.rmi.RemoteProcessor}: an interface for accessing a given processor remotely via RMI.
     \item \Class{sim.engine.rmi.RemotePromise}: a Java RMI object which implements the \class{sim.engine.Promised} interface.
-    \item \Class{sim.engine.rmi.TransportRMIInterface}: the interface both Promise and RemotePromise jointly implement.
+    \item \Class{sim.engine.rmi.GridRMI}: an interface for accessing a HaloGrid via RMI
 \end{itemize}
 
 
-\paragraph{The sim.engine.transport package} holds code which handles moving objects and agents from processor to processor. It contains the following classes:
+\paragraph{The sim.engine.mpi package} holds code for transporting objects from one processor to a neighboring processor using MPI (the Message Passing Interface).  It contains the following classes:
 
-{\bf\color{red} I need to fill this out.  Don't understand this code yet. }
+\begin{itemize}
+    \item \Class{sim.engine.mpi.Transporter}: the facility for moving an object from one partition to another.
+    \item \Class{sim.engine.mpi.PayloadWrapper}: used by the Transporter to box up an object, plus other information, to transport it to a new partition.
+    \item \Class{sim.engine.mpi.MigratableObject}: this class is going away.
+\end{itemize}
 
-\paragraph{The sim.field package} holds new fields and related objects.  It contains the following classes:
+\subsection{The sim.field package} 
+
+Tolds new fields and related objects.  It contains the following classes:
 
 \begin{itemize}
     \item \Class{sim.field.DAbstractGrid2D}: the distributed version of AbstractGrid2D.
@@ -14597,7 +14607,9 @@ Distributed MASON was co-designed by ISISLAB-UNISA (University of Salerno) and G
 \end{itemize}
 
 
-\paragraph{The sim.display package} handles remote visualization of the model.  It contains the following classes:
+\subsection{The sim.display package}
+
+This handles remote visualization of the model.  It contains the following classes:
 
 \begin{itemize}
     \item \Class{sim.field.proxy.SimStateProxy}: is a special SimState which represents a remote DSimState for purposes of visualization.
@@ -14612,7 +14624,8 @@ Distributed MASON was co-designed by ISISLAB-UNISA (University of Salerno) and G
     \item \Class{sim.engine.rmi.Stat}: statistics data provided by the RemoteProcessor to remote visualization or statistics processes.
  \end{itemize}
 
-\paragraph{The sim.field.util package} contains the following classes:
+\subsection{The sim.field.util package} 
+This contains the following classes:
 
 \begin{itemize}
     \item \Class{sim.field.util.IntRect2D}: a 2D integer rectangle, consisting of two Int2D objects.
@@ -14640,14 +14653,14 @@ If the number of processors is exactly a power of 4, such as 1, 4, 16, 64, 256, 
 
 Each processor has a unique {\bf processor ID} (or {\bf PID}).  If you have \(N\) processors, then their PIDs will be numbered 0...\(N-1\).   Processor 0 is the root processor.
 
-Processors communicate with one another using two Java packages.  First, processors do bulk synchronous communication using the {\bf Message Passing Interface} (or {\bf MPI}), which MASON does via the {\bf Java OpenMPI} library.  For example, after every timestep, Distributed MASON fields trade notes about which agents or objects have changed location or status in a large, intricate dance.  That's done with MPI.  Second, more fine-grained processor-to-processor communication is done with Java's {\bf Remote Method Invocation} or {\bf RMI}.  For example, if an agent in processor 1 needs to know something about another agent in distant processor 10, it'd communicate with that processor via RMI.
+Processors communicate with one another using two Java packages.  First, processors do bulk synchronous communication using the {\bf Message Passing Interface} (or {\bf MPI}), which MASON does via the {\bf Java OpenMPI} library.  For example, after every timestep, fields in neighboring processors trade notes about which agents or objects have changed location or status in a large, intricate dance.  That's done with MPI.  Second, more fine-grained and distant processor-to-processor communication is done with Java's {\bf Remote Method Invocation} or {\bf RMI}.  For example, if an agent in processor 1 needs to know something about another agent in distant processor 10, it'd communicate with that processor via RMI.
 
 Each processor has its own special subclasses of SimState and its own Schedule called \class{sim.engine.DSimState} and \class{sim.engine.DistributedSchedule} respectively.  These manage much of the hard work of maintaining a distributed model. DistributedSchedule has no special methods different from Schedule (though it has reimplemented several of Schedule's methods).  But DSimState has many new methods.  The important ones to be aware of for now are:
 
 \begin{methods}{\class{sim.engine.DSimState}}
 \mthd{public static int getPID() }
 Returns the PID of the process in charge of this DSimState.
-\mthd{QuadTreePartition getPartition()}
+\mthd{sim.field.partition.QuadTreePartition getPartition()}
 Returns the Partition object in charge of this DSimState.
 \mthd{static void doLoopDistributed(final Class\(\langle\)?\(\rangle\) c, final String[] args) }
 Replaces doLoop()
@@ -14666,7 +14679,7 @@ Finally, \method{doLoopDistributed} replaces the standard \method{doLoop()} meth
 \end{alltt}
 }
 
-\paragraph{Changes in DistributedSchedule}  DistributedSchedule is very similar to Schedule in many respects, but is a very important change that you need to be aware of.  
+\paragraph{Changes in DistributedSchedule}  DistributedSchedule is very similar to Schedule in many respects, but has one very important change that you need to be aware of.  
 
 {\bf DistributedSchedule requires all timestamps, deltas, and intervals to be integers.}  You cannot schedule an agent to be stepped at time 2.314, for example.  The reason for this is simple: there is more than one Schedule running in a distributed simulation, and we must keep them in sync with each other.  The most straightforward way to do this is to require that they sync up at integer boundaries.  If you attempt to schedule an agent for a non-integer time, delta, or interval, an exception will be thrown.
 
@@ -14685,20 +14698,24 @@ IntGrid2D & \Class{sim.util.DIntGrid2D}\\
 DoubleGrid2D & \Class{sim.util.DDoubleGrid2D}\\
 DenseGrid2D & \Class{sim.util.DDenseGrid2D}\\
 Continuous2D& \Class{sim.util.DContinuous2D}\\
-SparseGrid2D& No equivalent. Instead, use \Class{sim.util.DDenseGrid2D}, possibly with locations flag turned on\\
+SparseGrid2D& No equivalent. Instead, use \Class{sim.util.DDenseGrid2D}\\
 Network&No equivalent for now.
 \end{tabular}%
 \end{center}
 
 We have tried hard to make these feel much like the original MASON field classes, but as you might imagine, there must be some significant differences.    We discuss these fields in detail later, for now, it's worth discussing how field partitions interact.
 
-In Distributed MASON all fields are the same size, and overlap on top of one another precisely.  A field is divided into several regions. Each processor is in charge of a region (called the processor's {\bf partition}, and manages all the objects and agents associated with that region of the fields.  Now, in order to do their work, an agent typically needs to have access to the objects in the immediate neighborhood around it: but if an agent is currently right at the edge of a processor's partition, then this neighborhood will spill over into another processor's partition, and accessing that data can be very costly.  
+In Distributed MASON all fields are the same size, and overlap on top of one another precisely.  A field is divided into several regions. Each processor is in charge of a region (called the processor's {\bf partition}, and manages all the objects and agents associated with that region of the fields.  The entire world can be {\it bounded} or {\it toroidal} (wrap-around).  If toroidal, then regions on the opposite edges of the world will be considered neighbors.  
+
+In order to do work, an agent typically needs to have access to the objects in the immediate neighborhood around it: but if an agent is currently right at the edge of a processor's partition, then this neighborhood will spill over into another processor's partition, and accessing that data can be very costly.  
 
 MASON handles this by endowing every processor not only with its partition region, but with a buffer zone of cached information immediately around the processor called the processor's {\bf halo region}.  Agents can access this data without having to go to another processor to fetch it.   The size of the halo region is determined by an integer called the partition's {\bf Area of Interest} (or {\bf AOI}).  You specify the AOI when you set up the DSimState:
 
 \begin{methods}{\class{sim.engine.DSimState} Constructor}
 \mthd{public DSimState(long seed, int width, int height, int aoi)}
-Builds a DSimState with the given random number seed, model width, model height, and AOI. 
+Builds a DSimState with the given random number seed, model width, model height, and AOI.  The model world is assumed to be toroidal.
+\mthd{public DSimState(long seed, int width, int height, int aoi, boolean isToroidal)}
+Builds an optionally toroidal DSimState with the given random number seed, model width, model height, and AOI.   The model world is toroidal or not, as specified.
 \end{methods}
 
 In general, the AOI should be large enough to encompass the area around any agent that it needs to read to do its work: and thus the buffer size will generally be large enough for agents on the edge of a partition.  Information cached in the Halo area needs to be synchronized when any changes are made in its source processor node. Such an operation is called ``Halo Exchange'' and it is performed after each model step.
@@ -14820,7 +14837,13 @@ Returns a hashcode for the object based on its unique id.
 Returns the unique ID as a pretty string.
 \mthd{public String toString() }
 By default returns a string for the object in the form classname : ID : current processor ID. 
+\mthd{public void migrated(DSimState state)}
+Called when the object is moved from an old partition to a new partition so it can set it self up further if need be.  The new partition's DSimState is provided.
 \end{methods}
+
+\paragraph{Migrating Objects}
+
+Objects can move from partition to partition.  This could happen because the objects are wandering about the world; or it could happen because the system is load-balancing and changing the partition boundaries, under their feet, etc.  When this happens, Distributed MASON informs the object via the \method{migrated(...)} method so it can get back up on its feet.  For example, perhaps the object had a back-pointer to its SimState: if it's just been moved to an entirely new computer, it's now got a new SimState as well and needs to update itself.  
 
 \paragraph{DObjects and Threads}
 
@@ -14857,8 +14880,92 @@ Returns true if the agent is stopped (it Stoppable is null).
 
 \paragraph{The DSteppable class} Your agent can subclass from DObject and implement the Stopping interface itself, or it can simply subclass from a convenience class called \class{sim.engine.DSteppable} which handles all of this for you.  That's what I would do.
 
+\subsection{Distinguished Objects}
 
-\subsection{Initialization}  In ordinary MASON, you initialize your model\,---\,set up various global variables, initialize the fields, load agents into the schedule, and so on\,---\, in the \method{start()} method.  But in Distributed MASON, these tasks must be done, often in concert, by a number of processors in parallel.  This can be somewhat complex to do.
+A {\bf distinguished object} is an object\,---\,often an agent\,---\,which other agents on remote partitions may occasionally need to send a message to or get information from.  The problem is that the distinguished object might wander from partition to partition, and so we need a way to keep up-to-date with where it currently is so as to contact it successfully.
+
+You could use a distinguished object to establish a globals mechanism, but don't do that: Section~\ref{globalshareddata}, coming up next, discusses a more straightforward approach.
+
+A distinguished object must implement the \class{sim.engine.Distinguished} interface:
+
+\begin{methods}{\class{sim.engine.Distinguished}}
+\mthd{public Serializable remoteMessage(int tag, Serializable arguments) throws RemoteException}
+Responds to the message {\it tag} with arguments provided in the {\it arguments}, returning a Serializable response (or null).
+\end{methods}
+
+The idea is that you as a modeler may have developed some \(N\) messages that various distinguished objects might need to respond to.  Think of them as method calls of sorts.  Each such method is assigned unique integer to represent its ``name''.  When you call a method of the remote object, it receives this integer so it knows what method is being called on it, and it also receives a Serializable data object representing the argument data for the method.  It then responds to this method in whatever manner you deem fit, then replies with a Serializable response (or with null)
+
+To register a distinguished object, you first need to grab the {\bf Distinguished Object Registry} via this DSimState method:
+
+\begin{methods}{\class{sim.engine.DSimState}}
+\mthd{public sim.util.DRegistry getDRegistry() }
+Returns the SimState's Distinguished Object Registry.
+\end{methods}
+
+The DRegistry contains some methods for registering, and unregistering (rare) Distinguished objects:
+
+\begin{methods}{\class{sim.util.DRegistry}}
+\mthd{public boolean registerObject(String name, Distinguished obj) throws AccessException, RemoteException}
+Registers a Distinguished object with the registry under the unique name {\it name}, which you choose.
+\mthd{public boolean unregisterObject(String name) throws AccessException, RemoteException, NotBoundException}
+Unregisters a Distinguished object presently registered under the unique name {\it name}.
+%\mthd{public Remote getObject(String name) throws AccessException, RemoteException, NotBoundException}
+%Returns a remote distinguished object as a Remote (which you can cast to Distinguished).
+\end{methods}
+
+Okay, so we have registered our Distinguished object under the name ``George'', using \method{registerObject(...)}.  Now we would like to send George a message.  We do this from the DSimState:
+
+\begin{methods}{\class{sim.engine.DSimState}}
+\mthd{public Promised contactDistinguishedObject(String name, int tag, Serializable arguments)}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  throws RemoteException, NotBoundException}\\
+Sends a message of the given {\it tag} to the distinguished object registered with the given name, providing the message tag and arguments (which may be null).  If the object responds to this message with data, it is provided in the returned Promised object. 
+\end{methods}
+
+The remote distinguished object will receive the message and respond by the next simulation step, regardless of where it's located.  
+
+How is this all done?  Distinguished objects are registered with the RMI Registry (on your Root partition), and any partition can request a remote object from the Registry to send messages to via RMI.  Every timestep if a Distinguished object is migrated from one partition to another for any reason, it is unregistered with the registry and re-registered in the new partition.
+
+\subsection{Global Shared Data}
+\label{globalshareddata}
+
+It is often the case that, even though a model is distributed across many partitions, they must share a (hopefully small number of scarcely accessed) global data.  Distributed MASON provides a mechanism for you to define this data and make it available to all partitions to read and to write.  
+
+The general mechanism is as follows.  Each partition maintains its own copy of the latest globals, and is free to update them with new information.  Then in-between model steps the modified globals from each partition are shipped off to the Root partition, which is tasked with arbitrating among their differences and deciding on the new, proper set of values for each global.  The revised globals are then broadcast to all the partitions, and the next timestep begins anew.
+
+To use this facility, your DSimState subclass should define an array of Serializable objects representing your global data, something like:
+
+\begin{verbatim}
+	Serializable[] myGlobalData = new Serializable[10];
+\end{verbatim}
+
+This can be a collection of whatever you need: Strings, Integers, you name it.  This instance variable is the latest information you have regarding the global data.  Your agents are free to read it and write it.
+
+Every timestep your partition will be asked to synchronize its global variables.  To do this, you must override the methods \method{getPartitionGlobals()} and \method{setPartitionGlobals()} to provide and update your DSimState's globals.  Additionally, you must override the method .... 
+
+\begin{methods}{\class{sim.engine.DSimState}}
+\mthd{protected Serializable[] getPartitionGlobals()}
+Returns the current partition globals, possibly modified and updated by the partition. 
+\mthd{protected void setPartitionGlobals(Serializable[] globals)}
+Revises the partition's current globals to reflect the provided array.
+\mthd{public Promised contactDistinguishedObject(String name, int tag, Serializable arguments)}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  throws RemoteException, NotBoundException}\\
+Sends a message of the given {\it tag} to the distinguished object registered with the given name, providing the message tag and arguments (which may be null).  If the object responds to this message with data, it is provided in the returned Promised object. 
+
+
+%				[[[[[[ FIXME ]]]]]]		Not done, have to wait for Raj to respond to my message
+
+
+
+\end{methods}
+
+
+This is done via certain DSimState methods:
+
+
+
+\subsection{Initialization}  
+
+In ordinary MASON, you initialize your model\,---\,set up various global variables, initialize the fields, load agents into the schedule, and so on\,---\, in the \method{start()} method.  But in Distributed MASON, these tasks must be done, often in concert, by a number of processors in parallel.  This can be somewhat complex to do.
 
 There are two basic ways you could initialize a Distributed MASON model.  First, you could do {\bf fully distributed initialization}.  Here, each processor just sets up its own global variables, makes its own agents, and loads up its own partitions of the fields without consulting with or negotiating with any other processor.  This is the easiest approach, but most models will not be able to do it.  Second, you might do {\bf partially centralized initialization}, where the root processor instructs the other processors what they should create and do.  The root processor might even build agents and migrate them to the other processors, rather than have them build the agents themselves.  Partially centralized initialization is much more common.
 
@@ -15032,6 +15139,10 @@ Returns the data as an int.  If the data is not an int, this will throw an excep
 \mthd{public int getDouble()}
 Returns the data as an double.  If the data is not an double, this will throw an exception.
 \end{methods}
+
+\paragraph{Fields and Objects}
+
+In standard MASON an object can belong to multiple fields (though this is not common).  In Distributed MASON this is dangerous, because if an object is migrated, and belongs to both fields {\it both fields will migrate the object}.  This will result in {\it two} copies of the object in the new partition, one per field.  There are ways around this (such as fixing things during the \method{migrated(...)} method), but in general you ought to only put an object in a single field for your own debugging sanity.
 
 \paragraph{Fields and Agents}
 
@@ -15393,6 +15504,11 @@ In order to visualize these fields, we will create some {\it field proxy} object
     DenseGrid2DProxy buggridproxy = new DenseGrid2DProxy(1,1);
 \end{verbatim}
 
+\begin{wrapfigure}{r}[0in]{2in}
+\vspace{-10em}\hfill\includegraphics[width=2in]{HeatBugsProxyConsole.png}\\
+\includegraphics[width=2in]{HeatBugsProxyDisplay.png}\vspace{-3em}\end{wrapfigure}
+
+
 Notice that these have a width and height of 1 (or whatever): this doesn't matter, as the widths and heights will be automatically changed later.  Now we'll {\it register} these field proxies.  Recall that \variable{valgrid} was assigned ID 0, and \variable{buggrid} was assigned ID 2.  So we'll assign their proxies the same in our HeatBugsProxy start method:
 
 \begin{verbatim}
@@ -15401,18 +15517,17 @@ Notice that these have a width and height of 1 (or whatever): this doesn't matte
         registerFieldProxy(valgrid, 0);
         registerFieldProxy(buggrid, 2);
         }
-    }
 \end{verbatim}
-
-\begin{wrapfigure}{r}[0in]{2in}
-\vspace{-10em}\hfill\includegraphics[width=2in]{HeatBugsProxyConsole.png}\\
-\includegraphics[width=2in]{HeatBugsProxyDisplay.png}\vspace{-3em}\end{wrapfigure}
 
 Now all we have to do is make a \class{HeatBugsProxyWithUI} class, just like we would have made a HeatBugsWithUI.  In fact, it can be {\it identical} to HeatBugsWithUI, except that it uses HeatBugsProxy instead of HeatBugs, and attaches portrayals to our two proxy fields rather than to the standard valgrid and buggrid.
 
 When we run HeatBugsProxyWithUI in Java, the Console will have an additional tab (added by the SimStateProxy) labelled {\bf Overview}.  This will show the distributed processors in question: in this example, there are 4.  If you click on a processor, the Display will load and display the fields corresponding to the current partition of that processor, also shown at right.  Press the Play button to start visualization.
 
 The rate at which the proxy objects refresh their data is determined by a method called \method{setRate(...)} (in milliseconds). The default is 1 second: because it's costly to slosh all that data over to the visualizer.
+
+\paragraph{Objects can't be their own SimplePortrayals}  In standard MASON, an object can subclass from \class{sim.portrayal.SimplePortrayal2D} and portray itself automatically via the \method{hitObject(...)} and \method{draw(...)} methods.  But because objects (and ultimately agents) in Distributed MASON must subclass from \class{sim.engine.DObject}, they can't also subclass from \class{sim.portrayal.SimplePortrayal2D}.    Thus they can't portray themselves.  Instead you'll need to make your own subclass of SimplePortrayal2D to portray them.
+
+This is actually pretty easy to port over from standard MASON.  Just make a SimplePortrayal2D subclass, copy and paste the original  \method{hitObject(...)} and \method{draw(...)} into the new sublass, and then register the subclass with the object class.  This registration is done with \method{fieldPortrayal.setPortrayalForAll(...)} or  \method{fieldPortrayal.setPortrayalForClass(...)} etc.
 
 \paragraph{What doesn't work}  All this is doing is hijacking MASON's visualization facility to visualize the current state of each partition.  But you can't {\it change} the current state of the partitions: it's one-way.  For example, although the HeatBug Simple Portrayals are Movable, moving them won't change the underlying model, and they'll be reset the next time.  Likewise, you can't change the heat values, or the bug properties, etc.  It's all effectively read-only (for the time being).  
 
@@ -15483,7 +15598,7 @@ Grids query and change data in their storage objects using a unified API used by
 {\it IntGridStorage, ObjectGridStorage, DoubleGridStorage:} sets the value of all locations to 0 or null.   {\it DenseGridStorage, ContinuousStorage:} removes all objects.
 \end{methods}
 
-\paragraph{IntGridStorage, DoubleGridStorage, and ObjectGridStorage}  These storage objects all contain a single array called \variable{storage} which holds the elements.  Each also has similar and straightforward utility methods:
+\paragraph{IntGridStorage, DoubleGridStorage, and ObjectGridStorage}  These storage objects all contain a single array called \variable{storage} which holds the elements.  Each also has similar and straightforward utility methods for local changes (this is documented for completeness: you should use the Field, not its Storage):
 
 \begin{methods}{\class{sim.field.storage.IntGridStorage}}
 \mthd{public int get(Int2D p)}
@@ -15491,9 +15606,9 @@ Returns the value at the given local point.
 \mthd{public int get(int x, int y)}
 Returns the value at the given local point.
 \mthd{public void set(Int2D p, int val)}
-Segs the value at the given local point to val.
+Sets the value at the given local point to val.
 \mthd{public void set(int x, int y, int val)}
-Segs the value at the given local point to val.
+Sets the value at the given local point to val.
 \end{methods}
 
 \begin{methods}{\class{sim.field.storage.DoubleGridStorage}}
@@ -15502,24 +15617,34 @@ Returns the value at the given local point.
 \mthd{public double get(int x, int y)}
 Returns the value at the given local point.
 \mthd{public void set(Int2D p, double val)}
-Segs the value at the given local point to val.
+Sets the value at the given local point to val.
 \mthd{public void set(int x, int y, double val)}
-Segs the value at the given local point to val.
+Sets the value at the given local point to val.
 \end{methods}
 
-\begin{methods}{\class{sim.field.storage.ObjectGridStorage\(\langle\)T\(\rangle\)}}
+\begin{methods}{\class{sim.field.storage.ObjectGridStorage\(\langle\)T extends DObject\(\rangle\)}}
 \mthd{public T get(Int2D p)}
 Returns the value at the given local point.
 \mthd{public T get(int x, int y)}
 Returns the value at the given local point.
 \mthd{public void set(Int2D p, T val)}
-Segs the value at the given local point to val.
+Sets the value at the given local point to val.
 \mthd{public void set(int x, int y, T val)}
-Segs the value at the given local point to val.
+Sets the value at the given local point to val.
 \end{methods}
 
 \paragraph{DenseGridStorage}  This storage object must be able to hold multiple objects, and indeed multiple instances of the same object, in the same location.  To do this, it has a single array called \variable{storage} but which holds ArrayLists of the given type \(\langle\)T\(\rangle\), or null slots.  When an object is added to the array, if an ArrayList does not yet exist at that location, it is created.  If the last object is removed from an ArrayList, the ArrayList is deleted and replaced with \code{null} according to the setting of the \variable{removeEmptyBags} variable (by default \code{true}).
 
+\begin{methods}{\class{sim.field.storage.DenseGridStorage\(\langle\)T extends DObject\(\rangle\)}}
+\mthd{public ArrayList\(\langle\)T\(\rangle\) get(Int2D p)}
+Returns the ArrayList of all objects (or possibly null) at the given local point.
+\mthd{public ArrayList\(\langle\)T\(\rangle\) get(int x, int y)}
+Returns the ArrayList of all objects (or possibly null) at the given local point.
+\mthd{public void set(Int2D p, ArrayList\(\langle\)T\(\rangle\) val)}
+Sets the ArrayList of all objects at the given local point to val, or to null.
+\mthd{public void set(int x, int y, ArrayList\(\langle\)T\(\rangle\) val)}
+Sets the ArrayList of all objects at the given local point to val, or to null.
+\end{methods}
 
 
 
@@ -15578,7 +15703,7 @@ Halo Grids are of the class \class{sim.field.HaloGrid2D}.  Because they're the h
 Creates a HaloGrid2D.
 \end{methods}
 
-Each field object is registered with a unique number called the {\bf field index}: the same field object in different processors will have the same field index.  The field's HaloGrid maintains the field index information. It also can provide the Partition and the field's Storage as convenience methods.
+Each field is registered with a unique number called its {\bf field index}: the same field object in different processors will have the same field index.  The field's HaloGrid maintains the field index information. It also can provide the Partition and the field's Storage as convenience methods.
 
 \begin{methods}{\class{sim.field.HaloGrid2D}}
 \mthd{public int getFieldIndex()}
@@ -15704,6 +15829,11 @@ Builds an RMIProxy for the given Halo Grid on the given partition.
 Returns the TransportRMIInterface (the Halo Grid) for the given remote process which corresponds to the Halo Grid that owns this RMIProxy.
 \end{methods}
 
+
+\subsection{The DSimState}
+
+
+
 \subsection{The RemoteProcessor}
 [To Write --- it doesn't feel that this class is all that settled yet]
 
@@ -15809,6 +15939,24 @@ As shown before, HaloGrid2D provides moveAgent and moveRepeatingAgent methods th
 
 % Sometimes agents need to access other agents or other information well outside of their AOI.  Such access is supported with special methods, but it is not well-optimized in terms of performance and scalability.  You have been warned!
 }
+
+\subsection{Synchronization}
+
+Every timestep, neighboring partitions enter into a complex synchronization dance, where they trade lots of information. 
+
+\begin{enumerate}
+\item Let the visualizer update information
+\item Fulfill Remote Promises
+\item Fulfill Remote requests to remove agents from the fields via RMI
+\item Fulfill Remote requests to add agents to the fields via RMI
+\item Perform Halo Exchange
+\item Update distinguished object locations on the registry (they may have been moved)
+\item Load and set up migrated objects and agents
+\item Perform load balancing
+\end{enumerate}
+
+
+
 
 \subsection{Partitioning Schema and Load-balancing}
 \label{sec:partitioning}
