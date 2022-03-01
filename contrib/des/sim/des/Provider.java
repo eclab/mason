@@ -338,14 +338,15 @@ public abstract class Provider implements Named, Resettable
         if (entities == null)
             {
             CountableResource cr = (CountableResource) resource;
-            double amt = cr.getAmount();
-            if (amt > atMost) amt = atMost;
-            if (amt <= 0) return false;
-            boolean result = receiver.accept(this, cr, getOffersTakeItOrLeaveIt() ? amt : 0, amt);
+            double originalAmount = cr.getAmount();
+            double offer = originalAmount;
+            if (offer > atMost) offer = atMost;
+            if (offer <= 0) return false;
+            boolean result = receiver.accept(this, cr, getOffersTakeItOrLeaveIt() ? offer : 0, offer);
             if (result)
             	{
             	CountableResource removed = (CountableResource)(resource.duplicate());
-            	removed.setAmount(amt - cr.getAmount());
+            	removed.setAmount(originalAmount - cr.getAmount());
             	updateLastAcceptedOffers(removed, receiver);
             	}
              return result;
