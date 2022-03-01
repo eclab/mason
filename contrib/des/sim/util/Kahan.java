@@ -31,7 +31,8 @@ public class Kahan
 	/** Adds vals into the sum.  Returns the sum result. */
 	public double add(double[] vals)
 		{
-		for(int i = 0; i < vals.length; i++)
+		int len = vals.length;
+		for(int i = 0; i < len; i++)
 			{
 			double y = vals[i] - comp;
 			double t = sum + y;
@@ -52,7 +53,8 @@ public class Kahan
 		{
 		double sum = 0;
 		double comp = 0;
-		for(int i = 0; i < vals.length; i++)
+		int len = vals.length;
+		for(int i = 0; i < len; i++)
 			{
 			double y = vals[i] - comp;
 			double t = sum + y;
@@ -1069,15 +1071,28 @@ public class Kahan
 
 public static void main(String[] args)
 	{
+	System.err.println("Various tests of Kahan and standard summing on a built-in table of doubles:\n");
 	double sum = 0;
 	for(int i = 0; i < test.length; i++)
 		sum += test[i];
 	System.err.println("Standard Sum " + sum);
+	sum = 0;
+	for(int i = test.length - 1; i >= 0; i--)
+		sum += test[i];
+	System.err.println("Reverse Standard Sum " + sum);
 	System.err.println("Kahan Sum " + kahanSum(test));
+	double[] test2 = new double[test.length];
+	for(int i = 0; i < test.length; i++)
+		test2[test.length - i - 1] = test[i];
+	System.err.println("Reverse Kahan Sum " + kahanSum(test2));
 	Kahan kahan = new Kahan();
 	for(int i = 0; i < test.length; i++)
 		kahan.add(test[i]);
-	System.err.println("Kahan Sum Again " + kahan.getSum());
+	System.err.println("Kahan Incremental Sum " + kahan.getSum());
+	kahan = new Kahan();
+	for(int i = test.length - 1; i >= 0; i--)
+		kahan.add(test[i]);
+	System.err.println("Reverse Kahan Incremental Sum " + kahan.getSum());
 	}
 
 

@@ -22,7 +22,8 @@ public class Lock extends Provider implements Receiver
     Pool pool;
     double numResources;
     
-    public Resource getTypical() { return typical; }
+    public Resource getTypicalReceived() { return typical; }
+	public boolean hideTypicalReceived() { return true; }
 
     /** Builds a lock attached to the given pool and with the given amount of resources acquired each time. */
     public Lock(SimState state, Resource typical, Pool pool, double numResources)
@@ -48,12 +49,14 @@ public class Lock extends Provider implements Receiver
                 
     /** Returns the number of resources allocated each time */
     public double getNumResources() { return numResources; }
+	public boolean hideNumResources() { return true; }
     
     /** Sets the number of resources allocated each time */
     public void setNumResources(double val) { numResources = val; }
         
     /** Always returns true: locks only make take-it-or-leave-it offers */
     public boolean getOffersTakeItOrLeaveIt() { return true; }
+	public boolean hideOffersTakeItOrLeaveIt() { return true; }
 
     /** Returns false always and does nothing. */
     public boolean provide(Receiver receiver)

@@ -57,6 +57,7 @@ public abstract class Provider implements Named, Resettable
         {
         return (val >= 0);
         }
+	public boolean hidePositiveNonNaN() { return true; }
 
 	/** Throws an exception indicating that atMost is illegal. */
     void throwInvalidNumberException(double amount)
@@ -137,6 +138,7 @@ public abstract class Provider implements Named, Resettable
 		{
 		return offerOrder;
 		}
+	public boolean hideOfferOrder() { return true; }
 
     /** Offer Policy: offers are made to the first receiver, then the second, and so on, until available resources or receivers are exhausted. */
     public static final int OFFER_POLICY_FORWARD = 0;
@@ -169,6 +171,7 @@ public abstract class Provider implements Named, Resettable
                 
     /** Returns the receiver offer policy */
     public int getOfferPolicy() { return offerPolicy; }
+	public boolean hideOfferPolicy() { return true; }
          
     /** Sets the receiver offer policy to OFFER_POLICY_RANDOM, and
         sets the appropriate distribution for selecting a receiver.  If null is provided 
@@ -206,6 +209,7 @@ public abstract class Provider implements Named, Resettable
         {
         return offerDistribution;
         }
+	public boolean hideOfferRandomDistribution() { return true; }
     
     /** 
         Clears any current entites and resources ready to be provided.
@@ -219,14 +223,10 @@ public abstract class Provider implements Named, Resettable
     /** 
         Returns the typical kind of resource the Provider provides.  This should always be zero and not used except for type checking.
     */
-    public Resource getTypicalResource() { return typical; }
-        
-    /**  
-         Returns whether receivers are offered take-it-or-leave-it offers.
-         A take-it-or-leave-it offer requires the Receiver to accept all of the offered Resource,
-         or else reject it all.
-    */
-    public boolean getOffersTakeItOrLeaveIt() { return offersTakeItOrLeaveIt; }
+    public Resource getTypicalProvided() { return typical; }
+
+	@Deprecated
+    public Resource getTypical() { return getTypicalProvided(); }
         
     /** 
         Sets whether receivers are offered take-it-or-leave-it offers.
@@ -234,6 +234,14 @@ public abstract class Provider implements Named, Resettable
         or else reject it all.
     */
     public void setOffersTakeItOrLeaveIt(boolean val) { offersTakeItOrLeaveIt = val; }
+
+    /**  
+         Returns whether receivers are offered take-it-or-leave-it offers.
+         A take-it-or-leave-it offer requires the Receiver to accept all of the offered Resource,
+         or else reject it all.
+    */
+    public boolean getOffersTakeItOrLeaveIt() { return offersTakeItOrLeaveIt; }
+	public boolean hideOffersTakeItOrLeaveIt() { return true; }
 
     /** 
         Registers a receiver with the Provider.  Returns false if the receiver was already registered.

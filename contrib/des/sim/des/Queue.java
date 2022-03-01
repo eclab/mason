@@ -20,7 +20,8 @@ import java.util.*;
 
 public class Queue extends Provider implements Receiver, Steppable, StatReceiver
     {
-    public Resource getTypical() { return typical; }
+    public Resource getTypicalReceived() { return typical; }
+	public boolean hideTypicalReceived() { return true; }
 
     void throwInvalidCapacityException(double capacity)
         {
@@ -31,6 +32,7 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
 
     /** Returns the maximum available resources that may be aquired by the Queue. */
     public double getCapacity() { return capacity; }
+	public boolean hideCapacity() { return true; }
     
     /** Set the maximum available resources that may be aquired by the Queue. 
             
@@ -48,6 +50,7 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
     /** Returns whether the Queue offers items immediately upon accepting (when possible) in zero time,
         as opposed to when it is stepped. */
     public boolean getOffersImmediately() { return offersImmediately; }
+	public boolean hideOffersImmediately() { return true; }
 
     /** Sets whether the Queue offers items immediately upon accepting (when possible) in zero time,
         as opposed to when it is stepped. */

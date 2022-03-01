@@ -36,6 +36,8 @@ public interface Receiver extends Named, Resettable
     */
     public boolean accept(Provider provider, Resource resource, double atLeast, double atMost);
 
-    /** Returns the typical kind of resource the receiver can accept. */
-    public Resource getTypical();
+    /** Returns the typical kind of resource the receiver can accept. 
+    	When a Receiver is also a Provider, this is very often implemented
+    	simply by calling getTypicalProvided() */
+    public Resource getTypicalReceived();
     }
