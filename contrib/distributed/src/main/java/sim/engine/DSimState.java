@@ -60,7 +60,7 @@ public class DSimState extends SimState
 	static Logger logger;
 
 	/** The Partition of the DSimState */
-	protected QuadTreePartition partition;
+	protected Partition partition;
 	/** The DSimState's Transporter interface */
 	
 	Transporter transporter;
@@ -116,9 +116,9 @@ public class DSimState extends SimState
 	public DSimState(long seed, int width, int height, int aoi, boolean isToroidal)
 	{
 		super(seed, new MersenneTwisterFast(seed), new DistributedSchedule());
-		this.partition = new QuadTreePartition(width, height, isToroidal, aoi);
+		this.partition = new Partition(width, height, isToroidal, aoi);
 		partition.initialize();
-		balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
+		balancerLevel = ((Partition) partition).getQt().getDepth() - 1;
 		transporter = new Transporter(partition);
 		fieldList = new ArrayList<>();
 		rootInfo = new HashMap<>();
@@ -559,7 +559,7 @@ public class DSimState extends SimState
 			if (balancerLevel != 0)
 				balancerLevel--;
 			else
-				balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
+				balancerLevel = ((Partition) partition).getQt().getDepth() - 1;
 			try
 			{
 				MPI.COMM_WORLD.barrier();
@@ -589,7 +589,7 @@ public class DSimState extends SimState
 		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage(); // used to compute the position of the new centroids
 		Timing.start(Timing.LB_OVERHEAD);
 
-		((QuadTreePartition) partition).balance(runtime, level); // balance the partition moving the centroid for the given level
+		((Partition) partition).balance(runtime, level); // balance the partition moving the centroid for the given level
 		MPI.COMM_WORLD.barrier();
 
 		// Raj rewrite
@@ -916,7 +916,7 @@ public class DSimState extends SimState
 	/**
 	 * @return the partition
 	 */
-	public QuadTreePartition getPartition()
+	public Partition getPartition()
 		{
 		return partition;
 		}

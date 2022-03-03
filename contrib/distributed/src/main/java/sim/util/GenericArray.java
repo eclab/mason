@@ -3,7 +3,6 @@
   Licensed under the Academic Free License version 3.0
   See the file "LICENSE" for more information
 */
-
 	
 package sim.util;
 

@@ -18,6 +18,10 @@ import mpi.MPI;
 import mpi.MPIException;
 import sim.field.partitioning.Partition;
 
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+
 // TODO: Reuse ByteBuffers to minimize allocate/de-allocate overhead
 // TODO: Use ByteBuffer-back output/input streams - need to dynamically adjust the size of backing buffer.
 
@@ -720,6 +724,67 @@ public class MPIUtil
 	 *
 	 * MPI.Finalize(); }
 	 */
+
+
+/**
+ * Internal distributed MASON class to test MPI functionality
+ * 
+ *
+ */
+public static class MPITest
+{
+	private static final long serialVersionUID = 1L;
+	private static final Comm comm = MPI.COMM_WORLD;
+
+	private MPITest()
+	{
+	}
+
+	public static void execInOrder(Consumer<Integer> func, int delay)
+	{
+		try
+		{
+			for (int i = 0; i < comm.getSize(); i++)
+			{
+				execOnlyIn(i, func);
+				TimeUnit.MILLISECONDS.sleep(delay);
+			}
+		}
+		catch (MPIException | InterruptedException e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+
+	public static void execOnlyIn(int pid, Consumer<Integer> func)
+	{
+		try
+		{
+			if (pid == comm.getRank())
+				func.accept(pid);
+			comm.barrier();
+		}
+		catch (MPIException e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+
+	public static void printInOrder(String s)
+	{
+		execInOrder(i -> System.out.printf("[%2d] %s\n", i, s), 0);
+	}
+
+	public static void printOnlyIn(int pid, String s)
+	{
+		execOnlyIn(pid, i -> System.out.printf("[%2d] %s\n", i, s));
+	}
+}
+
+
+
 }
 
 /// SEAN NOTES: AutoCloseable doesn't appear to be used at all.  We can remove it?
@@ -807,4 +872,6 @@ class ByteBufferInputStream extends InputStream implements AutoCloseable
 			System.exit(-1);
 		}
 	}
-}
+}	
+
+
