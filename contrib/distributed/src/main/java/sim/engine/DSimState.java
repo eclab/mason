@@ -26,26 +26,15 @@ import java.util.logging.Logger;
 import java.util.logging.SocketHandler;
 import java.rmi.server.UnicastRemoteObject;
 
-import ec.util.MersenneTwisterFast;
-import mpi.MPI;
-import mpi.MPIException;
-import sim.display.Stat;
+import ec.util.*;
+import mpi.*;
+import sim.display.*;
 import sim.engine.mpi.*;
-import sim.engine.rmi.RemoteProcessor;
-import sim.engine.rmi.RemotePromise;
-import sim.field.HaloGrid2D;
-import sim.field.partitioning.QuadTreePartition;
-import sim.field.storage.ContinuousStorage;
-import sim.field.storage.GridStorage;
-import sim.util.DRegistry;
-import sim.util.Double2D;
-import sim.util.Int2D;
-import sim.util.IntRect2D;
-import sim.util.MPIUtil;
-import sim.util.Properties;
-
-import sim.util.SimpleProperties;
-import sim.util.Timing;
+import sim.engine.rmi.*;
+import sim.field.*;
+import sim.field.partitioning.*;
+import sim.field.storage.*;
+import sim.util.*;
 
 /**
  * Analogous to Mason's SimState. This class represents the entire distributed simulation.
@@ -232,10 +221,9 @@ public class DSimState extends SimState
 	Arraylist where the RemoteMessage are stored
 	the methods invoked on it have to be synchronized to avoid concurrent modification
 	*/
-	private ArrayList<DistinguishedRemoteMessage> messages_queue = 
-			new ArrayList<DistinguishedRemoteMessage>();
+	ArrayList<DistinguishedRemoteMessage> messages_queue = new ArrayList<DistinguishedRemoteMessage>();
 
-	private Properties prop;
+	Properties prop;
 
 	/**
 	 * Export a Promise on the registry 
@@ -255,8 +243,7 @@ public class DSimState extends SimState
 		try {
 			// DRegistry.getInstance().registerObject("0", callback);
 			UnicastRemoteObject.exportObject(callback, 0);
-			((DistinguishedRemote) DRegistry.getInstance().getObject(name))
-						.remoteMessage(tag, arguments, callback);
+			((DistinguishedRemoteObject) DRegistry.getInstance().getObject(name)).remoteMessage(tag, arguments, callback);
 			return callback;
 		} catch (AccessException e) {
 			e.printStackTrace();
@@ -325,8 +312,7 @@ public class DSimState extends SimState
 
 				// After the synchronization we can unregister migrated object!
 				// remove exported-migrated object from local node
-				for (DistinguishedObject exportedObj : 
-							DRegistry.getInstance().getAllLocalExportedObjects())
+				for (DistinguishedRemoteObject exportedObj : DRegistry.getInstance().getAllLocalExportedObjects())
 				{
 					try
 					{
@@ -1053,7 +1039,7 @@ public class DSimState extends SimState
 	// 1) gather each best score and corresponding x and y from each partition (gatherGlobals())
 	// 2) arbitrate (pick the best score and its x and y out of the partition candidates (arbitrateGlobal)
 	// 3) distributed the winner back to each partition, each partition keeps track of the global
-	private void updateGlobals()
+	void updateGlobals()
 	{
 		
 		if (schedule.getSteps() > 0 && (schedule.getSteps() % updateGlobalsInterval == 0)) {
@@ -1078,7 +1064,7 @@ public class DSimState extends SimState
 
 	// takes the set of globals from each partition the set of variables this is is implemented in getPartitionGlobals(),
 	// implemented in the specific subclass
-	private ArrayList<Serializable[]> gatherGlobals()
+	ArrayList<Serializable[]> gatherGlobals()
 	{
 		try
 		{
@@ -1134,7 +1120,7 @@ public class DSimState extends SimState
 
 	// after determining the overall global using arbitration, send that one back to each partition
 	// uses setPartitionGlobals(), should be implemented in subclass (to match getPartititonGlobals())
-	private void distributeGlobals(Serializable[] global)
+	void distributeGlobals(Serializable[] global)
 	{
 		// need to do typing
 		try
