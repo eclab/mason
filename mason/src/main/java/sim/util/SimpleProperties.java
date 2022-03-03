@@ -114,17 +114,17 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     {
     private static final long serialVersionUID = 1;
 
-    ArrayList getMethods;
-    ArrayList setMethods; // if no setters, that corresponding spot will be null
-    ArrayList domMethods; // if no domain, that corresponding spot will be null
-    ArrayList desMethods; // if no description, that corresponding spot will be null
-    ArrayList hideMethods; // if not hidden (or explicitly shown), that corresponding spot will be null
-    ArrayList nameMethods; // if not hidden (or explicitly shown), that corresponding spot will be null
-    Properties auxillary = null;  // if non-null, we use this properties instead
+    public ArrayList getMethods;
+    public ArrayList setMethods; // if no setters, that corresponding spot will be null
+    public ArrayList domMethods; // if no domain, that corresponding spot will be null
+    public ArrayList desMethods; // if no description, that corresponding spot will be null
+    public ArrayList hideMethods; // if not hidden (or explicitly shown), that corresponding spot will be null
+    public ArrayList nameMethods; // if not hidden (or explicitly shown), that corresponding spot will be null
+    public Properties auxillary = null;  // if non-null, we use this properties instead
 
-    boolean includeSuperclasses;
-    boolean includeGetClass;
-    boolean includeExtensions;
+    public boolean includeSuperclasses;
+    public boolean includeGetClass;
+    public boolean includeExtensions;
     
     public Comparator makeAlphabeticalComparator()
         {

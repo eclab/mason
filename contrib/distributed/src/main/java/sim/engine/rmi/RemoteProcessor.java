@@ -2,6 +2,8 @@ package sim.engine.rmi;
 
 import java.rmi.NotBoundException;
 
+
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import sim.field.storage.GridStorage;
 import sim.util.DRegistry;
 import sim.util.IntRect2D;
 import sim.util.Properties;
+import sim.util.SimpleProperties;
 
 /***
 	REMOTE PROCESSOR
@@ -30,6 +33,8 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	private static final long serialVersionUID = 1L;
 
 	DSimState state;
+	Properties prop;
+    //PropertiesRequester propRequester;
 	ReentrantLock lock = new ReentrantLock(true); // Fair lock
 	public final String processorName;
 	static ArrayList<VisualizationProcessor> processorCache = new ArrayList<>();
@@ -246,11 +251,92 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 		state.recordDebug = false;
 	}
 
-	@Override
-	public Properties getProperties() {
-		return state.getProperties();		
+
+
+	//call Properties methods using this object
+	/*
+	public PropertiesRequester getPropRequester() {
+		if (propRequester == null) {
+			this.propRequester = new PropertiesRequester(this.state);
+		}
+		
+		return this.propRequester;
+	}
+	*/
+	
+
+	
+	public Object getPropertiesValue(int index) {
+		
+		if (prop == null) {
+			this.prop = sim.util.SimpleProperties.getProperties(state);
+
+		}
+		
+		return prop.getValue(index);
+		
+		
 	}
 
+	
+	public int getPropertiesNumProperties() {
+		
+		if (prop == null) {
+			this.prop = sim.util.SimpleProperties.getProperties(state);
+
+		}						
+		return prop.numProperties();
+		
+		
+	}	
+
+    
+    public String getPropertiesName(int index) {
+    	
+		if (prop == null) {
+			this.prop = sim.util.SimpleProperties.getProperties(state);
+
+		}
+    	
+		return  ((SimpleProperties)prop).getName(index);  	
+
+    }
+	
+
+
+    public String getPropertiesDescription(int index) {
+		if (prop == null) {
+			this.prop = sim.util.SimpleProperties.getProperties(state);
+
+		}   	
+		
+		return  ((SimpleProperties)prop).getDescription(index);  	
+
+    }
+
+    
+
+    public Object getPropertiesDomain(int index) {
+		if (prop == null) {
+			this.prop = sim.util.SimpleProperties.getProperties(state);
+
+		}
+		
+		return  ((SimpleProperties)prop).getDomain(index);  	
+
+    }
+
+    public boolean propertiesIsHidden(int index) {
+		if (prop == null) {
+			this.prop = sim.util.SimpleProperties.getProperties(state);
+
+		}  	
+		
+		return  ((SimpleProperties)prop).isHidden(index);  	
+
+    }
+    
+    
 //	// TODO: do we extend this to other Remote objects?
 //	private Remote getRemote(String key) {
 //		Remote remote = cache.get(key);

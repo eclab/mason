@@ -131,8 +131,24 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
     			
     			if (privateBounds.contains(loc))
     			{
-    				System.out.println("set obj loc: " + loc + " -> " + new_loc);
-    			    setObjectLocation(entry.getKey(), new_loc);
+    				for (int i=0; i<data.length; i++) {
+    					
+    					if (data[i].containsKey(entry.getKey())) {
+    					
+    					
+        			    setObjectLocation(data[i].get(entry.getKey()), new_loc);
+        			    
+        			    break;
+
+    					
+    					}
+    				}
+    				//System.out.println("set obj loc: " + loc + " -> " + new_loc);
+    			    //setObjectLocation(entry.getKey(), new_loc);
+                    //setObjectLocation(entry.get)
+
+    			    //setObjectLocation(entry.getValue(), new_loc);
+
     			}
     		}
 		}

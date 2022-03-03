@@ -246,6 +246,8 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	public void clear()
 	{
         System.out.println("clear clear clear ------------------------------------------");
+        
+
 		width = (int) Math.ceil(shape.getWidth() / (double) discretization) + 1;
 		height = (int) Math.ceil(shape.getHeight() / (double) discretization) + 1;
 		this.locations = new HashMap<>();

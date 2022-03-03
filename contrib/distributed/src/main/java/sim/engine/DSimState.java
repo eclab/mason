@@ -8,6 +8,8 @@ package sim.engine;
 
 import java.io.IOException;
 
+
+
 import java.io.Serializable;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
@@ -41,6 +43,8 @@ import sim.util.Int2D;
 import sim.util.IntRect2D;
 import sim.util.MPIUtil;
 import sim.util.Properties;
+
+import sim.util.SimpleProperties;
 import sim.util.Timing;
 
 /**
@@ -230,6 +234,8 @@ public class DSimState extends SimState
 	*/
 	private ArrayList<DistinguishedRemoteMessage> messages_queue = 
 			new ArrayList<DistinguishedRemoteMessage>();
+
+	private Properties prop;
 
 	/**
 	 * Export a Promise on the registry 
@@ -928,6 +934,8 @@ public class DSimState extends SimState
 		{
 		return partition;
 		}
+	
+	
 
 	/**
 	 * @return an arraylist of all the HaloGrid2Ds registered with the SimState
@@ -1232,15 +1240,9 @@ public class DSimState extends SimState
 		
 	}
 	
-	//override this, for now
-	//may do reflection things here?
-	public Properties getProperties() {
-		Properties p = sim.util.Properties.getProperties(this);
-		System.out.println(p);
-		System.out.println("dog");
-		System.exit(-1);
-		return p;
-	}
+
+	
+
 	
 	/*
 	public static void loc_disagree(Int2D p, DHeatBug h, Partition p2, String s)

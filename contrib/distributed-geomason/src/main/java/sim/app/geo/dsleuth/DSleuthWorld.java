@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -35,7 +37,7 @@ public class DSleuthWorld  extends DSimState{
     private static final String TRANSPORT_DATA_FILE_NAME = "roads_0_1.txt.gz";
     private static final String URBAN_AREA_DATA_FILE_NAME = "urban.txt.gz";
 
-    DObjectGrid2D<DTile> landscape;
+    public DObjectGrid2D<DTile> landscape;
     ArrayList<DTile> spreadingCenters = new ArrayList<DTile>();
     // model parameters
     double dispersionCoefficient = 5; // maximally 100?
@@ -119,11 +121,11 @@ public class DSleuthWorld  extends DSimState{
     int maxCoefficient = 100;
     double maxRoadValue = 4;
     // landscape parameters
-    static int grid_width = 5030;  //taken from data
-    static int grid_height = 4192; //taken from data
+    int grid_width = 0; //5030;  //taken from data
+    int grid_height = 0; //4192; //taken from data
     // cheap way to visualize
-    int numUrban = 0;
-    int numNonUrban = 0;
+    public int numUrban = 0;
+    public int numNonUrban = 0;
     private static final long serialVersionUID = 1L;
 
 
@@ -134,7 +136,12 @@ public class DSleuthWorld  extends DSimState{
      */
     public DSleuthWorld(long seed)
     {
-        super(seed, grid_width, grid_height, 1);
+        //super(seed, grid_width, grid_height, 1);
+    	super(seed, readDimensions(SLOPE_DATA_FILE_NAME)[0], readDimensions(SLOPE_DATA_FILE_NAME)[1], 1);
+    	int[] width_height = readDimensions(SLOPE_DATA_FILE_NAME);
+    	grid_width = width_height[0];
+    	grid_height = width_height[1];
+
     }
     
     
@@ -148,6 +155,12 @@ public class DSleuthWorld  extends DSimState{
         try
         {
             super.start();
+            
+            //int[] aaa = readDimensions(SLOPE_DATA_FILE_NAME);
+            //System.out.println( "width : "+aaa[0]);
+            //System.out.println("height : "+aaa[1]);
+            
+           // System.exit(-1);
 
             readSlopeData(); // Also create initial landscape from slope data
 
@@ -270,6 +283,57 @@ public class DSleuthWorld  extends DSimState{
 
             System.exit(-1);
         }
+    }
+    
+    //to initially read file if necessary (perhaps I should put this in DSimState?)
+    private static int[] readDimensions(final String fileName)
+    {
+    	try {
+        InputStream inputStream = DSleuthData.class.getResourceAsStream(fileName);
+
+        if (inputStream == null)
+        {
+           throw new FileNotFoundException(fileName);
+        }
+
+
+            GZIPInputStream compressedInputStream = new GZIPInputStream(inputStream);
+            int width = 0;
+            int height = 0;
+
+            Scanner scanner = new Scanner(compressedInputStream);
+            scanner.useLocale(Locale.US);
+
+            scanner.next(); // skip "ncols"
+            width = scanner.nextInt();
+
+            scanner.next(); // skip "nrows"
+            height = scanner.nextInt();
+            
+            scanner.close();
+            
+            int[] width_and_height = new int[2];
+            width_and_height[0] = width;
+            width_and_height[1] = height;
+            
+            return  width_and_height;
+
+
+        } catch (IOException ex)
+        {
+            Logger.getLogger(DSleuthWorld.class.getName()).log(Level.SEVERE, null, ex);
+
+            System.exit(-1);
+        }
+
+    	catch (Exception ex)
+        {
+            Logger.getLogger(DSleuthWorld.class.getName()).log(Level.SEVERE, null, ex);
+
+            System.exit(-1);
+        }
+    	
+        return null;
     }
     
 

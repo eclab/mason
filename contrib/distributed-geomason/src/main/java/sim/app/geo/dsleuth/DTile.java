@@ -5,29 +5,29 @@ import sim.engine.DObject;
 public class DTile extends DObject{
 	
     // position in landscape
-    int x;
-    int y;
+    public int x;
+    public int y;
 
 
     /**
      * In range [1,51].  I have no idea why.
      */
-    int slope;
+    public int slope;
 
     /**
      * One of four values to indicate how this tile is used.
      */
-    int landuse;
+    public int landuse;
 
-    boolean excluded;
+    public boolean excluded;
 
-    int transport;
+    public int transport;
 
-    int hillshade;
+    public int hillshade;
 
-    boolean urbanOriginally;
+    public boolean urbanOriginally;
 
-    boolean urbanized;
+    public boolean urbanized;
 
 
     public DTile(int x, int y)

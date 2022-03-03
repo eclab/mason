@@ -113,7 +113,7 @@ public class DArcInfoASCGridImporter {
             
         } catch (IOException ex)
         {  // XXX Yes, but is this due to missing file or some other problem?
-            Logger.getLogger(ArcInfoASCGridImporter.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DArcInfoASCGridImporter.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         }
 

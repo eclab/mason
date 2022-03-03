@@ -1,6 +1,7 @@
 package sim.display;
 
 import java.rmi.NotBoundException;
+
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -15,6 +16,7 @@ import sim.field.partitioning.QuadTreeNode;
 import sim.field.storage.GridStorage;
 import sim.util.IntRect2D;
 import sim.util.Properties;
+import sim.util.RemoteSimpleProperties;
 
 /**
 	A subclass of SimState designed to visualize remote distributed models.
@@ -625,6 +627,27 @@ public class SimStateProxy extends SimState
 	    	}
     	}
     
+    public Properties getProperties(int partition) {
+    	
+    	try {
+    	VisualizationProcessor vp1 = visualizationProcessor(partition);
+
+    	return new RemoteSimpleProperties(vp1);
+    	
+    	}
+    	
+    	catch(Exception e) {
+    		System.out.println("Problem with Remote Properties");
+    		System.out.println(e);
+    		System.exit(-1);
+    	    return null;	
+    	}
+    	
+    	
+    }
+    
+    //this probably won't work bc properties can't be sent remotely
+    /*
     //should we instead tabulate each partition's properties?  unsure
     public Properties getProperties(int partition) {
     	try {
@@ -635,13 +658,24 @@ public class SimStateProxy extends SimState
     	}
     	
     	catch(Exception e) {
-    		System.out.println("cat");
+    		System.out.println("Problem with Properties");
     		System.out.println(e);
     		System.exit(-1);
     	    return null;	
     	}
     	
     }
+    
+    //for each partition
+    public Properties[] getAllProperties() {
+    	Properties[] prop_array = new Properties[numProcessors];
+    	
+    	for (int i=0; i<numProcessors; i++) {
+    		prop_array[i] = getProperties(i);
+    	}
+    	return prop_array;
+    }
+    */
     
     //return list of partitions from the node in the tree
     public int[] buildPartitionsList(QuadTreeNode chosenNode)

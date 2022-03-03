@@ -66,11 +66,16 @@ public class HeatBugsProxyWithUI extends GUIState
         //Inspector ins = Inspector.getInspector(((SimStateProxy)state).getStats(), this, "Properties");   
         //Inspector ins = Inspector.getInspector(((SimStateProxy)state).getStatsAligned(), this, "Properties");   
         //call a SimStateProxy getProperties I think (implement this, make it return a property object with all values
-        
+        System.out.println("hello");
         Properties prop_test = ((SimStateProxy)state).getProperties(0);  //null for some reason?
-        System.out.println(prop_test.numProperties());
-        System.exit(-1);
         
+        System.out.println(prop_test.getClass());
+        
+        int numProp = ((SimStateProxy)state).getProperties(0).numProperties();
+        System.out.println(prop_test);
+        //System.exit(-1);
+        String method_name = ((SimStateProxy)state).getProperties(0).getName(0);
+        System.out.println(method_name);        
         
         Inspector ins = Inspector.getInspector(((SimStateProxy)state).getProperties(0), this, "Properties");   
 
@@ -81,6 +86,10 @@ public class HeatBugsProxyWithUI extends GUIState
         insName.add("stats_inspector : "+state);
         this.controller.setInspectors(insBag, insName);
         
+        System.out.println(insName);
+        System.out.println("----");
+        System.out.println(insBag);
+        //System.exit(-1);
         
         }
     
