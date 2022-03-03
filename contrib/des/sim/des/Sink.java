@@ -23,7 +23,11 @@ public class Sink implements Receiver, StatReceiver
     public double getTotalReceivedResource() { return totalReceivedResource; }
     public double getReceiverResourceRate() { double time = state.schedule.getTime(); if (time <= 0) return 0; else return totalReceivedResource / time; }
 
-    public Resource getTypical() { return typical; }
+	@Deprecated
+    public Resource getTypical() { return getTypicalReceived(); }
+        
+    public Resource getTypicalReceived() { return typical; }
+	public boolean hideTypicalReceived() { return true; }
 
     void throwUnequalTypeException(Resource resource)
         {
@@ -75,6 +79,7 @@ public class Sink implements Receiver, StatReceiver
     String name;
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-   
+   	public boolean hideName() { return true; }
+
     public void reset(SimState state) { totalReceivedResource = 0; }
  	}

@@ -16,7 +16,8 @@ import java.util.*;
 
 public class SimpleDelay extends Source implements Receiver, Steppable, StatReceiver
     {
-    public Resource getTypical() { return typical; }
+    public Resource getTypicalReceived() { return typical; }
+	public boolean hideTypicalReceived() { return true; }
 
     class Node
         {
@@ -40,6 +41,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         the next timestep at which a delayed resource will become available.  If you turn this
         off you will have to schedule the SimpleDelay yourself. */
     public boolean getAutoSchedules() { return autoSchedules; }
+	public boolean hideAutoSchedules() { return true; }
 
     /** Sets whether the SimpleDelay schedules itself on the Schedule automatically to handle
         the next timestep at which a delayed resource will become available.  If you turn this
@@ -62,12 +64,14 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
 
     /** Returns the delay time. */
     public double getDelayTime() { return delayTime; }
+	public boolean hideDelayTime() { return true; }
 
     /** Sets the delay time and clears the delay entirely. */
     public void setDelayTime(double delayTime) { clear(); this.delayTime = delayTime; }
 
     /** Returns the delay ordering. */
     public int getRescheduleOrdering() { return rescheduleOrdering; }
+	public boolean hideRescheduleOrdering() { return true; }
 
     /** Returns the delay ordering and clears the delay entirely. */
     public void setRescheduleOrdering(int ordering) { clear();  this.rescheduleOrdering = ordering; }

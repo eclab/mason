@@ -21,7 +21,8 @@ import java.util.*;
 
 public class Composer extends Provider implements Receiver
     {
-    public Resource getTypical() { return typical; }
+    public Resource getTypicalReceived() { return typical; }
+	public boolean hideTypicalReceived() { return true; }
 
     void throwDuplicateType(Resource res)
         {

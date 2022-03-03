@@ -48,7 +48,8 @@ public class Probe extends Provider implements Receiver
     	}
     	
     public Lead getLead() { return lead; }
-
+	public boolean hideLead() { return true; }
+	
     public void reset()
     	{
     	totalOffers = 0;
@@ -64,14 +65,15 @@ public class Probe extends Provider implements Receiver
     	processed = true;
     	}
 
-    public Resource getTypical()
+    public Resource getTypicalReceived()
     	{
     	if (!receivers.isEmpty())
     		{
-    		return (receivers.get(0).getTypical());
+    		return (receivers.get(0).getTypicalReceived());
     		}
     	else return typical;
     	}
+	public boolean hideTypicalReceived() { return true; }
 
 	public double getSumThru()
 		{

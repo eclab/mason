@@ -27,7 +27,8 @@ public class Extractor extends Source implements Receiver
     {
     Provider provider = null;
     
-    public Resource getTypical() { return typical; }
+    public Resource getTypicalReceived() { return typical; }
+	public boolean hideTypicalReceived() { return true; }
 
     /** 
         Builds a source with the given typical resource type.  The provider is initially null.
@@ -49,6 +50,7 @@ public class Extractor extends Source implements Receiver
     public void setProvider(Provider provider) { this.provider = provider; }
     	
     public Provider getProvider() { return provider; }
+	public boolean hideProvider() { return true; }
                 
     boolean offersImmediately = true;
     
@@ -119,6 +121,7 @@ public class Extractor extends Source implements Receiver
 
     /** Returns Double.POSITIVE_INFINITY, which means nothing: Extractors do not have a capacity. */
     public double getCapacity() { return Double.POSITIVE_INFINITY; }
+	public boolean hideCapacity() { return true; }
     
     /** Does nothing. */
     public void setCapacity(double d) 

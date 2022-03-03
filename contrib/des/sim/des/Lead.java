@@ -26,15 +26,17 @@ public class Lead extends Provider implements Receiver
     	}
     
     public Probe getProbe() { return probe; }
+	public boolean hideProbe() { return true; }
     
-    public Resource getTypical()
+    public Resource getTypicalReceived()
     	{
     	if (!receivers.isEmpty())
     		{
-    		return (receivers.get(0).getTypical());
+    		return (receivers.get(0).getTypicalReceived());
     		}
     	else return typical;
     	}
+	public boolean hideTypicalReceived() { return true; }
 
     double _atLeast;
     double _atMost;

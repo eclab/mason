@@ -18,7 +18,8 @@ public class Decomposer extends Provider implements Receiver
     {
     HashMap<Integer, Receiver> output;
     
-    public Resource getTypical() { return typical; }
+    public Resource getTypicalReceived() { return typical; }
+	public boolean hideTypicalReceived() { return true; }
 
     void throwNotCompositeEntity(Entity res)
         {
@@ -43,7 +44,7 @@ public class Decomposer extends Provider implements Receiver
     **/
     public boolean addReceiver(Receiver receiver)
         {
-        Integer type = receiver.getTypical().getType();
+        Integer type = receiver.getTypicalReceived().getType();
         if (output.get(type) != null) return false;             // someone is already registered for this resource
         boolean result = super.addReceiver(receiver);
                 
