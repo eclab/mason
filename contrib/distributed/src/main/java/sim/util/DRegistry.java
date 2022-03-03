@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 import mpi.MPI;
 import sim.engine.Distinguished;
-import sim.engine.DistinguishedObject;
+import sim.engine.DistinguishedRemoteObject;
 import sim.engine.DSimState;
 
 
@@ -175,7 +175,7 @@ public class DRegistry
 		{
 			try
 			{
-				DistinguishedObject remoteObj = new DistinguishedObject(obj, simstate);
+				DistinguishedRemoteObject remoteObj = new DistinguishedRemoteObject(obj, simstate);
 				Remote stub = UnicastRemoteObject.exportObject(remoteObj, 0);
 				registry.bind(name, stub);
 				exportedNames.put(name, remoteObj);
@@ -214,12 +214,12 @@ public class DRegistry
 		return false;
 	}
 	
-	public List<DistinguishedObject> getAllLocalExportedObjects(){
-		List<DistinguishedObject> tor = new ArrayList<DistinguishedObject>();
+	public List<DistinguishedRemoteObject> getAllLocalExportedObjects(){
+		List<DistinguishedRemoteObject> tor = new ArrayList<DistinguishedRemoteObject>();
 		
 		for (Remote obj : exportedNames.values()) {
-			if (obj instanceof DistinguishedObject){
-				tor.add((DistinguishedObject) obj);
+			if (obj instanceof DistinguishedRemoteObject){
+				tor.add((DistinguishedRemoteObject) obj);
 			}
 		}
 		return tor;
