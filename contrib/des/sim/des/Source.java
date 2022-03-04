@@ -29,6 +29,8 @@ import java.util.*;
 
 public class Source extends Provider implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     void throwInvalidCapacityException(double capacity)
         {
         throw new RuntimeException("Capacities may not be negative or NaN.  capacity was: " + capacity);

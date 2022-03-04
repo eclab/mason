@@ -16,6 +16,8 @@ import java.util.*;
 
 public class Service extends Macro
     {
+    private static final long serialVersionUID = 1;
+
     SimpleDelay delay;
     Lock lock;
     Unlock unlock;

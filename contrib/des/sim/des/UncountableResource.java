@@ -13,6 +13,8 @@ package sim.des;
 
 public class UncountableResource extends CountableResource
     {
+    private static final long serialVersionUID = 1;
+
     void throwNonPositiveIntegerException(int amount)
         {
         throw new RuntimeException("Provided integer must be positive:" + amount);

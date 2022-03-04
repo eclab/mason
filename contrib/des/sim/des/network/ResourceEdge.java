@@ -19,6 +19,8 @@ import sim.des.*;
 
 public class ResourceEdge extends Edge
 	{
+    private static final long serialVersionUID = 1;
+
 	public ResourceEdge(Provider provider, Receiver receiver, Network network)
 		{
 		super(provider, receiver, null);		// we have a null info because we grab it from the provider

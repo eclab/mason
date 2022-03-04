@@ -19,6 +19,8 @@ import java.util.*;
 
 public class Lock extends Provider implements Receiver
     {
+    private static final long serialVersionUID = 1;
+
     Pool pool;
     double numResources;
     

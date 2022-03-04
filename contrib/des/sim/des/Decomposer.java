@@ -16,6 +16,8 @@ import java.util.*;
 
 public class Decomposer extends Provider implements Receiver
     {
+    private static final long serialVersionUID = 1;
+
     HashMap<Integer, Receiver> output;
     
     public Resource getTypicalReceived() { return typical; }

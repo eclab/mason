@@ -16,6 +16,8 @@ import java.util.*;
 
 public class Sink implements Receiver, StatReceiver
     {
+    private static final long serialVersionUID = 1;
+
     protected SimState state;
     Resource typical;
         

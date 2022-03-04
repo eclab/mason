@@ -20,6 +20,8 @@ import java.util.*;
 
 public class Pool implements Named
     {
+    private static final long serialVersionUID = 1;
+
     CountableResource resource;
     CountableResource initial;
     double maximum;

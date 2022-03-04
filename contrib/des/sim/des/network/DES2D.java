@@ -12,8 +12,10 @@ import sim.portrayal.network.*;
 import sim.util.*;
 import sim.des.*;
 
-public class DES2D
+public class DES2D implements java.io.Serializable
 	{
+    private static final long serialVersionUID = 1;
+
 	Continuous2D nodes;
 	Network edges;
 	SpatialNetwork2D field;
