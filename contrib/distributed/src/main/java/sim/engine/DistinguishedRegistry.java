@@ -1,4 +1,4 @@
-package sim.util;
+package sim.engine;
 
 import java.net.InetAddress;
 import java.rmi.AccessException;
@@ -23,7 +23,7 @@ import mpi.MPI;
 import sim.engine.Distinguished;
 import sim.engine.DistinguishedRemoteObject;
 import sim.engine.DSimState;
-
+import sim.util.*;
 
 /**
  * This class enables agents access to the information of another agent in any
@@ -33,7 +33,7 @@ import sim.engine.DSimState;
  * reference to that agent and invoke a method on that agent in order to obtain
  * the information he wishes.
  */
-public class DRegistry
+public class DistinguishedRegistry
 {
 	 static final long serialVersionUID = 1L;
 
@@ -41,7 +41,7 @@ public class DRegistry
 	
 	public static Logger logger;
 
-	 static DRegistry instance;
+	 static DistinguishedRegistry instance;
 
 	 static int port;
 	 static int rank;
@@ -56,9 +56,9 @@ public class DRegistry
 
 	 static void initLocalLogger(final String loggerName)
 	 {
-		DRegistry.logger = Logger.getLogger(DRegistry.class.getName());
-		DRegistry.logger.setLevel(Level.ALL);
-		DRegistry.logger.setUseParentHandlers(false);
+		DistinguishedRegistry.logger = Logger.getLogger(DistinguishedRegistry.class.getName());
+		DistinguishedRegistry.logger.setLevel(Level.ALL);
+		DistinguishedRegistry.logger.setUseParentHandlers(false);
 
 		final ConsoleHandler handler = new ConsoleHandler();
 		handler.setFormatter(new java.util.logging.Formatter()
@@ -70,10 +70,10 @@ public class DRegistry
 						rec.getLevel().getLocalizedName(), rec.getMessage());
 			}
 		});
-		DRegistry.logger.addHandler(handler);
+		DistinguishedRegistry.logger.addHandler(handler);
 	}
 
-	 DRegistry() throws NumberFormatException, Exception
+	 DistinguishedRegistry() throws NumberFormatException, Exception
 	 {
 		if (instance != null)
 		{
@@ -135,11 +135,11 @@ public class DRegistry
 		logger.log(Level.INFO, "Distributed Registry created/obtained on MPI node on master port: " + port);
 	}
 
-	public static DRegistry getInstance()
+	public static DistinguishedRegistry getInstance()
 	{
 		try
 		{
-			return instance = instance == null ? new DRegistry() : instance;
+			return instance = instance == null ? new DistinguishedRegistry() : instance;
 		}
 		catch (Exception e)
 		{
@@ -169,7 +169,7 @@ public class DRegistry
 	 */
 	public boolean registerObject(Distinguished obj, DSimState simstate) throws AccessException, RemoteException
 	{
-		String name = obj.getName();
+		String name = obj.distinguishedName();
 		
 		if (!exportedNames.containsKey(name))
 		{
@@ -202,7 +202,7 @@ public class DRegistry
 	 */
 	public boolean unregisterObject(Distinguished obj) throws AccessException, RemoteException, NotBoundException
 	{
-		String name = obj.getName();
+		String name = obj.distinguishedName();
 		Remote remote = exportedNames.remove(name);
 		if (remote != null)
 		{
@@ -265,7 +265,7 @@ public class DRegistry
 		}	
 	}
 	
-	// clear the DRegistry removing all the registered objects
+	// clear the DistinguishedRegistry removing all the registered objects
 	// iterating on toUnregister queue
 	public void unregisterObjects() throws AccessException, RemoteException, NotBoundException
 	{
@@ -360,7 +360,7 @@ public class DRegistry
 	 */
 	public boolean isMigrated(Distinguished agent)
 	{
-		return migratedNames.contains(agent.getName());
+		return migratedNames.contains(agent.distinguishedName());
 	}
 	/**
 	 * Clear the list of the registered agent’s keys on the registry
@@ -395,7 +395,7 @@ public class DRegistry
 	 */
 	public String ifExportedThenAddMigratedName(Distinguished obj)
 	{
-		String name = obj.getName();
+		String name = obj.distinguishedName();
 		Remote remote = exportedNames.get(name);
 		if (remote != null)
 			migratedNames.add(name);

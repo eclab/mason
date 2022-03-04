@@ -8,8 +8,8 @@ import java.util.Date;
 import mpi.MPIException;
 import sim.engine.DSimState;
 import sim.field.continuous.DContinuous2D;
-import sim.util.Timing;
 import sim.util.*;
+import sim.engine.*;
 
 public class Wanderers extends DSimState {
 	private static final long serialVersionUID = 1;
@@ -52,7 +52,7 @@ public class Wanderers extends DSimState {
 			Wanderer agent = (Wanderer) obj;
 			if (getPartition().getLocalBounds().contains(agent.loc)){
 				try {
-					this.getDRegistry().registerObject(agent, this);
+					this.getDistinguishedRegistry().registerObject(agent, this);
 				} catch (Exception e) {
 					e.printStackTrace();
 				} 

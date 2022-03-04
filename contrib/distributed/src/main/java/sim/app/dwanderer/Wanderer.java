@@ -79,7 +79,7 @@ public class Wanderer extends DSteppable implements Distinguished {
 		}
 	}
 	
-	public String getName() {
+	public String distinguishedName() {
 		return this.name;
 	}
 }

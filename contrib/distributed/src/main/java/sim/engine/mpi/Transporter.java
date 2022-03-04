@@ -234,7 +234,7 @@ public class Transporter
 			// check if the agent is exported, if so add it to the migrated group
 			// therefore the DSimState can unregister it
 			if (obj instanceof Distinguished){
-					DRegistry.getInstance().
+					DistinguishedRegistry.getInstance().
 						ifExportedThenAddMigratedName((Distinguished) obj);
 			}
 	

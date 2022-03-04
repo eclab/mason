@@ -13,7 +13,7 @@ import sim.display.Stat;
 import sim.display.VisualizationProcessor;
 import sim.engine.DSimState;
 import sim.field.storage.GridStorage;
-import sim.util.DRegistry;
+import sim.engine.DistinguishedRegistry;
 import sim.util.IntRect2D;
 import sim.util.Properties;
 import sim.util.SimpleProperties;
@@ -57,7 +57,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 
 		try
 		{
-			if (!DRegistry.getInstance().registerObject(processorName, this))
+			if (!DistinguishedRegistry.getInstance().registerObject(processorName, this))
 				throw new RuntimeException("Failed to register processor: " + processorName);
 		}
 		catch (RemoteException e)
@@ -145,7 +145,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	{
 		try
 		{
-			VisualizationProcessor proc = DRegistry.getInstance().getObjectT(getProcessorName(pid));
+			VisualizationProcessor proc = DistinguishedRegistry.getInstance().getObjectT(getProcessorName(pid));
 			processorCache.set(pid, proc);
 			return proc;
 		}
@@ -344,7 +344,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 //			return remote;
 //		else {
 //			try {
-//				remote = (Remote) DRegistry.getInstance().getObject(key);
+//				remote = (Remote) DistinguishedRegistry.getInstance().getObject(key);
 //				cache.put(key, remote);
 //				return remote;
 //			} catch (RemoteException | NotBoundException e) {

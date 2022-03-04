@@ -84,11 +84,11 @@ public class DSimState extends SimState
 
 	// A list of all fields in the Model. Any HaloField that is created will
 	// register itself here.
-	// Not to be confused with the DRegistry.
+	// Not to be confused with the DistinguishedRegistry.
 	ArrayList<HaloGrid2D<?, ?>> fieldList;
 
 	// The RMI registry
-	DRegistry registry;
+	DistinguishedRegistry registry;
 
 	// FIXME: what is this for?
 //	protected boolean withRegistry;
@@ -237,13 +237,13 @@ public class DSimState extends SimState
 	 * @throws RemoteException
 	 * @throws NotBoundException
 	 */
-	public RemotePromise sendRemoteMessage(String name, int tag, Serializable arguments) throws RemoteException{
-
+	public RemotePromise sendRemoteMessage(String name, int tag, Serializable arguments) throws RemoteException
+	{
 		RemotePromise callback = new RemotePromise();
 		try {
-			// DRegistry.getInstance().registerObject("0", callback);
+			// DistinguishedRegistry.getInstance().registerObject("0", callback);
 			UnicastRemoteObject.exportObject(callback, 0);
-			((DistinguishedRemoteObject) DRegistry.getInstance().getObject(name)).remoteMessage(tag, arguments, callback);
+			((DistinguishedRemoteObject) DistinguishedRegistry.getInstance().getObject(name)).remoteMessage(tag, arguments, callback);
 			return callback;
 		} catch (AccessException e) {
 			e.printStackTrace();
@@ -312,13 +312,13 @@ public class DSimState extends SimState
 
 				// After the synchronization we can unregister migrated object!
 				// remove exported-migrated object from local node
-				for (DistinguishedRemoteObject exportedObj : DRegistry.getInstance().getAllLocalExportedObjects())
+				for (DistinguishedRemoteObject exportedObj : DistinguishedRegistry.getInstance().getAllLocalExportedObjects())
 				{
 					try
 					{
 						// if the object is migrated unregister it
-						if (DRegistry.getInstance().isMigrated(exportedObj.object)) {
-							DRegistry.getInstance().unregisterObject(exportedObj.object);
+						if (DistinguishedRegistry.getInstance().isMigrated(exportedObj.object)) {
+							DistinguishedRegistry.getInstance().unregisterObject(exportedObj.object);
 						}
 					}
 					catch (NotBoundException e)
@@ -326,18 +326,18 @@ public class DSimState extends SimState
 						e.printStackTrace();
 					}
 				}
-				// for (String mo : DRegistry.getInstance().getMigratedNames())
+				// for (String mo : DistinguishedRegistry.getInstance().getMigratedNames())
 				// {
 				// 	try
 				// 	{
-				// 		DRegistry.getInstance().unregisterObject(mo);
+				// 		DistinguishedRegistry.getInstance().unregisterObject(mo);
 				// 	}
 				// 	catch (NotBoundException e)
 				// 	{
 				// 		e.printStackTrace();
 				// 	}
 				// }
-				DRegistry.getInstance().clearMigratedNames();
+				DistinguishedRegistry.getInstance().clearMigratedNames();
 				//wait all nodes to finish the unregister phase.
 				MPI.COMM_WORLD.barrier();
 			// }
@@ -377,7 +377,7 @@ public class DSimState extends SimState
 					{
 						try
 						{
-							DRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload, this);
+							DistinguishedRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload, this);
 						}
 						catch (RemoteException e)
 						{
@@ -431,7 +431,7 @@ public class DSimState extends SimState
 			   messages_queue.clear();
 		   }
 		   
-		   DRegistry.getInstance().unregisterObjects();
+		   DistinguishedRegistry.getInstance().unregisterObjects();
 	   } catch (AccessException e) {
 		   e.printStackTrace();
 	   } catch (RemoteException e) {
@@ -508,7 +508,7 @@ public class DSimState extends SimState
 							{
 								try
 								{
-									DRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload, this);
+									DistinguishedRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload, this);
 								}
 								catch (RemoteException e)
 								{
@@ -833,10 +833,10 @@ public class DSimState extends SimState
 	}
 
 	/**
-	 * @return the DRegistry instance, or null if the registry is not available. You can call this method after calling the
+	 * @return the DistinguishedRegistry instance, or null if the registry is not available. You can call this method after calling the
 	 *         start() method.
 	 */
-	public DRegistry getDRegistry()
+	public DistinguishedRegistry getDistinguishedRegistry()
 		{
 		return registry;
 		}
@@ -848,7 +848,7 @@ public class DSimState extends SimState
 //		if (withRegistry)
 		{
 			// distributed registry inizialization
-			registry = DRegistry.getInstance();
+			registry = DistinguishedRegistry.getInstance();
 		}
 
 		try

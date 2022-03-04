@@ -10,13 +10,13 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 
-/** A wrapper class for a fixed-length array of type E.
+/** A wrapper class for a fixed-length array of type T.
 	Why is this needed?  Because Java's generics are largely
 	broken with respect to arrays: you cannot easily make
 	or copy arrays of a generic type.  This allows us to get
 	around it in certain situations. */
 	
-public class GenericArray<E> implements Serializable
+public class GenericArray<T> implements Serializable
 {
     Object[] arr;
     public final int length;
@@ -33,16 +33,16 @@ public class GenericArray<E> implements Serializable
     	return length;
     	}
  
-    public E get(int i) 
+    public T get(int i) 
     	{
         @SuppressWarnings("unchecked")
-        final E e = (E)arr[i];
-        return e;
+        final T t = (T)arr[i];			// we have to set this variable first, then return it, due to compiler stupidity
+        return t;
     }
  
-    public void set(int i, E e) 
+    public void set(int i, T t) 
     	{
-        arr[i] = e;
+        arr[i] = t;
     	}
     
     public Object[] getArray() 
