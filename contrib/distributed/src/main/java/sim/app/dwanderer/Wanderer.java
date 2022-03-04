@@ -24,8 +24,7 @@ public class Wanderer extends DSteppable implements Distinguished {
 
 	public String name = null;
 
-	private Promised remote_result;
-
+	Promised remote_result;
 
 	public Wanderer(final Double2D location, String name) {
 		this.loc = location;
