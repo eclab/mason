@@ -237,7 +237,7 @@ public class DSimState extends SimState
 	 * @throws RemoteException
 	 * @throws NotBoundException
 	 */
-	public RemotePromise sendRemoteMessage(String name, int tag, Serializable arguments) throws RemoteException
+	public Promised sendRemoteMessage(String name, int tag, Serializable arguments) throws RemoteException
 	{
 		RemotePromise callback = new RemotePromise();
 		try {

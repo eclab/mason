@@ -190,6 +190,7 @@ public class DistinguishedRegistry
 		}
 		return false;
 	}
+	
 	/**
 	 * Remove the object with key name from the registry
 	 * 

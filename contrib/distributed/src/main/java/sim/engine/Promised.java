@@ -6,7 +6,7 @@ import java.rmi.Remote;
 
 public interface Promised extends Remote
 {
-
+	/** Returns TRUE if the promised data has arrived and may be extracted. */
 	public boolean isReady() throws RemoteException;
 
 	/** Returns the data. This data is only valid if isReady() is TRUE. */

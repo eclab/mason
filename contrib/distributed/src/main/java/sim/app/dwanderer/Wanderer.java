@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import sim.engine.*;
-import sim.engine.rmi.RemotePromise;
+import sim.engine.Promised;
 import sim.util.*;
 
 public class Wanderer extends DSteppable implements Distinguished {
@@ -24,7 +24,7 @@ public class Wanderer extends DSteppable implements Distinguished {
 
 	public String name = null;
 
-	private RemotePromise remote_result;
+	private Promised remote_result;
 
 
 	public Wanderer(final Double2D location, String name) {
