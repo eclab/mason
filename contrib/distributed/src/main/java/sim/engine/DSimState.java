@@ -221,7 +221,7 @@ public class DSimState extends SimState
 	Arraylist where the RemoteMessage are stored
 	the methods invoked on it have to be synchronized to avoid concurrent modification
 	*/
-	ArrayList<DistinguishedRemoteMessage> messages_queue = new ArrayList<DistinguishedRemoteMessage>();
+	ArrayList<DistinguishedRemoteMessage> distinguishedMessageQueue = new ArrayList<DistinguishedRemoteMessage>();
 
 	Properties prop;
 
@@ -257,14 +257,14 @@ public class DSimState extends SimState
 
 	
 	/**
-	 * Add a DistinguishedRemoteMessage on the DSimstate messages_queue
+	 * Add a DistinguishedRemoteMessage on the DSimstate distinguishedMessageQueue
 	 * 
 	 * @param message 
 	 * 
 	 */
     public void addRemoteMessage(DistinguishedRemoteMessage message){
-		synchronized(this.messages_queue){
-			messages_queue.add(message);
+		synchronized(this.distinguishedMessageQueue){
+			distinguishedMessageQueue.add(message);
 		}
 	}
 	/**
@@ -418,17 +418,17 @@ public class DSimState extends SimState
 		
 		int x = countTotalAgents(fieldList.get(0));
 
-		/* we invoke the fullfill for every messagge in the messages_queue
+		/* we invoke the fullfill for every messagge in the distinguishedMessageQueue
 		   to make the Promise ready
 		*/
 		try {
-			synchronized(this.messages_queue){
-			   for(DistinguishedRemoteMessage message: messages_queue){
+			synchronized(this.distinguishedMessageQueue){
+			   for(DistinguishedRemoteMessage message: distinguishedMessageQueue){
 				   Serializable data =
 					   message.object.remoteMessage(message.tag, message.arguments);
 				   message.callback.fulfill(data);
 			   }
-			   messages_queue.clear();
+			   distinguishedMessageQueue.clear();
 		   }
 		   
 		   DistinguishedRegistry.getInstance().unregisterObjects();
@@ -583,8 +583,8 @@ public class DSimState extends SimState
 
 		int x = countTotalAgents(fieldList.get(0));
 		
-		final IntRect2D old_partition = partition.getLocalBounds();
-		final int old_pid = partition.getPID();
+		final IntRect2D oldPartition = partition.getLocalBounds();
+		final int oldPID = partition.getPID();
 
 		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage(); // used to compute the position of the new centroids
 		Timing.start(Timing.LB_OVERHEAD);
@@ -608,10 +608,10 @@ public class DSimState extends SimState
 				for (int i = 0; i < st.storage.length; i++)
 				{
 					// don't bother with situations where no point would be valid
-					IntRect2D storage_bound = st.getCellBounds(i);
+					IntRect2D storageBound = st.getCellBounds(i);
 
-					// if storage_bound entirely in haloGrid localBounds, no need to check
-					if (!haloGrid2D.getLocalBounds().contains(storage_bound))
+					// if storageBound entirely in haloGrid localBounds, no need to check
+					if (!haloGrid2D.getLocalBounds().contains(storageBound))
 					{
 						// for agent/entity in cell
 						// HashSet agents = new HashSet(((HashMap) st.storage[i].clone()).values());
@@ -622,7 +622,7 @@ public class DSimState extends SimState
 						{
 							Double2D loc = st.getObjectLocation((DObject) a);
 
-							if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
+							if (a instanceof Stopping && !migratedAgents.contains(a) && oldPartition.contains(loc)
 									&& !partition.getLocalBounds().contains(loc))
 							{
 								final int locToP = partition.toPartitionPID(loc); // we need to use this, not toP
@@ -649,13 +649,13 @@ public class DSimState extends SimState
 
 								// keeps track of agents being moved so not added again
 								migratedAgents.add(a);
-								System.out.println("PID: " + partition.getPID() + " processor " + old_pid + " move " + a
+								System.out.println("PID: " + partition.getPID() + " processor " + oldPID + " move " + a
 										+ " from " + loc + " to processor " + locToP);
 								// here the agent is removed from the old location TOCHECK!!!
 							}
 
 							// not stoppable (transport a double or something) transporter call transportObject?
-							else if (old_partition.contains(loc) && !partition.getLocalBounds().contains(loc))
+							else if (oldPartition.contains(loc) && !partition.getLocalBounds().contains(loc))
 							{
 								final int locToP = partition.toPartitionPID(loc); // we need to use this, not toP
 								transporter.transport((DObject) a, locToP, loc, ((HaloGrid2D) field).getFieldIndex());
@@ -671,7 +671,7 @@ public class DSimState extends SimState
 				GridStorage st = ((HaloGrid2D) field).getStorage();
 
 				// go by point here
-				for (Int2D p : old_partition.getPointList()) //should we ignore halobound here?
+				for (Int2D p : oldPartition.getPointList()) //should we ignore halobound here?
 					{
 					
 					// check if the new partition contains the point
@@ -679,18 +679,18 @@ public class DSimState extends SimState
 					{
 						final int toP = partition.toPartitionPID(p);
 
-						Serializable a_list = st.getAllObjects(p);
+						Serializable aList = st.getAllObjects(p);
 
-						if (a_list != null)
+						if (aList != null)
 						{
 
 							// go backwards, so removing is safe
-							for (int i = ((ArrayList<Serializable>) a_list).size() - 1; i >= 0; i--)
+							for (int i = ((ArrayList<Serializable>) aList).size() - 1; i >= 0; i--)
 							{
-								Serializable a = ((ArrayList<Serializable>) a_list).get(i);
+								Serializable a = ((ArrayList<Serializable>) aList).get(i);
 																
 								// if a is stoppable
-								if (a != null && a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(p) && !partition.getLocalBounds().contains(p))
+								if (a != null && a instanceof Stopping && !migratedAgents.contains(a) && oldPartition.contains(p) && !partition.getLocalBounds().contains(p))
 								{
 									DSteppable stopping = ((DSteppable) a);
 									Stoppable stoppable = (Stoppable)(stopping.getStoppable());
@@ -720,7 +720,7 @@ public class DSimState extends SimState
 								}
 
 								// not stoppable (transport a double or something) transporter call transportObject?
-								else if (old_partition.contains(p) && !partition.getLocalBounds().contains(p) && !migratedAgents.contains(a))
+								else if (oldPartition.contains(p) && !partition.getLocalBounds().contains(p) && !migratedAgents.contains(a))
 								{
 									transporter.transport(a, toP, p,((HaloGrid2D) field).getFieldIndex());
 								}
@@ -1100,21 +1100,21 @@ public class DSimState extends SimState
 	// TODO should we make this one throw an exception and force specific agent to implement its own?
 	protected Serializable[] arbitrateGlobal(ArrayList<Serializable[]> gg)
 	{
-		int chosen_index = 0;
-		Serializable chosen_item = gg.get(0)[0];
+		int chosenIndex = 0;
+		Serializable chosenItem = gg.get(0)[0];
 
-		double best_val = (double) chosen_item; // make type invariant
+		double bestVal = (double) chosenItem; // make type invariant
 
 		for (int i = 0; i < partition.getNumProcessors(); i++)
 		{
-			if ((double) gg.get(i)[0] > best_val)
+			if ((double) gg.get(i)[0] > bestVal)
 			{
-				best_val = (double) gg.get(i)[0];
-				chosen_index = i;
+				bestVal = (double) gg.get(i)[0];
+				chosenIndex = i;
 			}
 		}
 
-		return gg.get(chosen_index);
+		return gg.get(chosenIndex);
 	}
 	
 
@@ -1212,11 +1212,11 @@ public class DSimState extends SimState
 				if (partition.getLocalBounds().contains(p))
 				{
 
-					Serializable a_list = st.getAllObjects(p);
+					Serializable aList = st.getAllObjects(p);
 
-					if (a_list != null)
+					if (aList != null)
 					{
-						count = count + ((ArrayList<Serializable>) a_list).size();
+						count = count + ((ArrayList<Serializable>) aList).size();
 					}
 				}
 			}
@@ -1234,22 +1234,22 @@ public class DSimState extends SimState
 	public static void loc_disagree(Int2D p, DHeatBug h, Partition p2, String s)
 	{
 		
-		Int2D h_loc = new Int2D(h.loc_x, h.loc_y);
+		Int2D hLoc = new Int2D(h.loc_x, h.loc_y);
 		
-		int new_px = p.x;
-		int new_py = p.y;
+		int newPx = p.x;
+		int newPy = p.y;
 		
 
 		
-		Int2D new_p = new Int2D(new_px, new_py);
-		//System.out.println(s+" "+h +" h_loc "+h_loc+" p "+ p );
+		Int2D newP = new Int2D(newPx, newPy);
+		//System.out.println(s+" "+h +" hLoc "+hLoc+" p "+ p );
 		
-		if (!new_p.equals(h_loc))
+		if (!newP.equals(hLoc))
 		{
 			
 			
 			
-			System.out.println(s+" loc disagree "+h+" h_loc "+h_loc+" p "+ p + " "+p2.getLocalBounds());
+			System.out.println(s+" loc disagree "+h+" hLoc "+hLoc+" p "+ p + " "+p2.getLocalBounds());
 			System.exit(-1);
 		}
 		

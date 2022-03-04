@@ -113,17 +113,15 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 	{
 		//System.out.println("adding obj "+t+" to"+p);
 		
-		Int2D local_p = toLocalPoint((Int2D) p);
+		Int2D localP = toLocalPoint((Int2D) p);
 		final ArrayList<T>[] array = storage;
-		final int idx = getFlatIndex(local_p);
+		final int idx = getFlatIndex(localP);
 
 		if (array[idx] == null)
 			array[idx] = new ArrayList<T>();
 
 		array[idx].add(t);
-		
-		//DSimState.loc_disagree((Int2D)p, (DHeatBug) t, null, "addObject");
-		
+				
 		if (!getAllObjects(p).contains(t))
 		{
 			System.out.println("not added to correct location");
@@ -134,8 +132,8 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 
 	public T getObject(Number2D p, long id)
 	{
-		Int2D local_p = toLocalPoint((Int2D) p);
-		ArrayList<T> ts = storage[getFlatIndex(local_p)];
+		Int2D localP = toLocalPoint((Int2D) p);
+		ArrayList<T> ts = storage[getFlatIndex(localP)];
 		if (ts != null)
 			{
 			for (T t : ts)
@@ -147,8 +145,8 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 
 	public ArrayList<T> getAllObjects(Number2D p)
 	{
-		Int2D local_p = toLocalPoint((Int2D) p);
-		return storage[getFlatIndex(local_p)];
+		Int2D localP = toLocalPoint((Int2D) p);
+		return storage[getFlatIndex(localP)];
 	}
 
 	//Does this need to be adapted to convert to local???
@@ -162,9 +160,9 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 
 	public boolean removeObject(Number2D p, long id)
 	{
-		Int2D local_p = toLocalPoint((Int2D) p);
+		Int2D localP = toLocalPoint((Int2D) p);
 		final ArrayList<T>[] array = storage;
-		final int idx = getFlatIndex(local_p);
+		final int idx = getFlatIndex(localP);
 		boolean result = false;
 
 		if (array[idx] != null)
@@ -186,9 +184,9 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
 
 	public void clear(Number2D p)
 	{
-		Int2D local_p = toLocalPoint((Int2D) p);
+		Int2D localP = toLocalPoint((Int2D) p);
 		final ArrayList<T>[] array = storage;
-		final int idx = getFlatIndex(local_p);
+		final int idx = getFlatIndex(localP);
 
 		if (array[idx] != null)
 		{

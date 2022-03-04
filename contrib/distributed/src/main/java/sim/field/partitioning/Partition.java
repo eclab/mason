@@ -249,35 +249,35 @@ public class Partition
 		if (leaves.size() < P)
 		{
 
-			ArrayList<QuadTreeNode> splittable_leaves = new ArrayList<QuadTreeNode>();
+			ArrayList<QuadTreeNode> splittableLeaves = new ArrayList<QuadTreeNode>();
 
 			for (QuadTreeNode leaf : leaves)
 			{
 				if (isSpaceSplittable(leaf))
 				{
-					splittable_leaves.add(leaf);
+					splittableLeaves.add(leaf);
 				}
 			}
 
-			int number_leaves = leaves.size();
+			int numberLeaves = leaves.size();
 			// useful to handle the partitioning when the number of processers is lower than for
 			
 			// if the quadtree has only the root node
-			if (number_leaves == 1 && leaves.get(0).isRoot())
+			if (numberLeaves == 1 && leaves.get(0).isRoot())
 			{ 
-				splittable_leaves.add(root);
+				splittableLeaves.add(root);
 			}
 
 			int toSplitId = -1;
 			
-			while (number_leaves < P && ((toSplitId = splittable_leaves.remove(splittable_leaves.size() - 1).id) != -1))
+			while (numberLeaves < P && ((toSplitId = splittableLeaves.remove(splittableLeaves.size() - 1).id) != -1))
 			{
 				Double2D center = qt.getNode(toSplitId).shape.getCenter();
 				qt.split(new Int2D((int) Math.floor(center.x), (int) Math.floor(center.y)));
-				number_leaves += 3;
+				numberLeaves += 3;
 			}
 			
-			if (number_leaves < P)
+			if (numberLeaves < P)
 			{
 				return;
 			}
@@ -287,23 +287,23 @@ public class Partition
 		else
 		{
 			ArrayList<QuadTreeNode> parents = new ArrayList<QuadTreeNode>(findLeafParent(leaves));
-			int number_leaves = leaves.size();
+			int numberLeaves = leaves.size();
 
-			while (number_leaves >= P + 3)
+			while (numberLeaves >= P + 3)
 			{
 
 				QuadTreeNode toMerge = parents.remove(0);
 
 				qt.merge(toMerge);
 				
-				number_leaves -= 3;
+				numberLeaves -= 3;
 
 			}
 
-			while (number_leaves != P)
+			while (numberLeaves != P)
 			{
 				refinePartition();
-				number_leaves--;
+				numberLeaves--;
 			}
 		}
 	}

@@ -111,42 +111,42 @@ public class ObjectGridStorage<T extends DObject> extends GridStorage<T>
 
 	public void addObject(Number2D p, T t)
 	{
-		Int2D local_p = toLocalPoint((Int2D) p);
+		Int2D localP = toLocalPoint((Int2D) p);
 
-		set(local_p, t);
+		set(localP, t);
 	}
 
 	public T getObject(Number2D p, long id)
 	{
-		Int2D local_p = toLocalPoint((Int2D) p);
+		Int2D localP = toLocalPoint((Int2D) p);
 		
-		//return storage[getFlatIndex(local_p)];
-		return storage.get(getFlatIndex(local_p));
+		//return storage[getFlatIndex(localP)];
+		return storage.get(getFlatIndex(localP));
 	}
 
 	// Don't call this method, it'd be foolish
 	public ArrayList<T> getAllObjects(Number2D p)
 	{
-		Int2D local_p = toLocalPoint((Int2D) p);
+		Int2D localP = toLocalPoint((Int2D) p);
 
 		
 		ArrayList<T> list = new ArrayList<T>();
-		//list.add(storage[getFlatIndex(local_p)]);
-		list.add(storage.get(getFlatIndex(local_p)));
+		//list.add(storage[getFlatIndex(localP)]);
+		list.add(storage.get(getFlatIndex(localP)));
 		return list;
 	}
 
 	public boolean removeObject(Number2D p, long id)
 	{
-		Int2D local_p = toLocalPoint((Int2D) p);
-		set(local_p, null);
+		Int2D localP = toLocalPoint((Int2D) p);
+		set(localP, null);
 		return true;
 	}
 
 	public void clear(Number2D p)
 	{
-		Int2D local_p = toLocalPoint((Int2D) p);
-		set(local_p, null);
+		Int2D localP = toLocalPoint((Int2D) p);
+		set(localP, null);
 	}
 
 	public void clear()

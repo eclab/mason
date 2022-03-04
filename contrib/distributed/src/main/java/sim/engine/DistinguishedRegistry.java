@@ -93,28 +93,28 @@ public class DistinguishedRegistry
 			startLocalRegistry(myip, port);
 		}
 
-		final String master_data[] = MPIUtil.<String>bcast(myip + ":" + port, 0).split(":");
+		final String masterData[] = MPIUtil.<String>bcast(myip + ":" + port, 0).split(":");
 
 		if (rank != 0)
 		{
-			startLocalRegistry(master_data[0], Integer.parseInt(master_data[1]));
+			startLocalRegistry(masterData[0], Integer.parseInt(masterData[1]));
 		}
 
 		MPI.COMM_WORLD.barrier();
 
 	}
 
-	 void startLocalRegistry(String master_ip, int master_port)
+	 void startLocalRegistry(String masterIP, int masterPort)
 	 {
 
 		try
 		{
 			registry = rank == 0 ? LocateRegistry.createRegistry(port)
-					: LocateRegistry.getRegistry(master_ip, master_port);
+					: LocateRegistry.getRegistry(masterIP, masterPort);
 		}
 		catch (RemoteException e1)
 		{
-			logger.log(Level.SEVERE, "Error Distributed Registry lookup for MPI node on master port: " + master_port);
+			logger.log(Level.SEVERE, "Error Distributed Registry lookup for MPI node on master port: " + masterPort);
 			e1.printStackTrace();
 		}
 
@@ -124,12 +124,12 @@ public class DistinguishedRegistry
 		}
 		catch (AccessException e)
 		{
-			logger.log(Level.SEVERE, "Error Distributed Registry lookup for MPI node on master port: " + master_port);
+			logger.log(Level.SEVERE, "Error Distributed Registry lookup for MPI node on master port: " + masterPort);
 			e.printStackTrace();
 		}
 		catch (RemoteException e)
 		{
-			logger.log(Level.SEVERE, "Error Distributed Registry lookup for MPI node on master port: " + master_port);
+			logger.log(Level.SEVERE, "Error Distributed Registry lookup for MPI node on master port: " + masterPort);
 			e.printStackTrace();
 		}
 		logger.log(Level.INFO, "Distributed Registry created/obtained on MPI node on master port: " + port);

@@ -126,17 +126,17 @@ public class IntRect2D implements Serializable
 /*
 	public IntRect2D resize(int left, int up, int right, int down)
 	{
-		Int2D new_ul = new Int2D(ul.x + left, ul.y + up);
-		Int2D new_br = new Int2D(br.x + right, br.y + down);
-		return new IntRect2D(new_ul, new_br);
+		Int2D newUL = new Int2D(ul.x + left, ul.y + up);
+		Int2D newBR = new Int2D(br.x + right, br.y + down);
+		return new IntRect2D(newUL, newBR);
 	}
 */
 /*
 	public IntRect2D translate(int x, int y)
 	{
-		Int2D new_ul = new Int2D(ul.x + x, ul.y + y);
-		Int2D new_br = new Int2D(br.x + x, br.y + y);
-		return new IntRect2D(new_ul, new_br);
+		Int2D newUL = new Int2D(ul.x + x, ul.y + y);
+		Int2D newBR = new Int2D(br.x + x, br.y + y);
+		return new IntRect2D(newUL, newBR);
 	}
 */
 
@@ -223,7 +223,7 @@ public class IntRect2D implements Serializable
 	{
 		Int2D[] listOfPoints = new Int2D[this.getArea()];
 
-		int list_ind = 0;
+		int listInd = 0;
 
 		//int[] sizes = this.getSizes();
 		int width = getWidth();
@@ -233,8 +233,8 @@ public class IntRect2D implements Serializable
 		{
 			for (int j = 0; j < height; j++)
 			{
-				listOfPoints[list_ind] = new Int2D(ul.x + i, ul.y + j);
-				list_ind++;
+				listOfPoints[listInd] = new Int2D(ul.x + i, ul.y + j);
+				listInd++;
 			}
 		}
 
