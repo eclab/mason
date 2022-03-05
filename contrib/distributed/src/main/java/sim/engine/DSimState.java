@@ -96,7 +96,8 @@ public class DSimState extends SimState
 	// The number of steps between load balances
 	protected int balanceInterval = 100;
 	
-	protected int updateGlobalsInterval = 100;
+	// How often globals are updated
+	int updateGlobalsInterval = 100;
 	
 	protected int maxStatSize = 10000;
 	
@@ -1030,37 +1031,53 @@ public class DSimState extends SimState
 		}
 	}
 
-	// for communicating global variables (usually best) at each time step
-	// takes set of variables from each partition, picks the best from them in some
-	// way, then distributes the best back to each partition.
-	// To use, user must implement getPartitionGlobals, arbitrateGlobals, and setGlobals in subclass
-	// this method is called every "updateGlobalsInterval" steps, which is a field that can be changed by user
-	// Example: DPSO has a best fitness score and an x and y associated with that score
-	// 1) gather each best score and corresponding x and y from each partition (gatherGlobals())
-	// 2) arbitrate (pick the best score and its x and y out of the partition candidates (arbitrateGlobal)
-	// 3) distributed the winner back to each partition, each partition keeps track of the global
-	void updateGlobals()
+
+
+
+
+
+
+
+	//// GLOBALS FACILITY
+	
+	
+	
+	// implement in subclass. Default simply returns the first one.
+	protected Serializable[] arbitrateGlobals(ArrayList<Serializable[]> allGlobals)
 	{
-		
-		if (schedule.getSteps() > 0 && (schedule.getSteps() % updateGlobalsInterval == 0)) {
-			Serializable[] g = null;
+		if (allGlobals != null && allGlobals.get(0) != null)
+			return allGlobals.get(0);
+		else return null;
+	}
+	
+	// implement in subclass
+	protected Serializable[] getPartitionGlobals()
+	{
+		return null;
 
-			ArrayList<Serializable[]> gg = gatherGlobals();
-		
-			//gg will be null if gatherPartitionGlobals is not implemented
-			if (gg != null) {
-
-				if (partition.isRootProcessor())
-				{
-					g = arbitrateGlobal(gg);
-				}
-
-				distributeGlobals(g);
-			}	
-		}
 	}
 
+	// implement in subclass
+	protected void setPartitionGlobals(Serializable[] globals)
+	{
+		return;
+	}
 
+	protected void setUpdateGlobalsInterval(int val) { updateGlobalsInterval = val; }
+	protected int getUpdateGlobalsInterval() { return updateGlobalsInterval; }
+
+	// after determining the overall global using arbitration, send that one back to each partition
+	// uses setPartitionGlobals(), should be implemented in subclass (to match getPartititonGlobals())
+	void distributeGlobals(Serializable[] global)
+	{
+		try
+		{
+			// broadcast
+			global = MPIUtil.bcast(partition.getCommunicator(), global, 0);
+			setPartitionGlobals(global);
+		}
+		catch (Exception e) { }
+	}
 
 	// takes the set of globals from each partition the set of variables this is is implemented in getPartitionGlobals(),
 	// implemented in the specific subclass
@@ -1072,84 +1089,62 @@ public class DSimState extends SimState
 			Serializable[] g = this.getPartitionGlobals();
 			
 			//should be null when getPartitionGlobals() not implemented in subclass
-			if (g == null) {
-				return null;
-			}
-			
-			else {
-			
-				ArrayList<Serializable[]> gg = MPIUtil.gather(partition, g, 0);
-				return gg;
-			}
+			if (g == null) { return null; }
+			else 
+				{	
+				return MPIUtil.gather(partition, g, 0);
+				}
 		}
 		catch (Exception e)
 		{
 			System.out.println("error in gatherGlobals");
 			System.out.println(e);
 			System.exit(-1);
-
 		}
-
+		// cannot be reached
 		return null;
 	}
 	
-	
-	
-	// this one creates the best global out of the globals from each partiton (gg) should override in subclass
-	// this version picks based on the highest value of index 0
-	// TODO should we make this one throw an exception and force specific agent to implement its own?
-	protected Serializable[] arbitrateGlobal(ArrayList<Serializable[]> gg)
+	// for communicating global variables (usually best) at each time step
+	// takes set of variables from each partition, picks the best from them in some
+	// way, then distributes the best back to each partition.
+	// To use, user must implement getPartitionGlobals, arbitrateGlobals, and setGlobals in subclass
+	// this method is called every "updateGlobalsInterval" steps, which is a field that can be changed by user
+	// Example: DPSO has a best fitness score and an x and y associated with that score
+	// 1) gather each best score and corresponding x and y from each partition (gatherGlobals())
+	// 2) arbitrate (pick the best score and its x and y out of the partition candidates (arbitrateGlobal)
+	// 3) distributed the winner back to each partition, each partition keeps track of the global
+	void updateGlobals()
 	{
-		int chosenIndex = 0;
-		Serializable chosenItem = gg.get(0)[0];
-
-		double bestVal = (double) chosenItem; // make type invariant
-
-		for (int i = 0; i < partition.getNumProcessors(); i++)
-		{
-			if ((double) gg.get(i)[0] > bestVal)
+		if (schedule.getSteps() > 0 && (schedule.getSteps() % updateGlobalsInterval == 0)) 
 			{
-				bestVal = (double) gg.get(i)[0];
-				chosenIndex = i;
-			}
+			Serializable[] g = null;
+			ArrayList<Serializable[]> gg = gatherGlobals();
+		
+			//gg will be null if gatherPartitionGlobals is not implemented
+			if (gg != null) 
+			{
+				if (partition.isRootProcessor())
+				{
+					g = arbitrateGlobal(gg);
+				}
+				distributeGlobals(g);
+			}	
 		}
-
-		return gg.get(chosenIndex);
 	}
+
+
 	
 
-	// after determining the overall global using arbitration, send that one back to each partition
-	// uses setPartitionGlobals(), should be implemented in subclass (to match getPartititonGlobals())
-	void distributeGlobals(Serializable[] global)
-	{
-		// need to do typing
-		try
-		{
-			// partition.getCommunicator().bcast(global, 1, MPI.DOUBLE, 0);
-			global = MPIUtil.bcast(partition.getCommunicator(), global, 0);
-			//System.out.println("gl: "+global);
-			setPartitionGlobals(global);
-		}
-		catch (Exception e)
-		{
 
-		}
-	}
 
-	// implement in subclass
-	protected Serializable[] getPartitionGlobals()
-	{
-		//getPartitionGlobals() should be implemented in subclass
-		return null;
 
-	}
 
-	// implement in subclass
-	protected void setPartitionGlobals(Serializable[] o)
-	{
-		//setPartitionGlobals() should be implemented in subclass
-		return;
-	}
+
+
+
+
+
 	
 	//testing method: counts agents in each storage (not in halo) and sums them.  Should remain constant!
 	int countTotalAgents(HaloGrid2D field) 
