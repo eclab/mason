@@ -90,9 +90,6 @@ public class DSimState extends SimState
 	// The RMI registry
 	DistinguishedRegistry registry;
 
-	// FIXME: what is this for?
-//	protected boolean withRegistry;
-
 	// The number of steps between load balances
 	protected int balanceInterval = 100;
 	
@@ -123,7 +120,6 @@ public class DSimState extends SimState
 		transporter = new Transporter(partition);
 		fieldList = new ArrayList<>();
 		rootInfo = new HashMap<>();
-//		withRegistry = false;
 	}	
 	
 	
@@ -307,41 +303,36 @@ public class DSimState extends SimState
 			
 			transporter.sync();
 
-//			if (withRegistry)// {
-				// All nodes have finished the synchronization and can unregister exported objects.
-				//MPI.COMM_WORLD.barrier(); //not useful
-
-				// After the synchronization we can unregister migrated object!
-				// remove exported-migrated object from local node
-				for (DistinguishedRemoteObject exportedObj : DistinguishedRegistry.getInstance().getAllLocalExportedObjects())
+			// After the synchronization we can unregister migrated object!
+			// remove exported-migrated object from local node
+			for (DistinguishedRemoteObject exportedObj : DistinguishedRegistry.getInstance().getAllLocalExportedObjects())
+			{
+				try
 				{
-					try
-					{
-						// if the object is migrated unregister it
-						if (DistinguishedRegistry.getInstance().isMigrated(exportedObj.object)) {
-							DistinguishedRegistry.getInstance().unregisterObject(exportedObj.object);
-						}
-					}
-					catch (NotBoundException e)
-					{
-						e.printStackTrace();
+					// if the object is migrated unregister it
+					if (DistinguishedRegistry.getInstance().isMigrated(exportedObj.object)) {
+						DistinguishedRegistry.getInstance().unregisterObject(exportedObj.object);
 					}
 				}
-				// for (String mo : DistinguishedRegistry.getInstance().getMigratedNames())
-				// {
-				// 	try
-				// 	{
-				// 		DistinguishedRegistry.getInstance().unregisterObject(mo);
-				// 	}
-				// 	catch (NotBoundException e)
-				// 	{
-				// 		e.printStackTrace();
-				// 	}
-				// }
-				DistinguishedRegistry.getInstance().clearMigratedNames();
-				//wait all nodes to finish the unregister phase.
-				MPI.COMM_WORLD.barrier();
+				catch (NotBoundException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			// for (String mo : DistinguishedRegistry.getInstance().getMigratedNames())
+			// {
+			// 	try
+			// 	{
+			// 		DistinguishedRegistry.getInstance().unregisterObject(mo);
+			// 	}
+			// 	catch (NotBoundException e)
+			// 	{
+			// 		e.printStackTrace();
+			// 	}
 			// }
+			DistinguishedRegistry.getInstance().clearMigratedNames();
+			//wait all nodes to finish the unregister phase.
+			MPI.COMM_WORLD.barrier();
 
 		}
 		catch (ClassNotFoundException | MPIException | IOException e)
@@ -371,10 +362,7 @@ public class DSimState extends SimState
 			if (payloadWrapper.isAgent())
 			{
 
-//				if (withRegistry)
-				{
-					//if (payloadWrapper.payload.distinguishedName() != null)
-					if(payloadWrapper.payload instanceof Distinguished)
+				if(payloadWrapper.payload instanceof Distinguished)
 					{
 						try
 						{
@@ -385,7 +373,6 @@ public class DSimState extends SimState
 							e.printStackTrace();
 						}
 					}
-				}
 
 				if (payloadWrapper.isRepeating())
 					{
@@ -503,8 +490,6 @@ public class DSimState extends SimState
 					{
 
 						// I am currently unclear on how this works
-//						if (withRegistry)
-						{
 							if(payloadWrapper.payload instanceof Distinguished)
 							{
 								try
@@ -516,7 +501,6 @@ public class DSimState extends SimState
 									e.printStackTrace();
 								}
 							}
-						}
 
 					if (payloadWrapper.isRepeating())
 						{
@@ -846,11 +830,8 @@ public class DSimState extends SimState
 	{
 		super.start();
 
-//		if (withRegistry)
-		{
-			// distributed registry inizialization
-			registry = DistinguishedRegistry.getInstance();
-		}
+		// distributed registry inizialization
+		registry = DistinguishedRegistry.getInstance();
 
 		try
 		{
@@ -967,14 +948,6 @@ public class DSimState extends SimState
 		{
 		return rootInfo.get(key);
 		}
-
-/*
-	public void enableRegistry()
-		{
-		withRegistry = true;
-		}
-*/
-
 
 
 
