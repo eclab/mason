@@ -974,6 +974,17 @@ public class DSimState extends SimState
 		withRegistry = true;
 		}
 */
+
+
+
+
+
+	//// STATS FACILITY
+
+
+
+
+
 	/**
 	 * Log statistics data for this timestep. This data will then be sent to a remote statistics computer.
 	 */
@@ -982,17 +993,17 @@ public class DSimState extends SimState
 		synchronized (statLock)
 		{
 			if (recordStats)
-				statList.add(new Stat(data, schedule.getSteps()));
+				statList.add(new Stat(data, schedule.getSteps(), schedule.getTime()));
 		}
 	}
 	
-	public void emptyStats() {
-		
-		if (recordStats) {
-			
-			if (statList.size() > maxStatSize) {
+	public void emptyStats() 
+	{	
+		if (recordStats) 
+		{	
+			if (statList.size() > maxStatSize) 
+			{
 				statList = new ArrayList<>();
-
 			}
 		}
 	}
@@ -1005,7 +1016,7 @@ public class DSimState extends SimState
 		synchronized (debugStatLock)
 		{
 			if (recordDebug)
-				debugList.add(new Stat(data, schedule.getSteps()));
+				debugList.add(new Stat(data, schedule.getSteps(), schedule.getTime()));
 		}
 	}
 
@@ -1126,7 +1137,7 @@ public class DSimState extends SimState
 			{
 				if (partition.isRootProcessor())
 				{
-					g = arbitrateGlobal(gg);
+					g = arbitrateGlobals(gg);
 				}
 				distributeGlobals(g);
 			}	
