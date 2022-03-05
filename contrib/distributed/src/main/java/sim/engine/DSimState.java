@@ -1051,7 +1051,7 @@ public class DSimState extends SimState
 	// this method is called every "updateGlobalsInterval" steps, which is a field that can be changed by user
 	// Example: DPSO has a best fitness score and an x and y associated with that score
 	// 1) gather each best score and corresponding x and y from each partition (gatherGlobals())
-	// 2) arbitrate (pick the best score and its x and y out of the partition candidates (arbitrateGlobal)
+	// 2) arbitrate (pick the best score and its x and y out of the partition candidates (arbitrateGlobals)
 	// 3) distributed the winner back to each partition, each partition keeps track of the global
 	private void updateGlobals()
 	{
@@ -1066,7 +1066,7 @@ public class DSimState extends SimState
 
 				if (partition.isRootProcessor())
 				{
-					g = arbitrateGlobal(gg);
+					g = arbitrateGlobals(gg);
 				}
 
 				distributeGlobals(g);
@@ -1109,26 +1109,10 @@ public class DSimState extends SimState
 	
 	
 	
-	// this one creates the best global out of the globals from each partiton (gg) should override in subclass
-	// this version picks based on the highest value of index 0
-	// TODO should we make this one throw an exception and force specific agent to implement its own?
-	protected Serializable[] arbitrateGlobal(ArrayList<Serializable[]> gg)
+	// should be implemented by the subclass to use.  See DPSO for an example.
+	protected Serializable[] arbitrateGlobals(ArrayList<Serializable[]> gg)
 	{
-		int chosen_index = 0;
-		Serializable chosen_item = gg.get(0)[0];
-
-		double best_val = (double) chosen_item; // make type invariant
-
-		for (int i = 0; i < partition.getNumProcessors(); i++)
-		{
-			if ((double) gg.get(i)[0] > best_val)
-			{
-				best_val = (double) gg.get(i)[0];
-				chosen_index = i;
-			}
-		}
-
-		return gg.get(chosen_index);
+        return null;
 	}
 	
 
