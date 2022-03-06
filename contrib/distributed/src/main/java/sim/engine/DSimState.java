@@ -102,6 +102,12 @@ public class DSimState extends SimState
 	// be properly in sync
 	int balancerLevel;
 	
+	// Arraylist where the RemoteMessage are stored
+	// the methods invoked on it have to be synchronized to avoid concurrent modification
+	ArrayList<DistinguishedRemoteMessage> distinguishedMessageQueue = new ArrayList<DistinguishedRemoteMessage>();
+
+
+	
 	/**
 	 * Builds a new DSimState with the given random number SEED, the WIDTH and HEIGIHT of the entire model (not just the
 	 * partition), and the AREA OF INTEREST (AOI) for the halo field
@@ -122,6 +128,12 @@ public class DSimState extends SimState
 		rootInfo = new HashMap<>();
 	}	
 	
+	
+	
+	
+	///// PID 
+	
+
 	
 	// loads and stores the pid.
 	// Only call this after COMM_WORLD has been set up.
@@ -152,6 +164,13 @@ public class DSimState extends SimState
 		return pid;
 	}
 
+
+
+
+
+	////// MULTITHREADING
+
+
 	/**
 	 * Returns whether the DSimState is assuming that you may be allocating DObjects in a multithreaded environment. In general
 	 * you should try to run in single-threaded mode, it will cause far fewer headaches.
@@ -181,6 +200,14 @@ public class DSimState extends SimState
 			throw new RuntimeException("multiThreaded(...) may only be called once.");
 	}
 
+
+
+
+
+
+	////// HALO FIELD INTERACTION
+
+
 	/**
 	 * All HaloFields register themselves here.<br>
 	 * Do not call this method explicitly, it's called in the HaloField constructor
@@ -195,6 +222,425 @@ public class DSimState extends SimState
 		fieldList.add(halo);
 		return index;
 	}
+	
+	/**
+	 * @return the partition
+	 */
+	public Partition getPartition()
+		{
+		return partition;
+		}
+
+	/**
+	 * @return an arraylist of all the HaloGrid2Ds registered with the SimState
+	 */
+	public ArrayList<HaloGrid2D<?, ?>> getFieldList()
+		{
+		return fieldList;
+		}
+
+	/*
+	 * @return The Transporter
+	 */
+	public Transporter getTransporter()
+		{
+		return transporter;
+		}
+
+
+
+
+
+
+
+
+
+	
+
+
+	//// DISTINGUISHED OBJECTS
+
+
+
+	/**
+	 * @return the DistinguishedRegistry instance, or null if the registry is not available. You can call this method after calling the
+	 *         start() method.
+	 */
+	public DistinguishedRegistry getDistinguishedRegistry()
+		{
+		return registry;
+		}
+
+	/**
+	Sends a message to a Distinguished object registered on the registry with the name NAME.
+	 */
+	public Promised sendRemoteMessage(String name, int tag, Serializable arguments) throws RemoteException
+	{
+		RemotePromise callback = new RemotePromise();
+		try 
+		{
+			// DistinguishedRegistry.getInstance().registerObject("0", callback);
+			UnicastRemoteObject.exportObject(callback, 0);
+			((DistinguishedRemoteObject) DistinguishedRegistry.getInstance().getObject(name)).remoteMessage(tag, arguments, callback);
+			return callback;
+		} 
+		catch (Exception e) 
+		{
+		e.printStackTrace();
+		}
+		return null;
+	}
+
+	
+	// Called by DistinguishedRemoteObject when it receives a message it must put on the queue to process
+	void addRemoteMessage(DistinguishedRemoteMessage message)
+    	{
+		synchronized(this.distinguishedMessageQueue)
+		{
+			distinguishedMessageQueue.add(message);
+		}
+	}
+	
+	
+
+
+
+	////// INITIALIZATION
+
+	public static final int DEFAULT_TIMING_WINDOW = 20;
+
+	public static void doLoopDistributed(final Class<?> c, final String[] args)
+	{
+		doLoopDistributed(c, args, DEFAULT_TIMING_WINDOW);
+	}
+
+	public static void doLoopDistributed(final Class<?> c, final String[] args, final int window)
+	{
+		try
+		{
+			Timing.setWindow(window);
+			MPI.Init(args);
+			Timing.start(Timing.LB_RUNTIME);
+
+			// Setup Logger
+			final String loggerName = String.format("MPI-Job-%d", MPI.COMM_WORLD.getRank());
+			final String logServAddr = argumentForKey("-logserver", args);
+			final String logServPortStr = argumentForKey("-logport", args);
+			if (logServAddr != null && logServPortStr != null)
+				try
+				{
+					initRemoteLogger(loggerName, logServAddr, Integer.parseInt(logServPortStr));
+				}
+				catch (final IOException e)
+				{
+					e.printStackTrace();
+					System.exit(-1);
+				}
+			else
+				initLocalLogger(loggerName);
+
+			SimState.doLoop(c, args);
+			MPI.Finalize();
+		}
+		catch (MPIException ex)
+		{
+			throw new RuntimeException(ex);
+		}
+	}
+
+
+
+
+
+
+
+	////// STARTING
+
+
+	/**
+	 * Distribute the following keyed information from the root to all the nodes. This may be called inside startRoot().
+	 */
+	public void sendRootInfoToAll(String key, Serializable sendObj)
+	{
+		for (int i = 0; i < partition.getNumProcessors(); i++)
+		{
+			init[i].put(key, sendObj);
+		}
+	}
+
+	/**
+	 * Distribute the following keyed information from the root to a specific node (given by the pid). This may be called inside
+	 * startRoot().
+	 */
+	public void sendRootInfoToProcessor(int pid, String key, Serializable sendObj)
+		{
+		init[pid].put(key, sendObj);
+		}
+
+	/**
+	 * Extract information set to a processor by the root. This may be called inside start().
+	 */
+	public Serializable getRootInfo(String key)
+		{
+		return rootInfo.get(key);
+		}
+
+
+	/**
+	 * Modelers must override this method if they want to add any logic that is unique to the root processor
+	 */
+	protected void startRoot()
+	{
+	}
+
+
+	public void start()
+	{
+		super.start();
+
+		// distributed registry inizialization
+		registry = DistinguishedRegistry.getInstance();
+
+		try
+		{
+			processor = new RemoteProcessor(this);
+			processor.lock();
+			// unlocks in preSchedule
+		}
+		catch (RemoteException e1)
+		{
+			throw new RuntimeException(e1);
+		}
+
+		try
+		{
+			syncFields();
+
+			for (HaloGrid2D haloField : fieldList)
+				haloField.initRemote();
+
+			if (partition.isRootProcessor())
+			{
+				init = new HashMap[partition.getNumProcessors()];
+				for (int i = 0; i < init.length; i++)
+					init[i] = new HashMap<String, Serializable>();
+				// startRoot(init);
+				startRoot();
+			}
+			// synchronize using one to many communication
+			rootInfo = (HashMap<String, Serializable>) MPIUtil.scatter(partition.getCommunicator(), init, 0);
+
+			// schedule a zombie agent to prevent that a processor with no agent is stopped
+			// when the simulation is still going on
+			schedule.scheduleRepeating(new Stopping()
+			{
+				public void step(SimState state)
+					{
+					}
+
+				public Stoppable getStoppable()
+					{
+					return null;
+					}
+
+				public boolean isStopped()
+					{
+					return false;
+					}
+
+				public void setStoppable(Stoppable stop)
+					{
+					}
+			});
+
+			// On all processors, wait for the start to finish
+			MPI.COMM_WORLD.barrier();
+		}
+		catch (final MPIException | RemoteException e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+
+
+
+
+
+
+
+	//// STATISTICS FACILITY
+
+
+	/**
+	 * Log statistics data for this timestep. This data will then be sent to a remote statistics computer.
+	 */
+	public void addStat(Serializable data)
+	{
+		synchronized (statLock)
+		{
+			if (recordStats)
+				statList.add(new Stat(data, schedule.getSteps(), schedule.getTime()));
+		}
+	}
+	
+	public void emptyStats() 
+	{	
+		if (recordStats) 
+		{	
+			if (statList.size() > maxStatSize) 
+			{
+				statList = new ArrayList<>();
+			}
+		}
+	}
+
+	/**
+	 * Log debug statistics data for this timestep. This data will then be sent to a remote statistics computer.
+	 */
+	public void addDebug(Serializable data)
+	{
+		synchronized (debugStatLock)
+		{
+			if (recordDebug)
+				debugList.add(new Stat(data, schedule.getSteps(), schedule.getTime()));
+		}
+	}
+
+	/** Return the current list of logged statistics data and clear it. */
+	public ArrayList<Stat> getStatList()
+	{
+		synchronized (statLock)
+		{
+			ArrayList<Stat> ret = statList;
+			statList = new ArrayList<>();
+			return ret;
+		}
+	}
+
+	/** Return the current list of logged debug statistics data and clear it. */
+	public ArrayList<Stat> getDebugList()
+	{
+		synchronized (debugStatLock)
+		{
+			ArrayList<Stat> ret = debugList;
+			debugList = new ArrayList<>();
+			return ret;
+		}
+	}
+
+
+
+
+
+
+
+
+	//// GLOBALS FACILITY
+	
+		
+	// implement in subclass. Default simply returns the first one.
+	protected Serializable[] arbitrateGlobals(ArrayList<Serializable[]> allGlobals)
+	{
+		if (allGlobals != null && allGlobals.get(0) != null)
+			return allGlobals.get(0);
+		else return null;
+	}
+	
+	// implement in subclass
+	protected Serializable[] getPartitionGlobals()
+	{
+		return null;
+
+	}
+
+	// implement in subclass
+	protected void setPartitionGlobals(Serializable[] globals)
+	{
+		return;
+	}
+
+	protected void setUpdateGlobalsInterval(int val) { updateGlobalsInterval = val; }
+	protected int getUpdateGlobalsInterval() { return updateGlobalsInterval; }
+
+	// after determining the overall global using arbitration, send that one back to each partition
+	// uses setPartitionGlobals(), should be implemented in subclass (to match getPartititonGlobals())
+	void distributeGlobals(Serializable[] global)
+	{
+		try
+		{
+			// broadcast
+			global = MPIUtil.bcast(partition.getCommunicator(), global, 0);
+			setPartitionGlobals(global);
+		}
+		catch (Exception e) { }
+	}
+
+	// takes the set of globals from each partition the set of variables this is is implemented in getPartitionGlobals(),
+	// implemented in the specific subclass
+	ArrayList<Serializable[]> gatherGlobals()
+	{
+		try
+		{
+			// call getPartitionGlobals() for each partition
+			Serializable[] g = this.getPartitionGlobals();
+			
+			//should be null when getPartitionGlobals() not implemented in subclass
+			if (g == null) { return null; }
+			else 
+				{	
+				return MPIUtil.gather(partition, g, 0);
+				}
+		}
+		catch (Exception e)
+		{
+			System.out.println("error in gatherGlobals");
+			System.out.println(e);
+			System.exit(-1);
+		}
+		// cannot be reached
+		return null;
+	}
+	
+	// for communicating global variables (usually best) at each time step
+	// takes set of variables from each partition, picks the best from them in some
+	// way, then distributes the best back to each partition.
+	// To use, user must implement getPartitionGlobals, arbitrateGlobals, and setGlobals in subclass
+	// this method is called every "updateGlobalsInterval" steps, which is a field that can be changed by user
+	// Example: DPSO has a best fitness score and an x and y associated with that score
+	// 1) gather each best score and corresponding x and y from each partition (gatherGlobals())
+	// 2) arbitrate (pick the best score and its x and y out of the partition candidates (arbitrateGlobal)
+	// 3) distributed the winner back to each partition, each partition keeps track of the global
+	void updateGlobals()
+	{
+		if (schedule.getSteps() > 0 && (schedule.getSteps() % updateGlobalsInterval == 0)) 
+			{
+			Serializable[] g = null;
+			ArrayList<Serializable[]> gg = gatherGlobals();
+		
+			//gg will be null if gatherPartitionGlobals is not implemented
+			if (gg != null) 
+			{
+				if (partition.isRootProcessor())
+				{
+					g = arbitrateGlobals(gg);
+				}
+				distributeGlobals(g);
+			}	
+		}
+	}
+
+
+	
+
+
+
+
+
+
+	////// TOP-LEVEL LOOP
+	
+	
 
 	/**
 	 * Calls Sync on all the fields
@@ -205,72 +651,28 @@ public class DSimState extends SimState
 	void syncFields() throws MPIException, RemoteException
 	{
 		for (HaloGrid2D haloField : fieldList)
+			{
 			haloField.syncHalo();
+			}
 	}
 
 	void syncRemoveAndAdd() throws MPIException, RemoteException
 	{
 		for (HaloGrid2D haloField : fieldList)
+			{
 			haloField.syncRemoveAndAdd();
+			}
 	}
 
-	/*
-	Arraylist where the RemoteMessage are stored
-	the methods invoked on it have to be synchronized to avoid concurrent modification
-	*/
-	ArrayList<DistinguishedRemoteMessage> distinguishedMessageQueue = new ArrayList<DistinguishedRemoteMessage>();
 
-	Properties prop;
-
-	/**
-	 * Export a Promise on the registry 
-	 * 
-	 * @param name 
-	 * @param tag
-	 * @param arguments
-	 * 
-	 * @return Promised
-	 * @throws AccessException
-	 * @throws RemoteException
-	 * @throws NotBoundException
-	 */
-	public Promised sendRemoteMessage(String name, int tag, Serializable arguments) throws RemoteException
-	{
-		RemotePromise callback = new RemotePromise();
-		try {
-			// DistinguishedRegistry.getInstance().registerObject("0", callback);
-			UnicastRemoteObject.exportObject(callback, 0);
-			((DistinguishedRemoteObject) DistinguishedRegistry.getInstance().getObject(name)).remoteMessage(tag, arguments, callback);
-			return callback;
-		} catch (AccessException e) {
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		} catch (NotBoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	
-	/**
-	 * Add a DistinguishedRemoteMessage on the DSimstate distinguishedMessageQueue
-	 * 
-	 * @param message 
-	 * 
-	 */
-    public void addRemoteMessage(DistinguishedRemoteMessage message){
-		synchronized(this.distinguishedMessageQueue){
-			distinguishedMessageQueue.add(message);
-		}
-	}
+	// This is only here so it will show up in the documentation
 	/**
 	 * This method is called immediately before after the schedule. At present it is empty. Nonetheless, if you override this
 	 * method, you absolutely need to call super.postSchedule() first.
 	 */
 	public void postSchedule()
 	{
-		
+		super.postSchedule();
 	}
 
 	/**
@@ -410,8 +812,10 @@ public class DSimState extends SimState
 		   to make the Promise ready
 		*/
 		try {
-			synchronized(this.distinguishedMessageQueue){
-			   for(DistinguishedRemoteMessage message: distinguishedMessageQueue){
+			synchronized(this.distinguishedMessageQueue)
+			{
+			   for(DistinguishedRemoteMessage message: distinguishedMessageQueue)
+			   {
 				   Serializable data =
 					   message.object.remoteMessage(message.tag, message.arguments);
 				   message.callback.fulfill(data);
@@ -420,15 +824,24 @@ public class DSimState extends SimState
 		   }
 		   
 		   DistinguishedRegistry.getInstance().unregisterObjects();
-	   } catch (AccessException e) {
-		   e.printStackTrace();
-	   } catch (RemoteException e) {
-		   e.printStackTrace();
-	   } catch (NotBoundException e) {
+	   } 
+	   catch (Exception e) 
+	   {
 		   e.printStackTrace();
 	   }
 		
 	}
+
+
+
+
+
+
+
+
+
+	//// LOAD BALANCING
+
 
 	void loadBalance()
 	{
@@ -717,302 +1130,10 @@ public class DSimState extends SimState
 						}
 					}
 				}
-				
-
-
 			}
 		}
 		MPI.COMM_WORLD.barrier();
 		Timing.stop(Timing.LB_OVERHEAD);
-		
-
-
-	}
-
-	static void initRemoteLogger(final String loggerName, final String logServAddr, final int logServPort)
-			throws IOException
-	{
-		final SocketHandler sh = new SocketHandler(logServAddr, logServPort);
-		sh.setLevel(Level.ALL);
-		sh.setFormatter(new java.util.logging.Formatter()
-		{
-			public String format(final LogRecord rec)
-			{
-				return String.format("[%s][%s][%s:%s][%-7s]\t %s",
-						new SimpleDateFormat("MM-dd-YYYY HH:mm:ss.SSS").format(new Date(rec.getMillis())),
-						rec.getLoggerName(), rec.getSourceClassName(), rec.getSourceMethodName(),
-						rec.getLevel().getLocalizedName(), rec.getMessage());
-			}
-		});
-		DSimState.logger = Logger.getLogger(loggerName);
-		DSimState.logger.setUseParentHandlers(false);
-		DSimState.logger.setLevel(Level.ALL);
-		DSimState.logger.addHandler(sh);
-	}
-
-	static void initLocalLogger(final String loggerName)
-	{
-		DSimState.logger = Logger.getLogger(loggerName);
-		DSimState.logger.setLevel(Level.ALL);
-		DSimState.logger.setUseParentHandlers(false);
-
-		final ConsoleHandler handler = new ConsoleHandler();
-		handler.setFormatter(new java.util.logging.Formatter()
-		{
-			public synchronized String format(final LogRecord rec)
-			{
-				return String.format("[%s][%-7s] %s%n",
-						new SimpleDateFormat("MM-dd-YYYY HH:mm:ss.SSS").format(new Date(rec.getMillis())),
-						rec.getLevel().getLocalizedName(), rec.getMessage());
-			}
-		});
-		DSimState.logger.addHandler(handler);
-	}
-
-	public static final int DEFAULT_TIMING_WINDOW = 20;
-
-	public static void doLoopDistributed(final Class<?> c, final String[] args)
-	{
-		doLoopDistributed(c, args, DEFAULT_TIMING_WINDOW);
-	}
-
-	public static void doLoopDistributed(final Class<?> c, final String[] args, final int window)
-	{
-		try
-		{
-			Timing.setWindow(window);
-			MPI.Init(args);
-			Timing.start(Timing.LB_RUNTIME);
-
-			// Setup Logger
-			final String loggerName = String.format("MPI-Job-%d", MPI.COMM_WORLD.getRank());
-			final String logServAddr = argumentForKey("-logserver", args);
-			final String logServPortStr = argumentForKey("-logport", args);
-			if (logServAddr != null && logServPortStr != null)
-				try
-				{
-					initRemoteLogger(loggerName, logServAddr, Integer.parseInt(logServPortStr));
-				}
-				catch (final IOException e)
-				{
-					e.printStackTrace();
-					System.exit(-1);
-				}
-			else
-				initLocalLogger(loggerName);
-
-			SimState.doLoop(c, args);
-			MPI.Finalize();
-		}
-		catch (MPIException ex)
-		{
-			throw new RuntimeException(ex);
-		}
-	}
-
-	/**
-	 * Modelers must override this method if they want to add any logic that is unique to the root processor
-	 */
-	protected void startRoot()
-	{
-	}
-
-	/**
-	 * @return the DistinguishedRegistry instance, or null if the registry is not available. You can call this method after calling the
-	 *         start() method.
-	 */
-	public DistinguishedRegistry getDistinguishedRegistry()
-		{
-		return registry;
-		}
-
-	public void start()
-	{
-		super.start();
-
-		// distributed registry inizialization
-		registry = DistinguishedRegistry.getInstance();
-
-		try
-		{
-			processor = new RemoteProcessor(this);
-			processor.lock();
-			// unlocks in preSchedule
-		}
-		catch (RemoteException e1)
-		{
-			throw new RuntimeException(e1);
-		}
-
-		try
-		{
-			syncFields();
-
-			for (HaloGrid2D haloField : fieldList)
-				haloField.initRemote();
-
-			if (partition.isRootProcessor())
-			{
-				init = new HashMap[partition.getNumProcessors()];
-				for (int i = 0; i < init.length; i++)
-					init[i] = new HashMap<String, Serializable>();
-				// startRoot(init);
-				startRoot();
-			}
-			// synchronize using one to many communication
-			rootInfo = (HashMap<String, Serializable>) MPIUtil.scatter(partition.getCommunicator(), init, 0);
-
-			// schedule a zombie agent to prevent that a processor with no agent is stopped
-			// when the simulation is still going on
-			schedule.scheduleRepeating(new Stopping()
-			{
-				public void step(SimState state)
-					{
-					}
-
-				public Stoppable getStoppable()
-					{
-					return null;
-					}
-
-				public boolean isStopped()
-					{
-					return false;
-					}
-
-				public void setStoppable(Stoppable stop)
-					{
-					}
-			});
-
-			// On all processors, wait for the start to finish
-			MPI.COMM_WORLD.barrier();
-		}
-		catch (final MPIException | RemoteException e)
-		{
-			e.printStackTrace();
-			System.exit(-1);
-		}
-	}
-
-	/**
-	 * @return the partition
-	 */
-	public Partition getPartition()
-		{
-		return partition;
-		}
-	
-	
-
-	/**
-	 * @return an arraylist of all the HaloGrid2Ds registered with the SimState
-	 */
-	public ArrayList<HaloGrid2D<?, ?>> getFieldList()
-		{
-		return fieldList;
-		}
-
-	/*
-	 * @return the Transporter
-	 */
-	public Transporter getTransporter()
-		{
-		return transporter;
-		}
-
-	/**
-	 * Distribute the following keyed information from the root to all the nodes. This may be called inside startRoot().
-	 */
-	public void sendRootInfoToAll(String key, Serializable sendObj)
-	{
-		for (int i = 0; i < partition.getNumProcessors(); i++)
-		{
-			init[i].put(key, sendObj);
-		}
-	}
-
-	/**
-	 * Distribute the following keyed information from the root to a specific node (given by the pid). This may be called inside
-	 * startRoot().
-	 */
-	public void sendRootInfoToProcessor(int pid, String key, Serializable sendObj)
-		{
-		init[pid].put(key, sendObj);
-		}
-
-	/**
-	 * Extract information set to a processor by the root. This may be called inside start().
-	 */
-	public Serializable getRootInfo(String key)
-		{
-		return rootInfo.get(key);
-		}
-
-
-
-
-	//// STATS FACILITY
-
-
-
-
-
-	/**
-	 * Log statistics data for this timestep. This data will then be sent to a remote statistics computer.
-	 */
-	public void addStat(Serializable data)
-	{
-		synchronized (statLock)
-		{
-			if (recordStats)
-				statList.add(new Stat(data, schedule.getSteps(), schedule.getTime()));
-		}
-	}
-	
-	public void emptyStats() 
-	{	
-		if (recordStats) 
-		{	
-			if (statList.size() > maxStatSize) 
-			{
-				statList = new ArrayList<>();
-			}
-		}
-	}
-
-	/**
-	 * Log debug statistics data for this timestep. This data will then be sent to a remote statistics computer.
-	 */
-	public void addDebug(Serializable data)
-	{
-		synchronized (debugStatLock)
-		{
-			if (recordDebug)
-				debugList.add(new Stat(data, schedule.getSteps(), schedule.getTime()));
-		}
-	}
-
-	/** Return the current list of logged statistics data and clear it. */
-	public ArrayList<Stat> getStatList()
-	{
-		synchronized (statLock)
-		{
-			ArrayList<Stat> ret = statList;
-			statList = new ArrayList<>();
-			return ret;
-		}
-	}
-
-	/** Return the current list of logged debug statistics data and clear it. */
-	public ArrayList<Stat> getDebugList()
-	{
-		synchronized (debugStatLock)
-		{
-			ArrayList<Stat> ret = debugList;
-			debugList = new ArrayList<>();
-			return ret;
-		}
 	}
 
 
@@ -1020,110 +1141,7 @@ public class DSimState extends SimState
 
 
 
-
-
-	//// GLOBALS FACILITY
-	
-	
-	
-	// implement in subclass. Default simply returns the first one.
-	protected Serializable[] arbitrateGlobals(ArrayList<Serializable[]> allGlobals)
-	{
-		if (allGlobals != null && allGlobals.get(0) != null)
-			return allGlobals.get(0);
-		else return null;
-	}
-	
-	// implement in subclass
-	protected Serializable[] getPartitionGlobals()
-	{
-		return null;
-
-	}
-
-	// implement in subclass
-	protected void setPartitionGlobals(Serializable[] globals)
-	{
-		return;
-	}
-
-	protected void setUpdateGlobalsInterval(int val) { updateGlobalsInterval = val; }
-	protected int getUpdateGlobalsInterval() { return updateGlobalsInterval; }
-
-	// after determining the overall global using arbitration, send that one back to each partition
-	// uses setPartitionGlobals(), should be implemented in subclass (to match getPartititonGlobals())
-	void distributeGlobals(Serializable[] global)
-	{
-		try
-		{
-			// broadcast
-			global = MPIUtil.bcast(partition.getCommunicator(), global, 0);
-			setPartitionGlobals(global);
-		}
-		catch (Exception e) { }
-	}
-
-	// takes the set of globals from each partition the set of variables this is is implemented in getPartitionGlobals(),
-	// implemented in the specific subclass
-	ArrayList<Serializable[]> gatherGlobals()
-	{
-		try
-		{
-			// call getPartitionGlobals() for each partition
-			Serializable[] g = this.getPartitionGlobals();
-			
-			//should be null when getPartitionGlobals() not implemented in subclass
-			if (g == null) { return null; }
-			else 
-				{	
-				return MPIUtil.gather(partition, g, 0);
-				}
-		}
-		catch (Exception e)
-		{
-			System.out.println("error in gatherGlobals");
-			System.out.println(e);
-			System.exit(-1);
-		}
-		// cannot be reached
-		return null;
-	}
-	
-	// for communicating global variables (usually best) at each time step
-	// takes set of variables from each partition, picks the best from them in some
-	// way, then distributes the best back to each partition.
-	// To use, user must implement getPartitionGlobals, arbitrateGlobals, and setGlobals in subclass
-	// this method is called every "updateGlobalsInterval" steps, which is a field that can be changed by user
-	// Example: DPSO has a best fitness score and an x and y associated with that score
-	// 1) gather each best score and corresponding x and y from each partition (gatherGlobals())
-	// 2) arbitrate (pick the best score and its x and y out of the partition candidates (arbitrateGlobal)
-	// 3) distributed the winner back to each partition, each partition keeps track of the global
-	void updateGlobals()
-	{
-		if (schedule.getSteps() > 0 && (schedule.getSteps() % updateGlobalsInterval == 0)) 
-			{
-			Serializable[] g = null;
-			ArrayList<Serializable[]> gg = gatherGlobals();
-		
-			//gg will be null if gatherPartitionGlobals is not implemented
-			if (gg != null) 
-			{
-				if (partition.isRootProcessor())
-				{
-					g = arbitrateGlobals(gg);
-				}
-				distributeGlobals(g);
-			}	
-		}
-	}
-
-
-	
-
-
-
-
-
+	////// GUNK
 
 
 
@@ -1234,5 +1252,50 @@ public class DSimState extends SimState
 		
 	}
     */
+
+
+
+
+	//// DO WE NEED THE LOGGER ANY MORE?
+
+	static void initRemoteLogger(final String loggerName, final String logServAddr, final int logServPort)
+			throws IOException
+	{
+		final SocketHandler sh = new SocketHandler(logServAddr, logServPort);
+		sh.setLevel(Level.ALL);
+		sh.setFormatter(new java.util.logging.Formatter()
+		{
+			public String format(final LogRecord rec)
+			{
+				return String.format("[%s][%s][%s:%s][%-7s]\t %s",
+						new SimpleDateFormat("MM-dd-YYYY HH:mm:ss.SSS").format(new Date(rec.getMillis())),
+						rec.getLoggerName(), rec.getSourceClassName(), rec.getSourceMethodName(),
+						rec.getLevel().getLocalizedName(), rec.getMessage());
+			}
+		});
+		DSimState.logger = Logger.getLogger(loggerName);
+		DSimState.logger.setUseParentHandlers(false);
+		DSimState.logger.setLevel(Level.ALL);
+		DSimState.logger.addHandler(sh);
+	}
+
+	static void initLocalLogger(final String loggerName)
+	{
+		DSimState.logger = Logger.getLogger(loggerName);
+		DSimState.logger.setLevel(Level.ALL);
+		DSimState.logger.setUseParentHandlers(false);
+
+		final ConsoleHandler handler = new ConsoleHandler();
+		handler.setFormatter(new java.util.logging.Formatter()
+		{
+			public synchronized String format(final LogRecord rec)
+			{
+				return String.format("[%s][%-7s] %s%n",
+						new SimpleDateFormat("MM-dd-YYYY HH:mm:ss.SSS").format(new Date(rec.getMillis())),
+						rec.getLevel().getLocalizedName(), rec.getMessage());
+			}
+		});
+		DSimState.logger.addHandler(handler);
+	}
 	
 }
