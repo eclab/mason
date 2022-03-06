@@ -42,7 +42,7 @@ public class DFlockers extends DSimState
 	/** Creates a Flockers simulation with the given random number seed. */
 	public DFlockers(final long seed)
 	{
-		super(seed, DFlockers.width, DFlockers.height, DFlockers.neighborhood);
+		super(seed, DFlockers.width, DFlockers.height, DFlockers.neighborhood, true);
 
 		flockers = new DContinuous2D<>((int) (DFlockers.neighborhood / 1.5), this);
 		

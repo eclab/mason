@@ -11,7 +11,8 @@ import sim.field.continuous.DContinuous2D;
 import sim.util.*;
 import sim.engine.*;
 
-public class Wanderers extends DSimState {
+public class Wanderers extends DSimState 
+{
 	private static final long serialVersionUID = 1;
 
 	public final static int width = 200;
@@ -26,7 +27,7 @@ public class Wanderers extends DSimState {
 
 	/** Creates a Wanderers simulation with the given random number seed. */
 	public Wanderers(final long seed) {
-		super(seed, Wanderers.width, Wanderers.height, Wanderers.neighborhood);
+		super(seed, Wanderers.width, Wanderers.height, Wanderers.neighborhood, true);
 		wanderers = new DContinuous2D<>((int) (neighborhood), this);
 	}
 		

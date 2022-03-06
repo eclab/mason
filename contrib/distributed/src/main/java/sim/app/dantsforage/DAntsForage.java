@@ -156,7 +156,7 @@ public /* strictfp */ class DAntsForage extends DSimState
 
 	public DAntsForage(long seed)
 	{
-		super(seed, GRID_WIDTH, GRID_HEIGHT, 10);
+		super(seed, GRID_WIDTH, GRID_HEIGHT, 10, true);
 		sites = new DIntGrid2D(this);
 		toFoodGrid = new DDoubleGrid2D(this);
 		toHomeGrid = new DDoubleGrid2D(this);

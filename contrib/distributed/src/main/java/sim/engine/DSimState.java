@@ -108,15 +108,12 @@ public class DSimState extends SimState
 
 
 	
+	
+	
 	/**
 	 * Builds a new DSimState with the given random number SEED, the WIDTH and HEIGIHT of the entire model (not just the
-	 * partition), and the AREA OF INTEREST (AOI) for the halo field
+	 * partition), the AREA OF INTEREST (AOI) for the halo field, and whether or not the model is TOROIDAL
 	 */
-	public DSimState(long seed, int width, int height, int aoi)
-	{
-		this(seed, width, height, aoi, true);
-	}
-
 	public DSimState(long seed, int width, int height, int aoi, boolean isToroidal)
 	{
 		super(seed, new MersenneTwisterFast(seed), new DistributedSchedule());

@@ -157,7 +157,7 @@ public class DSchelling extends DSimState
         
     public DSchelling(long seed, int width, int height)
         {
-		super(seed, width, height, 10); //what should aoi be?
+		super(seed, width, height, 10, true); //what should aoi be?
 		gridWidth = width;
 		gridHeight = height;
         createGrids();

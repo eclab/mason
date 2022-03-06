@@ -57,7 +57,7 @@ public class DHeatBugs extends DSimState
 
 	public DHeatBugs(final long seed, final int width, final int height, final int count, final int aoi)
 	{
-		super(seed, width, height, aoi);
+		super(seed, width, height, aoi, true);
 		gridWidth = width;
 		gridHeight = height;
 		bugCount = count;
