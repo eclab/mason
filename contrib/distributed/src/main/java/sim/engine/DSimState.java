@@ -147,8 +147,9 @@ public class DSimState extends SimState
 	}
 
 	/**
-	 * Only call this method after COMM_WORLD has been setup. </br>
-	 * It's safe to call it in the start method and after.
+	 * Returns the partition's PID.  Do not call this method prior to start() or startRoot(),
+	 * as MPI may not have been set up yet and you will likely receive a RuntimeException.
+	 * It's safe to call it in these methods and afterwards.
 	 * 
 	 * @return Current pid
 	 */
