@@ -261,20 +261,14 @@ public class DSimState extends SimState
 	 * @return the DistinguishedRegistry instance, or null if the registry is not available. You can call this method after calling the
 	 *         start() method.
 	 */
-	public DistinguishedRegistry getDistinguishedRegistry()
-		{
-		return registry;
-		}
-
-	/**
-	 * @return the DistinguishedRegistry instance, or null if the registry is not available. You can call this method after calling the
-	 *         start() method.
-	 */
 	public boolean registerDistinguishedObject(Distinguished obj) throws AccessException, RemoteException
 		{
-			try {
-				return this.registry.registerObject(obj, this);
-			} catch (Exception e) {
+			try 
+			{
+				return registry.registerObject(obj, this);
+			} 
+			catch (Exception e) 
+			{
 				e.printStackTrace();
 				return false;
 			}
