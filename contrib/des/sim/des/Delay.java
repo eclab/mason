@@ -84,7 +84,7 @@ public class Delay extends SimpleDelay
                 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
-        if (!resource.isSameType(amount)) 
+        if (!typical.isSameType(amount)) 
             throwUnequalTypeException(amount);
                 
         if (isOffering()) throwCyclicOffers();  // cycle

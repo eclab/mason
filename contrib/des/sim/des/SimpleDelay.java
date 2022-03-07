@@ -105,7 +105,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         then auto-reschedules the delay if that feature is on. */
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
-        if (!resource.isSameType(amount)) 
+        if (!typical.isSameType(amount)) 
             throwUnequalTypeException(amount);
         
         if (isOffering()) throwCyclicOffers();  // cycle
