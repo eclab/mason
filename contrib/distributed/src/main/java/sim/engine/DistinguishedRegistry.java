@@ -23,13 +23,12 @@ import mpi.MPI;
 import sim.util.*;
 
 /**
- * This class enables agents access to the information of another agent in any
- * position in the field. By using this class an agent can be visible to
- * everyone else by registering on it. Any agent interested in the information
- * of another agent can perform a lookup operation on this register, obtain the
- * reference to that agent and invoke a method on that agent in order to obtain
- * the information he wishes.
- */
+	The utility class to register and update Distinguished objects on the RMI Registry.  This class
+	allows you to register them, and also handled re-registering them with new DSimStates as the
+	objects migrate from partition to partition.
+**/
+
+
 public class DistinguishedRegistry
 {
 	 static final long serialVersionUID = 1L;

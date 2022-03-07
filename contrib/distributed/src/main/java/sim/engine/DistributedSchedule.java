@@ -7,9 +7,12 @@
 package sim.engine;
 
 /**
- * Overrides scheduleRepeating and scheduleOnce to use DistributedTentativeStep
- *
+	DISTRIBUTED SCHEDULE is a subclass of Schedule designed to work with Distributed MASON.
+	It automatically wraps all scheduled objects in either a DistributedIterativeRepeat or
+	a DistributedTentativeStep.  All Steppables which are added to the DistributedSchedule
+	must be Stopping or an exception will be thrown.
  */
+ 
 public class DistributedSchedule extends Schedule
 {
 	private static final long serialVersionUID = 1;

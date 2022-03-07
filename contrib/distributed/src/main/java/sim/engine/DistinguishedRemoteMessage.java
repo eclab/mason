@@ -4,10 +4,11 @@ import java.io.Serializable;
 
 import sim.engine.rmi.RemotePromise;
 
-/*
-* Message used to exchange information between Remote Objects
-* Has a specific atomic ID used for the register on DRegistry
-*/
+/**
+	The message placed on the DSimState's queue to be processed on behalf of a Distinguished object.
+	It contains the TAG of the message, its ARGUMENTS (which many be null), the Distinguished object
+	to be processed, and the promised CALLBACK to be filled out.
+**/
 
 public class DistinguishedRemoteMessage 
 {

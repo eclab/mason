@@ -5,10 +5,10 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 
-/*
- * Interface that should be implemented by a class that needs to be a remote (Distinguish) Object
- * The modeler needs to implement the method of the class based on needs
-*/
+/**
+	The RMI interface for DistinguishedRemoteObject.
+**/
+
 
 public interface DistinguishedRemote extends Remote 
 {
