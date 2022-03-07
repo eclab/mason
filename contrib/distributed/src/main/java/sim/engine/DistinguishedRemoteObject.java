@@ -2,9 +2,6 @@ package sim.engine;
 
 import java.rmi.RemoteException;
 import java.io.Serializable;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-import sim.engine.rmi.RemotePromise;
 
 /*
  * Wrapper of the Remote Object containing
@@ -13,7 +10,7 @@ import sim.engine.rmi.RemotePromise;
  * and the corresponding methods
 */
 
-public class DistinguishedRemoteObject implements Remote 
+public class DistinguishedRemoteObject implements DistinguishedRemote 
 	{
 	// real object within the field
 	Distinguished object;

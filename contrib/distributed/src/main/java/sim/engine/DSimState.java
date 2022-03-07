@@ -7,9 +7,6 @@
 package sim.engine;
 
 import java.io.IOException;
-
-
-
 import java.io.Serializable;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
@@ -123,7 +120,7 @@ public class DSimState extends SimState
 		transporter = new Transporter(partition);
 		fieldList = new ArrayList<>();
 		rootInfo = new HashMap<>();
-	}	
+	}
 	
 	
 	
@@ -270,6 +267,21 @@ public class DSimState extends SimState
 		}
 
 	/**
+	 * @return the DistinguishedRegistry instance, or null if the registry is not available. You can call this method after calling the
+	 *         start() method.
+	 */
+	public boolean registerDistinguishedObject(Distinguished obj) throws AccessException, RemoteException
+		{
+			try {
+				return this.registry.registerObject(obj, this);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+
+
+	/**
 	Sends a message to a Distinguished object registered on the registry with the name NAME.
 	 */
 	public Promised sendRemoteMessage(String name, int tag, Serializable arguments) throws RemoteException
@@ -279,7 +291,7 @@ public class DSimState extends SimState
 		{
 			// DistinguishedRegistry.getInstance().registerObject("0", callback);
 			UnicastRemoteObject.exportObject(callback, 0);
-			((DistinguishedRemoteObject) DistinguishedRegistry.getInstance().getObject(name)).remoteMessage(tag, arguments, callback);
+			((DistinguishedRemote) DistinguishedRegistry.getInstance().getObject(name)).remoteMessage(tag, arguments, callback);
 			return callback;
 		} 
 		catch (Exception e) 
@@ -719,18 +731,8 @@ public class DSimState extends SimState
 					e.printStackTrace();
 				}
 			}
-			// for (String mo : DistinguishedRegistry.getInstance().getMigratedNames())
-			// {
-			// 	try
-			// 	{
-			// 		DistinguishedRegistry.getInstance().unregisterObject(mo);
-			// 	}
-			// 	catch (NotBoundException e)
-			// 	{
-			// 		e.printStackTrace();
-			// 	}
-			// }
 			DistinguishedRegistry.getInstance().clearMigratedNames();
+
 			//wait all nodes to finish the unregister phase.
 			MPI.COMM_WORLD.barrier();
 
