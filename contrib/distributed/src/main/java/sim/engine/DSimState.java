@@ -283,7 +283,6 @@ public class DSimState extends SimState
 		RemotePromise callback = new RemotePromise();
 		try 
 		{
-			// DistinguishedRegistry.getInstance().registerObject("0", callback);
 			UnicastRemoteObject.exportObject(callback, 0);
 			((DistinguishedRemote) DistinguishedRegistry.getInstance().getObject(name)).remoteMessage(tag, arguments, callback);
 			return callback;
@@ -817,7 +816,7 @@ public class DSimState extends SimState
 			   distinguishedMessageQueue.clear();
 		   }
 		   
-		   DistinguishedRegistry.getInstance().unregisterObjects();
+		   DistinguishedRegistry.getInstance().unregisterQueuedObjects();
 	   } 
 	   catch (Exception e) 
 	   {

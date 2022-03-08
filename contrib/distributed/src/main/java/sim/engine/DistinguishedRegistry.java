@@ -232,9 +232,8 @@ public class DistinguishedRegistry
 		}	
 	}
 	
-	// clear the DistinguishedRegistry removing all the registered objects
-	// iterating on toUnregister queue
-	public void unregisterObjects() throws AccessException, RemoteException, NotBoundException
+	// remove the registered objects within the unRegister queue 
+	public void unregisterQueuedObjects() throws AccessException, RemoteException, NotBoundException
 	{
 		// needs to be synchronized to avoid concurrentModificationException
 		synchronized(toUnregister){ 
