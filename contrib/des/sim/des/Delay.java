@@ -43,7 +43,8 @@ public class Delay extends SimpleDelay
         super(state, 1.0, typical);
         }
         
-    /** Returns in an array all the Resources currently being delayed and not yet ready to provide.  
+    /** Returns in an array all the Resources currently being delayed and not yet ready to provide,
+    	along with their timestamps (when they are due to become available), combined as a DelayNode.  
     	Note that this is a different set of Resources than Provider.getEntities() returns.  
     	You can modify the array (it's yours), but do not modify the Resources stored inside, as they
     	are the actual Resources being delayed.
@@ -61,6 +62,7 @@ public class Delay extends SimpleDelay
     		}
     	return nodes;
     	}
+    public boolean hideDelayedResources() { return true; }
     
 	public double getSize() { return delayHeap.size(); }
 

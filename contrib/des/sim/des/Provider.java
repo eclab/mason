@@ -287,6 +287,7 @@ public abstract class Provider implements Named, Resettable
     	  	return (Entity[])(entities.toArray(new Entity[entities.size()]));
     	else return null;
     	}
+    public boolean hideEntities() { return true; }
     
 
     /** 
