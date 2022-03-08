@@ -82,7 +82,6 @@ public abstract class Provider implements Named, Resettable
     protected SimState state;
     
     
-    
     ////// OFFER STATISTICS
     //////
     ////// These methods maintain the most recent offers made, which can be used to update graphical
@@ -278,6 +277,18 @@ public abstract class Provider implements Named, Resettable
             return 0;
         }
         
+    /** Returns in an array all the current Entities the Provider can provide.  You can
+    	modify the array (it's yours), but do not modify the Entities stored inside, as they
+    	are the actual Entities stored in the Provider.  If this Provider does not provide
+    	Entities, then null is returned.  */
+    public Entity[] getEntities()
+    	{
+    	if (entities != null)
+    	  	return (Entity[])(entities.toArray(new Entity[entities.size()]));
+    	else return null;
+    	}
+    
+
     /** 
         Builds a provider with the given typical resource type.
     */

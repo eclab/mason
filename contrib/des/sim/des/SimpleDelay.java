@@ -21,23 +21,21 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
     public Resource getTypicalReceived() { return typical; }
 	public boolean hideTypicalReceived() { return true; }
 
-    class Node
-        {
-        public Resource resource;
-        public double timestamp;
-                
-        public Node(Resource resource, double timestamp)
-            {
-            this.resource = resource;
-            this.timestamp = timestamp;
-            }
-        }
-        
     double totalResource = 0.0;
-    LinkedList<Node> delayQueue = new LinkedList<>();
+    LinkedList<DelayNode> delayQueue = new LinkedList<>();
     double delayTime;
     int rescheduleOrdering = 0;
     boolean autoSchedules = true;
+    
+    /** Returns in an array all the Resources currently being delayed and not yet ready to provide.  
+    	Note that this is a different set of Resources than Provider.getEntities() returns.  
+    	You can modify the array (it's yours), but do not modify the Resources stored inside, as they
+    	are the actual Resources being delayed.
+      */
+    public DelayNode[] getDelayedResources()
+    	{
+    	return (DelayNode[])(delayQueue.toArray(new DelayNode[delayQueue.size()]));
+    	}
     
     /** Returns whether the SimpleDelay schedules itself on the Schedule automatically to handle
         the next timestep at which a delayed resource will become available.  If you turn this
@@ -123,14 +121,14 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
             CountableResource token = (CountableResource)(cr.duplicate());
             token.setAmount(maxIncoming);
             cr.decrease(maxIncoming);
-            delayQueue.add(new Node(token, nextTime));
+            delayQueue.add(new DelayNode(token, nextTime));
 			totalResource += maxIncoming;            
 			totalReceivedResource += maxIncoming;
             }
         else
             {
             if (delayQueue.size() >= capacity) return false; // we're at capacity
-            delayQueue.add(new Node(amount, nextTime));
+            delayQueue.add(new DelayNode(amount, nextTime));
 			totalResource += 1;            
 			totalReceivedResource += 1.0;
             }
@@ -155,10 +153,10 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         drop();
         double time = state.schedule.getTime();
                 
-        Iterator<Node> iterator = delayQueue.descendingIterator();
+        Iterator<DelayNode> iterator = delayQueue.descendingIterator();
         while(iterator.hasNext())
             {
-            Node node = iterator.next();
+            DelayNode node = iterator.next();
             if (node.timestamp >= time)     // it's ripe
                 {
                 if (entities == null)

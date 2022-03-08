@@ -43,6 +43,25 @@ public class Delay extends SimpleDelay
         super(state, 1.0, typical);
         }
         
+    /** Returns in an array all the Resources currently being delayed and not yet ready to provide.  
+    	Note that this is a different set of Resources than Provider.getEntities() returns.  
+    	You can modify the array (it's yours), but do not modify the Resources stored inside, as they
+    	are the actual Resources being delayed.
+      */
+    public DelayNode[] getDelayedResources()
+    	{
+    	DelayNode[] nodes = new DelayNode[delayHeap.size()];
+    	if (nodes.length == 0) return nodes;
+    	
+    	Comparable[] keys = delayHeap.getKeys();
+    	Object[] objs = delayHeap.getObjects();
+    	for(int i = 0; i < nodes.length; i++)
+    		{
+    		nodes[i] = new DelayNode((Resource)(objs[i]),((Double)(keys[i])).doubleValue());
+    		}
+    	return nodes;
+    	}
+    
 	public double getSize() { return delayHeap.size(); }
 
 	public double getTotal() { if (entities == null) return totalResource; else return delayHeap.size(); }
