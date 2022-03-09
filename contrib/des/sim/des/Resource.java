@@ -40,9 +40,9 @@ public abstract class Resource implements java.io.Serializable
         }
         
     /** 
-        Returns a new kind of Entity with a given name, and initial amount.
-        The name is informal: It's legal for two different kinds of resources 
-        to have the same name.  Entity types are distinguishe internally using
+        Returns a new kind of Resource with a given name, and initial amount.
+        The name is informal: It's legal, though unwise, for two different kinds of resources 
+        to have the same name.  Resource types are distinguished internally using
         unique integers. 
     */
     public Resource(String name)
@@ -51,13 +51,13 @@ public abstract class Resource implements java.io.Serializable
         this.type = getNextType();
         }
                 
-    /** Fills out nothing, you'll have to do that. */
+    /** Does not set the name nor the type.  You'll have to do that. */
     protected Resource()
         {
         }
         
-    /** Clears the resource.  For countable/uncountable resources, this sets it to zero.
-        For entities, this removes any stored elements. */
+    /** Clears the resource.  For countable/uncountable resources, this sets its amount to zero.
+        For entities, this removes any stored elements but does not change the Info object. */
     public abstract void clear();
         
     /**
@@ -81,7 +81,7 @@ public abstract class Resource implements java.io.Serializable
     public abstract double getAmount();
 
     /** 
-        Returns true if the two objects are both Entitys with the same type.
+        Returns true if the two objects are both Entities with the same type.
     */
     public boolean isSameType(Resource other)
         {
@@ -96,12 +96,11 @@ public abstract class Resource implements java.io.Serializable
         }
         
 
-    /** Makes an exact copy of this resource */
+    /** Makes an exact copy of this resource.  */
     public abstract Resource duplicate();
 
     /** 
         Exactly copies the resource TIMES times.  Returns an array of the new resources.
-        Note that this changes the amount of the given entity available in the world.
     */
     public Resource[] duplicate(int times)
         {

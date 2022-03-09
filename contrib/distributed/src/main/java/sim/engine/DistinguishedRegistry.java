@@ -20,19 +20,15 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import mpi.MPI;
-import sim.engine.Distinguished;
-import sim.engine.DistinguishedRemoteObject;
-import sim.engine.DSimState;
 import sim.util.*;
 
 /**
- * This class enables agents access to the information of another agent in any
- * position in the field. By using this class an agent can be visible to
- * everyone else by registering on it. Any agent interested in the information
- * of another agent can perform a lookup operation on this register, obtain the
- * reference to that agent and invoke a method on that agent in order to obtain
- * the information he wishes.
- */
+	The utility class to register and update Distinguished objects on the RMI Registry.  This class
+	allows you to register them, and also handled re-registering them with new DSimStates as the
+	objects migrate from partition to partition.
+**/
+
+
 public class DistinguishedRegistry
 {
 	 static final long serialVersionUID = 1L;
@@ -225,36 +221,6 @@ public class DistinguishedRegistry
 		}
 		return tor;
 	}
-	/**
-	 * Register a generic object
-	 * registry
-	 * 
-	 * @param name
-	 * @param obj
-	 * 
-	 * @return true if successful
-	 * @throws AccessException
-	 * @throws RemoteException
-	 */
-	public boolean registerObject(String name, Remote remoteObj) throws AccessException, RemoteException
-	{
-		if (!exportedNames.containsKey(name))
-		{
-			try
-			{
-				Remote stub = UnicastRemoteObject.exportObject(remoteObj, 0);
-				exportedNames.put(name, remoteObj);
-				registry.bind(name, stub);
-			}
-			catch (AlreadyBoundException e)
-			{
-				e.printStackTrace();
-				return false;
-			}
-			return true;
-		}
-		return false;
-	}
 
 	// add the id of the remote object in the toUnregister queue
 	// they will be removed by the unregisterObjects
@@ -266,9 +232,8 @@ public class DistinguishedRegistry
 		}	
 	}
 	
-	// clear the DistinguishedRegistry removing all the registered objects
-	// iterating on toUnregister queue
-	public void unregisterObjects() throws AccessException, RemoteException, NotBoundException
+	// remove the registered objects within the unRegister queue 
+	public void unregisterQueuedObjects() throws AccessException, RemoteException, NotBoundException
 	{
 		// needs to be synchronized to avoid concurrentModificationException
 		synchronized(toUnregister){ 
@@ -347,44 +312,21 @@ public class DistinguishedRegistry
 	{
 		return (T) registry.lookup(name);
 	}
-	/**
-	 * @param agent
-	 * @return True if the object agent is registered on the registry.
-	 */
-	public boolean isExported(Distinguished agent)
-	{
-		return exportedObjects.containsKey(agent);
-	}
+	
 	/**
 	 * @param agent
 	 * @return True if the object agent is migrated
 	 */
-	public boolean isMigrated(Distinguished agent)
+	boolean isMigrated(Distinguished agent)
 	{
 		return migratedNames.contains(agent.distinguishedName());
 	}
 	/**
 	 * Clear the list of the registered agent’s keys on the registry
 	 */
-	public void clearMigratedNames()
+	void clearMigratedNames()
 	{
 		migratedNames.clear();
-	}
-
-	/**
-	 * @return the List of the agent’s keys on the registry.
-	 */
-	public List<String> getMigratedNames()
-	{
-		return migratedNames;
-	}
-
-	/* 
-	Add the name of the migrated agent to the list of the migrated agent’s keys on the registry.
-	*/
-	public void addMigratedName(Distinguished obj)
-	{
-		migratedNames.add(exportedObjects.get(obj));
 	}
 
 	/**

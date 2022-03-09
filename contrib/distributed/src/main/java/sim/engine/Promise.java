@@ -3,10 +3,9 @@ package sim.engine;
 import java.io.Serializable;
 
 /**
- * This class eventually provides data in the future (usually one MASON timestep
- * away). It is in many ways like a simplified and easier to use version of
- * java.util.concurrent.Future.
- */
+	PROMISE is an implementation of the Promised interface for local promised data
+	on your own partition.  For remotely promised data, see REMOTE PROMISE
+**/
 
 public class Promise implements Promised
 {

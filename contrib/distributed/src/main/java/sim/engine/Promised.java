@@ -4,6 +4,14 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.Remote;
 
+/**
+	PROMISED is an interface for data which is promised to be available at a future time.
+	Promised data is fulfilled by calling FULFILL, and accessed via GET, GETINT, or GETDOUBLE.
+	You can check to see if the promise has been fulfilledyet with ISREADY.
+
+**/
+
+
 public interface Promised extends Remote
 {
 	/** Returns TRUE if the promised data has arrived and may be extracted. */

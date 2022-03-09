@@ -257,7 +257,6 @@ public class SimStateProxy extends SimState
 					long cur = System.currentTimeMillis();
 					if (cur - refresh >= stepSize)
 						{
-						
 						refresh = cur;
 						try
 							{
@@ -272,12 +271,8 @@ public class SimStateProxy extends SimState
 							long steps = vp.getSteps();
 							if (steps > lastSteps)
 								{
-								
-
-								
 								// Okay it's worth updating, so let's grab the data
 								vp.lock();
-								
 
 								//(I did this in the update method)								
 								//for loop: for each processor
@@ -500,7 +495,7 @@ public class SimStateProxy extends SimState
 	}
 	
 	//TODO no checks
-	public String getStatsAsCSV(long step)
+	String getStatsAsCSV(long step)
 	{
 		ArrayList<Object> statsAtTimeStep = new ArrayList<Object>();
 		for (int p = 0; p < numProcessors; p++)
@@ -530,7 +525,7 @@ public class SimStateProxy extends SimState
 			Object obj = statsAtTimeStep.get(i);
 			if (obj instanceof Long)
 			{
-				str += "__" + (long) obj + "__" + ",";//TODO just comma
+				str += "__" + (long) obj + "__" + ",";   //TODO just comma
 			}
 			else
 			{
@@ -569,29 +564,30 @@ public class SimStateProxy extends SimState
 	/**
 	 * Returns and clears the stat queues
 	 */
-	public ArrayList<ArrayList<Object>> getStats()
+	public ArrayList<ArrayList<Object>> stats()
 	{
 		ArrayList<ArrayList<Object>> ret = statQueues;
 		statQueues = new ArrayList<>();
 		return ret;
 	}
 	
+	/*
 	public ArrayList<Object> getStatsAligned()
 	{
 		ArrayList<Object> ret2 = new ArrayList<Object>();
 		ArrayList<ArrayList<Object>> ret = statQueues;
 		
-		for (int i=0; i<ret.size(); i++) {
-			for (int j=0; j<ret.get(i).size(); j++) {
-				
+		for (int i=0; i<ret.size(); i++) 
+		{
+			for (int j=0; j<ret.get(i).size(); j++) 
+			{	
 				ret2.add(ret.get(i).get(j));
-				
 			}
 		}
-		
 		statQueues = new ArrayList<>();
 		return ret2;
 	}
+	*/
 	
 	public SimStateProxy(long seed)
 		{

@@ -8,10 +8,12 @@ public class Stat implements Serializable
 
 	public Serializable data;
 	public long steps;
+	public double time;
 
-	public Stat(Serializable _data, long _steps)
+	public Stat(Serializable _data, long _steps, double _time)
 	{
 		data = _data;
 		steps = _steps;
+		time = _time;
 	}
 }

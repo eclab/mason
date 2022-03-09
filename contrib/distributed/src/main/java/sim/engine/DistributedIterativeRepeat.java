@@ -7,8 +7,14 @@
 package sim.engine;
 
 /**
- * Changes constructor to set Stoppable. Overrides stop() to set Stoppable as null
+	DISTRIBUTED ITERATIVE REPEAT is a subclass of IterativeRepeat designed to work with Distributed MASON.
+	All Steppables scheduled on Distributed MASON's schedule are either wrapped in a
+	DistributedTentativeStep or in a DistributedIterativeRepeat, so that they are stoppable
+	when the steppable is migrated to another Schedule on another Partition. The difference
+	between DistributedIterativeRepeat and IterativeRepeat is all Steppables
+	attached to this object must be Stopping.
  */
+
 public class DistributedIterativeRepeat extends IterativeRepeat 
 {
 	private static final long serialVersionUID = 1;

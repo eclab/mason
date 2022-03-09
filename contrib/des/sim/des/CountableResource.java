@@ -7,7 +7,7 @@
 package sim.des;
 
 /** 
-    A CountableResource is an Resource which can be merged with resources of the same type.  Resources
+    A CountableResource is a Resource which can be merged with resources of the same type.  CountabeResources
     have AMOUNTS, which must be integers >= 0.  CountableResources are thus finitely divisible.
     You can also split a CountableResource into a group of smaller CountableResources, and can 
     compare their amounts against each other.

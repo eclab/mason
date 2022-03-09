@@ -2,18 +2,14 @@ package sim.engine;
 
 import java.rmi.RemoteException;
 import java.io.Serializable;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-import sim.engine.rmi.RemotePromise;
 
-/*
- * Wrapper of the Remote Object containing
- * the real object
- * the queue of remote message that has to be fulfilled
- * and the corresponding methods
-*/
+/**
+	The actual object registered on the RMI Registry by DistinguishedRegistry on behalf of a Distinguished
+	object.  This object contains the Distinguished object and the DSimState in which it is stored,
+	so it can add the message the DSimState's queue.
+**/
 
-public class DistinguishedRemoteObject implements Remote 
+public class DistinguishedRemoteObject implements DistinguishedRemote 
 	{
 	// real object within the field
 	Distinguished object;
