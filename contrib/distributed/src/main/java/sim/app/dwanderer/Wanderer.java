@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import sim.engine.*;
-import sim.engine.rmi.RemotePromise;
+import sim.engine.Promised;
 import sim.util.*;
 
 public class Wanderer extends DSteppable implements Distinguished {
@@ -22,10 +22,9 @@ public class Wanderer extends DSteppable implements Distinguished {
 
 	public int myPID = DSimState.getPID();
 
-	public String name = null;
+	public String name;
 
-	private RemotePromise remote_result;
-
+	Promised remoteResult;
 
 	public Wanderer(final Double2D location, String name) {
 		this.loc = location;
@@ -52,15 +51,15 @@ public class Wanderer extends DSteppable implements Distinguished {
 	
 		try {
 			//check if i have a message to read
-			if(remote_result != null && remote_result.isReady()) {
+			if(remoteResult != null && remoteResult.isReady()) {
 				System.out.println(
 					state.schedule.getSteps() + "]" +
 					"I am " + name + " my friend " + otherAgentID +
-					" was on proc " + remote_result.get());
+					" was on proc " + remoteResult.get());
 			}
 			
 			//send remote message to another agent 
-			remote_result = ((DSimState)state).sendRemoteMessage(otherAgentID, 0, null);
+			remoteResult = ((DSimState)state).sendRemoteMessage(otherAgentID, 0, null);
 			wanderersState.wanderers.moveAgent(loc, this);
 		} catch (Exception e) {
 			System.err.println("Error on agent " + this + " in step " + wanderersState.schedule.getSteps() + "on PID "
@@ -79,7 +78,7 @@ public class Wanderer extends DSteppable implements Distinguished {
 		}
 	}
 	
-	public String getName() {
-		return this.name;
+	public String distinguishedName() {
+		return name;
 	}
 }

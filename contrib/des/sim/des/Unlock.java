@@ -19,6 +19,8 @@ import java.util.*;
 
 public class Unlock extends Lock
     {
+    private static final long serialVersionUID = 1;
+
     /** Builds an Unlock attached to the given pool and with the given amount of resources released each time. */
     public Unlock(SimState state, Resource typical, Pool pool, double numResources)
         {

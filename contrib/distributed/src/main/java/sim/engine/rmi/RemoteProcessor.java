@@ -13,7 +13,7 @@ import sim.display.Stat;
 import sim.display.VisualizationProcessor;
 import sim.engine.DSimState;
 import sim.field.storage.GridStorage;
-import sim.util.DRegistry;
+import sim.engine.DistinguishedRegistry;
 import sim.util.IntRect2D;
 import sim.util.Properties;
 import sim.util.SimpleProperties;
@@ -57,7 +57,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 
 		try
 		{
-			if (!DRegistry.getInstance().registerObject(processorName, this))
+			if (!DistinguishedRegistry.getInstance().registerObject(processorName, this))
 				throw new RuntimeException("Failed to register processor: " + processorName);
 		}
 		catch (RemoteException e)
@@ -145,7 +145,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	{
 		try
 		{
-			VisualizationProcessor proc = DRegistry.getInstance().getObjectT(getProcessorName(pid));
+			VisualizationProcessor proc = DistinguishedRegistry.getInstance().getObjectT(getProcessorName(pid));
 			processorCache.set(pid, proc);
 			return proc;
 		}
@@ -171,33 +171,33 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	}
 	
 	//Raj: input pids and get all neighbors in the lowest point in quadtree that contains inputed pids
-	public int[] getMinimumNeighborhood(int[] proc_ids) throws RemoteException
+	public int[] getMinimumNeighborhood(int[] procIDs) throws RemoteException
 	{
-		if (proc_ids.length == 1)
+		if (procIDs.length == 1)
 		{
-			return proc_ids;
+			return procIDs;
 		}
 		
-		int selected_level = state.getPartition().getTreeDepth(); //-1?
+		int selectedLevel = state.getPartition().getTreeDepth(); //-1?
 		
-		for (int i=selected_level; i>=0; i--)
+		for (int i=selectedLevel; i>=0; i--)
 		{
-			boolean all_contained = true;
+			boolean allContained = true;
 			
-			int[] chosen_neighborhood = getProcessorNeighborhood(i); //this should contain all partitions
+			int[] chosenNeighborhood = getProcessorNeighborhood(i); //this should contain all partitions
 			
-			for (int a : chosen_neighborhood)
+			for (int a : chosenNeighborhood)
 			{
 				System.out.println(a);
 			}
 
 			
-			for (int proc_id : proc_ids)
+			for (int procID : procIDs)
 			{
 				boolean contained = false;
-				for (int neigh_id : chosen_neighborhood)
+				for (int neighborhoodID : chosenNeighborhood)
 				{
-					if (proc_id == neigh_id)
+					if (procID == neighborhoodID)
 					{
 						contained = true;
 						break; //found
@@ -207,18 +207,18 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 				
 				if (contained == false)
 				{
-					all_contained = false;
+					allContained = false;
 					break;
 				}
 			}
 			
-			if (all_contained == true)
+			if (allContained == true)
 			{
-				return chosen_neighborhood;
+				return chosenNeighborhood;
 			}
 		}
 		
-        throw new RemoteException("some proc_ids not in quad tree");    
+        throw new RemoteException("some procIDs not in quad tree");    
 	}
 
 	public ArrayList<Stat> getStatList() throws RemoteException
@@ -344,7 +344,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 //			return remote;
 //		else {
 //			try {
-//				remote = (Remote) DRegistry.getInstance().getObject(key);
+//				remote = (Remote) DistinguishedRegistry.getInstance().getObject(key);
 //				cache.put(key, remote);
 //				return remote;
 //			} catch (RemoteException | NotBoundException e) {

@@ -27,6 +27,8 @@ import java.util.*;
 
 public class Delay extends SimpleDelay
     {
+    private static final long serialVersionUID = 1;
+
     Heap delayHeap;
     AbstractDistribution distribution = null;
 

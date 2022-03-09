@@ -11,6 +11,8 @@ import java.util.*;
 
 public class Transformer extends Provider implements Receiver
     {
+    private static final long serialVersionUID = 1;
+
     Resource typicalIn;
     Resource output;
     double atLeastOut;

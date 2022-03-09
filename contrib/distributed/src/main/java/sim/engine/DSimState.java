@@ -26,26 +26,15 @@ import java.util.logging.Logger;
 import java.util.logging.SocketHandler;
 import java.rmi.server.UnicastRemoteObject;
 
-import ec.util.MersenneTwisterFast;
-import mpi.MPI;
-import mpi.MPIException;
-import sim.display.Stat;
+import ec.util.*;
+import mpi.*;
+import sim.display.*;
 import sim.engine.mpi.*;
-import sim.engine.rmi.RemoteProcessor;
-import sim.engine.rmi.RemotePromise;
-import sim.field.HaloGrid2D;
-import sim.field.partitioning.QuadTreePartition;
-import sim.field.storage.ContinuousStorage;
-import sim.field.storage.GridStorage;
-import sim.util.DRegistry;
-import sim.util.Double2D;
-import sim.util.Int2D;
-import sim.util.IntRect2D;
-import sim.util.MPIUtil;
-import sim.util.Properties;
-
-import sim.util.SimpleProperties;
-import sim.util.Timing;
+import sim.engine.rmi.*;
+import sim.field.*;
+import sim.field.partitioning.*;
+import sim.field.storage.*;
+import sim.util.*;
 
 /**
  * Analogous to Mason's SimState. This class represents the entire distributed simulation.
@@ -71,7 +60,7 @@ public class DSimState extends SimState
 	static Logger logger;
 
 	/** The Partition of the DSimState */
-	protected QuadTreePartition partition;
+	protected Partition partition;
 	/** The DSimState's Transporter interface */
 	
 	Transporter transporter;
@@ -95,11 +84,11 @@ public class DSimState extends SimState
 
 	// A list of all fields in the Model. Any HaloField that is created will
 	// register itself here.
-	// Not to be confused with the DRegistry.
+	// Not to be confused with the DistinguishedRegistry.
 	ArrayList<HaloGrid2D<?, ?>> fieldList;
 
 	// The RMI registry
-	DRegistry registry;
+	DistinguishedRegistry registry;
 
 	// FIXME: what is this for?
 //	protected boolean withRegistry;
@@ -127,9 +116,9 @@ public class DSimState extends SimState
 	public DSimState(long seed, int width, int height, int aoi, boolean isToroidal)
 	{
 		super(seed, new MersenneTwisterFast(seed), new DistributedSchedule());
-		this.partition = new QuadTreePartition(width, height, isToroidal, aoi);
+		this.partition = new Partition(width, height, isToroidal, aoi);
 		partition.initialize();
-		balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
+		balancerLevel = ((Partition) partition).getQt().getDepth() - 1;
 		transporter = new Transporter(partition);
 		fieldList = new ArrayList<>();
 		rootInfo = new HashMap<>();
@@ -232,10 +221,9 @@ public class DSimState extends SimState
 	Arraylist where the RemoteMessage are stored
 	the methods invoked on it have to be synchronized to avoid concurrent modification
 	*/
-	private ArrayList<DistinguishedRemoteMessage> messages_queue = 
-			new ArrayList<DistinguishedRemoteMessage>();
+	ArrayList<DistinguishedRemoteMessage> distinguishedMessageQueue = new ArrayList<DistinguishedRemoteMessage>();
 
-	private Properties prop;
+	Properties prop;
 
 	/**
 	 * Export a Promise on the registry 
@@ -249,14 +237,13 @@ public class DSimState extends SimState
 	 * @throws RemoteException
 	 * @throws NotBoundException
 	 */
-	public RemotePromise sendRemoteMessage(String name, int tag, Serializable arguments) throws RemoteException{
-
+	public Promised sendRemoteMessage(String name, int tag, Serializable arguments) throws RemoteException
+	{
 		RemotePromise callback = new RemotePromise();
 		try {
-			// DRegistry.getInstance().registerObject("0", callback);
+			// DistinguishedRegistry.getInstance().registerObject("0", callback);
 			UnicastRemoteObject.exportObject(callback, 0);
-			((DistinguishedRemote) DRegistry.getInstance().getObject(name))
-						.remoteMessage(tag, arguments, callback);
+			((DistinguishedRemoteObject) DistinguishedRegistry.getInstance().getObject(name)).remoteMessage(tag, arguments, callback);
 			return callback;
 		} catch (AccessException e) {
 			e.printStackTrace();
@@ -270,14 +257,14 @@ public class DSimState extends SimState
 
 	
 	/**
-	 * Add a DistinguishedRemoteMessage on the DSimstate messages_queue
+	 * Add a DistinguishedRemoteMessage on the DSimstate distinguishedMessageQueue
 	 * 
 	 * @param message 
 	 * 
 	 */
     public void addRemoteMessage(DistinguishedRemoteMessage message){
-		synchronized(this.messages_queue){
-			messages_queue.add(message);
+		synchronized(this.distinguishedMessageQueue){
+			distinguishedMessageQueue.add(message);
 		}
 	}
 	/**
@@ -325,14 +312,13 @@ public class DSimState extends SimState
 
 				// After the synchronization we can unregister migrated object!
 				// remove exported-migrated object from local node
-				for (DistinguishedObject exportedObj : 
-							DRegistry.getInstance().getAllLocalExportedObjects())
+				for (DistinguishedRemoteObject exportedObj : DistinguishedRegistry.getInstance().getAllLocalExportedObjects())
 				{
 					try
 					{
 						// if the object is migrated unregister it
-						if (DRegistry.getInstance().isMigrated(exportedObj.object)) {
-							DRegistry.getInstance().unregisterObject(exportedObj.object);
+						if (DistinguishedRegistry.getInstance().isMigrated(exportedObj.object)) {
+							DistinguishedRegistry.getInstance().unregisterObject(exportedObj.object);
 						}
 					}
 					catch (NotBoundException e)
@@ -340,18 +326,18 @@ public class DSimState extends SimState
 						e.printStackTrace();
 					}
 				}
-				// for (String mo : DRegistry.getInstance().getMigratedNames())
+				// for (String mo : DistinguishedRegistry.getInstance().getMigratedNames())
 				// {
 				// 	try
 				// 	{
-				// 		DRegistry.getInstance().unregisterObject(mo);
+				// 		DistinguishedRegistry.getInstance().unregisterObject(mo);
 				// 	}
 				// 	catch (NotBoundException e)
 				// 	{
 				// 		e.printStackTrace();
 				// 	}
 				// }
-				DRegistry.getInstance().clearMigratedNames();
+				DistinguishedRegistry.getInstance().clearMigratedNames();
 				//wait all nodes to finish the unregister phase.
 				MPI.COMM_WORLD.barrier();
 			// }
@@ -391,7 +377,7 @@ public class DSimState extends SimState
 					{
 						try
 						{
-							DRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload, this);
+							DistinguishedRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload, this);
 						}
 						catch (RemoteException e)
 						{
@@ -432,20 +418,20 @@ public class DSimState extends SimState
 		
 		int x = countTotalAgents(fieldList.get(0));
 
-		/* we invoke the fullfill for every messagge in the messages_queue
+		/* we invoke the fullfill for every messagge in the distinguishedMessageQueue
 		   to make the Promise ready
 		*/
 		try {
-			synchronized(this.messages_queue){
-			   for(DistinguishedRemoteMessage message: messages_queue){
+			synchronized(this.distinguishedMessageQueue){
+			   for(DistinguishedRemoteMessage message: distinguishedMessageQueue){
 				   Serializable data =
 					   message.object.remoteMessage(message.tag, message.arguments);
 				   message.callback.fulfill(data);
 			   }
-			   messages_queue.clear();
+			   distinguishedMessageQueue.clear();
 		   }
 		   
-		   DRegistry.getInstance().unregisterObjects();
+		   DistinguishedRegistry.getInstance().unregisterObjects();
 	   } catch (AccessException e) {
 		   e.printStackTrace();
 	   } catch (RemoteException e) {
@@ -522,7 +508,7 @@ public class DSimState extends SimState
 							{
 								try
 								{
-									DRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload, this);
+									DistinguishedRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload, this);
 								}
 								catch (RemoteException e)
 								{
@@ -573,7 +559,7 @@ public class DSimState extends SimState
 			if (balancerLevel != 0)
 				balancerLevel--;
 			else
-				balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
+				balancerLevel = ((Partition) partition).getQt().getDepth() - 1;
 			try
 			{
 				MPI.COMM_WORLD.barrier();
@@ -597,13 +583,13 @@ public class DSimState extends SimState
 
 		int x = countTotalAgents(fieldList.get(0));
 		
-		final IntRect2D old_partition = partition.getLocalBounds();
-		final int old_pid = partition.getPID();
+		final IntRect2D oldPartition = partition.getLocalBounds();
+		final int oldPID = partition.getPID();
 
 		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage(); // used to compute the position of the new centroids
 		Timing.start(Timing.LB_OVERHEAD);
 
-		((QuadTreePartition) partition).balance(runtime, level); // balance the partition moving the centroid for the given level
+		((Partition) partition).balance(runtime, level); // balance the partition moving the centroid for the given level
 		MPI.COMM_WORLD.barrier();
 
 		// Raj rewrite
@@ -622,10 +608,10 @@ public class DSimState extends SimState
 				for (int i = 0; i < st.storage.length; i++)
 				{
 					// don't bother with situations where no point would be valid
-					IntRect2D storage_bound = st.getCellBounds(i);
+					IntRect2D storageBound = st.getCellBounds(i);
 
-					// if storage_bound entirely in haloGrid localBounds, no need to check
-					if (!haloGrid2D.getLocalBounds().contains(storage_bound))
+					// if storageBound entirely in haloGrid localBounds, no need to check
+					if (!haloGrid2D.getLocalBounds().contains(storageBound))
 					{
 						// for agent/entity in cell
 						// HashSet agents = new HashSet(((HashMap) st.storage[i].clone()).values());
@@ -636,7 +622,7 @@ public class DSimState extends SimState
 						{
 							Double2D loc = st.getObjectLocation((DObject) a);
 
-							if (a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc)
+							if (a instanceof Stopping && !migratedAgents.contains(a) && oldPartition.contains(loc)
 									&& !partition.getLocalBounds().contains(loc))
 							{
 								final int locToP = partition.toPartitionPID(loc); // we need to use this, not toP
@@ -663,13 +649,13 @@ public class DSimState extends SimState
 
 								// keeps track of agents being moved so not added again
 								migratedAgents.add(a);
-								System.out.println("PID: " + partition.getPID() + " processor " + old_pid + " move " + a
+								System.out.println("PID: " + partition.getPID() + " processor " + oldPID + " move " + a
 										+ " from " + loc + " to processor " + locToP);
 								// here the agent is removed from the old location TOCHECK!!!
 							}
 
 							// not stoppable (transport a double or something) transporter call transportObject?
-							else if (old_partition.contains(loc) && !partition.getLocalBounds().contains(loc))
+							else if (oldPartition.contains(loc) && !partition.getLocalBounds().contains(loc))
 							{
 								final int locToP = partition.toPartitionPID(loc); // we need to use this, not toP
 								transporter.transport((DObject) a, locToP, loc, ((HaloGrid2D) field).getFieldIndex());
@@ -685,7 +671,7 @@ public class DSimState extends SimState
 				GridStorage st = ((HaloGrid2D) field).getStorage();
 
 				// go by point here
-				for (Int2D p : old_partition.getPointList()) //should we ignore halobound here?
+				for (Int2D p : oldPartition.getPointList()) //should we ignore halobound here?
 					{
 					
 					// check if the new partition contains the point
@@ -693,18 +679,18 @@ public class DSimState extends SimState
 					{
 						final int toP = partition.toPartitionPID(p);
 
-						Serializable a_list = st.getAllObjects(p);
+						Serializable aList = st.getAllObjects(p);
 
-						if (a_list != null)
+						if (aList != null)
 						{
 
 							// go backwards, so removing is safe
-							for (int i = ((ArrayList<Serializable>) a_list).size() - 1; i >= 0; i--)
+							for (int i = ((ArrayList<Serializable>) aList).size() - 1; i >= 0; i--)
 							{
-								Serializable a = ((ArrayList<Serializable>) a_list).get(i);
+								Serializable a = ((ArrayList<Serializable>) aList).get(i);
 																
 								// if a is stoppable
-								if (a != null && a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(p) && !partition.getLocalBounds().contains(p))
+								if (a != null && a instanceof Stopping && !migratedAgents.contains(a) && oldPartition.contains(p) && !partition.getLocalBounds().contains(p))
 								{
 									DSteppable stopping = ((DSteppable) a);
 									Stoppable stoppable = (Stoppable)(stopping.getStoppable());
@@ -734,7 +720,7 @@ public class DSimState extends SimState
 								}
 
 								// not stoppable (transport a double or something) transporter call transportObject?
-								else if (old_partition.contains(p) && !partition.getLocalBounds().contains(p) && !migratedAgents.contains(a))
+								else if (oldPartition.contains(p) && !partition.getLocalBounds().contains(p) && !migratedAgents.contains(a))
 								{
 									transporter.transport(a, toP, p,((HaloGrid2D) field).getFieldIndex());
 								}
@@ -847,10 +833,10 @@ public class DSimState extends SimState
 	}
 
 	/**
-	 * @return the DRegistry instance, or null if the registry is not available. You can call this method after calling the
+	 * @return the DistinguishedRegistry instance, or null if the registry is not available. You can call this method after calling the
 	 *         start() method.
 	 */
-	public DRegistry getDRegistry()
+	public DistinguishedRegistry getDistinguishedRegistry()
 		{
 		return registry;
 		}
@@ -862,7 +848,7 @@ public class DSimState extends SimState
 //		if (withRegistry)
 		{
 			// distributed registry inizialization
-			registry = DRegistry.getInstance();
+			registry = DistinguishedRegistry.getInstance();
 		}
 
 		try
@@ -930,7 +916,7 @@ public class DSimState extends SimState
 	/**
 	 * @return the partition
 	 */
-	public QuadTreePartition getPartition()
+	public Partition getPartition()
 		{
 		return partition;
 		}
@@ -1053,7 +1039,7 @@ public class DSimState extends SimState
 	// 1) gather each best score and corresponding x and y from each partition (gatherGlobals())
 	// 2) arbitrate (pick the best score and its x and y out of the partition candidates (arbitrateGlobals)
 	// 3) distributed the winner back to each partition, each partition keeps track of the global
-	private void updateGlobals()
+	void updateGlobals()
 	{
 		
 		if (schedule.getSteps() > 0 && (schedule.getSteps() % updateGlobalsInterval == 0)) {
@@ -1078,7 +1064,7 @@ public class DSimState extends SimState
 
 	// takes the set of globals from each partition the set of variables this is is implemented in getPartitionGlobals(),
 	// implemented in the specific subclass
-	private ArrayList<Serializable[]> gatherGlobals()
+	ArrayList<Serializable[]> gatherGlobals()
 	{
 		try
 		{
@@ -1113,12 +1099,13 @@ public class DSimState extends SimState
 	protected Serializable[] arbitrateGlobals(ArrayList<Serializable[]> gg)
 	{
         return null;
+
 	}
 	
 
 	// after determining the overall global using arbitration, send that one back to each partition
 	// uses setPartitionGlobals(), should be implemented in subclass (to match getPartititonGlobals())
-	private void distributeGlobals(Serializable[] global)
+	void distributeGlobals(Serializable[] global)
 	{
 		// need to do typing
 		try
@@ -1210,11 +1197,11 @@ public class DSimState extends SimState
 				if (partition.getLocalBounds().contains(p))
 				{
 
-					Serializable a_list = st.getAllObjects(p);
+					Serializable aList = st.getAllObjects(p);
 
-					if (a_list != null)
+					if (aList != null)
 					{
-						count = count + ((ArrayList<Serializable>) a_list).size();
+						count = count + ((ArrayList<Serializable>) aList).size();
 					}
 				}
 			}
@@ -1232,22 +1219,22 @@ public class DSimState extends SimState
 	public static void loc_disagree(Int2D p, DHeatBug h, Partition p2, String s)
 	{
 		
-		Int2D h_loc = new Int2D(h.loc_x, h.loc_y);
+		Int2D hLoc = new Int2D(h.loc_x, h.loc_y);
 		
-		int new_px = p.x;
-		int new_py = p.y;
+		int newPx = p.x;
+		int newPy = p.y;
 		
 
 		
-		Int2D new_p = new Int2D(new_px, new_py);
-		//System.out.println(s+" "+h +" h_loc "+h_loc+" p "+ p );
+		Int2D newP = new Int2D(newPx, newPy);
+		//System.out.println(s+" "+h +" hLoc "+hLoc+" p "+ p );
 		
-		if (!new_p.equals(h_loc))
+		if (!newP.equals(hLoc))
 		{
 			
 			
 			
-			System.out.println(s+" loc disagree "+h+" h_loc "+h_loc+" p "+ p + " "+p2.getLocalBounds());
+			System.out.println(s+" loc disagree "+h+" hLoc "+hLoc+" p "+ p + " "+p2.getLocalBounds());
 			System.exit(-1);
 		}
 		

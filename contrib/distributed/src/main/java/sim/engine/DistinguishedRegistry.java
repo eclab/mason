@@ -1,4 +1,4 @@
-package sim.util;
+package sim.engine;
 
 import java.net.InetAddress;
 import java.rmi.AccessException;
@@ -21,9 +21,9 @@ import java.util.logging.Logger;
 
 import mpi.MPI;
 import sim.engine.Distinguished;
-import sim.engine.DistinguishedObject;
+import sim.engine.DistinguishedRemoteObject;
 import sim.engine.DSimState;
-
+import sim.util.*;
 
 /**
  * This class enables agents access to the information of another agent in any
@@ -33,7 +33,7 @@ import sim.engine.DSimState;
  * reference to that agent and invoke a method on that agent in order to obtain
  * the information he wishes.
  */
-public class DRegistry
+public class DistinguishedRegistry
 {
 	 static final long serialVersionUID = 1L;
 
@@ -41,7 +41,7 @@ public class DRegistry
 	
 	public static Logger logger;
 
-	 static DRegistry instance;
+	 static DistinguishedRegistry instance;
 
 	 static int port;
 	 static int rank;
@@ -56,9 +56,9 @@ public class DRegistry
 
 	 static void initLocalLogger(final String loggerName)
 	 {
-		DRegistry.logger = Logger.getLogger(DRegistry.class.getName());
-		DRegistry.logger.setLevel(Level.ALL);
-		DRegistry.logger.setUseParentHandlers(false);
+		DistinguishedRegistry.logger = Logger.getLogger(DistinguishedRegistry.class.getName());
+		DistinguishedRegistry.logger.setLevel(Level.ALL);
+		DistinguishedRegistry.logger.setUseParentHandlers(false);
 
 		final ConsoleHandler handler = new ConsoleHandler();
 		handler.setFormatter(new java.util.logging.Formatter()
@@ -70,10 +70,10 @@ public class DRegistry
 						rec.getLevel().getLocalizedName(), rec.getMessage());
 			}
 		});
-		DRegistry.logger.addHandler(handler);
+		DistinguishedRegistry.logger.addHandler(handler);
 	}
 
-	 DRegistry() throws NumberFormatException, Exception
+	 DistinguishedRegistry() throws NumberFormatException, Exception
 	 {
 		if (instance != null)
 		{
@@ -93,28 +93,28 @@ public class DRegistry
 			startLocalRegistry(myip, port);
 		}
 
-		final String master_data[] = MPIUtil.<String>bcast(myip + ":" + port, 0).split(":");
+		final String masterData[] = MPIUtil.<String>bcast(myip + ":" + port, 0).split(":");
 
 		if (rank != 0)
 		{
-			startLocalRegistry(master_data[0], Integer.parseInt(master_data[1]));
+			startLocalRegistry(masterData[0], Integer.parseInt(masterData[1]));
 		}
 
 		MPI.COMM_WORLD.barrier();
 
 	}
 
-	 void startLocalRegistry(String master_ip, int master_port)
+	 void startLocalRegistry(String masterIP, int masterPort)
 	 {
 
 		try
 		{
 			registry = rank == 0 ? LocateRegistry.createRegistry(port)
-					: LocateRegistry.getRegistry(master_ip, master_port);
+					: LocateRegistry.getRegistry(masterIP, masterPort);
 		}
 		catch (RemoteException e1)
 		{
-			logger.log(Level.SEVERE, "Error Distributed Registry lookup for MPI node on master port: " + master_port);
+			logger.log(Level.SEVERE, "Error Distributed Registry lookup for MPI node on master port: " + masterPort);
 			e1.printStackTrace();
 		}
 
@@ -124,22 +124,22 @@ public class DRegistry
 		}
 		catch (AccessException e)
 		{
-			logger.log(Level.SEVERE, "Error Distributed Registry lookup for MPI node on master port: " + master_port);
+			logger.log(Level.SEVERE, "Error Distributed Registry lookup for MPI node on master port: " + masterPort);
 			e.printStackTrace();
 		}
 		catch (RemoteException e)
 		{
-			logger.log(Level.SEVERE, "Error Distributed Registry lookup for MPI node on master port: " + master_port);
+			logger.log(Level.SEVERE, "Error Distributed Registry lookup for MPI node on master port: " + masterPort);
 			e.printStackTrace();
 		}
 		logger.log(Level.INFO, "Distributed Registry created/obtained on MPI node on master port: " + port);
 	}
 
-	public static DRegistry getInstance()
+	public static DistinguishedRegistry getInstance()
 	{
 		try
 		{
-			return instance = instance == null ? new DRegistry() : instance;
+			return instance = instance == null ? new DistinguishedRegistry() : instance;
 		}
 		catch (Exception e)
 		{
@@ -169,13 +169,13 @@ public class DRegistry
 	 */
 	public boolean registerObject(Distinguished obj, DSimState simstate) throws AccessException, RemoteException
 	{
-		String name = obj.getName();
+		String name = obj.distinguishedName();
 		
 		if (!exportedNames.containsKey(name))
 		{
 			try
 			{
-				DistinguishedObject remoteObj = new DistinguishedObject(obj, simstate);
+				DistinguishedRemoteObject remoteObj = new DistinguishedRemoteObject(obj, simstate);
 				Remote stub = UnicastRemoteObject.exportObject(remoteObj, 0);
 				registry.bind(name, stub);
 				exportedNames.put(name, remoteObj);
@@ -190,6 +190,7 @@ public class DRegistry
 		}
 		return false;
 	}
+	
 	/**
 	 * Remove the object with key name from the registry
 	 * 
@@ -202,7 +203,7 @@ public class DRegistry
 	 */
 	public boolean unregisterObject(Distinguished obj) throws AccessException, RemoteException, NotBoundException
 	{
-		String name = obj.getName();
+		String name = obj.distinguishedName();
 		Remote remote = exportedNames.remove(name);
 		if (remote != null)
 		{
@@ -214,12 +215,12 @@ public class DRegistry
 		return false;
 	}
 	
-	public List<DistinguishedObject> getAllLocalExportedObjects(){
-		List<DistinguishedObject> tor = new ArrayList<DistinguishedObject>();
+	public List<DistinguishedRemoteObject> getAllLocalExportedObjects(){
+		List<DistinguishedRemoteObject> tor = new ArrayList<DistinguishedRemoteObject>();
 		
 		for (Remote obj : exportedNames.values()) {
-			if (obj instanceof DistinguishedObject){
-				tor.add((DistinguishedObject) obj);
+			if (obj instanceof DistinguishedRemoteObject){
+				tor.add((DistinguishedRemoteObject) obj);
 			}
 		}
 		return tor;
@@ -265,7 +266,7 @@ public class DRegistry
 		}	
 	}
 	
-	// clear the DRegistry removing all the registered objects
+	// clear the DistinguishedRegistry removing all the registered objects
 	// iterating on toUnregister queue
 	public void unregisterObjects() throws AccessException, RemoteException, NotBoundException
 	{
@@ -360,7 +361,7 @@ public class DRegistry
 	 */
 	public boolean isMigrated(Distinguished agent)
 	{
-		return migratedNames.contains(agent.getName());
+		return migratedNames.contains(agent.distinguishedName());
 	}
 	/**
 	 * Clear the list of the registered agent’s keys on the registry
@@ -395,7 +396,7 @@ public class DRegistry
 	 */
 	public String ifExportedThenAddMigratedName(Distinguished obj)
 	{
-		String name = obj.getName();
+		String name = obj.distinguishedName();
 		Remote remote = exportedNames.get(name);
 		if (remote != null)
 			migratedNames.add(name);

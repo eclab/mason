@@ -9,24 +9,20 @@ import sim.engine.rmi.RemotePromise;
 * Has a specific atomic ID used for the register on DRegistry
 */
 
-public class DistinguishedRemoteMessage {
-        
+public class DistinguishedRemoteMessage 
+{
     /* Tag used to understand which method to use to fill the RemoteMessage */
-    public int tag; 
+    int tag; 
     /* Optional argument that could be needed */
-    public Serializable arguments;
-    public Distinguished object;
-    public Promised callback;
+    Serializable arguments;
+    Distinguished object;
+    Promised callback;
     
-    protected DistinguishedRemoteMessage(
-                Distinguished object, 
-                int tag, 
-                Serializable arguments,
-                Promised callback) {
+    protected DistinguishedRemoteMessage(Distinguished object, int tag, Serializable arguments, Promised callback) 
+        {
         this.tag = tag;
         this.arguments = arguments;
         this.object = object;
         this.callback = callback;
-    }
-
+    	}
 }

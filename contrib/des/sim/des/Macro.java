@@ -26,6 +26,8 @@ import java.util.*;
 
 public class Macro implements Named
     {
+    private static final long serialVersionUID = 1;
+
     class Node
         {
         Named object;

@@ -284,9 +284,9 @@ public static class TimingStat
         min = Math.min(min, val);
         max = Math.max(max, val);
 
-        double avg_old = avg;
+        double avgOld = avg;
         avg += (val - avg) / ++cnt;
-        var += (val - avg_old) * (val - avg);
+        var += (val - avgOld) * (val - avg);
 
         mav.next(val);
     }

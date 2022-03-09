@@ -27,6 +27,8 @@ import sim.util.distribution.*;
 
 public abstract class Provider implements Named, Resettable
     {
+    private static final long serialVersionUID = 1;
+
     /** Throws an exception indicating that an offer cycle was detected. */
     protected void throwInvalidMinMax()
         {

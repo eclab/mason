@@ -20,8 +20,10 @@ import java.util.concurrent.atomic.*;
 **/
 
 
-public abstract class Resource 
+public abstract class Resource implements java.io.Serializable
     {
+    private static final long serialVersionUID = 1;
+
     static int typeCounter = 0;
     //static final AtomicInteger threadSafeCounter = new AtomicInteger();
          

@@ -27,7 +27,7 @@ import sim.engine.*;
 public class Transporter
 {
 	int numNeighbors; // number of direct neighbors
-	int[] src_count, src_displ, dst_count, dst_displ;
+	int[] srcCount, srcDispl, dstCount, distDispl;
 
 	HashMap<Integer, RemoteOutputStream> dstMap; // map of all neighboring partitions
 
@@ -88,10 +88,10 @@ public class Transporter
 
 		objectQueue = new ArrayList<>(); //reset this when reloading
 
-		src_count = new int[numNeighbors];
-		src_displ = new int[numNeighbors];
-		dst_count = new int[numNeighbors];
-		dst_displ = new int[numNeighbors];
+		srcCount = new int[numNeighbors];
+		srcDispl = new int[numNeighbors];
+		dstCount = new int[numNeighbors];
+		distDispl = new int[numNeighbors];
 
 		// outputStreams for direct neighbors
 		dstMap = new HashMap<Integer, RemoteOutputStream>();
@@ -135,9 +135,9 @@ public class Transporter
 		{
 			RemoteOutputStream outputStream = dstMap.get(neighbors[i]);
 			outputStream.flush(); //writes to ObjectOutputStream and removes from this stream
-			src_count[i] = outputStream.size();
-			src_displ[i] = total;
-			total += src_count[i];
+			srcCount[i] = outputStream.size();
+			srcDispl[i] = total;
+			total += srcCount[i];
 		}
 
 		// Concat neighbor streams into one
@@ -154,23 +154,23 @@ public class Transporter
 		
 		// First exchange count[] of the send byte buffers with neighbors so that we can
 		// setup recvbuf
-		partition.getCommunicator().neighborAllToAll(src_count, 1, MPI.INT, dst_count, 1, MPI.INT);
+		partition.getCommunicator().neighborAllToAll(srcCount, 1, MPI.INT, dstCount, 1, MPI.INT);
 
 		for (int i = 0, total = 0; i < numNeighbors; i++)
 		{
-			dst_displ[i] = total;
-			total += dst_count[i];
+			distDispl[i] = total;
+			total += dstCount[i];
 		}
-		ByteBuffer recvbuf = ByteBuffer.allocateDirect(dst_displ[numNeighbors - 1] + dst_count[numNeighbors - 1]);
+		ByteBuffer recvbuf = ByteBuffer.allocateDirect(distDispl[numNeighbors - 1] + dstCount[numNeighbors - 1]);
 
 		// exchange the actual object bytes
-		partition.getCommunicator().neighborAllToAllv(sendbuf, src_count, src_displ, MPI.BYTE, recvbuf, dst_count, dst_displ, MPI.BYTE);
+		partition.getCommunicator().neighborAllToAllv(sendbuf, srcCount, srcDispl, MPI.BYTE, recvbuf, dstCount, distDispl, MPI.BYTE);
 		
 		// read and handle incoming objects
 		for (int i = 0; i < numNeighbors; i++)
 		{
-			byte[] data = new byte[dst_count[i]];
-			recvbuf.position(dst_displ[i]);
+			byte[] data = new byte[dstCount[i]];
+			recvbuf.position(distDispl[i]);
 			recvbuf.get(data);
 			ObjectInputStream inputStream = new ObjectInputStream(new ByteArrayInputStream(data));
 
@@ -234,7 +234,7 @@ public class Transporter
 			// check if the agent is exported, if so add it to the migrated group
 			// therefore the DSimState can unregister it
 			if (obj instanceof Distinguished){
-					DRegistry.getInstance().
+					DistinguishedRegistry.getInstance().
 						ifExportedThenAddMigratedName((Distinguished) obj);
 			}
 	

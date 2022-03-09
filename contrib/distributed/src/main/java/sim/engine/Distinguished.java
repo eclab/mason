@@ -11,7 +11,7 @@ import java.rmi.RemoteException;
 
 
 /*
- * Interface that should be implemented by a class that needs to be a remote (Distinguish) Object
+ * Interface that should be implemented by a class that needs to be a distinguished Object
  * The modeler needs to implement the method of the class based on needs
  */
 
@@ -28,5 +28,6 @@ public interface Distinguished
 	/**
 	 * Return the name of the remote object.
 	 */
-	public String getName();
+	// Note this isn't a get...() so it doesn't appear in MASON's inspectors
+	public String distinguishedName();
 }

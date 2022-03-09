@@ -29,6 +29,8 @@ package sim.des;
 
 public class CountableResource extends Resource implements sim.util.Valuable
     {
+    private static final long serialVersionUID = 1;
+
     /** This is the largest possible integer that can be held in a double without skipping integers */
     public static final double MAXIMUM_INTEGER = 9.007199254740992E15;
 

@@ -18,6 +18,8 @@ import java.util.*;
 
 public class Lead extends Provider implements Receiver
     {
+    private static final long serialVersionUID = 1;
+
     Probe probe;
     
     Lead(Probe probe)

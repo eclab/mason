@@ -76,28 +76,28 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	//takes storage index and creates IntRect2D 
 	public IntRect2D getCellBounds(int index)
 	{
-		int x_low = index / this.height;
-		int y_low = index % this.height;
+		int xLow = index / this.height;
+		int yLow = index % this.height;
 		
-		int x_high = x_low + 1;
-		int y_high = y_low + 1;
+		int xHigh = xLow + 1;
+		int yHigh = yLow + 1;
 		
 		//undiscetize
-		x_low = x_low * discretization;
-		y_low = y_low * discretization;
-		x_high = x_high * discretization;
-		y_high = y_high * discretization;
+		xLow = xLow * discretization;
+		yLow = yLow * discretization;
+		xHigh = xHigh * discretization;
+		yHigh = yHigh * discretization;
 		
 		//offset
-		Int2D cell_ul = new Int2D(x_low, y_low); //include
-		Int2D cell_br = new Int2D(x_high, y_high);  //don't include
+		Int2D cellUL = new Int2D(xLow, yLow); //include
+		Int2D cellBR = new Int2D(xHigh, yHigh);  //don't include
 		
-		Int2D final_cell_ul = cell_ul.add(shape.ul());
-		Int2D final_cell_br = cell_br.add(shape.ul());
+		Int2D finalCellUL = cellUL.add(shape.ul());
+		Int2D finalCellBR = cellBR.add(shape.ul());
         
-		//System.out.println(this.getShape()+" index "+index+"ul "+final_cell_ul+"br "+final_cell_br);
+		//System.out.println(this.getShape()+" index "+index+"ul "+finalCellUL+"br "+finalCellBR);
 
-		return new IntRect2D(final_cell_ul,final_cell_br);
+		return new IntRect2D(finalCellUL,finalCellBR);
 	}
 
 	void setCelldp(final Int2D p, HashMap<Long, T> cell)
@@ -167,20 +167,20 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	// Put the object to the given point
 	public void addObject(Number2D p, T obj)
 	{
-		Double2D p_double = buildDouble2D(p);
+		Double2D pDouble = buildDouble2D(p);
 //		System.out.println("add Object: " + m + "; " + obj);
-		final Double2D old = locations.put(obj.ID(), p_double);
+		final Double2D old = locations.put(obj.ID(), pDouble);
 
 		if (old != null)
 			getCell(old).remove(obj.ID());
-		getCell(p_double).put(obj.ID(), obj);
+		getCell(pDouble).put(obj.ID(), obj);
 	}
 
 	public T getObject(Number2D p, long id)
 	{
-		Double2D p_double = buildDouble2D(p);
+		Double2D pDouble = buildDouble2D(p);
 
-		HashMap<Long, T> cell = getCell(p_double);
+		HashMap<Long, T> cell = getCell(pDouble);
 		if (cell == null)
 			return null;
 		else
@@ -190,14 +190,14 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	// Get all the objects at exactly the given point
 	public ArrayList<T> getAllObjects(final Number2D p)
 	{
-		Double2D p_double = buildDouble2D(p);
+		Double2D pDouble = buildDouble2D(p);
 
 		final ArrayList<T> objects = new ArrayList<>();
-		HashMap<Long, T> cell = getCell(p_double);
+		HashMap<Long, T> cell = getCell(pDouble);
 
 		if (cell != null)
 			for (final T t : cell.values())
-				if (locations.get(t.ID()).equals(p_double))
+				if (locations.get(t.ID()).equals(pDouble))
 					objects.add(t);
 
 		return objects;
@@ -218,13 +218,13 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	// Get all the objects at the given point
 	ArrayList<T> getObjects(NumberND p)
 	{
-		Double2D p_double = buildDouble2D(p);
+		Double2D pDouble = buildDouble2D(p);
 
 		final ArrayList<T> objects = new ArrayList<>();
 
-		if (getCell(p_double) != null)
-			for (final T t : getCell(p_double).values())
-				if (locations.get(t.ID()).equals(p_double))
+		if (getCell(pDouble) != null)
+			for (final T t : getCell(pDouble).values())
+				if (locations.get(t.ID()).equals(pDouble))
 					objects.add(t);
 
 		return objects;
@@ -234,11 +234,11 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 	// Remove all the objects at the given point
 	public void clear(Number2D p)
 	{
-		Double2D p_double = buildDouble2D(p);
-		HashMap<Long, T> cell = getCell(p_double);
+		Double2D pDouble = buildDouble2D(p);
+		HashMap<Long, T> cell = getCell(pDouble);
 
 		for (Long key : cell.keySet())
-			if (locations.get(key).equals(p_double))
+			if (locations.get(key).equals(pDouble))
 				cell.remove(key);
 	}
 

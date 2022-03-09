@@ -20,6 +20,8 @@ import java.util.*;
 
 public class Queue extends Provider implements Receiver, Steppable, StatReceiver
     {
+    private static final long serialVersionUID = 1;
+
     public Resource getTypicalReceived() { return typical; }
 	public boolean hideTypicalReceived() { return true; }
 

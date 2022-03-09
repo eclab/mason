@@ -21,6 +21,8 @@ import java.util.*;
 
 public class Composer extends Provider implements Receiver
     {
+    private static final long serialVersionUID = 1;
+
     public Resource getTypicalReceived() { return typical; }
 	public boolean hideTypicalReceived() { return true; }
 

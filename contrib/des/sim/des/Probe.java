@@ -17,6 +17,8 @@ import java.util.*;
 
 public class Probe extends Provider implements Receiver
     {
+    private static final long serialVersionUID = 1;
+
     static final Resource DEFAULT_TYPICAL = new Entity("Probe");
     
     long totalOffers;

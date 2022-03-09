@@ -16,6 +16,8 @@ import java.util.*;
 
 public class SimpleDelay extends Source implements Receiver, Steppable, StatReceiver
     {
+    private static final long serialVersionUID = 1;
+
     public Resource getTypicalReceived() { return typical; }
 	public boolean hideTypicalReceived() { return true; }
 

@@ -14,6 +14,8 @@ package sim.des;
 
 public class Money extends CountableResource
     {
+    private static final long serialVersionUID = 1;
+
     /** Produces a unique and new type of money, with an initial amount and a currency symbol. */
     public Money(String currencySymbol, int initialAmount)
         {

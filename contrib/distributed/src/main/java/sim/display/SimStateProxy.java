@@ -18,6 +18,8 @@ import sim.util.IntRect2D;
 import sim.util.Properties;
 import sim.util.RemoteSimpleProperties;
 
+import sim.engine.*;
+
 /**
 	A subclass of SimState designed to visualize remote distributed models.
 	
@@ -68,7 +70,7 @@ public class SimStateProxy extends SimState
 		this.host = host;
 		}
 	
-	int port = sim.util.DRegistry.PORT;
+	int port = DistinguishedRegistry.PORT;
 	
 	/** Returns the IP address of the distributed RMI registry.  You need to set this before start() is called. */
 	public int registryPort()

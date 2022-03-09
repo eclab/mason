@@ -15,12 +15,19 @@ import java.util.*;
    things like cars, or bricks, or telephones.  Entities can also be COMPOSITE, meaning that they
    hold a one or more things (normally Resources) in their bellies.  A composite Entity might be thought of as a
    cargo shipping container: you can't break it into two smaller containers, but you can open it
-   up and get at the things inside it.  
+   up and get at the things inside it. 
+   
+   <p>An Entity can also contain an INFO object.  This object can be anything you like.  The idea
+   is that the entity might be of a given type but have certain features (such as, say, a batch number
+   or an expiration date, or a VIN number).   
 **/
 
 public class Entity extends Resource
     {
+    private static final long serialVersionUID = 1;
+
     Resource[] storage;
+    Object info;
     
     /** 
         Creates an Entity of a new, unique type.
@@ -33,7 +40,8 @@ public class Entity extends Resource
     /** 
         Returns a Entity of the same type, name, and amount as the provided Entity.
         Note that the copy of the Entity's storage is just a pointer copy: you may
-        want to copy the storage more properly.
+        want to copy the storage more properly.  Similarly, the copy of the info is
+        just a pointer copy, though this might be more appropriate.
     */
     public Entity(Entity other)
         {
@@ -41,6 +49,7 @@ public class Entity extends Resource
         this.name = other.name;
         this.type = other.type;
         this.storage = other.storage;
+        this.info = info;
         }
                 
     /** Returns the current storage composed in the Entity, or null if there is none. */
@@ -53,6 +62,18 @@ public class Entity extends Resource
     public void setStorage(Resource[] val)
         {
         storage = val;
+        }
+        
+    /** Returns the current info object in the Entity, or null if there is none. */
+    public Object getInfo()
+        {
+        return storage;
+        }
+        
+    /** Sets the current info object in the Entity, or null if there is none. */
+    public void setInfo(Object val)
+        {
+        info = val;
         }
         
     /** Returns true if the Entity is composite. */
@@ -86,6 +107,8 @@ public class Entity extends Resource
         return "Entity[" + name + " (" + type + ")]";
         }
 
+	/** Only does type comparison. Thus two Entities may be equal even if they have different info
+		and storage objects. */
     public boolean equals(Object other)
         {
         if (other == this) return true;

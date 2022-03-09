@@ -8,8 +8,10 @@ import java.util.*;
    A simple class to make it easy to reset various objects, typically when start() is called in a model.
 */
 
-public class Reset
+public class Reset implements java.io.Serializable
     {
+    private static final long serialVersionUID = 1;
+
     ArrayList<Resettable> resets;
     SimState state;
     
