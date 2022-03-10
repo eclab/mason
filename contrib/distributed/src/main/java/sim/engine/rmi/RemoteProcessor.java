@@ -36,6 +36,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	Properties prop;
     //PropertiesRequester propRequester;
 	ReentrantLock lock = new ReentrantLock(true); // Fair lock
+	ReentrantLock partitionLock = new ReentrantLock(true); // Fair lock
 	public final String processorName;
 	static ArrayList<VisualizationProcessor> processorCache = new ArrayList<>();
 
@@ -67,14 +68,26 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 		}
 	}
 
+	/** ONLY the root processor listens to this lock */
 	public void lock() throws RemoteException
 	{
 		lock.lock();
 	}
 
+	/** ONLY the root processor listens to this lock */
 	public void unlock() throws RemoteException
 	{
 		lock.unlock();
+	}
+
+	public void lockPartition() throws RemoteException
+	{
+		partitionLock.lock();
+	}
+
+	public void unlockPartition() throws RemoteException
+	{
+		partitionLock.unlock();
 	}
 
 	public IntRect2D getStorageBounds() throws RemoteException
