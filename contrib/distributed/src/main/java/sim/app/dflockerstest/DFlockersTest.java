@@ -48,7 +48,7 @@ public class DFlockersTest extends DSimState
 	/** Creates a Flockers simulation with the given random number seed. */
 	public DFlockersTest(final long seed)
 	{
-		super(seed, DFlockersTest.width, DFlockersTest.height, DFlockersTest.neighborhood);
+		super(seed, DFlockersTest.width, DFlockersTest.height, DFlockersTest.neighborhood, true);
 
 		// final double[] discretizations = new double[] { DFlockersTest.neighborhood /
 		// 1.5, DFlockersTest.neighborhood / 1.5 };

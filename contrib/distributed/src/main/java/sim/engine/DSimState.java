@@ -7,6 +7,7 @@
 package sim.engine;
 
 import java.io.IOException;
+
 import java.io.Serializable;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
@@ -799,7 +800,6 @@ public class DSimState extends SimState
 		
 		updateGlobals(); //only happens every updateGlobalInterval steps
 		
-		int x = countTotalAgents(fieldList.get(0));
 
 		/* we invoke the fullfill for every messagge in the distinguishedMessageQueue
 		   to make the Promise ready
@@ -859,7 +859,6 @@ public class DSimState extends SimState
                     //sync transporter (objects moved to transporter.objectQueue)
 					transporter.sync();
 					
-					int x2 = countTotalAgents(fieldList.get(0));
 					
 										
 				}
@@ -921,7 +920,6 @@ public class DSimState extends SimState
 
 				}
 
-				int x3 = countTotalAgents(fieldList.get(0));
 				
 				// Wait that all nodes have registered their new objects in the distributed registry.
 				try
@@ -934,7 +932,6 @@ public class DSimState extends SimState
 					throw new RuntimeException(e);
 				}
 				
-				int x4 = countTotalAgents(fieldList.get(0));
 		        //System.exit(-1);
 
 				// clear queue
@@ -972,7 +969,6 @@ public class DSimState extends SimState
 	void balancePartitions(int level) throws MPIException
 	{
 
-		int x = countTotalAgents(fieldList.get(0));
 		
 		final IntRect2D oldPartition = partition.getLocalBounds();
 		final int oldPID = partition.getPID();
@@ -1143,110 +1139,12 @@ public class DSimState extends SimState
 
 
 	
-	//testing method: counts agents in each storage (not in halo) and sums them.  Should remain constant!
-	int countTotalAgents(HaloGrid2D field) 
-	{
-		int total = 0;
-
-		try {
-			//System.out.println(partition.getPID()+"-----");
-			int count = countLocal(field);
-			ArrayList<Integer> counts = MPIUtil.gather(partition, count, 0);
-		
-			for (Integer c: counts) {
-				total = total + c;
-			}
-		}
-		
-		catch (Exception e) {
-		}
-		
-		return total;
-
-	}
-	
-	protected int countLocal(HaloGrid2D field) 
-	{
-
-		int count = 0;
-
-		// ContinousStorage, do we need its own case anymore? We may be able to combine with else code.
-		if (field.getStorage() instanceof ContinuousStorage)
-		{
-
-			ContinuousStorage st = (ContinuousStorage) field.getStorage();
-			// for cell
-			for (int i = 0; i < st.storage.length; i++)
-			{
-				HashSet agents = new HashSet(((HashMap) st.storage[i]).values());
-
-				for (Object a : agents) 
-				{
-					Double2D loc = st.getObjectLocation((DObject) a);
-					
-					if (partition.getLocalBounds().contains(loc)) 
-					{
-						count = count + 1;
-					}
-
-				}
-			}
-		}
-		else 
-		{
-			GridStorage st = field.getStorage();
-
-			// go by point here
-			for (Int2D p : st.getShape().getPointList())
-			{
-				
-				// check if the partition contains the point
-				if (partition.getLocalBounds().contains(p))
-				{
-
-					Serializable aList = st.getAllObjects(p);
-
-					if (aList != null)
-					{
-						count = count + ((ArrayList<Serializable>) aList).size();
-					}
-				}
-			}
-		}
-		
-		return count;
-		
-	}
-	
 
 	
 
 	
-	/*
-	public static void loc_disagree(Int2D p, DHeatBug h, Partition p2, String s)
-	{
-		
-		Int2D hLoc = new Int2D(h.loc_x, h.loc_y);
-		
-		int newPx = p.x;
-		int newPy = p.y;
-		
 
-		
-		Int2D newP = new Int2D(newPx, newPy);
-		//System.out.println(s+" "+h +" hLoc "+hLoc+" p "+ p );
-		
-		if (!newP.equals(hLoc))
-		{
-			
-			
-			
-			System.out.println(s+" loc disagree "+h+" hLoc "+hLoc+" p "+ p + " "+p2.getLocalBounds());
-			System.exit(-1);
-		}
-		
-	}
-    */
+
 
 
 

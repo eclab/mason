@@ -37,7 +37,7 @@ public class DSimulation extends DSimState
 	/** Creates a Flockers simulation with the given random number seed. */
 	public DSimulation(final long seed)
 	{
-		super(seed, DSimulation.width, DSimulation.height, DSimulation.neighborhood);
+		super(seed, DSimulation.width, DSimulation.height, DSimulation.neighborhood, false);
 
 		// final double[] discretizations = new double[] { DSimulation.neighborhood /
 		// 1.5, DSimulation.neighborhood / 1.5 };

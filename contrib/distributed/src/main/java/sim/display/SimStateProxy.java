@@ -261,8 +261,8 @@ public class SimStateProxy extends SimState
 						try
 							{
 							// Now we query the remote processor to see if a new step has elapsed
-							VisualizationProcessor vp = visualizationProcessor(); 
-                            							
+							//VisualizationProcessor vp = visualizationProcessor(); 
+							VisualizationProcessor vp = visualizationProcessor(0);							
 							if (overview != null)
 								{
 								overview.update(vp.getAllLocalBounds());
@@ -291,7 +291,7 @@ public class SimStateProxy extends SimState
 								   //for each processor
 								      //change processor
 								        //update field with appropiate offset
-								vp.unlock();
+								
 
 								// === Stats & Debug === //
 								// Determine if any stats are registered (on *any* processor)
@@ -436,7 +436,7 @@ public class SimStateProxy extends SimState
 									// <<<<<<Stats & Debug
 									}
 //									}
-								
+								vp.unlock();
 
 								}
 							lastSteps = steps;

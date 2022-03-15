@@ -49,7 +49,7 @@ public class DVirusInfectionDemo extends DSimState{
     /** Creates a VirusInfectionDemo simulation with the given random number seed. */
     public DVirusInfectionDemo(long seed)
         {
-        super(seed, WIDTH, HEIGHT, AOI);
+        super(seed, WIDTH, HEIGHT, AOI, false);
         
 	    environment = new DContinuous2D(25, this);
 

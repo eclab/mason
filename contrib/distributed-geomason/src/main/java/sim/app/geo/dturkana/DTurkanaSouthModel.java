@@ -109,7 +109,7 @@ public class DTurkanaSouthModel extends DSimState{
 
     public DTurkanaSouthModel(long seed)
     {
-        super(seed, width, height, aoi);
+        super(seed, width, height, aoi, false);
     }
     
 	protected void startRoot()

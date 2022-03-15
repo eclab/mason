@@ -137,7 +137,7 @@ public class DSleuthWorld  extends DSimState{
     public DSleuthWorld(long seed)
     {
         //super(seed, grid_width, grid_height, 1);
-    	super(seed, readDimensions(SLOPE_DATA_FILE_NAME)[0], readDimensions(SLOPE_DATA_FILE_NAME)[1], 1);
+    	super(seed, readDimensions(SLOPE_DATA_FILE_NAME)[0], readDimensions(SLOPE_DATA_FILE_NAME)[1], 1, false);
     	int[] width_height = readDimensions(SLOPE_DATA_FILE_NAME);
     	grid_width = width_height[0];
     	grid_height = width_height[1];

@@ -114,7 +114,7 @@ public class DHaitiFood extends DSimState {
 
     /** Constructor */
     public DHaitiFood(long seed) {
-		super(seed, width, height, aoi);
+		super(seed, width, height, aoi, false);
 
         roadsFile = HaitiData.class.getResource("roads1.txt");
         roadVectorFile = HaitiRoadData.class.getResource("Haiti_all_roads_Clip.shp");
@@ -129,7 +129,7 @@ public class DHaitiFood extends DSimState {
 
     public DHaitiFood(long seed, int maxDen, int riotDen, int initFood, int energyFood, double enToStay, 
             double enWalkPaved, double enWalkUnpav, double enRiot, int interval){
-		super(seed, width, height, aoi);
+		super(seed, width, height, aoi, false);
         maximumDensity = maxDen;
         riotDensity = riotDen;
 
