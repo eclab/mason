@@ -83,7 +83,7 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
             {
             if (capacity - resource.getAmount() >= atLeast)
                 {
-                double transfer = Math.min(capacity - resource.getAmount(), atMost);
+                double transfer = Math.min(Math.min(capacity - resource.getAmount(), atMost), amount.getAmount());
                 resource.increase(transfer);
                 ((CountableResource)amount).decrease(transfer);
 				totalReceivedResource += atMost;

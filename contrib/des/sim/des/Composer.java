@@ -201,7 +201,7 @@ public class Composer extends Provider implements Receiver
                 return false;
             else
                 {
-                double amt = Math.min(total.maximum - res.getAmount(), atMost);
+                double amt = Math.min(Math.min(total.maximum - res.getAmount(), atMost), ((CountableResource)amount).getAmount());
                 res.increase(amt);
                 ((CountableResource)amount).decrease(amt);
                 if (getOffersImmediately()) deploy();

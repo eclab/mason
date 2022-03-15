@@ -33,6 +33,9 @@ public interface Receiver extends Named, Resettable
        match the typical resource of the receiver, or if a cycle was detected in accepting
        offers (A offers to B, which offers to C, which then offers to A).
       	At present does not check that atLeast and atMost are valid.
+      	
+      <p>It must be the case that 0 &lt;= atLeast &lt; = atMost &lt;= resource.getAmount(), 
+      or else a RuntimeException may be thrown. 
     */
     public boolean accept(Provider provider, Resource resource, double atLeast, double atMost);
 

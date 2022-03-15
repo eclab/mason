@@ -118,7 +118,7 @@ public class Delay extends SimpleDelay
         if (entities == null)
             {
             CountableResource cr = (CountableResource)amount;
-            double maxIncoming = Math.min(capacity - totalResource, atMost);
+            double maxIncoming = Math.min(Math.min(capacity - totalResource, atMost), cr.getAmount());
             if (maxIncoming < atLeast) return false;
                 
             CountableResource token = (CountableResource)(cr.duplicate());

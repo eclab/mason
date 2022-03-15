@@ -511,6 +511,7 @@ public abstract class Provider implements Named, Resettable
         offering = false;
         return result;
         }
+    
         
     /**
        Asks the Provider to make a unilateral offer to the given Receiver.  This can be used to implement
