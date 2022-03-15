@@ -408,8 +408,14 @@ public class DSimState extends SimState
 		try
 		{
 			processor = new RemoteProcessor(this);
-			processor.lock();
-			// unlocks in preSchedule
+			// only the root partition locks
+			if (partition.isRootProcessor())
+				{
+				processor.lock();
+				// unlocks in preSchedule
+				}
+			// all partitions do a propertieslock
+			processor.lockPartition();
 		}
 		catch (RemoteException e1)
 		{
@@ -690,20 +696,69 @@ public class DSimState extends SimState
 		
 		try
 		{
-			// Wait for all agents globally to stop moving
+			// ALLOW INSPECTION
+			// We have a big problem regarding remote inspection.  If a remote inspector is just
+			// reading, and potentially writing, any data willy-nilly during the model runtime,
+			// then we have a race condition.  We can't have simple data access locks of course because
+			// that would be horrendously expensive.  Alternatively we could lock here and let
+			// an inspector do its thing, but this might be a piecemeal thing, with one lock
+			// per property, which would cause the visualizer to be very slow and also skip a lot
+			// of drawing.  :-(
+
+				try
+					{
+					processor.unlockPartition();
+					}
+				catch (RemoteException ex)
+					{
+					throw new RuntimeException(ex);
+					}
+
+
+			// ALLOW VISUALIZATION
+			// To do this, we will first have a barrier, so all partitions are synced up and
+			// waiting.  THEN we will unlock the root.  This will allow the remote visualizer
+			// to lock on the root.  We wait until the visualizer has done its work.  THEN
+			// we will relock on the root.  Finally we will have another barrier so everyone
+			// has synced up with the root, and we can go on.  Unfortunately this requires two
+			// barriers.  :-(
+
+			MPI.COMM_WORLD.barrier();		
+			if (partition.isRootProcessor())
+				{
+				try
+					{
+					processor.unlock();
+					//// WARNING: it's possible that if the remote visualizer has DIED while
+					//// in a locked state, it won't release the lock and we'll hang here?  We
+					//// may need to use tryLock() instead with a timeout, which could be very
+					//// expensive, and maybe create a new lock replacing the original?  Not sure.
+					processor.lock();
+					}
+				catch (RemoteException ex)
+					{
+					throw new RuntimeException(ex);
+					}
+				}
 			MPI.COMM_WORLD.barrier();
 
-			// give time for Visualizer
-			try
-			{
-				processor.unlock();
-				processor.lock();
-			}
-			catch (RemoteException e1)
-			{
-				throw new RuntimeException(e1);
-			}
+
+			// ALLOW INSPECTION AGAIN
+			// Now we relock the properties lock.  I *think* this avoids most deadlock conditions 
+			// where we're locked on one lock but the visualizer is locked on the other one?
 			
+				try
+					{
+					processor.lock();
+					}
+				catch (RemoteException ex)
+					{
+					throw new RuntimeException(ex);
+					}
+
+
+			
+
 			// Sync all the Remove and Add queues for RMI
 			syncRemoveAndAdd();
 			
