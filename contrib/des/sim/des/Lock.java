@@ -66,9 +66,9 @@ public class Lock extends Provider implements Receiver
         return false;
         }
 
-    protected boolean offerReceiver(Receiver receiver)
+    protected boolean offerReceiver(Receiver receiver, double atMost)
         {
-        return receiver.accept(this, _amount, _atLeast, _atMost);
+        return receiver.accept(this, _amount, Math.min(_atLeast, atMost), Math.min(_atMost, atMost));
         }
         
     double _atLeast;

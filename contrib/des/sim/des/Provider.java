@@ -354,9 +354,17 @@ public abstract class Provider implements Named, Resettable
         linked list (normally entities are added to the END of the linked list
         via entities.add()).  If the offer order is LIFO, then the entity
         is removed from the END of the entities linked list.
+        
+        <p>The only real reason for the atMost parameter is so that receivers
+        can REQUEST to be offered atMost resource from a provider.
     */
     protected boolean offerReceiver(Receiver receiver, double atMost)
         {
+        if (!getMakesOffers())
+        	{
+        	return false;
+        	}
+        	
         if (entities == null)
             {
             CountableResource cr = (CountableResource) resource;
@@ -548,4 +556,8 @@ public abstract class Provider implements Named, Resettable
     	clearLastAcceptedOffers(Schedule.BEFORE_SIMULATION);
     	totalAcceptedOfferResource = 0;
     	}
+    	
+    boolean makesOffers = true;
+    public void setMakesOffers(boolean value) { makesOffers = value; }
+    public boolean getMakesOffers() { return makesOffers; }
     }

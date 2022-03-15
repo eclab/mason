@@ -26,6 +26,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
     double delayTime;
     int rescheduleOrdering = 0;
     boolean autoSchedules = true;
+	boolean dropsResourcesBeforeUpdate = true;
     
     /** Returns in an array all the Resources currently being delayed and not yet ready to provide,
     	along with their timestamps (when they are due to become available), combined as a DelayNode.  
@@ -64,6 +65,9 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
 	/** Returns the number AMOUNT of resource currently being delayed. */
 	public double getTotal() { if (entities == null) return totalResource; else return delayQueue.size(); }
 
+	/** Returns the number AMOUNT of resource currently being delayed, plus the current available resources. */
+	public double getTotalPlusAvailable() { return getTotal() + getAvailable(); }
+	
     /** Returns the delay time. */
     public double getDelayTime() { return delayTime; }
 	public boolean hideDelayTime() { return true; }
@@ -139,6 +143,24 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         return true;
         }
 
+	/** Sets whether available resources are cleared prior to loading new delayed resources
+		during update().  By default this is TRUE.  If this is FALSE, then resources will build
+		potentialy forever if not accepted by downstream receivers, as there is no maximum 
+		capacity to the available resources. */
+	public void setDropsResourcesBeforeUpdate(boolean val)
+		{
+		dropsResourcesBeforeUpdate = val; 
+		}
+
+	/** Returns whether available resources are cleared prior to loading new delayed resources
+		during update().  By default this is TRUE.  If this is FALSE, then resources will build
+		potentialy forever if not accepted by downstream receivers, as there is no maximum 
+		capacity to the available resources. */
+	public boolean getDropsResourcesBeforeUpdate()
+		{
+		return dropsResourcesBeforeUpdate; 
+		}
+
     /** Removes all currently ripe resources. */
     protected void drop()
         {
@@ -153,7 +175,11 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         them available to registered receivers in zero time. */
     protected void update()
         {
-        drop();
+        if (getDropsResourcesBeforeUpdate()) 
+        	{
+        	drop();
+        	}
+        	
         double time = state.schedule.getTime();
                 
         Iterator<DelayNode> iterator = delayQueue.descendingIterator();

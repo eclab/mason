@@ -39,9 +39,9 @@ public class Transformer extends Provider implements Receiver
         return false;
         }
 
-    protected boolean offerReceiver(Receiver receiver)
+    protected boolean offerReceiver(Receiver receiver, double atMost)
         {
-        return receiver.accept(this, output, atLeastOut, atMostOut);
+        return receiver.accept(this, output, Math.min(atLeastOut, atMost), Math.min(atMostOut, atMost));
         }
 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)

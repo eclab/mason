@@ -144,7 +144,11 @@ public class Delay extends SimpleDelay
 
     protected void update()
         {
-        drop();
+        if (getDropsResourcesBeforeUpdate()) 
+        	{
+        	drop();
+        	}
+
         double time = state.schedule.getTime();
         
         Double minKey = (Double)delayHeap.getMinKey();
