@@ -54,6 +54,18 @@ public abstract class Provider implements Named, Resettable
         throw new RuntimeException("Requested resource amounts are between " + atLeast + " and " + atMost + ", which is out of bounds.");
         }
 
+	/** Throws an exception indicating that entities were requested from this Provider, but it does not provide them. */
+    protected void throwDoesNotProvideEntities()
+        {
+        throw new RuntimeException("This Provider was asked to provide Entities, but it does not.");
+        }
+
+	/** Throws an exception indicating that an entity index was requested which cannot be provided. */
+    protected void throwInvalidEntityNumber(int num)
+        {
+        throw new RuntimeException("This Provider asked to provide entity number " + num + " which is outside the range 0 ... " + entities.size() + ".");
+        }
+
 	/** Tests if val is non-NaN and positive. */
     protected boolean isPositiveNonNaN(double val)
         {
@@ -342,7 +354,14 @@ public abstract class Provider implements Named, Resettable
         currentShuffledReceiver++;
         return ret;
         }
-        
+       
+       
+    protected boolean offerReceiver(Receiver receiver, Entity entity)
+    	{
+		boolean result = receiver.accept(this, entity, 0, 0);
+		return result;
+		}
+    	 
     /** 
         Makes an offer of up to the given amount to the given receiver.
         If the typical resource is an ENTITY, then atMost is ignored.
@@ -384,10 +403,10 @@ public abstract class Provider implements Named, Resettable
         else if (offerOrder == OFFER_ORDER_FIFO)
             {
             Entity e = entities.getFirst();
-            boolean result = receiver.accept(this, e, 0, 0);
-            if (result) entities.removeFirst();
+            boolean result = offerReceiver(receiver, e); //receiver.accept(this, e, 0, 0);
             if (result)
             	{
+				entities.removeFirst();
             	updateLastAcceptedOffers(e.duplicate(), receiver);
             	}
             return result;
@@ -395,10 +414,10 @@ public abstract class Provider implements Named, Resettable
          else // if (offerOrder == OFFER_ORDER_LIFO)
             {
             Entity e = entities.getLast();
-            boolean result = receiver.accept(this, e, 0, 0);
-            if (result) entities.removeLast();
+            boolean result = offerReceiver(receiver, e);  //receiver.accept(this, e, 0, 0);
             if (result)
             	{
+				entities.removeLast();
             	updateLastAcceptedOffers(e.duplicate(), receiver);
             	}
             return result;
@@ -544,6 +563,43 @@ public abstract class Provider implements Named, Resettable
         if (!isPositiveNonNaN(atMost))
         	throwInvalidNumberException(atMost);
         return offerReceiver(receiver, atMost);
+        }
+
+    /**
+       Asks the Provider to offer to the given receiver entity #entityNumber in its entities list.  You can get this
+       entity number by requesting getEntities(), then returning the index of the entity of interest
+       in the resulting array.  If you want to grab multiple entities, call this method multiple times; but
+       beware that as you pull entities out, the entity list shrinks and the indexes change.  The easiest
+       way to deal with this is to call getEntities() once, and then request entities one by one going BACKWARDS 
+       through the resulting list.    If this Provider does not offer entities, or if
+       the entityNumber is invalid, an exception is thrown.
+    */
+    public boolean provideEntity(Receiver receiver, int entityNumber)
+        {
+		Entity e = getEntity(entityNumber);
+		boolean result = offerReceiver(receiver, e);
+		if (result)
+			{
+			entities.remove(entityNumber);
+			updateLastAcceptedOffers(e.duplicate(), receiver);
+			}
+		return result;
+    	}
+
+    /**
+       Returns the available entity with the given number for inspection, but does not remove it from the available pool.
+       Numbers range from 0 to (int)getAvailable();  You probably should not modify this Entity: it is the actual
+       Entity in the Provider and is owned by the Provider.  If this Provider does not offer entities, or if
+       the entityNumber is invalid, an exception is thrown.
+    */
+    public Entity getEntity(int entityNumber)
+        {
+        if (entities == null)
+    		throwDoesNotProvideEntities();
+    	if (entityNumber < 0 || entityNumber > entities.size())
+    		throwInvalidEntityNumber(entityNumber);
+    		
+        return entities.get(entityNumber);
         }
 
     String name;
