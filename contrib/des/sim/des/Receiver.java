@@ -43,4 +43,10 @@ public interface Receiver extends Named, Resettable
     	When a Receiver is also a Provider, this is very often implemented
     	simply by calling getTypicalProvided() */
     public Resource getTypicalReceived();
+    
+	/** Sets whether the receiver currently refuses all offers.  The default should be FALSE. */
+	public void setRefusesOffers(boolean value);
+
+	/** Returns whether the receiver currently refuses all offers.  The default should be FALSE. */
+    public boolean getRefusesOffers();
     }

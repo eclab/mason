@@ -92,6 +92,7 @@ public class Extractor extends Source implements Receiver
 
     public boolean accept(Provider provider, Resource res, double atLeast, double atMost)
     	{
+    	if (getRefusesOffers()) { return false; }
         if (!typical.isSameType(res)) throwUnequalTypeException(res);
 
         if (isOffering()) throwCyclicOffers();  // cycle
@@ -131,6 +132,9 @@ public class Extractor extends Source implements Receiver
         super.setCapacity(d);
         capacity = Double.POSITIVE_INFINITY;		// reset to default
         }
-
+        
+    boolean refusesOffers = false;
+	public void setRefusesOffers(boolean value) { refusesOffers = value; }
+    public boolean getRefusesOffers() { return refusesOffers; }
     }
         

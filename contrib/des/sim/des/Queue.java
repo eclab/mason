@@ -72,6 +72,7 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
+    	if (getRefusesOffers()) { return false; }
         if (isOffering()) throwCyclicOffers();  // cycle
         
         if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
@@ -123,5 +124,9 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
     	super.reset(state);
 		totalReceivedResource = 0; 
     	}
+        
+    boolean refusesOffers = false;
+	public void setRefusesOffers(boolean value) { refusesOffers = value; }
+    public boolean getRefusesOffers() { return refusesOffers; }
     }
         

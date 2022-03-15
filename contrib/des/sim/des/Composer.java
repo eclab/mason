@@ -172,6 +172,7 @@ public class Composer extends Provider implements Receiver
 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
+    	if (getRefusesOffers()) { return false; }
         if (isOffering()) throwCyclicOffers();  // cycle
         
         if (!(atLeast >= 0 && atMost >= atLeast))
@@ -261,4 +262,8 @@ public class Composer extends Provider implements Receiver
         {
         deploy();
         }
+        
+    boolean refusesOffers = false;
+	public void setRefusesOffers(boolean value) { refusesOffers = value; }
+    public boolean getRefusesOffers() { return refusesOffers; }
     }

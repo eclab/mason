@@ -105,6 +105,7 @@ public class Delay extends SimpleDelay
                 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
+    	if (getRefusesOffers()) { return false; }
         if (!typical.isSameType(amount)) 
             throwUnequalTypeException(amount);
                 
@@ -169,5 +170,9 @@ public class Delay extends SimpleDelay
         {
         return "Delay@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical.getName() + ")";
         }               
+        
+    boolean refusesOffers = false;
+	public void setRefusesOffers(boolean value) { refusesOffers = value; }
+    public boolean getRefusesOffers() { return refusesOffers; }
     }
         

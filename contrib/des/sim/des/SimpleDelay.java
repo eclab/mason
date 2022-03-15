@@ -105,6 +105,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         then auto-reschedules the delay if that feature is on. */
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
+    	if (getRefusesOffers()) { return false; }
         if (!typical.isSameType(amount)) 
             throwUnequalTypeException(amount);
         
@@ -198,5 +199,9 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
 		clear();
 		totalReceivedResource = 0; 
 		}
+        
+    boolean refusesOffers = false;
+	public void setRefusesOffers(boolean value) { refusesOffers = value; }
+    public boolean getRefusesOffers() { return refusesOffers; }
     }
         

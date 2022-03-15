@@ -50,6 +50,7 @@ public class Sink implements Receiver, StatReceiver
 
     public boolean accept(Provider provider, Resource resource, double atLeast, double atMost)
         {
+    	if (getRefusesOffers()) { return false; }
         if (!typical.isSameType(resource)) throwUnequalTypeException(resource);
         
         if (!(atLeast >= 0 && atMost >= atLeast))
@@ -84,4 +85,8 @@ public class Sink implements Receiver, StatReceiver
    	public boolean hideName() { return true; }
 
     public void reset(SimState state) { totalReceivedResource = 0; }
+        
+    boolean refusesOffers = false;
+	public void setRefusesOffers(boolean value) { refusesOffers = value; }
+    public boolean getRefusesOffers() { return refusesOffers; }
  	}
