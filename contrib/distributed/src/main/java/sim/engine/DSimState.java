@@ -871,7 +871,6 @@ public class DSimState extends SimState
 			   distinguishedMessageQueue.clear();
 		   }
 		   
-		   DistinguishedRegistry.getInstance().unregisterQueuedObjects();
 	   } 
 	   catch (Exception e) 
 	   {
@@ -1028,10 +1027,11 @@ public class DSimState extends SimState
 		final IntRect2D oldPartition = partition.getLocalBounds();
 		final int oldPID = partition.getPID();
 
-		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage(); // used to compute the position of the new centroids
+		// get the average time to run a step, used to compute the position of the new centroids
+		final Double avgRuntime = Timing.get(Timing.LB_RUNTIME).getMovingAverage(); 
 		Timing.start(Timing.LB_OVERHEAD);
 
-		((Partition) partition).balance(runtime, level); // balance the partition moving the centroid for the given level
+		((Partition) partition).balance(avgRuntime, level); // balance the partition moving the centroid for the given level
 		MPI.COMM_WORLD.barrier();
 
 		// Raj rewrite

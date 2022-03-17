@@ -47,8 +47,6 @@ public class DistinguishedRegistry
 	 static HashMap<Remote, String> exportedObjects = new HashMap<>();
 	 /* ID of the migrated objects */
 	 static List<String> migratedNames = new ArrayList<String>();
-	 /* ID of the object that has to be unregistered by the DSimState */
-	 static List<String> toUnregister = new ArrayList<String>();
 
 	 static void initLocalLogger(final String loggerName)
 	 {
@@ -221,31 +219,6 @@ public class DistinguishedRegistry
 		}
 		return tor;
 	}
-
-	// add the id of the remote object in the toUnregister queue
-	// they will be removed by the unregisterObjects
-	public void lazyUnregisterObject(String name) throws AccessException, RemoteException, NotBoundException
-	{
-		// needs to be synchronized to avoid concurrentModificationException
-		synchronized(toUnregister){
-			toUnregister.add(name);
-		}	
-	}
-	
-	// remove the registered objects within the unRegister queue 
-	public void unregisterQueuedObjects() throws AccessException, RemoteException, NotBoundException
-	{
-		// needs to be synchronized to avoid concurrentModificationException
-		synchronized(toUnregister){ 
-			for(String name : toUnregister){
-				registry.unbind(name);
-				UnicastRemoteObject.unexportObject(exportedNames.get(name), true);
-				exportedNames.remove(name);
-			}
-			toUnregister.clear();
-		}
-	}
-
 	
 	/**
 	 * Register an already exported UnicastRemoteObject obj with key name on the

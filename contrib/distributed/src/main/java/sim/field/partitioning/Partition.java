@@ -15,7 +15,6 @@ import java.util.function.Consumer;
  */
 public class Partition
 {
-	private static final long serialVersionUID = 1L;
 
 	QuadTree qt;
 	QuadTreeNode myLeafNode; // the leaf node that this pid is mapped to
@@ -578,8 +577,7 @@ public class Partition
 		{
 			Double2D d = myLeafNode.getShape().getCenter();
 			final Int2D ctr = new Int2D((int) Math.floor(d.x), (int) Math.floor(d.y));
-			// final Int2D ctr = myLeafNode.getShape().getInt2DCenter();
-			final double[] sendData = new double[2 + 1], recvData = new double[2 + 1]; // 2 == num dimensions
+			final double[] sendData = new double[3], recvData = new double[3]; // 2 (num dimensions) + 1
 
 			sendData[0] = myRuntime;
 			sendData[1] = ctr.x * myRuntime;

@@ -87,7 +87,10 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 
 	public void unlockPartition() throws RemoteException
 	{
-		partitionLock.unlock();
+		if (partitionLock.isHeldByCurrentThread()) 
+		{
+			partitionLock.unlock();
+		}
 	}
 
 	public IntRect2D getStorageBounds() throws RemoteException
