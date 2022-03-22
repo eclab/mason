@@ -52,7 +52,7 @@ public class Unlock extends Lock
 		double free = pool.getMaximum() - pool.getResource().getAmount();
 		double increment = Math.min(numResources, free);		// don't increment above maximum
 		
-		// release the resource
+		// prerelease the resource
 		pool.getResource().increase(increment);
 		
         _amount = amount;
