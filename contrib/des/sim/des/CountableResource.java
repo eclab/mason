@@ -210,6 +210,7 @@ public class CountableResource extends Resource implements sim.util.Valuable
 			{
 			amount = min;
 			}
+			
 		if (amount > max)
 			{
 			amount = max;
@@ -221,7 +222,15 @@ public class CountableResource extends Resource implements sim.util.Valuable
     */
     public void bound(double max)
         {
-        bound(0, max);
+       if (!isPositiveNonNaN(max))                                     // negative or NaN
+            throwInvalidNumberException(max);
+        if (!isInteger(max))
+            throwNonIntegerAmountException(max);
+
+		if (amount > max)
+			{
+			amount = max;
+			}
         }
         
 

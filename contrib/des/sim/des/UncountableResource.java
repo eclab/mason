@@ -137,6 +137,44 @@ public class UncountableResource extends CountableResource
         amount = val;
         }
                 
+     /**
+       Bounds the resource to be no more than max and no less than min.  
+       It must be the case that max >= min >= 0.
+    */
+    public void bound(double min, double max)
+        {
+        if (!isPositiveNonNaN(min))                                     // negative or NaN
+            throwInvalidNumberException(min);
+        if (!isPositiveNonNaN(max))                                     // negative or NaN
+            throwInvalidNumberException(max);
+		if (min > max)
+			throwUnorderedException(min, max);
+
+		if (amount < min)
+			{
+			amount = min;
+			}
+			
+		if (amount > max)
+			{
+			amount = max;
+			}
+        }
+
+     /**
+       Bounds the resource to be no more than max and no less than 0.
+    */
+    public void bound(double max)
+        {
+       if (!isPositiveNonNaN(max))                                     // negative or NaN
+            throwInvalidNumberException(max);
+
+		if (amount > max)
+			{
+			amount = max;
+			}
+        }
+
     public boolean increase(double val)
         {
         if (!isPositiveNonNaN(val))                                     // negative or NaN
