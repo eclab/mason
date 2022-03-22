@@ -90,7 +90,7 @@ public class Lock extends Provider implements Receiver
         	return false;
         	}
 
-		// grab the resource
+		// pre-grab the resource
         pool.getResource().decrease(numResources);
 
         _amount = amount;
