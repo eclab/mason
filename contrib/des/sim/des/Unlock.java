@@ -49,17 +49,22 @@ public class Unlock extends Lock
         if (!(atLeast >= 0 && atMost >= atLeast))
         	throwInvalidAtLeastAtMost(atLeast, atMost);
 
-        if (pool.getMaximum() - pool.getResource().getAmount() < numResources) return false;
-
+		double free = pool.getMaximum() - pool.getResource().getAmount();
+		double increment = Math.min(numResources, free);		// don't increment above maximum
+		
+		// release the resource
+		pool.getResource().increase(increment);
+		
         _amount = amount;
         _atLeast = atLeast;
         _atMost = atMost;
         boolean result = offerReceivers();
                 
-        if (true)                               // we always increment even if we fail
-            {
-            pool.getResource().increase(numResources);
-            }
+        if (!result) // gotta put it back
+        	{
+        	pool.getResource().decrease(increment);
+        	// pool.getResource().bound(pool.getMaximum());		// not needed
+        	}
 
         _amount = null;		/// let it gc
         return result;

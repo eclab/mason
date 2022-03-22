@@ -85,17 +85,24 @@ public class Lock extends Provider implements Receiver
         if (!(atLeast >= 0 && atMost >= atLeast))
         	throwInvalidAtLeastAtMost(atLeast, atMost);
 
-        if (pool.getResource().getAmount() < numResources) return false;
+        if (pool.getResource().getAmount() < numResources) 
+        	{
+        	return false;
+        	}
+
+		// grab the resource
+        pool.getResource().decrease(numResources);
 
         _amount = amount;
         _atLeast = atLeast;
         _atMost = atMost;
         boolean result = offerReceivers();
                 
-        if (result)
-            {
-            pool.getResource().decrease(numResources);
-            }
+        if (!result) // gotta put it back
+        	{
+        	pool.getResource().increase(numResources);
+        	pool.getResource().bound(pool.getMaximum());
+        	}
 
         _amount = null;		/// let it gc
         return result;

@@ -74,6 +74,11 @@ public class CountableResource extends Resource implements sim.util.Valuable
         throw new RuntimeException("Amounts may not be negative or NaN.  Amount provided was: " + amount);
         }
 
+    void throwUnorderedException(double min, double max)
+        {
+        throw new RuntimeException("Min must be <= max.  Min was " + min + " and max was " + max);
+        }
+
     static boolean isPositiveNonNaN(double val)
         {
         return (val >= 0);
@@ -184,7 +189,43 @@ public class CountableResource extends Resource implements sim.util.Valuable
         else return false;
         }
 
-    /**
+     /**
+       Bounds the resource to be no more than max and no less than min.  
+       It must be the case that max >= min >= 0.
+    */
+    public void bound(double min, double max)
+        {
+        if (!isPositiveNonNaN(min))                                     // negative or NaN
+            throwInvalidNumberException(min);
+        if (!isPositiveNonNaN(max))                                     // negative or NaN
+            throwInvalidNumberException(max);
+		if (min > max)
+			throwUnorderedException(min, max);
+        if (!isInteger(min))
+            throwNonIntegerAmountException(min);
+        if (!isInteger(max))
+            throwNonIntegerAmountException(max);
+
+		if (amount < min)
+			{
+			amount = min;
+			}
+		if (amount > max)
+			{
+			amount = max;
+			}
+        }
+
+     /**
+       Bounds the resource to be no more than max and no less than 0.
+    */
+    public void bound(double max)
+        {
+        bound(0, max);
+        }
+        
+
+   /**
        Increases the amount by the given value: if the value drops
        to beneath 0, it is set to 0 and FALSE is returned.  Else TRUE is returned.
     */
