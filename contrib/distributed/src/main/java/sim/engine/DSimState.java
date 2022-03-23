@@ -696,6 +696,9 @@ public class DSimState extends SimState
 		
 		try
 		{
+			MPI.COMM_WORLD.barrier();		
+					
+					
 			// ALLOW INSPECTION
 			// We have a big problem regarding remote inspection.  If a remote inspector is just
 			// reading, and potentially writing, any data willy-nilly during the model runtime,
@@ -704,15 +707,14 @@ public class DSimState extends SimState
 			// an inspector do its thing, but this might be a piecemeal thing, with one lock
 			// per property, which would cause the visualizer to be very slow and also skip a lot
 			// of drawing.  :-(
-
-				try
-					{
-					processor.unlockPartition();
-					}
-				catch (RemoteException ex)
-					{
-					throw new RuntimeException(ex);
-					}
+			try
+				{
+				processor.unlockPartition();
+				}
+			catch (RemoteException ex)
+				{
+				throw new RuntimeException(ex);
+				}
 
 
 			// ALLOW VISUALIZATION
@@ -723,7 +725,6 @@ public class DSimState extends SimState
 			// has synced up with the root, and we can go on.  Unfortunately this requires two
 			// barriers.  :-(
 
-			MPI.COMM_WORLD.barrier();		
 			if (partition.isRootProcessor())
 				{
 				try
@@ -733,6 +734,7 @@ public class DSimState extends SimState
 					//// in a locked state, it won't release the lock and we'll hang here?  We
 					//// may need to use tryLock() instead with a timeout, which could be very
 					//// expensive, and maybe create a new lock replacing the original?  Not sure.
+
 					processor.lock();
 					}
 				catch (RemoteException ex)
@@ -749,7 +751,7 @@ public class DSimState extends SimState
 			
 				try
 					{
-					processor.lock();
+					processor.lockPartition();
 					}
 				catch (RemoteException ex)
 					{

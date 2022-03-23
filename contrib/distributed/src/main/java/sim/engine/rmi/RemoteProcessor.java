@@ -77,7 +77,10 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 	/** ONLY the root processor listens to this lock */
 	public void unlock() throws RemoteException
 	{
+	if (lock.isHeldByCurrentThread()) 
+		{
 		lock.unlock();
+		}
 	}
 
 	public void lockPartition() throws RemoteException
@@ -87,7 +90,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
 
 	public void unlockPartition() throws RemoteException
 	{
-		if (partitionLock.isHeldByCurrentThread()) 
+	if (partitionLock.isHeldByCurrentThread()) 
 		{
 			partitionLock.unlock();
 		}
