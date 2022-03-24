@@ -9,7 +9,7 @@ import ec.util.MersenneTwisterFast;
 
 /** This stub class simply calls the equivalent function in Distributions.java */
 
-public class Logistic extends AbstractContinousDistribution
+public class Logistic extends AbstractContinuousDistribution
     {
     public Logistic(MersenneTwisterFast random)
         {
