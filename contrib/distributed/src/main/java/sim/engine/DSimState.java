@@ -643,7 +643,9 @@ public class DSimState extends SimState
 
 	
 
-
+    public DistinguishedRegistry getRegistry() {
+    	return registry;
+    }
 
 
 

@@ -237,9 +237,16 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 		Double2D pDouble = buildDouble2D(p);
 		HashMap<Long, T> cell = getCell(pDouble);
 
+		ArrayList<Long> removeList = new ArrayList<Long>();
 		for (Long key : cell.keySet())
-			if (locations.get(key).equals(pDouble))
-				cell.remove(key);
+			if (locations.get(key).equals(pDouble)) {
+				removeList.add(key);
+				//cell.remove(key); #concurrent exception issues
+			}
+		
+		for (int i=0; i<removeList.size(); i++) {
+			cell.remove(removeList.get(i));
+		}
 	}
 
 	@SuppressWarnings("unchecked")
