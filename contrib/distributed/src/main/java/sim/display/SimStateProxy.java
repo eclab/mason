@@ -103,21 +103,21 @@ public class SimStateProxy extends SimState
 		}		
 	
 	public static final int DEFAULT_SLEEP = 25;	// ms
-	public static final int DEFAULT_STEP_SIZE = 1000;
+	public static final int DEFAULT_PAUSE_INTERVAL = 1000;	// ms
 	
 	public long refresh = 0;
 	protected int sleep = DEFAULT_SLEEP;
-	protected int stepSize = DEFAULT_STEP_SIZE;
+	protected int pauseInterval = DEFAULT_PAUSE_INTERVAL;
 	/** Returns the update rate in ms */
-	public int stepSize()
+	public int pauseInterval()
 		{
-		return stepSize;
+		return pauseInterval;
 		}
 	
 	/** Sets the update rate in ms */
-	public void setStepSize(int val)
+	public void setPauseInterval(int val)
 		{
-		stepSize = val;
+		pauseInterval = val;
 		}
 	
 	public long lastSteps = -1;
@@ -145,9 +145,7 @@ public class SimStateProxy extends SimState
 	
 	int[] chosenNodePartitionList = {0}; //list of partitions based on chosen node of the tree
 	
-	/** Ordered stat data (or placeholder if no data) for each processor from the earliest timestep saved in the queues {@link SimStateProxy#statsSmallestTimestep} to the current one
-	<p> TODO WELL atm, it's really this: ArrayList&ltArrayList&ltInteger | Stat&gt&gt */
-	ArrayList<ArrayList<Object>> statQueues = new ArrayList<ArrayList<Object>>();
+	ArrayList<Stat> statLists[][];
 	
 	/** Registers a field proxy with the SimState.  Each timestep or whatnot the proxy will get updated,
 		which causes it to go out and load information remotely.  The order in which the fields are registered
@@ -228,10 +226,13 @@ public class SimStateProxy extends SimState
 			worldBounds = visualizationRoot.getWorldBounds();
 			numProcessors = visualizationRoot.getNumProcessors();
 			
-			for (int i = 0; i < numProcessors; i++)
-			{
-				statQueues.add(new ArrayList<>());
-			}
+ 			statLists = new ArrayList[VisualizationProcessor.NUM_STATS][numProcessors];
+ 
+ 			for(int i = 0; i < statLists.length; i++)
+ 				for(int j = 0; j < statLists[i].length; j++)
+ 					{
+ 					statLists[i][j] = new ArrayList<>();
+ 					}
 
 			// set up the cache
 			visualizationCache = new VisualizationProcessor[numProcessors];
@@ -241,7 +242,6 @@ public class SimStateProxy extends SimState
 				{
 				public void step(SimState state)
 					{
-					
 					System.out.println("stepping...");
 					// First we sleep a little bit so we don't just constantly poll
 					try
@@ -254,10 +254,10 @@ public class SimStateProxy extends SimState
 						}
 					
 					// Next we check to see if enough time has elapsed to bother querying the remote processor
-					long cur = System.currentTimeMillis();
-					if (cur - refresh >= stepSize)
+					long currentTime = System.currentTimeMillis();
+					if (currentTime - refresh >= pauseInterval)
 						{
-						refresh = cur;
+						refresh = currentTime;
 						try
 							{
 							// Now we query the remote processor to see if a new step has elapsed
@@ -291,159 +291,75 @@ public class SimStateProxy extends SimState
 								   //for each processor
 								      //change processor
 								        //update field with appropiate offset
-								
 
-								// === Stats & Debug === //
-								// Determine if any stats are registered (on *any* processor)
-								boolean statsExist = false; // flag for if any stats are registered
-								ArrayList<ArrayList<Stat>> allStats = new ArrayList<>();
-								System.out.println("num processors :"+numProcessors);
-								for (int p = 0; p < numProcessors; p++)
-								{
-									VisualizationProcessor vp1 = visualizationProcessor(p);
-									ArrayList<Stat> statList = vp1.getStatList();
-									
-									System.out.println("size of statList : "+statList.size());
-									
-									allStats.add(statList);
-									if (!statsExist && !statList.isEmpty())
-										statsExist = true;
-								}
-								
-								System.out.println("num processors :"+numProcessors);
-
-
-								
-								if (statsExist)
-								{
-									System.out.println("statsExist");
-									// Find minimum step over all processor stats
-									long minStep = Long.MAX_VALUE;
-									long maxStep = Long.MIN_VALUE;
-									for (int p = 0; p < allStats.size(); p++) {
-										ArrayList<Stat> stats = allStats.get(p);
-										if (stats.get(0).steps < minStep)
-										{
-											minStep = stats.get(0).steps;
-										}
-										if (stats.get(stats.size() - 1).steps > maxStep) //TODO What if stats is empty? can it be?
-										{
-											maxStep = stats.get(stats.size() - 1).steps;
-										}
-									}
-									// TODO Overflow check?...or no?
-									if (minStep < 0)
+								// Grab all the statistics and debug information
+								for(int i = 0; i < numProcessors; i++)
 									{
-										throw new IllegalStateException();
-									}
-									
-									for (int p = 0; p < allStats.size(); p++)
-									{
-										ArrayList<Stat> stats = allStats.get(p);
-										ArrayList<Object> queue = statQueues.get(p);
-										
-	//									TODO? long currStep = minStep;
-										long currStep = 0; // if queue is empty, start at timestep 0
-										if (!queue.isEmpty()) // ...otherwise, start at last timestep + 1
+									VisualizationProcessor sv = visualizationProcessor(i);
+									for(int s = 0; s < VisualizationProcessor.NUM_STATS; s++)
 										{
-											currStep = getStep(p, queue.size() - 1, minStep) + 1;
-										}
-	
-										// Purpose: Verification - to make sure all timesteps are accounted for
-										if (!queue.isEmpty())
-										{
-											getStep(p, queue.size() - 1, minStep); // <- Note: this will throw error this creates inconsistent timsteps in queues
-										}
-	
-										int currIndex = 0; // index of incoming stats
-										while (currIndex < stats.size())
-										{
-											// Fill in any skipped steps
-											while (currStep < stats.get(currIndex).steps)
-											{
-//												System.out.println("off steps: " + currStep + " and " + stats.get(currIndex).steps);
-												long lastStep = getStep(p, queue.size() - 1, minStep);
-												queue.add(lastStep);
-												currStep++;
-											}
-											// <- currStep == stat.steps
-											// Add *this* stat and the rest of the stats at *this* timestep
-											ArrayList<Stat> currTimeStepStats = new ArrayList<Stat>();
-											do
-											{
-												currTimeStepStats.add(stats.get(currIndex));
-												currIndex++;
-											}
-											while (currIndex < stats.size() && stats.get(currIndex).steps == currStep);
-											queue.add(currTimeStepStats);
-											
-											currStep++;
-											// <- currStep == last stat.steps + 1
-										}
+										statLists[s][i].addAll(sv.getStats(s));
+										}					
 									}
-									
-									// Test:
-//										ArrayList<Serializable> stats = getStats(maxStep);
-									System.out.println();
-									System.out.println("***************************************");
-									System.out.println("*** Stats dumped for timestep " + maxStep);
-									String header = "";
-									for (int p = 0; p < numProcessors; p++)
-									{
-										header += "P" + p + " | ";
-									}
-									System.out.println(header.substring(0, header.length() - " | ".length()));
-									
-									for (int i = 0; i < maxStep - 1; i++)
-									{
-										System.out.println(getStatsAsCSV(i));
-									}
-									
-									System.out.println("***************************************");
-									MersenneTwisterFast random = new MersenneTwisterFast();
-									long randStart = Math.abs(random.nextLong()) % (maxStep - minStep);
-									long randEnd = Math.abs(random.nextLong()) % (maxStep - minStep);
-									if (randStart > randEnd) // swap if necessary
-									{
-										long tmp = randStart;
-										randStart = randEnd;
-										randEnd = tmp;
-									}
-									System.out.println("*** Stats dumped for timesteps [" + randStart + "," + randEnd + ")");
-									System.out.println(header.substring(0, header.length() - " | ".length()));
-									
-									System.out.println(getStatsAsCSV(randStart, randEnd));
-									
-//										// === Write to File === //
-//										// TODO this will not work for jars, right? Need a zip file tracer?
-//										File statsFile = new File(statsFileName);
-//										// Create the file if it doesn't exist
-//										if (!statsFile.exists()) {
-//											statsFile.mkdirs();
-//										}
-//										
-//										BufferedWriter writer;
-//										try {
-//											writer = new BufferedWriter(new FileWriter(statsFileName, true));
-//										    writer.append(getStatsAsCSV(minStep, maxStep));									    
-//											writer.close();
-//										} catch (IOException e1) {
-//											// TODO Auto-generated catch block
-//											e1.printStackTrace();
-//										}
-									
-									//TODO Do the same for Debug
-									// <<<<<<Stats & Debug
-									}
-//									}
 								vp.unlock();
-
+								lastSteps = steps;
 								}
-							lastSteps = steps;
 							}
 						catch (RemoteException | NotBoundException ex)
 							{
 							ex.printStackTrace();
+							}
+						}
+						
+					// Process the statistics lists
+					for(int s = 0; s < VisualizationProcessor.NUM_STATS; s++)
+						{
+						long startStep = Long.MAX_VALUE;		// way bigger than is possible
+						long endStep = -1;
+						
+						// determine timesteps
+						for(int i = 0; i < numProcessors; i++)
+							{
+							ArrayList<Stat> processorStats = statLists[s][i];
+							for(Stat stat : processorStats)
+								{
+								if (stat.steps < startStep) startStep = stat.steps;
+								if (stat.steps > endStep) endStep = stat.steps;
+								}
+							}
+							
+						if (endStep != -1)	// we have stats!
+							{					
+							// Build array
+							ArrayList<Stat>[][] stats = new ArrayList[numProcessors][(int)(endStep - startStep + 1)];
+							double[] times = new double[(int)(endStep - startStep + 1)];
+							for(int i = 0; i < numProcessors; i++)
+								{
+								for(int st = 0; st < stats[i].length; st++)
+									{
+									stats[i][st] = new ArrayList<Stat>();
+									}
+								}
+								
+							// Load the array
+							for(int i = 0; i < numProcessors; i++)
+								{
+								ArrayList<Stat> processorStats = statLists[s][i];
+								for(Stat stat : processorStats)
+									{
+									stats[i][(int)(stat.steps - startStep)].add(stat);
+									times[(int)(stat.steps - startStep)] = stat.time;		// yes, this is redundant
+									}
+								}
+
+							// Reset
+							for(int i = 0; i < numProcessors; i++)
+								{
+								statLists[s][i] = new ArrayList<Stat>();
+								}
+							
+							// Submit the array
+							outputStatistics(s, times, stats, startStep, endStep);
 							}
 						}
 					}
@@ -461,7 +377,8 @@ public class SimStateProxy extends SimState
 			System.err.println("-start()");
 		}
 
-	private long getStep(int pid, int index, long minStep)
+/*
+	long getStep(int pid, int index, long minStep)
 	{
 		if (pid < 0 || pid > numProcessors)
 		{
@@ -547,10 +464,12 @@ public class SimStateProxy extends SimState
 		
 		return "step-" + step + ": " + str;
 	}
+	*/
 	
 	/**
 	 * Retrieve stats from a time interval [start, end)
 	 */
+	 /*
 	public String getStatsAsCSV(long start, long end)
 	{
 		String str = "";
@@ -560,16 +479,19 @@ public class SimStateProxy extends SimState
 		}
 		return str;
 	}
+	*/
 	
 	/**
 	 * Returns and clears the stat queues
 	 */
+	 /*
 	public ArrayList<ArrayList<Object>> stats()
 	{
 		ArrayList<ArrayList<Object>> ret = statQueues;
 		statQueues = new ArrayList<>();
 		return ret;
 	}
+	*/
 	
 	/*
 	public ArrayList<Object> getStatsAligned()
@@ -643,6 +565,39 @@ public class SimStateProxy extends SimState
     	
     	
     }
+    
+    /** Called to process the output statistics for stat type stat (either VisualizationProcessor.STATISTICS or 	
+    	VisualizationProcessor.DEBUG).  There are some N MODEL STEPS, consisting of startStep through endStep inclusive.
+    	For each MODEL STEPS, the array times[timestep - startStep] indicates the model time at that step, and the
+    	array stats[timestep - startStep][processor] provides the statistics emitted by the given processor
+    	at that time.  Each statistics is an ArrayList<Stat> holding Stat messages emitted by the processor at that
+    	model step.  Usually this ArrayList will be empty or hold a single Stat message; though it is possible it may
+    	hold many.
+    */
+    public void outputStatistics(int stat, double[] times, ArrayList<Stat>[][] stats, long startStep, long endStep)
+    	{
+    	// For the moment we're just dumping the data to debug it
+    	System.err.println("STATISTICS OUTPUT " + stat);
+    	for(long i = startStep; i < endStep; i++)
+    		{
+    		System.err.print("Step: " + i + "\tTime: " + times[(int)(i - startStep)]);
+    		for (int j = 0; j < stats[(int)(i - startStep)].length; j++)
+    			{
+    			ArrayList<Stat> statList = stats[(int)(i - startStep)][j];
+    			if (!statList.isEmpty())
+    				{
+	    			System.err.print("\t" + j + ": ");
+	    			boolean first = true;
+	    			for(Stat s : statList)
+    					{
+    					if (!first) System.err.println(", ");
+    					first = false;
+	    				System.err.print(s.data);
+	    				}
+	    			}
+    			}
+    		}
+    	}
     
     //this probably won't work bc properties can't be sent remotely
     /*

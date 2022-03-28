@@ -65,18 +65,10 @@ public class DSimState extends SimState
 	HashMap<String, Serializable> rootInfo = null;
 	HashMap<String, Serializable>[] init = null;
 
-	// The statistics queue lock
-	final Object statLock = new Object[0];
 	// The statistics queue
-	ArrayList<Stat> statList = new ArrayList<>();
-	public boolean recordStats = false;
-
-	// The debug queue lock
-	final Object debugStatLock = new Object[0];
-	// The debug queue
-	ArrayList<Stat> debugList = new ArrayList<>();
-	public boolean recordDebug = false;
-
+	ArrayList<Stat> statList[] = new ArrayList[VisualizationProcessor.NUM_STATS];
+ 	boolean recordStats[] = new boolean[VisualizationProcessor.NUM_STATS];
+	
 	// The RemoteProcessor interface for communicating via RMI
 	RemoteProcessor processor;
 
@@ -104,6 +96,9 @@ public class DSimState extends SimState
 	// the methods invoked on it have to be synchronized to avoid concurrent modification
 	ArrayList<DistinguishedRemoteMessage> distinguishedMessageQueue = new ArrayList<DistinguishedRemoteMessage>();
 
+	public static final int STATISTICS = VisualizationProcessor.STATISTICS;
+	public static final int DEBUG = VisualizationProcessor.DEBUG;
+	
 
 	
 	
@@ -485,59 +480,37 @@ public class DSimState extends SimState
 	/**
 	 * Log statistics data for this timestep. This data will then be sent to a remote statistics computer.
 	 */
-	public void addStat(Serializable data)
+	public void addStat(Serializable data, int stat)
 	{
-		synchronized (statLock)
-		{
-			if (recordStats)
-				statList.add(new Stat(data, schedule.getSteps(), schedule.getTime()));
-		}
+	if (recordStats[stat])
+		statList[stat].add(new Stat(data, schedule.getSteps(), schedule.getTime()));
 	}
 	
-	public void emptyStats() 
+	/** Return and replace the provided stats list, which you now own.  This is only
+		public so it can be accessed by VisualizationProcessor.  You should not call this method. */
+	public ArrayList<Stat> getStats(int stat)
+	{
+		ArrayList<Stat> ret = statList[stat];
+		statList[stat] = new ArrayList<>();
+		return ret;
+	}
+
+	/** Start the provided stats.  If the stats are already started, this has no effect.  This is only
+		public so it can be accessed by VisualizationProcessor.  You should not call this method. */
+	public void startStats(int stat) 
 	{	
-		if (recordStats) 
-		{	
-			if (statList.size() > maxStatSize) 
-			{
-				statList = new ArrayList<>();
-			}
-		}
+		recordStats[stat] = true;
 	}
 
-	/**
-	 * Log debug statistics data for this timestep. This data will then be sent to a remote statistics computer.
-	 */
-	public void addDebug(Serializable data)
+	/* Stop the and clear the provided stats.  If the stats are already stopped, this has no effect.  This is only
+		public so it can be accessed by VisualizationProcessor.  You should not call this method. */
+	public void stopStats(int stat) 
 	{
-		synchronized (debugStatLock)
-		{
-			if (recordDebug)
-				debugList.add(new Stat(data, schedule.getSteps(), schedule.getTime()));
-		}
+		recordStats[stat] = false;
+		// clear stats
+		statList[stat] = new ArrayList<>();
 	}
 
-	/** Return the current list of logged statistics data and clear it. */
-	public ArrayList<Stat> getStatList()
-	{
-		synchronized (statLock)
-		{
-			ArrayList<Stat> ret = statList;
-			statList = new ArrayList<>();
-			return ret;
-		}
-	}
-
-	/** Return the current list of logged debug statistics data and clear it. */
-	public ArrayList<Stat> getDebugList()
-	{
-		synchronized (debugStatLock)
-		{
-			ArrayList<Stat> ret = debugList;
-			debugList = new ArrayList<>();
-			return ret;
-		}
-	}
 
 
 
@@ -699,7 +672,6 @@ public class DSimState extends SimState
 		try
 		{
 			MPI.COMM_WORLD.barrier();		
-					
 					
 			// ALLOW INSPECTION
 			// We have a big problem regarding remote inspection.  If a remote inspector is just
@@ -904,21 +876,12 @@ public class DSimState extends SimState
 			try
 			{
 				// Balance the partitions for the given level migrating the agents
-				
-				emptyStats();
-
-
-				
 				balancePartitions(balancerLevel);
 		        
 				try
 				{
-
                     //sync transporter (objects moved to transporter.objectQueue)
 					transporter.sync();
-					
-					
-										
 				}
 				catch (ClassNotFoundException | IOException e1)
 				{
