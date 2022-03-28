@@ -240,19 +240,19 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
         throw new RemoteException("some procIDs not in quad tree");    
 	}
 
-	public ArrayList<Stat> getStats(int stat) throws RemoteException
+	public ArrayList<Stat> getStats(int statType) throws RemoteException
 	{
-		return state.getStats(stat);
+		return state.getStats(statType);
 	}
 
-	public void startStats(int stat) throws RemoteException
+	public void startStats(int statType) throws RemoteException
 	{
-		state.startStats(stat);
+		state.startStats(statType);
 	}
 
-	public void stopStats(int stat) throws RemoteException
+	public void stopStats(int statType) throws RemoteException
 	{	
-		state.stopStats(stat);
+		state.stopStats(statType);
 	}
 
 

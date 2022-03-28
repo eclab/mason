@@ -29,9 +29,9 @@ import sim.util.SimpleProperties;
 
 public interface VisualizationProcessor extends Remote
 {
-	public static final int NUM_STATS = 2;
-	public static final int STATISTICS = 0;
-	public static final int DEBUG = 1;
+	public static final int NUM_STAT_TYPES = 2;
+	public static final int STAT_TYPE_STATISTICS = 0;
+	public static final int STAT_TYPE_DEBUG = 1;
 	
 	/**
 	 * Blocks until the remote processor is in a state where we can safely grab
@@ -87,11 +87,11 @@ public interface VisualizationProcessor extends Remote
 	//Raj: input pids and get all neighbors in the lowest point in quadtree that contains inputed pids
 	public int[] getMinimumNeighborhood(int[] proc_ids) throws RemoteException;
 
-	public ArrayList<Stat> getStats(int stat) throws RemoteException;
+	public ArrayList<Stat> getStats(int statType) throws RemoteException;
 	
-	public void startStats(int stat) throws RemoteException;
+	public void startStats(int statType) throws RemoteException;
 	
-	public void stopStats(int stat) throws RemoteException;
+	public void stopStats(int statType) throws RemoteException;
 
 	//public Properties getProperties() throws RemoteException; //added by Raj
 	

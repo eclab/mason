@@ -226,7 +226,7 @@ public class SimStateProxy extends SimState
 			worldBounds = visualizationRoot.getWorldBounds();
 			numProcessors = visualizationRoot.getNumProcessors();
 			
- 			statLists = new ArrayList[VisualizationProcessor.NUM_STATS][numProcessors];
+ 			statLists = new ArrayList[VisualizationProcessor.NUM_STAT_TYPES][numProcessors];
  
  			for(int i = 0; i < statLists.length; i++)
  				for(int j = 0; j < statLists[i].length; j++)
@@ -293,12 +293,12 @@ public class SimStateProxy extends SimState
 								        //update field with appropiate offset
 
 								// Grab all the statistics and debug information
-								for(int i = 0; i < numProcessors; i++)
+								for(int proc = 0; proc < numProcessors; proc++)
 									{
-									VisualizationProcessor sv = visualizationProcessor(i);
-									for(int s = 0; s < VisualizationProcessor.NUM_STATS; s++)
+									VisualizationProcessor sv = visualizationProcessor(proc);
+									for(int s = 0; s < VisualizationProcessor.NUM_STAT_TYPES; s++)
 										{
-										statLists[s][i].addAll(sv.getStats(s));
+										statLists[s][proc].addAll(sv.getStats(s));
 										}					
 									}
 								vp.unlock();
@@ -311,55 +311,57 @@ public class SimStateProxy extends SimState
 							}
 						}
 						
+						
 					// Process the statistics lists
-					for(int s = 0; s < VisualizationProcessor.NUM_STATS; s++)
+					for(int type = 0; type < VisualizationProcessor.NUM_STAT_TYPES; type++)
 						{
-						long startStep = Long.MAX_VALUE;		// way bigger than is possible
-						long endStep = -1;
+						long startSteps = Long.MAX_VALUE;		// way more than is feasible
+						long endSteps = -1;						// smaller than the minimum step
 						
 						// determine timesteps
-						for(int i = 0; i < numProcessors; i++)
+						for(int proc = 0; proc < numProcessors; proc++)
 							{
-							ArrayList<Stat> processorStats = statLists[s][i];
+							ArrayList<Stat> processorStats = statLists[type][proc];
 							for(Stat stat : processorStats)
 								{
-								if (stat.steps < startStep) startStep = stat.steps;
-								if (stat.steps > endStep) endStep = stat.steps;
+								if (stat.steps < startSteps) startSteps = stat.steps;
+								if (stat.steps > endSteps) endSteps = stat.steps;
 								}
 							}
-							
-						if (endStep != -1)	// we have stats!
-							{					
-							// Build array
-							ArrayList<Stat>[][] stats = new ArrayList[numProcessors][(int)(endStep - startStep + 1)];
-							double[] times = new double[(int)(endStep - startStep + 1)];
-							for(int i = 0; i < numProcessors; i++)
+						
+						// we now know our start and end steps.  Do we have any statistics at all?
+						if (endSteps != -1)	// we have stats!
+							{	
+							// Build array of [proc][timestep]
+							ArrayList<Stat>[][] stats = new ArrayList[numProcessors][(int)(endSteps - startSteps + 1)];
+							double[] times = new double[(int)(endSteps - startSteps + 1)];
+							for(int proc = 0; proc < numProcessors; proc++)
 								{
-								for(int st = 0; st < stats[i].length; st++)
+								for(int t = 0; t < stats[proc].length; t++)
 									{
-									stats[i][st] = new ArrayList<Stat>();
+									stats[proc][t] = new ArrayList<Stat>();
 									}
 								}
 								
 							// Load the array
-							for(int i = 0; i < numProcessors; i++)
+							for(int proc = 0; proc < numProcessors; proc++)
 								{
-								ArrayList<Stat> processorStats = statLists[s][i];
+								ArrayList<Stat> processorStats = statLists[type][proc];
 								for(Stat stat : processorStats)
 									{
-									stats[i][(int)(stat.steps - startStep)].add(stat);
-									times[(int)(stat.steps - startStep)] = stat.time;		// yes, this is redundant
+									stats[proc][(int)(stat.steps - startSteps)].add(stat);
+									times[(int)(stat.steps - startSteps)] = stat.time;		// yes, this is redundant
 									}
 								}
 
-							// Reset
-							for(int i = 0; i < numProcessors; i++)
+							// Reset the stat lists
+							for(int proc = 0; proc < numProcessors; proc++)
 								{
-								statLists[s][i] = new ArrayList<Stat>();
+								statLists[type][proc] = new ArrayList<Stat>();
 								}
 							
 							// Submit the array
-							outputStatistics(s, times, stats, startStep, endStep);
+							outputStatistics(type, times, stats, startSteps, endSteps);
 							}
 						}
 					}
@@ -567,32 +569,32 @@ public class SimStateProxy extends SimState
     }
     
     /** Called to process the output statistics for stat type stat (either VisualizationProcessor.STATISTICS or 	
-    	VisualizationProcessor.DEBUG).  There are some N MODEL STEPS, consisting of startStep through endStep inclusive.
-    	For each MODEL STEPS, the array times[timestep - startStep] indicates the model time at that step, and the
-    	array stats[timestep - startStep][processor] provides the statistics emitted by the given processor
+    	VisualizationProcessor.DEBUG).  There are some N MODEL STEPS, consisting of startSteps through endSteps inclusive.
+    	For each MODEL STEPS, the array times[timestep - startSteps] indicates the model time at that step, and the
+    	array stats[timestep - startSteps][processor] provides the statistics emitted by the given processor
     	at that time.  Each statistics is an ArrayList<Stat> holding Stat messages emitted by the processor at that
     	model step.  Usually this ArrayList will be empty or hold a single Stat message; though it is possible it may
     	hold many.
     */
-    public void outputStatistics(int stat, double[] times, ArrayList<Stat>[][] stats, long startStep, long endStep)
+    public void outputStatistics(int statType, double[] times, ArrayList<Stat>[][] stats, long startSteps, long endSteps)
     	{
     	// For the moment we're just dumping the data to debug it
-    	System.err.println("STATISTICS OUTPUT " + stat);
-    	for(long i = startStep; i < endStep; i++)
+    	System.err.println("STATISTICS OUTPUT " + statType);
+    	for(long i = startSteps; i < endSteps; i++)
     		{
-    		System.err.print("Step: " + i + "\tTime: " + times[(int)(i - startStep)]);
-    		for (int j = 0; j < stats[(int)(i - startStep)].length; j++)
+    		System.err.print("Step: " + i + "\tTime: " + times[(int)(i - startSteps)]);
+    		for (int j = 0; j < stats[(int)(i - startSteps)].length; j++)
     			{
-    			ArrayList<Stat> statList = stats[(int)(i - startStep)][j];
+    			ArrayList<Stat> statList = stats[(int)(i - startSteps)][j];
     			if (!statList.isEmpty())
     				{
 	    			System.err.print("\t" + j + ": ");
 	    			boolean first = true;
-	    			for(Stat s : statList)
+	    			for(Stat stat : statList)
     					{
     					if (!first) System.err.println(", ");
     					first = false;
-	    				System.err.print(s.data);
+	    				System.err.print(stat.data);
 	    				}
 	    			}
     			}

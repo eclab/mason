@@ -66,8 +66,8 @@ public class DSimState extends SimState
 	HashMap<String, Serializable>[] init = null;
 
 	// The statistics queue
-	ArrayList<Stat> statList[] = new ArrayList[VisualizationProcessor.NUM_STATS];
- 	boolean recordStats[] = new boolean[VisualizationProcessor.NUM_STATS];
+	ArrayList<Stat> statList[] = new ArrayList[VisualizationProcessor.NUM_STAT_TYPES];
+ 	boolean recordStats[] = new boolean[VisualizationProcessor.NUM_STAT_TYPES];
 	
 	// The RemoteProcessor interface for communicating via RMI
 	RemoteProcessor processor;
@@ -96,11 +96,6 @@ public class DSimState extends SimState
 	// the methods invoked on it have to be synchronized to avoid concurrent modification
 	ArrayList<DistinguishedRemoteMessage> distinguishedMessageQueue = new ArrayList<DistinguishedRemoteMessage>();
 
-	public static final int STATISTICS = VisualizationProcessor.STATISTICS;
-	public static final int DEBUG = VisualizationProcessor.DEBUG;
-	
-
-	
 	
 	
 	/**
@@ -480,35 +475,35 @@ public class DSimState extends SimState
 	/**
 	 * Log statistics data for this timestep. This data will then be sent to a remote statistics computer.
 	 */
-	public void addStat(Serializable data, int stat)
+	public void addStat(Serializable data, int statType)
 	{
-	if (recordStats[stat])
-		statList[stat].add(new Stat(data, schedule.getSteps(), schedule.getTime()));
+	if (recordStats[statType])
+		statList[statType].add(new Stat(data, schedule.getSteps(), schedule.getTime()));
 	}
 	
 	/** Return and replace the provided stats list, which you now own.  This is only
 		public so it can be accessed by VisualizationProcessor.  You should not call this method. */
-	public ArrayList<Stat> getStats(int stat)
+	public ArrayList<Stat> getStats(int statType)
 	{
-		ArrayList<Stat> ret = statList[stat];
-		statList[stat] = new ArrayList<>();
+		ArrayList<Stat> ret = statList[statType];
+		statList[statType] = new ArrayList<>();
 		return ret;
 	}
 
 	/** Start the provided stats.  If the stats are already started, this has no effect.  This is only
 		public so it can be accessed by VisualizationProcessor.  You should not call this method. */
-	public void startStats(int stat) 
+	public void startStats(int statType) 
 	{	
-		recordStats[stat] = true;
+		recordStats[statType] = true;
 	}
 
 	/* Stop the and clear the provided stats.  If the stats are already stopped, this has no effect.  This is only
 		public so it can be accessed by VisualizationProcessor.  You should not call this method. */
-	public void stopStats(int stat) 
+	public void stopStats(int statType) 
 	{
-		recordStats[stat] = false;
+		recordStats[statType] = false;
 		// clear stats
-		statList[stat] = new ArrayList<>();
+		statList[statType] = new ArrayList<>();
 	}
 
 
