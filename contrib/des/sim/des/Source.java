@@ -351,7 +351,7 @@ public class Source extends Provider implements Steppable
                 
     protected void update()
         {
-        if (autoSchedules)
+        if (getAutoSchedules())
             {
             double time = state.schedule.getTime();
             if (time == Schedule.EPOCH)
