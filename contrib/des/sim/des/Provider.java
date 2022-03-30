@@ -322,6 +322,11 @@ public abstract class Provider implements Named, Resettable
         this.state = state;
         }
         
+    public SimState getState()
+    	{
+    	return state;
+    	}
+        
     //// SHUFFLING PROCEDURE
     //// You'd think that shuffling would be easy to implement but it's not.
     //// We want to avoid an O(n) shuffle just to (most likely) select the

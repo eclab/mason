@@ -14,12 +14,25 @@ import sim.util.Properties;
 import sim.util.SimpleProperties;
 
 /**
- * This is implemented by a single object for each processor and added to the
- * registry.
+ VISUALIZATION PROCESSOR is the remote interface of each partitition exposed to
+ the visualization program (probably on your laptop).  It does at least the following:
+ 
+ <ul>
+ <li> Synchronization with remote partitions so we can safely access them without
+ 		interfere with the model running.
+ <li> Getting current simulation time and steps
+ <li> Accessing the processor neighborhoods and topology
+ <li> Accessing data from the remote fields and their accompanying grid storage.
+ <li> Getting the latest statistics and debug streams
+ <li> Accessing properties of remote objects.
  */
 
 public interface VisualizationProcessor extends Remote
 {
+	public static final int NUM_STAT_TYPES = 2;
+	public static final int STAT_TYPE_STATISTICS = 0;
+	public static final int STAT_TYPE_DEBUG = 1;
+	
 	/**
 	 * Blocks until the remote processor is in a state where we can safely grab
 	 * storage objects without creating a race condition; then holds a lock to
@@ -74,18 +87,12 @@ public interface VisualizationProcessor extends Remote
 	//Raj: input pids and get all neighbors in the lowest point in quadtree that contains inputed pids
 	public int[] getMinimumNeighborhood(int[] proc_ids) throws RemoteException;
 
-	public ArrayList<Stat> getStatList() throws RemoteException;
+	public ArrayList<Stat> getStats(int statType) throws RemoteException;
 	
-	public ArrayList<Stat> getDebugList() throws RemoteException;
+	public void startStats(int statType) throws RemoteException;
 	
-	public void initStat() throws RemoteException;
-	
-	public void initDebug() throws RemoteException;
-	
-	public void stopStat() throws RemoteException;
-	
-	public void stopDebug() throws RemoteException;
-	
+	public void stopStats(int statType) throws RemoteException;
+
 	//public Properties getProperties() throws RemoteException; //added by Raj
 	
 	//public Object getPropertiesValues(int index) throws RemoteException;

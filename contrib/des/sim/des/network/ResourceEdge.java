@@ -35,10 +35,12 @@ public class ResourceEdge extends Edge
 			{
 			ArrayList<Resource> offers = provider.getLastAcceptedOffers();
 			ArrayList<Receiver> receivers = provider.getLastAcceptedOfferReceivers();
-			int loc = offers.indexOf(receiver);
+			int loc = receivers.indexOf(receiver);
 			if (loc >= 0)
 				{
-				return offers.get(loc);
+				if (offerTime == provider.getState().schedule.getTime())
+					return "-->" + offers.get(loc);
+				else return offers.get(loc);
 				}
 			else 
 				{

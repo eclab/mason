@@ -6,9 +6,9 @@ public class Stat implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
-	public Serializable data;
-	public long steps;
-	public double time;
+	public final Serializable data;
+	public final long steps;
+	public final double time;
 
 	public Stat(Serializable _data, long _steps, double _time)
 	{

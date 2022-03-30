@@ -47,6 +47,22 @@ public class DES2D implements java.io.Serializable
 		edges.addEdge(new ResourceEdge(provider, receiver, edges));
 		}
 		
+	public void clear()
+		{
+		nodes.clear();
+		edges.clear();
+		}
+	
+	public Continuous2D getNodes()
+		{
+		return nodes;
+		}
+	
+	public Network getEdges()
+		{
+		return edges;
+		}
+		
 	public SpatialNetwork2D getField()
 		{
 		return field;
