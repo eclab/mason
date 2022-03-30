@@ -8,6 +8,7 @@ import sim.engine.DSimState;
 import sim.engine.SimState;
 import sim.util.geo.DGeomObject;
 import sim.util.geo.DGeomSteppable;
+import sim.util.geo.MasonGeometry;
 
 public class DPolygon extends DGeomSteppable{
 	
@@ -28,7 +29,13 @@ public class DPolygon extends DGeomSteppable{
         neighbors = new ArrayList<DPolygon>();
     }
 
-
+    public DPolygon(MasonGeometry mg)
+    {
+        super();
+        this.mg = mg;
+        residents = new ArrayList<DPerson>();
+        neighbors = new ArrayList<DPolygon>();
+    }
 
     public void init()
     {

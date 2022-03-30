@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
-
+import sim.app.geo.schellingpolygon.Polygon;
 import sim.app.geo.schellingpolygon.data.SchellingPolygonData;
 import sim.engine.DSimState;
 import sim.field.geo.DGeomVectorField;
@@ -30,7 +30,8 @@ public class DPolySchelling extends DSimState{
 	
     // storing the data
     public DGeomVectorField world;
-    ArrayList<DPolygon> polys = new ArrayList<DPolygon>();
+    ArrayList<DPolygon> polys = new ArrayList<DPolygon>(); //for setup
+    ArrayList<Polygon> initPolys = new ArrayList<Polygon>(); //for setup
     ArrayList<DPerson> people = new ArrayList<DPerson>();
     // used by PolySchellingWithUI to keep track of the percent of unhappy Persons
     int totalReds = 0;
@@ -54,7 +55,9 @@ public class DPolySchelling extends DSimState{
             URL wardsFile = SchellingPolygonData.class.getResource("1991_wards_disolved_Project.shp");
             URL wardsDB  = SchellingPolygonData.class.getResource("1991_wards_disolved_Project.dbf");
 
-            ShapeFileImporter.read(wardsFile, wardsDB, world.getStorage().getGeomVectorField(), DPolygon.class);
+            //ShapeFileImporter.read(wardsFile, wardsDB, world.getStorage().getGeomVectorField(), DPolygon.class);
+            ShapeFileImporter.read(wardsFile, wardsDB, world.getStorage().getGeomVectorField(), Polygon.class);
+
 
         } catch (Exception ex)
         {
@@ -64,15 +67,15 @@ public class DPolySchelling extends DSimState{
         
         // copy over the geometries into a list of Polygons
         Bag ps = world.getStorage().getGeomVectorField().getGeometries();
-        polys.addAll(ps);
+        initPolys.addAll(ps);
         world.getStorage().getGeomVectorField().clear(); //we need to do this because we will split up the polygons per partition!
 
         ArrayList<DPolygon> poly_list = new ArrayList<DPolygon>();
         // process the polygons for neighbor and Person info
-        for (int i = 0; i < polys.size(); i++)
+        for (int i = 0; i < initPolys.size(); i++)
         {
-            DPolygon p1 = polys.get(i);
-            p1.init();
+            DPolygon p1 = new DPolygon(initPolys.get(i));
+ 
             
             poly_list.add(p1);
         }
