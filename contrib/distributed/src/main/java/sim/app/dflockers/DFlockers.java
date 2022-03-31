@@ -47,7 +47,9 @@ public class DFlockers extends DSimState
 		flockers = new DContinuous2D<>((int) (DFlockers.neighborhood / 1.5), this);
 		
 		//this.recordStats = true;
-		this.recordStats = false;
+		//this.recordStats = false;
+		this.startStats(0);
+		this.startStats(1);
 
 
 	}
@@ -86,6 +88,8 @@ public class DFlockers extends DSimState
 		}
 
 	}
+	
+
 
 	public static void main(final String[] args)
 	{

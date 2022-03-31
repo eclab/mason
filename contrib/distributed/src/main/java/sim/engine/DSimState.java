@@ -477,8 +477,10 @@ public class DSimState extends SimState
 	 */
 	public void addStat(Serializable data, int statType)
 	{
-	if (recordStats[statType])
+	if (recordStats[statType]) {
+
 		statList[statType].add(new Stat(data, schedule.getSteps(), schedule.getTime()));
+	}
 	}
 	
 	/** Return and replace the provided stats list, which you now own.  This is only
@@ -495,6 +497,8 @@ public class DSimState extends SimState
 	public void startStats(int statType) 
 	{	
 		recordStats[statType] = true;
+		statList[statType] = new ArrayList<>();
+
 	}
 
 	/* Stop the and clear the provided stats.  If the stats are already stopped, this has no effect.  This is only

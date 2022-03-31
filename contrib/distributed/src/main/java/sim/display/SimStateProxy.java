@@ -332,6 +332,8 @@ public class SimStateProxy extends SimState
 						// we now know our start and end steps.  Do we have any statistics at all?
 						if (endSteps != -1)	// we have stats!
 							{	
+							
+							
 							// Build array of [proc][timestep]
 							ArrayList<Stat>[][] stats = new ArrayList[numProcessors][(int)(endSteps - startSteps + 1)];
 							double[] times = new double[(int)(endSteps - startSteps + 1)];
@@ -579,10 +581,19 @@ public class SimStateProxy extends SimState
     public void outputStatistics(int statType, double[] times, ArrayList<Stat>[][] stats, long startSteps, long endSteps)
     	{
     	// For the moment we're just dumping the data to debug it
+    	/*
     	System.err.println("STATISTICS OUTPUT " + statType);
     	for(long i = startSteps; i < endSteps; i++)
     		{
     		System.err.print("Step: " + i + "\tTime: " + times[(int)(i - startSteps)]);
+    		System.out.println("stats : "+stats);
+    		System.out.println("startSteps "+startSteps);
+    		System.out.println("endSteps "+endSteps);
+    		System.out.println("stat size "+stats.length);
+    		System.out.println("stats[] : "+stats[(int)(i - startSteps)]); //OOV ind: 4
+    		System.out.println("--");
+
+    		
     		for (int j = 0; j < stats[(int)(i - startSteps)].length; j++)
     			{
     			ArrayList<Stat> statList = stats[(int)(i - startSteps)][j];
@@ -599,6 +610,29 @@ public class SimStateProxy extends SimState
 	    			}
     			}
     		}
+    		*/
+    	
+    	System.err.println("STATISTICS OUTPUT " + statType);
+    	for(long i = startSteps; i < endSteps; i++)
+    		{
+    		
+    		for (int j = 0; j < stats.length; j++) //for each partition
+    			{
+    			ArrayList<Stat> statList = stats[j][(int)(i - startSteps)];
+    			if (!statList.isEmpty())
+    				{
+	    			System.err.print("\t" + j + ": ");
+	    			boolean first = true;
+	    			for(Stat stat : statList)
+    					{
+    					if (!first) System.err.println(", ");
+    					first = false;
+	    				System.err.print(stat.data);
+	    				}
+	    			}
+    			}
+    		}
+    	
     	}
     
     //this probably won't work bc properties can't be sent remotely
