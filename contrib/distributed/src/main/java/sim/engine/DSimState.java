@@ -67,7 +67,12 @@ public class DSimState extends SimState
 
 	// The statistics queue
 	ArrayList<Stat> statList[] = new ArrayList[VisualizationProcessor.NUM_STAT_TYPES];
- 	boolean recordStats[] = new boolean[VisualizationProcessor.NUM_STAT_TYPES];
+ 	boolean statsStarted[] = new boolean[VisualizationProcessor.NUM_STAT_TYPES];
+ 	public static final int DEFAULT_MAX_STATS = 16384;
+ 	int maxStats = DEFAULT_MAX_STATS;
+ 	
+ 	public int getMaxStats() { return maxStats; }
+ 	public void setMaxStats(int val) { maxStats = val; }
 	
 	// The RemoteProcessor interface for communicating via RMI
 	RemoteProcessor processor;
@@ -111,6 +116,12 @@ public class DSimState extends SimState
 		transporter = new Transporter(partition);
 		fieldList = new ArrayList<>();
 		rootInfo = new HashMap<>();
+		
+		// initialize statistics lists
+		for(int i = 0; i < statList.length; i++)
+			{
+			statList[i] = new ArrayList<>(); 
+			}
 	}
 	
 	
@@ -475,13 +486,25 @@ public class DSimState extends SimState
 	/**
 	 * Log statistics data for this timestep. This data will then be sent to a remote statistics computer.
 	 */
-	public void addStat(Serializable data, int statType)
+	public static final int ADD_STAT_ERROR = -1;
+	public static final int ADD_STAT_STOPPED = 0;
+	public static final int ADD_STAT_SUCCESS = 1;
+	
+	public int addStat(Serializable data, int statType)
 	{
-	if (recordStats[statType]) {
-
+	if (statsStarted[statType]) 
+		{
+		if (statList[statType].size() >= maxStats) return ADD_STAT_ERROR;
 		statList[statType].add(new Stat(data, schedule.getSteps(), schedule.getTime()));
+		return ADD_STAT_SUCCESS;
+		}
+	return ADD_STAT_STOPPED;
 	}
-	}
+	
+	public boolean getStatsStarted(int statType)
+		{
+		return statsStarted[statType]; 
+		}
 	
 	/** Return and replace the provided stats list, which you now own.  This is only
 		public so it can be accessed by VisualizationProcessor.  You should not call this method. */
@@ -496,8 +519,7 @@ public class DSimState extends SimState
 		public so it can be accessed by VisualizationProcessor.  You should not call this method. */
 	public void startStats(int statType) 
 	{	
-		recordStats[statType] = true;
-		statList[statType] = new ArrayList<>();
+		statsStarted[statType] = true;
 
 	}
 
@@ -505,7 +527,7 @@ public class DSimState extends SimState
 		public so it can be accessed by VisualizationProcessor.  You should not call this method. */
 	public void stopStats(int statType) 
 	{
-		recordStats[statType] = false;
+		statsStarted[statType] = false;
 		// clear stats
 		statList[statType] = new ArrayList<>();
 	}
