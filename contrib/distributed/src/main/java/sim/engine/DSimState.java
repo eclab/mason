@@ -71,9 +71,6 @@ public class DSimState extends SimState
  	public static final int DEFAULT_MAX_STATS = 16384;
  	int maxStats = DEFAULT_MAX_STATS;
  	
- 	public int getMaxStats() { return maxStats; }
- 	public void setMaxStats(int val) { maxStats = val; }
-	
 	// The RemoteProcessor interface for communicating via RMI
 	RemoteProcessor processor;
 
@@ -486,45 +483,54 @@ public class DSimState extends SimState
 	/**
 	 * Log statistics data for this timestep. This data will then be sent to a remote statistics computer.
 	 */
-	public static final int ADD_STAT_ERROR = -1;
+	public static final int ADD_STAT_FULL = -1;
 	public static final int ADD_STAT_STOPPED = 0;
 	public static final int ADD_STAT_SUCCESS = 1;
 	
+	/** 
+		Log a statistics entry for the given stat type (presently one of VisualizationProcessor.STAT_TYPE_STATISTICS or VisualizationProcessor.STAT_TYPE_DEBUG).
+		If the log stream is not currently running for this stat type, then the entry will not be logged and ADD_STAT_STOPPED will be returned.
+		If the log stream is running, but is filled up (because it has not lately been accessed and cleared by the remote visualizer tool),
+		then the entry will not be logged and ADD_STAT_FULL will be returned.  Otherwise the entry will be logged and ADD_STAT_SUCCESS will be returned.
+		The maximum number of entries that stat streams may hold before they are filled up is specified by getMaxStats() and can be changed
+		via setMaxStats().  You can test to see if a stream is started via getStatStarted(...).
+	*/
 	public int addStat(Serializable data, int statType)
 	{
 	if (statsStarted[statType]) 
 		{
-		if (statList[statType].size() >= maxStats) return ADD_STAT_ERROR;
+		if (statList[statType].size() >= maxStats) return ADD_STAT_FULL;
 		statList[statType].add(new Stat(data, schedule.getSteps(), schedule.getTime()));
 		return ADD_STAT_SUCCESS;
 		}
 	return ADD_STAT_STOPPED;
 	}
 	
+	/** Returns the maximum number of Stat log entries that a stream can hold before it is full and will not accept any more.	*/
+ 	public int getMaxStats() { return maxStats; }
+ 	
+	/** Sets the maximum number of Stat log entries that a stream can hold before it is full and will not accept any more.	*/
+ 	public void setMaxStats(int val) { maxStats = val; }
+	
+	
+	/** Returns true if the log stream for the given statistics type is running. */
 	public boolean getStatsStarted(int statType)
 		{
 		return statsStarted[statType]; 
 		}
 	
-	/** Return and replace the provided stats list, which you now own.  This is only
-		public so it can be accessed by VisualizationProcessor.  You should not call this method. */
-	public ArrayList<Stat> getStats(int statType)
-	{
-		ArrayList<Stat> ret = statList[statType];
-		statList[statType] = new ArrayList<>();
-		return ret;
-	}
-
-	/** Start the provided stats.  If the stats are already started, this has no effect.  This is only
-		public so it can be accessed by VisualizationProcessor.  You should not call this method. */
+	/** Start running the log stream for the given statistics type.  If it is already running, this has no effect.
+		You can start this stream in your start() method if you wish; alternatively a remote visualization tool
+		can start the stream in its SimStateProxy class.  */
 	public void startStats(int statType) 
 	{	
 		statsStarted[statType] = true;
 
 	}
-
-	/* Stop the and clear the provided stats.  If the stats are already stopped, this has no effect.  This is only
-		public so it can be accessed by VisualizationProcessor.  You should not call this method. */
+	
+	/** Stop running the log stream for the given statistics type.  If it is already stopped, this has no effect.
+		You can stop this stream in your start() method if you wish; alternatively a remote visualization tool
+		can stop the stream in its SimStateProxy class.  */
 	public void stopStats(int statType) 
 	{
 		statsStarted[statType] = false;
@@ -532,6 +538,14 @@ public class DSimState extends SimState
 		statList[statType] = new ArrayList<>();
 	}
 
+	/** Returns and clears all the Stat log entries for the given stat type.  You should not call this method;
+		it is called by the remote visualizer (which is why it must be public here. */
+	public ArrayList<Stat> getStats(int statType) throws RemoteException
+	{
+		ArrayList<Stat> ret = statList[statType];
+		statList[statType] = new ArrayList<>();
+		return ret;
+	}
 
 
 
