@@ -14222,8 +14222,7 @@ E.g.: \lstinline[style=Bash]{mpirun -np 4 java -jar DflockersTest.jar}
 \vspace{1em}\noindent If you have fewer than 4 hardware cpu cores you can use the switch - -oversubscribe so MPI won't complain \\
 E.g.: \lstinline[style=Bash]{mpirun --oversubscribe -np 4 java -jar Heatbugs-R.jar}
 
-\paragraph{Note: The value of ``n'' must be a multiple of 4} The reason for this is due to MASON's partitioning scheme (the way that the platform divides tasking amongst machines), which depends on the QuadTree data structure.  {\bf \color{red} We're working on loosening this constraint.}
-
+\paragraph Distributed MASON's partitioning and load balancing scheme depends on a QuadTree data structure.  QuadTrees like powers of four (1, 4, 16, 64, 256, etc.), and so Distributed MASON does load balancing best when the number of partitions (the ``n'' parameter) is a power of four.  However if you have an odd number of machines, Distributed MASON can take advantage of them.
 
 \section{Setting up and Running Applications Over AWS}
 
@@ -14547,8 +14546,10 @@ This contains top-level versions of Distributed MASON's SimState, Schedule, and 
     \item \Class{sim.engine.DSimState}: the distributed version of SimState.
     \item \Class{sim.engine.DSteppable}: a distributed Steppable.
     \item \Class{sim.engine.Distinguished}: a distinguished DObject or DSteppable.  These are objects which can be traced by anyone as they wander from partition to partition.
+    \item \Class{sim.engine.DistinguishedRegstry}: the object used internally to manage the registry for Distinguished objects.
+    \item \Class{sim.engine.DistinguishedRemote}: the interface a DistinguishedRemoteObject exposes to other partitions through RMI.
     \item \Class{sim.engine.DistinguishedRemoteMessage}: messages sent to Distinguished objects from objects on other partitions.
-    \item \Class{sim.engine.DistinguishedRemoteObject}: how a Distinguished object appears to other objects on remote partitions (via RMI).
+    \item \Class{sim.engine.DistinguishedRemoteObject}: the object registered on the DistinguishedRegistry, holding a Distinguished and its current DSimState.
     \item \Class{sim.engine.DistributedIterativeRepeat}: distributed version of the  IterativeRepeat class.    This is used internally by the Schedule.
     \item \Class{sim.engine.DistributedSchedule}: the distributed version of Schedule.
     \item \Class{sim.engine.DistributedTentativeStep}: distributed version of the TentativeStep class.  This is used internally by the Schedule.
@@ -14998,6 +14999,7 @@ public void start() {
 This is for demonstration only: Obviously a much better thing to do would be for the root processor to determine {\it how many} flockers each node should generate, then simply tell each node its value.  Then each node would create its own DFlockers and populate them randomly in its space.  That way we would reduce the amount of network traffic between the nodes at startup: we'd just send a number to each processor rather than an array of DFlocker objects.
 
 \subsection{Distinguished Objects}
+\label{distinguishedobjects}
 
 A {\bf distinguished object} is an object\,---\,often an agent\,---\,which other agents on remote partitions may occasionally need to send a message to or get information from.  The problem is that the distinguished object might wander from partition to partition, and so we need a way to keep up-to-date with where it currently is so as to contact it successfully.  
 
@@ -15009,39 +15011,43 @@ A distinguished object must implement the \class{sim.engine.Distinguished} inter
 \mthd{public String distinguishedName()}
 Returns the name under which the distinguished object is registered with the DistinguishedRegistry
 \mthd{public Serializable remoteMessage(int tag, Serializable arguments) throws RemoteException}
-Responds to the message {\it tag} with arguments provided in the {\it arguments}, returning a Serializable response (or null).
+Responds to the message {\it tag} with arguments provided in the {\it arguments}, which can be null if there are no arguments to the message.  It then retursns a Serializable response, or null if the message is not meant to have a response.
 \end{methods}
 
-The method \method{distinguinshedName()} provides the unique name under which the distinguished object will be registered.  You can choose anything you want, but it must be different from the names of other registered distinguished objects.  Notice that \method{distinguishedName()} isn't called {\it getDistinguishedName()}.  This is so that it doesn't show up in MASON's inspectors. 
+The method \method{distinguishedName()} provides the unique name under which the distinguished object will be registered.  You can choose anything you want, but it must be different from the names of other registered distinguished objects.  Notice that \method{distinguishedName()} isn't called {\it getDistinguishedName()}.  This is so that it doesn't show up in MASON's inspectors. 
 
 The method \method{remoteMessage(...)} is how your distinguished object will respond to messages from others.  This method is designed such that you can respond to many different messages of your own design.  It works like this.  Each message is given a unique integer (the {\it tag}) to represent, more or less, the ``name'' of the message.  When a distinguished object has its \method{remoteMessage(...)} called, it'll be given this tag, so it knows what message is intended, and it is also given the arguments for that message in the form of a Serializable object.  If the distinguished object is intended to return a value, it then replies with a Serializable response (or with null).
 
-To register a distinguished object, you first need to grab the {\bf Distinguished Object Registry} via this DSimState method:
+To register a distinguished object, you call the following method in your DSimState:
 
 \begin{methods}{\class{sim.engine.DSimState}}
-\mthd{public sim.engine.DistinguishedRegistry getDistinguishedRegistry() }
-Returns the SimState's Distinguished Object Registry.
-\end{methods}
-
-The DistinguishedRegistry contains some methods for registering, and unregistering (rare) Distinguished objects:
-
-\begin{methods}{\class{sim.util.DistinguishedRegistry}}
-\mthd{public boolean registerObject(Distinguished obj, DSimState state) throws AccessException, RemoteException}
+\mthd{public boolean registerDistinguishedObject(Distinguished obj) throws AccessException, RemoteException}
 Registers a Distinguished object with the registry.
-\mthd{public boolean unregisterObject(Distinguished obj) throws AccessException, RemoteException, NotBoundException}
-Unregisters a Distinguished object.  This should be rarely needed.
 \end{methods}
 
-Okay, so we have registered our Distinguished object whose name is ``George'', using \method{registerObject(...)}.  Now we would like to send George a message.  We do this from the DSimState:
+Okay, so we have registered our Distinguished object, whose name is ``George'', using \method{registerObject(...)}.  Now we would like to send George a message.  We do this from the DSimState:
 
 \begin{methods}{\class{sim.engine.DSimState}}
 \mthd{public Promised sendRemoteMessage(String name, int tag, Serializable arguments) throws RemoteException}
 Sends a message of the given {\it tag} to the distinguished object registered with the given name, providing the message tag and arguments (which may be null).  If the object responds to this message with data, it is provided in the returned Promised object.  If the object doesn't respond, then the return value may be null.  If there is an error, this method may return null regardless. 
 \end{methods}
 
-The remote distinguished object will receive the message and respond by the {\bf next simulation step}, regardless of where it's located.  
+The remote distinguished object will receive the message and respond by the {\bf next simulation step}, regardless of where it's located.  Note that this method returns a \class{sim.engine.rmi.Promised} object if you're expecting the message to return you data.  This is an object which ultimately will hold the returned data when it comes available to you, possibly immediately but more likely by the next timestep.  A Promised object has the following methods:
 
-How is this all done?  Distinguished objects are registered with the RMI Registry (on your Root partition), and any partition can request a remote object from the Registry to send messages to via RMI.  Every timestep if a Distinguished object is migrated from one partition to another for any reason, it is unregistered with the registry and re-registered in the new partition.
+\begin{methods}{\class{sim.engine.rmi.Promised}}
+\mthd{public boolean isReady()}
+Returns true if the data has been fulfilled and is ready to be accessed.
+\mthd{public Serializable get()}
+Returns the data.  If the data is an int, a \class{java.lang.Integer} will be returned.  If the data is a double, a \class{java.lang.Double} will be returned.  Otherwise a copy of the data object itself will be returned.
+\mthd{public int getInt()}
+Returns the data as an int.  If the data is not an int, this will throw an exception.
+\mthd{public int getDouble()}
+Returns the data as an double.  If the data is not an double, this will throw an exception.
+\end{methods}
+
+You'll see the Promised object some more later when we discuss distributed fields.
+
+\paragraph{How the Distinguished system works} The DSimState maintains a \class{sim.engine.DistinguishedRegistry}.  This object is responsible for registering and unregistering Distinguished objects with the RMI Registry (on your Root partition).  It does this by creating a \class{sim.engine.DistinguishedRemoteObject}, which is a wrapper around a Distinguished object and its current DSimState, and places a remote version of the DistinguishedRemoteObject on the registry.  Any partition can request a remote object from the Registry to send messages to via RMI.  When you send a message to a Distinguished object, your DSimState will look it up its DistinguishedRemoteObject and hand the message it, and in turn the DistinguishedRemoteObject will queue up the message to be processed by its remote partition's DSimState before the next simulation step.  When the message is processed, the remote DSimState will call the Distinguished object to process the message, then fulfill its Promise with the result.  If a Distinguished object is migrated from one partition to another for any reason, it is unregistered with the registry and re-registered in the new partition.
 
 \subsection{Global Shared Data}
 \label{globalshareddata}
@@ -15092,7 +15098,7 @@ protected Serializable[] arbitrateGlobals(ArrayList<Serializable[]> allGlobals) 
             finalGlobals[j] = Math.min(finalGlobals[j], g[j]);
             }
         }
-    return finalGlobals
+    return finalGlobals;
     }
 \end{verbatim}
 
@@ -15161,7 +15167,7 @@ Setting and getting data is different from how it's done in the standard MASON f
 
 If your general request is to {\it change} something outside of the local region, then the remote processor will perform the request by the next timestep.  For example if you ask to move a rock from a local partition to a remote partition, it'll be deleted from your local partition immediately, but added to the remote partition by the next timestep.  Note that you cannot do the opposite: you can't move a rock from a remote partition to your local partition.  That operation has to be done by an agent on the remote processor.
 
-If the request is the {\it query}, then you will be given a \class{sim.engine.rmi.Promised} object.  This is an object which will ultimately (normally at the next timestep) be filled with the data you asked for: but it won't be immediately available.  It's a promise!  (If you queried an object which so happened to be inside the halo region, the Promised object's data will be available immediately).
+If the request is the {\it query}, then you will be given a \class{sim.engine.rmi.Promised} object.  We've seen this before in Section~\ref{distinguishedobjects}, but it's worth repeating it here.  Promised is an object which will ultimately (normally at the next timestep) be filled with the data you asked for: but it won't be immediately available.  It's a promise!  (If you queried an object which so happened to be inside the halo region, the Promised object's data will be available immediately).
 \end{itemize}
 
 \begin{methods}{\class{sim.engine.rmi.Promised}}
@@ -15416,7 +15422,7 @@ Returns the entire storage object.
 Returns an ArrayList of all objects currently in the halo grid.
 \end{methods}
 
-\section{Neighborhood Lookup in Distributed Fields}
+\subsection{Neighborhood Lookup in Distributed Fields}
 
 Neighborhood lookup in Distributed MASON fields is by and large quite similar to standard MASON fields.  But there are some big and important differences that you should be made aware of.  Before we discussed them, first note that there are {\bf two kinds of neighborhood lookup functions}: 
 
@@ -15582,15 +15588,47 @@ The rate at which the proxy objects refresh their data is determined by a method
 
 \paragraph{Objects can't be their own SimplePortrayals}  In standard MASON, an object can subclass from \class{sim.portrayal.SimplePortrayal2D} and portray itself automatically via the \method{hitObject(...)} and \method{draw(...)} methods.  But because objects (and ultimately agents) in Distributed MASON must subclass from \class{sim.engine.DObject}, they can't also subclass from \class{sim.portrayal.SimplePortrayal2D}.    Thus they can't portray themselves.  Instead you'll need to make your own subclass of SimplePortrayal2D to portray them.
 
-This is actually pretty easy to port over from standard MASON.  Just make a SimplePortrayal2D subclass, copy and paste the original  \method{hitObject(...)} and \method{draw(...)} into the new sublass, and then register the subclass with the object class.  This registration is done with \method{fieldPortrayal.setPortrayalForAll(...)} or  \method{fieldPortrayal.setPortrayalForClass(...)} etc.
+This is actually pretty easy to port over from standard MASON.  Just make a SimplePortrayal2D subclass, copy and paste the original  \method{hitObject(...)} and \method{draw(...)} into the new subclass, and then register the subclass with the object class.  This registration is done with \method{fieldPortrayal.setPortrayalForAll(...)} or  \method{fieldPortrayal.setPortrayalForClass(...)} etc.
 
 \paragraph{What doesn't work}  All this is doing is hijacking MASON's visualization facility to visualize the current state of each partition.  But you can't {\it change} the current state of the partitions: it's one-way.  For example, although the HeatBug Simple Portrayals are Movable, moving them won't change the underlying model, and they'll be reset the next time.  Likewise, you can't change the heat values, or the bug properties, etc.  It's all effectively read-only (for the time being).  
 
 \subsection{Inspection}
 
-\subsection{Visualization}
+\subsection{Statistics}
 
-\paragraph{What doesn't work}  ...
+If you have \(N\) separate partitions, how do you output statistics on the model?  One obvious (and frankly reasonable) choice would be for each partition to open up a file and write to it, and at the end of the model run, you'd manually gather up all the files.   But we offer another option if you're attaching a visualizer to the model.
+
+Distributed MASON at present has two statistics output streams called {\bf stat} and {\bf debug}.  They are identical\,---\,you could use both of them to dump statistics if you liked\,---\,but their names suggest what we thought they might be useful for.   Each partition can log a statistics entry (any \class{java.io.Serializable} object) with an output stream at any time, and your remote visualization laptop can receive these entries in a reasonably organized fashion, to do with as you like.
+
+Initially the statistics output streams are {\it stopped}, meaning that if you attempt to log something with them, it'll simply be ignored.  You can start all the partition's streams from the laptop, or you can start a partition's stream from the partition itself, typically during its \method{start()} method.  If you started from the visualization laptop, this would mean that you would miss all the entries that your distributed model had created prior to you firing up and connecting your laptop.  On the other hand, if you start from the start() method, you'll only have a finite amount of time to hook up the laptop before entries will get dropped, because as a memory safety measure Distributed MASON only permits a maximum number of statistics log entries to be stored (waiting to go to the laptop) on your partition.  You can change this maximum number from the partition.
+
+The integers which represent the two statistics types at present are: \variable{VisualizationProcessor.STAT\_TYPE\_STATISTICS} and \variable{VisualizationProcessor.STAT\_TYPE\_DEBUG}.
+
+On the partition side, statistics logging is handled in DSimState:
+
+\begin{methods}{\class{sim.engine.DSimState}}
+\mthd{public int addStat(Serializable data, int statType}
+Adds a statistics log entry to the stream for the given stat type (stat or debug).  On success, returns ADD\_STAT\_SUCCESS.  If the entry could not be logged because the stream is not started, instead returns ADD\_STAT\_STOPPED.  If the entry could not be logged because the stream is full, instead returns ADD\_STAT\_FULL.
+\mthd{public int getMaxStats()}
+Returns the maximum number of log entries a stream may hold (prior to being loaded by the visualizer) before it is full.
+\mthd{public void setMaxStats(int val)}
+Sets the maximum number of log entries a stream may hold (prior to being loaded by the visualizer) before it is full.
+\mthd{public boolean getStatsStarted(int statType)}
+Returns whether a given stats stream is started.
+\mthd{public void startStats(int statType)}
+Starts a given stats stream.
+\mthd{public void stopStats(int statType)}
+Stops a given stats stream.
+\end{methods}
+
+There is also a public method called \method{getStats(...)}, but you should not call this.  It is called by the remote visualization tool to grab and clear the latest statistics.
+
+On your visualization laptop, all statistics streams are started when you press the Play button (and thus start() is called internally).  All statistics streams stopped when you press the Stop button (and thus finish() is called internally).  Your SimStateProxy class has the following method you can override:
+
+\begin{methods}{\class{sim.display.SimStateProxy}}
+ \mthd{public void outputStatistics(int statType, double[] times, ArrayList\(\langle\)Serializable\(\rangle\)[][] stats, long startSteps, long endSteps)}
+Called to output the latest statistics from the partitions (to a file, to a chart, or whatever).  The statistics type is provided in statType, and the Schedule's start and end steps are provided in startSteps and endSteps inclusive.  Each step in that range is represented by two arrays, the times array and the stats array.  The first entry in each array is at step startSteps, the second is at step startSteps\(+\)1, and so on, up to endSteps.  The times array holds the simulation time for each step.  The stats array holds, for each step, an array of ArrayLists, one for each partition.  The ArrayLists hold the actual \class{sim.engine.Stat} objects, which in turn hold the serialized statistics log entries.  It is possible for a partition to log more than one Stat object in a given step.  These arrays are yours and you are free to modify them.
+\end{methods}
 
 
 \section{Under the Hood with Fields}
@@ -16036,8 +16074,6 @@ that subdivides the region of the node in four parts defined by two lines (paral
     \captionof{figure}{QuadTree partiton scheme.}
     \label{part}
 \end{center}
-
-Note that the use of the Quadtree forces us to have to use a number of processors that is multiple of 4, despite this we are studying a way to solve this limitation so that we can use a number of processors multiples of 2.
 
 In Distributed MASON the partition scheme is held by the class \textit{sim.field.partitioning.Partition}.
 
