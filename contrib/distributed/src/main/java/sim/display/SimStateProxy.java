@@ -212,6 +212,32 @@ public class SimStateProxy extends SimState
 		return visualizationProcessor().getStorageBounds();
 		}
 	
+	public void finish()
+		{
+		try
+			{
+			VisualizationProcessor vp = visualizationProcessor(0);							
+			vp.lock();
+			for(int proc = 0; proc < numProcessors; proc++)
+				{
+				VisualizationProcessor sv = visualizationProcessor(proc);
+				for(int s = 0; s < VisualizationProcessor.NUM_STAT_TYPES; s++)
+					{
+					sv.stopStats(s);
+					}					
+				}
+			vp.unlock();
+			}
+		catch (RemoteException ex)
+			{
+			ex.printStackTrace();
+			}
+		catch (NotBoundException ex)
+			{
+			ex.printStackTrace();
+			}
+		}
+		
 	public void start()
 		{
 		super.start();
@@ -233,6 +259,29 @@ public class SimStateProxy extends SimState
  					{
  					statLists[i][j] = new ArrayList<>();
  					}
+
+		try
+			{
+			VisualizationProcessor vp = visualizationProcessor(0);	
+			vp.lock();						
+			for(int proc = 0; proc < numProcessors; proc++)
+				{
+				VisualizationProcessor sv = visualizationProcessor(proc);
+				for(int s = 0; s < VisualizationProcessor.NUM_STAT_TYPES; s++)
+					{
+					sv.startStats(s);
+					}					
+				}
+			vp.unlock();
+			}
+		catch (RemoteException ex)
+			{
+			ex.printStackTrace();
+			}
+		catch (NotBoundException ex)
+			{
+			ex.printStackTrace();
+			}
 
 			// set up the cache
 			visualizationCache = new VisualizationProcessor[numProcessors];
