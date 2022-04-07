@@ -16,7 +16,7 @@ HF_PUBLIC="hostfile"
 HF_PRIVATE="mpi_hostfile"
 
 # AWS Config
-key=key-05dbe53fdee325843
+key=mason3
 security_gid=sg-03b0d2e50845a7b4f # Set this up via AWS Security Group
 subnet_id=subnet-0e2fa352 # Set this up in AWS VPC -> Subnet
 
