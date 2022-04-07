@@ -252,6 +252,9 @@ public class SimStateProxy extends SimState
 			worldBounds = visualizationRoot.getWorldBounds();
 			numProcessors = visualizationRoot.getNumProcessors();
 			
+			// set up the cache
+			visualizationCache = new VisualizationProcessor[numProcessors];
+			
  			statLists = new ArrayList[VisualizationProcessor.NUM_STAT_TYPES][numProcessors];
  
  			for(int i = 0; i < statLists.length; i++)
@@ -283,8 +286,7 @@ public class SimStateProxy extends SimState
 			ex.printStackTrace();
 			}
 
-			// set up the cache
-			visualizationCache = new VisualizationProcessor[numProcessors];
+
 
 			// set up the field proxies to be updated.  We may wish to change the rate at which they're updated, dunno
 			schedule.scheduleRepeating(new Steppable()

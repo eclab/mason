@@ -37,11 +37,11 @@ public class DPSO extends DSimState {
     public int getNeighborhoodSize() { return neighborhoodSize; }
     public void setNeighborhoodSize(int val) { if ((val >= 0) && (val <= numParticles)) neighborhoodSize = val; }
 
-    public double initialVelocityRange = 1.0;
+    public double initialVelocityRange = 0.1; //1.0;
     public double getInitialVelocityRange() { return initialVelocityRange; }
     public void setInitialVelocityRange(double val) { if (val >= 0.0) initialVelocityRange = val; }
     
-    public double velocityScalar = 2.7;
+    public double velocityScalar = 0.27; //2.7;
     public double getVelocityScalar() { return velocityScalar; }
     public void setVelocityScalar(double val) { if (val >= 0.0) velocityScalar = val; }
 

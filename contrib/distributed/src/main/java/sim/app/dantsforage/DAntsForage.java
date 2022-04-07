@@ -50,7 +50,7 @@ public /* strictfp */ class DAntsForage extends DSimState
 	public static final int HOME = 1;
 	public static final int FOOD = 2;
 
-	public int numAnts = 1000;
+	public int numAnts = 100;
 	public double evaporationConstant = 1.0;
 	public double reward = 1.0;
 	public double updateCutDown = 0.9;
