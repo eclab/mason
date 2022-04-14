@@ -14024,7 +14024,7 @@ Distributed MASON does not at present have facilities for:
 \item Multiple fields with different lengths or widths (they must be the same size)
 \end{itemize}
 
-\section{Setting up and Running Distributed MASON Applications}
+\section{Setting Up Distributed MASON Environment}
 
 To build Distributed MASON for the first time, you'll need to set up a number of items.   We'll assume in this documentation that you have a Unix-like system (Linux, MacOS).
 
@@ -14200,16 +14200,27 @@ If you need to update the \$CLASSPATH because of an update to the directory, do 
     \end{enumerate}
 \end{enumerate}
 
+\section{Running Distributed Mason Applications}
 \subsection{Running Applications Locally}
-Currently, there are two demos you can run: 
+Currently, you can run the following demos: 
 
 \begin{itemize}
     \item sim.app.dflockers.DFlockers 
     \item sim.app.dheatbugs.DHeatBugs
+    \item sim.app.dpso.DPSO
+    \item sim.app.dvirus.DVirusInfectionDemo
 \end{itemize}
 
-They are located in sim/app/dflockers and sim/app/dheatbugs respectively (from the distributed/ directory).  {\bf \color{red} We have an additional GeoMASON demo (CampusWorld) but don't have it documented here at present.  Just let us know if you're interested.}
+They are located in the sim/app/ directory (from the distributed/ directory).  Additionally, we have the following GeoMASON demos:
 
+\begin{itemize}
+    \item sim.app.dflockers.DCampusWorld 
+\end{itemize}
+
+These are located in sim/app.geo/ directory, from the distributed-geomason directory.
+
+
+\vspace{1em}\noindent To run these demos: \\
 \lstinline[style=Bash]{mpirun -np n java application} \\
 E.g.: \lstinline[style=Bash]{mpirun -np 4 java sim.app.dflockers.DFlockers}
 
@@ -14222,9 +14233,9 @@ E.g.: \lstinline[style=Bash]{mpirun -np 4 java -jar DflockersTest.jar}
 \vspace{1em}\noindent If you have fewer than 4 hardware cpu cores you can use the switch - -oversubscribe so MPI won't complain \\
 E.g.: \lstinline[style=Bash]{mpirun --oversubscribe -np 4 java -jar Heatbugs-R.jar}
 
-\paragraph Distributed MASON's partitioning and load balancing scheme depends on a QuadTree data structure.  QuadTrees like powers of four (1, 4, 16, 64, 256, etc.), and so Distributed MASON does load balancing best when the number of partitions (the ``n'' parameter) is a power of four.  However if you have an odd number of machines, Distributed MASON can take advantage of them.
+\vspace{1em}\noindent Distributed MASON's partitioning and load balancing scheme depends on a QuadTree data structure.  QuadTrees like powers of four (1, 4, 16, 64, 256, etc.), and so Distributed MASON does load balancing best when the number of partitions (the ``n'' parameter) is a power of four.  However if you have an odd number of machines, Distributed MASON can take advantage of them.
 
-\section{Setting up and Running Applications Over AWS}
+\subsection{Setting up and Running Applications Over AWS}
 
 If you wish to take advantage of cloud computing, we have instructions for setup over Amazon Web Services. Of course, you can skip any step of which you have already done and go on to the next part. The final two steps are the only ones strictly necessary if the appropriate setup is complete.
 
@@ -14491,10 +14502,10 @@ In particular, the key, security\_gid, and subnet\_id of this section.
     \includegraphics[scale=.25]{distributed/aws-configure-1.png}
 \end{center}
 
-You can specify the type of EC2 instance you want to use through the \textit{instance} variable; by default, the chosen instance is \texttt{c5.large}.   Another parameter that can be useful to modify is the AMI, changed via the \textit{ami} variable.  By default the AMI is ami-41e0b93b, which corresponds to ubuntu-xenial-16.04-amd64-server-20180109. For the correct functioning of the script, we recommend using an AMI that corresponds to an ubuntu server.
+You can specify the type of EC2 instance you want to use through the \textit{instance} variable; by default, the chosen instance is \texttt{c5.large}.   Another parameter that can be useful to modify is the AMI, changed via the \textit{ami} variable.  By default the AMI is ami-41e0b93b, which corresponds to ubuntu-xenial-16.04-amd64-server-20180109. For the correct functioning of the script, we recommend using an AMI that corresponds to an ubuntu server.  Additionally, the \textit{count} variable can be changed to match the desired number of partitions to be used.
 
 \paragraph{Step 9: Launch aws-setup.sh}
-The script is located in \lstinline[style=Bash]{distributed//script/aws-setup.sh}
+The script is located in \lstinline[style=Bash]{distributed/scripts/aws-setup.sh}
 On success, it will tell you how to log into your node, and you can start running experiments from there. This script generates the IP addresses of all of the nodes in your cluster.  The way to use it is the following:	
 \lstinline[style=Bash]{./aws-setup.sh [# of instances to generate] [name of the run]}
 
@@ -14505,7 +14516,7 @@ scp -i ~/.ssh/mason.pem ~/Projects/mason-stable/contrib/distributed/target/DHeat
 \end{lstlisting}
 
 \paragraph{Step 11: MPI Run}
-Next SSH into the root node and run your experiment using mpirun command giving it the mpi\_hosfile. For example:
+Next SSH into the root node and run your experiment using mpirun command giving it the mpi\_hostfile. For example:
 \begin{lstlisting}[style=Bash]
 ssh ubuntu@ec2-1-1-1-1.compute-1.amazonaws.com -i ~/.ssh/mason.pem
 mpirun -hostfile mpi_hostfile -n 4 java -jar DHeatbugs.jar
