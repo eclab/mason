@@ -14233,7 +14233,7 @@ E.g.: \lstinline[style=Bash]{mpirun -np 4 java -jar DflockersTest.jar}
 \vspace{1em}\noindent If you have fewer than 4 hardware cpu cores you can use the switch - -oversubscribe so MPI won't complain \\
 E.g.: \lstinline[style=Bash]{mpirun --oversubscribe -np 4 java -jar Heatbugs-R.jar}
 
-\vspace{1em}\noindent Distributed MASON's partitioning and load balancing scheme depends on a QuadTree data structure.  QuadTrees like powers of four (1, 4, 16, 64, 256, etc.), and so Distributed MASON does load balancing best when the number of partitions (the ``n'' parameter) is a power of four.  However if you have an odd number of machines, Distributed MASON can take advantage of them.
+Distributed MASON's partitioning and load balancing scheme depends on a QuadTree data structure.  QuadTrees like powers of four (1, 4, 16, 64, 256, etc.), and so Distributed MASON does load balancing best when the number of partitions (the ``n'' parameter) is a power of four.  However if you have an odd number of machines, Distributed MASON can take advantage of them.
 
 \subsection{Setting up and Running Applications Over AWS}
 
@@ -15919,11 +15919,26 @@ Syncs Halo regions from neighboring partitions, then processes the RMI Get queue
 \end{methods}
 	
 
-\paragraph{Migration}  When an agent or object crosses a partition boundary, or when load balancing changes the partition boundary under its feet, the agent or object must be {\it migrated}.  This is done by loading up a \class{sim.engine.transport.PayloadWrapper} with the object or agent, then sending it via MPI to the remote Halo Grid.  The remote Halo Grid then unwraps it and adds the object or agent to its own partition with:
-	
+\paragraph{Migration}  When an agent or object crosses a partition boundary, or when load balancing changes the partition boundary under its feet, the agent or object must be {\it migrated}.  This is done by loading the agent or object into a \class{sim.engine.mpi.PayloadWrapper}, then sending the PayloadWrapper via MPI to the remote Halo Grid.  The class \class{sim.engine.mpi.Transporter} handles the details.  It has methods to build the PayloadWrapper and add it to a byte array, then exchange that byte array with other partitions via MPI, then finally unwrap the exchanged byte array into a queue of incoming PayloadWrappers.  
+
+\begin{methods}{\class{sim.engine.mpi.Transporter}}
+	\mthd{public void transport(Serializable a, int dst, Number2D loc, int fieldIndex)}
+Queues a serializable object for migration to a destination partition {\it dst}, to be inserted into field {\it fieldIndex} at the given location.
+	\mthd{public void transport(Serializable a, int dst, Number2D loc, int fieldIndex, int ordering, double time)}
+Queues an agent for migration to a destination partition {\it dst}, to be inserted into field {\it fieldIndex} at the given location, and to be rescheduled in that partition's schedule at the given ordering and time.
+	\mthd{public void transport(Serializable a, int dst, Number2D loc, int fieldIndex, int ordering, double time, double interval)}
+Queues an agent for migration to a destination partition {\it dst}, to be inserted into field {\it fieldIndex} at the given location, and to be rescheduled repeating in that partition's schedule at the given ordering and time, and repeating interval.
+	\mthd{public void sync()}
+Exchanges migrated objects with neighbors.
+	\mthd{public boolean isNeighbor(int loc)}
+Returns true if the given partition is a neighbor of my partition.
+\end{methods}
+
+The DSimState then takes incoming PayloadWrappers and places their objects in the appropriate fields, schedules migrated agents, and so on. It adds objects to fields via the following method:
+
 \begin{methods}{\class{sim.field.HaloGrid2D} Migration}
 	\mthd{public void addPayload(PayloadWrapper payloadWrapper)}
-Processes a PayloadWrapper, adding its object or agent to the field, and (if it's an Agent) scheduling it in the schedule.
+	Adds the stored object to the appropriate field and location as directed by the payloadWrapper
 \end{methods}
 
 \paragraph{The RMIProxy} To enable a Halo Grid to find other Halo grids, in order to call remote RMI methods on them, each Halo Grid builds a \class{sim.field.transport.RMIProxy} object.  The Halo Grid does this at the appropriate time when the following method is called from DSimState:
@@ -15933,22 +15948,29 @@ Processes a PayloadWrapper, adding its object or agent to the field, and (if it'
 Sets up the Halo Grid's RMIProxy.
 \end{methods}
 
-The RMIProxy is little more than a cache of RMI remote objects representing Halo Grids on other processors.  It's simple:
-
-\begin{methods}{\class{sim.field.transport.RMIProxy} Constructor}
-\mthd{public RMIProxy(Partition ps, HaloGrid2D haloGrid)}
-Builds an RMIProxy for the given Halo Grid on the given partition.
-\end{methods}
-
-\begin{methods}{\class{sim.field.transport.RMIProxy}}
-\mthd{public TransportRMIInterface getField(int pid) throws RemoteException}
-Returns the TransportRMIInterface (the Halo Grid) for the given remote process which corresponds to the Halo Grid that owns this RMIProxy.
-\end{methods}
-
-
 \subsection{Under the Hood with the Distributed SimState}
 
 Distributed MASON doesn't just allocate a single SimState per model: it actually allocates one for every processor and hence one for every partition.  These are the \class{sim.engine.DSimState} objects.  Because there are many of them, they must communicate with one another and provide a great many facilities for other objects seeking to communicate across partition boundaries.
+
+In-between simulation steps there's a lot of work to do.  This is handled in the DSimState's \method{preSchedule()} method, just before scheduled objects are stepped.  Here's roughly what happens:
+
+\begin{enumerate}
+\item Timing is started to measure how long a step takes (for purposes of measuring load for load balancing).
+\item An MPI barrier is invoked: partitions must wait until all partitions have synced up at this point.
+\item Partitions respond to requests from a remote visualization tool
+\item An MPI barrier is invoked: partitions must wait until all partitions have synced up at this point.
+\item Queued-up RMI requests to add and remove objects from each partition are fulfilled.
+\item The transporter is synced, which migrates objects from partition to partition via MPI and loads them into the local Transporter queues.
+\item Distinguished objects that have moved to new partitions, via RMI or MPI, are re-registered with those partitions.
+\item An MPI barrier is invoked: partitions must wait until all partitions have synced up at this point.
+\item PayloadWrappers are extracted from the queues and their objects are added to the new fields. If the objects are agents, they are also scheduled on the new schedule.
+\item An MPI barrier is invoked: partitions must wait until all partitions have synced up at this point.
+\item Halo Grid areas of interest are synced, and RMI requests are fufilled.
+\item Timing is stopped.
+\item Load balancing is performed.
+\item Globals are updated.
+\item Distinguished object Messages are fulfilled.
+\end{enumerate}
 
 \subsection{The RemoteProcessor}
 [To Write --- it doesn't feel that this class is all that settled yet]
