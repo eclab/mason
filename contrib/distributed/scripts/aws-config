@@ -6,7 +6,7 @@ MASON_DIR="$(pwd)/../"
 
 # AWS EC2 Configuration
 runId="default"
-count="1"
+count="4"
 instance="c5.large"
 
 # --------------------------------------------------

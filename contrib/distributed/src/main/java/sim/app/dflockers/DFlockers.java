@@ -53,6 +53,16 @@ public class DFlockers extends DSimState
 
 
 	}
+	
+	@Override
+	public void preSchedule()
+	{
+		// TODO Auto-generated method stub
+		super.preSchedule(); // do not forget this line
+
+		System.out.println("Size of agents in proc " + getPID() + " " + flockers.getAllAgentsInStorage().size());
+
+	}
 
 	@Override
 	protected void startRoot()
