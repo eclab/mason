@@ -455,6 +455,7 @@ class ParameterSweepSimulationJob
     
     public void run(SimState simState, sim.util.Properties properties, ArrayList<Double> combos) 
         {
+        properties = initSweepValuesFromProperties(properties);
         simState.start();
         properties = initSweepValuesFromProperties(properties);
         for(int i = 0; i< sweep.numSteps; i++)
