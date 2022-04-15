@@ -455,8 +455,16 @@ class ParameterSweepSimulationJob
     
     public void run(SimState simState, sim.util.Properties properties, ArrayList<Double> combos) 
         {
+        // We're initializing from the properties both before and after simState.start().
+        // The reason for this as follows.  start() is where people normally set parameters.
+        // In most cases we want to prevent people from overriding our modified parameters 
+        // during start(), so we have to initialize AFTER start() to fix them.   However in 
+        // some rare cases people may rely on the parameters already having been modified.
+        // For these cases we also initialize prior to start().
+        
+       	initSweepValuesFromProperties(properties);
         simState.start();
-        properties = initSweepValuesFromProperties(properties);
+        initSweepValuesFromProperties(properties);
         for(int i = 0; i< sweep.numSteps; i++)
             {
             if (sweep.stop)
@@ -473,9 +481,8 @@ class ParameterSweepSimulationJob
         simState.finish();
         }
         
-    sim.util.Properties initSweepValuesFromProperties(sim.util.Properties properties) 
+    void initSweepValuesFromProperties(sim.util.Properties properties) 
         {
-
         for(int index = 0; index < sweep.indIndexes.length; index++)
             {
             String type = properties.getType(sweep.indIndexes[index]).toString();
@@ -498,7 +505,6 @@ class ParameterSweepSimulationJob
                 throw new RuntimeException("Unsupported type");
                 }
             }
-        return properties;
         }
 
     public double getPropertyValueAsDouble(sim.util.Properties properties, int dependentIndex) 
