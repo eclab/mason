@@ -13174,7 +13174,7 @@ The distributed model optimizer is very sophisticated, as it relies on ECJ a pop
 \vspace{-6em}
 \end{wrapfigure}
 
-MASON has a multithreaded parameter sweep facility which can run many simulations at once in the background and collect data on them.  The facility can either be run from the command line or from the graphical interface: the result is the same.  We'l'l discuss the GUI first.
+MASON has a multithreaded parameter sweep facility which can run many simulations at once in the background and collect data on them.  The facility can either be run from the command line or from the graphical interface: the result is the same.  We'll discuss the GUI first.
 
 If, while trying out a simulation, you select {\it Sweep Parameters} from the {\it File} menu, you'll be presented with a window such as the one at right.   This is the {\it Parameter Sweep Console}.  It runs entirely independently from the primary Console.  The Parameter Sweep Console allows you to choose variables to sweep over, set up your sweep experiment, and run or stop it.
 
@@ -13201,6 +13201,8 @@ The {\it Initial Seed} is the random number generator seed for the first job: th
 \paragraph{Running the Experiment}
 
 Once the variables and sweep settings have been set, you can run the experiment by pressing the Play button on the Parameter Sweep Console.  You will be asked to indicate the file to which the report will be written.   If you need to cancel the experiment, you can press the Stop button at any time. 
+
+The experiment will repeatedly start a new MASON simulation. In doing so, it will set the parameters, then call start(), then set the parameters again just to make sure that you didn't overwrite them in start(), then run the model to completion and finally collect the results.
  
 \paragraph{Interpreting the Report}
 
@@ -13245,6 +13247,7 @@ out = /tmp/out.csv
 
 Notice that the {\it independent, min, max, } and {\it divisions} entries consist of lists of items separated by whitespace.  These are the parameter name, min-value, max-value, and divisions of each independent parameter.  The {\it dependent} entry is also a list of (dependent) variables separated by whitespace, but in our example there is only one of them.
 
+\enlargethispage{1em}
 Let's say this file is called {\it in.params}.  Then you'd run the parameter sweep facility on the command line like this:
 
 \script{\textit{java sim.util.sweep.ParameterSweep in.params}}
