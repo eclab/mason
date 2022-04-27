@@ -1,6 +1,9 @@
 package sim.app.geo.dcampusworld;
 
 import java.net.URL;
+
+
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -161,8 +164,9 @@ public class DCampusWorld extends DSimState
 		System.out.println("super before setting: "+agentLocations.getStorage().getGeomVectorField().getMBR());
 
 		// add agents (when created, the agent adds itself to agentLocations)
-		for (int i = 0; i < numAgents; i++) {
-
+		// here we are equally distributing agents per partition, we can use startRoot instead if we don't want to do this
+		for (int i = 0; i < numAgents/this.getPartition().getNumProcessors(); i++) {
+			new DAgent(this);
 		}
 		
 		System.out.println("before setting: "+agentLocations.getStorage().getGeomVectorField().getMBR());

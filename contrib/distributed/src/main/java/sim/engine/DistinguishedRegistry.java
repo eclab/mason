@@ -171,6 +171,8 @@ public class DistinguishedRegistry
 			{
 				DistinguishedRemoteObject remoteObj = new DistinguishedRemoteObject(obj, simstate);
 				Remote stub = UnicastRemoteObject.exportObject(remoteObj, 0);
+				
+				
 				registry.bind(name, stub);
 				exportedNames.put(name, remoteObj);
 				exportedObjects.put(remoteObj, name);

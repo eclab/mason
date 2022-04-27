@@ -25,21 +25,17 @@ import sim.util.media.chart.TimeSeriesChartGenerator;
 
 public class TurkanaSouthModelProxyWithUI extends GUIState{
 
-	public TurkanaSouthModelProxyWithUI(SimState state) {
-		super(state);
-		// TODO Auto-generated constructor stub
-	}
-/*
+
     public Display2D display;
     public JFrame displayFrame;
 
     FastValueGridPortrayal2D populationDensityPortrayal = new FastValueGridPortrayal2D("Population Density");
     FastValueGridPortrayal2D rainPortrayal = new FastValueGridPortrayal2D("Rain");
     FastValueGridPortrayal2D vegetationPortrayal = new FastValueGridPortrayal2D("Vegetation");
-    SparseGridPortrayal2D agentPortrayal = new SparseGridPortrayal2D();
-    JFrame populationStatsFrame;
-    public TimeSeriesChartGenerator populationStatsChart = new TimeSeriesChartGenerator();
-    private XYSeries populationSeries;
+    DenseGridPortrayal2D agentPortrayal = new DenseGridPortrayal2D();
+    //JFrame populationStatsFrame;
+    //public TimeSeriesChartGenerator populationStatsChart = new TimeSeriesChartGenerator();
+    //private XYSeries populationSeries;
     //DTurkanaSouthModel model;
 
     public static void main(String[] args)
@@ -85,10 +81,12 @@ public class TurkanaSouthModelProxyWithUI extends GUIState{
         
     @SuppressWarnings("serial")
     public void setupPortrayals()
-    {
-        int maxValue = ((IntGrid2D)model.populationDensityGrid.getGrid()).max();
-            
-        populationDensityPortrayal.setField(model.populationDensityGrid.getGrid());
+    {   
+    	//((TurkanaSouthModelProxy)state)
+        //int maxValue = ((DIntGrid2D)((TurkanaSouthModelProxy)state).populationdensgrid.getGrid()).max();
+    	int maxValue = 10;
+    	
+        //populationDensityPortrayal.setField(model.populationDensityGrid.getGrid());
         populationDensityPortrayal.setMap(
             new SimpleColorMap(0, maxValue, Color.black, Color.white) {
                 @Override
@@ -100,23 +98,26 @@ public class TurkanaSouthModelProxyWithUI extends GUIState{
                 }
             });
 
-        rainPortrayal.setField(model.rainGrid);
+        rainPortrayal.setField(((TurkanaSouthModelProxy)state).raingrid);
         rainPortrayal.setMap(new SimpleColorMap(0, 1, Color.black, Color.white));
 
-        vegetationPortrayal.setField(model.vegetationGrid);
-        vegetationPortrayal.setMap(new SimpleColorMap(0, model.maxVegetationLevel, Color.black, Color.green));
+        vegetationPortrayal.setField(((TurkanaSouthModelProxy)state).veggrid);
+        vegetationPortrayal.setMap(new SimpleColorMap(0, 1, Color.black, Color.green));
 
-        agentPortrayal.setField(model.agentGrid);
+        agentPortrayal.setField(((TurkanaSouthModelProxy)state).turkanians);
         agentPortrayal.setPortrayalForAll(new MovablePortrayal2D(new OvalPortrayal2D(Color.blue, 0.7)));
 
+        //don't worry about charting for now
+        /*
         this.scheduleRepeatingImmediatelyAfter(new Steppable() {
             @Override
             public void step(SimState state) {
                 populationSeries.add(state.schedule.getTime() / model.ticksPerMonth, model.agents.size());
             }
         });
+        */
 
-        populationStatsChart.repaint();
+        //populationStatsChart.repaint();
         display.reset();
         display.repaint();
     }
@@ -127,9 +128,9 @@ public class TurkanaSouthModelProxyWithUI extends GUIState{
         super.init(c);
 
         // since we're running the GUI, don't print stats
-        model.printStats = false;
+        //model.printStats = false;
 
-        display = new Display2D(model.windowWidth, model.windowHeight, this); // at 400x400, we've got 4x4 per array position
+        display = new Display2D(400, 400, this); // at 400x400, we've got 4x4 per array position
         displayFrame = display.createFrame();
         displayFrame.setTitle("Turkana South");
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
@@ -154,5 +155,5 @@ public class TurkanaSouthModelProxyWithUI extends GUIState{
         displayFrame = null;
         display = null;
         }	
-	*/
+	
 }

@@ -11,7 +11,7 @@ instance="c5.large"
 
 # --------------------------------------------------
 
-JAR_NAME="DHeatBugs.jar"
+JAR_NAME="DFlockers.jar"
 HF_PUBLIC="hostfile"
 HF_PRIVATE="mpi_hostfile"
 

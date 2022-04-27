@@ -22,7 +22,7 @@ public class CampusWorldProxy extends SimStateProxy {
 	public void start() {
 		super.start();
 		sleep = 5;
-		stepSize = 100;
+		//stepSize = 100;
 
 		// TODO indexing. Needs to match same index ordering as...
 //		registerFieldProxy(walkwaysPortrayal, 0);

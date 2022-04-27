@@ -17,8 +17,8 @@ public class DPolygon extends DGeomSteppable{
     
     
 
-    ArrayList<DPerson> residents;
-    ArrayList<DPolygon> neighbors;
+    public ArrayList<DPerson> residents;
+    public ArrayList<DPolygon> neighbors;
 
 
 
@@ -45,7 +45,7 @@ public class DPolygon extends DGeomSteppable{
 
 
 
-    int getID()
+    public int getID()
     {
         if (id == -1)
         {
@@ -56,7 +56,7 @@ public class DPolygon extends DGeomSteppable{
 
 
 
-    String getSoc()
+    public String getSoc()
     {
         if (soc == null)
         {

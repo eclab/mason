@@ -2,14 +2,20 @@
 
 package sim.app.geo.dschellingpolygon;
 
+import sim.app.geo.dschellingpolygon.data.*;
+
+
+
 import java.net.URL;
+
+
 
 import java.util.ArrayList;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
 import sim.app.geo.schellingpolygon.Polygon;
-import sim.app.geo.schellingpolygon.data.SchellingPolygonData;
+//import sim.app.geo.schellingpolygon.data.SchellingPolygonData;
 import sim.engine.DSimState;
 import sim.field.geo.DGeomVectorField;
 import sim.field.geo.GeomVectorField;
@@ -52,8 +58,8 @@ public class DPolySchelling extends DSimState{
 	protected void startRoot() {
         try // to import the data from the shapefile
         {
-            URL wardsFile = SchellingPolygonData.class.getResource("1991_wards_disolved_Project.shp");
-            URL wardsDB  = SchellingPolygonData.class.getResource("1991_wards_disolved_Project.dbf");
+            URL wardsFile = DSchellingPolygonData.class.getResource("1991_wards_disolved_Project.shp");
+            URL wardsDB  = DSchellingPolygonData.class.getResource("1991_wards_disolved_Project.dbf");
 
             //ShapeFileImporter.read(wardsFile, wardsDB, world.getStorage().getGeomVectorField(), DPolygon.class);
             ShapeFileImporter.read(wardsFile, wardsDB, world.getStorage().getGeomVectorField(), Polygon.class);
