@@ -93,16 +93,16 @@ public class IntGrid2DProxy extends IntGrid2D implements UpdatableProxy
 			int[] data = (int[])(storage.storage);
 			for(int x = partition_width_low_ind; x < partition_width_high_ind; x++)
 				{
+
+				int[] fieldx = field[x - fullBounds_offset.getX()]; //oob in dantsforage?
 				
-				
-				int[] fieldx = field[x];
 				for(int y = partition_height_low_ind; y < partition_height_high_ind; y++)
 					{
 					
 
 					
 					Int2D local_p = storage.toLocalPoint(new Int2D(x, y)); //convert to local storage to access partition storage correctly
-					fieldx[y] = data[local_p.x * partBound.getHeight() + local_p.y];
+					fieldx[y - fullBounds_offset.getY()] = data[local_p.x * partBound.getHeight() + local_p.y];
 
 					}
 				}

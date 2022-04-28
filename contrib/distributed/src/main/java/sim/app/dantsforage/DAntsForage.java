@@ -6,6 +6,10 @@
 
 package sim.app.dantsforage;
 
+import java.util.ArrayList;
+
+import sim.app.dflockers.DFlocker;
+import sim.app.dflockers.DFlockers;
 import sim.engine.DSimState;
 import sim.engine.DSteppable;
 import sim.engine.Schedule;
@@ -13,6 +17,7 @@ import sim.engine.SimState;
 import sim.field.grid.DDenseGrid2D;
 import sim.field.grid.DDoubleGrid2D;
 import sim.field.grid.DIntGrid2D;
+import sim.util.Double2D;
 import sim.util.Int2D;
 import sim.util.Interval;
 
@@ -23,13 +28,13 @@ public /* strictfp */ class DAntsForage extends DSimState
 	public static final int GRID_HEIGHT = 100;
 	public static final int GRID_WIDTH = 100;
 
-	public static final int HOME_XMIN = 75;
-	public static final int HOME_XMAX = 75;
+	public static final int HOME_XMIN = 75; //75
+	public static final int HOME_XMAX = 75;  //75
 	public static final int HOME_YMIN = 75;
 	public static final int HOME_YMAX = 75;
 
-	public static final int FOOD_XMIN = 25;
-	public static final int FOOD_XMAX = 25;
+	public static final int FOOD_XMIN = 25; //25
+	public static final int FOOD_XMAX = 25;  //25
 	public static final int FOOD_YMIN = 25;
 	public static final int FOOD_YMAX = 25;
 
@@ -38,7 +43,9 @@ public /* strictfp */ class DAntsForage extends DSimState
 	public static final int TWO_OBSTACLES = 2;
 	public static final int ONE_LONG_OBSTACLE = 3;
 
-	public static final int OBSTACLES = NO_OBSTACLES;
+	//public static final int OBSTACLES = NO_OBSTACLES;
+	public static final int OBSTACLES = ONE_OBSTACLE;
+
 
 	public static final int ALGORITHM_VALUE_ITERATION = 1;
 	public static final int ALGORITHM_TEMPORAL_DIFERENCE = 2;
@@ -50,7 +57,7 @@ public /* strictfp */ class DAntsForage extends DSimState
 	public static final int HOME = 1;
 	public static final int FOOD = 2;
 
-	public int numAnts = 10;
+	public int numAnts = 1000;
 	public double evaporationConstant = 1.0;
 	public double reward = 1.0;
 	public double updateCutDown = 0.9;
@@ -156,7 +163,7 @@ public /* strictfp */ class DAntsForage extends DSimState
 
 	public DAntsForage(long seed)
 	{
-		super(seed, GRID_WIDTH, GRID_HEIGHT, 10, true);
+		super(seed, GRID_WIDTH, GRID_HEIGHT, 10, false);
 		sites = new DIntGrid2D(this);
 		toFoodGrid = new DDoubleGrid2D(this);
 		toHomeGrid = new DDoubleGrid2D(this);
@@ -164,10 +171,37 @@ public /* strictfp */ class DAntsForage extends DSimState
 		obstacles = new DIntGrid2D(this);
 	}
 
-	public void start()
-	{
-		super.start(); // clear out the schedule
 
+	@Override
+	protected void startRoot()
+	{
+		ArrayList<DAnt> ants = new ArrayList<DAnt>();
+		
+
+		
+		for (int x = 0; x < numAnts; x++)
+		{
+
+				DAnt ant = new DAnt(reward, (HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2);
+				
+				
+				ants.add(ant);
+				
+				System.out.println("added");
+
+			
+		}
+
+
+
+		sendRootInfoToAll("ants", ants);
+	}
+	
+	
+	public void start() {
+		
+		super.start();
+		
 		switch (OBSTACLES)
 		{
 		case NO_OBSTACLES:
@@ -176,10 +210,17 @@ public /* strictfp */ class DAntsForage extends DSimState
 			for (int x = 0; x < GRID_WIDTH; x++)
 				for (int y = 0; y < GRID_HEIGHT; y++)
 				{
-					obstacles.set(new Int2D(x, y), 0);
+					if (getPartition().getLocalBounds().contains(new Int2D(x, y))) {
+					    obstacles.set(new Int2D(x, y), 0);
+					}
 					if (((x - 55) * 0.707 + (y - 35) * 0.707) * ((x - 55) * 0.707 + (y - 35) * 0.707) / 36 +
-							((x - 55) * 0.707 - (y - 35) * 0.707) * ((x - 55) * 0.707 - (y - 35) * 0.707) / 1024 <= 1)
-						obstacles.set(new Int2D(x, y), 1);
+							((x - 55) * 0.707 - (y - 35) * 0.707) * ((x - 55) * 0.707 - (y - 35) * 0.707) / 1024 <= 1) {
+						
+						if (getPartition().getLocalBounds().contains(new Int2D(x, y))) {
+						    obstacles.set(new Int2D(x, y), 1);
+
+						}
+					}
 
 				}
 			break;
@@ -187,29 +228,47 @@ public /* strictfp */ class DAntsForage extends DSimState
 			for (int x = 0; x < GRID_WIDTH; x++)
 				for (int y = 0; y < GRID_HEIGHT; y++)
 				{
-					obstacles.set(new Int2D(x, y), 0);
+					if (getPartition().getLocalBounds().contains(new Int2D(x, y))) {
+					    obstacles.set(new Int2D(x, y), 0);
+					}
 					if (((x - 45) * 0.707 + (y - 25) * 0.707) * ((x - 45) * 0.707 + (y - 25) * 0.707) / 36 +
-							((x - 45) * 0.707 - (y - 25) * 0.707) * ((x - 45) * 0.707 - (y - 25) * 0.707) / 1024 <= 1)
-						obstacles.set(new Int2D(x, y), 1);
+							((x - 45) * 0.707 - (y - 25) * 0.707) * ((x - 45) * 0.707 - (y - 25) * 0.707) / 1024 <= 1) {
+						if (getPartition().getLocalBounds().contains(new Int2D(x, y))) {
+						    obstacles.set(new Int2D(x, y), 1);
+						}
+					}
 
 					if (((x - 35) * 0.707 + (y - 70) * 0.707) * ((x - 35) * 0.707 + (y - 70) * 0.707) / 36 +
-							((x - 35) * 0.707 - (y - 70) * 0.707) * ((x - 35) * 0.707 - (y - 70) * 0.707) / 1024 <= 1)
-						obstacles.set(new Int2D(x, y), 1);
+							((x - 35) * 0.707 - (y - 70) * 0.707) * ((x - 35) * 0.707 - (y - 70) * 0.707) / 1024 <= 1) {
+						if (getPartition().getLocalBounds().contains(new Int2D(x, y))) {
+						    obstacles.set(new Int2D(x, y), 1);
+						}
+					}
 				}
 			break;
 		case ONE_LONG_OBSTACLE:
 			for (int x = 0; x < GRID_WIDTH; x++)
 				for (int y = 0; y < GRID_HEIGHT; y++)
 				{
-					obstacles.set(new Int2D(x, y), 0);
+					if (getPartition().getLocalBounds().contains(new Int2D(x, y))) {
+					    obstacles.set(new Int2D(x, y), 0);
+					}
 					if ((x - 60) * (x - 60) / 1600 +
-							(y - 50) * (y - 50) / 25 <= 1)
-						obstacles.set(new Int2D(x, y), 1);
+							(y - 50) * (y - 50) / 25 <= 1) {
+						
+						if (getPartition().getLocalBounds().contains(new Int2D(x, y))) {
+						    obstacles.set(new Int2D(x, y), 1);
+						}
+					}
 				}
 			break;
 		}
-
-		// initialize the grid with the home and food sites
+		
+		
+		
+		
+		
+		
 		for (int x = HOME_XMIN; x <= HOME_XMAX; x++)
 			for (int y = HOME_YMIN; y <= HOME_YMAX; y++)
 				if (getPartition().getLocalBounds().contains(new Int2D(x, y)))
@@ -218,18 +277,19 @@ public /* strictfp */ class DAntsForage extends DSimState
 			for (int y = FOOD_YMIN; y <= FOOD_YMAX; y++)
 				if (getPartition().getLocalBounds().contains(new Int2D(x, y)))
 					sites.set(new Int2D(x, y), 2);
+		
+		ArrayList<DAnt> ants = (ArrayList<DAnt>) getRootInfo("ants");
+		
 
-		for (int x = 0; x < numAnts; x++)
+
+		for (Object p : ants)
 		{
-			if (getPartition().getLocalBounds()
-					.contains(new Int2D((HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2)))
-			{
-				DAnt ant = new DAnt(reward, (HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2);
-				buggrid.add(new Int2D((HOME_XMAX + HOME_XMIN) / 2, (HOME_YMAX + HOME_YMIN) / 2), ant);
-				schedule.scheduleRepeating(Schedule.EPOCH + x, 0, ant, 1);
+			DAnt a = (DAnt) p;
+			if (getPartition().getLocalBounds().contains(new Int2D(a.x, a.y))) {
+				buggrid.addAgent(new Int2D(a.x, a.y), a, 0, 0, 1);
 			}
 		}
-
+		
 		// Schedule evaporation to happen after the ants move and update
 		schedule.scheduleRepeating(Schedule.EPOCH, 1, new DSteppable()
 		{
@@ -239,7 +299,9 @@ public /* strictfp */ class DAntsForage extends DSimState
 				toHomeGrid.multiply(evaporationConstant);
 			}
 		}, 1);
+		
 
+		
 	}
 
 	public static void main(String[] args)

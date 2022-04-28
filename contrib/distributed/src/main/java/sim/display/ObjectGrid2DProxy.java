@@ -95,14 +95,14 @@ public class ObjectGrid2DProxy extends ObjectGrid2D implements UpdatableProxy
 				{
 				
 				
-				Object[] fieldx = field[x];
+				Object[] fieldx = field[x - fullBounds_offset.getX()];
 				for(int y = partition_height_low_ind; y < partition_height_high_ind; y++)
 					{
 					
 
 					
 					Int2D local_p = storage.toLocalPoint(new Int2D(x, y)); //convert to local storage to access partiton storage correctly
-					fieldx[y] = data[local_p.x * partBound.getHeight() + local_p.y];
+					fieldx[y - fullBounds_offset.getY()] = data[local_p.x * partBound.getHeight() + local_p.y];
 
 					}
 				}

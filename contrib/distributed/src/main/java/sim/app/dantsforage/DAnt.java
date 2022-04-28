@@ -159,18 +159,29 @@ public class DAnt extends DSteppable
 					max_y = ym;
 				}
 			}
-			af.buggrid.add(new Int2D(max_x, max_y), this);
+			
+            int old_x = x;
+            int old_y = y;
+
+			
 			x = max_x;
 			y = max_y;
+			
+			
+			
 			last = new Int2D(x, y);
 			if (af.sites.get(new Int2D(max_x, max_y)).getInt() == DAntsForage.HOME) // reward me next time! And change my status
 			{
 				reward = af.reward;
 				hasFoodItem = !hasFoodItem;
 			}
+			
+			af.buggrid.moveAgent(new Int2D(old_x, old_y), new Int2D(max_x, max_y), this);
+
 		}
 		else
 		{
+			
 			double max = DAntsForage.IMPOSSIBLY_BAD_PHEROMONE;
 			int max_x = x;
 			int max_y = y;
@@ -178,6 +189,7 @@ public class DAnt extends DSteppable
 			for (int dx = -1; dx < 2; dx++)
 				for (int dy = -1; dy < 2; dy++)
 				{
+
 					int _x = dx + x;
 					int _y = dy + y;
 					if ((dx == 0 && dy == 0) ||
@@ -199,6 +211,9 @@ public class DAnt extends DSteppable
 						max_y = _y;
 					}
 				}
+			
+
+			
 			if (max == 0 && last != null) // nowhere to go! Maybe go straight
 			{
 				if (state.random.nextBoolean(af.momentumProbability))
@@ -226,13 +241,26 @@ public class DAnt extends DSteppable
 					max_y = ym;
 				}
 			}
-			af.buggrid.add(new Int2D(max_x, max_y), this);
+			
+            int old_x = x;
+            int old_y = y;
+
+			
+			//af.buggrid.add(new Int2D(max_x, max_y), this);
 			last = new Int2D(max_x, max_y);
+			x = max_x;
+			y = max_y;			
+			
+
 			if (af.sites.get(new Int2D(max_x, max_y)).getInt() == DAntsForage.FOOD) // reward me next time! And change my status
 			{
 				reward = af.reward;
 				hasFoodItem = !hasFoodItem;
 			}
+			
+			//System.out.println("Ant : from "+new Int2D(old_x,old_y)+" to "+new Int2D(max_x, max_y));
+			af.buggrid.moveAgent(new Int2D(old_x,old_y), new Int2D(max_x, max_y), this); //this needs to be last, otherwise rest of code may not execute if moving partitions
+
 		}
 	}
 
@@ -241,7 +269,10 @@ public class DAnt extends DSteppable
 		try
 		{
 		depositPheromone(state);
+		
+		
 		act(state);
+		
 		}
 		catch (Exception e)
 		{
