@@ -33,7 +33,7 @@ public class Source extends Provider implements Steppable
     {
     protected SimplePortrayal2D buildPortrayal()
     	{
-    	return new OvalPortrayal2D(Color.red, 10.0, false);
+    	return new OvalPortrayal2D(Color.red, getPortrayalScale(), false);
     	}
 
     protected String getLabel() 

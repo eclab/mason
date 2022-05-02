@@ -21,7 +21,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
     {
     protected SimplePortrayal2D buildPortrayal()
     	{
-    	return new RectanglePortrayal2D(Color.black, 10.0, false);
+    	return new RectanglePortrayal2D(Color.black, getPortrayalScale(), true);
     	}
 
     protected String getLabel() 
@@ -73,7 +73,6 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         super.clear();
         delayQueue.clear();
         totalResource = 0.0;
-        System.err.println("CLEAR");
         }
 
 	/** Returns the number of items currently being delayed. */

@@ -15,6 +15,7 @@ import sim.display.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.event.*;
+import javax.swing.*;
 
 /**
    A provider of resources. Providers also have a TYPICAL resource, 
@@ -33,6 +34,10 @@ import java.awt.event.*;
 
 public abstract class Provider extends SimplePortrayal2D implements Named, Resettable
     {
+    static double portrayalScale = 10.0;
+    public static double getPortrayalScale() { return portrayalScale; }
+    public static void setPortrayalScale(double val) { portrayalScale = val; }
+    
     SimplePortrayal2D portrayal = null;
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info) { getPortrayal().draw(object, graphics, info); }
     public boolean hitObject(Object object, DrawInfo2D range) { return getPortrayal().hitObject(object, range); }
@@ -45,7 +50,13 @@ public abstract class Provider extends SimplePortrayal2D implements Named, Reset
     	{
     	if (portrayal == null) 
     		{
-    		portrayal = new MovablePortrayal2D(new LabelledPortrayal2D(buildPortrayal(), null)
+    		portrayal = new MovablePortrayal2D(new LabelledPortrayal2D(
+    			image == null? buildPortrayal() : new ImagePortrayal2D(image, getPortrayalScale()), 
+    				LabelledPortrayal2D.DEFAULT_OFFSET_X, LabelledPortrayal2D.DEFAULT_OFFSET_Y,
+    				-getPortrayalScale() / 2.0, getPortrayalScale() / 2.0,
+    				new Font("SansSerif",Font.PLAIN, 10), LabelledPortrayal2D.ALIGN_LEFT,
+    				null, Color.black, false)
+
 				{
 				public String getLabel(Object object, DrawInfo2D info)
 					{
@@ -56,6 +67,14 @@ public abstract class Provider extends SimplePortrayal2D implements Named, Reset
     	return portrayal;
     	}
 
+	ImageIcon image = null;
+	
+	/** Be sure to set the portrayal scale FIRST */
+	public void setImage(String imagePath)
+		{
+		image = new ImageIcon(getClass().getResource(imagePath));
+		}
+		
     protected SimplePortrayal2D buildPortrayal()
     	{
     	return new SimplePortrayal2D();
@@ -205,6 +224,8 @@ public abstract class Provider extends SimplePortrayal2D implements Named, Reset
     public static final int OFFER_POLICY_SHUFFLE = 3;
     /** Offer Policy: offers are made to only one random receiver, chosen via an offer distribution or, if the offer distribution is null, chosen uniformly. */
     public static final int OFFER_POLICY_RANDOM = 4;
+    /** Offer Policy: offers are made to only one receiver, chosen via selectReceiver. */
+    public static final int OFFER_POLICY_SELECT = 5;
     int offerPolicy;
     int roundRobinPosition = 0;
     boolean offersTakeItOrLeaveIt;
@@ -218,7 +239,7 @@ public abstract class Provider extends SimplePortrayal2D implements Named, Reset
     /** Sets the receiver offer policy.  Throws IllegalArgumentException if the policy is out of bounds. */
     public void setOfferPolicy(int offerPolicy) 
         { 
-        if (offerPolicy < OFFER_POLICY_FORWARD || offerPolicy > OFFER_POLICY_RANDOM)
+        if (offerPolicy < OFFER_POLICY_FORWARD || offerPolicy > OFFER_POLICY_SELECT)
             throw new IllegalArgumentException("Offer Policy " + offerPolicy + " out of bounds.");
         this.offerPolicy = offerPolicy; 
         roundRobinPosition = 0; 
@@ -471,7 +492,8 @@ public abstract class Provider extends SimplePortrayal2D implements Named, Reset
        }
        
     // only warn about problems with the distribution a single time
-    boolean warned = false; 
+    boolean distributionWarned = false; 
+    boolean selectWarned = false;
     
     /** Simply calls offerReceivers(receivers). */
     protected boolean offerReceivers()
@@ -565,10 +587,10 @@ public abstract class Provider extends SimplePortrayal2D implements Named, Reset
                     int val = offerDistribution.nextInt();
                     if (val < 0 || val >= size )
                         {
-                        if (!warned)
+                        if (!distributionWarned)
                             {
-                            new RuntimeException("Warning: Offer distribution for Provider " + this + " returned a value outside the Receiver range: " + val);
-                            warned = true;
+                            new RuntimeException("Warning: Offer distribution for Provider " + this + " returned a value outside the Receiver range: " + val).printStackTrace();
+                            distributionWarned = true;
                             }
                         result = false;
                         }
@@ -579,12 +601,38 @@ public abstract class Provider extends SimplePortrayal2D implements Named, Reset
                     }
                 }
             break;
+            case OFFER_POLICY_SELECT:
+                {
+                int size = receivers.size();
+                if (size == 0) 
+                    {
+					if (!selectWarned)
+						{
+						new RuntimeException("Warning: Offer policy is SELECT but there are no receivers to select from in " + this).printStackTrace();
+						selectWarned = true;
+						}
+                    }
+                else
+                	{                
+	                result = offerReceiver(selectReceiver(receivers), Double.POSITIVE_INFINITY);
+	                }
+                }
+            break;
             }
             
         offering = false;
         return result;
         }
     
+    /**
+       If the offer policy is OFFER_POLICY_SELECT, then when the receivers are non-empty,
+       this method will be called to specify which receiver should be offered resources.
+       Override this method as you see fit.  The default implementation simply returns the first one.
+    */
+    public Receiver selectReceiver(ArrayList<Receiver> receivers)
+    	{
+    	return receivers.get(0);
+    	}
         
     /**
        Asks the Provider to make a unilateral offer to the given Receiver.  This can be used to implement

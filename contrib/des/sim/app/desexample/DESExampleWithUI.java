@@ -86,8 +86,8 @@ public class DESExampleWithUI extends GUIState
         display = new Display2D(600,600,this);
         // turn off clipping
         display.setClipping(false);
-        display.attach( layoutPortrayal, "Layout" );
         display.attach( graphPortrayal, "Connections" );
+        display.attach( layoutPortrayal, "Layout" );
 
         displayFrame = display.createFrame();
         displayFrame.setTitle("Amazing!");
