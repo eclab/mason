@@ -61,6 +61,10 @@ public class ShapePortrayal2D extends AbstractShapePortrayal2D
     public static final double[] X_POINTS_HEXAGON_ROTATED = new double[] {0, 0.5, 0.5, 0, -0.5, -0.5};
     public static final double[] Y_POINTS_HEXAGON_ROTATED = new double[] {-0.5, -0.25, 0.25, 0.5, 0.25, -0.25};
     
+    public static final Shape SHAPE_OVAL = new Ellipse2D.Float(-0.5f, -0.5f, 1.0f, 1.0f);
+    public static final Shape SHAPE_ROUND_RECT = new RoundRectangle2D.Float(-0.5f, -0.5f, 1.0f, 1.0f, 0.1f, 0.1f);
+    public static final Shape SHAPE_VERY_ROUND_RECT = new RoundRectangle2D.Float(-0.5f, -0.5f, 1.0f, 1.0f, 0.3f, 0.3f);
+    
     Shape buildPolygon(double[] xpoints, double[] ypoints)
         {
         GeneralPath path = new GeneralPath();
@@ -106,7 +110,17 @@ public class ShapePortrayal2D extends AbstractShapePortrayal2D
         this.filled = filled;
         setStroke(null);
         }
-    
+        
+    public void setShape(Shape shape)
+    	{
+    	this.shape = shape;
+    	}
+
+    public void setShape(double[] xpoints, double[] ypoints)
+    	{
+    	this.shape = buildPolygon(xpoints, ypoints);
+    	}
+    	
     public void setStroke(Stroke s)
         {
         stroke = s;
