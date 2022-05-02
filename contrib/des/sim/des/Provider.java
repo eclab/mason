@@ -50,22 +50,33 @@ public abstract class Provider extends SimplePortrayal2D implements Named, Reset
     	{
     	if (portrayal == null) 
     		{
-    		portrayal = new MovablePortrayal2D(new LabelledPortrayal2D(
+    		portrayal = new MovablePortrayal2D(new CircledPortrayal2D(new LabelledPortrayal2D(
     			image == null? buildPortrayal() : new ImagePortrayal2D(image, getPortrayalScale()), 
     				LabelledPortrayal2D.DEFAULT_OFFSET_X, LabelledPortrayal2D.DEFAULT_OFFSET_Y,
     				-getPortrayalScale() / 2.0, getPortrayalScale() / 2.0,
     				new Font("SansSerif",Font.PLAIN, 10), LabelledPortrayal2D.ALIGN_LEFT,
     				null, Color.black, false)
-
 				{
 				public String getLabel(Object object, DrawInfo2D info)
 					{
 					return Provider.this.getLabel();
 					}
-				}); 
+				}, 0, getPortrayalScale() * 1.5, Color.gray, false)
+					{
+    				public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+    					{
+    					setCircleShowing(((Provider)object).getDrawState());
+    					super.draw(object, graphics, info);
+    					}
+					}); 
     		} 
     	return portrayal;
     	}
+
+	public boolean getDrawState()
+		{
+		return false;
+		}
 
 	ImageIcon image = null;
 	
@@ -77,7 +88,7 @@ public abstract class Provider extends SimplePortrayal2D implements Named, Reset
 		
     protected SimplePortrayal2D buildPortrayal()
     	{
-    	return new SimplePortrayal2D();
+    	return new RectanglePortrayal2D(Color.red, getPortrayalScale(), false);
     	}
 
     protected String getLabel() { return "---"; }
@@ -176,7 +187,7 @@ public abstract class Provider extends SimplePortrayal2D implements Named, Reset
     /** Returns the timestamp for the most recent offers accepted. */
     public double getLastAcceptedOfferTime() { return lastAcceptedOfferTime; }
     
-    // Clears the last accepted offers, and sets the time the given time.
+    // Clears the last accepted offers, and sets the time to the given time.
     void clearLastAcceptedOffers(double newTime) { lastAcceptedOffers.clear(); lastAcceptedOfferReceivers.clear(); lastAcceptedOfferTime = newTime; }
     
     // If the last offer time is less than the current time, clears the offers to the current time.
@@ -330,6 +341,14 @@ public abstract class Provider extends SimplePortrayal2D implements Named, Reset
         }
                                 
     /** 
+        Returns all registered receivers.
+    */
+    public ArrayList<Receiver> getReceivers()
+        {
+        return receivers;
+        }
+                                
+    /** 
         Unregisters a receiver with the Provider.  Returns false if the receiver was not registered.
     */
     public boolean removeReceiver(Receiver receiver)
@@ -421,7 +440,7 @@ public abstract class Provider extends SimplePortrayal2D implements Named, Reset
        
     protected boolean offerReceiver(Receiver receiver, Entity entity)
     	{
-        lastAcceptedOfferTime = state.schedule.getTime();
+        lastOfferTime = state.schedule.getTime();
 		boolean result = receiver.accept(this, entity, 0, 0);
 		if (result)
 			{
@@ -459,7 +478,7 @@ public abstract class Provider extends SimplePortrayal2D implements Named, Reset
             double offer = originalAmount;
             if (offer > atMost) offer = atMost;
             if (offer <= 0) return false;
-            lastAcceptedOfferTime = state.schedule.getTime();
+            lastOfferTime = state.schedule.getTime();
             boolean result = receiver.accept(this, cr, getOffersTakeItOrLeaveIt() ? offer : 0, offer);
             if (result)
             	{

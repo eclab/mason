@@ -22,6 +22,12 @@ public class Money extends CountableResource
         super(currencySymbol, initialAmount);
         }
         
+    /** Produces a unique and new type of money, with an initial amount of 0 and a currency symbol. */
+    public Money(String currencySymbol)
+        {
+        this(currencySymbol, 0);
+        }
+        
     /** Copies a money resource from another, including the amount, currency symbol, and type. */
     public Money(Money other)
         {

@@ -47,6 +47,12 @@ public class DES2D implements java.io.Serializable
 		edges.addEdge(new ResourceEdge(provider, receiver, edges));
 		}
 		
+	public void connect(Provider provider)
+		{
+		for(Receiver receiver : provider.getReceivers())
+			connect(provider, receiver);
+		}
+		
 	public void clear()
 		{
 		nodes.clear();

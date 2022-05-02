@@ -46,6 +46,12 @@ public class Pool implements Named
         this(new CountableResource("", initialResourceAllocation));
         }
         
+    public Pool(int initialResourceAllocation, double maximum)
+        {
+        this(new CountableResource("", initialResourceAllocation));
+        this.maximum = maximum;
+        }
+        
     public Pool()
         {
         this(0);

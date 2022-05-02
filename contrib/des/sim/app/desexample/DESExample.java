@@ -44,7 +44,12 @@ public class DESExample extends SimState
         source2.setAutoSchedules(true);
         // source1 needs to be added to the schedule ONCE -- thereafter it'll operate via autoscheduling
         schedule.scheduleOnce(Schedule.EPOCH, source2);
-        	
+        
+        Pool pool = new Pool(new CountableResource("Locks", 20), 20);
+        Lock lock1 = new Lock(this, quatloos, pool);
+        Lock lock2 = new Lock(this, quatloos, pool);
+        Unlock unlock = new Unlock(this, quatloos, pool);
+        
         // Add a Simple Delay
         SimpleDelay simpleDelay = new SimpleDelay(this, 24.3, quatloos);
         // FIME: at present simple delays autoschedule by default
@@ -56,20 +61,29 @@ public class DESExample extends SimState
         sink.setImage("images/factory.png");
         
         // Hook them up
-        source1.addReceiver(simpleDelay);
-        source2.addReceiver(simpleDelay);
-        simpleDelay.addReceiver(sink);
+        source1.addReceiver(lock1);
+        source2.addReceiver(lock2);
+        lock1.addReceiver(simpleDelay);
+        lock2.addReceiver(simpleDelay);
+        simpleDelay.addReceiver(unlock);
+        unlock.addReceiver(sink);
         
         // Set up our network for display purposes
         field = new DES2D(100, 100);
         field.add(source1, 20, 40);
         field.add(source2, 20, 60);
+        field.add(lock1, 35, 40);
+        field.add(lock2, 35, 60);
         field.add(simpleDelay, 50, 50);
+        field.add(unlock, 65, 50);
         field.add(sink, 80, 50);
         /// FIXME: maybe we should automatically connect somehow?
-        field.connect(source1, simpleDelay);
-        field.connect(source2, simpleDelay);
-        field.connect(simpleDelay, sink);
+        field.connect(source1, lock1);
+        field.connect(source2, lock2);
+        field.connect(simpleDelay, unlock);
+        field.connect(lock1);
+        field.connect(lock2);
+        field.connect(unlock);
         }
         
     public static void main(String[] args)

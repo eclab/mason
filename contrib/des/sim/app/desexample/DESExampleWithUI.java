@@ -15,6 +15,7 @@ import javax.swing.*;
 import java.awt.Color;
 import java.awt.*;
 import sim.field.network.*;
+import sim.des.network.*;
 
 public class DESExampleWithUI extends GUIState
     {
@@ -65,12 +66,12 @@ public class DESExampleWithUI extends GUIState
         DESExample example = (DESExample) state;
                 
         layoutPortrayal.setField(example.field.getNodes());
-       // layoutPortrayal.setPortrayalForAll(new MovablePortrayal2D(new RectanglePortrayal2D(5.0, false)));
-        
-        SimpleEdgePortrayal2D edge = new SimpleEdgePortrayal2D(Color.BLUE, Color.RED, Color.BLACK, new Font("SansSerif", Font.PLAIN, 2));
-        edge.setShape(SimpleEdgePortrayal2D.SHAPE_LINE);
         graphPortrayal.setField(example.field.getField());
-        graphPortrayal.setPortrayalForAll(edge);
+        graphPortrayal.setPortrayalForAll(new ResourceEdgePortrayal(1.0));
+        
+        //layoutPortrayal.setPortrayalForAll(new MovablePortrayal2D(new RectanglePortrayal2D(5.0, false)));        
+        //SimpleEdgePortrayal2D edge = ResourceEdge.getDefaultEdgePortrayal2D(); //new SimpleEdgePortrayal2D(Color.BLUE, Color.RED, Color.BLACK, new Font("SansSerif", Font.PLAIN, 2));
+        //edge.setShape(SimpleEdgePortrayal2D.SHAPE_LINE_ROUND_ENDS);
 
         // reschedule and repaint the displayer
         display.reset();

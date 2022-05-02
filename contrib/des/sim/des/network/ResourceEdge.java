@@ -11,6 +11,12 @@ import sim.util.*;
 import sim.engine.*;
 import java.util.*;
 import sim.des.*;
+import javax.swing.*;
+import java.awt.Color;
+import java.awt.*;
+import sim.field.network.*;
+import sim.portrayal.network.*;
+import sim.portrayal.*;
 
 /**
    A subclass of Edge which allows the display and weighting of resources which
@@ -20,7 +26,7 @@ import sim.des.*;
 public class ResourceEdge extends Edge
 	{
     private static final long serialVersionUID = 1;
-
+    
 	public ResourceEdge(Provider provider, Receiver receiver, Network network)
 		{
 		super(provider, receiver, null);		// we have a null info because we grab it from the provider

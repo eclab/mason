@@ -74,4 +74,9 @@ public class Unlock extends Lock
         {
         return "Unlock@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ", " + pool + ", " + numResources + ")";
         }               
+
+    protected String getLabel() 
+    	{ 
+    	return (getName() == null ? "Unlock (" + (pool.getName() == null ? "Pool " + System.identityHashCode(pool) : pool.getName()) + ")" : getName());
+    	}    
     }
