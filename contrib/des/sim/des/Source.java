@@ -9,7 +9,9 @@ package sim.des;
 import sim.engine.*;
 import sim.util.distribution.*;
 import java.util.*;
-
+import sim.portrayal.simple.*;
+import sim.portrayal.*;
+import java.awt.*;
 
 /** 
     A source of resources.  You will typically subclass Source to provide resources in a custom
@@ -29,6 +31,19 @@ import java.util.*;
 
 public class Source extends Provider implements Steppable
     {
+    protected SimplePortrayal2D buildPortrayal()
+    	{
+    	return new OvalPortrayal2D(Color.red, 10.0, false);
+    	}
+
+    protected String getLabel() 
+    	{ 
+    	return (getName() == null ? "Source" : getName()) + " " + 
+    		getTotal() + 
+    		(getCapacity() != Double.POSITIVE_INFINITY ? 
+    			" (" + String.format("%.2f", 100 * (getCapacity() == 0 ? 1.0 : getTotal() / getCapacity())) + ")" : "");
+    	}
+
     private static final long serialVersionUID = 1;
 
     void throwInvalidCapacityException(double capacity)
@@ -61,6 +76,9 @@ public class Source extends Provider implements Steppable
             throwInvalidCapacityException(d); 
         capacity = d; 
         }
+
+	/** Returns the number AMOUNT of resource currently being delayed. */
+	public double getTotal() { if (entities != null) return entities.size(); else return ((CountableResource)resource).getAmount(); }
 
     double rate = 1.0;
     boolean randomOffset = true;

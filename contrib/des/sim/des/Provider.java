@@ -9,6 +9,12 @@ package sim.des;
 import sim.engine.*;
 import java.util.*;
 import sim.util.distribution.*;
+import sim.portrayal.simple.*;
+import sim.portrayal.*;
+import sim.display.*;
+import java.awt.*;
+import java.awt.geom.*;
+import java.awt.event.*;
 
 /**
    A provider of resources. Providers also have a TYPICAL resource, 
@@ -25,8 +31,38 @@ import sim.util.distribution.*;
    offers.
 */
 
-public abstract class Provider implements Named, Resettable
+public abstract class Provider extends SimplePortrayal2D implements Named, Resettable
     {
+    SimplePortrayal2D portrayal = null;
+    public void draw(Object object, Graphics2D graphics, DrawInfo2D info) { getPortrayal().draw(object, graphics, info); }
+    public boolean hitObject(Object object, DrawInfo2D range) { return getPortrayal().hitObject(object, range); }
+    public boolean setSelected(LocationWrapper wrapper, boolean selected) { return getPortrayal().setSelected(wrapper, selected); }
+    public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper, MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type) { return getPortrayal().handleMouseEvent(guistate, manipulating, wrapper, event, fieldPortrayalDrawInfo, type); }
+    public Inspector getInspector(LocationWrapper wrapper, GUIState state) { return getPortrayal().getInspector(wrapper, state); }
+    public String getName(LocationWrapper wrapper) { return getPortrayal().getName(wrapper); }
+    
+    SimplePortrayal2D getPortrayal()
+    	{
+    	if (portrayal == null) 
+    		{
+    		portrayal = new MovablePortrayal2D(new LabelledPortrayal2D(buildPortrayal(), null)
+				{
+				public String getLabel(Object object, DrawInfo2D info)
+					{
+					return Provider.this.getLabel();
+					}
+				}); 
+    		} 
+    	return portrayal;
+    	}
+
+    protected SimplePortrayal2D buildPortrayal()
+    	{
+    	return new SimplePortrayal2D();
+    	}
+
+    protected String getLabel() { return "---"; }
+
     private static final long serialVersionUID = 1;
 
     /** Throws an exception indicating that an offer cycle was detected. */
@@ -93,23 +129,32 @@ public abstract class Provider implements Named, Resettable
     /** The model. */
     protected SimState state;
     
+    public SimState getState()
+    	{
+    	return state;
+    	}
+        
     
     ////// OFFER STATISTICS
     //////
     ////// These methods maintain the most recent offers made, which can be used to update graphical
     ////// interface information regarding offers between nodes.
     
+    /// The timestampof the most recent offers
+    double lastOfferTime = Schedule.BEFORE_SIMULATION;
     /// The most recent offers
     ArrayList<Resource> lastAcceptedOffers = new ArrayList<Resource>();
     /// The most receivers for the most recent offers
     ArrayList<Receiver> lastAcceptedOfferReceivers = new ArrayList<Receiver>();
-    /// The timestampof the most recent offers
+    /// The timestamp of the most recent accepted offers
     double lastAcceptedOfferTime = Schedule.BEFORE_SIMULATION;
-    /** Returns the most recent offers made. */
+    /** Returns the most recent offers accepted. */
     public ArrayList<Resource> getLastAcceptedOffers() { return lastAcceptedOffers; }
-    /** Returns the receivers for the most recent offers made. */
+    /** Returns the receivers for the most recent offers accepted. */
     public ArrayList<Receiver> getLastAcceptedOfferReceivers() { return lastAcceptedOfferReceivers; }
     /** Returns the timestamp for the most recent offers made. */
+    public double getLastOfferTime() { return lastOfferTime; }
+    /** Returns the timestamp for the most recent offers accepted. */
     public double getLastAcceptedOfferTime() { return lastAcceptedOfferTime; }
     
     // Clears the last accepted offers, and sets the time the given time.
@@ -117,16 +162,13 @@ public abstract class Provider implements Named, Resettable
     
     // If the last offer time is less than the current time, clears the offers to the current time.
     // Adds the given resource and receiver to the new offers.
-    void updateLastAcceptedOffers(Resource resourceDuplicate, Receiver receiver)
+    void updateLastAcceptedOffers(Resource resource, Receiver receiver)
     	{
 		double currentTime = state.schedule.getTime();
-		if (currentTime > getLastAcceptedOfferTime())
-			{
-			clearLastAcceptedOffers(currentTime);
-			}
-		lastAcceptedOffers.add(resourceDuplicate);
+		clearLastAcceptedOffers(currentTime);
+		lastAcceptedOffers.add(resource.duplicate());
 		lastAcceptedOfferReceivers.add(receiver);
-		totalAcceptedOfferResource += resourceDuplicate.getAmount();
+		totalAcceptedOfferResource += resource.getAmount();
     	}
     
     double totalAcceptedOfferResource;
@@ -322,11 +364,6 @@ public abstract class Provider implements Named, Resettable
         this.state = state;
         }
         
-    public SimState getState()
-    	{
-    	return state;
-    	}
-        
     //// SHUFFLING PROCEDURE
     //// You'd think that shuffling would be easy to implement but it's not.
     //// We want to avoid an O(n) shuffle just to (most likely) select the
@@ -363,7 +400,12 @@ public abstract class Provider implements Named, Resettable
        
     protected boolean offerReceiver(Receiver receiver, Entity entity)
     	{
+        lastAcceptedOfferTime = state.schedule.getTime();
 		boolean result = receiver.accept(this, entity, 0, 0);
+		if (result)
+			{
+			updateLastAcceptedOffers(entity, receiver);
+			}
 		return result;
 		}
     	 
@@ -396,6 +438,7 @@ public abstract class Provider implements Named, Resettable
             double offer = originalAmount;
             if (offer > atMost) offer = atMost;
             if (offer <= 0) return false;
+            lastAcceptedOfferTime = state.schedule.getTime();
             boolean result = receiver.accept(this, cr, getOffersTakeItOrLeaveIt() ? offer : 0, offer);
             if (result)
             	{
@@ -408,22 +451,20 @@ public abstract class Provider implements Named, Resettable
         else if (offerOrder == OFFER_ORDER_FIFO)
             {
             Entity e = entities.getFirst();
-            boolean result = offerReceiver(receiver, e); //receiver.accept(this, e, 0, 0);
+            boolean result = offerReceiver(receiver, e); 
             if (result)
             	{
 				entities.removeFirst();
-            	updateLastAcceptedOffers(e.duplicate(), receiver);
             	}
             return result;
             }
          else // if (offerOrder == OFFER_ORDER_LIFO)
             {
             Entity e = entities.getLast();
-            boolean result = offerReceiver(receiver, e);  //receiver.accept(this, e, 0, 0);
+            boolean result = offerReceiver(receiver, e);
             if (result)
             	{
 				entities.removeLast();
-            	updateLastAcceptedOffers(e.duplicate(), receiver);
             	}
             return result;
             }
@@ -586,7 +627,6 @@ public abstract class Provider implements Named, Resettable
 		if (result)
 			{
 			entities.remove(entityNumber);
-			updateLastAcceptedOffers(e.duplicate(), receiver);
 			}
 		return result;
     	}
@@ -615,6 +655,7 @@ public abstract class Provider implements Named, Resettable
     	{
     	clear();
     	clearLastAcceptedOffers(Schedule.BEFORE_SIMULATION);
+    	lastOfferTime = Schedule.BEFORE_SIMULATION;
     	totalAcceptedOfferResource = 0;
     	}
     	

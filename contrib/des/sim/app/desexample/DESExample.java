@@ -46,7 +46,7 @@ public class DESExample extends SimState
         schedule.scheduleOnce(Schedule.EPOCH, source2);
         	
         // Add a Simple Delay
-        SimpleDelay simpleDelay = new SimpleDelay(this, 2.3, quatloos);
+        SimpleDelay simpleDelay = new SimpleDelay(this, 24.3, quatloos);
         // FIME: at present simple delays autoschedule by default
         // but sources do not, and simple delays don't need to be added
         // to the schedule.  This is a bit confusing.

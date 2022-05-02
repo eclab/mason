@@ -8,14 +8,49 @@ package sim.des;
 
 import sim.engine.*;
 import java.util.*;
-
+import sim.portrayal.simple.*;
+import java.awt.*;
+import java.awt.geom.*;
+import java.awt.event.*;
+import sim.portrayal.*;
+import sim.display.*;
 
 /**
    A Sink accepts all incoming offers of resources matching a given type, then throws them away.
 */
 
-public class Sink implements Receiver, StatReceiver
+public class Sink extends SimplePortrayal2D implements Receiver, StatReceiver
     {
+    protected SimplePortrayal2D portrayal = null;
+    public void draw(Object object, Graphics2D graphics, DrawInfo2D info) { getPortrayal().draw(object, graphics, info); }
+    public boolean hitObject(Object object, DrawInfo2D range) { return getPortrayal().hitObject(object, range); }
+    public boolean setSelected(LocationWrapper wrapper, boolean selected) { return getPortrayal().setSelected(wrapper, selected); }
+    public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper, MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type) { return getPortrayal().handleMouseEvent(guistate, manipulating, wrapper, event, fieldPortrayalDrawInfo, type); }
+    public Inspector getInspector(LocationWrapper wrapper, GUIState state) { return getPortrayal().getInspector(wrapper, state); }
+    public String getName(LocationWrapper wrapper) { return getPortrayal().getName(wrapper); }
+    
+    SimplePortrayal2D getPortrayal()
+    	{
+    	if (portrayal == null) 
+    		{
+    		portrayal = new MovablePortrayal2D(new LabelledPortrayal2D(buildPortrayal(), null)
+				{
+				public String getLabel(Object object, DrawInfo2D info)
+					{
+					return Sink.this.getLabel();
+					}
+				}); 
+    		} 
+    	return portrayal;
+    	}
+
+    protected SimplePortrayal2D buildPortrayal()
+    	{
+    	return new ShapePortrayal2D(ShapePortrayal2D.X_POINTS_OCTAGON, ShapePortrayal2D.Y_POINTS_OCTAGON, Color.blue, 10.0, false);
+    	}
+
+    protected String getLabel() { return (getName() == null ? "Sink" : getName()); }
+    
     private static final long serialVersionUID = 1;
 
     protected SimState state;
