@@ -205,14 +205,14 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
             {
             if (fromPaint == toPaint)
                 {
-                graphics.setPaint (fromPaint);
+                graphics.setPaint(fromPaint);
                 graphics.drawLine(startX, startY, endX, endY);
                 }
             else
                 {
-                graphics.setPaint( fromPaint );
+                graphics.setPaint(fromPaint);
                 graphics.drawLine(startX,startY,midX,midY);
-                graphics.setPaint( toPaint );
+                graphics.setPaint(toPaint);
                 graphics.drawLine(midX,midY,endX,endY);
                 }
             }
