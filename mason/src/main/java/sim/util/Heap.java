@@ -38,14 +38,14 @@ public class Heap implements java.io.Serializable
     public Comparable[] getKeys()
         {
         Comparable[] k = new Comparable[numElem];
-        System.arraycopy(keys,0,k,0,numElem);
+        System.arraycopy(keys, 0, k, 0, numElem);
         return k;
         }
     
     public Object[] getObjects()
         {
         Object[] o = new Object[numElem];
-        System.arraycopy(objects,0,o,0,numElem);
+        System.arraycopy(objects, 0, o, 0, numElem);
         return o;
         }
 
@@ -69,7 +69,7 @@ public class Heap implements java.io.Serializable
     // builds the heap
     void buildHeap()
         {
-        for( int i = numElem/2 ; i >= 1 ; i-- )
+        for( int i = numElem / 2 ; i >= 1 ; i-- )
             heapify( i, numElem );
         }
         
@@ -81,25 +81,25 @@ public class Heap implements java.io.Serializable
         
         while( true )
             {
-            int l = 2*i;
-            int r = 2*i+1;
+            int l = 2 * i;
+            int r = 2 * i + 1;
             int smallest;
-            if( l <= heapsize && keys[l-1].compareTo(keys[i-1]) < 0 )    //keys[l-1] < keys[i-1] )
+            if( l <= heapsize && keys[l - 1].compareTo(keys[i - 1]) < 0 )    //keys[l - 1] < keys[i - 1] )
                 smallest = l;
             else
                 smallest = i;
-            if( r <= heapsize && keys[r-1].compareTo(keys[smallest-1]) < 0)    // keys[r-1] < keys[smallest-1] )
+            if( r <= heapsize && keys[r - 1].compareTo(keys[smallest - 1]) < 0)    // keys[r - 1] < keys[smallest - 1] )
                 smallest = r;
             if( smallest != i )
                 {
                 // swap keys
-                Comparable tempkey = keys[i-1];
-                keys[i-1] = keys[smallest-1];
-                keys[smallest-1] = tempkey;
+                Comparable tempkey = keys[i - 1];
+                keys[i - 1] = keys[smallest - 1];
+                keys[smallest - 1] = tempkey;
                 // swap info
-                Object temp = objects[i-1];
-                objects[i-1] = objects[smallest-1];
-                objects[smallest-1] = temp;
+                Object temp = objects[i - 1];
+                objects[i-1] = objects[smallest - 1];
+                objects[smallest - 1] = temp;
                 // recursive call.... :)
                 i = smallest;
                 }
@@ -112,14 +112,14 @@ public class Heap implements java.io.Serializable
     public Comparable getMinKey()
         {
         if (numElem == 0) return null;
-        return keys[1-1];
+        return keys[1 - 1];
         }
         
     /** Returns the current min element.  Returns null if there is no such element.  Does not extract the element. */
     public Object getMin()
         {
         if (numElem == 0) return null;
-        return objects[1-1];
+        return objects[1 - 1];			// that is, objects[0]
         }
         
     /* Removes elements in order and adds them to a Bag, so long as the provided
@@ -165,15 +165,15 @@ public class Heap implements java.io.Serializable
         if( numElem == 0 )
             return null;
         // remove the key
-        keys[1-1] = keys[numElem-1];
-        keys[numElem-1] = null;           // 0;
+        keys[1 - 1] = keys[numElem - 1];			// that is, 0
+        keys[numElem - 1] = null;
         // remove the info
-        Object result = objects[1-1];
-        objects[1-1] = objects[numElem-1];
-        objects[numElem-1] = null;
+        Object result = objects[1 - 1];
+        objects[1 - 1] = objects[numElem - 1];		// that is 0
+        objects[numElem - 1] = null;
         numElem--;
         // rebuild heap
-        if (numElem > 1) heapify( 1, numElem );    // no need to heapify if there's only zero or one element!
+        if (numElem > 1) heapify(1, numElem);    // no need to heapify if there's only zero or one element!
         // return the info with min key (which was also removed from the heap)
         
         // put back
@@ -182,7 +182,7 @@ public class Heap implements java.io.Serializable
         }
 
     /** Adds an element to the heap with the given key. */
-    public void add( Object elem, Comparable key )
+    public void add(Object elem, Comparable key)
         {
         // make local
         int numElem = this.numElem;
@@ -190,7 +190,7 @@ public class Heap implements java.io.Serializable
         Comparable[] keys = this.keys;
                 
         numElem++;
-        if( (numElem-1) >= objects.length )
+        if( (numElem - 1) >= objects.length )
             {
             Object[] temp = new Object[ objects.length * 2 + 1];
             System.arraycopy( objects, 0, temp, 0, objects.length );
@@ -207,15 +207,15 @@ public class Heap implements java.io.Serializable
 
         if (i > 1)  // no need to bubble up if there's only zero or one element!
             {
-            while ( i > 1 &&  key.compareTo(keys[i/2-1]) < 0 )    // keys[i/2-1] > key )
+            while ( i > 1 &&  key.compareTo(keys[i / 2 - 1]) < 0 )    // keys[i/2-1] > key )
                 {
-                objects[i-1] = objects[i/2-1];
-                keys[i-1] = keys[i/2-1];
-                i = i/2;
+                objects[i - 1] = objects[i / 2 - 1];
+                keys[i - 1] = keys[i / 2 - 1];
+                i = i / 2;
                 }
             }
-        keys[i-1] = key;
-        objects[i-1] = elem;
+        keys[i - 1] = key;
+        objects[i -1] = elem;
         
         // put back
         this.numElem = numElem;
