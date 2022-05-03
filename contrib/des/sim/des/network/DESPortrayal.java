@@ -34,6 +34,7 @@ public abstract class DESPortrayal extends SimplePortrayal2D implements Displaya
     	
     	if (portrayal == null || scale != portrayalScale)
     		{
+    		// rebuild it!
     		portrayalScale = scale;
     		if (baseImagePath != null)
     			{

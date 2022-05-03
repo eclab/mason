@@ -578,7 +578,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
                     }
                 else
                 	{                
-	                result = offerReceiver(selectReceiver(receivers), Double.POSITIVE_INFINITY);
+	                result = offerReceiver(selectReceiver(receivers, entities == null ? resource : entities.getFirst()), Double.POSITIVE_INFINITY);
 	                }
                 }
             break;
@@ -590,10 +590,10 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     
     /**
        If the offer policy is OFFER_POLICY_SELECT, then when the receivers are non-empty,
-       this method will be called to specify which receiver should be offered resources.
+       this method will be called to specify which receiver should be offered the given resource.
        Override this method as you see fit.  The default implementation simply returns the first one.
     */
-    public Receiver selectReceiver(ArrayList<Receiver> receivers)
+    public Receiver selectReceiver(ArrayList<Receiver> receivers, Resource resource)
     	{
     	return receivers.get(0);
     	}
