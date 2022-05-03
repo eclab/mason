@@ -15,57 +15,21 @@ import java.awt.event.*;
 import sim.portrayal.*;
 import sim.display.*;
 import javax.swing.*;
+import sim.des.network.*;
 
 /**
    A Sink accepts all incoming offers of resources matching a given type, then throws them away.
 */
 
-public class Sink extends SimplePortrayal2D implements Receiver, StatReceiver
+public class Sink extends DESPortrayal implements Receiver, StatReceiver
     {
-    public static double getPortrayalScale() { return Provider.getPortrayalScale(); }
-    public static void setPortrayalScale(double val) { Provider.setPortrayalScale(val); }
-    protected SimplePortrayal2D portrayal = null;
-    public void draw(Object object, Graphics2D graphics, DrawInfo2D info) { getPortrayal().draw(object, graphics, info); }
-    public boolean hitObject(Object object, DrawInfo2D range) { return getPortrayal().hitObject(object, range); }
-    public boolean setSelected(LocationWrapper wrapper, boolean selected) { return getPortrayal().setSelected(wrapper, selected); }
-    public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper, MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type) { return getPortrayal().handleMouseEvent(guistate, manipulating, wrapper, event, fieldPortrayalDrawInfo, type); }
-    public Inspector getInspector(LocationWrapper wrapper, GUIState state) { return getPortrayal().getInspector(wrapper, state); }
-    public String getName(LocationWrapper wrapper) { return getPortrayal().getName(wrapper); }
-    
-    SimplePortrayal2D getPortrayal()
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
-    	if (portrayal == null) 
-    		{
-    		portrayal = new MovablePortrayal2D(new LabelledPortrayal2D(
-    			image == null? buildPortrayal() : new ImagePortrayal2D(image, getPortrayalScale()), 
-    				LabelledPortrayal2D.DEFAULT_OFFSET_X, LabelledPortrayal2D.DEFAULT_OFFSET_Y,
-    				-getPortrayalScale() / 2.0, getPortrayalScale() / 2.0,
-    				new Font("SansSerif",Font.PLAIN, 10), LabelledPortrayal2D.ALIGN_LEFT,
-    				null, Color.black, false)
-    			{
-				public String getLabel(Object object, DrawInfo2D info)
-					{
-					return Sink.this.getLabel();
-					}
-				}); 
-    		} 
-    	return portrayal;
+    	return new ShapePortrayal2D(ShapePortrayal2D.X_POINTS_OCTAGON, ShapePortrayal2D.Y_POINTS_OCTAGON, Color.black, scale, false);
     	}
 
-    protected SimplePortrayal2D buildPortrayal()
-    	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.X_POINTS_OCTAGON, ShapePortrayal2D.Y_POINTS_OCTAGON, Color.black, getPortrayalScale(), false);
-    	}
-
-    protected String getLabel() { return (getName() == null ? "Sink" : getName()); }
-    
-	ImageIcon image = null;
-	
-	/** Be sure to set the portrayal scale FIRST */
-	public void setImage(String imagePath)
-		{
-		image = new ImageIcon(getClass().getResource(imagePath));
-		}
+	public boolean getDrawState() { return false; }
+    public String getLabel() { return "---"; }
 
     private static final long serialVersionUID = 1;
 

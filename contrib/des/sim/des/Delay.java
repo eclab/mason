@@ -30,7 +30,7 @@ import java.awt.*;
 
 public class Delay extends SimpleDelay
     {
-    protected String getLabel() 
+    public String getLabel() 
     	{ 
     	return (getName() == null ? "Delay" : getName()) + " " + 
     		getTotal() + 

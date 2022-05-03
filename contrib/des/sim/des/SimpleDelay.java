@@ -19,12 +19,12 @@ import java.awt.*;
 
 public class SimpleDelay extends Source implements Receiver, Steppable, StatReceiver
     {
-    protected SimplePortrayal2D buildPortrayal()
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
-    	return new RectanglePortrayal2D(Color.black, getPortrayalScale(), true);
+    	return new RectanglePortrayal2D(Color.black, scale, true);
     	}
 
-    protected String getLabel() 
+    public String getLabel() 
     	{ 
     	return (getName() == null ? "SimpleDelay" : getName()) + " " + 
     		getTotal() + 

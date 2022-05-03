@@ -16,6 +16,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.event.*;
 import javax.swing.*;
+import sim.des.network.*;
 
 /**
    A provider of resources. Providers also have a TYPICAL resource, 
@@ -32,66 +33,10 @@ import javax.swing.*;
    offers.
 */
 
-public abstract class Provider extends SimplePortrayal2D implements Named, Resettable
+public abstract class Provider extends DESPortrayal implements Named, Resettable
     {
-    static double portrayalScale = 10.0;
-    public static double getPortrayalScale() { return portrayalScale; }
-    public static void setPortrayalScale(double val) { portrayalScale = val; }
-    
-    SimplePortrayal2D portrayal = null;
-    public void draw(Object object, Graphics2D graphics, DrawInfo2D info) { getPortrayal().draw(object, graphics, info); }
-    public boolean hitObject(Object object, DrawInfo2D range) { return getPortrayal().hitObject(object, range); }
-    public boolean setSelected(LocationWrapper wrapper, boolean selected) { return getPortrayal().setSelected(wrapper, selected); }
-    public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper, MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type) { return getPortrayal().handleMouseEvent(guistate, manipulating, wrapper, event, fieldPortrayalDrawInfo, type); }
-    public Inspector getInspector(LocationWrapper wrapper, GUIState state) { return getPortrayal().getInspector(wrapper, state); }
-    public String getName(LocationWrapper wrapper) { return getPortrayal().getName(wrapper); }
-    
-    SimplePortrayal2D getPortrayal()
-    	{
-    	if (portrayal == null) 
-    		{
-    		portrayal = new MovablePortrayal2D(new CircledPortrayal2D(new LabelledPortrayal2D(
-    			image == null? buildPortrayal() : new ImagePortrayal2D(image, getPortrayalScale()), 
-    				LabelledPortrayal2D.DEFAULT_OFFSET_X, LabelledPortrayal2D.DEFAULT_OFFSET_Y,
-    				-getPortrayalScale() / 2.0, getPortrayalScale() / 2.0,
-    				new Font("SansSerif",Font.PLAIN, 10), LabelledPortrayal2D.ALIGN_LEFT,
-    				null, Color.black, false)
-				{
-				public String getLabel(Object object, DrawInfo2D info)
-					{
-					return Provider.this.getLabel();
-					}
-				}, 0, getPortrayalScale() * 1.5, Color.gray, false)
-					{
-    				public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-    					{
-    					setCircleShowing(((Provider)object).getDrawState());
-    					super.draw(object, graphics, info);
-    					}
-					}); 
-    		} 
-    	return portrayal;
-    	}
-
-	public boolean getDrawState()
-		{
-		return false;
-		}
-
-	ImageIcon image = null;
-	
-	/** Be sure to set the portrayal scale FIRST */
-	public void setImage(String imagePath)
-		{
-		image = new ImageIcon(getClass().getResource(imagePath));
-		}
-		
-    protected SimplePortrayal2D buildPortrayal()
-    	{
-    	return new RectanglePortrayal2D(Color.red, getPortrayalScale(), false);
-    	}
-
-    protected String getLabel() { return "---"; }
+	public boolean getDrawState() { return false; }
+    public String getLabel() { return "---"; }
 
     private static final long serialVersionUID = 1;
 

@@ -130,13 +130,10 @@ public class Lock extends Provider implements Receiver
 	public void setRefusesOffers(boolean value) { refusesOffers = value; }
     public boolean getRefusesOffers() { return refusesOffers; }
     
-    protected String getLabel() 
+    public String getLabel() 
     	{ 
     	return (getName() == null ? "Lock (" + (pool.getName() == null ? "Pool " + System.identityHashCode(pool) : pool.getName()) + ")" : getName());
     	}    
 
-	public boolean getDrawState()
-		{
-		return blocked;
-		}
+	public boolean getDrawState() { return blocked; }
     }
