@@ -232,6 +232,9 @@ public class DFlocker extends DSteppable implements Oriented2D
 //		}
 //		// <<<<<<<<<<<<<<<<
 		
+		dFlockers.addStat(loc.getX(), 0); //testing stats
+		dFlockers.addStat(loc.getY(), 1); //testing stats
+		
 		try
 		{
 			dFlockers.flockers.moveAgent(loc, this);
@@ -245,8 +248,7 @@ public class DFlocker extends DSteppable implements Oriented2D
 		
 
 
-		dFlockers.addStat(loc.getX(), 0); //testing stats
-		dFlockers.addStat(loc.getY(), 1); //testing stats
+
 
 	}
 	
