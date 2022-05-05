@@ -109,6 +109,9 @@ public class DPolySchelling extends DSimState{
 				world.addAgent(coord, a, 0, 0, 1);
 			    polys.add(a);
 			    
+			    //System.out.println(world.getStorage().getGeomVectorField().getGeometries().numObjs);
+			    //System.exit(-1);
+			    
 			}
 		}
 		
@@ -146,11 +149,21 @@ public class DPolySchelling extends DSimState{
 		}
 
         //poly instead
+        /*
         int i = 0;
         for (DPolygon p : polys)
         {
             schedule.scheduleRepeating(i, p, polys.size());
             i++;
+        }
+        */
+        
+        for (DPolygon p : polys)
+        {
+	        Double2D coord = new Double2D(p.getMasonGeometry().geometry.getCoordinate().x, p.getMasonGeometry().geometry.getCoordinate().y);
+
+			world.addAgent(coord, p, 0, 0, 1);
+
         }
 
 

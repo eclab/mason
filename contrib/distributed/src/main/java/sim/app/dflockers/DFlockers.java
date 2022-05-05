@@ -48,8 +48,8 @@ public class DFlockers extends DSimState
 		
 		//this.recordStats = true;
 		//this.recordStats = false;
-		this.startStats(0);
-		this.startStats(1);
+		//this.startStats(0);
+		//this.startStats(1);
 
 
 	}
@@ -60,7 +60,7 @@ public class DFlockers extends DSimState
 		// TODO Auto-generated method stub
 		super.preSchedule(); // do not forget this line
 
-		System.out.println("Size of agents in proc " + getPID() + " " + flockers.getAllAgentsInStorage().size());
+		System.out.println("Size of agents in proc " + getPID() + " " + flockers.getAllAgentsInStorage().size()+flockers.getHaloBounds());
 
 	}
 

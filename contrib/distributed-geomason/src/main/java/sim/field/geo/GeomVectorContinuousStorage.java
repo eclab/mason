@@ -207,6 +207,11 @@ public class GeomVectorContinuousStorage<T extends DGeomObject> extends Continuo
 		return geomVectorField;
 	}
 	
+	public void setGeomVectorField(GeomVectorField tempGeomVectorField) {
+		// TODO Auto-generated method stub
+		this.geomVectorField = tempGeomVectorField;
+	}
+	
 	
 	
 	public Serializable pack(final MPIParam mp)
@@ -280,6 +285,8 @@ public class GeomVectorContinuousStorage<T extends DGeomObject> extends Continuo
 
 
 	}
+
+
 	
 	
 	//checks if elements in both storage types match

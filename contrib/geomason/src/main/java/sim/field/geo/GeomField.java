@@ -31,8 +31,8 @@ public abstract class GeomField implements java.io.Serializable
     {
         MBR = new Envelope();
         drawX = drawY = 0;
-        fieldHeight = h; 
-        fieldWidth = w; 
+        //fieldHeight = h; 
+        //fieldWidth = w; 
     }
     
     /** The field dimensions
@@ -40,6 +40,8 @@ public abstract class GeomField implements java.io.Serializable
     * Used for computing scale.
     *
     */
+    
+    
    public int fieldWidth, fieldHeight; 
    
    public int getFieldWidth() { return fieldWidth; } 
@@ -47,6 +49,7 @@ public abstract class GeomField implements java.io.Serializable
 
    public void setFieldWidth(int fw ) { fieldWidth = fw; }
    public void setFieldHeight(int fh) { fieldHeight = fh; }
+   
    
     
 

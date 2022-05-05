@@ -112,13 +112,16 @@ public class ColorWorld extends SimState
 
                 // set each agent in the center of corresponding region
                 a.setLocation(region.getGeometry().getCentroid());
+                System.out.println(region.getGeometry().getCentroid());
 
                 // place the agents in the GeomVectorField
                 agents.addGeometry(new MasonGeometry(a.getGeometry()));
 
                 // add the new agent the schedule
                 schedule.scheduleRepeating(a);
-            }        
+            }  
+        
+            System.exit(-1);
     }
 
 

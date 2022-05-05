@@ -163,13 +163,13 @@ public class DAnt extends DSteppable
             int old_x = x;
             int old_y = y;
 
-			
+			last = new Int2D(x, y);
+
 			x = max_x;
 			y = max_y;
 			
 			
 			
-			last = new Int2D(x, y);
 			if (af.sites.get(new Int2D(max_x, max_y)).getInt() == DAntsForage.HOME) // reward me next time! And change my status
 			{
 				reward = af.reward;
@@ -198,6 +198,8 @@ public class DAnt extends DSteppable
 							af.obstacles.get(new Int2D(_x, _y)).getInt() == 1)
 						continue; // nothing to see here
 					double m = af.toFoodGrid.get(new Int2D(_x, _y)).getDouble();
+					
+                    if (m > max)
 					{
 						count = 2;
 					}
@@ -218,6 +220,7 @@ public class DAnt extends DSteppable
 			{
 				if (state.random.nextBoolean(af.momentumProbability))
 				{
+					System.out.println("momentum direction: "+(x - last.x)+" "+(y - last.y));
 					int xm = x + (x - last.x);
 					int ym = y + (y - last.y);
 					if (xm >= 0 && xm < DAntsForage.GRID_WIDTH && ym >= 0 && ym < DAntsForage.GRID_HEIGHT
@@ -247,7 +250,7 @@ public class DAnt extends DSteppable
 
 			
 			//af.buggrid.add(new Int2D(max_x, max_y), this);
-			last = new Int2D(max_x, max_y);
+			last = new Int2D(old_x, old_y);
 			x = max_x;
 			y = max_y;			
 			

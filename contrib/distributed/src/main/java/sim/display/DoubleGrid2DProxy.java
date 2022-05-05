@@ -81,7 +81,7 @@ public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
 			//int halo_size = vp1.getAOI();
 		    IntRect2D partBound = vp1.getStorageBounds();
 		    
-		    System.out.println("partBound "+partBound);
+		    System.out.println("double partBound "+partBound);
 		    
 			//remove halo bounds using bounds.ul offset, assumption is offset from 0,0 is halo size
 		    

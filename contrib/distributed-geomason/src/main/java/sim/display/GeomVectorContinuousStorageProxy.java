@@ -88,6 +88,7 @@ public class GeomVectorContinuousStorageProxy extends GeomVectorField implements
 		GeomVectorContinuousStorage st = (GeomVectorContinuousStorage)(stateProxy.storage(proxyIndex));
 		
 		System.out.println("objs : "+this.getGeometries().size());
+	
 		
 		//for (int p = 0; p < stateProxy.numProcessors; p++) {
 		for (int p : quad_tree_partitions)
@@ -109,6 +110,8 @@ public class GeomVectorContinuousStorageProxy extends GeomVectorField implements
             //this.getMBR().expandToInclude(storage.getGeomVectorField().MBR);
             System.out.println("env : "+this.getMBR().getMinX()+" "+this.getMBR().getMaxX()+" "+this.getMBR().getMinY()+" "+this.getMBR().getMaxY());
             
+            System.out.println(storage.getGeomVectorField().getGeometries().numObjs);
+            //System.exit(-1);
 
             for (Object a : storage.getGeomVectorField().getGeometries()) {
             	
@@ -121,6 +124,11 @@ public class GeomVectorContinuousStorageProxy extends GeomVectorField implements
               // }
             	
             }
+            
+            System.out.println(this.getGeometries().size());
+
+    		//if (this.getGeometries().size() > 0)
+    		//     System.exit(-1);	
             
             //System.out.println(p+" : "+"hashmap size :"+storage.locations.keySet().size()); 
             	
@@ -145,9 +153,9 @@ public class GeomVectorContinuousStorageProxy extends GeomVectorField implements
 		
 		//this.setMBR(st.getGeomVectorField().getMBR()); 
 		
-		//System.out.println("objs 2 : "+this.getGeometries().size());
+		System.out.println("objs 2 : "+this.getGeometries().size());
 
-		
+		//System.exit(-1);
 		
 		
 		

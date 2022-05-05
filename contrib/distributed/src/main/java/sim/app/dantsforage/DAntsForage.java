@@ -57,7 +57,7 @@ public /* strictfp */ class DAntsForage extends DSimState
 	public static final int HOME = 1;
 	public static final int FOOD = 2;
 
-	public int numAnts = 1000;
+	public int numAnts = 1;
 	public double evaporationConstant = 1.0;
 	public double reward = 1.0;
 	public double updateCutDown = 0.9;
@@ -169,6 +169,8 @@ public /* strictfp */ class DAntsForage extends DSimState
 		toHomeGrid = new DDoubleGrid2D(this);
 		buggrid = new DDenseGrid2D<DAnt>(this);
 		obstacles = new DIntGrid2D(this);
+
+
 	}
 
 

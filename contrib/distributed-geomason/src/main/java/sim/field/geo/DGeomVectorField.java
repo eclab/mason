@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 
 import sim.app.geo.dcampusworld.DCampusWorld;
 import sim.engine.DObject;
@@ -37,6 +38,7 @@ public class DGeomVectorField<T extends DGeomObject> extends DAbstractGrid2D
 	
 	private HaloGrid2D<T, GeomVectorContinuousStorage<T>> halo;
 	GeomVectorContinuousStorage<T> storage;
+	Envelope globalEnvelope;
 	
 	//T will be MasonGeometry which is not DOBject
 	//Should T be some thing that keeps track of MasonGeometry?
@@ -47,11 +49,12 @@ public class DGeomVectorField<T extends DGeomObject> extends DAbstractGrid2D
 	//do we just update each after each operation?  halo syncing is outside this code, so not sure?
 	
 	
-	public DGeomVectorField(int discretization, DSimState state) 
+	public DGeomVectorField(int discretization, DSimState state, Envelope globalEnvelope) 
 	{
 		super(state);
 		storage = new GeomVectorContinuousStorage(state.getPartition().getHaloBounds(), discretization);
-	
+	    this.globalEnvelope = globalEnvelope;
+	    
 		try 
 		{
 			halo = new HaloGrid2D<T, GeomVectorContinuousStorage<T>>(storage, state);
@@ -565,7 +568,47 @@ public class DGeomVectorField<T extends DGeomObject> extends DAbstractGrid2D
 			
 		}
 
+	
+	
+	
+	
+	public Double2D convertJTSToPartitionSpace(Coordinate coordJTS)
+	{
+		
+		
+		double xJTS = coordJTS.x - this.globalEnvelope.getMinX();
+		double yJTS = coordJTS.y - this.globalEnvelope.getMinY();
 
+		double wP = xJTS / this.globalEnvelope.getWidth();
+		double hP = yJTS / this.globalEnvelope.getHeight();
+
+		double partX = this.getStorage().getGeomVectorField().getFieldWidth() * wP;
+		double partY = this.getStorage().getGeomVectorField().getFieldHeight() * hP;
+		
+		//is this offset by partition?  I don't think so!
+
+		return new Double2D(partX, partY);
+	}
+	
+
+	public Coordinate convertPartitionSpaceToJTS(Double2D d)
+	{
+		double xP = d.x / this.getStorage().getGeomVectorField().getFieldWidth();
+		double yP = d.y / this.getStorage().getGeomVectorField().getHeight();
+		
+		xP = xP * this.globalEnvelope.getWidth();
+		yP = yP * this.globalEnvelope.getHeight();
+
+		double xJTS = xP + this.globalEnvelope.getMinX();
+		double yJTS = yP + this.globalEnvelope.getMinY();
+
+		
+		return new Coordinate(xJTS, yJTS);
+	}
+	
+	
+	
+/*
 	public Double2D convertJTSToPartitionSpace(Coordinate coordJTS)
 	{
 		
@@ -599,7 +642,7 @@ public class DGeomVectorField<T extends DGeomObject> extends DAbstractGrid2D
 		return new Coordinate(partX, partY);
 	}
 
-
+*/
 
 
     

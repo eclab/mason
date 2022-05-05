@@ -68,7 +68,9 @@ public class DCampusWorld extends DSimState
 	{
 		super(seed, width, height, aoi, false);
 		//agentLocations = new DContinuous2D<>(discretization, this);
-		agentLocations = new DGeomVectorField<DAgent>(discretization, this);;
+		
+		loadStatic(); //do it here so we can build our Envelope/MBR
+		agentLocations = new DGeomVectorField<DAgent>(discretization, this, MBR);
 //		balanceInterval = 100000;
 	}
 
@@ -153,7 +155,7 @@ public class DCampusWorld extends DSimState
 		super.start();
 
 		// dump static info to each partition here at start of sim
-		loadStatic();// TODO Remove this
+		//loadStatic();// TODO Remove this
 		
 
 

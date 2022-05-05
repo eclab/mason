@@ -89,7 +89,16 @@ public class DPSO extends DSimState {
         super(seed, 10, 10, 1, false);  //what should these be
         }
     
-    
+	@Override
+	public void preSchedule()
+	{
+		// TODO Auto-generated method stub
+		super.preSchedule(); // do not forget this line
+
+		System.out.println("Size of agents in proc " + getPID() + " " + space.getAllAgentsInStorage().size()+space.getHaloBounds());
+
+	}
+	
     public void updateBest(double currVal, double currX, double currY)
     {
     

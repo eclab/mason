@@ -243,6 +243,8 @@ public class DFlocker extends DSteppable implements Oriented2D
 			throw new RuntimeException(e);
 		}
 		
+
+
 		dFlockers.addStat(loc.getX(), 0); //testing stats
 		dFlockers.addStat(loc.getY(), 1); //testing stats
 
