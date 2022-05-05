@@ -2801,8 +2801,8 @@ There are two kinds of distributions: (1) distributions which require their own 
 \item Breit-Wigner (Lorentz)\hspace{\fill} \Class{sim.util.distribution.BreitWigner}
 \item Mean-Square Breit-Wigner\hspace{\fill} \Class{sim.util.distribution.BreitWignerMeanSquare}
 \item Chi-Square\hspace{\fill} \Class{sim.util.distribution.ChiSquare}
-\item Empirical\hspace{\fill} \Class{sim.util.distribution.Empirical}
-\item Discrete Emperical\hspace{\fill} \Class{sim.util.distribution.EmpiricalWalker}
+\item Empirical\,---\,distributions loaded from histograms\hspace{\fill} \Class{sim.util.distribution.Empirical}
+\item Empirical Walker\,---\,distributions loaded from histograms\hspace{\fill} \Class{sim.util.distribution.EmpiricalWalker} 
 \item Exponential\hspace{\fill} \Class{sim.util.distribution.Exponential}
 \item Exponential Power\hspace{\fill} \Class{sim.util.distribution.ExponentialPower}
 \item Gamma\hspace{\fill} \Class{sim.util.distribution.Gamma}
@@ -2818,7 +2818,7 @@ There are two kinds of distributions: (1) distributions which require their own 
 \item Zeta\hspace{\fill} \Class{sim.util.distribution.Zeta}
 \end{itemize}
 
-The second group are just function calls from the \Class{sim.util.distribution.Distributions} class:
+The second group are just function calls from the \Class{sim.util.distribution.Distributions} class.  MASON has set up stub classes like the above ones which just call these functions for your convenience.
 
 \begin{itemize}
 \item Burr (various kinds)
@@ -2831,7 +2831,7 @@ The second group are just function calls from the \Class{sim.util.distribution.D
 \item Power-Law
 \item Triangular
 \item Weibull
-\item Zipf
+\item Zipf (``Zipfian'')
 \end{itemize}
 
 \subsection{Distributions with Apache Commons Math}
@@ -8387,7 +8387,11 @@ Four provided Basic Portrayals draw their objects as either filled or outlined s
 \item \Class{sim.portrayal.simple.ShapePortrayal2D} draws its object as a 2D \class{java.awt.Shape}, which you provide.  You can also provide, as two arrays, the X and Y points for a polygon.
 \end{itemize}
 
-These classes all subclass from the simple abstract class \Class{sim.portrayal.simple.AbstractShapePortrayal2D}, which defines three basic internal variables you can set.
+A special RectanglePortrayal2D, called \Class{sim.portrayal.simple.ValuePortrayal2D}, is used by MASON to draw value grids such as IntGrid2D or DoubleGrid2D.
+
+These classes all subclass from the simple abstract class \Class{sim.portrayal.simple.AbstractShapePortrayal2D}.  MASON historically allowed these classes to draw objects {\it filled} with a color, or with a thin {\it outline}, but not both.  New constructors in Mason 21 now allow objects to be both filled and drawn with an outline of any thickness, dashing, or other Graphics2D features, and with any combination of fill or draw colors.
+
+\paragraph{Old-Style Drawing}  Subclasses of AbstractShapePortrayal2D historically defined the following internal variables which you could change:
 
 \java{%
     public Paint paint;\ \ \ \ \ // the paint with which to fill or draw the shape outline\\
@@ -8395,9 +8399,25 @@ These classes all subclass from the simple abstract class \Class{sim.portrayal.s
     public boolean filled;\ \ // whether to fill or draw the shape outline\\
 }
 
-Let's start with the first three.  RectanglePortrayal2D, OvalPortrayal2D, and HexagonalPortrayal2D all draw their objects either as filled shapes or as outline shapes with a 1-point (or 1-pixel) outline.  They have similar constructors.  Here are the constructors for RectanglePortrayal2D:
+If you created an AbstractShapePortrayal2D with an old-style constructor, then it will either fill its shape with the given Paint, or stroke the outside border of the shape with the given Paint, depending on the setting of \variable{filled}.   Except for ShapePortrayal2D (and its subclass HexagonalPortrayal2D), which permits a custom Stroke object, all these objects by default assume a 1-point (or 1-pixel) outline if drawn at all.
 
-\begin{methods}{\class{sim.portrayal.simple.RectanglePortrayal2D} Constructor}
+\paragraph{New-Style Drawing}  AbstractShapePortrayal2D objects created with new-style constructors instead use the following internal variables, which you can again change:
+
+\java{%
+    public Paint fillPaint;\ \ \ // the paint with which to fill the shape, can be null\\
+    public Paint strokePaint;\ // the paint with which to draw the shape outline, can be null\\
+    public Stroke stroke;\ \ \ \ \ // the Stroke defining the shape outline, can be null\\
+    public double scale;\ \ \ \ \ \ // how much to scale the object when drawing\\
+}
+
+The remaining old-style variables are ignored.
+
+A {\bf warning about AbstractShapePortrayal2D}  Note that new-style AbstractShapePortrayal2D objects are not serializable, because Stroke is typically not serializable.  This means that if you create an agent which is a {\it subclass} of AbstractShapePortrayal2D, in new-style form, and use that agent in your model, you will not be able to checkpoint your model.
+(HexagonalPortrayal2D isn't serializable in new-style {\it or} in old-style because it is a subclass of ShapePortrayal2D: see below).
+
+The RectanglePortrayal2D, OvalPortrayal2D, and HexagonalPortrayal2D portrayals all use the same constructors, here shown for RectanglePortrayal2D:
+
+\begin{methods}{\class{sim.portrayal.simple.RectanglePortrayal2D} Old-Style Constructor}
 \mthd{public RectanglePortrayal2D() } Creates a portrayal which portrays as a gray filled rectangle of scale 1.0.
 \mthd{public RectanglePortrayal2D(Paint paint) } Creates a portrayal which portrays as a filled rectangle of scale 1.0 and of the given Paint.
 \mthd{public RectanglePortrayal2D(double scale) } Creates a portrayal which portrays as a gray filled rectangle of the given scale.
@@ -8407,8 +8427,13 @@ Let's start with the first three.  RectanglePortrayal2D, OvalPortrayal2D, and He
 \mthd{public RectanglePortrayal2D(Paint paint, double scale, boolean filled) } Creates a portrayal which portrays as a rectangle of the given Paint and scale, and either filled or not.
 \end{methods}
 
-These classes are pretty easily customized.  One standard trick is to subclass a Basic Portrayal to cause it to (say) change its color in response to some aspect or property of the Object: for example, if it's hungry or not.  To do this, you'd override its \method{draw(...)} method to change some feature first, then call the superclass.  For example:
+\begin{methods}{\class{sim.portrayal.simple.RectanglePortrayal2D} New-Style Constructor}
+\mthd{public RectanglePortrayal2D(Paint fillPaint, Paint strokePaint, double strokeWidth, double scale) } Creates a portrayal which portrays as a rectangle of the given Paints and scale, optionally filled and optionally stroked, with the provided stroke width.
+\mthd{public RectanglePortrayal2D(Paint fillPaint, Paint strokePaint, Stroke stroke, double scale) } Creates a portrayal which portrays as a rectangle of the given Paints and scale, optionally filled and optionally stroked, with the provided Stroke.
+\end{methods}
 
+
+These classes are pretty easily customized.  One standard trick is to subclass a Basic Portrayal to cause it to (say) change its color in response to some aspect or property of the Object: for example, if it's hungry or not.  To do this, you'd override its \method{draw(...)} method to change some feature first, then call the superclass.  For example:
 
 {\footnotesize\begin{alltt}
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
@@ -8417,6 +8442,7 @@ These classes are pretty easily customized.  One standard trick is to subclass a
         boolean val = obj.isHungry();
         if (val) paint = Color.red;
         else paint = Color.blue;
+        fillPaint = paint;        // compatibility with new-style objects:
         super.draw(object, graphics, info);
         \}
 \end{alltt}}
@@ -8427,7 +8453,7 @@ Note that HexagonalPortrayal2D is a little nonstandard: its hexagon does not fit
 
 \paragraph{Arbitrary Shapes}  ShapePortrayal2D is much like the above portrayals, but has more functionality for drawing arbitrary shapes.  You specify the shape either as a \Class{java.awt.geom.Shape} object or as two arrays of values which represent the \(x\) and \(y\) coordinates for various points in a closed polygon.  This makes for a lot of constructors:
 
-\begin{methods}{\class{sim.portrayal.simple.ShapePortrayal2D} Constructor}
+\begin{methods}{\class{sim.portrayal.simple.ShapePortrayal2D} Old-Style Constructor}
 \mthd{public ShapePortrayal2D(Shape shape) } Creates a portrayal which portrays as a gray filled Shape of scale 1.0.
 \mthd{public ShapePortrayal2D(Shape shape, Paint paint) } Creates a portrayal which portrays as a filled Shape of scale 1.0 and of the given Paint.
 \mthd{public ShapePortrayal2D(Shape shape, double scale) } Creates a portrayal which portrays as a gray filled Shape of the given scale.
@@ -8444,24 +8470,35 @@ Note that HexagonalPortrayal2D is a little nonstandard: its hexagon does not fit
 \mthd{public ShapePortrayal2D(double[] xpoints, double[] ypoints, Paint paint, double scale, boolean filled) } Creates a portrayal which portrays as a polygon of the provided coordinates of the given Paint and scale, and either filled or not.
 \end{methods}
 
+\begin{methods}{\class{sim.portrayal.simple.ShapePortrayal2D} New-Style Constructor}
+\mthd{public ShapePortrayal2D(Shape shape, Paint fillPaint, Paint strokePaint, double strokeWidth, double scale) } Creates a portrayal which portrays the given shape, of the given Paints and scale, optionally filled and optionally stroked, with the provided stroke width.
+\mthd{public ShapePortrayal2D(Shape shape, Paint fillPaint, Paint strokePaint, Stroke stroke, double scale) } Creates a portrayal which portrays the given shape, of the given Paints and scale, optionally filled and optionally stroked, with the provided Stroke.
+\mthd{public ShapePortrayal2D(double[] xpoints, double[] ypoints, Paint fillPaint, Paint strokePaint, double strokeWidth, double scale)\hspace{-4em}} Creates a portrayal which portrays as a polygon of the provided coordinates, of the given Paints and scale, optionally filled and optionally stroked, with the provided stroke width.
+\mthd{public ShapePortrayal2D(double[] xpoints, double[] ypoints, Paint fillPaint, Paint strokePaint, Stroke stroke, double scale)\hspace{-4em}} Creates a portrayal which portrays as a polygon of the provided coordinates, of the given Paints and scale, optionally filled and optionally stroked, with the provided Stroke.
+\end{methods}
+
+
+
+
 \begin{wrapfigure}{r}[0in]{2.9in}
-\vspace{-1em}\hfill\includegraphics[width=2.8in]{2DShapes.pdf}\vspace{-1em}\end{wrapfigure}
-Besides letting you define shapes via Java2D shape objects and polygon arrays, ShapePortrayal2D also has some built-in shape arrays you can pass to its constructor, which define squares, diamonds, triangles in various orientations, hexagons in different orientations, octagons, bowties, and hourglasses.  The various built-in shapes are shown at right.  Note that all the default shapes are designed to fit within the same size square (hence the ``hexagon'' and ``rotated hexagon'' are kind of squished).  If you'd like an accurate hexagon, use HexagonalPortrayal2D.  Also note that ``square'' is somewhat redundant given that you can make the same with RectanglePortrayal2D.
+\vspace{-1em}\hfill\includegraphics[width=2.8in]{2DShapes.pdf}\vspace{-7em}\end{wrapfigure}
+Besides letting you define shapes via Java2D shape objects and polygon arrays, ShapePortrayal2D also has some built-in shape arrays you can pass to its constructor, which define squares, diamonds, triangles in various orientations, hexagons in different orientations, octagons, bowties, and hourglasses.  The various built-in shapes are shown at right.  Note that all the default shapes are designed to fit within the same size square (hence the ``hexagon'' and ``rotated hexagon'' are kind of squished).  If you'd like an accurate hexagon, use HexagonalPortrayal2D.  
 
 Here is an example of creating a ShapePortrayal2D with a left triangle default shape:
 
 {\footnotesize\begin{alltt}
     ShapePortrayal2D portrayal = new ShapePortrayal2D(
-        ShapePortrayal2D.X\_POINTS\_TRIANGLE\_LEFT, ShapePortrayal2D.Y\_POINTS\_TRIANGLE\_LEFT);
+        ShapePortrayal2D.X\_POINTS\_TRIANGLE\_LEFT,
+        ShapePortrayal2D.Y\_POINTS\_TRIANGLE\_LEFT);
 \end{alltt}}
 
-Unlike the prior portrayals, you can specify the stroke (outline) of the ShapePortrayal2D shape, using this variable:
+Unlike the prior portrayals, if using an old-style constructor you can also specify the stroke (outline) of the ShapePortrayal2D shape, using this variable:
 
 \java{%
-    public Stroke stroke;\ \ \ // the Stroke with which to draw the shape
+    public Stroke stroke;
 }
 
-If this variable is set to \variable{null}, ShapePortrayal2D will use a default \variable{java.awt.geom.BasicStroke()} instead.  A {\bf warning about ShapePortrayal2D}: it's not serializable (because Shapes aren't serializable).  This means that if you create an agent which is a {\it subclass} of ShapePortrayal2D and use that agent in your model, you will not be able to checkpoint your model.
+If this variable is set to \variable{null}, ShapePortrayal2D will use a default \variable{java.awt.geom.BasicStroke()} instead.  A {\bf warning about ShapePortrayal2D}: it's not serializable (because Shapes aren't serializable).  This means that if you create an agent which is a {\it subclass} of ShapePortrayal2D and use that agent in your model, you will not be able to checkpoint your model.  This goes for HexagonalPortrayal2D as well.
 
 
 \paragraph{Images} A final Basic SimplePortrayal provided in MASON is \Class{sim.portrayal.simple.ImagePortrayal2D}.  This class draws a small bitmap image to represent the object.  The image can be transparent or semitransparent if you wish.  The image is scaled as follows: if the image is taller than it is wide, then the image is scaled so that its width is exactly \variable{info.draw.width}.  If the image is wider than it is tall, then the image is scaled so that its height is exactly \variable{info.draw.height}.  
@@ -13016,7 +13053,7 @@ We begin by creating two instance variables in our GUIState which hold the time 
 
 \begin{verbatim}
 public sim.util.media.chart.TimeSeriesAttributes myAttributes;
-public ChartUtilities myChart;
+public TimeSeriesChartGenerator myChart;
 \end{verbatim}
 
 Next, in our GUIState's \method{init()} method, we create the chart and add the attributes to it:
@@ -15618,7 +15655,7 @@ If you have \(N\) separate partitions, how do you output statistics on the model
 
 Distributed MASON at present has two statistics output streams called {\bf stat} and {\bf debug}.  They are identical\,---\,you could use both of them to dump statistics if you liked\,---\,but their names suggest what we thought they might be useful for.   Each partition can log a statistics entry (any \class{java.io.Serializable} object) with an output stream at any time, and your remote visualization laptop can receive these entries in a reasonably organized fashion, to do with as you like.
 
-Stats are recorded using \method{DSimState.addStat()}, called in the app.  Initially the statistics output streams are {\it stopped}, meaning that if you attempt to log something with them, it'll simply be ignored.  You can start all the partition's streams from the laptop, using \method{VisualizationProcessor.startStats()}, or you can start a partition's stream from the partition itself using  \method{DSimState.startStats()}, typically during its \method{start()} method.  If you started from the visualization laptop, this would mean that you would miss all the entries that your distributed model had created prior to you firing up and connecting your laptop.  On the other hand, if you start from the start() method, you'll only have a finite amount of time to hook up the laptop before entries will get dropped, because as a memory safety measure Distributed MASON only permits a maximum number of statistics log entries to be stored (waiting to go to the laptop) on your partition.  You can change this maximum number from the partition.
+Stats are logged using \method{DSimState.addStat()}, called in the distributed application.  Initially the statistics output streams are {\it stopped}, meaning that if you attempt to log something with them, it'll simply be ignored.  You can {\it start} all the partition's streams from the laptop using \method{VisualizationProcessor.startStats()}, or you can start a partition's stream from the partition itself using  \method{DSimState.startStats()}, typically during the model's \method{start()} method.  If you started from the visualization laptop, this would mean that you would miss all the entries that your distributed model had created prior to you firing up and connecting your laptop.  On the other hand, if you start from the start() method, you'll only have a finite amount of time to hook up the laptop before entries will get dropped, because as a memory safety measure Distributed MASON only permits a maximum number of statistics log entries to be stored (waiting to go to the laptop) on your partition.  You can change this maximum number from the distributed model via \method{DSimState.setMaxStats(...)}.
 
 The integers which represent the two statistics types at present are: \variable{VisualizationProcessor.STAT\_TYPE\_STATISTICS} and \variable{VisualizationProcessor.STAT\_TYPE\_DEBUG}.
 
