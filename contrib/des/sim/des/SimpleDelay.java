@@ -7,6 +7,9 @@
 package sim.des;
 import sim.engine.*;
 import java.util.*;
+import sim.portrayal.simple.*;
+import sim.portrayal.*;
+import java.awt.*;
 
 /** 
     A simple deterministic delay pipeline.  Elements placed in the delay are only available
@@ -16,6 +19,19 @@ import java.util.*;
 
 public class SimpleDelay extends Source implements Receiver, Steppable, StatReceiver
     {
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+    	{
+    	return new RectanglePortrayal2D(Color.black, scale, true);
+    	}
+
+    public String getLabel() 
+    	{ 
+    	return (getName() == null ? "SimpleDelay" : getName()) + " " + 
+    		getTotal() + 
+    		(getCapacity() != Double.POSITIVE_INFINITY ? 
+    			" (" + String.format("%.2f", 100 * (getCapacity() == 0 ? 1.0 : getTotal() / getCapacity())) + ")" : "");
+    	}
+
     private static final long serialVersionUID = 1;
 
     public Resource getTypicalReceived() { return typical; }
@@ -105,6 +121,12 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         buildDelay();
         }
 
+    /** Creates a SimpleDelay with a given delayTime, 0 ordering, a delay time of 1.0, and typical resource. */
+    public SimpleDelay(SimState state, Resource typical)
+        {
+        this(state, 1.0, typical);
+        }
+
     /** Accepts up to CAPACITY of the given resource and places it in the delay,
         then auto-reschedules the delay if that feature is on. */
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
@@ -139,6 +161,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
 			totalResource += 1;            
 			totalReceivedResource += 1.0;
             }
+            
         if (getAutoSchedules()) state.schedule.scheduleOnce(nextTime, getRescheduleOrdering(), this);
         return true;
         }
@@ -182,11 +205,11 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         	
         double time = state.schedule.getTime();
                 
-        Iterator<DelayNode> iterator = delayQueue.descendingIterator();
+        Iterator<DelayNode> iterator = delayQueue.iterator();
         while(iterator.hasNext())
             {
             DelayNode node = iterator.next();
-            if (node.timestamp >= time)     // it's ripe
+            if (node.timestamp <= time)     // it's ripe
                 {
                 if (entities == null)
                     {

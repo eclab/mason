@@ -8,14 +8,29 @@ package sim.des;
 
 import sim.engine.*;
 import java.util.*;
-
+import sim.portrayal.simple.*;
+import java.awt.*;
+import java.awt.geom.*;
+import java.awt.event.*;
+import sim.portrayal.*;
+import sim.display.*;
+import javax.swing.*;
+import sim.des.network.*;
 
 /**
    A Sink accepts all incoming offers of resources matching a given type, then throws them away.
 */
 
-public class Sink implements Receiver, StatReceiver
+public class Sink extends DESPortrayal implements Receiver, StatReceiver
     {
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+    	{
+    	return new ShapePortrayal2D(ShapePortrayal2D.X_POINTS_OCTAGON, ShapePortrayal2D.Y_POINTS_OCTAGON, Color.black, scale, false);
+    	}
+
+	public boolean getDrawState() { return false; }
+    public String getLabel() { return "---"; }
+
     private static final long serialVersionUID = 1;
 
     protected SimState state;

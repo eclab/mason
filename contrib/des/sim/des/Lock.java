@@ -23,6 +23,7 @@ public class Lock extends Provider implements Receiver
 
     Pool pool;
     double numResources;
+    boolean blocked = false;
     
     public Resource getTypicalReceived() { return typical; }
 	public boolean hideTypicalReceived() { return true; }
@@ -77,6 +78,9 @@ public class Lock extends Provider implements Receiver
         
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
+//        System.err.println("Amount offered " + amount);
+        blocked = false;
+        
     	if (getRefusesOffers()) { return false; }
         if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
 
@@ -85,8 +89,10 @@ public class Lock extends Provider implements Receiver
         if (!(atLeast >= 0 && atMost >= atLeast))
         	throwInvalidAtLeastAtMost(atLeast, atMost);
 
+		// try to acquire resources
         if (pool.getResource().getAmount() < numResources) 
         	{
+        	blocked = true;
         	return false;
         	}
 
@@ -105,6 +111,7 @@ public class Lock extends Provider implements Receiver
         	}
 
         _amount = null;		/// let it gc
+//        System.err.println("Accepted " + amount);
         return result;
         }
 
@@ -122,4 +129,11 @@ public class Lock extends Provider implements Receiver
     boolean refusesOffers = false;
 	public void setRefusesOffers(boolean value) { refusesOffers = value; }
     public boolean getRefusesOffers() { return refusesOffers; }
+    
+    public String getLabel() 
+    	{ 
+    	return (getName() == null ? "Lock (" + (pool.getName() == null ? "Pool " + System.identityHashCode(pool) : pool.getName()) + ")" : getName());
+    	}    
+
+	public boolean getDrawState() { return blocked; }
     }

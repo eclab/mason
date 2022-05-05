@@ -100,6 +100,17 @@ public class CountableResource extends Resource implements sim.util.Valuable
         super(name);
         setAmount(initialAmount);
         }
+
+    /** 
+        Returns a new kind of CountableResource with a given name, and an initial amount of 0.
+        The name is informal: It's legal for two different kinds of countable resources 
+        to have the same name.  CountableResource types are distinguishe internally using
+        unique integers. 
+    */
+    public CountableResource(String name)
+        {
+        this(name, 0);
+        }
         
     /** 
         Returns a CountableResource of the same type, name, and amount as the provided CountableResource.

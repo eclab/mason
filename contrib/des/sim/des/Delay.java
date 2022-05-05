@@ -16,6 +16,9 @@ import sim.engine.*;
 import sim.util.distribution.*;
 import sim.util.*;
 import java.util.*;
+import sim.portrayal.simple.*;
+import sim.portrayal.*;
+import java.awt.*;
 
 
 /**
@@ -27,6 +30,14 @@ import java.util.*;
 
 public class Delay extends SimpleDelay
     {
+    public String getLabel() 
+    	{ 
+    	return (getName() == null ? "Delay" : getName()) + " " + 
+    		getTotal() + 
+    		(getCapacity() != Double.POSITIVE_INFINITY ? 
+    			" (" + String.format("%.2f", 100 * (getCapacity() == 0 ? 1.0 : getTotal() / getCapacity())) + ")" : "");
+    	}
+
     private static final long serialVersionUID = 1;
 
     Heap delayHeap;
@@ -37,10 +48,16 @@ public class Delay extends SimpleDelay
         delayHeap = new Heap();
         }
                 
-    /** Creates a Delay with a 0 ordering and typical resource. */
+    /** Creates a Delay with a 0 ordering, the given delay time, and typical resource. */
+    public Delay(SimState state, double delayTime, Resource typical)
+        {
+        super(state, delayTime, typical);
+        }
+
+    /** Creates a Delay with a 0 ordering, a delay time of 1.0, and typical resource. */
     public Delay(SimState state, Resource typical)
         {
-        super(state, 1.0, typical);
+        this(state, 1.0, typical);
         }
         
     /** Returns in an array all the Resources currently being delayed and not yet ready to provide,

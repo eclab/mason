@@ -9,6 +9,14 @@ package sim.des;
 import sim.engine.*;
 import java.util.*;
 import sim.util.distribution.*;
+import sim.portrayal.simple.*;
+import sim.portrayal.*;
+import sim.display.*;
+import java.awt.*;
+import java.awt.geom.*;
+import java.awt.event.*;
+import javax.swing.*;
+import sim.des.network.*;
 
 /**
    A provider of resources. Providers also have a TYPICAL resource, 
@@ -25,8 +33,11 @@ import sim.util.distribution.*;
    offers.
 */
 
-public abstract class Provider implements Named, Resettable
+public abstract class Provider extends DESPortrayal implements Named, Resettable
     {
+	public boolean getDrawState() { return false; }
+    public String getLabel() { return "---"; }
+
     private static final long serialVersionUID = 1;
 
     /** Throws an exception indicating that an offer cycle was detected. */
@@ -93,40 +104,46 @@ public abstract class Provider implements Named, Resettable
     /** The model. */
     protected SimState state;
     
+    public SimState getState()
+    	{
+    	return state;
+    	}
+        
     
     ////// OFFER STATISTICS
     //////
     ////// These methods maintain the most recent offers made, which can be used to update graphical
     ////// interface information regarding offers between nodes.
     
+    /// The timestampof the most recent offers
+    double lastOfferTime = Schedule.BEFORE_SIMULATION;
     /// The most recent offers
     ArrayList<Resource> lastAcceptedOffers = new ArrayList<Resource>();
     /// The most receivers for the most recent offers
     ArrayList<Receiver> lastAcceptedOfferReceivers = new ArrayList<Receiver>();
-    /// The timestampof the most recent offers
+    /// The timestamp of the most recent accepted offers
     double lastAcceptedOfferTime = Schedule.BEFORE_SIMULATION;
-    /** Returns the most recent offers made. */
+    /** Returns the most recent offers accepted. */
     public ArrayList<Resource> getLastAcceptedOffers() { return lastAcceptedOffers; }
-    /** Returns the receivers for the most recent offers made. */
+    /** Returns the receivers for the most recent offers accepted. */
     public ArrayList<Receiver> getLastAcceptedOfferReceivers() { return lastAcceptedOfferReceivers; }
     /** Returns the timestamp for the most recent offers made. */
+    public double getLastOfferTime() { return lastOfferTime; }
+    /** Returns the timestamp for the most recent offers accepted. */
     public double getLastAcceptedOfferTime() { return lastAcceptedOfferTime; }
     
-    // Clears the last accepted offers, and sets the time the given time.
+    // Clears the last accepted offers, and sets the time to the given time.
     void clearLastAcceptedOffers(double newTime) { lastAcceptedOffers.clear(); lastAcceptedOfferReceivers.clear(); lastAcceptedOfferTime = newTime; }
     
     // If the last offer time is less than the current time, clears the offers to the current time.
     // Adds the given resource and receiver to the new offers.
-    void updateLastAcceptedOffers(Resource resourceDuplicate, Receiver receiver)
+    void updateLastAcceptedOffers(Resource resource, Receiver receiver)
     	{
 		double currentTime = state.schedule.getTime();
-		if (currentTime > getLastAcceptedOfferTime())
-			{
-			clearLastAcceptedOffers(currentTime);
-			}
-		lastAcceptedOffers.add(resourceDuplicate);
+		clearLastAcceptedOffers(currentTime);
+		lastAcceptedOffers.add(resource.duplicate());
 		lastAcceptedOfferReceivers.add(receiver);
-		totalAcceptedOfferResource += resourceDuplicate.getAmount();
+		totalAcceptedOfferResource += resource.getAmount();
     	}
     
     double totalAcceptedOfferResource;
@@ -163,6 +180,8 @@ public abstract class Provider implements Named, Resettable
     public static final int OFFER_POLICY_SHUFFLE = 3;
     /** Offer Policy: offers are made to only one random receiver, chosen via an offer distribution or, if the offer distribution is null, chosen uniformly. */
     public static final int OFFER_POLICY_RANDOM = 4;
+    /** Offer Policy: offers are made to only one receiver, chosen via selectReceiver. */
+    public static final int OFFER_POLICY_SELECT = 5;
     int offerPolicy;
     int roundRobinPosition = 0;
     boolean offersTakeItOrLeaveIt;
@@ -176,7 +195,7 @@ public abstract class Provider implements Named, Resettable
     /** Sets the receiver offer policy.  Throws IllegalArgumentException if the policy is out of bounds. */
     public void setOfferPolicy(int offerPolicy) 
         { 
-        if (offerPolicy < OFFER_POLICY_FORWARD || offerPolicy > OFFER_POLICY_RANDOM)
+        if (offerPolicy < OFFER_POLICY_FORWARD || offerPolicy > OFFER_POLICY_SELECT)
             throw new IllegalArgumentException("Offer Policy " + offerPolicy + " out of bounds.");
         this.offerPolicy = offerPolicy; 
         roundRobinPosition = 0; 
@@ -267,6 +286,14 @@ public abstract class Provider implements Named, Resettable
         }
                                 
     /** 
+        Returns all registered receivers.
+    */
+    public ArrayList<Receiver> getReceivers()
+        {
+        return receivers;
+        }
+                                
+    /** 
         Unregisters a receiver with the Provider.  Returns false if the receiver was not registered.
     */
     public boolean removeReceiver(Receiver receiver)
@@ -322,11 +349,6 @@ public abstract class Provider implements Named, Resettable
         this.state = state;
         }
         
-    public SimState getState()
-    	{
-    	return state;
-    	}
-        
     //// SHUFFLING PROCEDURE
     //// You'd think that shuffling would be easy to implement but it's not.
     //// We want to avoid an O(n) shuffle just to (most likely) select the
@@ -363,7 +385,12 @@ public abstract class Provider implements Named, Resettable
        
     protected boolean offerReceiver(Receiver receiver, Entity entity)
     	{
+        lastOfferTime = state.schedule.getTime();
 		boolean result = receiver.accept(this, entity, 0, 0);
+		if (result)
+			{
+			updateLastAcceptedOffers(entity, receiver);
+			}
 		return result;
 		}
     	 
@@ -396,6 +423,7 @@ public abstract class Provider implements Named, Resettable
             double offer = originalAmount;
             if (offer > atMost) offer = atMost;
             if (offer <= 0) return false;
+            lastOfferTime = state.schedule.getTime();
             boolean result = receiver.accept(this, cr, getOffersTakeItOrLeaveIt() ? offer : 0, offer);
             if (result)
             	{
@@ -408,29 +436,28 @@ public abstract class Provider implements Named, Resettable
         else if (offerOrder == OFFER_ORDER_FIFO)
             {
             Entity e = entities.getFirst();
-            boolean result = offerReceiver(receiver, e); //receiver.accept(this, e, 0, 0);
+            boolean result = offerReceiver(receiver, e); 
             if (result)
             	{
 				entities.removeFirst();
-            	updateLastAcceptedOffers(e.duplicate(), receiver);
             	}
             return result;
             }
          else // if (offerOrder == OFFER_ORDER_LIFO)
             {
             Entity e = entities.getLast();
-            boolean result = offerReceiver(receiver, e);  //receiver.accept(this, e, 0, 0);
+            boolean result = offerReceiver(receiver, e);
             if (result)
             	{
 				entities.removeLast();
-            	updateLastAcceptedOffers(e.duplicate(), receiver);
             	}
             return result;
             }
        }
        
     // only warn about problems with the distribution a single time
-    boolean warned = false; 
+    boolean distributionWarned = false; 
+    boolean selectWarned = false;
     
     /** Simply calls offerReceivers(receivers). */
     protected boolean offerReceivers()
@@ -524,10 +551,10 @@ public abstract class Provider implements Named, Resettable
                     int val = offerDistribution.nextInt();
                     if (val < 0 || val >= size )
                         {
-                        if (!warned)
+                        if (!distributionWarned)
                             {
-                            new RuntimeException("Warning: Offer distribution for Provider " + this + " returned a value outside the Receiver range: " + val);
-                            warned = true;
+                            new RuntimeException("Warning: Offer distribution for Provider " + this + " returned a value outside the Receiver range: " + val).printStackTrace();
+                            distributionWarned = true;
                             }
                         result = false;
                         }
@@ -538,12 +565,38 @@ public abstract class Provider implements Named, Resettable
                     }
                 }
             break;
+            case OFFER_POLICY_SELECT:
+                {
+                int size = receivers.size();
+                if (size == 0) 
+                    {
+					if (!selectWarned)
+						{
+						new RuntimeException("Warning: Offer policy is SELECT but there are no receivers to select from in " + this).printStackTrace();
+						selectWarned = true;
+						}
+                    }
+                else
+                	{                
+	                result = offerReceiver(selectReceiver(receivers, entities == null ? resource : entities.getFirst()), Double.POSITIVE_INFINITY);
+	                }
+                }
+            break;
             }
             
         offering = false;
         return result;
         }
     
+    /**
+       If the offer policy is OFFER_POLICY_SELECT, then when the receivers are non-empty,
+       this method will be called to specify which receiver should be offered the given resource.
+       Override this method as you see fit.  The default implementation simply returns the first one.
+    */
+    public Receiver selectReceiver(ArrayList<Receiver> receivers, Resource resource)
+    	{
+    	return receivers.get(0);
+    	}
         
     /**
        Asks the Provider to make a unilateral offer to the given Receiver.  This can be used to implement
@@ -586,7 +639,6 @@ public abstract class Provider implements Named, Resettable
 		if (result)
 			{
 			entities.remove(entityNumber);
-			updateLastAcceptedOffers(e.duplicate(), receiver);
 			}
 		return result;
     	}
@@ -615,6 +667,7 @@ public abstract class Provider implements Named, Resettable
     	{
     	clear();
     	clearLastAcceptedOffers(Schedule.BEFORE_SIMULATION);
+    	lastOfferTime = Schedule.BEFORE_SIMULATION;
     	totalAcceptedOfferResource = 0;
     	}
     	

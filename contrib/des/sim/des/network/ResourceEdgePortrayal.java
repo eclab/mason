@@ -23,39 +23,45 @@ import sim.portrayal.*;
    travel from a provider to a receiver.
 **/
 
-public class ResourceEdge extends Edge
+public class ResourceEdgePortrayal extends SimpleEdgePortrayal2D
 	{
     private static final long serialVersionUID = 1;
     
-	public ResourceEdge(Provider provider, Receiver receiver, Network network)
+    double scale = 1.0;
+    
+    public ResourceEdgePortrayal(double scale)
+    	{
+    	super(Color.BLUE, Color.RED, Color.BLACK, new Font("SansSerif", Font.PLAIN, 2));
+        setShape(SimpleEdgePortrayal2D.SHAPE_LINE_ROUND_ENDS);
+        setAdjustsThickness(true);
+        setScaling(SimpleEdgePortrayal2D.NEVER_SCALE);
+        this.scale = scale;
+    	}
+    
+    protected double getPositiveWeight(Object edge, EdgeDrawInfo2D info)
 		{
-		super(provider, receiver, null);		// we have a null info because we grab it from the provider
-		}
-		
-	public Object getInfo() 
-		{ 
-		Provider provider = (Provider)getFrom();
-		Receiver receiver = (Receiver)getTo();
-		double offerTime = provider.getLastAcceptedOfferTime();
-		if (offerTime > Schedule.BEFORE_SIMULATION)
+		ResourceEdge e = (ResourceEdge)edge;
+		Provider provider = (Provider)(e.getFrom());
+		Receiver receiver = (Receiver)(e.getTo());
+		if (provider.getState().schedule.getTime() == provider.getLastAcceptedOfferTime())
 			{
 			ArrayList<Resource> offers = provider.getLastAcceptedOffers();
 			ArrayList<Receiver> receivers = provider.getLastAcceptedOfferReceivers();
 			int loc = receivers.indexOf(receiver);
 			if (loc >= 0)
 				{
-				if (offerTime == provider.getState().schedule.getTime())
-					return "-->" + offers.get(loc);
-				else return offers.get(loc);
+				return (offers.get(loc).getAmount()) * scale;
 				}
 			else 
 				{
-				return null;
+				return 0.0;
 				}
 			}
 		else
 			{
-			return null;		// or maybe an empty object?
+			return 0.0;
 			}
 		}
 	}
+	
+	

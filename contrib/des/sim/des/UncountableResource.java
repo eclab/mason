@@ -48,6 +48,17 @@ public class UncountableResource extends CountableResource
         }
         
     /** 
+        Returns a new kind of Resource with a given name, and an initial amount of 0.
+        The name is informal: It's legal for two different kinds of resources 
+        to have the same name.  Resource types are distinguishe internally using
+        unique integers. 
+    */
+    public UncountableResource(String name)
+        {
+        this(name, 0);
+        }
+        
+    /** 
         Returns a Resource of the same type, name, and amount as the provided resource.
         This is essentially a clone of the resource.
         Note that this changes the amount of the given resource available in the world.
