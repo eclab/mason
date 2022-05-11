@@ -3,6 +3,7 @@ package sim.field.storage;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import mpi.Datatype;
 import mpi.MPI;
 import mpi.MPIException;
 import sim.util.Int2D;
@@ -20,6 +21,11 @@ public class IntGridStorage extends GridStorage<Integer>
 	{
 		super(shape);
 		clear();
+	}
+	
+	public Datatype getMPIBaseType()
+	{
+	return MPI.INT;
 	}
 
 	public byte[] pack(MPIParam mp) throws MPIException
