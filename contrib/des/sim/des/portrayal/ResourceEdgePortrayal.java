@@ -31,13 +31,23 @@ public class ResourceEdgePortrayal extends SimpleEdgePortrayal2D
     
     public ResourceEdgePortrayal()
     	{
-    	this(1.0);
+    	this(1.0, false);
+    	}
+
+    public ResourceEdgePortrayal(boolean triangle)
+    	{
+    	this(1.0, triangle);
     	}
 
     public ResourceEdgePortrayal(double scale)
     	{
+    	this(scale, false);
+    	}
+
+    public ResourceEdgePortrayal(double scale, boolean triangle)
+    	{
     	super(Color.BLUE, Color.RED, Color.BLACK, new Font("SansSerif", Font.PLAIN, 10));
-        setShape(SimpleEdgePortrayal2D.SHAPE_TRIANGLE);		//SimpleEdgePortrayal2D.SHAPE_LINE_ROUND_ENDS);
+        setShape(triangle ? SimpleEdgePortrayal2D.SHAPE_TRIANGLE : SimpleEdgePortrayal2D.SHAPE_LINE_ROUND_ENDS);
         setAdjustsThickness(true);
         setScaling(SimpleEdgePortrayal2D.ALWAYS_SCALE);
         setLabelScaling(SimpleEdgePortrayal2D.SCALE_WHEN_SMALLER);
