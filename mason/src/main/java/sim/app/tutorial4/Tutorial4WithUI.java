@@ -54,6 +54,10 @@ public class Tutorial4WithUI extends GUIState
         if (displayFrame!=null) displayFrame.dispose();
         displayFrame = null;  // let gc
         display = null;       // let gc
+
+        if (displayFrame2!=null) displayFrame2.dispose();
+        displayFrame2 = null;  // let gc
+        display2 = null;       // let gc
         }
 
     public void start()
