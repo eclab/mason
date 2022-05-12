@@ -15526,6 +15526,140 @@ Returns a collection of neighbors, including those at or within the given radial
 Returns only those neighbors within, or (if {\it inclusive} is true) at the given radial distance from the given position.  If {\it radial} is false, then rather than radial (circular) distance, objects at or within a square centered the position are returned.  You can pass in an ArrayList to be reused rather than produce a new one.  Also returned are some other neighbors you probably don't care about.  
 \end{methods}
 
+\section{Distributed Geomason}
+In addition to large-scale distributed versions of traditional MASON models, Distributed MASON can be used to build distributed versions of GeoMason, referred to as Distributed Geomason.  Relevant classes and example apps are located in the ``contrib/distributed-geomason" directory.  Distributed GeoMason mostly uses Distributed Mason classes and methods, but does introduce GeoMason specific classes as well.  These mostly concern handling MasonGeometries, along with handling space and HaloFields necessary for Distributed Mason.  Similar to the Distributed analogs of grids, Distributed GeoMason has distributed versions of GeomVectorField (called DGeomVectorField). 
+
+DGeomVectorField combines GeomVectorField with DContinuous2D, using GeomVectorField for most of its operations but also using the DContinuous2D space to handle communication between partitions. In order to align the ContinuousStorage and GeomVectorField, DGeomVectorField requires a globalEnvelope.  Therefore, it is recommended to read in the data into a GeomVecotrField, calculate its global envelope, and pass it into the DGeomVectorField constructor.   DGeomVectorField is defined as follows:
+
+
+\begin{methods}{\class{sim.field.geo.DGeomVectorField Constructor}}
+\mthd{public DGeomVectorField\(\langle\)T extends DGeomObject\(\rangle\) extends DAbstractGrid2D(double discretization, DSimState state, Envelope globalEnvelope)}
+Creates a DGeomVectorField which holds objects of the given class {\it T}, using the given cell discretization.
+\end{methods}
+
+\begin{methods}{\class{sim.field.geo.DGeomVectorField}}
+\mthd{public boolean isLocal(Double2D p)}
+Returns true if the given point lies within the local bounds. This the Double2D version of the same Int2D method found in DAbstractGrid2D.
+\mthd{public boolean isHalo(Double2D p)}
+Returns true if the given point lies within the halo region or local bounds. This the Double2D version of the same Int2D method found in DAbstractGrid2D.
+\mthd{public Double2D getObjectLocationLocal(T val)}
+Returns the local location of the given object, else null if there is none.
+\mthd{public Double2D getObjectLocationLocal(long id)}
+Returns the local location of the object with the given ID, else null if there is none.
+\mthd{public boolean containsLocal(T val)}
+Returns whether the given object is located locally.
+\mthd{public boolean containsLocal(long id)}
+Returns whether the given object is located locally.
+\mthd{public boolean containsLocal(Double2D p, T val)}
+Returns whether the given object is located at the given location.
+\mthd{public boolean containsLocal(Double2D p, long id)}
+Returns whether the given object is located at the given location.
+\mthd{public HashMap\(<\)Long, T\(>\) getCellLocal(Double2D p)}
+Returns a HashMap (of IDs to objects) of all elements located in the discretized cell at the given location.
+%\mthd{public ArrayList\(<\)T\(>\) getLocal(Double2D p)}
+%Returns all the elements located exactly at the given point, or null.
+\mthd{public T getLocal(long id)}
+Returns an object stored locally with the given id, or null if there is none.
+\mthd{public T getLocal(Double2D p, long id)}
+Returns an object the given location, and stored locally with the given id, or null if there is none.
+\mthd{public void addLocal(Int2D p, T val)}
+Adds an object to the given local point.  If the element is currently located at a different local position, it is moved.
+\mthd{public boolean removeLocal(long id)}
+Removes an object locally with the given id.  Returns false if there was no such element.
+\mthd{public boolean removeLocal(T t)}
+Removes the given object locally.  Returns false if there was no such element.
+\mthd{public boolean removeLocal(Double2D p, long id)}
+Removes an object locally at the given point and with the given id.  Returns false if there was no such element.
+\mthd{public boolean removeLocal(Double2D p, T t)}
+Removes an object locally at the given point.  Returns false if there was no such element.
+\mthd{public Promised get(Double2D p, T t)}
+Returns a Promised value for the given point, which can be any point in the model, and which will be fulfilled by next timestep.  This value will be a single object at the point.  Remember that this is costly unless the point happens to be in your local or halo region.
+\mthd{public void add(Double2D p, T t)}
+Adds an object at the given point, which can be any point in the model, and which will be fulfilled by next timestep.  If the point is local, and the object is already stored locally, it will be simply moved: but you should not use this method to move objects, only to add new ones. Remember that this is costly unless the point happens to be in your local region.
+\mthd{public void remove(Double2D p, long id)}
+Removes object of the given ID from the given point, which can be any point in the model, and which will be fulfilled by next timestep.  Remember that this is costly unless the point happens to be in your local region.
+\mthd{public void remove(Double2D p, T t)}
+Removes the given object from the given point, which can be any point in the model, and which will be fulfilled by next timestep.  Remember that this is costly unless the point happens to be in your local region.
+\mthd{public void addAgent(Double2D p, T agent, double time, int ordering)}
+Adds an agent at the given point, which can be any point in the model, by next timestep.  If the point is local, and the object is already stored locally, it will be simply moved: but you should not use this method to move objects, only to add new ones.  Also schedules it (locally or remotely) with the given time and ordering.  Remember that this is costly unless the point happens to be in your local region.
+\mthd{public void addAgent(Double2D p, T agent, double time, int ordering, interval)}
+Adds an agent at the given point, which can be any point in the model, by next timestep.  If the point is local, and the object is already stored locally, it will be simply moved: but you should not use this method to move objects, only to add new ones.  Also schedules it repeating (locally or remotely) with the given time and ordering.  Remember that this is costly unless the point happens to be in your local region.
+\mthd{public void removeAgent(Double2D p, T agent)}
+Removes an agent from the given point, which can be any point in the model, by next timestep.  Also removes it (locally or remotely) from the schedule.  Remember that this is costly unless the point happens to be in your local region. 
+\mthd{public void moveAgent(Double2D to, T agent)}
+Moves an agent remotely to a new location, by next timestep.  The agent must be currently located local to this partition, but the {\it to} point can be any point in the model.  Also moves it to the appropriate processor's schedule.  Remember that this is costly unless the {\it to} point also happens to be in your local region.
+\mthd{public GeomVectorContinuousStorage getStorage()}
+Returns the entire storage object.
+\mthd{public ArrayList\(<\)T\(>\) getAllAgentsInStorage()}
+Returns an ArrayList of all objects currently in the halo grid.
+\mthd{public Double2D convertJTSToPartitionSpace(Coordinate coordJTS)}
+Returns a Double2D in ContinuousStorage space corresponding to an inputted Coordinate, in GeomVectorField space.  This is calculated using Envelope bounds.
+\mthd{public Coordinate convertPartitionSpaceToJTS(Double2D d)}
+Returns a  Coordinate, in GeomVectorField space corresponding to an inputted Double2D in ContinuousStorage space.  This is calculated using Envelope bounds.
+\mthd{public ArrayList<T> getNeighborsExactlyWithinDistance(Double2D position, double distance)}
+Returns ArrayList of Neighbors.
+\mthd{public getNeighborsExactlyWithinDistance(Double2D position, double distance, boolean radial, boolean inclusive, ArrayList<T> result)}
+Returns ArrayList of Neighbors.
+\mthd{public ArrayList<T> getNeighborsWithinDistance(Double2D position, double distance)}
+Returns ArrayList of Neighbors.
+\mthd{ public ArrayList<T> getNeighborsWithinDistance(Double2D position, double distance, ArrayList<T> result)}
+Returns ArrayList of Neighbors.
+\end{methods}
+
+
+
+DGeomVectorField uses the GeomVectorContinuousStorage class for storage, which stores the objects in both a ContinuousStorage object and GeomVectorField object.  Like regular GeoMason, GeomVectorField is used for most internal agent processes, while ContinuousStorage is used for communication across partitions.  GeomVectorContinuousStorage is defined as follows:
+
+\begin{methods}{\class{sim.field.geo.GeomVectorContinuousStorage Constructor}}
+\mthd{public sim.field.geo.GeomVectorContinuousStorage\(\langle\)T extends DGeomObject\(\rangle\) extends ContinuousStorage(IntRect2D shape, int discretization)}
+Creates a GeomVectorContinuousStorage which holds objects of the given class {\it T}, using the given cell discretization.  This is a subclass of ContinuousStorage, but also contains a GeomVectorField.
+\end{methods}
+
+\begin{methods}{\class{GeomVectorContinuousStorage}}
+\mthd{public void addObject(Number2D p, T obj)}
+Add object at a given point, along with its corresponding MasonGeometry.
+\mthd{public void removeObject(Number2D p, long id)}
+Remove object with given id, along with its corresponding MasonGeometry.
+\mthd{public void clear(Number2D p)}
+Remove all objects at point p, along with its corresponding MasonGeometry objects.
+\mthd{public void clear()}
+Remove all objects, along with its corresponding MasonGeometry objects.
+\mthd{public void removeObject( long id)}
+Remove object with given id, along with its corresponding MasonGeometry.
+\mthd{public void removeObject( IntRect2D r)}
+Remove objects with given region, along with its corresponding MasonGeometry objects.
+\mthd{public GeomVectorField getGeomVectorField()}
+Returns geomVectorField.
+\mthd{public GeomVectorField setGeomVectorField(GeomVectorField tempGeomVectorField)}
+Sets geomVectorField.
+\mthd{public Serializable pack(final MPIParam mp)}
+\mthd{public Serializable pack(sim.util.MPIParam mp) throws MPIException}
+Packs the portion of the storage specified by the MPIParam into a Serializable object for MPI to transport, and returns it.
+\mthd{public void unpack(sim.util.MPIParam mp, Serializable buf) throws MPIException}
+Unpacks the portion of the storage specified by the MPIParam from a Serializable object transported by MPI, and updates the grid storage to reflect changes in that portion.
+\end{methods}
+
+
+
+GeomVectorContinuousStorage stores DGeomObject objects, a class that combines DObject with MasonGeometry.  There is also an Agent equivalent
+(implements Stopping class) that is added to the schedule, called DGeomSteppable.  These classes mostly behave like their superclasses, but in addition have a MasonGeometry field (named \variable{mg}) The classes are defined as follows:
+
+
+
+\begin{methods}{\class{DGeomObject extends DObject}}
+\mthd{public MasonGeometry getMasonGeometry()}
+Returns MasonGeometry associated with this object.   
+\end{methods}
+
+\begin{methods}{\class{DGeomSteppable extends DGeomObject implements Stopping}}
+\mthd{public Stoppable getStoppable()}
+Returns stop object.
+\mthd{public void setStoppable(Stoppable stop)}
+Sets stop object.
+\mthd{public boolean isStopped()}
+Returns boolean on whether the object is stopped.
+\end{methods}
+
 
 \section{Visualization and Statistics}
 
