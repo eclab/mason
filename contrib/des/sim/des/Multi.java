@@ -154,12 +154,32 @@ public abstract class Multi implements Named, Resettable
 	    protected boolean offerReceiver(Receiver receiver, double atMost)
 	    	{
 	    	if (_atLeast > atMost) return false;	// can't even make an offer
-	    	else return receiver.accept(this, resource, Math.min(_atLeast, atMost), Math.min(_atMost, atMost));
+	    	else 
+	    		{
+	    		//return receiver.accept(this, resource, Math.min(_atLeast, atMost), Math.min(_atMost, atMost));
+            	double originalAmount = resource.getAmount();
+				lastOfferTime = state.schedule.getTime();
+				boolean result = receiver.accept(this, resource, Math.min(_atLeast, atMost), Math.min(_atMost, atMost));
+				if (result)
+					{
+					CountableResource removed = (CountableResource)(resource.duplicate());
+					removed.setAmount(originalAmount - resource.getAmount());
+					updateLastAcceptedOffers(removed, receiver);
+					}
+				return result;
+	    		}
 	    	}
 
 	    protected boolean offerReceiver(Receiver receiver, Entity entity)
     		{
-			return receiver.accept(this, entity, 0, 0);
+//			return receiver.accept(this, entity, 0, 0);
+			lastOfferTime = state.schedule.getTime();
+			boolean result = receiver.accept(this, entity, 0, 0);
+			if (result)
+				{
+				updateLastAcceptedOffers(entity, receiver);
+				}
+			return result;
 			}
 	    	
 		/** Routes to Multi.provide(...) */

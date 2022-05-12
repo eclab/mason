@@ -8,6 +8,9 @@ package sim.des;
 
 import sim.engine.*;
 import java.util.*;
+import sim.portrayal.*;
+import sim.portrayal.simple.*;
+import java.awt.*;
 
 /**
    A decomposer breaks up a composite Entity and offers its composed elements to receivers.
@@ -16,6 +19,10 @@ import java.util.*;
 
 public class Decomposer extends Provider implements Receiver
     {
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+    	{
+    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_COMPASS, Color.GRAY, Color.BLACK, 1.0, scale);
+    	}
     private static final long serialVersionUID = 1;
 
     HashMap<Integer, Receiver> output;

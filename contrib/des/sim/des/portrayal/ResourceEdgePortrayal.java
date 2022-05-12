@@ -1,10 +1,10 @@
 /*
-  Copyright 2021 by Sean Luke and George Mason University
+  Copyright 2022 by Sean Luke and George Mason University
   Licensed under the Academic Free License version 3.0
   See the file "LICENSE" for more information
 */
 
-package sim.des.network;
+package sim.des.portrayal;
 
 import sim.field.network.*;
 import sim.util.*;
@@ -19,8 +19,8 @@ import sim.portrayal.network.*;
 import sim.portrayal.*;
 
 /**
-   A subclass of Edge which allows the display and weighting of resources which
-   travel from a provider to a receiver.
+   A subclass of SimpleEdgePortrayal2D which scales the edges appropriately to the 
+   receint offers accepted between nodes.
 **/
 
 public class ResourceEdgePortrayal extends SimpleEdgePortrayal2D
@@ -29,12 +29,18 @@ public class ResourceEdgePortrayal extends SimpleEdgePortrayal2D
     
     double scale = 1.0;
     
+    public ResourceEdgePortrayal()
+    	{
+    	this(1.0);
+    	}
+
     public ResourceEdgePortrayal(double scale)
     	{
-    	super(Color.BLUE, Color.RED, Color.BLACK, new Font("SansSerif", Font.PLAIN, 2));
-        setShape(SimpleEdgePortrayal2D.SHAPE_LINE_ROUND_ENDS);
+    	super(Color.BLUE, Color.RED, Color.BLACK, new Font("SansSerif", Font.PLAIN, 10));
+        setShape(SimpleEdgePortrayal2D.SHAPE_TRIANGLE);		//SimpleEdgePortrayal2D.SHAPE_LINE_ROUND_ENDS);
         setAdjustsThickness(true);
-        setScaling(SimpleEdgePortrayal2D.NEVER_SCALE);
+        setScaling(SimpleEdgePortrayal2D.ALWAYS_SCALE);
+        setLabelScaling(SimpleEdgePortrayal2D.SCALE_WHEN_SMALLER);
         this.scale = scale;
     	}
     

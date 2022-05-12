@@ -3,6 +3,9 @@ package sim.des;
 import sim.engine.*;
 import sim.util.*;
 import java.util.*;
+import sim.portrayal.*;
+import sim.portrayal.simple.*;
+import java.awt.*;
 
 /**
    A LEAD is attached between a provider and a receiver somewhere UPSTREAM of its associated
@@ -18,6 +21,11 @@ import java.util.*;
 
 public class Lead extends Provider implements Receiver
     {
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+    	{
+    	return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_CHOMP, Color.GRAY, Color.BLACK, 1.0, scale);
+    	}
+
     private static final long serialVersionUID = 1;
 
     Probe probe;

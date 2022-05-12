@@ -15,21 +15,23 @@ import java.awt.event.*;
 import sim.portrayal.*;
 import sim.display.*;
 import javax.swing.*;
-import sim.des.network.*;
+import sim.des.portrayal.*;
 
 /**
    A Sink accepts all incoming offers of resources matching a given type, then throws them away.
 */
 
-public class Sink extends DESPortrayal implements Receiver, StatReceiver
+public class Sink extends DESPortrayal implements Receiver, StatReceiver, ProvidesBarData
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.X_POINTS_OCTAGON, ShapePortrayal2D.Y_POINTS_OCTAGON, Color.black, scale, false);
+    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_POINTER_DOWN, Color.GRAY, Color.BLACK, 1.0, scale);
     	}
 
+
+	public boolean hideDrawState() { return true; }
 	public boolean getDrawState() { return false; }
-    public String getLabel() { return "---"; }
+	public boolean hideLabel() { return true; }
 
     private static final long serialVersionUID = 1;
 
@@ -104,4 +106,20 @@ public class Sink extends DESPortrayal implements Receiver, StatReceiver
     boolean refusesOffers = false;
 	public void setRefusesOffers(boolean value) { refusesOffers = value; }
     public boolean getRefusesOffers() { return refusesOffers; }
+
+	public boolean hideDataBars() { return true; }
+	public double[] getDataBars() 
+		{
+		return new double[0];
+		}
+	public boolean hideDataValues() { return true; }
+	public String[] getDataValues() 
+		{
+		return new String[0];
+		}
+	public boolean hideDataLabels() { return true; }
+	public String[] getDataLabels()
+		{
+		return new String[0];
+		}
  	}

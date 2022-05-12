@@ -8,6 +8,9 @@ package sim.des;
 
 import sim.engine.*;
 import java.util.*;
+import sim.portrayal.*;
+import sim.portrayal.simple.*;
+import java.awt.*;
 
 /**
    A simple Macro which consists of a lock (the receiver), a delay, an unlock (the provider), 
@@ -16,6 +19,11 @@ import java.util.*;
 
 public class Service extends Macro
     {
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+    	{
+    	return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_PILL, Color.GRAY, Color.BLACK, 1.0, scale);
+    	}
+
     private static final long serialVersionUID = 1;
 
     SimpleDelay delay;

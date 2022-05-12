@@ -8,6 +8,9 @@ package sim.des;
 
 import sim.engine.*;
 import java.util.*;
+import sim.portrayal.*;
+import sim.portrayal.simple.*;
+import java.awt.*;
 
 /** 
     A blocking resource queue with a capacity: you can think of Queue as a warehouse with a maximum
@@ -20,6 +23,10 @@ import java.util.*;
 
 public class Queue extends Provider implements Receiver, Steppable, StatReceiver
     {
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+    	{
+    	return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_STORAGE, Color.GRAY, Color.BLACK, 1.0, scale);
+    	}
     private static final long serialVersionUID = 1;
 
     public Resource getTypicalReceived() { return typical; }

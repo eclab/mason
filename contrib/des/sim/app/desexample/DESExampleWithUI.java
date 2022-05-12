@@ -15,7 +15,7 @@ import javax.swing.*;
 import java.awt.Color;
 import java.awt.*;
 import sim.field.network.*;
-import sim.des.network.*;
+import sim.des.portrayal.*;
 
 public class DESExampleWithUI extends GUIState
     {
@@ -64,9 +64,10 @@ public class DESExampleWithUI extends GUIState
     public void setupPortrayals()
         {
         DESExample example = (DESExample) state;
-                
+        
+        
         layoutPortrayal.setField(example.field.getNodes());
-        graphPortrayal.setField(example.field.getField());
+        graphPortrayal.setField(example.field);
         graphPortrayal.setPortrayalForAll(new ResourceEdgePortrayal(1.0));
         
         //layoutPortrayal.setPortrayalForAll(new MovablePortrayal2D(new RectanglePortrayal2D(5.0, false)));        

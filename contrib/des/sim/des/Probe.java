@@ -3,6 +3,9 @@ package sim.des;
 import sim.engine.*;
 import sim.util.*;
 import java.util.*;
+import sim.portrayal.*;
+import sim.portrayal.simple.*;
+import java.awt.*;
 
 /**
    A Probe can be inserted between a provider and a receiver to gather statistical information such
@@ -17,6 +20,11 @@ import java.util.*;
 
 public class Probe extends Provider implements Receiver
     {
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+    	{
+    	return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_REVERSE_DELAY, Color.GRAY, Color.BLACK, 1.0, scale);
+    	}
+
     private static final long serialVersionUID = 1;
 
     static final Resource DEFAULT_TYPICAL = new Entity("Probe");

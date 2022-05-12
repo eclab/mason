@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package sim.des.network;
+package sim.des.portrayal;
 
 import sim.field.network.*;
 import sim.util.*;
@@ -31,17 +31,10 @@ public class DESPortrayalFactory
     static double portrayalScale = DEFAULT_PORTRAYAL_SCALE;
     public static double getPortrayalScale() { return portrayalScale; }
     public static void setPortrayalScale(double scale) { portrayalScale = scale; }
-
-	public static SimplePortrayal2D getPortrayal(Object obj, double scale, String imagePath)
-		{
-    	return getPortrayal(new ImagePortrayal2D(new ImageIcon(obj.getClass().getResource(imagePath)), scale));
-		}
     
-    public static SimplePortrayal2D getPortrayal(SimplePortrayal2D basePortrayal)
+    public static SimplePortrayal2D wrapPortrayal(SimplePortrayal2D basePortrayal)
     	{
-    	return new MovablePortrayal2D(
-    				new CircledPortrayal2D(
-    						new LabelledPortrayal2D(basePortrayal,
+    	BarPortrayal bar = new BarPortrayal(basePortrayal,
     							LabelledPortrayal2D.DEFAULT_OFFSET_X, LabelledPortrayal2D.DEFAULT_OFFSET_Y,
     							-portrayalScale / 2.0, portrayalScale / 2.0,
     							new Font("SansSerif",Font.PLAIN, 10), LabelledPortrayal2D.ALIGN_LEFT,
@@ -51,8 +44,10 @@ public class DESPortrayalFactory
 										{
 										return ((Displayable)object).getLabel();
 										}
-									}, 
-							0, portrayalScale * CIRCLE_RING_SCALE, Color.gray, false)
+									};
+		bar.setLabelScaling(bar.SCALE_WHEN_SMALLER);
+    	return new MovablePortrayal2D(
+    				new CircledPortrayal2D(bar, 0, portrayalScale * CIRCLE_RING_SCALE, Color.gray, false)
 								{
 								public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
 									{

@@ -9,6 +9,9 @@ package sim.des;
 import sim.engine.*;
 import sim.util.*;
 import java.util.*;
+import sim.portrayal.*;
+import sim.portrayal.simple.*;
+import java.awt.*;
 
 /*
   A Unlock unlocks (releases) resources to a pool before permitting resources to pass through it
@@ -19,6 +22,12 @@ import java.util.*;
 
 public class Unlock extends Lock
     {
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+    	{
+    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_BOWTIE, Color.GRAY, Color.BLACK, 1.0, scale);
+    	}
+
+
     private static final long serialVersionUID = 1;
 
     /** Builds an Unlock attached to the given pool and with the given amount of resources released each time. */
@@ -74,9 +83,4 @@ public class Unlock extends Lock
         {
         return "Unlock@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ", " + pool + ", " + numResources + ")";
         }               
-
-    public String getLabel() 
-    	{ 
-    	return (getName() == null ? "Unlock (" + (pool.getName() == null ? "Pool " + System.identityHashCode(pool) : pool.getName()) + ")" : getName());
-    	}    
     }

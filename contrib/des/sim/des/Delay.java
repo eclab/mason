@@ -30,14 +30,6 @@ import java.awt.*;
 
 public class Delay extends SimpleDelay
     {
-    public String getLabel() 
-    	{ 
-    	return (getName() == null ? "Delay" : getName()) + " " + 
-    		getTotal() + 
-    		(getCapacity() != Double.POSITIVE_INFINITY ? 
-    			" (" + String.format("%.2f", 100 * (getCapacity() == 0 ? 1.0 : getTotal() / getCapacity())) + ")" : "");
-    	}
-
     private static final long serialVersionUID = 1;
 
     Heap delayHeap;
@@ -83,12 +75,12 @@ public class Delay extends SimpleDelay
     
 	public double getSize() { return delayHeap.size(); }
 
-	public double getTotal() { if (entities == null) return totalResource; else return delayHeap.size(); }
+	public double getDelayed() { if (entities == null) return totalDelayedResource; else return delayHeap.size(); }
 
     public void clear()
         {
         delayHeap = new Heap();
-        totalResource = 0.0;
+        totalDelayedResource = 0.0;
         }
         
     /** Sets the distribution used to independently select the delay time for each separate incoming 
@@ -136,21 +128,21 @@ public class Delay extends SimpleDelay
         if (entities == null)
             {
             CountableResource cr = (CountableResource)amount;
-            double maxIncoming = Math.min(Math.min(capacity - totalResource, atMost), cr.getAmount());
+            double maxIncoming = Math.min(Math.min(capacity - totalDelayedResource, atMost), cr.getAmount());
             if (maxIncoming < atLeast) return false;
                 
             CountableResource token = (CountableResource)(cr.duplicate());
             token.setAmount(maxIncoming);
             cr.decrease(maxIncoming);
             delayHeap.add(token, nextTime);
-			totalResource += maxIncoming;            
+			totalDelayedResource += maxIncoming;            
 			totalReceivedResource += maxIncoming;
             }
         else
             {
             if (delayHeap.size() >= capacity) return false;      // we're at capacity
             delayHeap.add(amount, nextTime);
-			totalResource += 1;            
+			totalDelayedResource += 1;            
 			totalReceivedResource += 1.0;
             }
        
@@ -175,13 +167,13 @@ public class Delay extends SimpleDelay
             if (entities == null)
                 {
                 CountableResource res = ((CountableResource)_res);
-                totalResource -= res.getAmount();
+                totalDelayedResource -= res.getAmount();
                 resource.add(res);
                 }
             else
                 {
                 entities.add((Entity)(_res));
-				totalResource--;            
+				totalDelayedResource--;            
                 }
  			minKey = (Double)delayHeap.getMinKey();		// grab the next one
             }

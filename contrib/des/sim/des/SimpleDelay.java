@@ -7,8 +7,8 @@
 package sim.des;
 import sim.engine.*;
 import java.util.*;
-import sim.portrayal.simple.*;
 import sim.portrayal.*;
+import sim.portrayal.simple.*;
 import java.awt.*;
 
 /** 
@@ -21,15 +21,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
-    	return new RectanglePortrayal2D(Color.black, scale, true);
-    	}
-
-    public String getLabel() 
-    	{ 
-    	return (getName() == null ? "SimpleDelay" : getName()) + " " + 
-    		getTotal() + 
-    		(getCapacity() != Double.POSITIVE_INFINITY ? 
-    			" (" + String.format("%.2f", 100 * (getCapacity() == 0 ? 1.0 : getTotal() / getCapacity())) + ")" : "");
+    	return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_DELAY, Color.GRAY, Color.BLACK, 1.0, scale);
     	}
 
     private static final long serialVersionUID = 1;
@@ -37,7 +29,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
     public Resource getTypicalReceived() { return typical; }
 	public boolean hideTypicalReceived() { return true; }
 
-    double totalResource = 0.0;
+    double totalDelayedResource = 0.0;
     LinkedList<DelayNode> delayQueue = new LinkedList<>();
     double delayTime;
     int rescheduleOrdering = 0;
@@ -72,17 +64,17 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         {
         super.clear();
         delayQueue.clear();
-        totalResource = 0.0;
+        totalDelayedResource = 0.0;
         }
 
 	/** Returns the number of items currently being delayed. */
 	public double getSize() { return delayQueue.size(); }
 
 	/** Returns the number AMOUNT of resource currently being delayed. */
-	public double getTotal() { if (entities == null) return totalResource; else return delayQueue.size(); }
+	public double getDelayed() { if (entities == null) return totalDelayedResource; else return delayQueue.size(); }
 
 	/** Returns the number AMOUNT of resource currently being delayed, plus the current available resources. */
-	public double getTotalPlusAvailable() { return getTotal() + getAvailable(); }
+	public double getDelayedPlusAvailable() { return getDelayed() + getAvailable(); }
 	
     /** Returns the delay time. */
     public double getDelayTime() { return delayTime; }
@@ -144,21 +136,21 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         if (entities == null)
             {
             CountableResource cr = (CountableResource)amount;
-            double maxIncoming = Math.min(Math.min(capacity - totalResource, atMost), cr.getAmount());
+            double maxIncoming = Math.min(Math.min(capacity - totalDelayedResource, atMost), cr.getAmount());
             if (maxIncoming < atLeast) return false;
                 
             CountableResource token = (CountableResource)(cr.duplicate());
             token.setAmount(maxIncoming);
             cr.decrease(maxIncoming);
             delayQueue.add(new DelayNode(token, nextTime));
-			totalResource += maxIncoming;            
+			totalDelayedResource += maxIncoming;            
 			totalReceivedResource += maxIncoming;
             }
         else
             {
             if (delayQueue.size() >= capacity) return false; // we're at capacity
             delayQueue.add(new DelayNode(amount, nextTime));
-			totalResource += 1;            
+			totalDelayedResource += 1;            
 			totalReceivedResource += 1.0;
             }
             
@@ -215,13 +207,13 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
                     {
                     CountableResource res = ((CountableResource)(node.resource));
                     iterator.remove();
-                    totalResource -= res.getAmount();
+                    totalDelayedResource -= res.getAmount();
                     resource.add(res);
                     }
                 else
                     {
                     entities.add((Entity)(node.resource));
-					totalResource--;            
+					totalDelayedResource--;            
                     }
                 }
             else break;             // don't process any more
@@ -252,5 +244,18 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
     boolean refusesOffers = false;
 	public void setRefusesOffers(boolean value) { refusesOffers = value; }
     public boolean getRefusesOffers() { return refusesOffers; }
+    
+	public double[] getDataBars() 
+		{
+		return new double[] { getCapacity() == 0 ? -1 : getDelayed() / (double)getCapacity(), -1 };
+		}
+	public String[] getDataValues() 
+		{
+		return new String[] { "" + getDelayed() + "/" + getCapacity(), "" + getAvailable() };
+		}
+	public String[] getDataLabels()
+		{
+		return new String[] { "Delayed", "Available"};
+		}
     }
         

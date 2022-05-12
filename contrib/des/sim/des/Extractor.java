@@ -9,6 +9,9 @@ package sim.des;
 import sim.engine.*;
 import sim.util.distribution.*;
 import java.util.*;
+import sim.portrayal.*;
+import sim.portrayal.simple.*;
+import java.awt.*;
 
 
 /** 
@@ -25,6 +28,11 @@ import java.util.*;
 
 public class Extractor extends Source implements Receiver
     {
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+    	{
+    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_POINTER_LEFT, Color.GRAY, Color.BLACK, 1.0, scale);
+    	}
+
     private static final long serialVersionUID = 1;
 
     Provider provider = null;

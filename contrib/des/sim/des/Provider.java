@@ -16,7 +16,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.event.*;
 import javax.swing.*;
-import sim.des.network.*;
+import sim.des.portrayal.*;
 
 /**
    A provider of resources. Providers also have a TYPICAL resource, 
@@ -33,10 +33,10 @@ import sim.des.network.*;
    offers.
 */
 
-public abstract class Provider extends DESPortrayal implements Named, Resettable
+public abstract class Provider extends DESPortrayal implements Named, Resettable, ProvidesBarData
     {
+    public boolean hideDrawState() { return true; }
 	public boolean getDrawState() { return false; }
-    public String getLabel() { return "---"; }
 
     private static final long serialVersionUID = 1;
 
@@ -674,4 +674,20 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     boolean makesOffers = true;
     public void setMakesOffers(boolean value) { makesOffers = value; }
     public boolean getMakesOffers() { return makesOffers; }
+
+	public boolean hideDataBars() { return true; }
+	public double[] getDataBars() 
+		{
+		return new double[0];
+		}
+	public boolean hideDataValues() { return true; }
+	public String[] getDataValues() 
+		{
+		return new String[0];
+		}
+	public boolean hideDataLabels() { return true; }
+	public String[] getDataLabels()
+		{
+		return new String[0];
+		}
     }

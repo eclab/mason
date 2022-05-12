@@ -8,6 +8,9 @@ package sim.des;
 
 import sim.engine.*;
 import java.util.*;
+import sim.portrayal.*;
+import sim.portrayal.simple.*;
+import java.awt.*;
 
 /**
    A composer composes multiple resources received from a provider into a single Entity to offer to
@@ -21,6 +24,11 @@ import java.util.*;
 
 public class Composer extends Provider implements Receiver
     {
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+    	{
+    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_STAR, Color.GRAY, Color.BLACK, 1.0, scale);
+    	}
+
     private static final long serialVersionUID = 1;
 
     public Resource getTypicalReceived() { return typical; }

@@ -9,6 +9,9 @@ package sim.des;
 import sim.engine.*;
 import sim.util.*;
 import java.util.*;
+import sim.portrayal.*;
+import sim.portrayal.simple.*;
+import java.awt.*;
 
 /**
    An If conditionally offers received resources to exactly one of N possible receivers depending the 
@@ -17,6 +20,11 @@ import java.util.*;
 
 public abstract class If extends Provider implements Receiver
     {
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+    	{
+    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_TRIANGLE_RIGHT, Color.GRAY, Color.BLACK, 1.0, scale);
+    	}
+
     private static final long serialVersionUID = 1;
 
     public Resource getTypicalReceived() { return typical; }
@@ -36,7 +44,17 @@ public abstract class If extends Provider implements Receiver
     	
     protected boolean offerReceiver(Receiver receiver, double atMost)
         {
-        return receiver.accept(this, _amount, Math.min(_atLeast, atMost), Math.min(_atMost, atMost));
+        //return receiver.accept(this, _amount, Math.min(_atLeast, atMost), Math.min(_atMost, atMost));
+        double originalAmount = _amount.getAmount();
+        lastOfferTime = state.schedule.getTime();
+        boolean result = receiver.accept(this, _amount, Math.min(_atLeast, atMost), Math.min(_atMost, atMost));
+		if (result)
+			{
+            	CountableResource removed = (CountableResource)(resource.duplicate());
+            	removed.setAmount(originalAmount - _amount.getAmount());
+            	updateLastAcceptedOffers(removed, receiver);
+			}
+		return result;
         }
         
     double _atLeast;

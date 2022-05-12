@@ -9,8 +9,8 @@ package sim.des;
 import sim.engine.*;
 import sim.util.distribution.*;
 import java.util.*;
-import sim.portrayal.simple.*;
 import sim.portrayal.*;
+import sim.portrayal.simple.*;
 import java.awt.*;
 
 /** 
@@ -31,14 +31,25 @@ import java.awt.*;
 
 public class Source extends Provider implements Steppable
     {
-    public String getLabel() 
-    	{ 
-    	return (getName() == null ? "Source" : getName()) + " " + 
-    		getTotal() + 
-    		(getCapacity() != Double.POSITIVE_INFINITY ? 
-    			" (" + String.format("%.2f", 100 * (getCapacity() == 0 ? 1.0 : getTotal() / getCapacity())) + ")" : "");
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+    	{
+    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_POINTER_UP, Color.GRAY, Color.BLACK, 1.0, scale);
     	}
 
+	public double[] getDataBars() 
+		{
+		return new double[] { getCapacity() == Double.POSITIVE_INFINITY || getCapacity() == 0 ? -1 : getAvailable() / (double)getCapacity() };
+		}
+	public String[] getDataValues()
+		{
+		return new String[] { getCapacity() == Double.POSITIVE_INFINITY ? "" + getAvailable() :
+								getAvailable() + "/" + getCapacity() };
+		}
+	public String[] getDataLabels()
+		{
+		return new String[] { "Available" };
+		}
+    	
     private static final long serialVersionUID = 1;
 
     void throwInvalidCapacityException(double capacity)
@@ -71,9 +82,6 @@ public class Source extends Provider implements Steppable
             throwInvalidCapacityException(d); 
         capacity = d; 
         }
-
-	/** Returns the number AMOUNT of resource currently being delayed. */
-	public double getTotal() { if (entities != null) return entities.size(); else return ((CountableResource)resource).getAmount(); }
 
     double rate = 1.0;
     boolean randomOffset = true;

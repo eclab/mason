@@ -8,9 +8,17 @@ package sim.des;
 
 import sim.engine.*;
 import java.util.*;
+import sim.portrayal.*;
+import sim.portrayal.simple.*;
+import java.awt.*;
 
 public class Transformer extends Provider implements Receiver
     {
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+    	{
+    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_POINTER_RIGHT, Color.GRAY, Color.BLACK, 1.0, scale);
+    	}
+
     private static final long serialVersionUID = 1;
 
     Resource typicalIn;
@@ -41,7 +49,17 @@ public class Transformer extends Provider implements Receiver
 
     protected boolean offerReceiver(Receiver receiver, double atMost)
         {
-        return receiver.accept(this, output, Math.min(atLeastOut, atMost), Math.min(atMostOut, atMost));
+        //return receiver.accept(this, output, Math.min(atLeastOut, atMost), Math.min(atMostOut, atMost));
+        double originalAmount = output.getAmount();
+        lastOfferTime = state.schedule.getTime();
+        boolean result = receiver.accept(this, output, Math.min(atLeastOut, atMost), Math.min(atMostOut, atMost));
+		if (result)
+			{
+			CountableResource removed = (CountableResource)(resource.duplicate());
+			removed.setAmount(originalAmount - output.getAmount());
+			updateLastAcceptedOffers(removed, receiver);
+			}
+		return result;
         }
 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
