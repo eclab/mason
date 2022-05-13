@@ -84,6 +84,8 @@ public class DESExampleWithUI extends GUIState
         {
         super.init(c);
 
+        DESPortrayalParameters.setImageClass(DESExampleWithUI.class);
+
         // make the displayer
         display = new Display2D(600,600,this);
         // turn off clipping

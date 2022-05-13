@@ -26,7 +26,7 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Displa
 	{
     double portrayalScale = Double.NaN;
     String baseImagePath;
-    Class baseImageClass;
+    boolean usesGlobalImageClass = false;
     
 	public boolean hideLabel() { return true; }
 	/** Returns the label to visually describe the object.  By default returns the object's name: if there is no name, returns its classname. */
@@ -34,21 +34,39 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Displa
 
 	public boolean hideImagePath() { return true; }
 	/** Sets the path to the image file, relative to the class file in setImageClass(). */
-    public void setImagePath(String path) { baseImagePath = path; }
+    public void setImage(String path, boolean usesGlobalImageClass) { baseImagePath = path; this.usesGlobalImageClass = usesGlobalImageClass; }
 	/** Returns the path to the image file, relative to the class file in setImageClass(). */
     public String getImagePath() { return baseImagePath; }
-
-	public boolean hideImageClass() { return true; }
-	/** Sets the class file from which setImagePath(...) defines a path to the image, if any. */
-	public void setImageClass(Class cls) { baseImageClass = cls; }
 	/** Returns the class file from which setImagePath(...) defines a path to the image, if any. */
-    public Class getImageClass() { return baseImageClass; }
+    public boolean getUsesGlobalImageClass() { return usesGlobalImageClass; }
 
-	public boolean hideImage() { return true; }
-	/** Sets the class file and the path relative to that file which leads to the image, if any. */
-    public void setImage(Class cls, String path) { setImagePath(path); setImageClass(cls); }
-
-
+	// wraps the base portrayal provided
+    static SimplePortrayal2D wrapPortrayal(SimplePortrayal2D basePortrayal)
+    	{
+    	double portrayalScale = DESPortrayalParameters.getPortrayalScale();
+    	BarPortrayal bar = new BarPortrayal(basePortrayal,
+    							LabelledPortrayal2D.DEFAULT_OFFSET_X, LabelledPortrayal2D.DEFAULT_OFFSET_Y,
+    							-portrayalScale / 2.0, portrayalScale / 2.0,
+    							new Font("SansSerif",Font.PLAIN, 10), LabelledPortrayal2D.ALIGN_LEFT,
+    							null, Color.black, false)
+									{
+									public String getLabel(Object object, DrawInfo2D info)
+										{
+										return ((Displayable)object).getLabel();
+										}
+									};
+		bar.setLabelScaling(bar.SCALE_WHEN_SMALLER);
+    	return new MovablePortrayal2D(
+    				new CircledPortrayal2D(bar, 0, portrayalScale * DESPortrayalParameters.CIRCLE_RING_SCALE, Color.gray, false)
+								{
+								public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+									{
+									setCircleShowing(((Displayable)object).getDrawState());
+									super.draw(object, graphics, info);
+									}
+								}); 
+    	}
+    	
 	/** 
 	Called by InternalPortrayal2D to provide the portrayal to draw this object.
  	We override the standard method to update the scale and rebuild the portrayal
@@ -71,24 +89,18 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Displa
     	
 	/** 
 	Called by InternalPortrayal2D to build a new portrayal when called for.
-	To do this, it first builds a "base portrayal" -- this is either an ImagePortrayal2D
-	(if you have set the baseImagePath and baseImageClass), or a ShapePortrayal2D
-	of some sort (by calling buildDefaultPortrayal(....)). It then passes this "base portrayal"
-	to the DESPortrayalFactory, which wraps it with various of gizmos, producing a final
-	portrayal for the object.  This final portrayal is then returned.
+	To do this, it first either builds an ImagePortrayal2D (if you have set the baseImagePath),
+	or a ShapePortrayal2D of some sort (returned by buildDefaultPortrayal(....)). 
+	It then attaches to this base portrayal a variety of labels, indicators, and the ability
+	to move.  The final modified portrayal is then returned.
 	*/
     public SimplePortrayal2D buildPortrayal(Object object)
     	{
 		if (baseImagePath != null)
 			{
-			if (baseImageClass != null)
-				{
-				return DESPortrayalFactory.wrapPortrayal(new ImagePortrayal2D(new ImageIcon(baseImageClass.getResource(baseImagePath)), portrayalScale));
-				}
-			else
-				{
-				return DESPortrayalFactory.wrapPortrayal(new ImagePortrayal2D(new ImageIcon(object.getClass().getResource(baseImagePath)), portrayalScale));
-				}
+			return DESPortrayalFactory.wrapPortrayal(new ImagePortrayal2D(new ImageIcon(
+				(usesGlobalImageClass ? DESPortrayalParameters.getImageClass() : 
+					this.getClass()).getResource(baseImagePath)), portrayalScale));
 			}
 		else
 			{

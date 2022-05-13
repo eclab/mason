@@ -60,7 +60,7 @@ public class DESExample extends SimState
 
         // Add a Sink
         Sink sink = new Sink(this, quatloos);
-        sink.setImage(this.getClass(), "images/factory.png");
+        sink.setImage("images/factory.png", true);
         
         // Hook them up
         source1.addReceiver(lock1);
