@@ -12,7 +12,7 @@ import sim.portrayal.*;
 import sim.portrayal.simple.*;
 import java.awt.*;
 
-public class Transformer extends Provider implements Receiver
+public class Transformer extends Filter
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
@@ -21,45 +21,18 @@ public class Transformer extends Provider implements Receiver
 
     private static final long serialVersionUID = 1;
 
-    Resource typicalIn;
-    Resource output;
-    double atLeastOut;
-    double atMostOut;
+    CountableResource typicalIn;
     double ratioIn;
     double ratioOut;
         
-    public Resource getTypicalReceived() { return typical; }
-	public boolean hideTypicalReceived() { return true; }
-
-    public Transformer(SimState state, Resource typicalOut, Resource typicalIn, double ratioIn, double ratioOut)
+    public Transformer(SimState state, CountableResource typicalOut, CountableResource typicalIn, double ratioIn, double ratioOut)
         {
-        // typical being our output CountableResource
+        // typical being our _amount CountableResource
         super(state, typicalOut);
-        this.typicalIn = typicalIn.duplicate();
+        this.typicalIn = (CountableResource)(typicalIn.duplicate());
         this.ratioIn = ratioIn;
         this.ratioOut = ratioOut;
-        output = typical.duplicate();
-        }
-
-    /** Returns false always and does nothing: Transformer is push-only. */
-    public boolean provide(Receiver receiver)
-        {
-        return false;
-        }
-
-    protected boolean offerReceiver(Receiver receiver, double atMost)
-        {
-        //return receiver.accept(this, output, Math.min(atLeastOut, atMost), Math.min(atMostOut, atMost));
-        double originalAmount = output.getAmount();
-        lastOfferTime = state.schedule.getTime();
-        boolean result = receiver.accept(this, output, Math.min(atLeastOut, atMost), Math.min(atMostOut, atMost));
-		if (result)
-			{
-			CountableResource removed = (CountableResource)(resource.duplicate());
-			removed.setAmount(originalAmount - output.getAmount());
-			updateLastAcceptedOffers(removed, receiver);
-			}
-		return result;
+        _amount = typical.duplicate();
         }
 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
@@ -76,16 +49,16 @@ public class Transformer extends Provider implements Receiver
             {
             if (typical instanceof Entity)
                 {
-                atLeastOut = 0;
-                atMostOut = 0;
-                output = (Entity)(output.duplicate());
+                _atLeast = 0;
+                _atMost = 0;
+                _amount = (Entity)(_amount.duplicate());
                 return offerReceivers();
                 }
             else
                 {
-                atLeastOut = ratioOut / ratioIn;
-                atMostOut = ratioOut / ratioIn;
-                ((CountableResource)output).setAmount(ratioOut / ratioIn);
+                _atLeast = ratioOut / ratioIn;
+                _atMost = ratioOut / ratioIn;
+                ((CountableResource)_amount).setAmount(ratioOut / ratioIn);
                 return offerReceivers();
                 }
             }
@@ -93,13 +66,13 @@ public class Transformer extends Provider implements Receiver
             {
             // FIXME:
             // This comes into problems when we get to exchangeRates with discrete objects..
-            atLeastOut = (atLeast / ratioIn) * ratioOut;
-            atMostOut = (atMost / ratioIn) * ratioOut;
-            ((CountableResource)output).setAmount(atMostOut);
+            _atLeast = (atLeast / ratioIn) * ratioOut;
+            _atMost = (atMost / ratioIn) * ratioOut;
+            ((CountableResource)_amount).setAmount(_atMost);
             boolean retval = offerReceivers();
             if (retval)
                 {
-                ((CountableResource)amount).setAmount((((CountableResource)output).getAmount() * ratioIn) / ratioOut);                  // is this right?
+                ((CountableResource)amount).setAmount((((CountableResource)_amount).getAmount() * ratioIn) / ratioOut);                  // is this right?
                 }
             return retval;
             }
@@ -109,13 +82,4 @@ public class Transformer extends Provider implements Receiver
         {
         return "Transformer@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typicalIn + " -> " + typical + ", " + ratioIn + "/" + ratioOut + ")";
         }
-
-    public void step(SimState state)
-        {
-        // do nothing
-        }
-        
-    boolean refusesOffers = false;
-	public void setRefusesOffers(boolean value) { refusesOffers = value; }
-    public boolean getRefusesOffers() { return refusesOffers; }
     }

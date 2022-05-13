@@ -18,7 +18,7 @@ import java.awt.*;
    value of the selectReceiver(...) method.
 */
 
-public abstract class If extends Provider implements Receiver
+public abstract class If extends Filter
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
@@ -26,9 +26,6 @@ public abstract class If extends Provider implements Receiver
     	}
 
     private static final long serialVersionUID = 1;
-
-    public Resource getTypicalReceived() { return typical; }
-	public boolean hideTypicalReceived() { return true; }
 
     /** Builds a lock attached to the given pool and with the given amount of resources acquired each time. */
     public If(SimState state, Resource typical)
@@ -42,25 +39,6 @@ public abstract class If extends Provider implements Receiver
     	throw new IllegalArgumentException("Offer Policy may not be set in an If.");
     	}
     	
-    protected boolean offerReceiver(Receiver receiver, double atMost)
-        {
-        //return receiver.accept(this, _amount, Math.min(_atLeast, atMost), Math.min(_atMost, atMost));
-        double originalAmount = _amount.getAmount();
-        lastOfferTime = state.schedule.getTime();
-        boolean result = receiver.accept(this, _amount, Math.min(_atLeast, atMost), Math.min(_atMost, atMost));
-		if (result)
-			{
-            	CountableResource removed = (CountableResource)(resource.duplicate());
-            	removed.setAmount(originalAmount - _amount.getAmount());
-            	updateLastAcceptedOffers(removed, receiver);
-			}
-		return result;
-        }
-        
-    double _atLeast;
-    double _atMost;
-    Resource _amount;
-        
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
     	if (getRefusesOffers()) { return false; }
@@ -82,16 +60,6 @@ public abstract class If extends Provider implements Receiver
         return "If@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ")";
         }  
                      
-    /** Does nothing. */
-    public void step(SimState state)
-        {
-        // do nothing
-        }
-        
-    boolean refusesOffers = false;
-	public void setRefusesOffers(boolean value) { refusesOffers = value; }
-    public boolean getRefusesOffers() { return refusesOffers; }
-    
     /**
        If the offer policy is OFFER_POLICY_SELECT, then when the receivers are non-empty,
        this method will be called to specify which receiver should be offered the given resource.

@@ -18,7 +18,7 @@ import java.awt.*;
    the In and the Probe, and so on.
 */
 
-public class Probe extends Provider implements Receiver
+public class Probe extends Filter
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
@@ -157,10 +157,6 @@ public class Probe extends Provider implements Receiver
 		processed = false;
 		}
 	
-    double _atLeast;
-    double _atMost;
-    Resource _amount;
-        
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)	
     	{
     	if (getRefusesOffers()) { return false; }
@@ -205,24 +201,9 @@ public class Probe extends Provider implements Receiver
          return val;
     	}
 
-    public boolean provide(Receiver receiver)
-        {
-        return false;
-        }
-
     public String toString()
         {
         return "Probe@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + 
         	(lead == null ? "" : ("In@"+ System.identityHashCode(lead) + "(" + (lead.getName() == null ? "" : lead.getName()) + ")"));
         }  
-                     
-    /** Does nothing. */
-    public void step(SimState state)
-        {
-        // do nothing
-        }
-        
-    boolean refusesOffers = false;
-	public void setRefusesOffers(boolean value) { refusesOffers = value; }
-    public boolean getRefusesOffers() { return refusesOffers; }
     }

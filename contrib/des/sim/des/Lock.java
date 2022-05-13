@@ -20,13 +20,12 @@ import java.awt.*;
    accepts the offer and offers it in turn to registered receivers.
 */
 
-public class Lock extends Provider implements Receiver
+public class Lock extends Filter
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
     	return new ShapePortrayal2D(ShapePortrayal2D.POLY_HOURGLASS, Color.GRAY, Color.BLACK, 1.0, scale);
     	}
-
 
     private static final long serialVersionUID = 1;
 
@@ -34,9 +33,6 @@ public class Lock extends Provider implements Receiver
     double numResources;
     boolean blocked = false;
     
-    public Resource getTypicalReceived() { return typical; }
-	public boolean hideTypicalReceived() { return true; }
-
     /** Builds a lock attached to the given pool and with the given amount of resources acquired each time. */
     public Lock(SimState state, Resource typical, Pool pool, double numResources)
         {
@@ -70,30 +66,6 @@ public class Lock extends Provider implements Receiver
     public boolean getOffersTakeItOrLeaveIt() { return true; }
 	public boolean hideOffersTakeItOrLeaveIt() { return true; }
 
-    /** Returns false always and does nothing. */
-    public boolean provide(Receiver receiver)
-        {
-        return false;
-        }
-
-    protected boolean offerReceiver(Receiver receiver, double atMost)
-        {
-        double originalAmount = _amount.getAmount();
-        lastOfferTime = state.schedule.getTime();
-        boolean result = receiver.accept(this, _amount, Math.min(_atLeast, atMost), Math.min(_atMost, atMost));
-		if (result)
-			{
-			CountableResource removed = (CountableResource)(resource.duplicate());
-			removed.setAmount(originalAmount - _amount.getAmount());
-			updateLastAcceptedOffers(removed, receiver);
-			}
-		return result;
-        }
-        
-    double _atLeast;
-    double _atMost;
-    Resource _amount;
-        
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
 //        System.err.println("Amount offered " + amount);
@@ -138,16 +110,6 @@ public class Lock extends Provider implements Receiver
         return "Lock@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical.getName() + ", " + pool + ", " + numResources + ")";
         }  
                      
-    /** Does nothing. */
-    public void step(SimState state)
-        {
-        // do nothing
-        }
-        
-    boolean refusesOffers = false;
-	public void setRefusesOffers(boolean value) { refusesOffers = value; }
-    public boolean getRefusesOffers() { return refusesOffers; }
-    
     public String getLabel() 
     	{ 
     	return super.getLabel() + " (" + (pool.getName() == null ? "Pool " + System.identityHashCode(pool) : pool.getName()) + ")";
