@@ -65,11 +65,12 @@ public class DESExampleWithUI extends GUIState
         {
         DESExample example = (DESExample) state;
         
-        
         layoutPortrayal.setField(example.field.getNodes());
         graphPortrayal.setField(example.field);
-        graphPortrayal.setPortrayalForAll(new ResourceEdgePortrayal(1.0));
-        
+        ResourceEdgePortrayal edge = new ResourceEdgePortrayal(1.0);
+        //edge.setShape(SimpleEdgePortrayal2D.SHAPE_TRIANGLE);
+        graphPortrayal.setPortrayalForAll(edge);
+
         //layoutPortrayal.setPortrayalForAll(new MovablePortrayal2D(new RectanglePortrayal2D(5.0, false)));        
         //SimpleEdgePortrayal2D edge = ResourceEdge.getDefaultEdgePortrayal2D(); //new SimpleEdgePortrayal2D(Color.BLUE, Color.RED, Color.BLACK, new Font("SansSerif", Font.PLAIN, 2));
         //edge.setShape(SimpleEdgePortrayal2D.SHAPE_LINE_ROUND_ENDS);

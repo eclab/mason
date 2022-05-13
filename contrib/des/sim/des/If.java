@@ -22,7 +22,8 @@ public abstract class If extends Filter
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_TRIANGLE_RIGHT, Color.GRAY, Color.BLACK, 1.0, scale);
+    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_TRIANGLE_RIGHT, 
+    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
     	}
 
     private static final long serialVersionUID = 1;
@@ -31,6 +32,7 @@ public abstract class If extends Filter
     public If(SimState state, Resource typical)
         {
         super(state, typical);
+        setName("If");
         super.setOfferPolicy(OFFER_POLICY_SELECT);
         }
     

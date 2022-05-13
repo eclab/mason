@@ -347,6 +347,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
             resource.setAmount(0.0);
             }
         this.state = state;
+        setName("Provider");
         }
         
     //// SHUFFLING PROCEDURE

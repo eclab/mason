@@ -22,7 +22,8 @@ public class Probe extends Filter
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_REVERSE_DELAY, Color.GRAY, Color.BLACK, 1.0, scale);
+    	return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_REVERSE_DELAY, 
+    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
     	}
 
     private static final long serialVersionUID = 1;
@@ -49,6 +50,7 @@ public class Probe extends Filter
     	{
     	super(state, DEFAULT_TYPICAL);
     	reset();
+        setName("Probe " + System.identityHashCode(this));
     	}
     
     public Lead buildLead() 

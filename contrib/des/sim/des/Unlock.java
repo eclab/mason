@@ -24,7 +24,8 @@ public class Unlock extends Lock
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_BOWTIE, Color.GRAY, Color.BLACK, 1.0, scale);
+    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_BOWTIE, 
+    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
     	}
 
 
@@ -34,6 +35,7 @@ public class Unlock extends Lock
     public Unlock(SimState state, Resource typical, Pool pool, double numResources)
         {
         super(state, typical, pool, numResources);
+    	setName("Unlock (" + (pool.getName() == null ? "Pool " + System.identityHashCode(pool) : pool.getName()) + ")");
         }
         
     /** Builds an Unlock attached to the given pool and with 1.0 of the resource returned each time. */

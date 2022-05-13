@@ -16,7 +16,8 @@ public class Transformer extends Filter
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_POINTER_RIGHT, Color.GRAY, Color.BLACK, 1.0, scale);
+    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_POINTER_RIGHT, 
+    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
     	}
 
     private static final long serialVersionUID = 1;
@@ -33,6 +34,7 @@ public class Transformer extends Filter
         this.ratioIn = ratioIn;
         this.ratioOut = ratioOut;
         _amount = typical.duplicate();
+        setName("Transformer");
         }
 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)

@@ -25,7 +25,8 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_STORAGE, Color.GRAY, Color.BLACK, 1.0, scale);
+    	return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_STORAGE, 
+    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
     	}
     private static final long serialVersionUID = 1;
 
@@ -75,6 +76,7 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
     public Queue(SimState state, Resource typical)
         {
         super(state, typical);
+        setName("Queue");
         }
 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)

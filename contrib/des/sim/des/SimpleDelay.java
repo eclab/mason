@@ -21,7 +21,8 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_DELAY, Color.GRAY, Color.BLACK, 1.0, scale);
+    	return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_DELAY, 
+    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
     	}
 
     private static final long serialVersionUID = 1;
@@ -111,6 +112,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         super(state, typical);
         this.delayTime = delayTime;
         buildDelay();
+        setName("Delay");
         }
 
     /** Creates a SimpleDelay with a given delayTime, 0 ordering, a delay time of 1.0, and typical resource. */

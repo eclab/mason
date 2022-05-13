@@ -19,10 +19,13 @@ import java.awt.*;
 
 public class Service extends Macro
     {
+    /*
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_PILL, Color.GRAY, Color.BLACK, 1.0, scale);
+    	return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_PILL, 
+    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
     	}
+    */
 
     private static final long serialVersionUID = 1;
 
@@ -49,6 +52,7 @@ public class Service extends Macro
         lock.addReceiver(delay);
         delay.addReceiver(unlock);
         this.pool = pool;
+        setName("Service");
         }
 
     /** Creates a service with a brand new pool, initial resources in the pool, and delay time. 

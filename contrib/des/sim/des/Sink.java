@@ -25,7 +25,8 @@ public class Sink extends DESPortrayal implements Receiver, StatReceiver, Provid
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_POINTER_DOWN, Color.GRAY, Color.BLACK, 1.0, scale);
+    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_POINTER_DOWN, 
+    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
     	}
 
 
@@ -63,6 +64,7 @@ public class Sink extends DESPortrayal implements Receiver, StatReceiver, Provid
         {
         this.state = state;
         this.typical = typical;
+        setName("Sink");
         }
 
     public boolean accept(Provider provider, Resource resource, double atLeast, double atMost)

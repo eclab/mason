@@ -23,7 +23,8 @@ public class Lead extends Filter
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_CHOMP, Color.GRAY, Color.BLACK, 1.0, scale);
+    	return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_CHOMP, 
+    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
     	}
 
     private static final long serialVersionUID = 1;
@@ -33,6 +34,7 @@ public class Lead extends Filter
     Lead(Probe probe)
     	{
     	super(probe.state, Probe.DEFAULT_TYPICAL);
+        setName("Lead for " + System.identityHashCode(this));
     	}
     
     public Probe getProbe() { return probe; }

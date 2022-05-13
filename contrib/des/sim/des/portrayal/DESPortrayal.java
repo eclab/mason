@@ -22,15 +22,27 @@ import java.awt.geom.*;
 import java.awt.event.*;
 import sim.display.*;
 
-public abstract class DESPortrayal extends InternalPortrayal2D implements Displayable, Named
+public abstract class DESPortrayal extends InternalPortrayal2D implements Named
 	{
     double portrayalScale = Double.NaN;
     String baseImagePath;
     boolean usesGlobalImageClass = false;
     
-	public boolean hideLabel() { return true; }
-	/** Returns the label to visually describe the object.  By default returns the object's name: if there is no name, returns its classname. */
-    public String getLabel() { if (getName() != null) return getName(); return getClass().getSimpleName(); }
+	Paint fillPaint = Color.GRAY;
+	Paint strokePaint = Color.BLACK;
+	double strokeWidth = 2.0;
+	
+	public boolean hideFillPaint() { return true; }
+    public Paint getFillPaint() { return fillPaint; }
+    public void setFillPaint(Paint paint) { fillPaint = paint; }
+    
+	public boolean hideStrokePaint() { return true; }
+    public Paint getStrokePaint() { return strokePaint; }
+    public void setStrokePaint(Paint paint) { strokePaint = paint; }
+
+	public boolean hideStrokeWidth() { return true; }
+    public double getStrokeWidth() { return strokeWidth; }
+    public void setStrokeWidth(double width) { strokeWidth = width; }
 
 	public boolean hideImagePath() { return true; }
 	/** Sets the path to the image file, relative to the class file in setImageClass(). */
@@ -39,6 +51,9 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Displa
     public String getImagePath() { return baseImagePath; }
 	/** Returns the class file from which setImagePath(...) defines a path to the image, if any. */
     public boolean getUsesGlobalImageClass() { return usesGlobalImageClass; }
+
+	/** Indicates if the portrayal should currently be drawn circled. */
+    public boolean getDrawState() { return false; }
 
 	// wraps the base portrayal provided
     static SimplePortrayal2D wrapPortrayal(SimplePortrayal2D basePortrayal)
@@ -52,7 +67,7 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Displa
 									{
 									public String getLabel(Object object, DrawInfo2D info)
 										{
-										return ((Displayable)object).getLabel();
+										return ((DESPortrayal)object).getName();
 										}
 									};
 		bar.setLabelScaling(bar.SCALE_WHEN_SMALLER);
@@ -61,7 +76,7 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Displa
 								{
 								public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
 									{
-									setCircleShowing(((Displayable)object).getDrawState());
+									setCircleShowing(((DESPortrayal)object).getDrawState());
 									super.draw(object, graphics, info);
 									}
 								}); 
@@ -75,7 +90,7 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Displa
     public SimplePortrayal2D providePortrayal(Object object)
     	{
     	// I am always the object
-    	double scale = DESPortrayalFactory.getPortrayalScale();
+    	double scale = DESPortrayalParameters.getPortrayalScale();
     	
     	if (scale != portrayalScale)
     		{
@@ -98,13 +113,13 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Displa
     	{
 		if (baseImagePath != null)
 			{
-			return DESPortrayalFactory.wrapPortrayal(new ImagePortrayal2D(new ImageIcon(
+			return wrapPortrayal(new ImagePortrayal2D(new ImageIcon(
 				(usesGlobalImageClass ? DESPortrayalParameters.getImageClass() : 
 					this.getClass()).getResource(baseImagePath)), portrayalScale));
 			}
 		else
 			{
-			return DESPortrayalFactory.wrapPortrayal(buildDefaultPortrayal(portrayalScale));
+			return wrapPortrayal(buildDefaultPortrayal(portrayalScale));
 			}
     	}
 	
@@ -116,7 +131,7 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Displa
     	{
     	return new ShapePortrayal2D(
     		ShapePortrayal2D.POLY_SQUARE,
-    		Color.GRAY, Color.BLACK, 2.0, scale);
+    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
     	}
 	}	
 	

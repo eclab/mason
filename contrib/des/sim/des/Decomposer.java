@@ -21,7 +21,8 @@ public class Decomposer extends Provider implements Receiver
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_COMPASS, Color.GRAY, Color.BLACK, 1.0, scale);
+    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_COMPASS, 
+    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
     	}
     private static final long serialVersionUID = 1;
 

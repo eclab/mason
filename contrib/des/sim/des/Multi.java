@@ -75,6 +75,7 @@ public abstract class Multi implements Named, Resettable
 			{
 			multiProviders[i] = new MultiProvider(state, providerResources[i], i);
 			}
+        setName("Multi");
 		}
 		
 	public void reset(SimState state)

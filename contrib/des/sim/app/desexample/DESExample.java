@@ -11,6 +11,10 @@ import sim.field.continuous.*;
 import sim.field.network.*;
 import sim.des.*;
 import sim.des.portrayal.*;
+import java.awt.geom.*;
+import java.awt.*;
+import sim.portrayal.simple.*;
+import sim.portrayal.*;
 
 public class DESExample extends SimState
     {
@@ -31,7 +35,15 @@ public class DESExample extends SimState
     	Money quatloos = new Money("Q", 0);
         
         // Add some sources
-        Source source1 = new Source(this, quatloos);
+        Source source1 = new Source(this, quatloos)
+        	{
+			public SimplePortrayal2D buildDefaultPortrayal(double scale)
+				{
+				return new ShapePortrayal2D(
+					ShapePortrayal2D.POLY_SQUARE,
+					Color.BLUE, Color.RED, 2.0, scale);
+				}
+        	};
         source1.setRate(1.0, false);
         source1.setProduction(1.1);
         source1.setAutoSchedules(true);
@@ -48,6 +60,7 @@ public class DESExample extends SimState
         Pool pool = new Pool(new CountableResource("Locks", 20), 20);
         pool.setName("Blah");
         Lock lock1 = new Lock(this, quatloos, pool);
+        lock1.setFillPaint(Color.GREEN);
         Lock lock2 = new Lock(this, quatloos, pool);
         Unlock unlock = new Unlock(this, quatloos, pool);
         

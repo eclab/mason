@@ -24,7 +24,8 @@ public class Lock extends Filter
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_HOURGLASS, Color.GRAY, Color.BLACK, 1.0, scale);
+    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_HOURGLASS, 
+    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
     	}
 
     private static final long serialVersionUID = 1;
@@ -39,6 +40,7 @@ public class Lock extends Filter
         super(state, typical);
         this.numResources = numResources;
         this.pool = pool;
+        setName("Lock ( " + pool.getName() + ")");
         }
         
     /** Builds a lock attached to the given pool and with 1.0 of the resource acquired each time. */
@@ -50,9 +52,7 @@ public class Lock extends Filter
     /** Builds a Lock with the same parameters as the provided Lock. */
     public Lock(Lock other)
         {
-        super(other.state, other.typical);
-        this.pool = other.pool;
-        this.numResources = other.numResources;
+        this(other.state, other.typical, other.pool, other.numResources);
         }
                 
     /** Returns the number of resources allocated each time */
@@ -110,9 +110,9 @@ public class Lock extends Filter
         return "Lock@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical.getName() + ", " + pool + ", " + numResources + ")";
         }  
                      
-    public String getLabel() 
+    public String getName() 
     	{ 
-    	return super.getLabel() + " (" + (pool.getName() == null ? "Pool " + System.identityHashCode(pool) : pool.getName()) + ")";
+    	return "Lock (" + (pool.getName() == null ? "Pool " + System.identityHashCode(pool) : pool.getName()) + ")";
     	}    
 
 	public boolean getDrawState() { return blocked; }

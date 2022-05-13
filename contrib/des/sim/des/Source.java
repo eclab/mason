@@ -33,7 +33,8 @@ public class Source extends Provider implements Steppable
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
     	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_POINTER_UP, Color.GRAY, Color.BLACK, 1.0, scale);
+    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_POINTER_UP, 
+    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
     	}
 
 	public double[] getDataBars() 
@@ -68,6 +69,7 @@ public class Source extends Provider implements Steppable
     public Source(SimState state, Resource typical)
         {
         super(state, typical);
+        setName("Source");
         }
                 
     double capacity = Double.POSITIVE_INFINITY;    
