@@ -257,9 +257,9 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
 	public String[] getDataValues() 
 		{
 		if (getDropsResourcesBeforeUpdate())
-		return new String[] { "" + getDelayed() + "/" + getCapacity() };
+		return new String[] { "" + getDelayed() /*+ "/" + getCapacity()*/ };
 		else
-		return new String[] { "" + getDelayed() + "/" + getCapacity(), "" + getAvailable() };
+		return new String[] { "" + getDelayed() /*+ "/" + getCapacity()*/, "" + getAvailable() };
 		}
 	public String[] getDataLabels()
 		{

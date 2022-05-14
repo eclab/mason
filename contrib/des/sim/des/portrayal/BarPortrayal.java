@@ -63,19 +63,21 @@ public class BarPortrayal extends LabelledPortrayal2D
 			graphics.setPaint(emptyPaint);
 			for(int i = 0; i < labels.length; i++)
 				{
+				int barStart = x + fm.stringWidth(labels[i]) + GUTTER;
 				y += height;
 				if (bars[i] < 0) continue;
-            	graphics.drawLine(x - BAR_WIDTH - GUTTER, y - ascent / 2, x - GUTTER, y - ascent / 2);
+            	graphics.drawLine(barStart, y - ascent / 2, barStart + BAR_WIDTH, y - ascent / 2);
 				}
 
 			y = origy;
 			graphics.setPaint(barPaint);
 			for(int i = 0; i < labels.length; i++)
 				{
+				int barStart = x + fm.stringWidth(labels[i]) + GUTTER;
 				y += height;
 				if (bars[i] < 0) continue;
 				int w = (int)(BAR_WIDTH * bars[i]);
-            	graphics.fillRect(x - w - GUTTER, y - (ascent * 3) / 4, w + 1, ascent / 2);
+            	graphics.fillRect(barStart, y - (ascent * 3) / 4, w, ascent / 2);
 				}
 
 			y = origy;
@@ -84,14 +86,16 @@ public class BarPortrayal extends LabelledPortrayal2D
 				{
 				y += height;
 				if (values[i] == null) continue;		
-				if (bars[i] < 0)
+				//if (bars[i] < 0)
 					{
 	            	graphics.drawString(values[i],x - fm.stringWidth(values[i]) - GUTTER,y);
 					}
+				/*
 				else
 					{
 	            	graphics.drawString(values[i],x - fm.stringWidth(values[i]) - GUTTER - BAR_WIDTH - GUTTER,y);
 	            	}
+	            */
 				}
             }
             }
