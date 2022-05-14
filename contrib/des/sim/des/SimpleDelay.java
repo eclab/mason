@@ -249,14 +249,23 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
     
 	public double[] getDataBars() 
 		{
-		return new double[] { getCapacity() == 0 ? -1 : getDelayed() / (double)getCapacity(), -1 };
+		if (getDropsResourcesBeforeUpdate())
+			return new double[] { getCapacity() == 0 ? -1 : getDelayed() / (double)getCapacity() };
+		else
+			return new double[] { getCapacity() == 0 ? -1 : getDelayed() / (double)getCapacity(), -1 };
 		}
 	public String[] getDataValues() 
 		{
+		if (getDropsResourcesBeforeUpdate())
+		return new String[] { "" + getDelayed() + "/" + getCapacity() };
+		else
 		return new String[] { "" + getDelayed() + "/" + getCapacity(), "" + getAvailable() };
 		}
 	public String[] getDataLabels()
 		{
+		if (getDropsResourcesBeforeUpdate())
+		return new String[] { "Delayed" };
+		else
 		return new String[] { "Delayed", "Available"};
 		}
     }
