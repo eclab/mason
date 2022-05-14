@@ -33,15 +33,21 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Named
 	double strokeWidth = 2.0;
 	
 	public boolean hideFillPaint() { return true; }
+	/** Sets the fill paint for the underlying default portrayal shape. */
     public Paint getFillPaint() { return fillPaint; }
+	/** Returns the fill paint for the underlying default portrayal shape. */
     public void setFillPaint(Paint paint) { fillPaint = paint; }
     
 	public boolean hideStrokePaint() { return true; }
+	/** Sets the stroke paint for the underlying default portrayal shape. */
     public Paint getStrokePaint() { return strokePaint; }
+	/** Returns the stroke paint for the underlying default portrayal shape. */
     public void setStrokePaint(Paint paint) { strokePaint = paint; }
 
 	public boolean hideStrokeWidth() { return true; }
+	/** Sets the stroke width for the underlying default portrayal shape. */
     public double getStrokeWidth() { return strokeWidth; }
+	/** Returns the stroke width for the underlying default portrayal shape. */
     public void setStrokeWidth(double width) { strokeWidth = width; }
 
 	public boolean hideImagePath() { return true; }
@@ -52,7 +58,8 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Named
 	/** Returns the class file from which setImagePath(...) defines a path to the image, if any. */
     public boolean getUsesGlobalImageClass() { return usesGlobalImageClass; }
 
-	/** Indicates if the portrayal should currently be drawn circled. */
+	/** Indicates if the portrayal should currently be drawn circled.  Some subclasses, such as Lock,
+		may change this value in real time. */
     public boolean getDrawState() { return false; }
 
 	// wraps the base portrayal provided
