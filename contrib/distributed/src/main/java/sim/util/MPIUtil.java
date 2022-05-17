@@ -32,11 +32,12 @@ import java.util.function.Consumer;
 // TODO: Use ByteBuffer-back output/input streams - need to dynamically adjust the size of backing buffer.
 
 /**
- * Utility class that serialize/exchange/deserialize objects using MPI
+ * Utility class that serializes/exchanges/deserializes objects using MPI
  * 
  * This class contains methods that implement boiler plate code for low level
  * MPI methods.
  */
+ 
 public class MPIUtil
     {
     private static final long serialVersionUID = 1L;

@@ -15,7 +15,7 @@ import mpi.MPIException;
 import sim.field.partitioning.QuadTreeNode;
 
 /**
- * Creates and contains the comm world (for the communication topology)
+ * Creates and contains the MPI comm world (for the communication topology)
  *
  */
 public class GroupComm

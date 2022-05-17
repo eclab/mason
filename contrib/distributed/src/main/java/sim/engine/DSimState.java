@@ -66,8 +66,8 @@ public class DSimState extends SimState
     HashMap<String, Serializable>[] init = null;
 
     // The statistics queue
-    ArrayList<Stat> statList[] = new ArrayList[VisualizationProcessor.NUM_STAT_TYPES];
-    boolean statsStarted[] = new boolean[VisualizationProcessor.NUM_STAT_TYPES];
+    ArrayList<Stat> statList[] = new ArrayList[RemoteProcessorRMI.NUM_STAT_TYPES];
+    boolean statsStarted[] = new boolean[RemoteProcessorRMI.NUM_STAT_TYPES];
     public static final int DEFAULT_MAX_STATS = 16384;
     int maxStats = DEFAULT_MAX_STATS;
         
@@ -488,7 +488,7 @@ public class DSimState extends SimState
     public static final int ADD_STAT_SUCCESS = 1;
         
     /** 
-        Log a statistics entry for the given stat type (presently one of VisualizationProcessor.STAT_TYPE_STATISTICS or VisualizationProcessor.STAT_TYPE_DEBUG).
+        Log a statistics entry for the given stat type (presently one of RemoteProcessorRMI.STAT_TYPE_STATISTICS or RemoteProcessorRMI.STAT_TYPE_DEBUG).
         If the log stream is not currently running for this stat type, then the entry will not be logged and ADD_STAT_STOPPED will be returned.
         If the log stream is running, but is filled up (because it has not lately been accessed and cleared by the remote visualizer tool),
         then the entry will not be logged and ADD_STAT_FULL will be returned.  Otherwise the entry will be logged and ADD_STAT_SUCCESS will be returned.
@@ -646,14 +646,6 @@ public class DSimState extends SimState
                 distributeGlobals(g);
                 }       
             }
-        }
-
-
-        
-
-    public DistinguishedRegistry getRegistry() 
-        {
-        return registry;
         }
 
 

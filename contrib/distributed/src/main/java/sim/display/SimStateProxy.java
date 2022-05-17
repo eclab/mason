@@ -23,6 +23,7 @@ import sim.field.storage.GridStorage;
 import sim.util.IntRect2D;
 import sim.util.Properties;
 import sim.util.RemoteSimpleProperties;
+import sim.engine.rmi.*;
 
 import sim.engine.*;
 
@@ -93,7 +94,7 @@ public class SimStateProxy extends SimState
     /** Returns the string by which the visualization root (a VisualizationRoot instance) is registered with the Registry. */
     public final String visualizationRootString()
         {
-        return visualizationProcessorString(visualizationRootPID());
+        return RemoteProcessorRMIString(visualizationRootPID());
         }                                               
         
     /** Returns the pid by which the visualization root (a VisualizationRoot instance) is registered with the Registry. */
@@ -102,8 +103,8 @@ public class SimStateProxy extends SimState
         return 0;
         }                                               
         
-    /** Returns the string by which a given visualization processor (a VisualizationProcessor instance) is registered with the Registry. */
-    public final String visualizationProcessorString(int pid)
+    /** Returns the string by which a given visualization processor (a RemoteProcessorRMI instance) is registered with the Registry. */
+    public final String RemoteProcessorRMIString(int pid)
         {
         return RemoteProcessor.getProcessorName(pid);
         }               
@@ -133,9 +134,9 @@ public class SimStateProxy extends SimState
     // World bounds
     IntRect2D worldBounds = null;
     // The visualization root
-    VisualizationProcessor visualizationRoot = null;
+    RemoteProcessorRMI visualizationRoot = null;
     // a cache of Visualization Processors so we don't keep querying for them
-    VisualizationProcessor[] visualizationCache = null;
+    RemoteProcessorRMI[] visualizationCache = null;
     // The number of pids.
     int numProcessors = 0;
     // which processor are we currently visualizing?
@@ -155,7 +156,7 @@ public class SimStateProxy extends SimState
         
     /** Registers a field proxy with the SimState.  Each timestep or whatnot the proxy will get updated,
         which causes it to go out and load information remotely.  The order in which the fields are registered
-        must be the same as the order associated with the remote grids' storage objects returned by the VisualizationProcessor. */
+        must be the same as the order associated with the remote grids' storage objects returned by the RemoteProcessorRMI. */
     public void registerFieldProxy(UpdatableProxy proxy, int index)
         {
         fields.add(proxy);
@@ -189,19 +190,19 @@ public class SimStateProxy extends SimState
         }
         
     /** Sets the current processor and returns Visualization Processor. */
-    public VisualizationProcessor visualizationProcessor(int pid) throws RemoteException, NotBoundException
+    public RemoteProcessorRMI RemoteProcessorRMI(int pid) throws RemoteException, NotBoundException
         {
         if (pid < 0 || pid > numProcessors) throw new IllegalArgumentException(pid+"");
         setCurrentProcessor(pid);
-        return visualizationProcessor();
+        return RemoteProcessorRMI();
         }
         
     /** Returns the current Visualization Processor either cached or by fetching it remotely. */
-    public VisualizationProcessor visualizationProcessor() throws RemoteException, NotBoundException
+    public RemoteProcessorRMI RemoteProcessorRMI() throws RemoteException, NotBoundException
         {
         if (visualizationCache[processor] == null)
             {
-            visualizationCache[processor] = (VisualizationProcessor)(registry.lookup(visualizationProcessorString(processor)));
+            visualizationCache[processor] = (RemoteProcessorRMI)(registry.lookup(RemoteProcessorRMIString(processor)));
             }
         return visualizationCache[processor];
         }
@@ -209,25 +210,25 @@ public class SimStateProxy extends SimState
     /** Fetches the requested storage from the current Visualization Processor. */
     public GridStorage storage(int storage) throws RemoteException, NotBoundException
         {
-        return visualizationProcessor().getStorage(storage);
+        return RemoteProcessorRMI().getStorage(storage);
         }
                 
     /** Fetches the halo bounds from the current Visualization Processor. */
     public IntRect2D bounds() throws RemoteException, NotBoundException
         {
-        return visualizationProcessor().getStorageBounds();
+        return RemoteProcessorRMI().getStorageBounds();
         }
         
     public void finish()
         {
         try
             {
-            VisualizationProcessor vp = visualizationProcessor(0);                                                  
+            RemoteProcessorRMI vp = RemoteProcessorRMI(0);                                                  
             vp.lock();
             for(int proc = 0; proc < numProcessors; proc++)
                 {
-                VisualizationProcessor sv = visualizationProcessor(proc);
-                for(int s = 0; s < VisualizationProcessor.NUM_STAT_TYPES; s++)
+                RemoteProcessorRMI sv = RemoteProcessorRMI(proc);
+                for(int s = 0; s < RemoteProcessorRMI.NUM_STAT_TYPES; s++)
                     {
                     sv.stopStats(s);
                     }                                       
@@ -254,14 +255,14 @@ public class SimStateProxy extends SimState
             {
             // grab the registry and query it for basic information
             registry = LocateRegistry.getRegistry(registryHost(), registryPort());
-            visualizationRoot = (VisualizationProcessor)(registry.lookup(visualizationRootString()));
+            visualizationRoot = (RemoteProcessorRMI)(registry.lookup(visualizationRootString()));
             worldBounds = visualizationRoot.getWorldBounds();
             numProcessors = visualizationRoot.getNumProcessors();
                         
             // set up the cache
-            visualizationCache = new VisualizationProcessor[numProcessors];
+            visualizationCache = new RemoteProcessorRMI[numProcessors];
                         
-            statLists = new ArrayList[VisualizationProcessor.NUM_STAT_TYPES][numProcessors];
+            statLists = new ArrayList[RemoteProcessorRMI.NUM_STAT_TYPES][numProcessors];
  
             for(int i = 0; i < statLists.length; i++)
                 for(int j = 0; j < statLists[i].length; j++)
@@ -271,12 +272,12 @@ public class SimStateProxy extends SimState
 
             try
                 {
-                VisualizationProcessor vp = visualizationProcessor(0);  
+                RemoteProcessorRMI vp = RemoteProcessorRMI(0);  
                 vp.lock();                                              
                 for(int proc = 0; proc < numProcessors; proc++)
                     {
-                    VisualizationProcessor sv = visualizationProcessor(proc);
-                    for(int s = 0; s < VisualizationProcessor.NUM_STAT_TYPES; s++)
+                    RemoteProcessorRMI sv = RemoteProcessorRMI(proc);
+                    for(int s = 0; s < RemoteProcessorRMI.NUM_STAT_TYPES; s++)
                         {
                         sv.startStats(s);
                         }                                       
@@ -318,8 +319,8 @@ public class SimStateProxy extends SimState
                         try
                             {
                             // Now we query the remote processor to see if a new step has elapsed
-                            //VisualizationProcessor vp = visualizationProcessor(); 
-                            VisualizationProcessor vp = visualizationProcessor(0);                                                  
+                            //RemoteProcessorRMI vp = RemoteProcessorRMI(); 
+                            RemoteProcessorRMI vp = RemoteProcessorRMI(0);                                                  
                             if (overview != null)
                                 {
                                 overview.update(vp.getAllLocalBounds());
@@ -352,8 +353,8 @@ public class SimStateProxy extends SimState
                                 // Grab all the statistics and debug information
                                 for(int proc = 0; proc < numProcessors; proc++)
                                     {
-                                    VisualizationProcessor sv = visualizationProcessor(proc);
-                                    for(int s = 0; s < VisualizationProcessor.NUM_STAT_TYPES; s++)
+                                    RemoteProcessorRMI sv = RemoteProcessorRMI(proc);
+                                    for(int s = 0; s < RemoteProcessorRMI.NUM_STAT_TYPES; s++)
                                         {
                                         statLists[s][proc].addAll(sv.getStats(s));
                                         }                                       
@@ -370,7 +371,7 @@ public class SimStateProxy extends SimState
                                                 
                                                 
                     // Process the statistics lists
-                    for(int type = 0; type < VisualizationProcessor.NUM_STAT_TYPES; type++)
+                    for(int type = 0; type < RemoteProcessorRMI.NUM_STAT_TYPES; type++)
                         {
                         long startSteps = Long.MAX_VALUE;               // way more than is feasible
                         long endSteps = -1;                                             // smaller than the minimum step
@@ -586,7 +587,7 @@ public class SimStateProxy extends SimState
         {
         try
             {
-            return visualizationProcessor().getSteps();
+            return RemoteProcessorRMI().getSteps();
             }
         catch (RemoteException | NotBoundException ex)
             {
@@ -599,7 +600,7 @@ public class SimStateProxy extends SimState
         {
         try
             {
-            return visualizationProcessor().getTime();
+            return RemoteProcessorRMI().getTime();
             }
         catch (RemoteException | NotBoundException ex)
             {
@@ -611,7 +612,7 @@ public class SimStateProxy extends SimState
     public Properties getProperties(int partition) {
         
         try {
-            VisualizationProcessor vp1 = visualizationProcessor(partition);
+            RemoteProcessorRMI vp1 = RemoteProcessorRMI(partition);
 
             return new RemoteSimpleProperties(vp1);
         
@@ -627,8 +628,8 @@ public class SimStateProxy extends SimState
         
         }
     
-    /** Called to process the output statistics for stat type stat (either VisualizationProcessor.STATISTICS or         
-        VisualizationProcessor.DEBUG).  There are some N MODEL STEPS, consisting of startSteps through endSteps inclusive.
+    /** Called to process the output statistics for stat type stat (either RemoteProcessorRMI.STATISTICS or         
+        RemoteProcessorRMI.DEBUG).  There are some N MODEL STEPS, consisting of startSteps through endSteps inclusive.
         For each MODEL STEPS, the array times[timestep - startSteps] indicates the model time at that step, and the
         array stats[timestep - startSteps][processor] provides the statistics emitted by the given processor
         at that time.  Each statistics is an ArrayList<Stat> holding Stat messages emitted by the processor at that
@@ -697,7 +698,7 @@ public class SimStateProxy extends SimState
     //should we instead tabulate each partition's properties?  unsure
     public Properties getProperties(int partition) {
     try {
-    VisualizationProcessor vp1 = visualizationProcessor(partition);
+    RemoteProcessorRMI vp1 = RemoteProcessorRMI(partition);
     return vp1.getProperties();
     //return null;
         

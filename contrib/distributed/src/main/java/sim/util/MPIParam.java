@@ -17,7 +17,7 @@ import sim.field.storage.GridStorage;
 
 // TODO need to use generic for other type of rectangles
 /**
- * Contains data type (mpi.Datatype), size, index and rectangles of a partition
+ * Contains the data type (mpi.Datatype), size, index and rectangles of a subregion of a partition when transferred via MPI
  *
  */
 public class MPIParam

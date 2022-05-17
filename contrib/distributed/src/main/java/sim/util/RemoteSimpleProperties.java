@@ -16,27 +16,24 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import sim.engine.rmi.*;
 
-import sim.display.VisualizationProcessor;
-
-//Basically, a reconstructed reconstructed SimpleProperties class
-//so DSimState on servers generate a Properties object, then a remote serializable transport object gets info, the this info is used
-// to construct this object
-// I am currently unclear on how calling these methods in the Inspector work, so I may need to change this!
-
+/**
+ REMOTESIMPLEPROPERTIES is a special subclass of SimpleProperties which
+ allows property access of remote objects for purposes of model inspectors and charting. 
+ */
 
 public class RemoteSimpleProperties extends SimpleProperties
     {
     private static final long serialVersionUID = 1;
 
-    VisualizationProcessor vp;
+    RemoteProcessorRMI vp;
     
-    public RemoteSimpleProperties(VisualizationProcessor vp) 
+    public RemoteSimpleProperties(RemoteProcessorRMI vp) 
         {
         super();
         this.vp = vp;
         }
-
     
     //My guess is use p to make remote requests here?
     public Object getValue(int index) 

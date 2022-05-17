@@ -42,6 +42,7 @@ import sim.util.Number2D;
  * @param <T> The Class of Object to store in the field
  * @param <S> The Type of Storage to use
  */
+ 
 public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
     extends UnicastRemoteObject implements GridRMI<T, Number2D>
     {

@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.HashSet;
+import sim.engine.rmi.*;
 
 import javax.swing.JComponent;
 

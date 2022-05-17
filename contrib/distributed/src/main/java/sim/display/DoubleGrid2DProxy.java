@@ -12,6 +12,7 @@ import sim.field.grid.DoubleGrid2D;
 import sim.field.storage.DoubleGridStorage;
 import sim.util.Int2D;
 import sim.util.IntRect2D;
+import sim.engine.rmi.*;
 
 public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
     {
@@ -42,7 +43,7 @@ public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
         int halo_size = 0;
                 
         //calculate position in quadtree that encompasses all desired partitions
-        VisualizationProcessor vp2 = stateProxy.visualizationProcessor(quad_tree_partitions[0]); //pick 1
+        RemoteProcessorRMI vp2 = stateProxy.RemoteProcessorRMI(quad_tree_partitions[0]); //pick 1
         int[] extended_partition_list = vp2.getMinimumNeighborhood(quad_tree_partitions);               
 
                 
@@ -50,7 +51,7 @@ public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
         for (int p_ind = 0; p_ind < extended_partition_list.length; p_ind++)
             {
             int p = extended_partition_list[p_ind];
-            VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
+            RemoteProcessorRMI vp1 = stateProxy.RemoteProcessorRMI(p);
             halo_size = vp1.getAOI();
 
             rect_list[p_ind] = vp1.getStorageBounds();
@@ -83,7 +84,7 @@ public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
         for (int p_ind = 0; p_ind < quad_tree_partitions.length; p_ind++)
             {
             int p = quad_tree_partitions[p_ind];
-            VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
+            RemoteProcessorRMI vp1 = stateProxy.RemoteProcessorRMI(p);
             //int halo_size = vp1.getAOI();
             IntRect2D partBound = vp1.getStorageBounds();
                     

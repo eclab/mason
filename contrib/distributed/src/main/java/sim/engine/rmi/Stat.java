@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
         
-package sim.display;
+package sim.engine.rmi;
 
 import java.io.Serializable;
 

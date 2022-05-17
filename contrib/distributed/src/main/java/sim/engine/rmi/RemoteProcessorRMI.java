@@ -4,11 +4,9 @@
   See the file "LICENSE" for more information
 */
         
-package sim.display;
+package sim.engine.rmi;
 
 import java.rmi.Remote;
-
-
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -20,7 +18,7 @@ import sim.util.Properties;
 import sim.util.SimpleProperties;
 
 /**
-   VISUALIZATION PROCESSOR is the remote interface of each partitition exposed to
+   REMOTE PROCESSOR RMI is the remote interface of each partitition exposed to
    the visualization program (probably on your laptop).  It does at least the following:
  
    <ul>
@@ -33,25 +31,39 @@ import sim.util.SimpleProperties;
    <li> Accessing properties of remote objects.
 */
 
-public interface VisualizationProcessor extends Remote
+public interface RemoteProcessorRMI extends Remote
     {
     public static final int NUM_STAT_TYPES = 2;
     public static final int STAT_TYPE_STATISTICS = 0;
     public static final int STAT_TYPE_DEBUG = 1;
         
     /**
-     * Blocks until the remote processor is in a state where we can safely grab
+     * Only the root partition responds to this: blocks until the 
+     * root partition is in a state where we can safely grab
      * storage objects without creating a race condition; then holds a lock to
      * prevent the remote processor from continuing.
      */
     public void lock() throws RemoteException;
 
     /**
-     * Releases the lock obtained by lock(), thus letting the remote processor
+     * Releases the lock obtained by lock(), thus letting the root processor
      * continue its work.
      */
     public void unlock() throws RemoteException;
 
+    /**
+     * Blocks until the p partition is in a state where we can safely grab
+     * storage objects without creating a race condition; then holds a lock to
+     * prevent the remote processor from continuing.
+     */
+    public void lockPartition() throws RemoteException;
+
+    /**
+     * Releases the lock obtained by lockPartition(), thus letting the processor
+     * continue its work.
+     */
+    public void unlockPartition() throws RemoteException;
+    
     /** Returns the current bounds of the processor's local region. */
 
     public IntRect2D getStorageBounds() throws RemoteException;

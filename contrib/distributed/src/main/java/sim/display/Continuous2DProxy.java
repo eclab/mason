@@ -17,6 +17,7 @@ import sim.field.storage.ContinuousStorage;
 import sim.util.Double2D;
 import sim.util.Int2D;
 import sim.util.IntRect2D;
+import sim.engine.rmi.*;
 
 @SuppressWarnings("rawtypes")
 public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
@@ -45,7 +46,7 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
         int halo_size = 0;
 
         //calculate position in quadtree that encompasses all desired partitions
-        VisualizationProcessor vp2 = stateProxy.visualizationProcessor(quad_tree_partitions[0]); //pick 1
+        RemoteProcessorRMI vp2 = stateProxy.RemoteProcessorRMI(quad_tree_partitions[0]); //pick 1
         int[] extended_partition_list = vp2.getMinimumNeighborhood(quad_tree_partitions);
 
         //IntRect2D[] rect_list = new IntRect2D[quad_tree_partitions.length];
@@ -53,7 +54,7 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
         for (int p_ind = 0; p_ind < extended_partition_list.length; p_ind++)
             {
             int p = extended_partition_list[p_ind];
-            VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
+            RemoteProcessorRMI vp1 = stateProxy.RemoteProcessorRMI(p);
             halo_size = vp1.getAOI();
 
             rect_list[p_ind] = vp1.getStorageBounds();
@@ -89,7 +90,7 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
         for (int p : quad_tree_partitions)
             {
 
-            VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
+            RemoteProcessorRMI vp1 = stateProxy.RemoteProcessorRMI(p);
             //int halo_size = vp1.getAOI();
             IntRect2D partBound = vp1.getStorageBounds();
                     

@@ -12,9 +12,10 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Internal distributed MASON class to time simulation steps
- * used to balance the partition calculating the average time for a step
+ * TIMING is used to time simulation steps in order to compute model load
+ * for purposes of load balancing by the partition scheme.
  */
+ 
 public class Timing 
     {
     public static final String LB_RUNTIME = "_MASON_LOAD_BALANCING_RUNTIME";

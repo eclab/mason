@@ -15,8 +15,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sim.display.Stat;
-import sim.display.VisualizationProcessor;
 import sim.engine.DSimState;
 import sim.field.storage.GridStorage;
 import sim.engine.DistinguishedRegistry;
@@ -34,7 +32,7 @@ import sim.util.SimpleProperties;
     that the object is in-between steps and the visualization tool has atomic control over it.
 */
 
-public class RemoteProcessor extends UnicastRemoteObject implements VisualizationProcessor
+public class RemoteProcessor extends UnicastRemoteObject implements RemoteProcessorRMI
     {
     private static final long serialVersionUID = 1L;
 
@@ -44,7 +42,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
     ReentrantLock lock = new ReentrantLock(true); // Fair lock
     ReentrantLock partitionLock = new ReentrantLock(true); // Fair lock
     public final String processorName;
-    static ArrayList<VisualizationProcessor> processorCache = new ArrayList<>();
+    static ArrayList<RemoteProcessorRMI> processorCache = new ArrayList<>();
 
     /**
      * Creates a processor and registers it to the RMI Registry
@@ -142,9 +140,9 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
         return state.getPartition().getAllBounds();
         }
 
-    public static VisualizationProcessor getProcessor(int pid)
+    public static RemoteProcessorRMI getProcessor(int pid)
         {
-        VisualizationProcessor processor;
+        RemoteProcessorRMI processor;
         if (processorCache.size() <= pid)
             {
             // Extend the dynamic array
@@ -166,11 +164,11 @@ public class RemoteProcessor extends UnicastRemoteObject implements Visualizatio
         return "<Processor "  + pid + ">" ;
         }
 
-    private static VisualizationProcessor fetchAndUpdate(int pid)
+    static RemoteProcessorRMI fetchAndUpdate(int pid)
         {
         try
             {
-            VisualizationProcessor proc = DistinguishedRegistry.getInstance().getObjectT(getProcessorName(pid));
+            RemoteProcessorRMI proc = DistinguishedRegistry.getInstance().getObjectT(getProcessorName(pid));
             processorCache.set(pid, proc);
             return proc;
             }
