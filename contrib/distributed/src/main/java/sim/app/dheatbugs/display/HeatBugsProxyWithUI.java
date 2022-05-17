@@ -38,14 +38,14 @@ public class HeatBugsProxyWithUI extends GUIState
         }
     
     public HeatBugsProxyWithUI()
-    	{
-    	super(new HeatBugsProxy(System.currentTimeMillis()));
-    	}
+        {
+        super(new HeatBugsProxy(System.currentTimeMillis()));
+        }
     
     public HeatBugsProxyWithUI(SimState state)
-    	{
-    	super(state);
-		}
+        {
+        super(state);
+        }
     
     public static String getName()
         {
@@ -53,9 +53,9 @@ public class HeatBugsProxyWithUI extends GUIState
         }
     
     public Object getSimulationInspectedObject()
-    	{
-    	return state; // non-volatile
-    	}
+        {
+        return state; // non-volatile
+        }
 
     public void start()
         {

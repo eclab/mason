@@ -4,7 +4,7 @@ import sim.display.Continuous2DProxy;
 import sim.display.SimStateProxy;
 
 public class PSOProxy extends SimStateProxy {
-	
+        
     private static final long serialVersionUID = 1;
 
     //public Continuous2DProxy flockers = new Continuous2DProxy(1, 1, 1);
@@ -15,15 +15,15 @@ public class PSOProxy extends SimStateProxy {
     public PSOProxy(long seed)
         {
         super(seed);
-		setRegistryHost("localhost");
-		//setRegistryPort(5000);
+        setRegistryHost("localhost");
+        //setRegistryPort(5000);
         }
     
     public void start()
         {
         super.start();
-		registerFieldProxy(space, 0);
+        registerFieldProxy(space, 0);
         }
-	
+        
 
-}
+    }

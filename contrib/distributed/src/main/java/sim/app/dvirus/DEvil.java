@@ -12,8 +12,8 @@ import sim.util.Bag;
 import sim.util.Double2D;
 
 public class DEvil extends DAgent{
-	
-	private static final long serialVersionUID = 1;
+        
+    private static final long serialVersionUID = 1;
 
     protected boolean greedy = false;
     public final boolean getIsGreedy() { return greedy; }
@@ -139,4 +139,4 @@ public class DEvil extends DAgent{
     public String getType() { return "Evil"; }
 
 
-}
+    }

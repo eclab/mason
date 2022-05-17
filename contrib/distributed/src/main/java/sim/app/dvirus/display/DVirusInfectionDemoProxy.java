@@ -6,14 +6,14 @@ import sim.display.SimStateProxy;
 import sim.field.continuous.DContinuous2D;
 
 public class DVirusInfectionDemoProxy extends SimStateProxy{
-	
+        
     private static final long serialVersionUID = 1;
 
     public DVirusInfectionDemoProxy(long seed)
         {
         super(seed);
-		setRegistryHost("localhost");
-		//setRegistryPort(5000);
+        setRegistryHost("localhost");
+        //setRegistryPort(5000);
         }
         
 
@@ -22,7 +22,7 @@ public class DVirusInfectionDemoProxy extends SimStateProxy{
     public void start()
         {
         super.start();
-		registerFieldProxy(envgrid, 0);
+        registerFieldProxy(envgrid, 0);
         }
 
-}
+    }

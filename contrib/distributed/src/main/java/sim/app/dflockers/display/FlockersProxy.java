@@ -21,13 +21,13 @@ public class FlockersProxy extends SimStateProxy
     public FlockersProxy(long seed)
         {
         super(seed);
-		setRegistryHost("localhost");
-		//setRegistryPort(5000);
+        setRegistryHost("localhost");
+        //setRegistryPort(5000);
         }
     
     public void start()
         {
         super.start();
-		registerFieldProxy(flockers, 0);
+        registerFieldProxy(flockers, 0);
         }
-	}
+    }

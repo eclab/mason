@@ -9,20 +9,20 @@ import java.io.Serializable;
  *
  */
 public abstract class MigratableObject implements Serializable
-{
-	private static final long serialVersionUID = 1L;
+    {
+    private static final long serialVersionUID = 1L;
 
-	private String exportName = null;
+    private String exportName = null;
 
-	public void setExportedName(String exportName)
-	{
-		this.exportName = exportName;
+    public void setExportedName(String exportName)
+        {
+        this.exportName = exportName;
 
-	}
+        }
 
-	public String getExportedName()
-	{
-		return this.exportName;
-	}
+    public String getExportedName()
+        {
+        return this.exportName;
+        }
 
-}
+    }

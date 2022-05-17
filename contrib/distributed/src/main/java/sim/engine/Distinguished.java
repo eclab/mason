@@ -15,18 +15,18 @@ import java.rmi.RemoteException;
  */
 
 public interface Distinguished 
-{
-	/**
-	 * Respond to a remote request of some data.
-	 * @param tag is the tag used to understand which method to use to fill the RemoteMessage  
-	 * @param arguments is the optional argument that could be needed
-	 * 
-	 */
-	public Serializable remoteMessage(int tag, Serializable arguments) throws RemoteException;
-	
-	/**
-	 * Return the name of the remote object.
-	 */
-	// Note this isn't a get...() so it doesn't appear in MASON's inspectors
-	public String distinguishedName();
-}
+    {
+    /**
+     * Respond to a remote request of some data.
+     * @param tag is the tag used to understand which method to use to fill the RemoteMessage  
+     * @param arguments is the optional argument that could be needed
+     * 
+     */
+    public Serializable remoteMessage(int tag, Serializable arguments) throws RemoteException;
+        
+    /**
+     * Return the name of the remote object.
+     */
+    // Note this isn't a get...() so it doesn't appear in MASON's inspectors
+    public String distinguishedName();
+    }
