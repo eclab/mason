@@ -194,11 +194,11 @@ public class RemoteProcessor extends UnicastRemoteObject implements RemoteProces
         }
         
     //Raj: input pids and get all neighbors in the lowest point in quadtree that contains inputed pids
-    public int[] getMinimumNeighborhood(int[] procIDs) throws RemoteException
+    public int[] getMinimumNeighborhood(int[] processorIDs) throws RemoteException
         {
-        if (procIDs.length == 1)
+        if (processorIDs.length == 1)
             {
-            return procIDs;
+            return processorIDs;
             }
                 
         int selectedLevel = state.getPartition().getTreeDepth(); //-1?
@@ -215,7 +215,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements RemoteProces
                 }
 
                         
-            for (int procID : procIDs)
+            for (int procID : processorIDs)
                 {
                 boolean contained = false;
                 for (int neighborhoodID : chosenNeighborhood)
@@ -241,7 +241,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements RemoteProces
                 }
             }
                 
-        throw new RemoteException("some procIDs not in quad tree");    
+        throw new RemoteException("some processorIDs not in quad tree");    
         }
 
     public ArrayList<Stat> getStats(int statType) throws RemoteException
@@ -275,7 +275,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements RemoteProces
         
 
         
-    public Object getPropertiesValue(int index) 
+    public Object getPropertyValue(int index) 
         {
         if (prop == null) 
             {
@@ -286,7 +286,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements RemoteProces
         }
 
         
-    public int getPropertiesNumProperties() 
+    public int getNumProperties() 
         {       
         if (prop == null) 
             {
@@ -296,7 +296,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements RemoteProces
         }       
 
     
-    public String getPropertiesName(int index) 
+    public String getPropertyName(int index) 
         {   
         if (prop == null) 
             {
@@ -308,7 +308,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements RemoteProces
         
 
 
-    public String getPropertiesDescription(int index) 
+    public String getPropertyDescription(int index) 
         {
         if (prop == null) 
             {
@@ -320,7 +320,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements RemoteProces
 
     
 
-    public Object getPropertiesDomain(int index) 
+    public Object getPropertyDomain(int index) 
         {
         if (prop == null) 
             {
@@ -330,7 +330,7 @@ public class RemoteProcessor extends UnicastRemoteObject implements RemoteProces
         return  ((SimpleProperties)prop).getDomain(index);      
         }
 
-    public boolean propertiesIsHidden(int index) 
+    public boolean getPropertyIsHidden(int index) 
         {
         if (prop == null) 
             {

@@ -44,7 +44,7 @@ public class RemoteSimpleProperties extends SimpleProperties
         try 
             {
             //return vp.getProperties().getValue(index);
-            return vp.getPropertiesValue(index);            
+            return vp.getPropertyValue(index);            
             }
         catch (Exception e) 
             {
@@ -65,7 +65,7 @@ public class RemoteSimpleProperties extends SimpleProperties
             {
             //return vp.getProperties().getValue(index);
             //return vp.getPropRequester().numProperties();  //we don't want to bring Properties over, just the values!  Handle Properties on partition end
-            return vp.getPropertiesNumProperties();
+            return vp.getNumProperties();
             }
         catch (Exception e) 
             {
@@ -82,7 +82,7 @@ public class RemoteSimpleProperties extends SimpleProperties
         {
         try 
             {
-            return vp.getPropertiesDescription(index);
+            return vp.getPropertyDescription(index);
             } 
         catch (RemoteException e) 
             {
@@ -100,7 +100,7 @@ public class RemoteSimpleProperties extends SimpleProperties
         {
         try 
             {
-            return vp.getPropertiesDomain(index);
+            return vp.getPropertyDomain(index);
             } 
         catch (RemoteException e) 
             {
@@ -115,7 +115,7 @@ public class RemoteSimpleProperties extends SimpleProperties
         {
         try 
             {
-            return vp.propertiesIsHidden(index);
+            return vp.getPropertyIsHidden(index);
             } 
         catch (RemoteException e) 
             {
@@ -131,7 +131,7 @@ public class RemoteSimpleProperties extends SimpleProperties
         {
         try 
             {
-            return vp.getPropertiesName(index);
+            return vp.getPropertyName(index);
             } 
         catch (RemoteException e) 
             {

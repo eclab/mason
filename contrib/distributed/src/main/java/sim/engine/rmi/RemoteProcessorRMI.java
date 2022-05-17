@@ -103,7 +103,7 @@ public interface RemoteProcessorRMI extends Remote
     public int[] getProcessorNeighborhood(int level) throws RemoteException;
         
     //Raj: input pids and get all neighbors in the lowest point in quadtree that contains inputed pids
-    public int[] getMinimumNeighborhood(int[] proc_ids) throws RemoteException;
+    public int[] getMinimumNeighborhood(int[] processorIDs) throws RemoteException;
 
     public ArrayList<Stat> getStats(int statType) throws RemoteException;
         
@@ -111,36 +111,17 @@ public interface RemoteProcessorRMI extends Remote
         
     public void stopStats(int statType) throws RemoteException;
 
-    //public Properties getProperties() throws RemoteException; //added by Raj
-        
-    //public Object getPropertiesValues(int index) throws RemoteException;
-        
-    //public PropertiesRequester getPropRequester();
+    public Object getPropertyValue(int index) throws RemoteException;
 
-    public Object getPropertiesValue(int index) throws RemoteException;
+    public int getNumProperties() throws RemoteException;
+            
+    public String getPropertyName(int index)  throws RemoteException;
 
-        
-    public int getPropertiesNumProperties() throws RemoteException;
-        
+    public String getPropertyDescription(int index) throws RemoteException;
 
-    
-    public String getPropertiesName(int index)  throws RemoteException;
- 
+    public Object getPropertyDomain(int index) throws RemoteException;
 
-    public String getPropertiesDescription(int index) throws RemoteException;
-
-    
-
-    public Object getPropertiesDomain(int index) throws RemoteException;
-
-    public boolean propertiesIsHidden(int index) throws RemoteException;
-    
-
-        
-        
-    // TODO: Adding here for now
-    // Not sure if one class can implement two remote interfaces
-    public GridRMI getGrid(int fieldId) throws RemoteException;
-
-
+    public boolean getPropertyIsHidden(int index) throws RemoteException;
+            
+    public GridRMI getGrid(int fieldID) throws RemoteException;
     }
