@@ -1,9 +1,9 @@
 /*
-  \  Copyright 2006 by Sean Luke and George Mason University
+  Copyright 2022 by Sean Luke and George Mason University
   Licensed under the Academic Free License version 3.0
   See the file "LICENSE" for more information
 */
-
+        
 package sim.app.dtest;
 
 import java.rmi.Remote;
