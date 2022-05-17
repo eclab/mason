@@ -308,11 +308,9 @@ Most of these toolkits were developed for small jobs.  MASON is distinguished am
 Many of these features are quite common among good simulation libraries.  But not among those in the ``ultra-light'' multiagent simulation category.  In this area, MASON was {\it completely unique} when it was developed.  Since then, MASON's features have influenced the restructuring of other toolkits to include some of the above, but I believe that MASON still remains very much the high-performance, high-hackability leader among systems in this area.
 
 \paragraph{What MASON is Not}
-MASON is {\it not} a distributed toolkit.  Yet.  MASON was designed to be efficient when running in a single process, albeit with multiple threads.  It requires a single unified memory space, and has no facilities for distributing models over multiple processes or multiple computers.  However, there are several projects underway towards developing distributed versions of MASON.
-
 MASON is {\it not} an easy toolkit for Java beginners.  MASON expects significant Java knowledge out of its users.  If you are a rank beginner, allow me to recommend NetLogo,\footnote{http:/\!/ccl.northwestern.edu/netlogo/} a good toolkit with an easy-to-learn language.
 
-Finally MASON does {\it not} have plug-in facilities for Eclipse or NetBeans, though it can be used quite comfortably with them.  If you're looking for a richer set of development tools, you might look into Repast.\footnote{http:/\!/repast.sourceforge.net/}
+Also, MASON does {\it not} have plug-in facilities for Eclipse or NetBeans, though it can be used quite comfortably with them.  If you're looking for a richer set of development tools, you might look into Repast.\footnote{http:/\!/repast.sourceforge.net/}
 
 \paragraph{MASON History}  In 1998, after using a variety of genetic programming and evolutionary computation toolkits for my thesis work, I decided to develop ECJ, a big evolutionary computation toolkit which was meant to support my own research for the next ten years or so.  ECJ turned out pretty well: it's used very widely in the evolutionary computation field and can run on a lot of machines in parallel.  ECJ was written in Java.
 
@@ -7365,13 +7363,15 @@ When a Portrayal is told to draw itself, it's passed a \Class{sim.portrayal.Draw
 \begin{itemize}
 \item The {\bf clip rectangle}: this rectangle specifies the clip region of the Display (the portion of the field which is visible to the user).  If an object does not fall within the clip rectangle, there's no need to draw it at all: in fact, Field Portrayals may omit sending drawing requests to objects that they know fall outside the clip. The Clip rectangle is also used for hit-testing: it specifies the hit region.  If an object overlaps this region, it is considered to be hit.
 \item Whether or not the object has been {\bf selected} and should draw itself appropriately.  This is a temporary setting.
-\item Whether or not the object should be drawn {\bf precisely}, that is, using double-floating-point resolution Java2D primitives instead of (often faster) AWT integer primitives.  This will be set when the object is being drawn to a high-quality PDF file for example.  It is also set if the Display2D which created this DrawInfo2D is being forced to draw precisely (via \method{Display2D.setPrecise(...)}).
+\item Whether or not the object should be drawn {\bf precisely}, that is, using double-floating-point resolution Java2D primitives instead of (historically faster) AWT integer primitives.  This will be set when the object is being drawn to a high-quality PDF file for example.  It is also set if the Display2D which created this DrawInfo2D is being forced to draw precisely (via \method{Display2D.setPrecise(...)}). Note that MASON is moving towards drawing everything precisely, as AWT primitives are no longer faster; so this variable may go away or be less useful.
 \item The {\bf FieldPortrayal2D} which is being asked to draw objects.
 \item The {\bf location} of the object in the FieldPortrayal.  This is set by the Field Portrayal before the DrawInfo2D is sent to the SimplePortrayal, and FieldPortrayals are free to set this or not: it's useful to some Field Portrayals but not others.  Furthermore, the object may not necessarily be the actual location object (for example, it might be a \class{sim.util.MutableDouble2D} when the actual location is a \class{sim.util.Double2D}).
 \item The {\bf GUIState}.
+\item The original {\bf DrawInfo2D} of the FieldPortrayal2D, if this DrawInfo2D is being used to draw a SimplePortrayal2D (else \variable{null}).
+\item The {\bf scale} of the Display2D: if the user has not zoomed in or out, this is 1.0.  Zooming in increases the scale, and zooming out decreases it.
 \end{itemize}
 
-These six variables are publicly accessible:
+These nine variables are publicly accessible:
 
 \java{%
     public FieldPortrayal2D fieldPortrayal;\\
@@ -7380,7 +7380,9 @@ These six variables are publicly accessible:
     public boolean selected;\\
     public boolean precise;\\
     public Object location;\\
-    public GUIState gui;
+    public GUIState gui;\\
+    public DrawInfo2D parent;\\
+    public double scale;\\
 }
 
 \paragraph{What's the point of DrawInfo2D?} DrawInfo2D basically stores graphics context information (scaling, translating, clipping).  You might be asking yourself: why do this when there's a perfectly good graphics context system in the form of Graphics2D's clip region and affine transforms?  There are several reasons.  First, DrawInfo2D is somewhat faster: because it doesn't allow rotation, we don't have to repeatedly apply, then remove, affine transform matrices.  Second, and more importantly, Graphics2D's affine transform mechanism scales {\it everything}: font sizes, line thicknesses, etc., when one zooms in. Very often  this is {\it not} what we want.  By using DrawInfo2D we can choose to scale line thickness (for example) if we wish.  With affine transforms we have no choice.  Third, DrawInfo2D is {\it much simpler to understand}.  It's probably not reasonable to ask simulation developers to perform rigorous affine transformations and resets on Java's graphics library.  Fourth, if you want to use AWT instead of Java2D (it's often much faster), affine transforms aren't an option in some cases.
@@ -8387,6 +8389,12 @@ Four provided Basic Portrayals draw their objects as either filled or outlined s
 \item \Class{sim.portrayal.simple.ShapePortrayal2D} draws its object as a 2D \class{java.awt.Shape}, which you provide.  You can also provide, as two arrays, the X and Y points for a polygon.
 \end{itemize}
 
+Additionally there is a portrayal for drawing pictures:
+
+\begin{itemize}
+\item \Class{sim.portrayal.simple.ImagePortrayal2D} draws its object as a PNG or JPEG image.
+\end{itemize}
+
 A special RectanglePortrayal2D, called \Class{sim.portrayal.simple.ValuePortrayal2D}, is used by MASON to draw value grids such as IntGrid2D or DoubleGrid2D.
 
 These classes all subclass from the simple abstract class \Class{sim.portrayal.simple.AbstractShapePortrayal2D}.  MASON historically allowed these classes to draw objects {\it filled} with a color, or with a thin {\it outline}, but not both.  New constructors in Mason 21 now allow objects to be both filled and drawn with an outline of any thickness, dashing, or other Graphics2D features, and with any combination of fill or draw colors.
@@ -8407,7 +8415,7 @@ If you created an AbstractShapePortrayal2D with an old-style constructor, then i
     public Paint fillPaint;\ \ \ // the paint with which to fill the shape, can be null\\
     public Paint strokePaint;\ // the paint with which to draw the shape outline, can be null\\
     public Stroke stroke;\ \ \ \ \ // the Stroke defining the shape outline, can be null\\
-    public double scale;\ \ \ \ \ \ // how much to scale the object when drawing\\
+    public double scale;\ \ \ \ \ \ // how much to scale the object when drawing
 }
 
 The remaining old-style variables are ignored.
@@ -8449,9 +8457,44 @@ These classes are pretty easily customized.  One standard trick is to subclass a
 
 Here again, a \class{sim.util.gui.ColorMap} (Section \ref{sim.util.gui.ColorMap}) might be of use to you: you could store one permanently as an instance variable.
 
-Note that HexagonalPortrayal2D is a little nonstandard: its hexagon does not fit within the typical 1x1 scale region for an object.  Rather, it's a true hexagon shape intended primarily to be used with hexagonal field portrayals.  But you can easily use it elsewhere.
+Note that HexagonalPortrayal2D is a little nonstandard: its hexagon does not fit within the typical 1x1 scale region for an object.  Rather, it's a true hexagon shape intended primarily to be used with hexagonal field portrayals.  But you can easily use it elsewhere.  Also note that HexagonalPortayal2D is not serializable because it is a ShapePortrayal2D, which can cause checkpointing problems.  For a solution, see the discussion of the issue ShapePortrayal2D in a few pages.
 
-\paragraph{Arbitrary Shapes}  ShapePortrayal2D is much like the above portrayals, but has more functionality for drawing arbitrary shapes.  You specify the shape either as a \Class{java.awt.geom.Shape} object or as two arrays of values which represent the \(x\) and \(y\) coordinates for various points in a closed polygon.  This makes for a lot of constructors:
+\begin{wrapfigure}{r}[0in]{2.9in}
+\vspace{-1em}\hfill\includegraphics[width=2.8in]{2DShapes.pdf}\vspace{-7em}\end{wrapfigure}
+
+\paragraph{Arbitrary Shapes}  ShapePortrayal2D is much like the above portrayals, but has more functionality for drawing arbitrary shapes.  You specify the shape either as a \Class{java.awt.geom.Shape} object or as two arrays of values which represent the \(x\) and \(y\) coordinates for various points in a closed polygon.  You can also pass in a predefined polygonal shape number (such as \variable{POLY\_SQUARE}).
+
+To help you out, ShapePortrayal2D has a number of built-in shapes.  Some are Java2D Shape objects, others are polygons specified as arrays of points (and you can refer to the polygons by a polygon number).  The various built-in shapes are shown at right.  Note that all the default shapes are designed to fit within the same size square (hence the ``hexagon'' and ``rotated hexagon'' are kind of squished).  If you'd like an accurate hexagon, use HexagonalPortrayal2D.  
+
+Here is an example of creating a ShapePortrayal2D with a left triangle default shape:
+
+{\footnotesize\begin{alltt}
+    ShapePortrayal2D portrayal = new ShapePortrayal2D(
+        ShapePortrayal2D.POLY\_TRIANGLE\_LEFT);
+\end{alltt}}
+
+If you are using ``old-style constructors'' (see below), you can only specify the fill or stroke (outline) color, but not both; however you can change the stroke after the fact by modifying this variable:
+
+\java{%
+    public Stroke stroke;
+}
+
+\begin{wrapfigure}{r}[0in]{2.9in}
+\hfill\includegraphics[width=2.8in]{2DShapeOptions.pdf}
+\vspace{-1em}
+\end{wrapfigure}
+
+If using an old-style constructor you can specify both the fill and stroke color, the stroke thickness, or even customize the Stroke entirely.  This allows for many unusual styes such as those at right.
+
+\paragraph{ShapePortrayal2D is not Serializable}  If you want a model object to directly subclass a ShapePortrayal2D so it can draw itself as an arbitrary shape, there's a problem: Shapes and Strokes aren't serializable.  This means your model can't be serialized, thus it can't be checkpointed.  This goes for HexagonalPortrayal2D as well.
+
+There's a way around this. Instead of subclassing from ShapePortrayal2D, you could instead subclass from \class{sim.portrayal.simple.InternalPortrayal2D}.  This abstract class builds a SimplePortrayal2D (in this case, your ShapePortrayal2D) on the fly as necessary to draw things, and stores it in such a way as to be serializable.  You just have to override this method to provide your desired ShapePortrayal2D:
+
+\begin{methods}{\class{sim.portrayal.simple.InternalPortrayal2D}}
+\mthd{public SimplePortrayal2D buildPortrayal(Object object) } Builds a SimplePortrayal2D capable of portraying the given object.
+\end{methods}
+
+All right, let's get to the constructors:
 
 \begin{methods}{\class{sim.portrayal.simple.ShapePortrayal2D} Old-Style Constructor}
 \mthd{public ShapePortrayal2D(Shape shape) } Creates a portrayal which portrays as a gray filled Shape of scale 1.0.
@@ -8475,30 +8518,13 @@ Note that HexagonalPortrayal2D is a little nonstandard: its hexagon does not fit
 \mthd{public ShapePortrayal2D(Shape shape, Paint fillPaint, Paint strokePaint, Stroke stroke, double scale) } Creates a portrayal which portrays the given shape, of the given Paints and scale, optionally filled and optionally stroked, with the provided Stroke.
 \mthd{public ShapePortrayal2D(double[] xpoints, double[] ypoints, Paint fillPaint, Paint strokePaint, double strokeWidth, double scale)\hspace{-4em}} Creates a portrayal which portrays as a polygon of the provided coordinates, of the given Paints and scale, optionally filled and optionally stroked, with the provided stroke width.
 \mthd{public ShapePortrayal2D(double[] xpoints, double[] ypoints, Paint fillPaint, Paint strokePaint, Stroke stroke, double scale)\hspace{-4em}} Creates a portrayal which portrays as a polygon of the provided coordinates, of the given Paints and scale, optionally filled and optionally stroked, with the provided Stroke.
+\mthd{public ShapePortrayal2D(int polygon, Paint fillPaint, Paint strokePaint, double strokeWidth, double scale)\hspace{-4em}} Creates a portrayal which portrays the given polygon, of the given Paints and scale, optionally filled and optionally stroked, with the provided stroke width.
+\mthd{public ShapePortrayal2D(int polygon, Paint fillPaint, Paint strokePaint, Stroke stroke, double scale)\hspace{-4em}} Creates a portrayal which portrays the given polygon, of the given Paints and scale, optionally filled and optionally stroked, with the provided Stroke.
 \end{methods}
 
 
 
 
-\begin{wrapfigure}{r}[0in]{2.9in}
-\vspace{-1em}\hfill\includegraphics[width=2.8in]{2DShapes.pdf}\vspace{-7em}\end{wrapfigure}
-Besides letting you define shapes via Java2D shape objects and polygon arrays, ShapePortrayal2D also has some built-in shape arrays you can pass to its constructor, which define squares, diamonds, triangles in various orientations, hexagons in different orientations, octagons, bowties, and hourglasses.  The various built-in shapes are shown at right.  Note that all the default shapes are designed to fit within the same size square (hence the ``hexagon'' and ``rotated hexagon'' are kind of squished).  If you'd like an accurate hexagon, use HexagonalPortrayal2D.  
-
-Here is an example of creating a ShapePortrayal2D with a left triangle default shape:
-
-{\footnotesize\begin{alltt}
-    ShapePortrayal2D portrayal = new ShapePortrayal2D(
-        ShapePortrayal2D.X\_POINTS\_TRIANGLE\_LEFT,
-        ShapePortrayal2D.Y\_POINTS\_TRIANGLE\_LEFT);
-\end{alltt}}
-
-Unlike the prior portrayals, if using an old-style constructor you can also specify the stroke (outline) of the ShapePortrayal2D shape, using this variable:
-
-\java{%
-    public Stroke stroke;
-}
-
-If this variable is set to \variable{null}, ShapePortrayal2D will use a default \variable{java.awt.geom.BasicStroke()} instead.  A {\bf warning about ShapePortrayal2D}: it's not serializable (because Shapes aren't serializable).  This means that if you create an agent which is a {\it subclass} of ShapePortrayal2D and use that agent in your model, you will not be able to checkpoint your model.  This goes for HexagonalPortrayal2D as well.
 
 
 \paragraph{Images} A final Basic SimplePortrayal provided in MASON is \Class{sim.portrayal.simple.ImagePortrayal2D}.  This class draws a small bitmap image to represent the object.  The image can be transparent or semitransparent if you wish.  The image is scaled as follows: if the image is taller than it is wide, then the image is scaled so that its width is exactly \variable{info.draw.width}.  If the image is wider than it is tall, then the image is scaled so that its height is exactly \variable{info.draw.height}.  
@@ -8843,7 +8869,7 @@ Label scaling works much like the scaling in EdgePortrayal2D.  By default, the f
     public static final int ALWAYS\_SCALE;
 }
 
-The font size of a label is determined by the three scaling constants described earlier, as specified by \method{setScaling(...)}.  Specifically, if the scaling is \variable{ALWAYS\_SCALE}, then the font will scale as you zoom in and out.  If the scaling is \variable{NEVER\_SCALE}, then the font will be fixed regardless of current zoom setting.  And if the scaling is \variable{SCALE\_WHEN\_SMALLER}, then the font will scale larger as you zoom in, but if you zoom out, the font will go no smaller than its prespecified font size.
+The font size of a label is determined by the three scaling constants described earlier, as specified by \method{setScaling(...)}.  Specifically, if the scaling is \variable{ALWAYS\_SCALE}, then the font will scale as you zoom in and out.  If the scaling is \variable{NEVER\_SCALE}, then the font will be fixed regardless of current zoom setting.  And if the scaling is \variable{SCALE\_WHEN\_SMALLER}, then the font will scale larger as you zoom in, but if you zoom out, the font will go no smaller than its prespecified font size.  Note that 
 
 Here are LabelledPortrayal's (few) methods of interest:
 
@@ -14003,11 +14029,37 @@ This example simply builds a new MASON model, loads it with parameters as specif
 
 Distributed MASON allows you to create large MASON models which run over a potentially very large number of machines in compute farms or cloud computing services.  To do this will require some modifications to the classes you use in your model and some tweaking on your part, but we have tried hard to keep this to a minimum.
 
-Distributed MASON was co-designed by ISISLAB-UNISA (University of Salerno) and George Mason University, and is loosely inspired by the earlier D-MASON architecture developed at Salerno (https:/\!/isislab-unisa.github.io/dmason/). 
+\paragraph{History}
 
-To use Distributed MASON, you'll need to understand how to use or set up cloud computing services or to run processes on your own servers (we'll show how to get running locally on your laptop, and also with Amazon Web Services).  It's also helpful to understand some basic concepts in distributed computing.  Let's go over those now.
+Distributed MASON's roots began with D-MASON, a distributed agent-based simulation tool built on top of the MASON toolkit in 2011 by the ISISLab research group of the University of Salerno (https:/\!/isislab-unisa.github.io/dmason/).   D-MASON may be found at https:/\!/github.com/isislab-unisa/dmason
 
-\section{Basic Concepts}
+D-MASON was designed to extend MASON and run without any modification of MASON at all. The idea was to use the MASON toolkit to perform independent simulation parts using different computing nodes, then synchronize them after every simulation step. To achieving that, D-MASON had two main design choices:  (1) the partition scheme was based on the simulation space, which meant that each computational node was responsible only for simulating agents that lay on the portion of each field assigned to that particular node, and (2) agents could only read the past simulation state, not the current one.  D-MASON was released in several versions starting in July 2013 and ending in January 2018, when the D-MASON team joined with GMU in developing Distributed MASON, as part of NSF Grant 1727303.
+
+\section{Should I Go Distributed?}
+
+Are your models bumping up against the maximum computational or memory capacity of your computer?  Then perhaps going distributed is for you.  Distributed models spread the model over multiple processes, typically one per CPU core, thus reducing the computational load per core and reducing the memory load per machine.  Notice that I used {\it CPU} for computational load and {\it machine} for memory load.  This is because you can go distributed {\it inside a single machine}: if you have a 16-core machine you could distribute MASON over 16 processes, one per core: but of course they'd all be using the same total memory.  Or if you had 16 1-core computers, you could distribute MASON over 16 processes, one per computers.  Or if you had 4 machines, each with 4 cores, you could distribute MASON as four processes per machine.  And so on.
+
+There are many downsides: it's more complex, it's much harder to visualize and extract statistics, and  so on.  But the biggest downside is that if you have multiple processes, agents in one process will inevitably need to access data or agents in another process, and doing this requires interprocess communication.  If the processes live in the same computer, this might be {\it fairly slow}, entailing communication over sockets, wrapping and serializing data, and so on.    If the processes are in different computers, this can be {\it extremely slow}, perhaps 1000\(\times\) slower, as the communication has to go over a network.  So if interprocess communication is so slow, why would you want to go distributed?  Because if you play your cards right, the speed gains from multiple CPUs will outweigh the losses from interprocess communication.  
+
+\begin{wrapfigure}{r}[0in]{3.5in}
+\includegraphics[width=3.5in]{2partitions}
+\end{wrapfigure}
+
+Consider the figure at right.   Distributed MASON breaks a model among multiple processes {\bf spatially}: it cuts up your fields into regions and hands each region to a process.  The region of the field that a given process is responsible for is known as its {\bf partition}.  At right we have MASON distributed over two processes, each of which has a partition.    There is an agent in Process 2, right at the edge of Partition 2.  To do its work, this agent must read data in the immediate neighborhood around it (the blue ring).  Part of this region lies in Partition 1, and so to access this data requires interprocess communication.  Now imagine that there are many such agents, each with the same sized blue ring around them.  Thus the region of Partition 1 which might need to be accessed at {\it some point} by {\it some agent} in Partition 2 is, as shown, the {\bf Area of Interest} (or {\bf AOI}) of Partition 2.  Assuming there are similar agents in Partition 1, Partition 2 likewise has an AOI from Partition 1.
+
+Distributed MASON does not contact the remote process each time an agent needs to grab data.  Instead, before each model step, all partitions exchange copies of data in their areas of interest with their neighbors.  When an agent needs information, it accesses this cached information stored by its own partition.  This is known as {\bf halo exchange} (all the areas of interest around a partition are its ``halo'').  
+
+Halo exchange can be costly: entire pieces of a field are being shoved over the network from partition to partition every timestep.    The cost is largely a function of (1) how large the area of interest is (if it's thin relative to the partition size, then it doesn't take long to transfer) and (2) how much data is in the area of interest (if it's an ObjectGrid2D filled with objects, this might take much longer than sparsely populated continuous space).
+
+Another way your model might reduce the cost of distribution is to have agents which spend a great deal of their time thinking.  If the vast majority of your time is spent in agents doing complex calculations, then halo exchange only happens every once in a while. 
+
+Some models require that very distant agents communicate frequently or otherwise have access to one another.  Distributed MASON allows for distant communication between objects, or reading arbitrary data in arbitrary locations and partitions, but it's not very efficient.  The less you model needs to do this, the more it can take advantage of distribution.
+
+Thus whether distributing a model is worth it depends on several factors; you'll have to test and tweak.
+
+\section{Some Basic Concepts and Terminology}
+To use Distributed MASON, it's helpful to understand some basic concepts in distributed computing and how MASON uses them to do agent-based modeling.
+
 Distributed MASON is run over some \(N\) {\bf processors} (computers) which are all connected over a network.  Distributed MASON cuts up your model field (grid, continuous) into rectangular pieces, called {\bf partitions}, and each processor is in charge of one partition.  The sizes and locations of these partitions may change over time.  Distributed MASON ties the processors together using two well known distributed computing facilities: a Java version of the venerable {\bf Message Passing Interface (MPI)}, and Java's own {\bf Remote Method Invocation (RMI)} API.  You won't ever directly touch these facilities but it's useful to know what's going on underneath.
 
 \paragraph{MPI} The Message Passing Interface (MPI) is a classic library and protocol to hook together large numbers of processors in supercomputers, compute farms, and so on.  The general design of MPI is to run some \(N\) processes on various nodes in your facility, then define a  {\it neighborhood topology} among them: the topology simply says which processes can talk to which other processes.  You can use MPI to tell the system that all processors should send a message to each of their neighbors simultaneously.  Or you can use it to tell the system that some specific node will send some data to every other node simultaneously.  And so on.  MPI is {\it synchronous}: it keeps all your processors working in sync in an elaborate dance.  To send a message from node A to all other nodes (for example) every single processor simultaneously calls the same MPI method (node A passes its data to this method, the other nodes pass in null), and then when MPI has finished its work, every processor gets the data returned by this method.
@@ -14042,7 +14094,7 @@ How about statistics or debugging?  If you had access to the stdout and stderr o
 
 \paragraph{What's Easy and What's Not}  Computational nodes in Distributed MASON are organized in a 2D space in order to match the 2D spaces common in a great many agent-based models.  In models like these, agents typically only communicate with other agents near to them, or gather or change information in the environment near to them.  It's well understood how to use this organization to do distributed computing relatively efficiently.  
 
-However not all models are arranged like this.  For example, in a social network, an agent may need to communicate or know about (via edges in the network) a great many other agents distributed throughout the environment.  These models are very difficult to implement efficiently in a distributed fashion.  {\bf \color{red} We are working on a distributed form of MASON's Network class to at least make things \textit{possible} if not \textit{efficient} but it's not ready yet.}
+However not all models are arranged like this.  For example, in a social network, an agent may need to communicate or know about (via edges in the network) a great many other agents distributed throughout the environment.  These models are very difficult to implement efficiently in a distributed fashion. 
 
 \paragraph{What's Available and What's Not}  Currently Distributed MASON can provide facilities for:
 
@@ -14058,7 +14110,7 @@ Distributed MASON does not at present have facilities for:
 
 \begin{itemize}
 \item 3D fields
-\item Networks (for now)
+\item Networks (for now)  {\bf \color{red} We are working on a distributed form of MASON's Network class to at least make things \textit{possible} if not \textit{efficient} but it's not ready yet.}
 \item Unbounded fields
 \item Sparse grids
 \item Multiple fields with different lengths or widths (they must be the same size)
@@ -14594,21 +14646,21 @@ Distributed MASON adds many classes to the standard MASON packages, and also add
 
 \subsection{The sim.engine package} 
 
-This contains top-level versions of Distributed MASON's SimState, Schedule, and various agents and objects.  It consists of the following classes:
+This contains classes in two major categories: (1) Distributed MASON's custom versions of various top-level MASON objects, and (2) facilities to implement the {\it distinguished object} facility.  Distinguished objects are model objects or agents which wander from partition to partition but can still be contacted by anyone, anywhere, at any time, because they maintain their whereabouts in a globally accessible {\it registry}.
 
 \begin{itemize}
-    \item \Class{sim.engine.DObject}: a distributed Object.
+    \item \Class{sim.engine.DObject}: a distributed Object.  Generally speaking, all objects in the model must subclass from DObject.
+    \item \Class{sim.engine.DSteppable}: a distributed version of Steppable objects.  Note that this is an abstract class, not an interface.
     \item \Class{sim.engine.DSimState}: the distributed version of SimState.
-    \item \Class{sim.engine.DSteppable}: a distributed Steppable.
-    \item \Class{sim.engine.Distinguished}: a distinguished DObject or DSteppable.  These are objects which can be traced by anyone as they wander from partition to partition.
-    \item \Class{sim.engine.DistinguishedRegstry}: the object used internally to manage the registry for Distinguished objects.
-    \item \Class{sim.engine.DistinguishedRemote}: the interface a DistinguishedRemoteObject exposes to other partitions through RMI.
-    \item \Class{sim.engine.DistinguishedRemoteMessage}: messages sent to Distinguished objects from objects on other partitions.
-    \item \Class{sim.engine.DistinguishedRemoteObject}: the object registered on the DistinguishedRegistry, holding a Distinguished and its current DSimState.
-    \item \Class{sim.engine.DistributedIterativeRepeat}: distributed version of the  IterativeRepeat class.    This is used internally by the Schedule.
-    \item \Class{sim.engine.DistributedSchedule}: the distributed version of Schedule.
-    \item \Class{sim.engine.DistributedTentativeStep}: distributed version of the TentativeStep class.  This is used internally by the Schedule.
-    \item \Class{sim.engine.Promised}: an interface for objects which hold information that will be filled out and provided in the future. 
+    \item \Class{sim.engine.DSchedule}: the distributed version of Schedule.
+    \item \Class{sim.engine.DIterativeRepeat}: distributed version of the IterativeRepeat class.    Used internally by the Schedule.
+    \item \Class{sim.engine.DTentativeStep}: distributed version of the TentativeStep class.  Used internally by the Schedule.
+    \item \Class{sim.engine.Distinguished}: a Distinguished DObject or DSteppable.
+   \item \Class{sim.engine.DistinguishedRegstry}: the object used internally to manage the registry for Distinguished objects.
+    \item \Class{sim.engine.DistinguishedRemote}: the interface a DistinguishedRemoteObject exposes to other partitions through RMI.  Used internally.
+    \item \Class{sim.engine.DistinguishedRemoteMessage}: messages sent to Distinguished objects from objects on other partitions.  Used internally.
+    \item \Class{sim.engine.DistinguishedRemoteObject}: the object registered on the DistinguishedRegistry, holding a Distinguished and its current DSimState.   Used internally.
+    \item \Class{sim.engine.Promised}: an interface for objects which hold information that will be filled out and provided in the future.  When Distinguished objects are contacted, they will return values as Promised objects.
     \item \Class{sim.engine.Promise}: a basic implementation of Promised.
 \end{itemize}
 
@@ -14696,7 +14748,6 @@ This handles remote visualization of the model.  It contains the following class
 This contains the following classes:
 
 \begin{itemize}
-    \item \Class{sim.util.DistinguishedRegistry}: a mechanism for registering global information for the model.
     \item \Class{sim.util.GenericArray}: a wrapper for fixed-length arrays which makes them easier to use with Java's generics in some circumstances.
     \item \Class{sim.util.GroupComm}: MPI communication topology information.
     \item \Class{sim.util.IntRect2D}: a 2D integer rectangle, consisting of two Int2D objects.
@@ -14726,7 +14777,7 @@ Each processor has a unique {\bf processor ID} (or {\bf PID}).  If you have \(N\
 
 Processors communicate with one another using two Java packages.  First, processors do bulk synchronous communication using the {\bf Message Passing Interface} (or {\bf MPI}), which MASON does via the {\bf Java OpenMPI} library.  For example, after every timestep, fields in neighboring processors trade notes about which agents or objects have changed location or status in a large, intricate dance.  That's done with MPI.  Second, more fine-grained and distant processor-to-processor communication is done with Java's {\bf Remote Method Invocation} or {\bf RMI}.  For example, if an agent in processor 1 needs to know something about another agent in distant processor 10, it'd communicate with that processor via RMI.
 
-Each processor has its own special subclasses of SimState and its own Schedule called \class{sim.engine.DSimState} and \class{sim.engine.DistributedSchedule} respectively.  These manage much of the hard work of maintaining a distributed model. DistributedSchedule has no special methods different from Schedule (though it has reimplemented several of Schedule's methods).  But DSimState has many new methods.  The important ones to be aware of for now are:
+Each processor has its own special subclasses of SimState and its own Schedule called \class{sim.engine.DSimState} and \class{sim.engine.DSchedule} respectively.  These manage much of the hard work of maintaining a distributed model. DSchedule has no special methods different from Schedule (it has overridden several of Schedule's methods).  But DSimState has many new methods.  The important ones to be aware of for now are:
 
 \begin{methods}{\class{sim.engine.DSimState}}
 \mthd{public static int getPID() }
@@ -14750,11 +14801,11 @@ Finally, \method{doLoopDistributed} replaces the standard \method{doLoop()} meth
 \end{alltt}
 }
 
-\paragraph{Changes in DistributedSchedule}  DistributedSchedule is very similar to Schedule in many respects, but has one very important change that you need to be aware of.  
+\paragraph{Changes in DSchedule}  DSchedule is very similar to Schedule in many respects, but has one very important change that you need to be aware of.  
 
-{\bf DistributedSchedule requires all timestamps, deltas, and intervals to be integers.}  You cannot schedule an agent to be stepped at time 2.314, for example.  The reason for this is simple: there is more than one Schedule running in a distributed simulation, and we must keep them in sync with each other.  The most straightforward way to do this is to require that they sync up at integer boundaries.  If you attempt to schedule an agent for a non-integer time, delta, or interval, an exception will be thrown.
+{\bf DSchedule requires all timestamps, deltas, and intervals to be integers.}  You cannot schedule an agent to be stepped at time 2.314, for example.  The reason for this is simple: there is more than one Schedule running in a distributed simulation, and we must keep them in sync with each other.  The most straightforward way to do this is to require that they sync up at integer boundaries.  If you attempt to schedule an agent for a non-integer time, delta, or interval, an exception will be thrown.
 
-Along the same lines, every DistributedSchedule will include one dummy Steppable which is scheduled for every single timestep, in order to guarantee this sync.  This means that if you schedule agents repeating every 10 timesteps (say), you'll still see the Schedule advance 1 timestep at a time.  
+Along the same lines, every DSchedule will include one dummy Steppable which is scheduled for every single timestep, in order to guarantee this sync.  This means that if you schedule agents repeating every 10 timesteps (say), you'll still see the Schedule advance 1 timestep at a time.  
 
 \subsection{Distributed Fields, Partitions, and Int Rects}
 \label{distributedfieldsandpartitions}
@@ -14936,9 +14987,9 @@ Returns whether the DSimState is assuming that you could be allocating DObjects 
 
 \subsection{Agents}
 
-Agents are likely to migrate from processor to processor as they wander to different partitions of your field.  This means that they must be DObjects, but it also means that they not only must migrate from one processor's field partition to another processor's field partition, but must {\it also} be moved from one processor's schedule to another processor's schedule.  This in turn means that we must be able to \method{stop()} all agents.  Thus all agents in Distributed MASON must implement the \class{sim.field.Stopping} interface.
+Agents are likely to migrate from processor to processor as they wander about the field.  This means that they must be DObjects, but it also means that they not only must migrate from one processor's field partition to another processor's field partition, but must {\it also} be moved from one processor's schedule to another processor's schedule.  This in turn means that we must be able to \method{stop()} all agents to remove them from their old partition's schedule.  Thus all agents in Distributed MASON must implement the \class{sim.field.Stopping} interface.
 
-The Stopping interface is very simple: it stores and retrieves a \class{sim.field.Stoppable} object.  Why is this necessary?  As usual, all agents are either scheduled repeating or one-shot.  Normally whenever a MASON agent is scheduled repeating, it is stored on the schedule wrapped in a \class{sim.engine.IterativeRepeat} object, but when it is scheduled one-shot, it is just stuck on the schedule.  In Distributed MASON this is somewhat different: when an agent is scheduled repeating, it is placed in a special wrapper called \class{sim.engine.DistributedIterativeRepeat}, and when it is scheduled one-shot, it is placed in a special wrapper called \class{sim.engine.DistributedTentativeStep}.  These special wrappers are Stoppable, and in turn tell your object (because it is Stopping) who they are.  Thus when your object must be migrated to another processor, your schedule can efficiently figure out who to stop by just querying your agent.  Note that this means that {\bf at present you should not use Sequence or other wrappers.}
+The Stopping interface is very simple: it stores and retrieves a \class{sim.field.Stoppable} object.  Why is this necessary?  As usual, all agents are either scheduled repeating or one-shot.  Normally whenever a MASON agent is scheduled repeating, it is stored on the schedule wrapped in a \class{sim.engine.IterativeRepeat} object, but when it is scheduled one-shot, it is just stuck on the schedule.  In Distributed MASON this is somewhat different: when an agent is scheduled repeating, it is placed in a special wrapper called \class{sim.engine.DIterativeRepeat}, and when it is scheduled one-shot, it is placed in a special wrapper called \class{sim.engine.DTentativeStep}.  These special wrappers are Stoppable, and in turn tell your object (because it is Stopping) who they are.  Thus when your object must be migrated to another processor, your schedule can efficiently figure out who to stop by just querying your agent.  Note that this means that {\bf at present you should not use Sequence or other wrappers.}
 
 Stopping was discussed earlier in standard MASON, but here it is again for reference:
 
@@ -15826,7 +15877,7 @@ Oh, you were looking for more pain?  Very well.  In this Section we'll discuss s
 
 Each grid and continuous field object, in each partition, contains two objects internally: a {\bf Halo Grid} and a {\bf Storage Object}.  The storage object holds all local storage for the partition (including the halo boundary).  The Halo Grid handles all intercommunication between field objects in different partitions.  We'll get to Halo Grids in the following section.
 
-\subsection{Grid Storage}
+\subsection{Under the Hood with Grid Storage}
 
 Each grid, on each partition, stores its local and halo data in a grid storage object, a subclass of \class{sim.field.storage.GridStorage}.  This object holds the {\it shape} (an IntRect2D) of the data, which is the rectangular region of the partition in this grid; plus the {\it offset}, which is the position of the top-left corner of the region in the world coordinates, and a {\it data type} (an mpi.Datatype), defining what kind of data is being held for MPI purposes.  Each subclass also stores its data packed into one-dimensional array.  The Continuous storage includes an additional hashtable to specify real-valued locations of objects.
 
@@ -15984,7 +16035,7 @@ Returns the real-valued (global) location of the object with the given ID, else 
 
 
 
-\subsection{Halo Grids}
+\subsection{Under the Hood with Halo Grids}
 
 As mentioned before, each grid and continuous field object, in each partition, contains two objects internally: a {\bf Halo Grid} and a {\bf Storage Object}.  The storage object holds all local storage for the partition (including the halo boundary).  The halo grid handles all intercommunication between field objects in different partitions.
 
@@ -15997,7 +16048,16 @@ Halo Grids are of the class \class{sim.field.HaloGrid2D}.  Because they're the h
 Creates a HaloGrid2D.
 \end{methods}
 
-Each field is registered with a unique number called its {\bf field index}: the same field object in different processors will have the same field index.  The field's HaloGrid maintains the field index information. It also can provide the Partition and the field's Storage as convenience methods.
+Each field is registered with the DSimState with a unique number called its {\bf field index}: assuming that every partition constructs its fields in the same order (which its should), then the same field object in different partitions will have the same field index.  Field indexes start at 0 and go up, so the first constructed field will be 0, the next will be 1, and so on.  Registration, assignment of the field index, and lookup are done as:
+
+\begin{methods}{\class{sim.engine.DSimState}}
+\mthd{public int registerField(HaloGrid2D halo)}
+	Registers the halo grid and returns its allocated field index.
+\mthd{ArrayList<HaloGrid2D> getFieldList()}
+	Returns an ArrayList of all registered Halo Grids, in order.
+\end{methods}
+
+The field's HaloGrid maintains the field index information. It also can provide the Partition and the field's Storage as convenience methods.
 
 \begin{methods}{\class{sim.field.HaloGrid2D}}
 \mthd{public int getFieldIndex()}
@@ -16045,9 +16105,9 @@ Attempts to wrap around the given point to within the halo bounds region, if pos
 \item In-between timesteps, the queue requests are processed.  First, remove requests are processed, then add requests, and then finally get-requests (queries), fulfilling Remote Promises.
 \end{enumerate}
 
-The first set of methods are (don't call these directly):
+The first set of methods are part of the \class{sim.engine.rmi.GridRMI} interface(don't call these directly):
 
-\begin{methods}{\class{sim.field.HaloGrid2D}\(\langle\)T\(\rangle\)}
+\begin{methods}{\class{sim.engine.rmi.GridRMI}\(\langle\)T\(\rangle\)}
 \mthd{public void addToRemote(NumberND p, T t)}
 Sets or adds an object to a remote location.
 \mthd{public void addAgentToRemote(NumberND p, T t, int ordering, double time)}
@@ -16112,6 +16172,14 @@ Exchanges migrated objects with neighbors.
 Returns true if the given partition is a neighbor of my partition.
 \end{methods}
 
+The Transporter is owned by the DSimState, and various fields get access to it by calling:
+
+\begin{methods}{\class{sim.engine.DSimState}}
+	\mthd{public sim.engine.mpi.Transporter getTransporter()}
+	Returns the partition's Transporter.
+\end{methods}
+
+
 The DSimState then takes incoming PayloadWrappers and places their objects in the appropriate fields, schedules migrated agents, and so on. It adds objects to fields via the following method:
 
 \begin{methods}{\class{sim.field.HaloGrid2D} Migration}
@@ -16143,280 +16211,361 @@ In-between simulation steps there's a lot of work to do.  This is handled in the
 \item An MPI barrier is invoked: partitions must wait until all partitions have synced up at this point.
 \item PayloadWrappers are extracted from the queues and their objects are added to the new fields. If the objects are agents, they are also scheduled on the new schedule.
 \item An MPI barrier is invoked: partitions must wait until all partitions have synced up at this point.
-\item Halo Grid areas of interest are synced, and RMI requests are fufilled.
+\item Halo Grid areas of interest are synced, and RMI requests are fulfilled.
 \item Timing is stopped.
 \item Load balancing is performed.
 \item Globals are updated.
 \item Distinguished object Messages are fulfilled.
 \end{enumerate}
 
-\subsection{The RemoteProcessor}
-[To Write --- it doesn't feel that this class is all that settled yet]
+\subsection{Under the Hood with the Partition Communication and Visualization}
+Each partition is registered with the Registry via its \class{sim.engine.rmi.RemoteProcessor} object.  The RemoteProcessor is the way that partitions communicate with one another.  The DSimState holds onto this object.  With two minor exceptions the RemoteProcessor's methods are largely draw from the \class{sim.engine.rmi.RemoteProcessorRMI} interface, which is how the RemoteProcessor presents itself over RMI to other partitions.  These exceptions are just static methods:
 
-
-
-\ignore{
-\begin{methods}{\class{sim.field.HaloGrid2D} Halo Exchange}
-
-\mthd{public void syncHalo() throws MPIException}
-Exchange his Halo area with neighbors and receive halo areas from his neighbors.
-\mthd{opublic void syncObject(PayloadWrapper payloadWrapper)}
-Schedule the object contained in PayloadWrapper.
-\mthd{public void initRemote()}
- Generate the RMIProxy.
-\mthd{public void reload()}
- Update the internal status of the Halo area as necessary and recreate instances of sim.field.HaloField\$Neighbor.
+\begin{methods}{\class{sim.engine.rmi.RemoteProcessor}}
+\mthd{public static VisualizationProcessor getProcessor(int pid)}
+	Returns an RMI remote object for the given PID processor.  This object is cached, so you can call it repeatedly without incurring network penalties.
+\mthd{public static String getProcessorName(int pid)}
+	Returns a reasonable name for the given processor.
 \end{methods}
 
-The \textit{sim.field.HaloGrid2D} provides methods to add/remove/get and move agents and object on the distributed field.
+The RemoteProcessorRMI interface provides methods for partitions to access one another's fields (using GridRMI), and also many methods meant to allow visualizers to remotely access fields and statistics information.  Let's start with the most important method partitions need to access fields in remote partitions: 
 
-\begin{methods}{\class{sim.field.HaloGrid2D} Field}
-\mthd{public void add(P p, T t)}
-Adds the object t to the local or remote location p.
-\mthd{public void remove(P p, T t)}
-Remove the object t from the local or remote location p.
-\mthd{public void remove(P p)}
-Remove all the objects from the local or remote location p.
-\mthd{public void move(P fromP, P toP, T t)}
-Move an object t form the fromP location to the toP location. toP can be a remote location.
-\mthd{public void addAgent(P p, T t) }
-Adds and schedules the agent t in a location p. If the location is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
-\mthd{public void addAgent(P p, T t, int ordering, double time)}
-Adds and schedules the agent t in a location p with a certain time with a certain ordering. If the location is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
-\mthd{public void moveAgent(P fromP, P toP, T t)}
-Moves and schedules the agent t from the location fromP to the location toP. If the location toP is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
-\mthd{public void moveAgent(P fromP, P toP, T t, int ordering, double time)}
-Moves and schedules the agent t from the location fromP to the location toP with a certain time with a certain ordering. If the location toP is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
-\mthd{public void addRepeatingAgent(P p, T t, double time, int ordering, double interval)}
-Adds and schedules the repeating agent t in a location p with a certain time, with a certain ordering and a certain interval. If the location is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
-\mthd{public void addRepeatingAgent(P p, T t, int ordering, double interval)}
-Adds and schedules the repeating agent t in a location p with a certain ordering and a certain interval. If the location is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
-\mthd{public void removeAndStopRepeatingAgent(P p, T t)}
-Remove and stops the agent t from the local or remote location p.
-\mthd{public void removeAndStopRepeatingAgent(P p, DistributedIterativeRepeat iterativeRepeat)}
-Remove and stops the DistributedIterativeRepeat iterativeRepeat object from the local or remote location p.
-\mthd{public void moveRepeatingAgent(P fromP, P toP, T t)}
-Moves and schedules a repeating agent t from the location fromP to the location toP with a certain time with a certain ordering. If the location toP is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
-\mthd{public void moveLocal(P fromP, P toP, T t)}
-Move an object t form the fromP location to the toP location. toP must be local.
+\begin{methods}{\class{sim.engine.rmi.RemoteProcessorRMI} Partition}
+\mthd{GridRMI getGrid(int fieldID)}
+	Returns the GridRMI (Halo Grid) object representing the given field in the partition.
 \end{methods}
 
-The \textit{sim.field.HaloGrid2D} provides  methods to enable data collection or distribution to/from one node.
+Next come methods meant to enable visualizers to access data in the distributed model:
 
-\begin{methods}{\class{sim.field.HaloGrid2D} Data collection/distribution}
-\mthd{public void collect(int dst, GridStorage fullField) throws MPIException}
-Collect the objects from all the other processors.
-\mthd{public void collectGroup(int level, GridStorage groupField)) throws MPIException}
-The master processor of a specific Communicator Group collect the objects from all the other processors of that group.
-\mthd{public void distributeGroup(int level, GridStorage groupField) throws MPIException}
-The master processor of a specific Communicator Group send the objects to all the other processors of that group.
+\begin{methods}{\class{sim.engine.rmi.RemoteProcessorRMI} Visualization}
+\mthd{public static void lock()}
+	[Only called on the root partition].  Blocks until the partition is in a waiting state and can be modified remotely, then locks it in that state. When called at the right time, this will also freeze all the other partitions as they wait for the root partition to unlock.  \mthd{public void unlock()}
+	[Only called on the root partition].  Unlocks the root partition.
+\mthd{public void lockPartition()}
+	Blocks until the partition is in a waiting state and can be modified remotely, then locks it in that state. 
+\mthd{public void unlockPartition()}
+	Unlocks the partition.
+\mthd{public IntRect2D getStorageBounds()}
+	Returns the storage bounds of the partition.
+\mthd{public GridStorage getStorage(int storage)}
+	Returns a full copy of the given storage object.
+\mthd{public int getNumProcessors(int storage)}
+	Returns the number of processors.
+\mthd{public IntRect2D getWorldBounds()}
+	Returns the world bounds of the model.
+\mthd{public long getSteps()}
+	Returns the current steps in the schedule.
+\mthd{public double getTime()}
+	Returns the current time on the schedule.
+\mthd{public ArrayList\(\langle\)IntRect2D\(\rangle\) getAllLocalBounds()}
+	Returns the local partition bounds of each separate partition.
+\mthd{public int getAOI()}
+	Returns the Area of Interest.
+\mthd{public int getProcessorLevels()}
+	Returns the depth in the Quad Tree representation.
+\mthd{public int[] getProcessorNeighborhood(int level)}
+	Returns all the processor ID at the given level in the Quad Tree.
+\mthd{public int[] getMinimumNeighborhood(int[] processorIDs)}
+	Returns all the processor ID at the minimum given level in the Quad Tree which contains all the provided processor IDs.
 \end{methods}
 
-The \textit{sim.field.HaloGrid2D} also provides various stabbing queries of determining which area the given point is.
+The RemoteProcessorRMI interface also handles statistics output to remote visualization.  The are two statistics types at present, one called ``statistics'' and one called ``debug'' (other than that they operate the same way).  They are defined in RemoteProcessorRMI as:
 
-\begin{methods}{\class{sim.field.HaloGrid2D} stabbing queries}
-\mthd{public boolean inGlobal(IntPoint p)} 
-Return true if the location p belongs to the field.
-\mthd{public boolean inLocal(P p)}
-Return true if the location p belongs to the Private and Shared Area of the processor's partition.
-\mthd{public boolean inPrivate(P p)}
-Return true if the location p belongs to the Private Area of the processor's partition.
-\mthd{public boolean inLocalAndHalo(P p)}
-Return true if the location p belongs to the Private, Shared and Halo of the processor's partition.
-\mthd{public boolean inShared(P p)}
-Return true if the location p belongs to the Shared Area of the processor's partition.
-\mthd{public boolean inHalo(P p)}
-Return true if the location p belongs to the Halo Area of the processor's partition.
+\begin{verbatim}
+    public static final int NUM_STAT_TYPES = 2;
+    public static final int STAT_TYPE_STATISTICS = 0;
+    public static final int STAT_TYPE_DEBUG = 1;
+\end{verbatim}
+
+\begin{methods}{\class{sim.engine.rmi.RemoteProcessorRMI} Statistics}
+\mthd{public void startStats(int statType)}
+	Starts the statistics stream for the given stat type. 
+\mthd{public void stopStats(int statType)}
+	Stops or pauses the statistics stream for the given stat type. 
+\mthd{public ArrayList\(\langle\)Stat\(\rangle\) getStats(int statType)}
+	Returns the current streamed statistics objects for the given stat type. 
 \end{methods}
 
-\begin{methods}{\class{sim.field.HaloGrid2D} Remote field access }
-\mthd{public void addToRemote(P p, T t)}
-Add an object t to a remote location p.
-\mthd{public void removeFromRemote(P p, T t} 
-Remove an object t from a remote location p.
-\mthd{public void removeFromRemote(P p)}
-Remove all the objects from a remote location p.
-\mthd{public Serializable getFromRemote(P p)}
-Get all the objects from a remote location p.
+Last, RemoteProcessorRMI interface enables access to remote object properties of the SimState.  This is essentially a simple remote interface to MASON's \class{sim.util.Properties} object, and is used for inspectors.
+
+\begin{methods}{\class{sim.engine.rmi.RemoteProcessorRMI} Properties}
+\mthd{public int getNumProperties()}
+	Returns number of properties of the DSimState. 
+\mthd{public Object getPropertyValue(int index)}
+	Returns the value of the given property of the DSimState. 
+\mthd{public String getPropertyName(int index)}
+	Returns the name of the given property of the DSimState. 
+\mthd{public String getPropertyDescription(int index)}
+	Returns the description of the given property of the DSimState. 
+\mthd{public Object getPropertyDomain(int index)}
+	Returns the domain of the given property of the DSimState. 
+\mthd{public boolean getPropertyIsHidden(int index)}
+	Returns whether the given DSimState property is hidden.
 \end{methods}
-
-The inner class sim.field.HaloGrid2D\$Neighbor contains the information about which part of my region should be sent out to which neighbor and where I should put the received data from my neighbors into my halo area.
-
-\begin{methods}{\class{sim.field.HaloGrid2D\$Neighbor}}
-\mthd{private ArrayList\(<\)IntHyperRect\(>\) generateOverlaps(IntHyperRect p1, IntHyperRect p2)}
-Generate the Halo Area.
-\end{methods}
-
+%
+%
+%\ignore{
+%\begin{methods}{\class{sim.field.HaloGrid2D} Halo Exchange}
+%
+%\mthd{public void syncHalo() throws MPIException}
+%Exchange his Halo area with neighbors and receive halo areas from his neighbors.
+%\mthd{opublic void syncObject(PayloadWrapper payloadWrapper)}
+%Schedule the object contained in PayloadWrapper.
+%\mthd{public void initRemote()}
+% Generate the RMIProxy.
+%\mthd{public void reload()}
+% Update the internal status of the Halo area as necessary and recreate instances of sim.field.HaloField\$Neighbor.
+%\end{methods}
+%
+%The \textit{sim.field.HaloGrid2D} provides methods to add/remove/get and move agents and object on the distributed field.
+%
+%\begin{methods}{\class{sim.field.HaloGrid2D} Field}
+%\mthd{public void add(P p, T t)}
+%Adds the object t to the local or remote location p.
+%\mthd{public void remove(P p, T t)}
+%Remove the object t from the local or remote location p.
+%\mthd{public void remove(P p)}
+%Remove all the objects from the local or remote location p.
+%\mthd{public void move(P fromP, P toP, T t)}
+%Move an object t form the fromP location to the toP location. toP can be a remote location.
+%\mthd{public void addAgent(P p, T t) }
+%Adds and schedules the agent t in a location p. If the location is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
+%\mthd{public void addAgent(P p, T t, int ordering, double time)}
+%Adds and schedules the agent t in a location p with a certain time with a certain ordering. If the location is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
+%\mthd{public void moveAgent(P fromP, P toP, T t)}
+%Moves and schedules the agent t from the location fromP to the location toP. If the location toP is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
+%\mthd{public void moveAgent(P fromP, P toP, T t, int ordering, double time)}
+%Moves and schedules the agent t from the location fromP to the location toP with a certain time with a certain ordering. If the location toP is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
+%\mthd{public void addRepeatingAgent(P p, T t, double time, int ordering, double interval)}
+%Adds and schedules the repeating agent t in a location p with a certain time, with a certain ordering and a certain interval. If the location is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
+%\mthd{public void addRepeatingAgent(P p, T t, int ordering, double interval)}
+%Adds and schedules the repeating agent t in a location p with a certain ordering and a certain interval. If the location is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
+%\mthd{public void removeAndStopRepeatingAgent(P p, T t)}
+%Remove and stops the agent t from the local or remote location p.
+%\mthd{public void removeAndStopRepeatingAgent(P p, DIterativeRepeat iterativeRepeat)}
+%Remove and stops the DIterativeRepeat iterativeRepeat object from the local or remote location p.
+%\mthd{public void moveRepeatingAgent(P fromP, P toP, T t)}
+%Moves and schedules a repeating agent t from the location fromP to the location toP with a certain time with a certain ordering. If the location toP is a remote location, the agent will be migrated. Note that the remote location must be a location of the neighbour processor.
+%\mthd{public void moveLocal(P fromP, P toP, T t)}
+%Move an object t form the fromP location to the toP location. toP must be local.
+%\end{methods}
+%
+%The \textit{sim.field.HaloGrid2D} provides  methods to enable data collection or distribution to/from one node.
+%
+%\begin{methods}{\class{sim.field.HaloGrid2D} Data collection/distribution}
+%\mthd{public void collect(int dst, GridStorage fullField) throws MPIException}
+%Collect the objects from all the other processors.
+%\mthd{public void collectGroup(int level, GridStorage groupField)) throws MPIException}
+%The master processor of a specific Communicator Group collect the objects from all the other processors of that group.
+%\mthd{public void distributeGroup(int level, GridStorage groupField) throws MPIException}
+%The master processor of a specific Communicator Group send the objects to all the other processors of that group.
+%\end{methods}
+%
+%The \textit{sim.field.HaloGrid2D} also provides various stabbing queries of determining which area the given point is.
+%
+%\begin{methods}{\class{sim.field.HaloGrid2D} stabbing queries}
+%\mthd{public boolean inGlobal(IntPoint p)} 
+%Return true if the location p belongs to the field.
+%\mthd{public boolean inLocal(P p)}
+%Return true if the location p belongs to the Private and Shared Area of the processor's partition.
+%\mthd{public boolean inPrivate(P p)}
+%Return true if the location p belongs to the Private Area of the processor's partition.
+%\mthd{public boolean inLocalAndHalo(P p)}
+%Return true if the location p belongs to the Private, Shared and Halo of the processor's partition.
+%\mthd{public boolean inShared(P p)}
+%Return true if the location p belongs to the Shared Area of the processor's partition.
+%\mthd{public boolean inHalo(P p)}
+%Return true if the location p belongs to the Halo Area of the processor's partition.
+%\end{methods}
+%
+%\begin{methods}{\class{sim.field.HaloGrid2D} Remote field access }
+%\mthd{public void addToRemote(P p, T t)}
+%Add an object t to a remote location p.
+%\mthd{public void removeFromRemote(P p, T t} 
+%Remove an object t from a remote location p.
+%\mthd{public void removeFromRemote(P p)}
+%Remove all the objects from a remote location p.
+%\mthd{public Serializable getFromRemote(P p)}
+%Get all the objects from a remote location p.
+%\end{methods}
+%
+%The inner class sim.field.HaloGrid2D\$Neighbor contains the information about which part of my region should be sent out to which neighbor and where I should put the received data from my neighbors into my halo area.
+%
+%\begin{methods}{\class{sim.field.HaloGrid2D\$Neighbor}}
+%\mthd{private ArrayList\(<\)IntHyperRect\(>\) generateOverlaps(IntHyperRect p1, IntHyperRect p2)}
+%Generate the Halo Area.
+%\end{methods}
+%
 %reload() function is called when the underlying partition scheme is changed. The reload() function will update the internal status as necessary and recreate instances of sim.field.HaloField\$Neighbor. It will also rearrange the data in the storage by calling field.reshape(haloPart). %Here you may notice that there are no additional data transmissions with other nodes. This is because here we assume that each adjustment of the partition will not go beyond the AOI, which means in case of region expansion, the data needed already exists in the Halo area, avoiding additional data transmissions. // I will omit this information because for the moment is not implemented any kind of re-balancing so the reload function is called only at the beginning of the simulation.
-As shown before, HaloGrid2D provides moveAgent and moveRepeatingAgent methods that handle migrating if need be. Thus the recommended way to work with Agents is to use the moveAgent methods exposed by the various fields. Using the HaloGrid2D or extending classes means that the modeler will not have to worry about scheduling, registering or migrating Agents as the HaloGrid2D class will handle everything for them.
+%As shown before, HaloGrid2D provides moveAgent and moveRepeatingAgent methods that handle migrating if need be. Thus the recommended way to work with Agents is to use the moveAgent methods exposed by the various fields. Using the HaloGrid2D or extending classes means that the modeler will not have to worry about scheduling, registering or migrating Agents as the HaloGrid2D class will handle everything for them.
 % \begin{center}
 %     \includegraphics[scale=.5]{distributed/mason-field-2.png}
 % \end{center}
-
+%
 % Sometimes agents need to access other agents or other information well outside of their AOI.  Such access is supported with special methods, but it is not well-optimized in terms of performance and scalability.  You have been warned!
-}
-
-\subsection{Synchronization}
-
-Every timestep, neighboring partitions enter into a complex synchronization dance, where they trade lots of information. 
-
-\begin{enumerate}
-\item Let the visualizer update information
-\item Fulfill Remote Promises
-\item Fulfill Remote requests to remove agents from the fields via RMI
-\item Fulfill Remote requests to add agents to the fields via RMI
-\item Perform Halo Exchange
-\item Update distinguished object locations on the registry (they may have been moved)
-\item Load and set up migrated objects and agents
-\item Perform load balancing
-\end{enumerate}
-
-
-
-
-\subsection{Partitioning Schema and Load-balancing}
-\label{sec:partitioning}
-
-Distributed MASON assumes that all fields in the simulation follow the same partition scheme. Our partition scheme is based on a QuadTree data structure. We use a variant of Quadtree called Point Quadtree. Each tree node corresponds to a point
-that subdivides the region of the node in four parts defined by two lines (parallel to the coordinate axes) on which this point lies. Thus, the shape and position of subregions depend on the coordinates of the point (data-driven subdivision). The Figure \ref{part} shows how a field is partitioned using the Point Quadtree, it is easy to see the point used to partion the field on different layers of the QuadTree.
-
-\begin{center}
-    \includegraphics[scale=.4]{distributed/mason-partition-1.png}
-    \captionof{figure}{QuadTree partiton scheme.}
-    \label{part}
-\end{center}
-
-In Distributed MASON the partition scheme is held by the class \textit{sim.field.partitioning.Partition}.
-
-\begin{methods}{\class{sim.field.partitioning.Partition}}
-\mthd{public int getPid()}
-Return the PID of the processor.
-\mthd{public int getNumProc()}
-Return the number of processors.
-\mthd{public int getNumDim()}
-Return the number field's dimensions.
-\mthd{public boolean isToroidal()}
-Return true if the field is toroidal.
-\mthd{public Comm getCommunicator()}
-Return the MPI communicator.
-\mthd{public int[\ ] getFieldSize()}
-Return an array thath contains the height and width of the field.
-\mthd{public IntHyperRect getField()}
-Return a rectangle that represents the field.
-\mthd{public abstract IntHyperRect getPartition()}
-Return a rectangle that represents the partiton of the current processor.
-\mthd{public abstract IntHyperRect getPartition(int pid)}
-Return a rectangle that represents the partiton of the processor with PID pid.
-\mthd{public abstract int getNumNeighbors()}
-Return the number of neighbors of the current processors.
-\mthd{public abstract int[\ ] getNeighborIds()}
-Return  an array that contains the ids of the neighbors of the current processors.
-\mthd{public abstract int toPartitionId(P p)}
-Return the processor id that contains the position p.
-\mthd{public abstract int toPartitionId(int[\ ] c)}
-Return the processor id that contains the position c represented by [x,y] integer coordinates.
-\mthd{public abstract int toPartitionId(double[\ ] c)}
-Return the processor id that contains the position c represented by [x,y] double coordinates.
-\mthd{public abstract boolean isGlobalMaster()}
-Return true if the current processor have PID 0.
-\mthd{public abstract void initialize()}
-Initilize the QuadTreePartiton creating a full uniform QuadTree.
-\end{methods}
-
-The class \textit{sim.field.partitioning.Partition}  is in charge of dividing the field into regions, identifying the neighboring nodes, and creating the MPI communication topology between neighbors and adjusting the partition. 
-
-\begin{methods}{\class{sim.field.partitioning.Partition} Additional}
-\mthd{public QuadTree getQt()}
-Return the QuadTree that represents the partition scheme.
-\mthd{public boolean isGroupMaster(GroupComm gc)}
-Return true if the current processor is the master of the MPI group communicator gc.
-\mthd{public boolean isGroupMaster(int level)}
-Return true if the current processor is the master of the specified Quadtree level.
-\mthd{public GroupComm getGroupComm(int level)}
-Return the MPI group communicator of the specified Quadtree level.
-\mthd{public IntHyperRect getNodeShapeAtLevel(int level)}
-Return a rectangle that represents the partition at the specified level of the Quadtree
-\mthd{public void balance(double myRt, int level) throws MPIException}
-Rebalance the QuadTreePartion in order to keep balanced the workload of all processors in the simulation.
-\end{methods}
-
-All the processors hold the same copy of the partition scheme and any changes to partition scheme will be synchronized across all nodes. Therefore, the PartitionInterface is expected to be a singleton and once it is initialized, the type of partition QuadTree can not be changed.
-
-Besides setting up the communication topology with its neighbors, the partition scheme also sets up group communication at different levels so that the group of immediate siblings (cousins / second cousins/...) can communicate with each other. This is typically used internally for hierarchical load-balancing.
-
-Distributed Mason uses a space partitioning approach where the association between processors and agents changes during the simulation. To better exploit the computing power provided by the processors it is necessary to design the system to avoid bottlenecks. Since the simulation is synchronized after each step, the system advances with the same speed provided by the slower processor in the system. For this reason it is necessary to balance the load among processor. 
-
-Distributed Mason presents a first version of load balancing that uses a hierarchy methodology, favoring a more frequent load balancing at the lower levels of the QuadTree which represents the partition and less frequently that at the upper levels. For the moment the frequency of load balancing at the lower and upper levels is fixed, but we hope to be able to make it completely, or as dynamic as possible.
-
-\subsection{Transporting and Migration}
-
-An agent or object may be moved or copied from partition to partition for one of four reasons:
-
-\begin{itemize}
-\item Because the agent or object is wandering across a partition boundary.
-\item Because load balancing has shifted the partition boundary under the object/agent's feet, and it now finds itself in the region of a different partition.
-\item Because an agent or object is near a partition boundary and falls within the Area of Interest (AOI) of the neighboring partition, and so a copy of it must be provided to the halo field of the other partition.
-\item Because the modeler is explicitly moving the agent, or adding it, to a distant partition, well beyond a single partition boundary.
-\end{itemize} 
-
-The fourth case, which uses RMI to move the object/agent to a distant location, has been discussed already with HaloGrid2D.  The other three cases move or copy object/agent to a neighbor using MPI.  Moving an object across a partition boundary is called {\bf transporting}; while moving and scheduling an agent is called {\bf migrating} the agent.
-
-When an agent sets its location in a field to somewhere outside its current processor's region, the field will determine where the agent should migrated, and add the agent to the appropriate neighbor's queue in the TransporterMPI by calling one of its migration methods. The TransporterMPI  have inside an HashMap, called dstMap, that hold the migration queue for all the neighbors.
-
-\begin{methods}{\class{sim.engine.transport.TransporterMPI}}
-\mthd{public void reload()}
-Reload the dstMap in case the field partitions changes. 
-\mthd{public void sync() throws MPIException, IOException, ClassNotFoundException}
-Exchange the migrating agents with neighbors.
-\mthd{public void migrateAgent(Stopping agent, int dst, NdPoint loc, int fieldIndex)}
-Transports the Object as well as migrates it.
-\mthd{public void migrateAgent(int ordering, Stopping agent, int dst, NdPoint loc,int fieldIndex)}
-Transports the Object as well as migrates it.
-\mthd{public void migrateAgent(int ordering, double time, Stopping agent, int dst,NdPoint loc, int fieldIndex)}
-Transports the Object as well as migrates it.
-\mthd{public void migrateAgent(AgentWrapper agentWrapper, int dst, NdPoint loc, int fieldIndex)}
-Transports the Object as well as migrates it.
-\mthd{public void migrateRepeatingAgent(DistributedIterativeRepeat iterativeRepeat, int dst,NdPoint loc, int fieldIndex)}
-Transports the Object as well as migrates it. Does not stop() the repeating object. Thus, call stop on iterativeRepeat after calling this function
-\mthd{public void transportObject(Serializable obj, int dst, NdPoint loc, int fieldIndex)}
-Transports the Object but doesn't schedule it. Does not stop() the repeating object. Thus, call stop on iterativeRepeat after calling this function
-\end{methods}
-
-After each step, the {\bf sync()} method in the TransporterMPI class will be called to exchange the migrating agents with neighbors. The received agents will be put into a queue and the receiving processor will read the agents from the queue and schedule them for the next step. 
-
-You can also manually move an object or an agent using TransporterRMI's transport and migrate methods.  We also provide low-level direct access through RMI methods within the various fields. 
-
-\subsubsection{Remote Partition Access}
-Sometimes agents need to access other agents or other information well outside of their AOI. Such access is supported with special methods, but it is not well-optimized in terms of performance and scalability.  You have been warned! \\
-\todo{maybe Rajdeep can argue the RMIProxy class than me}
-The class \textit{sim.engine.transport.RMIProxy} is added to provide a very preliminary way for one node to access data located in an arbitrary different node. This is implemented using RMI. In initialization of the RMIProxy, the master node (pid = 0) will create a RMI registry and broadcast the ip and port number to the rest of the nodes. Then all the nodes will connect to the registry and register the field with a random name. The names from each node will then be broadcast to every other node so that every node knows how to find any other node in the registry. Finally, each node will get a Remote handle of every other node. During the simulation, if an agent tries to access the data outside its current region, the data will be obtained by finding the corresponding remote node and calling get on its Remote handle.
-\vspace{0.5em}\\
-Another way to permit the agents to access to the information of another agents in any position in the field is due with the sim.engine.registry.DistinguishedRegistry. By using sim.engine.registry.DistinguishedRegistry an agent can be visible to everyone else by registering on it. Any agent interested in the information of another agent can perform a lookup operation on this register, obtain the reference to that agent and invoke a method on that agent in order to obtain the information he wishes.
-
-\begin{methods}{\class{sim.engine.registry.DistinguishedRegistry}}
-\mthd{public boolean registerObject(String name, Remote obj) throws AccessException, RemoteException}
-Register an object obj with kay name on the registry.
-\mthd{public Object getObject(String name) throws AccessException, RemoteException, NotBoundException}
-Retrieve the object with key name from the registry.
-\mthd{public boolean unRegisterObject(String name) throws AccessException, RemoteException, NotBoundException}
-Remove the object with key name from the registry.
-\mthd{public boolean isExported(Object agent)}
-Return true if the object agent is reigested on the registry.
-\mthd{public void clearMigratedNames()}
-Clear the list of the registered agent's keys on the registry.
-\mthd{public ArrayList\(<\)String\(>\) getMigratedNames()}
-Get the List of the agent's keys on the registry.
-\mthd{public void addMigratedName(Object obj)}
-\end{methods}
-
-\subsubsection{Utility classes for communication via MPI}
-\begin{itemize}
-    \item \textbf{sim.util.MPITest}: provide a few utilities to help print out debugging information during testing.
-    \item \textbf{sim.util.MPIParam}: create an MPI datatype that can be used to extract any N-dimensional rectangular subarray from a 1-d array representing a n-d grid. This is used when pack/unpack data in the Halo Exchange.
-    \item \textbf{sim.util.GroupComm}: create a MPI communicator that includes a subset of all the nodes. This is used in the hierarchical load balancer to collect/distribute data at a certain level.
-    \item \textbf{sim.util.MPIUtil}: wrappers for MPI calls. MPI calls usually require that both the sender/receiver know the size of the message. However, in case of sending serialized objects, the receiver is unaware of the exact size. In MPIUtil, we provide wrappers that exchange the exact size of the variable length payload first and then do the actual MPI calls.
-\end{itemize}
-
+%}
+%
+%\subsection{Synchronization}
+%
+%Every timestep, neighboring partitions enter into a complex synchronization dance, where they trade lots of information. 
+%
+%\begin{enumerate}
+%\item Let the visualizer update information
+%\item Fulfill Remote Promises
+%\item Fulfill Remote requests to remove agents from the fields via RMI
+%\item Fulfill Remote requests to add agents to the fields via RMI
+%\item Perform Halo Exchange
+%\item Update distinguished object locations on the registry (they may have been moved)
+%\item Load and set up migrated objects and agents
+%\item Perform load balancing
+%\end{enumerate}
+%
+%
+%
+%
+%\subsection{Partitioning Schema and Load-balancing}
+%\label{sec:partitioning}
+%
+%Distributed MASON assumes that all fields in the simulation follow the same partition scheme. Our partition scheme is based on a QuadTree data structure. We use a variant of Quadtree called Point Quadtree. Each tree node corresponds to a point
+%that subdivides the region of the node in four parts defined by two lines (parallel to the coordinate axes) on which this point lies. Thus, the shape and position of subregions depend on the coordinates of the point (data-driven subdivision). The Figure \ref{part} shows how a field is partitioned using the Point Quadtree, it is easy to see the point used to partion the field on different layers of the QuadTree.
+%
+%\begin{center}
+%    \includegraphics[scale=.4]{distributed/mason-partition-1.png}
+%    \captionof{figure}{QuadTree partiton scheme.}
+%    \label{part}
+%\end{center}
+%
+%In Distributed MASON the partition scheme is held by the class \textit{sim.field.partitioning.Partition}.
+%
+%\begin{methods}{\class{sim.field.partitioning.Partition}}
+%\mthd{public int getPid()}
+%Return the PID of the processor.
+%\mthd{public int getNumProc()}
+%Return the number of processors.
+%\mthd{public int getNumDim()}
+%Return the number field's dimensions.
+%\mthd{public boolean isToroidal()}
+%Return true if the field is toroidal.
+%\mthd{public Comm getCommunicator()}
+%Return the MPI communicator.
+%\mthd{public int[\ ] getFieldSize()}
+%Return an array thath contains the height and width of the field.
+%\mthd{public IntHyperRect getField()}
+%Return a rectangle that represents the field.
+%\mthd{public abstract IntHyperRect getPartition()}
+%Return a rectangle that represents the partiton of the current processor.
+%\mthd{public abstract IntHyperRect getPartition(int pid)}
+%Return a rectangle that represents the partiton of the processor with PID pid.
+%\mthd{public abstract int getNumNeighbors()}
+%Return the number of neighbors of the current processors.
+%\mthd{public abstract int[\ ] getNeighborIds()}
+%Return  an array that contains the ids of the neighbors of the current processors.
+%\mthd{public abstract int toPartitionId(P p)}
+%Return the processor id that contains the position p.
+%\mthd{public abstract int toPartitionId(int[\ ] c)}
+%Return the processor id that contains the position c represented by [x,y] integer coordinates.
+%\mthd{public abstract int toPartitionId(double[\ ] c)}
+%Return the processor id that contains the position c represented by [x,y] double coordinates.
+%\mthd{public abstract boolean isGlobalMaster()}
+%Return true if the current processor have PID 0.
+%\mthd{public abstract void initialize()}
+%Initilize the QuadTreePartiton creating a full uniform QuadTree.
+%\end{methods}
+%
+%The class \textit{sim.field.partitioning.Partition}  is in charge of dividing the field into regions, identifying the neighboring nodes, and creating the MPI communication topology between neighbors and adjusting the partition. 
+%
+%\begin{methods}{\class{sim.field.partitioning.Partition} Additional}
+%\mthd{public QuadTree getQt()}
+%Return the QuadTree that represents the partition scheme.
+%\mthd{public boolean isGroupMaster(GroupComm gc)}
+%Return true if the current processor is the master of the MPI group communicator gc.
+%\mthd{public boolean isGroupMaster(int level)}
+%Return true if the current processor is the master of the specified Quadtree level.
+%\mthd{public GroupComm getGroupComm(int level)}
+%Return the MPI group communicator of the specified Quadtree level.
+%\mthd{public IntHyperRect getNodeShapeAtLevel(int level)}
+%Return a rectangle that represents the partition at the specified level of the Quadtree
+%\mthd{public void balance(double myRt, int level) throws MPIException}
+%Rebalance the QuadTreePartion in order to keep balanced the workload of all processors in the simulation.
+%\end{methods}
+%
+%All the processors hold the same copy of the partition scheme and any changes to partition scheme will be synchronized across all nodes. Therefore, the PartitionInterface is expected to be a singleton and once it is initialized, the type of partition QuadTree can not be changed.
+%
+%Besides setting up the communication topology with its neighbors, the partition scheme also sets up group communication at different levels so that the group of immediate siblings (cousins / second cousins/...) can communicate with each other. This is typically used internally for hierarchical load-balancing.
+%
+%Distributed Mason uses a space partitioning approach where the association between processors and agents changes during the simulation. To better exploit the computing power provided by the processors it is necessary to design the system to avoid bottlenecks. Since the simulation is synchronized after each step, the system advances with the same speed provided by the slower processor in the system. For this reason it is necessary to balance the load among processor. 
+%
+%Distributed Mason presents a first version of load balancing that uses a hierarchy methodology, favoring a more frequent load balancing at the lower levels of the QuadTree which represents the partition and less frequently that at the upper levels. For the moment the frequency of load balancing at the lower and upper levels is fixed, but we hope to be able to make it completely, or as dynamic as possible.
+%
+%\subsection{Transporting and Migration}
+%
+%An agent or object may be moved or copied from partition to partition for one of four reasons:
+%
+%\begin{itemize}
+%\item Because the agent or object is wandering across a partition boundary.
+%\item Because load balancing has shifted the partition boundary under the object/agent's feet, and it now finds itself in the region of a different partition.
+%\item Because an agent or object is near a partition boundary and falls within the Area of Interest (AOI) of the neighboring partition, and so a copy of it must be provided to the halo field of the other partition.
+%\item Because the modeler is explicitly moving the agent, or adding it, to a distant partition, well beyond a single partition boundary.
+%\end{itemize} 
+%
+%The fourth case, which uses RMI to move the object/agent to a distant location, has been discussed already with HaloGrid2D.  The other three cases move or copy object/agent to a neighbor using MPI.  Moving an object across a partition boundary is called {\bf transporting}; while moving and scheduling an agent is called {\bf migrating} the agent.
+%
+%When an agent sets its location in a field to somewhere outside its current processor's region, the field will determine where the agent should migrated, and add the agent to the appropriate neighbor's queue in the TransporterMPI by calling one of its migration methods. The TransporterMPI  have inside an HashMap, called dstMap, that hold the migration queue for all the neighbors.
+%
+%\begin{methods}{\class{sim.engine.transport.TransporterMPI}}
+%\mthd{public void reload()}
+%Reload the dstMap in case the field partitions changes. 
+%\mthd{public void sync() throws MPIException, IOException, ClassNotFoundException}
+%Exchange the migrating agents with neighbors.
+%\mthd{public void migrateAgent(Stopping agent, int dst, NdPoint loc, int fieldIndex)}
+%Transports the Object as well as migrates it.
+%\mthd{public void migrateAgent(int ordering, Stopping agent, int dst, NdPoint loc,int fieldIndex)}
+%Transports the Object as well as migrates it.
+%\mthd{public void migrateAgent(int ordering, double time, Stopping agent, int dst,NdPoint loc, int fieldIndex)}
+%Transports the Object as well as migrates it.
+%\mthd{public void migrateAgent(AgentWrapper agentWrapper, int dst, NdPoint loc, int fieldIndex)}
+%Transports the Object as well as migrates it.
+%\mthd{public void migrateRepeatingAgent(DIterativeRepeat iterativeRepeat, int dst,NdPoint loc, int fieldIndex)}
+%Transports the Object as well as migrates it. Does not stop() the repeating object. Thus, call stop on iterativeRepeat after calling this function
+%\mthd{public void transportObject(Serializable obj, int dst, NdPoint loc, int fieldIndex)}
+%Transports the Object but doesn't schedule it. Does not stop() the repeating object. Thus, call stop on iterativeRepeat after calling this function
+%\end{methods}
+%
+%After each step, the {\bf sync()} method in the TransporterMPI class will be called to exchange the migrating agents with neighbors. The received agents will be put into a queue and the receiving processor will read the agents from the queue and schedule them for the next step. 
+%
+%You can also manually move an object or an agent using TransporterRMI's transport and migrate methods.  We also provide low-level direct access through RMI methods within the various fields. 
+%
+%\subsubsection{Remote Partition Access}
+%Sometimes agents need to access other agents or other information well outside of their AOI. Such access is supported with special methods, but it is not well-optimized in terms of performance and scalability.  You have been warned! \\
+%\todo{maybe Rajdeep can argue the RMIProxy class than me}
+%The class \textit{sim.engine.transport.RMIProxy} is added to provide a very preliminary way for one node to access data located in an arbitrary different node. This is implemented using RMI. In initialization of the RMIProxy, the master node (pid = 0) will create a RMI registry and broadcast the ip and port number to the rest of the nodes. Then all the nodes will connect to the registry and register the field with a random name. The names from each node will then be broadcast to every other node so that every node knows how to find any other node in the registry. Finally, each node will get a Remote handle of every other node. During the simulation, if an agent tries to access the data outside its current region, the data will be obtained by finding the corresponding remote node and calling get on its Remote handle.
+%\vspace{0.5em}\\
+%Another way to permit the agents to access to the information of another agents in any position in the field is due with the sim.engine.registry.DistinguishedRegistry. By using sim.engine.registry.DistinguishedRegistry an agent can be visible to everyone else by registering on it. Any agent interested in the information of another agent can perform a lookup operation on this register, obtain the reference to that agent and invoke a method on that agent in order to obtain the information he wishes.
+%
+%\begin{methods}{\class{sim.engine.registry.DistinguishedRegistry}}
+%\mthd{public boolean registerObject(String name, Remote obj) throws AccessException, RemoteException}
+%Register an object obj with kay name on the registry.
+%\mthd{public Object getObject(String name) throws AccessException, RemoteException, NotBoundException}
+%Retrieve the object with key name from the registry.
+%\mthd{public boolean unRegisterObject(String name) throws AccessException, RemoteException, NotBoundException}
+%Remove the object with key name from the registry.
+%\mthd{public boolean isExported(Object agent)}
+%Return true if the object agent is reigested on the registry.
+%\mthd{public void clearMigratedNames()}
+%Clear the list of the registered agent's keys on the registry.
+%\mthd{public ArrayList\(<\)String\(>\) getMigratedNames()}
+%Get the List of the agent's keys on the registry.
+%\mthd{public void addMigratedName(Object obj)}
+%\end{methods}
+%
+%\subsubsection{Utility classes for communication via MPI}
+%\begin{itemize}
+%    \item \textbf{sim.util.MPITest}: provide a few utilities to help print out debugging information during testing.
+%    \item \textbf{sim.util.MPIParam}: create an MPI datatype that can be used to extract any N-dimensional rectangular subarray from a 1-d array representing a n-d grid. This is used when pack/unpack data in the Halo Exchange.
+%    \item \textbf{sim.util.GroupComm}: create a MPI communicator that includes a subset of all the nodes. This is used in the hierarchical load balancer to collect/distribute data at a certain level.
+%    \item \textbf{sim.util.MPIUtil}: wrappers for MPI calls. MPI calls usually require that both the sender/receiver know the size of the message. However, in case of sending serialized objects, the receiver is unaware of the exact size. In MPIUtil, we provide wrappers that exchange the exact size of the variable length payload first and then do the actual MPI calls.
+%\end{itemize}
+%
 
 
 
