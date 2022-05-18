@@ -32,25 +32,25 @@ import java.awt.*;
 public class Source extends Provider implements Steppable
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
-    	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_POINTER_UP, 
-    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
-    	}
+        {
+        return new ShapePortrayal2D(ShapePortrayal2D.POLY_POINTER_UP, 
+            getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
+        }
 
-	public double[] getDataBars() 
-		{
-		return new double[] { getCapacity() == Double.POSITIVE_INFINITY || getCapacity() == 0 ? -1 : getAvailable() / (double)getCapacity() };
-		}
-	public String[] getDataValues()
-		{
-		return new String[] { getCapacity() == Double.POSITIVE_INFINITY ? "" + getAvailable() :
-								getAvailable() + "/" + getCapacity() };
-		}
-	public String[] getDataLabels()
-		{
-		return new String[] { "Available" };
-		}
-    	
+    public double[] getDataBars() 
+        {
+        return new double[] { getCapacity() == Double.POSITIVE_INFINITY || getCapacity() == 0 ? -1 : getAvailable() / (double)getCapacity() };
+        }
+    public String[] getDataValues()
+        {
+        return new String[] { getCapacity() == Double.POSITIVE_INFINITY ? "" + getAvailable() :
+                              getAvailable() + "/" + getCapacity() };
+        }
+    public String[] getDataLabels()
+        {
+        return new String[] { "Available" };
+        }
+        
     private static final long serialVersionUID = 1;
 
     void throwInvalidCapacityException(double capacity)
@@ -274,42 +274,42 @@ public class Source extends Provider implements Steppable
         }
         
     /*
-    boolean warned = false;
-    void warnRejectionFailed()
-        {
-        if (warned) return;
-        System.err.println("ONE-TIME WARNING: Source could not produce a positive amount from the provided distribution after " + REJECTION_TRIES + 
-            " tries, and was forced to use 0.0.  That's not good.\nSource: " + this + "\nDistribution: " + productionDistribution);
-        warned = true;
-        }
+      boolean warned = false;
+      void warnRejectionFailed()
+      {
+      if (warned) return;
+      System.err.println("ONE-TIME WARNING: Source could not produce a positive amount from the provided distribution after " + REJECTION_TRIES + 
+      " tries, and was forced to use 0.0.  That's not good.\nSource: " + this + "\nDistribution: " + productionDistribution);
+      warned = true;
+      }
     */
         
     /** Builds *amt* number of Entities and adds them to the entities list.  
-    	The amount could be a real-value, in which it should be
-    	simply rounded down to the nearest positive integer >= 0.  By default this
-    	generates entities using buildEntity().  */
+        The amount could be a real-value, in which it should be
+        simply rounded down to the nearest positive integer >= 0.  By default this
+        generates entities using buildEntity().  */
     protected void buildEntities(double amt)
-    	{
-		for(int i = 0; i < Math.round(amt); i++)
-			{
-			if (entities.size() < capacity)
-				entities.add(buildEntity());
-			else break;
-			}
-    	}
-    	
+        {
+        for(int i = 0; i < Math.round(amt); i++)
+            {
+            if (entities.size() < capacity)
+                entities.add(buildEntity());
+            else break;
+            }
+        }
+        
     /** Builds *amt* of Countable or Uncountable Resource and adds it to the resource pool. 
-    	By default this simply adds resource out of thin air. */
+        By default this simply adds resource out of thin air. */
     protected void buildResource(double amt)
-    	{
-		CountableResource res = (CountableResource)resource;
-		if (res.isCountable())
-			amt = Math.round(amt);
-																	
-		res.increase(amt);
-		if (res.getAmount() > capacity)
-			res.setAmount(capacity);
-    	}
+        {
+        CountableResource res = (CountableResource)resource;
+        if (res.isCountable())
+            amt = Math.round(amt);
+                                                                                                                                        
+        res.increase(amt);
+        if (res.getAmount() > capacity)
+            res.setAmount(capacity);
+        }
         
         
     /** This method is called once every time this Source is stepped, and is used to produce new
@@ -411,26 +411,26 @@ public class Source extends Provider implements Steppable
         double amt = production;
         if (productionDistribution != null)
             {
-			amt = Math.abs(productionDistribution.nextDouble());
+            amt = Math.abs(productionDistribution.nextDouble());
             
             /*
             // produce
-			for(int i = 0; i < REJECTION_TRIES; i++)
-				{
-				amt = productionDistribution.nextDouble();
-				if (amt >= 0)
-					break;
-				}
-				
-			if (amt < 0)
-				{
-				warnRejectionFailed();
-        		amt = 0;
-        		}
-        	*/
+            for(int i = 0; i < REJECTION_TRIES; i++)
+            {
+            amt = productionDistribution.nextDouble();
+            if (amt >= 0)
+            break;
+            }
+                                
+            if (amt < 0)
+            {
+            warnRejectionFailed();
+            amt = 0;
+            }
+            */
             }
     
-    	// produce it                                      
+        // produce it                                      
         if (entities != null)
             {
             buildEntities(amt);

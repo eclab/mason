@@ -25,15 +25,15 @@ import java.awt.*;
 public class Composer extends Provider implements Receiver
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
-    	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_STAR, 
-    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
-    	}
+        {
+        return new ShapePortrayal2D(ShapePortrayal2D.POLY_STAR, 
+            getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
+        }
 
     private static final long serialVersionUID = 1;
 
     public Resource getTypicalReceived() { return typical; }
-	public boolean hideTypicalReceived() { return true; }
+    public boolean hideTypicalReceived() { return true; }
 
     void throwDuplicateType(Resource res)
         {
@@ -130,9 +130,9 @@ public class Composer extends Provider implements Receiver
         indicates that you want more than one of this entity present in the composition. 
         
         <p>Throws a RuntimeException if there is a duplicate among the provided resources, or
-        	if a minimum is > its maximum, or if a resource is an Entity but its maximum is
-        	not an integer.
-        */
+        if a minimum is > its maximum, or if a resource is an Entity but its maximum is
+        not an integer.
+    */
     public Composer(SimState state, Entity typical, Resource[] minimums, double[] maximums)
         {
         super(state, typical);
@@ -181,14 +181,14 @@ public class Composer extends Provider implements Receiver
 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
-    	if (getRefusesOffers()) { return false; }
+        if (getRefusesOffers()) { return false; }
         if (isOffering()) throwCyclicOffers();  // cycle
         
         if (!(atLeast >= 0 && atMost >= atLeast))
-        	throwInvalidAtLeastAtMost(atLeast, atMost);
+            throwInvalidAtLeastAtMost(atLeast, atMost);
 
-         if (!(atLeast >= 0 && atMost >= atLeast))
-        	throwInvalidAtLeastAtMost(atLeast, atMost);
+        if (!(atLeast >= 0 && atMost >= atLeast))
+            throwInvalidAtLeastAtMost(atLeast, atMost);
        
         // Find the appropriate node
         Node total = mappedTotals.get(amount.getType());
@@ -242,8 +242,8 @@ public class Composer extends Provider implements Receiver
         }
     
 
-	void resetTotals()
-		{
+    void resetTotals()
+        {
         // reset totals
         for(int i = 0; i < totals.length; i++)
             {
@@ -253,13 +253,13 @@ public class Composer extends Provider implements Receiver
                 totals[i].resource.clear();
                 }
             }
-		}
-		
+        }
+                
     public void clear()
-    	{
-    	super.clear();
-    	resetTotals();
-    	}
+        {
+        super.clear();
+        resetTotals();
+        }
         
     public String toString()
         {
@@ -273,6 +273,6 @@ public class Composer extends Provider implements Receiver
         }
         
     boolean refusesOffers = false;
-	public void setRefusesOffers(boolean value) { refusesOffers = value; }
+    public void setRefusesOffers(boolean value) { refusesOffers = value; }
     public boolean getRefusesOffers() { return refusesOffers; }
     }

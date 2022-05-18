@@ -21,10 +21,10 @@ import java.awt.*;
 public abstract class If extends Filter
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
-    	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_TRIANGLE_RIGHT, 
-    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
-    	}
+        {
+        return new ShapePortrayal2D(ShapePortrayal2D.POLY_TRIANGLE_RIGHT, 
+            getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
+        }
 
     private static final long serialVersionUID = 1;
 
@@ -37,18 +37,18 @@ public abstract class If extends Filter
         }
     
     public void setOfferPolicy(int offerPolicy)
-    	{
-    	throw new IllegalArgumentException("Offer Policy may not be set in an If.");
-    	}
-    	
+        {
+        throw new IllegalArgumentException("Offer Policy may not be set in an If.");
+        }
+        
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
-    	if (getRefusesOffers()) { return false; }
+        if (getRefusesOffers()) { return false; }
         if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
         if (isOffering()) throwCyclicOffers();  // cycle
         
         if (!(atLeast >= 0 && atMost >= atLeast))
-        	throwInvalidAtLeastAtMost(atLeast, atMost);
+            throwInvalidAtLeastAtMost(atLeast, atMost);
 
         return offerReceivers(amount, atLeast, atMost);
         }

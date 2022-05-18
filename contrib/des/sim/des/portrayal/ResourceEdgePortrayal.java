@@ -24,60 +24,60 @@ import sim.portrayal.*;
 **/
 
 public class ResourceEdgePortrayal extends SimpleEdgePortrayal2D
-	{
+    {
     private static final long serialVersionUID = 1;
     
     double scale = 1.0;
     
     public ResourceEdgePortrayal()
-    	{
-    	this(1.0, false);
-    	}
+        {
+        this(1.0, false);
+        }
 
     public ResourceEdgePortrayal(boolean triangle)
-    	{
-    	this(1.0, triangle);
-    	}
+        {
+        this(1.0, triangle);
+        }
 
     public ResourceEdgePortrayal(double scale)
-    	{
-    	this(scale, false);
-    	}
+        {
+        this(scale, false);
+        }
 
     public ResourceEdgePortrayal(double scale, boolean triangle)
-    	{
-    	super(Color.BLUE, Color.RED, Color.BLACK, new Font("SansSerif", Font.PLAIN, 10));
+        {
+        super(Color.BLUE, Color.RED, Color.BLACK, new Font("SansSerif", Font.PLAIN, 10));
         setShape(triangle ? SimpleEdgePortrayal2D.SHAPE_TRIANGLE : SimpleEdgePortrayal2D.SHAPE_LINE_ROUND_ENDS);
         setAdjustsThickness(true);
         setScaling(SimpleEdgePortrayal2D.ALWAYS_SCALE);
         setLabelScaling(SimpleEdgePortrayal2D.SCALE_WHEN_SMALLER);
         this.scale = scale;
-    	}
+        }
     
     protected double getPositiveWeight(Object edge, EdgeDrawInfo2D info)
-		{
-		ResourceEdge e = (ResourceEdge)edge;
-		Provider provider = (Provider)(e.getFrom());
-		Receiver receiver = (Receiver)(e.getTo());
-		if (provider.getState().schedule.getTime() == provider.getLastAcceptedOfferTime())
-			{
-			ArrayList<Resource> offers = provider.getLastAcceptedOffers();
-			ArrayList<Receiver> receivers = provider.getLastAcceptedOfferReceivers();
-			int loc = receivers.indexOf(receiver);
-			if (loc >= 0)
-				{
-				return (offers.get(loc).getAmount()) * scale;
-				}
-			else 
-				{
-				return 0.0;
-				}
-			}
-		else
-			{
-			return 0.0;
-			}
-		}
-	}
-	
-	
+        {
+        ResourceEdge e = (ResourceEdge)edge;
+        Provider provider = (Provider)(e.getFrom());
+        Receiver receiver = (Receiver)(e.getTo());
+        if (provider.getState().schedule.getTime() == provider.getLastAcceptedOfferTime())
+            {
+            ArrayList<Resource> offers = provider.getLastAcceptedOffers();
+            ArrayList<Receiver> receivers = provider.getLastAcceptedOfferReceivers();
+            int loc = receivers.indexOf(receiver);
+            if (loc >= 0)
+                {
+                return (offers.get(loc).getAmount()) * scale;
+                }
+            else 
+                {
+                return 0.0;
+                }
+            }
+        else
+            {
+            return 0.0;
+            }
+        }
+    }
+        
+        

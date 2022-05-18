@@ -36,7 +36,7 @@ import sim.des.portrayal.*;
 public abstract class Provider extends DESPortrayal implements Named, Resettable, ProvidesBarData
     {
     public boolean hideDrawState() { return true; }
-	public boolean getDrawState() { return false; }
+    public boolean getDrawState() { return false; }
 
     private static final long serialVersionUID = 1;
 
@@ -59,32 +59,32 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
             " but got resource type " + res.getName() + "(" + res.getType() + ")" );
         }
 
-	/** Throws an exception indicating that atLeast and atMost are out of legal bounds. */
+    /** Throws an exception indicating that atLeast and atMost are out of legal bounds. */
     protected void throwInvalidAtLeastAtMost(double atLeast, double atMost)
         {
         throw new RuntimeException("Requested resource amounts are between " + atLeast + " and " + atMost + ", which is out of bounds.");
         }
 
-	/** Throws an exception indicating that entities were requested from this Provider, but it does not provide them. */
+    /** Throws an exception indicating that entities were requested from this Provider, but it does not provide them. */
     protected void throwDoesNotProvideEntities()
         {
         throw new RuntimeException("This Provider was asked to provide Entities, but it does not.");
         }
 
-	/** Throws an exception indicating that an entity index was requested which cannot be provided. */
+    /** Throws an exception indicating that an entity index was requested which cannot be provided. */
     protected void throwInvalidEntityNumber(int num)
         {
         throw new RuntimeException("This Provider asked to provide entity number " + num + " which is outside the range 0 ... " + entities.size() + ".");
         }
 
-	/** Tests if val is non-NaN and positive. */
+    /** Tests if val is non-NaN and positive. */
     protected boolean isPositiveNonNaN(double val)
         {
         return (val >= 0);
         }
-	public boolean hidePositiveNonNaN() { return true; }
+    public boolean hidePositiveNonNaN() { return true; }
 
-	/** Throws an exception indicating that atMost is illegal. */
+    /** Throws an exception indicating that atMost is illegal. */
     void throwInvalidNumberException(double amount)
         {
         throw new RuntimeException("atMost may not be negative or NaN.  Amount provided was: " + amount);
@@ -105,9 +105,9 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     protected SimState state;
     
     public SimState getState()
-    	{
-    	return state;
-    	}
+        {
+        return state;
+        }
         
     
     ////// OFFER STATISTICS
@@ -138,13 +138,13 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     // If the last offer time is less than the current time, clears the offers to the current time.
     // Adds the given resource and receiver to the new offers.
     void updateLastAcceptedOffers(Resource resource, Receiver receiver)
-    	{
-		double currentTime = state.schedule.getTime();
-		clearLastAcceptedOffers(currentTime);
-		lastAcceptedOffers.add(resource.duplicate());
-		lastAcceptedOfferReceivers.add(receiver);
-		totalAcceptedOfferResource += resource.getAmount();
-    	}
+        {
+        double currentTime = state.schedule.getTime();
+        clearLastAcceptedOffers(currentTime);
+        lastAcceptedOffers.add(resource.duplicate());
+        lastAcceptedOfferReceivers.add(receiver);
+        totalAcceptedOfferResource += resource.getAmount();
+        }
     
     double totalAcceptedOfferResource;
     public double getTotalOfferResource() { return totalAcceptedOfferResource; }
@@ -157,18 +157,18 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     public static final int OFFER_ORDER_LIFO = 1;
     public int offerOrder = OFFER_ORDER_FIFO;
     
-	public void setOfferOrder(int offerOrder)
-		{
+    public void setOfferOrder(int offerOrder)
+        {
         if (offerOrder < OFFER_ORDER_FIFO || offerOrder > OFFER_ORDER_LIFO)
             throw new IllegalArgumentException("Offer Order " + offerOrder + " out of bounds.");
-		this.offerOrder = offerOrder;
-		}
-		
-	public int getOfferOrder()
-		{
-		return offerOrder;
-		}
-	public boolean hideOfferOrder() { return true; }
+        this.offerOrder = offerOrder;
+        }
+                
+    public int getOfferOrder()
+        {
+        return offerOrder;
+        }
+    public boolean hideOfferOrder() { return true; }
 
     /** Offer Policy: offers are made to the first receiver, then the second, and so on, until available resources or receivers are exhausted. */
     public static final int OFFER_POLICY_FORWARD = 0;
@@ -203,7 +203,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
                 
     /** Returns the receiver offer policy */
     public int getOfferPolicy() { return offerPolicy; }
-	public boolean hideOfferPolicy() { return true; }
+    public boolean hideOfferPolicy() { return true; }
          
     /** Sets the receiver offer policy to OFFER_POLICY_RANDOM, and
         sets the appropriate distribution for selecting a receiver.  If null is provided 
@@ -241,7 +241,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
         {
         return offerDistribution;
         }
-	public boolean hideOfferRandomDistribution() { return true; }
+    public boolean hideOfferRandomDistribution() { return true; }
     
     /** 
         Clears any current entites and resources ready to be provided.
@@ -257,7 +257,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     */
     public Resource getTypicalProvided() { return typical; }
 
-	@Deprecated
+    @Deprecated
     public Resource getTypical() { return getTypicalProvided(); }
         
     /** 
@@ -273,7 +273,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
          or else reject it all.
     */
     public boolean getOffersTakeItOrLeaveIt() { return offersTakeItOrLeaveIt; }
-	public boolean hideOffersTakeItOrLeaveIt() { return true; }
+    public boolean hideOffersTakeItOrLeaveIt() { return true; }
 
     /** 
         Registers a receiver with the Provider.  Returns false if the receiver was already registered.
@@ -317,15 +317,15 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
         }
         
     /** Returns in an array all the current Entities the Provider can provide.  You can
-    	modify the array (it's yours), but do not modify the Entities stored inside, as they
-    	are the actual Entities stored in the Provider.  If this Provider does not provide
-    	Entities, then null is returned.  */
+        modify the array (it's yours), but do not modify the Entities stored inside, as they
+        are the actual Entities stored in the Provider.  If this Provider does not provide
+        Entities, then null is returned.  */
     public Entity[] getEntities()
-    	{
-    	if (entities != null)
-    	  	return (Entity[])(entities.toArray(new Entity[entities.size()]));
-    	else return null;
-    	}
+        {
+        if (entities != null)
+            return (Entity[])(entities.toArray(new Entity[entities.size()]));
+        else return null;
+        }
     public boolean hideEntities() { return true; }
     
 
@@ -385,22 +385,22 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
        
     
     /** 
-    	Offers the given entity to the given receiver, returning true if it was
-    	accepted.  You probably should not override this method; instead you probably
-    	want to override offerReceiver(Receiver, double) 
+        Offers the given entity to the given receiver, returning true if it was
+        accepted.  You probably should not override this method; instead you probably
+        want to override offerReceiver(Receiver, double) 
     */
-    	
- 	protected boolean offerReceiver(Receiver receiver, Entity entity)
-    	{
+        
+    protected boolean offerReceiver(Receiver receiver, Entity entity)
+        {
         lastOfferTime = state.schedule.getTime();
-		boolean result = receiver.accept(this, entity, 0, 0);
-		if (result)
-			{
-			updateLastAcceptedOffers(entity, receiver);
-			}
-		return result;
-		}
-    	 
+        boolean result = receiver.accept(this, entity, 0, 0);
+        if (result)
+            {
+            updateLastAcceptedOffers(entity, receiver);
+            }
+        return result;
+        }
+         
     /** 
         Makes an offer of up to the given amount to the given receiver.
         If the typical resource is an ENTITY, then atMost is ignored.
@@ -421,10 +421,10 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     protected boolean offerReceiver(Receiver receiver, double atMost)
         {
         if (!getMakesOffers())
-        	{
-        	return false;
-        	}
-        	
+            {
+            return false;
+            }
+                
         if (entities == null)
             {
             CountableResource cr = (CountableResource) resource;
@@ -435,34 +435,34 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
             lastOfferTime = state.schedule.getTime();
             boolean result = receiver.accept(this, cr, getOffersTakeItOrLeaveIt() ? offer : 0, offer);
             if (result)
-            	{
-            	CountableResource removed = (CountableResource)(resource.duplicate());
-            	removed.setAmount(originalAmount - cr.getAmount());
-            	updateLastAcceptedOffers(removed, receiver);
-            	}
-             return result;
-           }
+                {
+                CountableResource removed = (CountableResource)(resource.duplicate());
+                removed.setAmount(originalAmount - cr.getAmount());
+                updateLastAcceptedOffers(removed, receiver);
+                }
+            return result;
+            }
         else if (offerOrder == OFFER_ORDER_FIFO)
             {
             Entity e = entities.getFirst();
-            boolean result = offerReceiver(receiver, e); 			// CHECK
+            boolean result = offerReceiver(receiver, e);                        // CHECK
             if (result)
-            	{
-				entities.removeFirst();
-            	}
+                {
+                entities.removeFirst();
+                }
             return result;
             }
-         else // if (offerOrder == OFFER_ORDER_LIFO)
+        else // if (offerOrder == OFFER_ORDER_LIFO)
             {
             Entity e = entities.getLast();
-            boolean result = offerReceiver(receiver, e);			// CHECK
+            boolean result = offerReceiver(receiver, e);                        // CHECK
             if (result)
-            	{
-				entities.removeLast();
-            	}
+                {
+                entities.removeLast();
+                }
             return result;
             }
-       }
+        }
        
     // only warn about problems with the distribution a single time
     boolean distributionWarned = false; 
@@ -579,16 +579,16 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
                 int size = receivers.size();
                 if (size == 0) 
                     {
-					if (!selectWarned)
-						{
-						new RuntimeException("Warning: Offer policy is SELECT but there are no receivers to select from in " + this).printStackTrace();
-						selectWarned = true;
-						}
+                    if (!selectWarned)
+                        {
+                        new RuntimeException("Warning: Offer policy is SELECT but there are no receivers to select from in " + this).printStackTrace();
+                        selectWarned = true;
+                        }
                     }
                 else
-                	{                
-	                result = offerReceiver(selectReceiver(receivers, entities == null ? resource : entities.getFirst()), Double.POSITIVE_INFINITY);
-	                }
+                    {                
+                    result = offerReceiver(selectReceiver(receivers, entities == null ? resource : entities.getFirst()), Double.POSITIVE_INFINITY);
+                    }
                 }
             break;
             }
@@ -603,9 +603,9 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
        Override this method as you see fit.  The default implementation simply returns the first one.
     */
     public Receiver selectReceiver(ArrayList<Receiver> receivers, Resource resource)
-    	{
-    	return receivers.get(0);
-    	}
+        {
+        return receivers.get(0);
+        }
         
     /**
        Asks the Provider to make a unilateral offer to the given Receiver.  This can be used to implement
@@ -628,7 +628,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     public boolean provide(Receiver receiver, double atMost)
         {
         if (!isPositiveNonNaN(atMost))
-        	throwInvalidNumberException(atMost);
+            throwInvalidNumberException(atMost);
         return offerReceiver(receiver, atMost);
         }
 
@@ -643,14 +643,14 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     */
     public boolean provideEntity(Receiver receiver, int entityNumber)
         {
-		Entity e = getEntity(entityNumber);
-		boolean result = offerReceiver(receiver, e);					// CHECK
-		if (result)
-			{
-			entities.remove(entityNumber);
-			}
-		return result;
-    	}
+        Entity e = getEntity(entityNumber);
+        boolean result = offerReceiver(receiver, e);                                    // CHECK
+        if (result)
+            {
+            entities.remove(entityNumber);
+            }
+        return result;
+        }
 
     /**
        Returns the available entity with the given number for inspection, but does not remove it from the available pool.
@@ -661,10 +661,10 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     public Entity getEntity(int entityNumber)
         {
         if (entities == null)
-    		throwDoesNotProvideEntities();
-    	if (entityNumber < 0 || entityNumber > entities.size())
-    		throwInvalidEntityNumber(entityNumber);
-    		
+            throwDoesNotProvideEntities();
+        if (entityNumber < 0 || entityNumber > entities.size())
+            throwInvalidEntityNumber(entityNumber);
+                
         return entities.get(entityNumber);
         }
 
@@ -673,30 +673,36 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     public void setName(String name) { this.name = name; }
     
     public void reset(SimState state) 
-    	{
-    	clear();
-    	clearLastAcceptedOffers(Schedule.BEFORE_SIMULATION);
-    	lastOfferTime = Schedule.BEFORE_SIMULATION;
-    	totalAcceptedOfferResource = 0;
-    	}
-    	
+        {
+        clear();
+        clearLastAcceptedOffers(Schedule.BEFORE_SIMULATION);
+        lastOfferTime = Schedule.BEFORE_SIMULATION;
+        totalAcceptedOfferResource = 0;
+        }
+        
     boolean makesOffers = true;
     public void setMakesOffers(boolean value) { makesOffers = value; }
     public boolean getMakesOffers() { return makesOffers; }
 
-	public boolean hideDataBars() { return true; }
-	public double[] getDataBars() 
-		{
-		return new double[0];
-		}
-	public boolean hideDataValues() { return true; }
-	public String[] getDataValues() 
-		{
-		return new String[0];
-		}
-	public boolean hideDataLabels() { return true; }
-	public String[] getDataLabels()
-		{
-		return new String[0];
-		}
+    public boolean hideDataBars() { return true; }
+    public double[] getDataBars() 
+        {
+        return new double[0];
+        }
+    public boolean hideDataValues() { return true; }
+    public String[] getDataValues() 
+        {
+        return new String[0];
+        }
+    public boolean hideDataLabels() { return true; }
+    public String[] getDataLabels()
+        {
+        return new String[0];
+        }
+
+    /** Does nothing. */
+    public void step(SimState state)
+        {
+        // do nothing by default
+        }
     }

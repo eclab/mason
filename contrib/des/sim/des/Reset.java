@@ -16,24 +16,24 @@ public class Reset implements java.io.Serializable
     SimState state;
     
     public Reset(SimState state)
-    	{
-    	this.state = state;
-    	resets = new ArrayList<Resettable>();
-    	}
-    	
+        {
+        this.state = state;
+        resets = new ArrayList<Resettable>();
+        }
+        
     public void reset()
-    	{
-    	for(Resettable r : resets)
-    		r.reset(state);
-    	}
+        {
+        for(Resettable r : resets)
+            r.reset(state);
+        }
     
     public void add(Resettable r)
-    	{
-    	resets.add(r);
-    	}
+        {
+        resets.add(r);
+        }
     
     public void remove(Resettable r)
-    	{
-    	resets.remove(r);
-    	}
+        {
+        resets.remove(r);
+        }
     }

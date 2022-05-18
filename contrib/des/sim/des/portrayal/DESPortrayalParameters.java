@@ -7,7 +7,7 @@
 package sim.des.portrayal;
 
 public class DESPortrayalParameters
-	{
+    {
     private static final long serialVersionUID = 1;
     
     public static final double DEFAULT_PORTRAYAL_SCALE = 10.0;
@@ -19,7 +19,7 @@ public class DESPortrayalParameters
     
     static Class baseImageClass = DESPortrayalParameters.class;
     
-	public static void setImageClass(Class cls) { baseImageClass = cls; }
+    public static void setImageClass(Class cls) { baseImageClass = cls; }
     public static Class getImageClass() { return baseImageClass; }
-	}	
-	
+    }       
+        

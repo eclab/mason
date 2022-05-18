@@ -20,11 +20,11 @@ import java.awt.*;
 public class Service extends Macro
     {
     /*
-    public SimplePortrayal2D buildDefaultPortrayal(double scale)
-    	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_PILL, 
-    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
-    	}
+      public SimplePortrayal2D buildDefaultPortrayal(double scale)
+      {
+      return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_PILL, 
+      getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
+      }
     */
 
     private static final long serialVersionUID = 1;

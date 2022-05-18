@@ -78,9 +78,9 @@ public class Pool implements Named
         // does nothing
         }
 
-	/** Resets the pool's resource to its initial value */
+    /** Resets the pool's resource to its initial value */
     public void reset(SimState state) 
-    	{ 
+        { 
         this.resource = (CountableResource)(initial.duplicate());
-    	}
+        }
     }

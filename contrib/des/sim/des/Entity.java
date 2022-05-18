@@ -107,8 +107,8 @@ public class Entity extends Resource
         return "Entity[" + name + " (" + type + ")]";
         }
 
-	/** Only does type comparison. Thus two Entities may be equal even if they have different info
-		and storage objects. */
+    /** Only does type comparison. Thus two Entities may be equal even if they have different info
+        and storage objects. */
     public boolean equals(Object other)
         {
         if (other == this) return true;

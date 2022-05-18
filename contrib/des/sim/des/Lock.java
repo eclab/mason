@@ -23,10 +23,10 @@ import java.awt.*;
 public class Lock extends Filter
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
-    	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_HOURGLASS, 
-    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
-    	}
+        {
+        return new ShapePortrayal2D(ShapePortrayal2D.POLY_HOURGLASS, 
+            getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
+        }
 
     private static final long serialVersionUID = 1;
 
@@ -57,46 +57,46 @@ public class Lock extends Filter
                 
     /** Returns the number of resources allocated each time */
     public double getNumResources() { return numResources; }
-	public boolean hideNumResources() { return true; }
+    public boolean hideNumResources() { return true; }
     
     /** Sets the number of resources allocated each time */
     public void setNumResources(double val) { numResources = val; }
         
     /** Always returns true: locks only make take-it-or-leave-it offers */
     public boolean getOffersTakeItOrLeaveIt() { return true; }
-	public boolean hideOffersTakeItOrLeaveIt() { return true; }
+    public boolean hideOffersTakeItOrLeaveIt() { return true; }
 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         blocked = false;
         
-    	if (getRefusesOffers()) { return false; }
+        if (getRefusesOffers()) { return false; }
         if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
         if (!(atLeast >= 0 && atMost >= atLeast))
-        	throwInvalidAtLeastAtMost(atLeast, atMost);
+            throwInvalidAtLeastAtMost(atLeast, atMost);
 
-		// try to acquire resources
+        // try to acquire resources
         if (pool.getResource().getAmount() < numResources) 
-        	{
-        	blocked = true;
-        	return false;
-        	}
+            {
+            blocked = true;
+            return false;
+            }
 
-		// pre-grab the resource
+        // pre-grab the resource
         pool.getResource().decrease(numResources);
 
         boolean result = offerReceivers(amount, atLeast, atMost);
                 
         if (!result) // gotta put it back
-        	{
-        	pool.getResource().increase(numResources);
-        	pool.getResource().bound(pool.getMaximum());
-        	}
+            {
+            pool.getResource().increase(numResources);
+            pool.getResource().bound(pool.getMaximum());
+            }
 
-        _amount = null;		/// let it gc
+        _amount = null;         /// let it gc
         return result;
         }
 
@@ -106,9 +106,9 @@ public class Lock extends Filter
         }  
                      
     public String getName() 
-    	{ 
-    	return "Lock (" + (pool.getName() == null ? "Pool " + System.identityHashCode(pool) : pool.getName()) + ")";
-    	}    
+        { 
+        return "Lock (" + (pool.getName() == null ? "Pool " + System.identityHashCode(pool) : pool.getName()) + ")";
+        }    
 
-	public boolean getDrawState() { return blocked; }
+    public boolean getDrawState() { return blocked; }
     }

@@ -15,31 +15,31 @@ import java.awt.*;
 
 
 /** 
-	A subclass of Source which, when stepped, provides resources to Receivers by first requesting them
-	from a Provider via a pull operation (calling provide()).  The amount of resources and
-	the timing of the steps are exactly the same as described in Source.  Unlike Source, capacity
-	is ignored and getCapacity() and setCapacity() do nothing.
-	
-	<p>Extractors are Receivers but are not designed to receive things via push, only via pull.
-	Thus you should not register them as receivers of a given Provider.  Instead you should 
-	attach an Extractor to a Provider via its setProvider() method or in its constructor.
+    A subclass of Source which, when stepped, provides resources to Receivers by first requesting them
+    from a Provider via a pull operation (calling provide()).  The amount of resources and
+    the timing of the steps are exactly the same as described in Source.  Unlike Source, capacity
+    is ignored and getCapacity() and setCapacity() do nothing.
+        
+    <p>Extractors are Receivers but are not designed to receive things via push, only via pull.
+    Thus you should not register them as receivers of a given Provider.  Instead you should 
+    attach an Extractor to a Provider via its setProvider() method or in its constructor.
 */
 
 
 public class Extractor extends Source implements Receiver
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
-    	{
-    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_POINTER_LEFT, 
-    		getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
-    	}
+        {
+        return new ShapePortrayal2D(ShapePortrayal2D.POLY_POINTER_LEFT, 
+            getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
+        }
 
     private static final long serialVersionUID = 1;
 
     Provider provider = null;
     
     public Resource getTypicalReceived() { return typical; }
-	public boolean hideTypicalReceived() { return true; }
+    public boolean hideTypicalReceived() { return true; }
 
     /** 
         Builds a source with the given typical resource type.  The provider is initially null.
@@ -59,9 +59,9 @@ public class Extractor extends Source implements Receiver
         }
                
     public void setProvider(Provider provider) { this.provider = provider; }
-    	
+        
     public Provider getProvider() { return provider; }
-	public boolean hideProvider() { return true; }
+    public boolean hideProvider() { return true; }
                 
     boolean offersImmediately = true;
     
@@ -85,31 +85,31 @@ public class Extractor extends Source implements Receiver
     
     /** Builds a single entity, ignoring the amount passed in, by asking the provider to provide it.  */
     protected void buildEntities(double amt)
-    	{
-    	acceptValue = 1;			// we always just grab ONE, not multiple entities
-    	if (provider != null) provider.provide(this);		// the provider will immediately call accept(...)
-    	acceptValue = OFF;
-    	}
+        {
+        acceptValue = 1;                        // we always just grab ONE, not multiple entities
+        if (provider != null) provider.provide(this);           // the provider will immediately call accept(...)
+        acceptValue = OFF;
+        }
         
     /** Builds resource by asking the provider to provide it.  */
     protected void buildResource(double amt)
-    	{
-    	acceptValue = amt;
-    	if (provider != null) provider.provide(this);		// the provider will immediately call accept(...)
-    	acceptValue = OFF;
-    	}
+        {
+        acceptValue = amt;
+        if (provider != null) provider.provide(this);           // the provider will immediately call accept(...)
+        acceptValue = OFF;
+        }
 
     public boolean accept(Provider provider, Resource res, double atLeast, double atMost)
-    	{
-    	if (getRefusesOffers()) { return false; }
+        {
+        if (getRefusesOffers()) { return false; }
         if (!typical.isSameType(res)) throwUnequalTypeException(res);
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
         if (!(atLeast >= 0 && atMost >= atLeast))
-        	throwInvalidAtLeastAtMost(atLeast, atMost);
+            throwInvalidAtLeastAtMost(atLeast, atMost);
 
-    	if (acceptValue < atLeast || acceptValue > atMost) return false;		// Also if it's == OFF, which is -1
+        if (acceptValue < atLeast || acceptValue > atMost) return false;                // Also if it's == OFF, which is -1
 
         if (res instanceof CountableResource) 
             {
@@ -124,7 +124,7 @@ public class Extractor extends Source implements Receiver
             if (getOffersImmediately()) offerReceivers(); 
             return true;
             }
-    	}
+        }
 
     public String toString()
         {
@@ -133,17 +133,17 @@ public class Extractor extends Source implements Receiver
 
     /** Returns Double.POSITIVE_INFINITY, which means nothing: Extractors do not have a capacity. */
     public double getCapacity() { return Double.POSITIVE_INFINITY; }
-	public boolean hideCapacity() { return true; }
+    public boolean hideCapacity() { return true; }
     
     /** Does nothing. */
     public void setCapacity(double d) 
         { 
         super.setCapacity(d);
-        capacity = Double.POSITIVE_INFINITY;		// reset to default
+        capacity = Double.POSITIVE_INFINITY;            // reset to default
         }
         
     boolean refusesOffers = false;
-	public void setRefusesOffers(boolean value) { refusesOffers = value; }
+    public void setRefusesOffers(boolean value) { refusesOffers = value; }
     public boolean getRefusesOffers() { return refusesOffers; }
     }
         
