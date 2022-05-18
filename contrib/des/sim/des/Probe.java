@@ -167,14 +167,11 @@ public class Probe extends Filter
         if (!(atLeast >= 0 && atMost >= atLeast))
         	throwInvalidAtLeastAtMost(atLeast, atMost);
 
-        _amount = amount;
-        _atLeast = atLeast;
-        _atMost = atMost;
         Resource oldAmount = null;
         if (amount instanceof CountableResource)
         	oldAmount = amount.duplicate();
         
-         boolean val = offerReceivers();
+         boolean val = offerReceivers(amount, atLeast, atMost);
          
          if (val)
          	{

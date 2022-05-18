@@ -50,11 +50,7 @@ public abstract class If extends Filter
         if (!(atLeast >= 0 && atMost >= atLeast))
         	throwInvalidAtLeastAtMost(atLeast, atMost);
 
-        _amount = amount;
-        _atLeast = atLeast;
-        _atMost = atMost;
-        boolean result = offerReceivers();
-        return result;
+        return offerReceivers(amount, atLeast, atMost);
         }
 
     public String toString()

@@ -33,51 +33,31 @@ public class Transformer extends Filter
         this.typicalIn = (CountableResource)(typicalIn.duplicate());
         this.ratioIn = ratioIn;
         this.ratioOut = ratioOut;
-        _amount = typical.duplicate();
         setName("Transformer");
         }
 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {       
     	if (getRefusesOffers()) { return false; }
-        if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
+        if (!typicalIn.isSameType(amount)) throwUnequalTypeException(amount);
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
         if (!(atLeast >= 0 && atMost >= atLeast))
         	throwInvalidAtLeastAtMost(atLeast, atMost);
 
-        if (amount instanceof Entity)
-            {
-            if (typical instanceof Entity)
-                {
-                _atLeast = 0;
-                _atMost = 0;
-                _amount = (Entity)(_amount.duplicate());
-                return offerReceivers();
-                }
-            else
-                {
-                _atLeast = ratioOut / ratioIn;
-                _atMost = ratioOut / ratioIn;
-                ((CountableResource)_amount).setAmount(ratioOut / ratioIn);
-                return offerReceivers();
-                }
-            }
-        else
-            {
-            // FIXME:
-            // This comes into problems when we get to exchangeRates with discrete objects..
-            _atLeast = (atLeast / ratioIn) * ratioOut;
-            _atMost = (atMost / ratioIn) * ratioOut;
-            ((CountableResource)_amount).setAmount(_atMost);
-            boolean retval = offerReceivers();
-            if (retval)
-                {
-                ((CountableResource)amount).setAmount((((CountableResource)_amount).getAmount() * ratioIn) / ratioOut);                  // is this right?
-                }
-            return retval;
-            }
+		double _atLeast = (atLeast / ratioIn) * ratioOut;
+		double _atMost = (atMost / ratioIn) * ratioOut;
+		CountableResource _amount = (CountableResource)(typical.duplicate());
+		double oldAmount = amount.getAmount() / ratioIn * ratioOut;
+		_amount.setAmount(oldAmount);
+		boolean retval = offerReceivers(_amount, _atLeast, _atMost);
+		if (retval)
+			{
+			// modify original
+			((CountableResource)amount).setAmount((oldAmount - amount.getAmount()) / ratioOut * ratioIn);
+			}
+		return retval;
         }
         
     public String toString()

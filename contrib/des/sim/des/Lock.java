@@ -89,10 +89,7 @@ public class Lock extends Filter
 		// pre-grab the resource
         pool.getResource().decrease(numResources);
 
-        _amount = amount;
-        _atLeast = atLeast;
-        _atMost = atMost;
-        boolean result = offerReceivers();
+        boolean result = offerReceivers(amount, atLeast, atMost);
                 
         if (!result) // gotta put it back
         	{

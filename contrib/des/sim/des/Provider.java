@@ -383,8 +383,14 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
         return ret;
         }
        
-       
-    protected boolean offerReceiver(Receiver receiver, Entity entity)
+    
+    /** 
+    	Offers the given entity to the given receiver, returning true if it was
+    	accepted.  You probably should not override this method; instead you probably
+    	want to override offerReceiver(Receiver, double) 
+    */
+    	
+ 	protected boolean offerReceiver(Receiver receiver, Entity entity)
     	{
         lastOfferTime = state.schedule.getTime();
 		boolean result = receiver.accept(this, entity, 0, 0);
@@ -405,11 +411,13 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
         (default), then the entity is removed from the FRONT of the entities 
         linked list (normally entities are added to the END of the linked list
         via entities.add()).  If the offer order is LIFO, then the entity
-        is removed from the END of the entities linked list.
+        is removed from the END of the entities linked list.  Then this entity
+        is offered to the receiver by calling offerReceiver(receiver, entity).
         
         <p>The only real reason for the atMost parameter is so that receivers
         can REQUEST to be offered atMost resource from a provider.
     */
+    
     protected boolean offerReceiver(Receiver receiver, double atMost)
         {
         if (!getMakesOffers())
@@ -437,7 +445,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
         else if (offerOrder == OFFER_ORDER_FIFO)
             {
             Entity e = entities.getFirst();
-            boolean result = offerReceiver(receiver, e); 
+            boolean result = offerReceiver(receiver, e); 			// CHECK
             if (result)
             	{
 				entities.removeFirst();
@@ -447,7 +455,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
          else // if (offerOrder == OFFER_ORDER_LIFO)
             {
             Entity e = entities.getLast();
-            boolean result = offerReceiver(receiver, e);
+            boolean result = offerReceiver(receiver, e);			// CHECK
             if (result)
             	{
 				entities.removeLast();
@@ -636,7 +644,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     public boolean provideEntity(Receiver receiver, int entityNumber)
         {
 		Entity e = getEntity(entityNumber);
-		boolean result = offerReceiver(receiver, e);
+		boolean result = offerReceiver(receiver, e);					// CHECK
 		if (result)
 			{
 			entities.remove(entityNumber);

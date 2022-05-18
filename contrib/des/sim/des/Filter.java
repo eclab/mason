@@ -18,9 +18,9 @@ public abstract class Filter extends Provider implements Receiver
 	{
     private static final long serialVersionUID = 1;
 
-    protected Resource _amount;
-    protected double _atLeast;
-    protected double _atMost;
+     Resource _amount;
+     double _atLeast;
+     double _atMost;
 
     public Resource getTypicalReceived() { return typical; }
 	public boolean hideTypicalReceived() { return true; }
@@ -36,20 +36,48 @@ public abstract class Filter extends Provider implements Receiver
         return false;
         }
 
+	protected boolean offerReceivers(Resource amount, double atLeast, double atMost)
+		{
+		_amount = amount;
+		_atLeast = atLeast;
+		_atMost = atMost;
+		boolean ret = offerReceivers();
+		_amount = null;
+		return ret;
+		}
+
+	/** Not permitted.  Use offerReceivers(amount, atLeast, atMost) instead. */
+    protected boolean offerReceivers(ArrayList<Receiver> receivers)
+    	{
+    	return false;
+    	}
+
     protected boolean offerReceiver(Receiver receiver, double atMost)
         {
-        //return receiver.accept(this, _amount, Math.min(_atLeast, atMost), Math.min(_atMost, atMost));
-        double originalAmount = _amount.getAmount();
-        lastOfferTime = state.schedule.getTime();
-        boolean result = receiver.accept(this, _amount, Math.min(_atLeast, atMost), Math.min(_atMost, atMost));
-		if (result)
-			{
-			CountableResource removed = (CountableResource)(resource.duplicate());
-			removed.setAmount(originalAmount - _amount.getAmount());
-			updateLastAcceptedOffers(removed, receiver);
+        if (!getMakesOffers())
+        	{
+        	return false;
+        	}
+        	
+        if (_amount instanceof CountableResource)
+        	{
+			double originalAmount = _amount.getAmount();
+			lastOfferTime = state.schedule.getTime();
+			boolean result = receiver.accept(this, _amount, Math.min(_atLeast, atMost), Math.min(_atMost, atMost));
+			if (result)
+				{
+				CountableResource removed = (CountableResource)(resource.duplicate());
+				removed.setAmount(originalAmount - _amount.getAmount());
+				updateLastAcceptedOffers(removed, receiver);
+				}
+			return result;
 			}
-		return result;
-        }
+		else
+			{
+			// FIXME: do I need to check _atLeast and _atMost?
+			return offerReceiver(receiver, (Entity) _amount);
+			}
+		}
 
     public String toString()
         {

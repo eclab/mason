@@ -58,14 +58,11 @@ public class Lead extends Filter
         if (!(atLeast >= 0 && atMost >= atLeast))
         	throwInvalidAtLeastAtMost(atLeast, atMost);
 
-        _amount = amount;
-        _atLeast = atLeast;
-        _atMost = atMost;
-    	Resource _oldAmount = null;
+    	Resource oldAmount = null;
         if (amount instanceof CountableResource)
-        	_oldAmount = amount.duplicate();
+        	oldAmount = amount.duplicate();
         
-         boolean val = offerReceivers();
+         boolean val = offerReceivers(amount, atLeast, atMost);
          
          if (val)
          	{
@@ -76,8 +73,8 @@ public class Lead extends Filter
          	else
          		{
          		CountableResource cr = (CountableResource)amount;
-         		CountableResource crOld = (CountableResource)_oldAmount;
-         		double amt = _oldAmount.getAmount() - amount.getAmount();
+         		CountableResource crOld = (CountableResource)oldAmount;
+         		double amt = oldAmount.getAmount() - amount.getAmount();
          		if (amt == 0) // uh
          			{
          			throw new RuntimeException("Receivers returned TRUE when offered, but didn't change the amount.  Uh oh!");
