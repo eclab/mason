@@ -68,7 +68,6 @@ public class Lock extends Filter
 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
-//        System.err.println("Amount offered " + amount);
         blocked = false;
         
     	if (getRefusesOffers()) { return false; }
@@ -98,7 +97,6 @@ public class Lock extends Filter
         	}
 
         _amount = null;		/// let it gc
-//        System.err.println("Accepted " + amount);
         return result;
         }
 

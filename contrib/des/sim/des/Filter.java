@@ -46,12 +46,6 @@ public abstract class Filter extends Provider implements Receiver
 		return ret;
 		}
 
-	/** Not permitted.  Use offerReceivers(amount, atLeast, atMost) instead. */
-    protected boolean offerReceivers(ArrayList<Receiver> receivers)
-    	{
-    	return false;
-    	}
-
     protected boolean offerReceiver(Receiver receiver, double atMost)
         {
         if (!getMakesOffers())
