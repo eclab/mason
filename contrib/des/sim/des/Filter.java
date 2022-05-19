@@ -12,7 +12,14 @@ import java.awt.*;
     turn around in zero time and offer them to a single downstream receiver.  This
     class largely exists to include a bunch of boilerplate variables and methods
     common to all these kinds of objects.
-*/
+    
+    <p>Because they're just passing on their resource, Filter objects don't place
+    the resource in the Entities list or in the resource pool; they just stash it
+    and hand it on.  This is done by calling the special method 
+    offerReceivers(amount, atLeast, atMost) during the accept(...) method.  This in
+    turn stashes these three values and calls offerReceivers() which eventually
+    calls a new offerReceiver(...) method that uses the three stashed values. 
+ */
 
 public abstract class Filter extends Provider implements Receiver
     {

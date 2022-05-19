@@ -587,7 +587,13 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
                     }
                 else
                     {                
-                    result = offerReceiver(selectReceiver(receivers), Double.POSITIVE_INFINITY);
+                    Resource oldResource = resource.duplicate();
+                    Receiver receiver = selectReceiver(receivers);
+                    result = offerReceiver(receiver, Double.POSITIVE_INFINITY);
+                    if (result)
+                    	{
+                    	offerSuccessful(receiver, oldResource, resource);
+                    	}
                     }
                 }
             break;
@@ -612,6 +618,18 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     public Receiver selectReceiver(ArrayList<Receiver> receivers, Resource resource)
         {
         return receivers.get(0);
+        }
+        
+    /**
+       If the offer policy is OFFER_POLICY_SELECT, then if a receiver accepts an offer of a resource,
+       this method is called, with (a copy of) the original resource, the revised resource after then
+       receiver accepted it. If the resource was an ENTITY, then the revised resource will likely be unchanged.
+       If the resource was a COUNTABLE RESOURCE, then the revised resource will be reduced by the amount
+       that the receiver accepted (relative to the original resource).
+    */
+    public void offerSuccessful(Receiver receiver, Resource originalResource, Resource revisedResource)
+        {
+        return;
         }
         
     /**

@@ -15,7 +15,8 @@ import java.awt.*;
 
 /**
    An If conditionally offers received resources to exactly one of N possible receivers depending the 
-   value of the selectReceiver(...) method.
+   value of the selectReceiver(...) method.  Afterwards, the offerSuccessful(...) method will be called
+   if the receiver accepted the offer.
 */
 
 public abstract class If extends Provider implements Receiver
@@ -54,7 +55,9 @@ public abstract class If extends Provider implements Receiver
 			{
 			entities.clear();
             entities.add((Entity)amount);
-            return offerReceivers();
+			boolean result = offerReceivers();
+            entities.clear();		// just to be safe
+            return result;
 			}
 		else
 			{
