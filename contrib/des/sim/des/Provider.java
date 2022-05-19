@@ -587,7 +587,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
                     }
                 else
                     {                
-                    result = offerReceiver(selectReceiver(receivers, entities == null ? resource : entities.getFirst()), Double.POSITIVE_INFINITY);
+                    result = offerReceiver(selectReceiver(receivers), Double.POSITIVE_INFINITY);
                     }
                 }
             break;
@@ -596,6 +596,13 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
         offering = false;
         return result;
         }
+    
+    // This is here so that If can override it
+    Receiver selectReceiver(ArrayList<Receiver> receivers)
+    	{
+    	return selectReceiver(receivers, entities == null ? resource : entities.getFirst());
+    	}
+    
     
     /**
        If the offer policy is OFFER_POLICY_SELECT, then when the receivers are non-empty,

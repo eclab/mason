@@ -18,7 +18,7 @@ import java.awt.*;
    value of the selectReceiver(...) method.
 */
 
-public abstract class If extends Filter
+public abstract class If extends Provider implements Receiver
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
         {
@@ -50,14 +50,39 @@ public abstract class If extends Filter
         if (!(atLeast >= 0 && atMost >= atLeast))
             throwInvalidAtLeastAtMost(atLeast, atMost);
 
-        return offerReceivers(amount, atLeast, atMost);
+		if (entities != null)
+			{
+			entities.clear();
+            entities.add((Entity)amount);
+            return offerReceivers();
+			}
+		else
+			{
+			CountableResource oldResource = resource;
+			oldResource = (CountableResource)amount;
+			boolean result = offerReceivers();
+			resource = oldResource;
+			return result;
+			}
+        }
+
+    /** Returns false always and does nothing: If is push-only. */
+    public boolean provide(Receiver receiver)
+        {
+        return false;
         }
 
     public String toString()
         {
         return "If@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ")";
         }  
-                     
+ 
+    public Resource getTypicalReceived() { return typical; }
+    public boolean hideTypicalReceived() { return true; }
+    boolean refusesOffers = false;
+    public void setRefusesOffers(boolean value) { refusesOffers = value; }
+    public boolean getRefusesOffers() { return refusesOffers; }
+                        
     /**
        If the offer policy is OFFER_POLICY_SELECT, then when the receivers are non-empty,
        this method will be called to specify which receiver should be offered the given resource.

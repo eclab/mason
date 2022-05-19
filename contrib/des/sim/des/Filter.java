@@ -30,7 +30,7 @@ public abstract class Filter extends Provider implements Receiver
         super(state, typical);
         }
 
-    /** Returns false always and does nothing: Transformer is push-only. */
+    /** Returns false always and does nothing: Filter is push-only. */
     public boolean provide(Receiver receiver)
         {
         return false;
