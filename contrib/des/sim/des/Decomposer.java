@@ -8,6 +8,9 @@ package sim.des;
 
 import sim.engine.*;
 import java.util.*;
+import sim.portrayal.*;
+import sim.portrayal.simple.*;
+import java.awt.*;
 
 /**
    A decomposer breaks up a composite Entity and offers its composed elements to receivers.
@@ -16,12 +19,17 @@ import java.util.*;
 
 public class Decomposer extends Provider implements Receiver
     {
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+        {
+        return new ShapePortrayal2D(ShapePortrayal2D.POLY_COMPASS, 
+            getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
+        }
     private static final long serialVersionUID = 1;
 
     HashMap<Integer, Receiver> output;
     
     public Resource getTypicalReceived() { return typical; }
-	public boolean hideTypicalReceived() { return true; }
+    public boolean hideTypicalReceived() { return true; }
 
     void throwNotCompositeEntity(Entity res)
         {
@@ -76,13 +84,13 @@ public class Decomposer extends Provider implements Receiver
     **/
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {       
-    	if (getRefusesOffers()) { return false; }
+        if (getRefusesOffers()) { return false; }
         if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
         if (!(atLeast >= 0 && atMost >= atLeast))
-        	throwInvalidAtLeastAtMost(atLeast, atMost);
+            throwInvalidAtLeastAtMost(atLeast, atMost);
 
         // unpack
         Entity entity = (Entity)amount;
@@ -125,6 +133,6 @@ public class Decomposer extends Provider implements Receiver
         }
         
     boolean refusesOffers = false;
-	public void setRefusesOffers(boolean value) { refusesOffers = value; }
+    public void setRefusesOffers(boolean value) { refusesOffers = value; }
     public boolean getRefusesOffers() { return refusesOffers; }
     }

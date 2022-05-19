@@ -279,7 +279,7 @@ An UncountableResource is a CountableResource which can be subdivided infinitely
 
 \clearpage
 \begin{figure}[t]
-\centering\includegraphics[width=6in]{Processes.pdf}
+\centering\includegraphics[width=6.5in]{Processes.pdf}
 \end{figure}
 
 \section{Processes}
@@ -330,10 +330,6 @@ Both a Receiver and Provider.  When a SimpleDelay receives a Resource, it adds i
 
 A subclass of SimpleDelay.  This is just like a SimpleDelay, except that the delay time for each object received can be {\it different}, so some Resources can move through the Delay faster than others.  Thus the SimpleDelay is implemented using a heap rather than a linked list.
 
-\subsection{Transformer}
-
-Both a Receiver and Provider.  Upon receiving a Resource, it {\bf transforms} the Resource into a different one according to a certain rule, then immediately offers it to downstream receivers.  If they do not accept, then the Resource is discarded.  {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
-
 \subsection{Composer}
 
 Both a Receiver and Provider.  Upon receiving a Resource, it adds it to a collection of Resources. These Resources can be of different types.  When it has all the necessary amounts of Resources for each type, it gathers them together and produces a Composed Entity holding these Resources, then offers the Entity to downstream receivers. If they do not accept, then the Entity is discarded.  The Composer has both minimum and maximum (capacity) amounts for each of the Resources needed to compose into the Entity.
@@ -342,9 +338,23 @@ Both a Receiver and Provider.  Upon receiving a Resource, it adds it to a collec
 
 Both a Receiver and Provider.  Upon receiving a Composed Entity, it decomposes it and offers each of its Resources to various downstream receivers, one registered for each Resource type. If they do not accept, then that Resource is discarded.  {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
 
+
+
+\section{Filters}
+
+Filters are just Processes which accept offers and immediately turn around and offer them to a single downstream Receiver.  Filters are both Providers and Receivers, and never respond to requests to make offers.
+
+\subsection{Filter}
+
+The abstract superclass of Filters, which simply gathers together variables and methods common to them.
+
+\subsection{Transformer}
+
+Upon receiving a Resource, Transformer {\bf transforms} the Resource into a different one according to a certain rule, then immediately offers it to downstream receivers.  If they do not accept, then the Resource is discarded.  {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
+
 \subsection{Lock}
 
-Both a Receiver and Provider.  Upon receiving a Resource, it attempts to {\bf allocate} some amount of {\it a different} Resource from a {\bf Pool}.  If successful, it then offers the original Resource to downstream receivers. If they do not accept, then that Resource is discarded.  {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
+Upon receiving a Resource, Lock attempts to {\bf allocate} some amount of {\it a different} Resource from a {\bf Pool}.  If successful, it then offers the original Resource to downstream receivers. If they do not accept, then that Resource is discarded.  {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
 
 \subsection{Unlock}
 
@@ -358,6 +368,9 @@ An object which gathers statistics on the resources which pass through it.  A Pr
 
 An object detached from Probe with can be used in combination with it to determine the amount of resources in a DES subgraph between them.
 
+\subsection{If}
+
+A Filter which receives and incoming offer, then chooses only one of several possible Receivers to hand the offer to.  This choice is specified in a method defined by the modeler.
 
 \section{Process Utilities}
 

@@ -1,3 +1,9 @@
+/*
+  Copyright 2022 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+        
 package sim.app.dvirus.display;
 
 import sim.display.Continuous2DProxy;
@@ -6,14 +12,14 @@ import sim.display.SimStateProxy;
 import sim.field.continuous.DContinuous2D;
 
 public class DVirusInfectionDemoProxy extends SimStateProxy{
-	
+        
     private static final long serialVersionUID = 1;
 
     public DVirusInfectionDemoProxy(long seed)
         {
         super(seed);
-		setRegistryHost("localhost");
-		//setRegistryPort(5000);
+        setRegistryHost("localhost");
+        //setRegistryPort(5000);
         }
         
 
@@ -22,7 +28,7 @@ public class DVirusInfectionDemoProxy extends SimStateProxy{
     public void start()
         {
         super.start();
-		registerFieldProxy(envgrid, 0);
+        registerFieldProxy(envgrid, 0);
         }
 
-}
+    }

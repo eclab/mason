@@ -1,3 +1,9 @@
+/*
+  Copyright 2022 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+        
 package sim.app.dvirus;
 
 //import java.awt.Color;
@@ -124,20 +130,20 @@ public class DGood extends DAgent{
             }
         }
 /*
-    protected Color goodColor = new Color(0,0,0);
-    protected Color goodMarkColor = new Color(255,0,0);
-    public final void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-        {
-        double diamx = info.draw.width*DVirusInfectionDemo.DIAMETER;
-        double diamy = info.draw.height*DVirusInfectionDemo.DIAMETER;
+  protected Color goodColor = new Color(0,0,0);
+  protected Color goodMarkColor = new Color(255,0,0);
+  public final void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+  {
+  double diamx = info.draw.width*DVirusInfectionDemo.DIAMETER;
+  double diamy = info.draw.height*DVirusInfectionDemo.DIAMETER;
 
-        graphics.setColor( goodColor );            
-        graphics.fillOval((int)(info.draw.x-diamx/2),(int)(info.draw.y-diamy/2),(int)(diamx),(int)(diamy));
-        graphics.setColor( goodMarkColor );
-        graphics.fillRect((int)(info.draw.x-diamx/3),(int)(info.draw.y-diamy/16),(int)(diamx/1.5),(int)(diamy/8));
-        graphics.fillRect((int)(info.draw.x-diamx/16),(int)(info.draw.y-diamy/3),(int)(diamx/8),(int)(diamy/1.5));
-        }
- */   
+  graphics.setColor( goodColor );            
+  graphics.fillOval((int)(info.draw.x-diamx/2),(int)(info.draw.y-diamy/2),(int)(diamx),(int)(diamy));
+  graphics.setColor( goodMarkColor );
+  graphics.fillRect((int)(info.draw.x-diamx/3),(int)(info.draw.y-diamy/16),(int)(diamx/1.5),(int)(diamy/8));
+  graphics.fillRect((int)(info.draw.x-diamx/16),(int)(info.draw.y-diamy/3),(int)(diamx/8),(int)(diamy/1.5));
+  }
+*/   
     public String getType() { return "Good"; }
 
-}
+    }

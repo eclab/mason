@@ -1,3 +1,9 @@
+/*
+  Copyright 2022 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+        
 package sim.app.dschelling;
 
 import sim.app.schelling.Agent;
@@ -9,7 +15,7 @@ import sim.util.Int2D;
 import sim.util.Interval;
 
 public class DSchelling extends DSimState
-{
+    {
 
     private static final long serialVersionUID = 1;
 
@@ -24,55 +30,55 @@ public class DSchelling extends DSimState
 
     // we presume that no one relies on these DURING a simulation
     public int getGridHeight()
-    {
-    	return gridHeight;
-    }
+        {
+        return gridHeight;
+        }
     
     public void setGridHeight(int val)
-    {
-    	if (val > 0) gridHeight = val;
-    }
+        {
+        if (val > 0) gridHeight = val;
+        }
     
     public int getGridWidth()
-    {
-    	return gridWidth;
-	}
+        {
+        return gridWidth;
+        }
     
     public void setGridWidth(int val)
-    {
-    	if (val > 0) gridWidth = val;
-	}
+        {
+        if (val > 0) gridWidth = val;
+        }
     
     public int getNeighborhood()
-    {
-    	return neighborhood;
-    }
+        {
+        return neighborhood;
+        }
     
     public void setNeighborhood(int val)
-    {
-    	if (val > 0) neighborhood = val;
-	}
+        {
+        if (val > 0) neighborhood = val;
+        }
     
     public int getThreshold()
-    {
-    	return threshold;
-	}
+        {
+        return threshold;
+        }
     
     public void setThreshold(int val)
-    {
-    	if (val >= 0) threshold = val;
-	}
+        {
+        if (val >= 0) threshold = val;
+        }
 
     // some cutsie-pie probability sliders.  More work than necessary, but it was fun.
     public Object domRedProbability()
-    {
-    	return new Interval(0.0,1.0);
-	}
+        {
+        return new Interval(0.0,1.0);
+        }
     
     public double getRedProbability()
-    {
-    	return redProbability;
-	}
+        {
+        return redProbability;
+        }
     
     public void setRedProbability(double val) 
         { 
@@ -83,14 +89,14 @@ public class DSchelling extends DSimState
         }
     
     public Object domBlueProbability()
-    {
-    	return new Interval(0.0,1.0);
-	}
+        {
+        return new Interval(0.0,1.0);
+        }
     
     public double getBlueProbability()
-    {
-    	return blueProbability;
-	}
+        {
+        return blueProbability;
+        }
     
     public void setBlueProbability(double val) 
         { 
@@ -101,14 +107,14 @@ public class DSchelling extends DSimState
         }
 
     public Object domEmptyProbability()
-    {
-    	return new Interval(0.0,1.0);
-	}
+        {
+        return new Interval(0.0,1.0);
+        }
     
     public double getEmptyProbability()
-    {
-    	return emptyProbability;
-	}
+        {
+        return emptyProbability;
+        }
     
     public void setEmptyProbability(double val) 
         { 
@@ -119,14 +125,14 @@ public class DSchelling extends DSimState
         }
 
     public Object domUnavailableProbability()
-    {
-    	return new Interval(0.0,1.0);
-	}
+        {
+        return new Interval(0.0,1.0);
+        }
     
     public double getUnavailableProbability()
-    {
-    	return unavailableProbability;
-	}
+        {
+        return unavailableProbability;
+        }
     
     public void setUnavailableProbability(double val) 
         { 
@@ -157,9 +163,9 @@ public class DSchelling extends DSimState
         
     public DSchelling(long seed, int width, int height)
         {
-		super(seed, width, height, 10, true); //what should aoi be?
-		gridWidth = width;
-		gridHeight = height;
+        super(seed, width, height, 10, true); //what should aoi be?
+        gridWidth = width;
+        gridHeight = height;
         createGrids();
         }
     
@@ -171,7 +177,7 @@ public class DSchelling extends DSimState
         //neighbors = new IntGrid2D(gridWidth, gridHeight,0);
         neighbors = new DIntGrid2D(this);
         for(int x=0;x<gridWidth;x++)
-        {
+            {
             for(int y=0;y<gridHeight;y++)
                 {
                 double d = random.nextDouble();
@@ -179,18 +185,18 @@ public class DSchelling extends DSimState
                 else if (d < redProbability + blueProbability) neighbors.set(new Int2D(x, y), BLUE); //g[x][y] = BLUE;
                 else if (d < redProbability + blueProbability + emptyProbability) 
                     {
-                	// g[x][y] = EMPTY; 
-                	// emptySpaces.add(new Int2D(x,y));
-                	
-                	neighbors.set(new Int2D(x, y), EMPTY);
-                	emptySpaces.add(new Int2D(x,y));
-                	
-                	
+                    // g[x][y] = EMPTY; 
+                    // emptySpaces.add(new Int2D(x,y));
+                        
+                    neighbors.set(new Int2D(x, y), EMPTY);
+                    emptySpaces.add(new Int2D(x,y));
+                        
+                        
                     }
                     
                 else neighbors.set(new Int2D(x, y), UNAVAILABLE); //g[x][y] = UNAVAILABLE;
                 }
-        }
+            }
         }
     
 
@@ -198,9 +204,9 @@ public class DSchelling extends DSimState
     /** Resets and starts a simulation */
     public void start()
         {
-    	
-    	System.out.println("hello");
-    	
+        
+        System.out.println("hello");
+        
         super.start();  // clear out the schedule
         
         // make new grids
@@ -215,10 +221,10 @@ public class DSchelling extends DSimState
     
 
     
-	public static void main(final String[] args)
-	{
-		doLoopDistributed(Schelling.class, args);
-		System.exit(0);
-	}
+    public static void main(final String[] args)
+        {
+        doLoopDistributed(Schelling.class, args);
+        System.exit(0);
+        }
 
-}
+    }

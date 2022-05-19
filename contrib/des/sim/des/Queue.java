@@ -8,6 +8,9 @@ package sim.des;
 
 import sim.engine.*;
 import java.util.*;
+import sim.portrayal.*;
+import sim.portrayal.simple.*;
+import java.awt.*;
 
 /** 
     A blocking resource queue with a capacity: you can think of Queue as a warehouse with a maximum
@@ -20,10 +23,15 @@ import java.util.*;
 
 public class Queue extends Provider implements Receiver, Steppable, StatReceiver
     {
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+        {
+        return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_STORAGE, 
+            getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
+        }
     private static final long serialVersionUID = 1;
 
     public Resource getTypicalReceived() { return typical; }
-	public boolean hideTypicalReceived() { return true; }
+    public boolean hideTypicalReceived() { return true; }
 
     void throwInvalidCapacityException(double capacity)
         {
@@ -34,12 +42,12 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
 
     /** Returns the maximum available resources that may be aquired by the Queue. */
     public double getCapacity() { return capacity; }
-	public boolean hideCapacity() { return true; }
+    public boolean hideCapacity() { return true; }
     
     /** Set the maximum available resources that may be aquired by the Queue. 
             
-    <p>Throws a runtime exception if the capacity is negative or NaN.
-	*/
+        <p>Throws a runtime exception if the capacity is negative or NaN.
+    */
     public void setCapacity(double d) 
         { 
         if (!isPositiveNonNaN(d))
@@ -52,7 +60,7 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
     /** Returns whether the Queue offers items immediately upon accepting (when possible) in zero time,
         as opposed to when it is stepped. */
     public boolean getOffersImmediately() { return offersImmediately; }
-	public boolean hideOffersImmediately() { return true; }
+    public boolean hideOffersImmediately() { return true; }
 
     /** Sets whether the Queue offers items immediately upon accepting (when possible) in zero time,
         as opposed to when it is stepped. */
@@ -68,17 +76,18 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
     public Queue(SimState state, Resource typical)
         {
         super(state, typical);
+        setName("Queue");
         }
 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
-    	if (getRefusesOffers()) { return false; }
+        if (getRefusesOffers()) { return false; }
         if (isOffering()) throwCyclicOffers();  // cycle
         
         if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
 
         if (!(atLeast >= 0 && atMost >= atLeast))
-        	throwInvalidAtLeastAtMost(atLeast, atMost);
+            throwInvalidAtLeastAtMost(atLeast, atMost);
 
         if (entities == null)
             {
@@ -87,7 +96,7 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
                 double transfer = Math.min(Math.min(capacity - resource.getAmount(), atMost), amount.getAmount());
                 resource.increase(transfer);
                 ((CountableResource)amount).decrease(transfer);
-				totalReceivedResource += atMost;
+                totalReceivedResource += atMost;
                 if (getOffersImmediately()) offerReceivers(); 
                 return true;
                 }
@@ -98,7 +107,7 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
             if (capacity - entities.size() >= 1)
                 {
                 entities.add((Entity)amount);
-				totalReceivedResource += 1.0;
+                totalReceivedResource += 1.0;
                 if (getOffersImmediately()) offerReceivers(); 
                 return true;
                 }
@@ -120,13 +129,13 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
         }
 
     public void reset(SimState state) 
-    	{
-    	super.reset(state);
-		totalReceivedResource = 0; 
-    	}
+        {
+        super.reset(state);
+        totalReceivedResource = 0; 
+        }
         
     boolean refusesOffers = false;
-	public void setRefusesOffers(boolean value) { refusesOffers = value; }
+    public void setRefusesOffers(boolean value) { refusesOffers = value; }
     public boolean getRefusesOffers() { return refusesOffers; }
     }
         

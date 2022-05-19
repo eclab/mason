@@ -11,17 +11,17 @@ package sim.des;
 */
 
 public class DelayNode
-        {
-        Resource resource;
-        double timestamp;
+    {
+    Resource resource;
+    double timestamp;
                 
-        public DelayNode(Resource resource, double timestamp)
-            {
-            this.resource = resource;
-            this.timestamp = timestamp;
-            }
-        
-        public Resource getResource() { return resource; }
-        public double getTimestamp() { return timestamp; }
+    public DelayNode(Resource resource, double timestamp)
+        {
+        this.resource = resource;
+        this.timestamp = timestamp;
         }
+        
+    public Resource getResource() { return resource; }
+    public double getTimestamp() { return timestamp; }
+    }
         

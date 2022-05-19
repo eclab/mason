@@ -1,3 +1,9 @@
+/*
+  Copyright 2022 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+        
 package sim.app.dwanderer;
 
 import java.io.File;
@@ -12,67 +18,67 @@ import sim.util.*;
 import sim.engine.*;
 
 public class Wanderers extends DSimState 
-{
-	private static final long serialVersionUID = 1;
+    {
+    private static final long serialVersionUID = 1;
 
-	public final static int width = 200;
-	public final static int height = 200;
-	public final static int neighborhood = 1; // aoi
+    public final static int width = 200;
+    public final static int height = 200;
+    public final static int neighborhood = 1; // aoi
 
-	public final DContinuous2D<Wanderer> wanderers;
+    public final DContinuous2D<Wanderer> wanderers;
 
-	final SimpleDateFormat format = new SimpleDateFormat("ss-mm-HH-yyyy-MM-dd");
-	String dateString = format.format(new Date());
-	String dirname = System.getProperty("user.dir") + File.separator + dateString;
+    final SimpleDateFormat format = new SimpleDateFormat("ss-mm-HH-yyyy-MM-dd");
+    String dateString = format.format(new Date());
+    String dirname = System.getProperty("user.dir") + File.separator + dateString;
 
-	/** Creates a Wanderers simulation with the given random number seed. */
-	public Wanderers(final long seed) 
-	{
-		super(seed, Wanderers.width, Wanderers.height, Wanderers.neighborhood, true);
-		wanderers = new DContinuous2D<>((int) (neighborhood), this);
-	}
-		
-	protected void startRoot() 
-	{
-		ArrayList<Wanderer> agents = new ArrayList<Wanderer>();
+    /** Creates a Wanderers simulation with the given random number seed. */
+    public Wanderers(final long seed) 
+        {
+        super(seed, Wanderers.width, Wanderers.height, Wanderers.neighborhood, true);
+        wanderers = new DContinuous2D<>((int) (neighborhood), this);
+        }
+                
+    protected void startRoot() 
+        {
+        ArrayList<Wanderer> agents = new ArrayList<Wanderer>();
 
-		Wanderer agentA = new Wanderer(new Double2D(50.0, 50.0), "A");
-		Wanderer agentB = new Wanderer(new Double2D(150.0, 150.0), "B");
-	
-		agents.add(agentA);
-		agents.add(agentB);
+        Wanderer agentA = new Wanderer(new Double2D(50.0, 50.0), "A");
+        Wanderer agentB = new Wanderer(new Double2D(150.0, 150.0), "B");
+        
+        agents.add(agentA);
+        agents.add(agentB);
 
-		sendRootInfoToAll("agents", agents);
-	}
+        sendRootInfoToAll("agents", agents);
+        }
 
-	public void start() 
-	{
-		super.start();
+    public void start() 
+        {
+        super.start();
 
-		ArrayList<Wanderer> agents = (ArrayList<Wanderer>) getRootInfo("agents");
+        ArrayList<Wanderer> agents = (ArrayList<Wanderer>) getRootInfo("agents");
 
-		for (Object obj : agents) 
-		{
-			Wanderer agent = (Wanderer) obj;
-			if (getPartition().getLocalBounds().contains(agent.loc))
-			{
-				try 
-				{
-					registerDistinguishedObject(agent);
-				} 
-				catch (Exception e) 
-				{
-					e.printStackTrace();
-				} 
-				wanderers.addAgent(agent.loc, agent, 0, 0, 1);
-			}
-		}
-	}
+        for (Object obj : agents) 
+            {
+            Wanderer agent = (Wanderer) obj;
+            if (getPartition().getLocalBounds().contains(agent.loc))
+                {
+                try 
+                    {
+                    registerDistinguishedObject(agent);
+                    } 
+                catch (Exception e) 
+                    {
+                    e.printStackTrace();
+                    } 
+                wanderers.addAgent(agent.loc, agent, 0, 0, 1);
+                }
+            }
+        }
 
-	public static void main(final String[] args) throws MPIException 
-	{
-		Timing.setWindow(20);
-		doLoopDistributed(Wanderers.class, args);
-		System.exit(0);
-	}
-}
+    public static void main(final String[] args) throws MPIException 
+        {
+        Timing.setWindow(20);
+        doLoopDistributed(Wanderers.class, args);
+        System.exit(0);
+        }
+    }

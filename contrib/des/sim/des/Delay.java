@@ -30,14 +30,6 @@ import java.awt.*;
 
 public class Delay extends SimpleDelay
     {
-    public String getLabel() 
-    	{ 
-    	return (getName() == null ? "Delay" : getName()) + " " + 
-    		getTotal() + 
-    		(getCapacity() != Double.POSITIVE_INFINITY ? 
-    			" (" + String.format("%.2f", 100 * (getCapacity() == 0 ? 1.0 : getTotal() / getCapacity())) + ")" : "");
-    	}
-
     private static final long serialVersionUID = 1;
 
     Heap delayHeap;
@@ -61,34 +53,34 @@ public class Delay extends SimpleDelay
         }
         
     /** Returns in an array all the Resources currently being delayed and not yet ready to provide,
-    	along with their timestamps (when they are due to become available), combined as a DelayNode.  
-    	Note that this is a different set of Resources than Provider.getEntities() returns.  
-    	You can modify the array (it's yours), but do not modify the Resources stored inside, as they
-    	are the actual Resources being delayed.
-      */
+        along with their timestamps (when they are due to become available), combined as a DelayNode.  
+        Note that this is a different set of Resources than Provider.getEntities() returns.  
+        You can modify the array (it's yours), but do not modify the Resources stored inside, as they
+        are the actual Resources being delayed.
+    */
     public DelayNode[] getDelayedResources()
-    	{
-    	DelayNode[] nodes = new DelayNode[delayHeap.size()];
-    	if (nodes.length == 0) return nodes;
-    	
-    	Comparable[] keys = delayHeap.getKeys();
-    	Object[] objs = delayHeap.getObjects();
-    	for(int i = 0; i < nodes.length; i++)
-    		{
-    		nodes[i] = new DelayNode((Resource)(objs[i]),((Double)(keys[i])).doubleValue());
-    		}
-    	return nodes;
-    	}
+        {
+        DelayNode[] nodes = new DelayNode[delayHeap.size()];
+        if (nodes.length == 0) return nodes;
+        
+        Comparable[] keys = delayHeap.getKeys();
+        Object[] objs = delayHeap.getObjects();
+        for(int i = 0; i < nodes.length; i++)
+            {
+            nodes[i] = new DelayNode((Resource)(objs[i]),((Double)(keys[i])).doubleValue());
+            }
+        return nodes;
+        }
     public boolean hideDelayedResources() { return true; }
     
-	public double getSize() { return delayHeap.size(); }
+    public double getSize() { return delayHeap.size(); }
 
-	public double getTotal() { if (entities == null) return totalResource; else return delayHeap.size(); }
+    public double getDelayed() { if (entities == null) return totalDelayedResource; else return delayHeap.size(); }
 
     public void clear()
         {
         delayHeap = new Heap();
-        totalResource = 0.0;
+        totalDelayedResource = 0.0;
         }
         
     /** Sets the distribution used to independently select the delay time for each separate incoming 
@@ -122,36 +114,36 @@ public class Delay extends SimpleDelay
                 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
-    	if (getRefusesOffers()) { return false; }
+        if (getRefusesOffers()) { return false; }
         if (!typical.isSameType(amount)) 
             throwUnequalTypeException(amount);
                 
         if (isOffering()) throwCyclicOffers();  // cycle
         
         if (!(atLeast >= 0 && atMost >= atLeast))
-        	throwInvalidAtLeastAtMost(atLeast, atMost);
+            throwInvalidAtLeastAtMost(atLeast, atMost);
 
         double nextTime = state.schedule.getTime() + getDelay(provider, amount);
 
         if (entities == null)
             {
             CountableResource cr = (CountableResource)amount;
-            double maxIncoming = Math.min(Math.min(capacity - totalResource, atMost), cr.getAmount());
+            double maxIncoming = Math.min(Math.min(capacity - totalDelayedResource, atMost), cr.getAmount());
             if (maxIncoming < atLeast) return false;
                 
             CountableResource token = (CountableResource)(cr.duplicate());
             token.setAmount(maxIncoming);
             cr.decrease(maxIncoming);
             delayHeap.add(token, nextTime);
-			totalResource += maxIncoming;            
-			totalReceivedResource += maxIncoming;
+            totalDelayedResource += maxIncoming;            
+            totalReceivedResource += maxIncoming;
             }
         else
             {
             if (delayHeap.size() >= capacity) return false;      // we're at capacity
             delayHeap.add(amount, nextTime);
-			totalResource += 1;            
-			totalReceivedResource += 1.0;
+            totalDelayedResource += 1;            
+            totalReceivedResource += 1.0;
             }
        
         if (getAutoSchedules()) state.schedule.scheduleOnce(nextTime, getRescheduleOrdering(), this);
@@ -162,9 +154,9 @@ public class Delay extends SimpleDelay
     protected void update()
         {
         if (getDropsResourcesBeforeUpdate()) 
-        	{
-        	drop();
-        	}
+            {
+            drop();
+            }
 
         double time = state.schedule.getTime();
         
@@ -175,15 +167,15 @@ public class Delay extends SimpleDelay
             if (entities == null)
                 {
                 CountableResource res = ((CountableResource)_res);
-                totalResource -= res.getAmount();
+                totalDelayedResource -= res.getAmount();
                 resource.add(res);
                 }
             else
                 {
                 entities.add((Entity)(_res));
-				totalResource--;            
+                totalDelayedResource--;            
                 }
- 			minKey = (Double)delayHeap.getMinKey();		// grab the next one
+            minKey = (Double)delayHeap.getMinKey();         // grab the next one
             }
         }
 
@@ -193,7 +185,7 @@ public class Delay extends SimpleDelay
         }               
         
     boolean refusesOffers = false;
-	public void setRefusesOffers(boolean value) { refusesOffers = value; }
+    public void setRefusesOffers(boolean value) { refusesOffers = value; }
     public boolean getRefusesOffers() { return refusesOffers; }
     }
         

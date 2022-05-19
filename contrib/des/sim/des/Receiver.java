@@ -32,21 +32,21 @@ public interface Receiver extends Named, Resettable
        <p>May throw a RuntimeException if the resource does not
        match the typical resource of the receiver, or if a cycle was detected in accepting
        offers (A offers to B, which offers to C, which then offers to A).
-      	At present does not check that atLeast and atMost are valid.
-      	
-      <p>It must be the case that 0 &lt;= atLeast &lt; = atMost &lt;= resource.getAmount(), 
-      or else a RuntimeException may be thrown. 
+       At present does not check that atLeast and atMost are valid.
+        
+       <p>It must be the case that 0 &lt;= atLeast &lt; = atMost &lt;= resource.getAmount(), 
+       or else a RuntimeException may be thrown. 
     */
     public boolean accept(Provider provider, Resource resource, double atLeast, double atMost);
 
     /** Returns the typical kind of resource the receiver can accept. 
-    	When a Receiver is also a Provider, this is very often implemented
-    	simply by calling getTypicalProvided() */
+        When a Receiver is also a Provider, this is very often implemented
+        simply by calling getTypicalProvided() */
     public Resource getTypicalReceived();
     
-	/** Sets whether the receiver currently refuses all offers.  The default should be FALSE. */
-	public void setRefusesOffers(boolean value);
+    /** Sets whether the receiver currently refuses all offers.  The default should be FALSE. */
+    public void setRefusesOffers(boolean value);
 
-	/** Returns whether the receiver currently refuses all offers.  The default should be FALSE. */
+    /** Returns whether the receiver currently refuses all offers.  The default should be FALSE. */
     public boolean getRefusesOffers();
     }

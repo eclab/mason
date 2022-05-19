@@ -9,6 +9,9 @@ package sim.des;
 import sim.engine.*;
 import sim.util.*;
 import java.util.*;
+import sim.portrayal.*;
+import sim.portrayal.simple.*;
+import java.awt.*;
 
 /**
    A Lock locks (seizes, acquires) resources from a pool before permitting resources to pass through it
@@ -17,23 +20,27 @@ import java.util.*;
    accepts the offer and offers it in turn to registered receivers.
 */
 
-public class Lock extends Provider implements Receiver
+public class Lock extends Filter
     {
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+        {
+        return new ShapePortrayal2D(ShapePortrayal2D.POLY_HOURGLASS, 
+            getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
+        }
+
     private static final long serialVersionUID = 1;
 
     Pool pool;
     double numResources;
     boolean blocked = false;
     
-    public Resource getTypicalReceived() { return typical; }
-	public boolean hideTypicalReceived() { return true; }
-
     /** Builds a lock attached to the given pool and with the given amount of resources acquired each time. */
     public Lock(SimState state, Resource typical, Pool pool, double numResources)
         {
         super(state, typical);
         this.numResources = numResources;
         this.pool = pool;
+        setName("Lock ( " + pool.getName() + ")");
         }
         
     /** Builds a lock attached to the given pool and with 1.0 of the resource acquired each time. */
@@ -45,73 +52,51 @@ public class Lock extends Provider implements Receiver
     /** Builds a Lock with the same parameters as the provided Lock. */
     public Lock(Lock other)
         {
-        super(other.state, other.typical);
-        this.pool = other.pool;
-        this.numResources = other.numResources;
+        this(other.state, other.typical, other.pool, other.numResources);
         }
                 
     /** Returns the number of resources allocated each time */
     public double getNumResources() { return numResources; }
-	public boolean hideNumResources() { return true; }
+    public boolean hideNumResources() { return true; }
     
     /** Sets the number of resources allocated each time */
     public void setNumResources(double val) { numResources = val; }
         
     /** Always returns true: locks only make take-it-or-leave-it offers */
     public boolean getOffersTakeItOrLeaveIt() { return true; }
-	public boolean hideOffersTakeItOrLeaveIt() { return true; }
+    public boolean hideOffersTakeItOrLeaveIt() { return true; }
 
-    /** Returns false always and does nothing. */
-    public boolean provide(Receiver receiver)
-        {
-        return false;
-        }
-
-    protected boolean offerReceiver(Receiver receiver, double atMost)
-        {
-        return receiver.accept(this, _amount, Math.min(_atLeast, atMost), Math.min(_atMost, atMost));
-        }
-        
-    double _atLeast;
-    double _atMost;
-    Resource _amount;
-        
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
-//        System.err.println("Amount offered " + amount);
         blocked = false;
         
-    	if (getRefusesOffers()) { return false; }
+        if (getRefusesOffers()) { return false; }
         if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
         if (!(atLeast >= 0 && atMost >= atLeast))
-        	throwInvalidAtLeastAtMost(atLeast, atMost);
+            throwInvalidAtLeastAtMost(atLeast, atMost);
 
-		// try to acquire resources
+        // try to acquire resources
         if (pool.getResource().getAmount() < numResources) 
-        	{
-        	blocked = true;
-        	return false;
-        	}
+            {
+            blocked = true;
+            return false;
+            }
 
-		// pre-grab the resource
+        // pre-grab the resource
         pool.getResource().decrease(numResources);
 
-        _amount = amount;
-        _atLeast = atLeast;
-        _atMost = atMost;
-        boolean result = offerReceivers();
+        boolean result = offerReceivers(amount, atLeast, atMost);
                 
         if (!result) // gotta put it back
-        	{
-        	pool.getResource().increase(numResources);
-        	pool.getResource().bound(pool.getMaximum());
-        	}
+            {
+            pool.getResource().increase(numResources);
+            pool.getResource().bound(pool.getMaximum());
+            }
 
-        _amount = null;		/// let it gc
-//        System.err.println("Accepted " + amount);
+        _amount = null;         /// let it gc
         return result;
         }
 
@@ -120,20 +105,10 @@ public class Lock extends Provider implements Receiver
         return "Lock@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical.getName() + ", " + pool + ", " + numResources + ")";
         }  
                      
-    /** Does nothing. */
-    public void step(SimState state)
-        {
-        // do nothing
-        }
-        
-    boolean refusesOffers = false;
-	public void setRefusesOffers(boolean value) { refusesOffers = value; }
-    public boolean getRefusesOffers() { return refusesOffers; }
-    
-    public String getLabel() 
-    	{ 
-    	return (getName() == null ? "Lock (" + (pool.getName() == null ? "Pool " + System.identityHashCode(pool) : pool.getName()) + ")" : getName());
-    	}    
+    public String getName() 
+        { 
+        return "Lock (" + (pool.getName() == null ? "Pool " + System.identityHashCode(pool) : pool.getName()) + ")";
+        }    
 
-	public boolean getDrawState() { return blocked; }
+    public boolean getDrawState() { return blocked; }
     }

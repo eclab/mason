@@ -17,18 +17,18 @@ public class HeatBugsProxy extends SimStateProxy
     public HeatBugsProxy(long seed)
         {
         super(seed);
-		setRegistryHost("localhost");
-		//setRegistryPort(5000);
+        setRegistryHost("localhost");
+        //setRegistryPort(5000);
         }
         
-	DoubleGrid2DProxy valgrid = new DoubleGrid2DProxy(1,1);	// width and height don't matter, they'll be changed
-	DenseGrid2DProxy buggrid = new DenseGrid2DProxy(1,1);		// width and height don't matter, they'll be changed
+    DoubleGrid2DProxy valgrid = new DoubleGrid2DProxy(1,1); // width and height don't matter, they'll be changed
+    DenseGrid2DProxy buggrid = new DenseGrid2DProxy(1,1);           // width and height don't matter, they'll be changed
 
     public void start()
         {
         super.start();
-		registerFieldProxy(valgrid, 0);
-		registerFieldProxy(buggrid, 2);
+        registerFieldProxy(valgrid, 0);
+        registerFieldProxy(buggrid, 2);
         }
     }
     

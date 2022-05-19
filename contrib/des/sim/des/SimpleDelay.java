@@ -7,8 +7,8 @@
 package sim.des;
 import sim.engine.*;
 import java.util.*;
-import sim.portrayal.simple.*;
 import sim.portrayal.*;
+import sim.portrayal.simple.*;
 import java.awt.*;
 
 /** 
@@ -20,47 +20,40 @@ import java.awt.*;
 public class SimpleDelay extends Source implements Receiver, Steppable, StatReceiver
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
-    	{
-    	return new RectanglePortrayal2D(Color.black, scale, true);
-    	}
-
-    public String getLabel() 
-    	{ 
-    	return (getName() == null ? "SimpleDelay" : getName()) + " " + 
-    		getTotal() + 
-    		(getCapacity() != Double.POSITIVE_INFINITY ? 
-    			" (" + String.format("%.2f", 100 * (getCapacity() == 0 ? 1.0 : getTotal() / getCapacity())) + ")" : "");
-    	}
+        {
+        return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_DELAY, 
+            getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
+        }
 
     private static final long serialVersionUID = 1;
 
     public Resource getTypicalReceived() { return typical; }
-	public boolean hideTypicalReceived() { return true; }
+    public boolean hideTypicalReceived() { return true; }
 
-    double totalResource = 0.0;
+    double totalDelayedResource = 0.0;
     LinkedList<DelayNode> delayQueue = new LinkedList<>();
     double delayTime;
     int rescheduleOrdering = 0;
     boolean autoSchedules = true;
-	boolean dropsResourcesBeforeUpdate = true;
+    boolean dropsResourcesBeforeUpdate = true;
     
     /** Returns in an array all the Resources currently being delayed and not yet ready to provide,
-    	along with their timestamps (when they are due to become available), combined as a DelayNode.  
-    	Note that this is a different set of Resources than Provider.getEntities() returns.  
-    	You can modify the array (it's yours), but do not modify the Resources stored inside, as they
-    	are the actual Resources being delayed.
-      */
+        along with their timestamps (when they are due to become available), combined as a DelayNode.  
+        Note that this is a different set of Resources than Provider.getEntities() returns.  
+        You can modify the array (it's yours), but do not modify the Resources stored inside, as they
+        are the actual Resources being delayed.
+    */
     public DelayNode[] getDelayedResources()
-    	{
-    	return (DelayNode[])(delayQueue.toArray(new DelayNode[delayQueue.size()]));
-    	}
+        {
+        return (DelayNode[])(delayQueue.toArray(new DelayNode[delayQueue.size()]));
+        }
     public boolean hideDelayedResources() { return true; }
     
     /** Returns whether the SimpleDelay schedules itself on the Schedule automatically to handle
         the next timestep at which a delayed resource will become available.  If you turn this
         off you will have to schedule the SimpleDelay yourself. */
     public boolean getAutoSchedules() { return autoSchedules; }
-	public boolean hideAutoSchedules() { return true; }
+    public boolean hideAutoSchedules() { return true; }
 
     /** Sets whether the SimpleDelay schedules itself on the Schedule automatically to handle
         the next timestep at which a delayed resource will become available.  If you turn this
@@ -72,28 +65,28 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         {
         super.clear();
         delayQueue.clear();
-        totalResource = 0.0;
+        totalDelayedResource = 0.0;
         }
 
-	/** Returns the number of items currently being delayed. */
-	public double getSize() { return delayQueue.size(); }
+    /** Returns the number of items currently being delayed. */
+    public double getSize() { return delayQueue.size(); }
 
-	/** Returns the number AMOUNT of resource currently being delayed. */
-	public double getTotal() { if (entities == null) return totalResource; else return delayQueue.size(); }
+    /** Returns the number AMOUNT of resource currently being delayed. */
+    public double getDelayed() { if (entities == null) return totalDelayedResource; else return delayQueue.size(); }
 
-	/** Returns the number AMOUNT of resource currently being delayed, plus the current available resources. */
-	public double getTotalPlusAvailable() { return getTotal() + getAvailable(); }
-	
+    /** Returns the number AMOUNT of resource currently being delayed, plus the current available resources. */
+    public double getDelayedPlusAvailable() { return getDelayed() + getAvailable(); }
+        
     /** Returns the delay time. */
     public double getDelayTime() { return delayTime; }
-	public boolean hideDelayTime() { return true; }
+    public boolean hideDelayTime() { return true; }
 
     /** Sets the delay time and clears the delay entirely. */
     public void setDelayTime(double delayTime) { clear(); this.delayTime = delayTime; }
 
     /** Returns the delay ordering. */
     public int getRescheduleOrdering() { return rescheduleOrdering; }
-	public boolean hideRescheduleOrdering() { return true; }
+    public boolean hideRescheduleOrdering() { return true; }
 
     /** Returns the delay ordering and clears the delay entirely. */
     public void setRescheduleOrdering(int ordering) { clear();  this.rescheduleOrdering = ordering; }
@@ -119,6 +112,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         super(state, typical);
         this.delayTime = delayTime;
         buildDelay();
+        setName("Delay");
         }
 
     /** Creates a SimpleDelay with a given delayTime, 0 ordering, a delay time of 1.0, and typical resource. */
@@ -131,58 +125,58 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         then auto-reschedules the delay if that feature is on. */
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
-    	if (getRefusesOffers()) { return false; }
+        if (getRefusesOffers()) { return false; }
         if (!typical.isSameType(amount)) 
             throwUnequalTypeException(amount);
         
         if (isOffering()) throwCyclicOffers();  // cycle
         
         if (!(atLeast >= 0 && atMost >= atLeast))
-        	throwInvalidAtLeastAtMost(atLeast, atMost);
+            throwInvalidAtLeastAtMost(atLeast, atMost);
 
         double nextTime = state.schedule.getTime() + delayTime;
         if (entities == null)
             {
             CountableResource cr = (CountableResource)amount;
-            double maxIncoming = Math.min(Math.min(capacity - totalResource, atMost), cr.getAmount());
+            double maxIncoming = Math.min(Math.min(capacity - totalDelayedResource, atMost), cr.getAmount());
             if (maxIncoming < atLeast) return false;
                 
             CountableResource token = (CountableResource)(cr.duplicate());
             token.setAmount(maxIncoming);
             cr.decrease(maxIncoming);
             delayQueue.add(new DelayNode(token, nextTime));
-			totalResource += maxIncoming;            
-			totalReceivedResource += maxIncoming;
+            totalDelayedResource += maxIncoming;            
+            totalReceivedResource += maxIncoming;
             }
         else
             {
             if (delayQueue.size() >= capacity) return false; // we're at capacity
             delayQueue.add(new DelayNode(amount, nextTime));
-			totalResource += 1;            
-			totalReceivedResource += 1.0;
+            totalDelayedResource += 1;            
+            totalReceivedResource += 1.0;
             }
             
         if (getAutoSchedules()) state.schedule.scheduleOnce(nextTime, getRescheduleOrdering(), this);
         return true;
         }
 
-	/** Sets whether available resources are cleared prior to loading new delayed resources
-		during update().  By default this is TRUE.  If this is FALSE, then resources will build
-		potentialy forever if not accepted by downstream receivers, as there is no maximum 
-		capacity to the available resources. */
-	public void setDropsResourcesBeforeUpdate(boolean val)
-		{
-		dropsResourcesBeforeUpdate = val; 
-		}
+    /** Sets whether available resources are cleared prior to loading new delayed resources
+        during update().  By default this is TRUE.  If this is FALSE, then resources will build
+        potentialy forever if not accepted by downstream receivers, as there is no maximum 
+        capacity to the available resources. */
+    public void setDropsResourcesBeforeUpdate(boolean val)
+        {
+        dropsResourcesBeforeUpdate = val; 
+        }
 
-	/** Returns whether available resources are cleared prior to loading new delayed resources
-		during update().  By default this is TRUE.  If this is FALSE, then resources will build
-		potentialy forever if not accepted by downstream receivers, as there is no maximum 
-		capacity to the available resources. */
-	public boolean getDropsResourcesBeforeUpdate()
-		{
-		return dropsResourcesBeforeUpdate; 
-		}
+    /** Returns whether available resources are cleared prior to loading new delayed resources
+        during update().  By default this is TRUE.  If this is FALSE, then resources will build
+        potentialy forever if not accepted by downstream receivers, as there is no maximum 
+        capacity to the available resources. */
+    public boolean getDropsResourcesBeforeUpdate()
+        {
+        return dropsResourcesBeforeUpdate; 
+        }
 
     /** Removes all currently ripe resources. */
     protected void drop()
@@ -199,10 +193,10 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
     protected void update()
         {
         if (getDropsResourcesBeforeUpdate()) 
-        	{
-        	drop();
-        	}
-        	
+            {
+            drop();
+            }
+                
         double time = state.schedule.getTime();
                 
         Iterator<DelayNode> iterator = delayQueue.iterator();
@@ -215,13 +209,13 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
                     {
                     CountableResource res = ((CountableResource)(node.resource));
                     iterator.remove();
-                    totalResource -= res.getAmount();
+                    totalDelayedResource -= res.getAmount();
                     resource.add(res);
                     }
                 else
                     {
                     entities.add((Entity)(node.resource));
-					totalResource--;            
+                    totalDelayedResource--;            
                     }
                 }
             else break;             // don't process any more
@@ -243,14 +237,36 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         offerReceivers();
         }
 
-	public void reset()
-		{
-		clear();
-		totalReceivedResource = 0; 
-		}
+    public void reset()
+        {
+        clear();
+        totalReceivedResource = 0; 
+        }
         
     boolean refusesOffers = false;
-	public void setRefusesOffers(boolean value) { refusesOffers = value; }
+    public void setRefusesOffers(boolean value) { refusesOffers = value; }
     public boolean getRefusesOffers() { return refusesOffers; }
+    
+    public double[] getDataBars() 
+        {
+        if (getDropsResourcesBeforeUpdate())
+            return new double[] { getCapacity() == 0 ? -1 : getDelayed() / (double)getCapacity() };
+        else
+            return new double[] { getCapacity() == 0 ? -1 : getDelayed() / (double)getCapacity(), -1 };
+        }
+    public String[] getDataValues() 
+        {
+        if (getDropsResourcesBeforeUpdate())
+            return new String[] { "" + getDelayed() /*+ "/" + getCapacity()*/ };
+        else
+            return new String[] { "" + getDelayed() /*+ "/" + getCapacity()*/, "" + getAvailable() };
+        }
+    public String[] getDataLabels()
+        {
+        if (getDropsResourcesBeforeUpdate())
+            return new String[] { "Delayed" };
+        else
+            return new String[] { "Delayed", "Available"};
+        }
     }
         
