@@ -26,11 +26,7 @@ public class DenseGrid2DProxy extends DenseGrid2D implements UpdatableProxy
 		
 		//rebuild bounds by combining each processor?
 		
-		//IntRect2D bounds = stateProxy.worldBounds;
-		//System.out.println(bounds);
 
-		//int width = bounds.br().x - bounds.ul().x;
-		//int height = bounds.br().y - bounds.ul().y;
 		
 		int halo_size = 0;
 

@@ -18,17 +18,7 @@ public class ObjectGrid2DProxy extends ObjectGrid2D implements UpdatableProxy
 
 	public void update(SimStateProxy stateProxy, int proxyIndex, int[] quad_tree_partitions) throws RemoteException, NotBoundException
 		{
-		/*
-		IntRect2D bounds = stateProxy.worldBounds;
-		//System.out.println(bounds);
 
-		int width = bounds.br().x - bounds.ul().x;
-		int height = bounds.br().y - bounds.ul().y;
-		
-
-		if (width != this.width || height != this.height)
-			reshape(width, height);
-			*/
 		
 		int halo_size = 0;
 

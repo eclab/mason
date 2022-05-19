@@ -46,10 +46,7 @@ public class DFlockers extends DSimState
 
 		flockers = new DContinuous2D<>((int) (DFlockers.neighborhood / 1.5), this);
 		
-		//this.recordStats = true;
-		//this.recordStats = false;
-		//this.startStats(0);
-		//this.startStats(1);
+
 
 
 	}
@@ -60,7 +57,6 @@ public class DFlockers extends DSimState
 		// TODO Auto-generated method stub
 		super.preSchedule(); // do not forget this line
 
-		System.out.println("Size of agents in proc " + getPID() + " " + flockers.getAllAgentsInStorage().size()+flockers.getHaloBounds());
 
 	}
 
@@ -86,7 +82,6 @@ public class DFlockers extends DSimState
 		// TODO Auto-generated method stub
 		super.start(); // do not forget this line
 
-		// ArrayList<DFlocker> agents = (ArrayList<DFlocker>) rootInfo.get("agents");
 		ArrayList<DFlocker> agents = (ArrayList<DFlocker>) getRootInfo("agents");
 
 		for (Object p : agents)

@@ -174,31 +174,13 @@ public class DFlocker extends DSteppable implements Oriented2D
 
 		if (dead)
 			return;
-		//List<DFlocker> b = null;
-		//List<DFlocker> b = new ArrayList<DFlocker>();
 
-		// try {
-		//b = dFlockers.flockers.getNeighborsWithin(this, DFlockers.neighborhood);
-		//b = dFlockers.flockers.getStorage().getNeighborsWithin(this, DFlockers.neighborhood); //this works too
-
-		//this is the newest version
-		
-		//Bag b_bag = dFlockers.flockers.getNeighborsWithinDistance(this.loc, (double)DFlockers.neighborhood, true, true, null);
-		//ArrayList b_bag = dFlockers.flockers.getNeighborsWithinDistance(this.loc, (double)DFlockers.neighborhood, null);
-		//for(int i=0; i<b_bag.size(); i++)
-		//{
-		//	b.add((DFlocker)b_bag.get(i));
-		//}
 		ArrayList<DFlocker> b = getNeighbors(dFlockers);
 		
 		
 		
 		
-		
-		
-//		}catch (Exception e) {
-//			System.out.println("SIMULATION ERROR: agent "+this+ " on pid"+dFlockers.getPartition().getPid());
-//		}
+
 
 		final Double2D avoid = avoidance(b, dFlockers.flockers);
 		final Double2D cohe = cohesion(b, dFlockers.flockers);
@@ -223,14 +205,7 @@ public class DFlocker extends DSteppable implements Oriented2D
 		lastd = new Double2D(dx, dy);
 		loc = new Double2D(dFlockers.flockers.stx(loc.x + dx), dFlockers.flockers.sty(loc.y + dy));
 		
-//		// TESTING >>>>>>>>
-//		// Sometimes, randomly send flocker to root node
-//		if (state.random.nextBoolean(0.0001)) {
-//			//TODO lastd?
-//			loc = new Double2D(0,0);
-//			System.out.println("moved flocker to origin");
-//		}
-//		// <<<<<<<<<<<<<<<<
+
 		
 		dFlockers.addStat(loc.getX(), 0); //testing stats
 		dFlockers.addStat(loc.getY(), 1); //testing stats

@@ -156,10 +156,7 @@ public class DPSO extends DSimState {
 
         for (int i = 0; i < numParticles; i++)
         {
-        //double x = (random.nextDouble() * width); // - (width * 0.5);
-        //double y = (random.nextDouble() * height); // - (height * 0.5);
-        //double vx = (random.nextDouble() * initialVelocityRange) - (initialVelocityRange * 0.5);
-        //double vy = (random.nextDouble() * initialVelocityRange) - (initialVelocityRange * 0.5);
+ 
         
         double x = (random.nextDouble() * width) - (width * 0.5);
         double y = (random.nextDouble() * height) - (height * 0.5);
@@ -228,12 +225,7 @@ public class DPSO extends DSimState {
                     state.kill();
                 }
             
-        	//System.out.println(getPID()+" before "+bestVal+" x: "+best_x+" y: "+best_y);
 
-        	//updateGlobals();
-        	
-        	//System.out.println(getPID()+" after "+bestVal+" x: "+best_x+" y: "+best_y);
-        	//System.exit(-1);
 
             }
         }); 

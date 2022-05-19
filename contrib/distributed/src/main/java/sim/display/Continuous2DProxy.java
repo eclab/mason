@@ -24,17 +24,7 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
 
 	public void update(SimStateProxy stateProxy, int proxyIndex, int[] quad_tree_partitions) throws RemoteException, NotBoundException
 	{
-		/*
-		IntRect2D bounds = stateProxy.worldBounds;
-		//System.out.println(bounds);
 
-		int width = bounds.br().x - bounds.ul().x;
-		int height = bounds.br().y - bounds.ul().y;
-		
-
-		//if (width != this.width || height != this.height)
-		reshape(width, height);
-		*/
 
 		int halo_size = 0;
 
@@ -103,25 +93,7 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
             HashMap<Long, DObject>[] data = storage.storage;
             HashMap<Long, Double2D> locations = storage.getLocations();
 
-//            HashMap<Long, DObject>[] privateData = (HashMap<Long, DObject>[]) new Object[data.length];
 
-//			for (int x = partition_width_low_ind; x < partition_width_high_ind; x++) {
-//				for (int y = partition_height_low_ind; y < partition_height_high_ind; y++) {
-//					Int2D local_p = storage.toLocalPoint(new Int2D(x, y)); //convert to local storage to access partition storage correctly
-////					if (local_p.x * partBound.getHeight() + local_p.y < 0 || local_p.x * partBound.getHeight() + local_p.y >= data.length) {
-////						System.err.println("IndexOutOfBoundsException: " + local_p.x * partBound.getHeight() + local_p.y + " for bounds " + data.length);
-////						continue;
-////					}
-//					HashMap<Long, DObject> privateArea = storage.getCell(local_p);
-////					HashMap<Long, DObject> privateArea = data[local_p.x * partBound.getHeight() + local_p.y];
-////					HashMap<Long, DObject> privateArea = data[GridStorage.getFlatIdx(local_p, partBound.getHeight())];
-//	    			for (Entry<Long, DObject> entry : privateArea.entrySet()) {
-//	    				Double2D loc = locations.get(entry.getKey());
-//	    				DObject obj = entry.getValue();
-//	    				setObjectLocation(obj, loc);
-//	    			}
-//				}
-//			}
 
             HashMap<Long, Double2D> map = storage.getLocations();
     		for (Entry<Long, Double2D> entry : map.entrySet())
@@ -143,16 +115,11 @@ public class Continuous2DProxy extends Continuous2D implements UpdatableProxy
     					
     					}
     				}
-    				//System.out.println("set obj loc: " + loc + " -> " + new_loc);
-    			    //setObjectLocation(entry.getKey(), new_loc);
-                    //setObjectLocation(entry.get)
 
-    			    //setObjectLocation(entry.getValue(), new_loc);
 
     			}
     		}
 		}
 		
-		System.out.println("--");
 	}
 }

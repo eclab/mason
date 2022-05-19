@@ -288,30 +288,7 @@ public class GeomVectorContinuousStorage<T extends DGeomObject> extends Continuo
 
 
 	
-	
-	//checks if elements in both storage types match
-	/*
-	public void geomvecAndContinuousStorageMatch(String s) {
-		int gvCount = this.getGeomVectorField().getGeometries().size();
-		int storageCount = 0;
-		
-		for (HashMap<Long, T> h : this.storage) {
-			for (Long key : h.keySet()) {
-				storageCount = storageCount + 1;
-			}
-		}
-		
-		if (storageCount != gvCount) {
-			System.out.println("storage is "+storageCount+" while geomvecfield is "+gvCount+" DONT MATCH! "+s);
-			System.exit(-1);
-		}
-		
-		else
-		{
-			System.out.println(s+" fine "+storageCount);
-		}
-	}
-	*/
+
 	
 
 

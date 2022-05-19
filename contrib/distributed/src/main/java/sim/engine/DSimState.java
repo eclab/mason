@@ -1094,8 +1094,8 @@ public class DSimState extends SimState
 
 								// keeps track of agents being moved so not added again
 								migratedAgents.add(a);
-								System.out.println("PID: " + partition.getPID() + " processor " + oldPID + " move " + a
-										+ " from " + loc + " to processor " + locToP);
+								//System.out.println("PID: " + partition.getPID() + " processor " + oldPID + " move " + a
+								//		+ " from " + loc + " to processor " + locToP);
 								// here the agent is removed from the old location TOCHECK!!!
 							}
 

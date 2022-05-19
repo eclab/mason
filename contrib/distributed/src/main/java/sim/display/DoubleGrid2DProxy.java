@@ -21,18 +21,6 @@ public class DoubleGrid2DProxy extends DoubleGrid2D implements UpdatableProxy
 		
 
 		
-		/*
-		IntRect2D bounds = stateProxy.worldBounds;
-		//System.out.println(bounds);
-
-		int width = bounds.br().x - bounds.ul().x;
-		int height = bounds.br().y - bounds.ul().y;
-		
-
-		if (width != this.width || height != this.height)
-			reshape(width, height);
-		*/
-		
 		int halo_size = 0;
 		
 		//calculate position in quadtree that encompasses all desired partitions

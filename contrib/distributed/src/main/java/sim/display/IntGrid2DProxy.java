@@ -19,18 +19,7 @@ public class IntGrid2DProxy extends IntGrid2D implements UpdatableProxy
 	public void update(SimStateProxy stateProxy, int proxyIndex, int[] quad_tree_partitions) throws RemoteException, NotBoundException
 		{
 
-		
-		/*
-		IntRect2D bounds = stateProxy.worldBounds;
-		//System.out.println(bounds);
 
-		int width = bounds.br().x - bounds.ul().x;
-		int height = bounds.br().y - bounds.ul().y;
-		
-
-		if (width != this.width || height != this.height)
-			reshape(width, height);
-		*/
 		
 		int halo_size = 0;
 
@@ -68,7 +57,6 @@ public class IntGrid2DProxy extends IntGrid2D implements UpdatableProxy
 
 		}
 		
-		//reshape(width, height);
 		reshape(max_w_h, max_w_h);	
 		
 		//for (int p = 0; p < stateProxy.numProcessors; p++) {
@@ -78,7 +66,6 @@ public class IntGrid2DProxy extends IntGrid2D implements UpdatableProxy
 			//int halo_size = vp1.getAOI();
 		    IntRect2D partBound = vp1.getStorageBounds();
 		    
-		    System.out.println("int partBound "+partBound);
 
 		    
 			//remove halo bounds using bounds.ul offset, assumption is offset from 0,0 is halo size
@@ -88,7 +75,6 @@ public class IntGrid2DProxy extends IntGrid2D implements UpdatableProxy
             int partition_height_low_ind =  partBound.ul().getY()+halo_size;  //partition bounds
             int partition_height_high_ind =  partBound.br().getY()-halo_size;   //partition bounds 
 
-            System.out.println(partBound);
             
 			// load storage, add this to field!
 			IntGridStorage storage = (IntGridStorage)(stateProxy.storage(proxyIndex));

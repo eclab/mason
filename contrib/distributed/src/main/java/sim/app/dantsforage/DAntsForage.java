@@ -159,7 +159,6 @@ public /* strictfp */ class DAntsForage extends DSimState
 	public DDoubleGrid2D toHomeGrid;
 	public DDenseGrid2D<DAnt> buggrid;
 	public DIntGrid2D obstacles;
-	//public DDoubleGrid2D obstacles;
 	
 
 	public DAntsForage(long seed)
@@ -170,7 +169,6 @@ public /* strictfp */ class DAntsForage extends DSimState
 		toHomeGrid = new DDoubleGrid2D(this);
 		buggrid = new DDenseGrid2D<DAnt>(this);
 		obstacles = new DIntGrid2D(this);
-		//obstacles = new DDoubleGrid2D(this);
 
 
 	}
