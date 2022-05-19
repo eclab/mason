@@ -14037,9 +14037,11 @@ D-MASON was designed to extend MASON and run without any modification of MASON a
 
 \section{Should I Go Distributed?}
 
-Are your models bumping up against the maximum computational or memory capacity of your computer?  Then perhaps going distributed is for you.  Distributed models spread the model over multiple processes, typically one per CPU core, thus reducing the computational load per core and reducing the memory load per machine.  Notice that I used {\it CPU} for computational load and {\it machine} for memory load.  This is because you can go distributed {\it inside a single machine}: if you have a 16-core machine you could distribute MASON over 16 processes, one per core: but of course they'd all be using the same total memory.  Or if you had 16 1-core computers, you could distribute MASON over 16 processes, one per computers.  Or if you had 4 machines, each with 4 cores, you could distribute MASON as four processes per machine.  And so on.
+Are your models bumping up against the maximum computational or memory capacity of your computer?  Then perhaps going distributed is for you.  Or perhaps not. 
 
-There are many downsides: it's more complex, it's much harder to visualize and extract statistics, and  so on.  But the biggest downside is that if you have multiple processes, agents in one process will inevitably need to access data or agents in another process, and doing this requires interprocess communication.  If the processes live in the same computer, this might be {\it fairly slow}, entailing communication over sockets, wrapping and serializing data, and so on.    If the processes are in different computers, this can be {\it extremely slow}, perhaps 1000\(\times\) slower, as the communication has to go over a network.  So if interprocess communication is so slow, why would you want to go distributed?  Because if you play your cards right, the speed gains from multiple CPUs will outweigh the losses from interprocess communication.  
+Distributed models spread the model over multiple processes, typically one per CPU core, thus reducing the computational load per core and reducing the memory load per machine.  Notice that I used {\it CPU} for computational load and {\it machine} for memory load.  This is because you can go distributed {\it inside a single machine}: if you have a 16-core machine you could distribute MASON over 16 processes, one per core: but of course they'd all be using the same total memory.  Or if you had 16 1-core computers, you could distribute MASON over 16 processes, one per computers.  Or if you had 4 machines, each with 4 cores, you could distribute MASON as four processes per machine.  And so on.
+
+There are many downsides: it's more complex, it's much harder to visualize and extract statistics, and  so on.  But the biggest downside is that if you have multiple processes, agents in one process will inevitably need to access data or agents in another process, and doing this requires {\bf interprocess communication.}  If the processes live in the same computer, this might be {\it slow}, entailing communication over sockets, wrapping and serializing data, and so on.    If the processes are in different computers, this can be {\it very slow}, perhaps 1000\(\times\) slower, as the communication has to go over a network.  So if interprocess communication is so slow, why would you want to go distributed?  Because if you play your cards right, the speed gains from multiple CPUs will outweigh the losses from interprocess communication.  
 
 \begin{wrapfigure}{r}[0in]{3.5in}
 \includegraphics[width=3.5in]{2partitions}
@@ -14049,9 +14051,9 @@ Consider the figure at right.   Distributed MASON breaks a model among multiple 
 
 Distributed MASON does not contact the remote process each time an agent needs to grab data.  Instead, before each model step, all partitions exchange copies of data in their areas of interest with their neighbors.  When an agent needs information, it accesses this cached information stored by its own partition.  This is known as {\bf halo exchange} (all the areas of interest around a partition are its ``halo'').  
 
-Halo exchange can be costly: entire pieces of a field are being shoved over the network from partition to partition every timestep.    The cost is largely a function of (1) how large the area of interest is (if it's thin relative to the partition size, then it doesn't take long to transfer) and (2) how much data is in the area of interest (if it's an ObjectGrid2D filled with objects, this might take much longer than sparsely populated continuous space).
+\paragraph{Halo exchange is very costly} Pieces of a field are being shoved over the network from partition to partition every timestep.    The cost is largely a function of (1) how large the area of interest is (if it's thin relative to the partition size, then it doesn't take long to transfer) and (2) how much data is in the area of interest (if it's an ObjectGrid2D filled with objects, this might take much longer than sparsely populated continuous space).  In HeatBugs, for example, the area of interest is a single grid column or row: but that's a lot of data to push over the network each step.  However if each partition is very large, then though the column or row is larger as well, it's a square root of the total partition size, and so its transfer cost, as a percentage of the entire model cost, may decrease.
 
-Another way your model might reduce the cost of distribution is to have agents which spend a great deal of their time thinking.  If the vast majority of your time is spent in agents doing complex calculations, then halo exchange only happens every once in a while. 
+Another way your model might reduce the cost of distribution is to have agents which spend a great deal of their time thinking.  If the vast majority of your time is spent in agents doing complex calculations, then halo exchange only happens every once in a while.  This is easily the best case for a distributed model.
 
 Some models require that very distant agents communicate frequently or otherwise have access to one another.  Distributed MASON allows for distant communication between objects, or reading arbitrary data in arbitrary locations and partitions, but it's not very efficient.  The less you model needs to do this, the more it can take advantage of distribution.
 
@@ -14944,6 +14946,16 @@ Translates the IntRect2D by subtracting offsets from it.
 Returns the rectangle in text form.
 \end{methods}
 
+\paragraph{Using Standard MASON Fields}
+
+There's no reason you can't create and use a standard MASON field in Distributed MASON.  But this field won't be shared with other partitions: it'll be private and local to your partition only.  Likely every partition will have its own separate MASON field as a result.
+
+So what's the point?  There's a good reason you'd want to use a standard MASON field: to load read-only information common to every partition.  For example, imagine if you had a large read-only map, as an integer grid, which covered the entire world.  Instead of distributing this map, you could have every single partition just load it from a file into an IntGrid2D (say), and now each partition could access any point on the map without disturbing any other partition.  
+
+You could also create MASON fields to store local information in your model: but this might be less useful as your partition bounds could change at any moment due to load balancing.
+
+
+
 \subsection{Objects}
 
 Unlike in MASON, you can no longer reliably refer to an object in a field by its reference (its pointer), because if it has been moved to another processor, or moved back, it will have a different reference.  Thus any objects in MASON that could possibly be moved from one location to another must subclass from the \class{sim.engine.DObject} class.  This class provides a unique and permanent ID (a long) for the object created when it is constructed.   This ID is a combination of the processor ID on which the object was originally created (an instance variable called \variable{firstpid}) and a unique counter on that processor (an instance variable called \variable{localid}).  Various standard Object methods are provided so you can compare and hash this object by its ID.
@@ -15211,7 +15223,7 @@ protected Serializable[] arbitrateGlobals(ArrayList<Serializable[]> allGlobals) 
 
 \section{Using Fields}
 
-Once again, Distributed MASON's available fields are:
+Once again, Distributed MASON's available distributed fields are:
 
 \begin{center}
 \begin{tabular}{@{}ll@{}}
@@ -15410,9 +15422,9 @@ Creates a DDenseGrid2D which holds objects of the given class {\it T}.
 \begin{methods}{\class{sim.field.grid.DDenseGrid2D}}
 \mthd{public boolean containsLocal(Int2D p, T val)}
 Returns whether ArrayList< given object is located at the given position.
-\mthd{public ArrayList\(<\)T\(>\) getAllLocal(Int2D p)}
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getAllLocal(Int2D p)}
 Returns all the elements located at the given point, or null.
-\mthd{public void setAllLocal(Int2D p, ArrayList\(<\)T\(>\))}
+\mthd{public void setAllLocal(Int2D p, ArrayList\(\langle\)T\(\rangle\))}
 Sets all the elements at a point local to your partition.  You can pass in null to clear the elements.
 \mthd{public void addLocal(Int2D p, T val)}
 Adds an element to the given local point.
@@ -15442,7 +15454,7 @@ Removes an agent from the given point, which can be any point in the model, by n
 Removes all objects from the given point, which can be any point in the model, by next timestep.  If any objects are also agents (Steppable), then removes them (locally or remotely) from their schedules.  Remember that this is costly unless the point happens to be in your local region. 
 \mthd{public void moveAgent(Int2D from, Int2D to, T agent)}
 Moves an agent from one point to the other, by next timestep.  The {\it from} point must be local to this partition, but the {\it to} point can be any point in the model.  Also moves it (locally or remotely) to the appropriate processor's schedule.  Remember that this is costly unless the {\it to} point also happens to be in your local region.
-\mthd{public ArrayList\(<\)T\(>\)[\ ] getStorageArray()}
+\mthd{public ArrayList\(\langle\)T\(\rangle\)[\ ] getStorageArray()}
 Returns the local storage array in row-major order for the halo region, containing ArrayLists holding objects of the class {\it T},  including the halo region.  {\bf Do not modify this array.}  You can use it to scan over all Object values in the halo region (by grabbing each of the ArrayLists and scanning through them).  Be careful with this.  You probably shouldn't play with this if you don't know what it does.
 
 
@@ -15490,7 +15502,7 @@ Returns whether the given object is located at the given location.
 Returns whether the given object is located at the given location.
 \mthd{public HashMap\(<\)Long, T\(>\) getCellLocal(Double2D p)}
 Returns a HashMap (of IDs to objects) of all elements located in the discretized cell at the given location.
-%\mthd{public ArrayList\(<\)T\(>\) getLocal(Double2D p)}
+%\mthd{public ArrayList\(\langle\)T\(\rangle\) getLocal(Double2D p)}
 %Returns all the elements located exactly at the given point, or null.
 \mthd{public DObject getLocal(long id)}
 Returns an object stored locally with the given id, or null if there is none.
@@ -15524,7 +15536,7 @@ Removes an agent from the given point, which can be any point in the model, by n
 Moves an agent remotely to a new location, by next timestep.  The agent must be currently located local to this partition, but the {\it to} point can be any point in the model.  Also moves it to the appropriate processor's schedule.  Remember that this is costly unless the {\it to} point also happens to be in your local region.
 \mthd{public ContinuousStorage getStorage()}
 Returns the entire storage object.
-\mthd{public ArrayList\(<\)T\(>\) getAllAgentsInStorage()}
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getAllAgentsInStorage()}
 Returns an ArrayList of all objects currently in the halo grid.
 \end{methods}
 
@@ -15615,13 +15627,31 @@ Returns only those neighbors within, or (if {\it inclusive} is true) at the give
 \end{methods}
 
 \section{Distributed Geomason}
-In addition to large-scale distributed versions of traditional MASON models, Distributed MASON can be used to build distributed versions of GeoMason, referred to as Distributed Geomason.  Relevant classes and example apps are located in the ``contrib/distributed-geomason" directory.  Distributed GeoMason mostly uses Distributed Mason classes and methods, but does introduce GeoMason specific classes as well.  These mostly concern handling MasonGeometries, along with handling space and HaloFields necessary for Distributed Mason.  Similar to the Distributed analogs of grids, Distributed GeoMason has distributed versions of GeomVectorField (called DGeomVectorField). 
+In addition to large-scale distributed versions of traditional MASON models, Distributed MASON can be used to build distributed versions of GeoMason, which we refer to as {\bf Distributed Geomason}.  Relevant classes and example apps are located in the \file{contrib/distributed-geomason} directory.  Distributed GeoMason largely introduces two new classes: a version of GeomVectorField called \class{sim.field.geo.DGeomVectorField}, and a version of GeomGridField called \class{sim.field.geo.DGeomGridField}.
+
+\paragraph{Initialization}
+
+Distributed MASON's \class{sim.engine.DSimState} must be constructed with a bounding box: a width and a height, plus an area of interest (AOI).  This can be a problem for GeoMASON applications as many may not know their bounding box until they have loaded files at \method{start()}-time.  How to deal with this?  You have two strategies:
+
+\begin{enumerate}
+\item Hard-code the width and height (and AOI( when constructing \class{sim.engine.DSimState}
+\item Load and precompute the width and height from files when constructing \class{sim.engine.DSimState}, then re-load the same files on \method{start}
+\end{enumerate}.
+
+\paragraph{Using Standard Fields}
+
+As mentioned earlier, there's no reason you can't use a standard MASON field in Distributed MASON or Distributed GeoMASON: but it will be a copy local to your partition.  One common use for this is to have every partition load read-only information, such as a global map, into an IntGrid2D (say).  Now every partition has its own copy of the map and doesn't have to ask other partitions for information stored on it.  You can also use standard GeoMASON fields as well, and for the same reason: to load read-only maps rather than distributed ones.
+
+It's also common to use distributed fields, such as DDoubleGrid2D, instead of something more heavyweight, such as DGeomGridField.  You are not restricted to the Geomason fields: you can absolutely use standard DistributedMASON fields.  Indeed, DGeomVectorField uses DContinuous2D internally to get around serialization problems in in JTS.
+
+\subsection{Distributed Vector Fields}
 
 DGeomVectorField combines GeomVectorField with DContinuous2D, using GeomVectorField for most of its operations but also using the DContinuous2D space to handle communication between partitions. In order to align the ContinuousStorage and GeomVectorField, DGeomVectorField requires a globalEnvelope.  Therefore, it is recommended to read in the data into a GeomVecotrField, calculate its global envelope, and pass it into the DGeomVectorField constructor.   DGeomVectorField is defined as follows:
 
 
 \begin{methods}{\class{sim.field.geo.DGeomVectorField Constructor}}
-\mthd{public DGeomVectorField\(\langle\)T extends DGeomObject\(\rangle\) extends DAbstractGrid2D(double discretization, DSimState state, Envelope globalEnvelope)}
+\mthd{public DGeomVectorField\(\langle\)T extends DGeomObject\(\rangle\) extends DAbstractGrid2D(double discretization, DSimState state,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  Envelope globalEnvelope)}\\
 Creates a DGeomVectorField which holds objects of the given class {\it T}, using the given cell discretization.
 \end{methods}
 
@@ -15644,7 +15674,7 @@ Returns whether the given object is located at the given location.
 Returns whether the given object is located at the given location.
 \mthd{public HashMap\(<\)Long, T\(>\) getCellLocal(Double2D p)}
 Returns a HashMap (of IDs to objects) of all elements located in the discretized cell at the given location.
-%\mthd{public ArrayList\(<\)T\(>\) getLocal(Double2D p)}
+%\mthd{public ArrayList\(\langle\)T\(\rangle\) getLocal(Double2D p)}
 %Returns all the elements located exactly at the given point, or null.
 \mthd{public T getLocal(long id)}
 Returns an object stored locally with the given id, or null if there is none.
@@ -15678,19 +15708,19 @@ Removes an agent from the given point, which can be any point in the model, by n
 Moves an agent remotely to a new location, by next timestep.  The agent must be currently located local to this partition, but the {\it to} point can be any point in the model.  Also moves it to the appropriate processor's schedule.  Remember that this is costly unless the {\it to} point also happens to be in your local region.
 \mthd{public GeomVectorContinuousStorage getStorage()}
 Returns the entire storage object.
-\mthd{public ArrayList\(<\)T\(>\) getAllAgentsInStorage()}
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getAllAgentsInStorage()}
 Returns an ArrayList of all objects currently in the halo grid.
 \mthd{public Double2D convertJTSToPartitionSpace(Coordinate coordJTS)}
 Returns a Double2D in ContinuousStorage space corresponding to an inputted Coordinate, in GeomVectorField space.  This is calculated using Envelope bounds.
 \mthd{public Coordinate convertPartitionSpaceToJTS(Double2D d)}
 Returns a  Coordinate, in GeomVectorField space corresponding to an inputted Double2D in ContinuousStorage space.  This is calculated using Envelope bounds.
-\mthd{public ArrayList<T> getNeighborsExactlyWithinDistance(Double2D position, double distance)}
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getNeighborsExactlyWithinDistance(Double2D position, double distance)}
 Returns ArrayList of Neighbors.
-\mthd{public getNeighborsExactlyWithinDistance(Double2D position, double distance, boolean radial, boolean inclusive, ArrayList<T> result)}
+\mthd{public getNeighborsExactlyWithinDistance(Double2D position, double distance, boolean radial, boolean inclusive, ArrayList\(\langle\)T\(\rangle\) result)}
 Returns ArrayList of Neighbors.
-\mthd{public ArrayList<T> getNeighborsWithinDistance(Double2D position, double distance)}
+\mthd{public ArrayList\(\langle\)T\(\rangle\) getNeighborsWithinDistance(Double2D position, double distance)}
 Returns ArrayList of Neighbors.
-\mthd{ public ArrayList<T> getNeighborsWithinDistance(Double2D position, double distance, ArrayList<T> result)}
+\mthd{ public ArrayList\(\langle\)T\(\rangle\) getNeighborsWithinDistance(Double2D position, double distance, ArrayList\(\langle\)T\(\rangle\) result)}
 Returns ArrayList of Neighbors.
 \end{methods}
 
@@ -15699,7 +15729,8 @@ Returns ArrayList of Neighbors.
 DGeomVectorField uses the GeomVectorContinuousStorage class for storage, which stores the objects in both a ContinuousStorage object and GeomVectorField object.  Like regular GeoMason, GeomVectorField is used for most internal agent processes, while ContinuousStorage is used for communication across partitions.  GeomVectorContinuousStorage is defined as follows:
 
 \begin{methods}{\class{sim.field.geo.GeomVectorContinuousStorage Constructor}}
-\mthd{public sim.field.geo.GeomVectorContinuousStorage\(\langle\)T extends DGeomObject\(\rangle\) extends ContinuousStorage(IntRect2D shape, int discretization)}
+\mthd{public sim.field.geo.GeomVectorContinuousStorage\(\langle\)T extends DGeomObject\(\rangle\)}
+\rule{0pt}{0pt}\hspace{\fill}{\sf extends ContinuousStorage(IntRect2D shape, int discretization)}\\
 Creates a GeomVectorContinuousStorage which holds objects of the given class {\it T}, using the given cell discretization.  This is a subclass of ContinuousStorage, but also contains a GeomVectorField.
 \end{methods}
 
@@ -15747,6 +15778,10 @@ Sets stop object.
 \mthd{public boolean isStopped()}
 Returns boolean on whether the object is stopped.
 \end{methods}
+
+\subsection{Distributed Grids}
+
+GeoMason has a standard grid class called \class{sim.field.geo.GeomGridField}.  This class has utility methods to load GIS raster data, though often it's just used to load the data and then transfer it to an IntGrid2D or DoubleGrid2D or ObjectGrid2D.  Distributed MASON has and equivalent class called  \class{sim.field.geo.DGeomGridField}.  This class isn't spectacularly efficient: so we imagine you might employ a similar strategy: each partition loading into a (non-distributed)  GeomGridField, and then transferring each partition's portion into its local region of a DIntGrid2D, DDoubleGrid2D, or DObjectGrid2D.  However, we provide DGeomGridField in case you really need to use it.
 
 
 \section{Visualization and Statistics}
