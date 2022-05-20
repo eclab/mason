@@ -761,8 +761,6 @@ public class DSimState extends SimState
                 }
 
 
-                        
-
             // Sync all the Remove and Add queues for RMI
             syncRemoveAndAdd();
                         
