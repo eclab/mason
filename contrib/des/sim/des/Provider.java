@@ -587,10 +587,14 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
                     }
                 else
                     {                
-                    Resource oldResource = resource;
+                    Resource oldResource;
                     if (entities == null) 
                     	{
-                    	oldResource = oldResource.duplicate();
+                    	oldResource = resource.duplicate();
+                    	}
+                    else
+                    	{
+                    	oldResource = entities.getFirst();
                     	}
                     Receiver receiver = selectReceiver(receivers);
                     result = offerReceiver(receiver, Double.POSITIVE_INFINITY);
