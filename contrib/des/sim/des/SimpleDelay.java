@@ -236,12 +236,36 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         update();
         offerReceivers();
         }
+    
+    protected boolean offerReceivers(ArrayList<Receiver> receivers)
+    	{
+    	boolean returnval = super.offerReceivers(receivers);
+    	if (slackProvider != null)
+    		slackProvider.provide(this);
+    	return returnval;
+    	}
 
     public void reset()
         {
         clear();
         totalReceivedResource = 0; 
         }
+        
+    Provider slackProvider;
+    
+    /** Returns the slack provider.  Whenever a queue's offerReceivers(...) call is made, and it has slack afterwards,
+    	it will call the slack provider to ask it to fill the slack up to capacity. */
+    public Provider getSlackProvider()
+    	{
+    	return slackProvider;
+    	}
+    	
+    /** Sets the slack provider.  Whenever a queue's offerReceivers(...) call is made, and it has slack afterwards,
+    	it will call the slack provider to ask it to fill the slack up to capacity. */
+    public void setSlackProvider(Provider provider)
+    	{
+    	slackProvider = provider;
+    	}
         
     boolean refusesOffers = false;
     public void setRefusesOffers(boolean value) { refusesOffers = value; }

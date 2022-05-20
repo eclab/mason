@@ -83,6 +83,13 @@ public class Unlock extends Lock
 
     public String toString()
         {
-        return "Unlock@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ", " + pool + ", " + numResources + ")";
-        }               
+        return "Unlock@" + System.identityHashCode(this) + "(" + 
+        	(pool.getName() == null ? "Pool@" + System.identityHashCode(pool) : pool.getName()) + ", " +
+        	typical.getName() + ", " + numResources + ")";
+        }  
+                     
+    public String getName() 
+        { 
+        return "Unlock (" + (pool.getName() == null ? "Pool " + System.identityHashCode(pool) : pool.getName()) + ")";
+        }    
     }
