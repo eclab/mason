@@ -207,7 +207,7 @@ public class Extractor extends Source implements Receiver
                     }
                 }
             break;
-            case OFFER_POLICY_SELECT:
+            case REQUEST_POLICY_SELECT:
                 {
                 int size = providers.size();
                 if (size == 0) 
