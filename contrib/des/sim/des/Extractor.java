@@ -137,6 +137,7 @@ public class Extractor extends Source implements Receiver
     	{
     	requesting = true;
     	boolean result = false;
+    	acceptValue = amt;
     	
     	switch(requestPolicy)
     		{
@@ -144,7 +145,8 @@ public class Extractor extends Source implements Receiver
     			{
                 for(Provider p : providers)
                     {
-                    boolean r = p.provide(this, amt);
+                    if (acceptValue < 0) break;
+                    boolean r = p.provide(this, acceptValue);
                     result = result || r;
                     if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
                     if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
@@ -155,8 +157,9 @@ public class Extractor extends Source implements Receiver
     			{
                 for(int i = providers.size() - 1; i >= 0; i--)
                     {
+                    if (acceptValue < 0) break;
                     Provider p = providers.get(i);
-                    boolean r = p.provide(this, amt);
+                    boolean r = p.provide(this, acceptValue);
                     result = result || r;
                     if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
                     if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
@@ -168,9 +171,10 @@ public class Extractor extends Source implements Receiver
                 shuffleProviders();
                 while(true)
                     {
+                    if (acceptValue < 0) break;
                     Provider p = nextShuffledProvider();
                     if (p == null) break;		// all done
-                    boolean r = p.provide(this, amt);
+                    boolean r = p.provide(this, acceptValue);
                     result = result || r;
                     if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
                     if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
@@ -228,6 +232,7 @@ public class Extractor extends Source implements Receiver
             break;
     		}
     	
+    	acceptValue = 0;
     	requesting = false;
     	return result;
     	}    
@@ -310,23 +315,18 @@ public class Extractor extends Source implements Receiver
         return val;
         }
     
-    static final int OFF = -1;
-    double acceptValue = OFF;
+    double acceptValue = 0;
     
     /** Builds a single entity, ignoring the amount passed in, by asking the provider to provide it.  */
     protected void buildEntities(double amt)
         {
-        acceptValue = 1;                        // we always just grab ONE, not multiple entities
         requestProviders(amt);
-        acceptValue = OFF;
         }
         
     /** Builds resource by asking the provider to provide it.  */
     protected void buildResource(double amt)
         {
-        acceptValue = amt;
         requestProviders(amt);
-        acceptValue = OFF;
         }
 
     public boolean accept(Provider provider, Resource res, double atLeast, double atMost)
@@ -339,18 +339,24 @@ public class Extractor extends Source implements Receiver
         if (!(atLeast >= 0 && atMost >= atLeast))
             throwInvalidAtLeastAtMost(atLeast, atMost);
 
-        if (acceptValue < atLeast || acceptValue > atMost) return false;                // Also if it's == OFF, which is -1
-
+		if (acceptValue > 0) 
+			{
+			if (atLeast > acceptValue) return false;
+			atMost = Math.min(atMost, acceptValue);
+			}
+		 
         if (res instanceof CountableResource) 
             {
-            resource.increase(acceptValue);
-            ((CountableResource) res).decrease(acceptValue);
+            resource.increase(atMost);
+            ((CountableResource) res).decrease(atMost);
+            if (acceptValue > 0) acceptValue -= atMost;
             if (distinguishedReceiver != null) offerReceivers(); 
             return true;
             }
         else
             {
             entities.add((Entity)res);
+            if (acceptValue > 0) acceptValue -= 1;
             if (distinguishedReceiver != null) offerReceivers(); 
             return true;
             }
