@@ -587,12 +587,16 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
                     }
                 else
                     {                
-                    Resource oldResource = resource.duplicate();
+                    Resource oldResource = resource;
+                    if (entities == null) 
+                    	{
+                    	oldResource = oldResource.duplicate();
+                    	}
                     Receiver receiver = selectReceiver(receivers);
                     result = offerReceiver(receiver, Double.POSITIVE_INFINITY);
                     if (result)
                     	{
-                    	offerSuccessful(receiver, oldResource, resource);
+                    	selectedOfferAccepted(receiver, oldResource, resource);
                     	}
                     }
                 }
@@ -627,7 +631,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
        If the resource was a COUNTABLE RESOURCE, then the revised resource will be reduced by the amount
        that the receiver accepted (relative to the original resource).
     */
-    public void offerSuccessful(Receiver receiver, Resource originalResource, Resource revisedResource)
+    protected void selectedOfferAccepted(Receiver receiver, Resource originalResource, Resource revisedResource)
         {
         return;
         }
