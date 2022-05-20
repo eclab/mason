@@ -360,7 +360,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     /** 
         Resets the receiver shuffling
     */
-    void shuffle() 
+    void shuffleReceivers() 
         {
         currentShuffledReceiver = 0;
         }
@@ -465,8 +465,8 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
         }
        
     // only warn about problems with the distribution a single time
-    boolean distributionWarned = false; 
-    boolean selectWarned = false;
+    boolean offerDistributionWarned = false; 
+    boolean offerSelectWarned = false;
     
     /** Simply calls offerReceivers(receivers). */
     protected boolean offerReceivers()
@@ -535,7 +535,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
             break;
             case OFFER_POLICY_SHUFFLE:
                 {
-                shuffle();
+                shuffleReceivers();
                 while(true)
                     {
                     Receiver r = nextShuffledReceiver();
@@ -560,10 +560,10 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
                     int val = offerDistribution.nextInt();
                     if (val < 0 || val >= size )
                         {
-                        if (!distributionWarned)
+                        if (!offerDistributionWarned)
                             {
                             new RuntimeException("Warning: Offer distribution for Provider " + this + " returned a value outside the Receiver range: " + val).printStackTrace();
-                            distributionWarned = true;
+                            offerDistributionWarned = true;
                             }
                         result = false;
                         }
@@ -579,10 +579,10 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
                 int size = receivers.size();
                 if (size == 0) 
                     {
-                    if (!selectWarned)
+                    if (!offerSelectWarned)
                         {
                         new RuntimeException("Warning: Offer policy is SELECT but there are no receivers to select from in " + this).printStackTrace();
-                        selectWarned = true;
+                        offerSelectWarned = true;
                         }
                     }
                 else
@@ -597,6 +597,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
                     	oldResource = entities.getFirst();
                     	}
                     Receiver receiver = selectReceiver(receivers);
+                    if (receiver == null) break;
                     result = offerReceiver(receiver, Double.POSITIVE_INFINITY);
                     if (result)
                     	{
