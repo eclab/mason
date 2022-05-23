@@ -444,6 +444,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
             }
         else if (offerOrder == OFFER_ORDER_FIFO)
             {
+            if (entities.isEmpty()) return false;
             Entity e = entities.getFirst();
             boolean result = offerReceiver(receiver, e);                        // CHECK
             if (result)
@@ -454,6 +455,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
             }
         else // if (offerOrder == OFFER_ORDER_LIFO)
             {
+            if (entities.isEmpty()) return false;
             Entity e = entities.getLast();
             boolean result = offerReceiver(receiver, e);                        // CHECK
             if (result)

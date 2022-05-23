@@ -68,6 +68,7 @@ public class DESExampleWithUI extends GUIState
         layoutPortrayal.setField(example.field.getNodes());
         graphPortrayal.setField(example.field);
         SimpleEdgePortrayal2D edge = new DelayedEdgePortrayal(); //new ResourceEdgePortrayal(1.0);
+        edge.setBaseWidth(1);
         //edge.setShape(SimpleEdgePortrayal2D.SHAPE_TRIANGLE);
         graphPortrayal.setPortrayalForAll(edge);
 

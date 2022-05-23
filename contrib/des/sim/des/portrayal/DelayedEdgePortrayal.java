@@ -38,6 +38,11 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
         }
     
     
+	public static final double DEFAULT_CIRCLE_WIDTH = 0;
+	double circleWidth = DEFAULT_CIRCLE_WIDTH;
+	public void setCircleWidth(double val) { circleWidth = val; }
+	public double getCircleWidth() { return circleWidth; }
+	
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
 			if (!(info instanceof EdgeDrawInfo2D))
@@ -64,6 +69,7 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
 			final int midY = (int)midYd;
         
         	final double TRIANGLE_WIDTH = 10.0;
+			double circleFinalWidth = (circleWidth <= DEFAULT_CIRCLE_WIDTH ? TRIANGLE_WIDTH - 2 : circleWidth);
 
             	double alpha = Math.atan2(startYd - endYd, startXd - endXd);
             	
@@ -83,7 +89,7 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
         		
         		double offsetEnd2 = 
         			1.5 / 2 * info.draw.width * objectScale 					// this is the distance from the center of the object to the outer circular border
-        		 		+ TRIANGLE_WIDTH * 1.5 * width * scale;						// this is the additional offset to include the arrowhead
+        		 		+ (circleFinalWidth + 2) * 1.5 * width * scale;						// this is the additional offset to include the arrowhead
         		
         		double sXd = startXd;
         		double sYd = startYd;
@@ -121,7 +127,7 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
 					{
 					Stroke oldstroke = graphics.getStroke();
 					double weight = getPositiveWeight(object, e);
-					graphics.setStroke(getBasicStroke((float)(width * weight * scale)));  // duh, can't reset a stroke, have to make it new each time :-(
+					graphics.setStroke(getBasicStroke((float)(/*width * */weight * scale + 1)));  // duh, can't reset a stroke, have to make it new each time :-(
 					Line2D.Double preciseLine = new Line2D.Double();
 					preciseLine.setLine(sXd, sYd, eXd, eYd);
 					graphics.draw(preciseLine);
@@ -162,8 +168,7 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
 								{
 								double centerX = sXd + pos * (eXd2 - sXd);
 								double centerY = sYd + pos * (eYd2 - sYd);
-								double circleWidth = TRIANGLE_WIDTH - 2;
-								graphics.fill(new Ellipse2D.Double(centerX - circleWidth/2 * scale, centerY - circleWidth/2 * scale, circleWidth * scale, circleWidth * scale));
+								graphics.fill(new Ellipse2D.Double(centerX - circleFinalWidth/2 * scale, centerY - circleFinalWidth/2 * scale, circleFinalWidth * scale, circleFinalWidth * scale));
 								}
 							}
 			    		}
