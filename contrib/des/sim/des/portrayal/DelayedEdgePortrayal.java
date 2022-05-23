@@ -31,7 +31,7 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
     public DelayedEdgePortrayal()
         {
         super(Color.BLUE, Color.RED, Color.BLACK, new Font("SansSerif", Font.PLAIN, 10));
-        setShape(triangle ? SimpleEdgePortrayal2D.SHAPE_TRIANGLE : SimpleEdgePortrayal2D.SHAPE_LINE_BUTT_ENDS);
+        setShape(SimpleEdgePortrayal2D.SHAPE_LINE_BUTT_ENDS);
         setAdjustsThickness(true);
         setScaling(SimpleEdgePortrayal2D.ALWAYS_SCALE);
         setLabelScaling(SimpleEdgePortrayal2D.SCALE_WHEN_SMALLER);
@@ -81,25 +81,38 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
         			1.5 / 2 * info.draw.width * objectScale 					// this is the distance from the center of the object to the outer circular border
         		 		+ TRIANGLE_WIDTH * width * scale;						// this is the additional offset to include the arrowhead
         		
+        		double offsetEnd2 = 
+        			1.5 / 2 * info.draw.width * objectScale 					// this is the distance from the center of the object to the outer circular border
+        		 		+ TRIANGLE_WIDTH * 1.5 * width * scale;						// this is the additional offset to include the arrowhead
+        		
         		double sXd = startXd;
         		double sYd = startYd;
         		double eXd = endXd;
         		double eYd = endYd;
+        		double eXd2 = endXd;
+        		double eYd2 = endYd;
+        		
+        		double cos = Math.cos(alpha);
+        		double sin = Math.sin(alpha);
 
         		if (len - offsetStart - offsetEnd > info.draw.width * objectScale * 0.5)		// If the length of the line, minus the offset, is less than one half a full object's distance
         			{
-					 sXd -= offsetStart * Math.cos(alpha);
-					 sYd -= offsetStart * Math.sin(alpha);
-					 eXd += offsetEnd * Math.cos(alpha);
-					 eYd += offsetEnd * Math.sin(alpha);
+					 sXd -= offsetStart * cos;
+					 sYd -= offsetStart * sin;
+					 eXd += offsetEnd * cos;
+					 eYd += offsetEnd * sin;
+					 eXd2 += offsetEnd2 * cos;
+					 eYd2 += offsetEnd2 * sin;
 					 }
 				else if (len > 0)
 					{
 					 double beta = len / (info.draw.width * objectScale * 0.5 + offsetStart + offsetEnd);		// fraction of original offset we should shrink the offset to
-					 sXd -= offsetStart * Math.cos(alpha) * beta;
-					 sYd -= offsetStart * Math.sin(alpha) * beta;
-					 eXd += offsetEnd * Math.cos(alpha) * beta;
-					 eYd += offsetEnd * Math.sin(alpha) * beta;
+					 sXd -= offsetStart * cos * beta;
+					 sYd -= offsetStart * sin * beta;
+					 eXd += offsetEnd * cos * beta;
+					 eYd += offsetEnd * sin * beta;
+					 eXd2 += offsetEnd2 * cos * beta;
+					 eYd2 += offsetEnd2 * sin * beta;
 					}
         		
         		graphics.setPaint(fromPaint);
@@ -115,6 +128,7 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
 					graphics.setStroke(oldstroke);
                 	}
 
+				// Draw Triangle
 				Path2D.Double head = new Path2D.Double();
 				head.moveTo((1.0 - TRIANGLE_WIDTH) * width * scale, 0 * width * scale);
 				head.lineTo(1.0 * width * scale, -(TRIANGLE_WIDTH / 2.0) * width * scale);
@@ -146,9 +160,10 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
 							double pos = 1.0 - (delayed[i].getTimestamp() - time) / delayTime;
 							if (pos >= 0 && pos <= 1)
 								{
-								double centerX = sXd + pos * (eXd - sXd);
-								double centerY = sYd + pos * (eYd - sYd);
-								graphics.fill(new Ellipse2D.Double(centerX - TRIANGLE_WIDTH/2, centerY - TRIANGLE_WIDTH/2, TRIANGLE_WIDTH, TRIANGLE_WIDTH));
+								double centerX = sXd + pos * (eXd2 - sXd);
+								double centerY = sYd + pos * (eYd2 - sYd);
+								double circleWidth = TRIANGLE_WIDTH - 2;
+								graphics.fill(new Ellipse2D.Double(centerX - circleWidth/2 * scale, centerY - circleWidth/2 * scale, circleWidth * scale, circleWidth * scale));
 								}
 							}
 			    		}
@@ -198,7 +213,7 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
             int loc = receivers.indexOf(receiver);
             if (loc >= 0)
                 {
-                return (offers.get(loc).getAmount()) * scale;
+                return (offers.get(loc).getAmount()) * getBaseWidth();
                 }
             else 
                 {
