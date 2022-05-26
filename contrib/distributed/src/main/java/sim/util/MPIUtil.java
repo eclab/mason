@@ -108,11 +108,10 @@ public class MPIUtil
     static void serialize(final Serializable obj, final ByteBuffer buf)
         {
         try (ByteBufferOutputStream out = new ByteBufferOutputStream(buf);
-            ObjectOutputStream os = new ObjectOutputStream(out)) {
+            ObjectOutputStream os = new ObjectOutputStream(out)) 
+            {
             os.writeObject(obj);
-            os.flush();
-
-            /// SEAN QUESTION: Why are we flushing rather than closing this stream?
+            os.close();
             }
         catch (final IOException e)
             {
@@ -120,11 +119,6 @@ public class MPIUtil
             System.exit(-1);
             }
         }
-
-    /// SEAN QUESTION: why are we reallocating ByteBufferOutputStream and
-    /// ObjectOutputStream every single time?
-    /// Why aren't we just writing all of the objects with the same ones and then
-    /// flushing?
 
     /**
      * Serialize each Serializable in objs into buf. The length of each byte array
@@ -136,43 +130,22 @@ public class MPIUtil
      */
     static void serialize(final Serializable[] objs, final ByteBuffer buffer, final int[] count)
         {
-        for (int i = 0, prevPos = buffer.position(); i < objs.length; i++)
+        try (ByteBufferOutputStream out = new ByteBufferOutputStream(buf);
+            ObjectOutputStream os = new ObjectOutputStream(out)) 
             {
-            serialize(objs[i], buffer);
-            count[i] = buffer.position() - prevPos;
-            prevPos = buffer.position();
-            }
-        }
-
-    /**
-     * Deserialize the object of given type T that is stored in [pos, pos + len) in
-     * buffer
-     * 
-     * @param <T>    Type of object to deserialize
-     * @param buffer to deserialize
-     * @param pos
-     * @param len
-     * 
-     * @return the deserialized object
-     */
-    static <T extends Serializable> T deserialize(final ByteBuffer buffer, final int pos, final int len)
-        {
-        T obj = null;
-
-        buffer.position(pos);
-        try (
-            ByteBufferInputStream in = new ByteBufferInputStream(buffer);
-            ObjectInputStream is = new ObjectInputStream(in);)
-            {
-            obj = (T) is.readObject();
-            }
-        catch (IOException | ClassNotFoundException e)
+			for (int i = 0, prevPos = buffer.position(); i < objs.length; i++)
+				{
+				os.writeObject(objs[i]);
+				count[i] = buffer.position() - prevPos;
+				prevPos = buffer.position();
+				}
+            os.close();
+			}
+        catch (final IOException e)
             {
             e.printStackTrace();
             System.exit(-1);
             }
-
-        return obj;
         }
 
     /**
@@ -244,7 +217,8 @@ public class MPIUtil
         comm.bcast(numBytes, 1, MPI.INT, root);
         comm.bcast(buf, numBytes[0], MPI.BYTE, root);
 
-        return MPIUtil.<T>deserialize(buf, 0, numBytes[0]);
+//        return MPIUtil.<T>deserialize(buf, 0, numBytes[0]);
+        return MPIUtil.<T>deserialize(buf, 0);
         }
 
     /**
@@ -334,7 +308,8 @@ public class MPIUtil
 
         comm.scatterv(srcBuf, srcCount, srcDispl, MPI.BYTE, dstBuf, dstCount, MPI.BYTE, root);
 
-        return MPIUtil.<T>deserialize(dstBuf, 0, dstCount);
+//        return MPIUtil.<T>deserialize(dstBuf, 0, dstCount);
+        return MPIUtil.<T>deserialize(dstBuf, 0);
         }
 
     /**
@@ -429,7 +404,8 @@ public class MPIUtil
                 if (i == pid)
                     recvObjs.add(sendObj);
                 else
-                    recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i], dstCount[i]));
+//                    recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i], dstCount[i]));
+                    recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i]));
 
         return recvObjs;
         }
@@ -489,7 +465,8 @@ public class MPIUtil
             if (i == pid)
                 recvObjs.add(sendObj);
             else
-                recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i], dstCount[i]));
+//                recvObjs.add(MPIUtil.<T>gdstBuf, dstDispl[i], dstCount[i]));
+                recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i]));
 
         return recvObjs;
         }
@@ -545,7 +522,8 @@ public class MPIUtil
         comm.neighborAllToAllv(srcBuf, srcCount, srcDispl, MPI.BYTE, dstBuf, dstCount, dstDispl, MPI.BYTE);
 
         for (int i = 0; i < nc; i++)
-            recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i], dstCount[i])); //expensive
+//            recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i], dstCount[i]));
+            recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i]));
 
         return recvObjs;
         }
@@ -583,7 +561,8 @@ public class MPIUtil
         comm.neighborAllToAllv(srcBuf, srcCount, srcDispl, MPI.BYTE, dstBuf, dstCount, dstDispl, MPI.BYTE);
 
         for (int i = 0; i < nc; i++)
-            recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i], dstCount[i]));
+//            recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i], dstCount[i]));
+            recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i]));
 
         return recvObjs;
         }
@@ -607,14 +586,6 @@ public class MPIUtil
         return MPIUtil.<T>neighborAllToAll(partition.getCommunicator(), sendObjs);
         }
 
-    //// SEAN QUESTION: Why is this different from the others? Why do we not have
-    //// serialization?
-    //// Is this because we'd never use it?
-    ////
-    //// SEAN CONCERN: This is horribly inefficient, we're boxing and unboxing vals.
-    //// Why not pass in
-    //// The value as a byte, or int, or float, etc. BTW, we don't need float and
-    //// long probably, just double and int.
 
     /**
      * Allows all nodes to broadcast to all nodes at once, but only neighbors will
@@ -627,8 +598,8 @@ public class MPIUtil
      * 
      * @throws MPIException
      */
-    public static Object neighborAllGather(final Partition partition, final Object val,
-        final Datatype type) throws MPIException
+     // BOXING!!!!
+    public static Object neighborAllGather(final Partition partition, final Object val, final Datatype type) throws MPIException
         {
         final int nc = partition.getNumNeighbors();
         Object sendBuf, recvBuf;
