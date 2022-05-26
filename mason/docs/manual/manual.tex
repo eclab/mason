@@ -15627,7 +15627,7 @@ Returns only those neighbors within, or (if {\it inclusive} is true) at the give
 \end{methods}
 
 \section{Distributed Geomason}
-In addition to large-scale distributed versions of traditional MASON models, Distributed MASON can be used to build distributed versions of GeoMason, which we refer to as {\bf Distributed Geomason}.  Relevant classes and example apps are located in the \file{contrib/distributed-geomason} directory.  Distributed GeoMason largely introduces two new classes: a version of GeomVectorField called \class{sim.field.geo.DGeomVectorField}, and a version of GeomGridField called \class{sim.field.geo.DGeomGridField}.
+In addition to large-scale distributed versions of traditional MASON models, Distributed MASON can be used to build distributed versions of GeoMason, which we refer to as {\bf Distributed Geomason}.  Relevant classes and example apps are located in the \file{contrib/distributed-geomason} directory.  Distributed GeoMason largely introduces a new class: a version of GeomVectorField called \class{sim.field.geo.DGeomVectorField}.
 
 \paragraph{Initialization}
 
@@ -15642,7 +15642,7 @@ Distributed MASON's \class{sim.engine.DSimState} must be constructed with a boun
 
 As mentioned earlier, there's no reason you can't use a standard MASON field in Distributed MASON or Distributed GeoMASON: but it will be a copy local to your partition.  One common use for this is to have every partition load read-only information, such as a global map, into an IntGrid2D (say).  Now every partition has its own copy of the map and doesn't have to ask other partitions for information stored on it.  You can also use standard GeoMASON fields as well, and for the same reason: to load read-only maps rather than distributed ones.
 
-It's also common to use distributed fields, such as DDoubleGrid2D, instead of something more heavyweight, such as DGeomGridField.  You are not restricted to the Geomason fields: you can absolutely use standard DistributedMASON fields.  Indeed, DGeomVectorField uses DContinuous2D internally to get around serialization problems in in JTS.
+It's also common to use distributed fields, such as DDoubleGrid2D, instead of something more heavyweight.  You are not restricted to the Geomason fields: you can absolutely use standard DistributedMASON fields.  Indeed, DGeomVectorField uses DContinuous2D internally to get around serialization problems in in JTS.
 
 \subsection{Distributed Vector Fields}
 
@@ -15779,9 +15779,9 @@ Sets stop object.
 Returns boolean on whether the object is stopped.
 \end{methods}
 
-\subsection{Distributed Grids}
+%\subsection{Distributed Grids}
 
-GeoMason has a standard grid class called \class{sim.field.geo.GeomGridField}.  This class has utility methods to load GIS raster data, though often it's just used to load the data and then transfer it to an IntGrid2D or DoubleGrid2D or ObjectGrid2D.  Distributed MASON has and equivalent class called  \class{sim.field.geo.DGeomGridField}.  This class isn't spectacularly efficient: so we imagine you might employ a similar strategy: each partition loading into a (non-distributed)  GeomGridField, and then transferring each partition's portion into its local region of a DIntGrid2D, DDoubleGrid2D, or DObjectGrid2D.  However, we provide DGeomGridField in case you really need to use it.
+%GeoMason has a standard grid class called \class{sim.field.geo.GeomGridField}.  This class has utility methods to load GIS raster data, though often it's just used to load the data and then transfer it to an IntGrid2D or DoubleGrid2D or ObjectGrid2D.  Distributed MASON has and equivalent class called  %\class{sim.field.geo.DGeomGridField}.  This class isn't spectacularly efficient: so we imagine you might employ a similar strategy: each partition loading into a (non-distributed)  GeomGridField, and then transferring each partition's portion into its local region of a DIntGrid2D, DDoubleGrid2D, or DObjectGrid2D.  However, we provide DGeomGridField in case you really need to use it.
 
 
 \section{Visualization and Statistics}
