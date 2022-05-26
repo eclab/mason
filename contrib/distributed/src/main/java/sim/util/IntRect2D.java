@@ -17,13 +17,10 @@ import java.io.Serializable;
 public class IntRect2D implements Serializable
     {
     private static final long serialVersionUID = 1L;
-    //// SEAN FIXME: I am presuming that this rectangle is HALF-OPEN, that is br is
-    //// out of bounds
-//// IS THIS A VALID ASSUMPTION GIVEN THE HALO FIELD USAGE ETC.?
+
     Int2D ul, br;
 
-//// SEAN FIXME: I changed this to >= from >, assuming you can't have zero-length rects. 
-//// Zero-length rects are fine but they can't have a "center", which is one of the functions.
+
     void verifyValidSize(Int2D ul, Int2D br)
         {
         if (ul.x >= br.x) {
@@ -97,35 +94,30 @@ public class IntRect2D implements Serializable
 
     // Return whether the rect contains p
     // Noted that the rect is treated as half-inclusive (ul) and half-exclusive (br)
-    public boolean contains(Double2D p)
-        {
-        return (ul.x <= p.x && ul.y <= p.y && br.x > p.x && br.y > p.y);
-        }
-
-//// SEAN FIXME: we should try not to require this
     public boolean contains(Number2D p)
         {
         double x = p.getVal(0);
         double y = p.getVal(1);
         return (ul.x <= x && ul.y <= y && br.x > x && br.y > y);
         }
+    
+    public boolean contains(Double2D p)
+    {
+    return (ul.x <= p.x && ul.y <= p.y && br.x > p.x && br.y > p.y);
+    }
 
-//// SEAN FIXME: Verify that this is the case for half-open intervals
     // Return whether the given rect is inside this rectangle
     public boolean contains(IntRect2D that)
         {
         return (ul.x <= that.ul.x && ul.y <= that.ul.y && br.x >= that.br.x && br.y >= that.br.y);
         }
 
-//// SEAN FIXME: rename to intersects(...)
-//// SEAN FIXME: Verify that this is the case for half-open intervals
     // Return whether the given rect intersects with self
     public boolean intersects(IntRect2D that)
         {
         return (ul.x < that.br.x && ul.y < that.br.y && that.ul.x < br.x && that.ul.y < br.y);
         }
 
-//// SEAN FIXME: Verify that this is the case for half-open intervals
     // Return the intersection of the given rect and self
     public IntRect2D getIntersection(IntRect2D that)
         {
@@ -135,32 +127,28 @@ public class IntRect2D implements Serializable
             new Int2D(Math.min(br.x, that.br.x), Math.min(br.y, that.br.y)));
         }
 
-/*
-  public IntRect2D resize(int left, int up, int right, int down)
-  {
-  Int2D newUL = new Int2D(ul.x + left, ul.y + up);
-  Int2D newBR = new Int2D(br.x + right, br.y + down);
-  return new IntRect2D(newUL, newBR);
-  }
-*/
-/*
-  public IntRect2D translate(int x, int y)
-  {
-  Int2D newUL = new Int2D(ul.x + x, ul.y + y);
-  Int2D newBR = new Int2D(br.x + x, br.y + y);
-  return new IntRect2D(newUL, newBR);
-  }
-*/
+    /*
+    public IntRect2D resize(int left, int up, int right, int down)
+    {
+    Int2D newUL = new Int2D(ul.x + left, ul.y + up);
+    Int2D newBR = new Int2D(br.x + right, br.y + down);
+    return new IntRect2D(newUL, newBR);
+    }
+    */
+    /*
+    public IntRect2D translate(int x, int y)
+    {
+    Int2D newUL = new Int2D(ul.x + x, ul.y + y);
+    Int2D newBR = new Int2D(br.x + x, br.y + y);
+    return new IntRect2D(newUL, newBR);
+    }
+    */
 
-//// SEAN FIXME: I changed this to Double2D because it does / 2 which is almost certainly wrong
-//// SEAN FIXME: I think the code is wrong in general anyway, as it rounds *up* because of half-open
+
     public Double2D getCenter()
         {
-        // return new Double2D((br.x - ul.x + 1) / 2.0, (br.y - ul.y + 1) / 2.0);
         return new Double2D(((br.x - ul.x) / 2.0) + ul.x, ((br.y - ul.y) / 2.0) + ul.y);
 
-        // return new Int2D(IntStream.range(0, getNd()).map(i -> (br.c(i) - ul.c(i)) / 2
-        // + ul.c(i)).toArray());
         }
 
     // Return whether two hyper rectangles equal (the two vertexs equal)
@@ -169,7 +157,6 @@ public class IntRect2D implements Serializable
         return this.ul.equals(that.ul) && this.br.equals(that.br);
         }
 
-//// SEAN FIXME: I deleted compareTo entirely because it makes arbitrary comparison orderings and Int2D is not comparable
 
     public static IntRect2D getBoundingRect(IntRect2D[] rects)
         {

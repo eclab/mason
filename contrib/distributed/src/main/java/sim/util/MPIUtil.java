@@ -545,7 +545,7 @@ public class MPIUtil
         comm.neighborAllToAllv(srcBuf, srcCount, srcDispl, MPI.BYTE, dstBuf, dstCount, dstDispl, MPI.BYTE);
 
         for (int i = 0; i < nc; i++)
-            recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i], dstCount[i]));
+            recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i], dstCount[i])); //expensive
 
         return recvObjs;
         }

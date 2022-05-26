@@ -220,7 +220,7 @@ public class DAnt extends DSteppable
 			{
 				if (state.random.nextBoolean(af.momentumProbability))
 				{
-					System.out.println("momentum direction: "+(x - last.x)+" "+(y - last.y));
+					//System.out.println("momentum direction: "+(x - last.x)+" "+(y - last.y));
 					int xm = x + (x - last.x);
 					int ym = y + (y - last.y);
 					if (xm >= 0 && xm < DAntsForage.GRID_WIDTH && ym >= 0 && ym < DAntsForage.GRID_HEIGHT

@@ -21,7 +21,9 @@ public class FlockersProxy extends SimStateProxy
     public FlockersProxy(long seed)
         {
         super(seed);
-        setRegistryHost("localhost");
+        //setRegistryHost("localhost");
+        setRegistryHost("172.31.33.239");
+        
         //setRegistryPort(5000);
         }
     

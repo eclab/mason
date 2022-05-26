@@ -670,7 +670,7 @@ public class SimStateProxy extends SimState
           }
         */
         
-        System.err.println("STATISTICS OUTPUT " + statType);
+        //System.err.println("STATISTICS OUTPUT " + statType);
         for(long i = startSteps; i < endSteps; i++)
             {
                 
@@ -679,13 +679,13 @@ public class SimStateProxy extends SimState
                 ArrayList<Stat> statList = stats[j][(int)(i - startSteps)];
                 if (!statList.isEmpty())
                     {
-                    System.err.print("\t" + j + ": ");
+                    //System.err.print("\t" + j + ": ");
                     boolean first = true;
                     for(Stat stat : statList)
                         {
-                        if (!first) System.err.println(", ");
+                        //if (!first) System.err.println(", ");
                         first = false;
-                        System.err.print(stat.data);
+                        //System.err.print(stat.data);
                         }
                     }
                 }
