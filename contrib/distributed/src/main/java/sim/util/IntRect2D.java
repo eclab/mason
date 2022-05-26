@@ -11,7 +11,8 @@ import java.io.Serializable;
 /**
  INTRECT2D represents rectangles with integer coordinates.  It consists of two Int2D
  objects representing the upper left (ul) and bottom right (br) corners of the rectangle.
- The upper left corner is inclusive, and the bottom right corner is exclusive.
+ The upper left corner is inclusive, and the bottom right corner is exclusive. Note that
+ you are not permitted to have zero-length rects: that is, ul cannot be equal to br.
  */
 
 public class IntRect2D implements Serializable
@@ -94,6 +95,14 @@ public class IntRect2D implements Serializable
 
     // Return whether the rect contains p
     // Noted that the rect is treated as half-inclusive (ul) and half-exclusive (br)
+
+    public boolean contains(Double2D p)
+        {
+        return (ul.x <= p.x && ul.y <= p.y && br.x > p.x && br.y > p.y);
+        }
+
+    // Return whether the rect contains p
+    // Noted that the rect is treated as half-inclusive (ul) and half-exclusive (br)
     public boolean contains(Number2D p)
         {
         double x = p.getVal(0);
@@ -101,14 +110,12 @@ public class IntRect2D implements Serializable
         return (ul.x <= x && ul.y <= y && br.x > x && br.y > y);
         }
     
-    public boolean contains(Double2D p)
-    {
-    return (ul.x <= p.x && ul.y <= p.y && br.x > p.x && br.y > p.y);
-    }
+
 
     // Return whether the given rect is inside this rectangle
     public boolean contains(IntRect2D that)
         {
+        // We are doing >= because "that" is an IntRect2D.
         return (ul.x <= that.ul.x && ul.y <= that.ul.y && br.x >= that.br.x && br.y >= that.br.y);
         }
 
@@ -127,22 +134,6 @@ public class IntRect2D implements Serializable
             new Int2D(Math.min(br.x, that.br.x), Math.min(br.y, that.br.y)));
         }
 
-    /*
-    public IntRect2D resize(int left, int up, int right, int down)
-    {
-    Int2D newUL = new Int2D(ul.x + left, ul.y + up);
-    Int2D newBR = new Int2D(br.x + right, br.y + down);
-    return new IntRect2D(newUL, newBR);
-    }
-    */
-    /*
-    public IntRect2D translate(int x, int y)
-    {
-    Int2D newUL = new Int2D(ul.x + x, ul.y + y);
-    Int2D newBR = new Int2D(br.x + x, br.y + y);
-    return new IntRect2D(newUL, newBR);
-    }
-    */
 
 
     public Double2D getCenter()
@@ -179,43 +170,6 @@ public class IntRect2D implements Serializable
         return new String("IntRect2D[(" + ul.x + ", " + ul.y + ") -> (" + br.x + ", " + br.y + ")]");
         }
 
-/*
-//// SEAN FIXME: I deleted toToroidal(rect) and split entirely for the time being
-
-// fix for bugs
-public Int2D toToroidal(Int2D p)
-{
-int x = p.x;
-int y = p.y;
-int width = br.x - ul.x;
-int height = br.y - ul.y;
-
-return new Int2D(tx(x, width), ty(y, height));
-}
-
-// slight revision for more efficiency
-final int tx(int x, int width)
-{
-if (x >= 0 && x < width)
-return x; // do clearest case first
-x = x % width;
-if (x < 0)
-x = x + width;
-return x;
-}
-
-// slight revision for more efficiency
-final int ty(int y, int height)
-{
-if (y >= 0 && y < height)
-return y; // do clearest case first
-y = y % height;
-if (y < 0)
-y = y + height;
-return y;
-}
-*/
-
     // added by Raj Patel
     // returns a list of every Int2D point in IntRect2D
     public Int2D[] getPointList()
@@ -240,13 +194,6 @@ return y;
         return listOfPoints;
         }
 
-/*
-// remove? or add?
-public IntRect2D resize(Int2D vals)
-{
-return new IntRect2D(ul.subtract(vals), br.add(vals));
-}
-*/
 
     public IntRect2D expand(int val)
         {
@@ -258,14 +205,6 @@ return new IntRect2D(ul.subtract(vals), br.add(vals));
         //return new IntRect2D(ul.add(-val), br.add(val));              
 
         }
-
-/*
-// maybe remove, maybe keep
-public IntRect2D add(int dim, int offset)
-{
-return new IntRect2D(ul.add(dim, offset), br.add(dim, offset));
-}
-*/
 
     // maybe remove, maybe keep
     public IntRect2D add(Int2D offsets)

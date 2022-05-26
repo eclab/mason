@@ -24,6 +24,7 @@ import sim.util.IntRect2D;
 import sim.util.Properties;
 import sim.util.RemoteSimpleProperties;
 import sim.engine.rmi.*;
+import java.io.*;
 
 import sim.engine.*;
 
@@ -265,10 +266,12 @@ public class SimStateProxy extends SimState
             statLists = new ArrayList[RemoteProcessorRMI.NUM_STAT_TYPES][numProcessors];
  
             for(int i = 0; i < statLists.length; i++)
+            	{
                 for(int j = 0; j < statLists[i].length; j++)
                     {
                     statLists[i][j] = new ArrayList<>();
                     }
+                }
 
             try
                 {
@@ -609,8 +612,8 @@ public class SimStateProxy extends SimState
             }
         }
     
-    public Properties getProperties(int partition) {
-        
+    public Properties getProperties(int partition) 
+    	{
         try {
             RemoteProcessorRMI vp1 = RemoteProcessorRMI(partition);
 
@@ -618,7 +621,8 @@ public class SimStateProxy extends SimState
         
             }
         
-        catch(Exception e) {
+        catch(Exception e) 
+        	{
             System.out.println("Problem with Remote Properties");
             System.out.println(e);
             System.exit(-1);
@@ -635,62 +639,71 @@ public class SimStateProxy extends SimState
         at that time.  Each statistics is an ArrayList<Stat> holding Stat messages emitted by the processor at that
         model step.  Usually this ArrayList will be empty or hold a single Stat message; though it is possible it may
         hold many.
+        
+        <P>By default this method does nothing.  But you could override it to output statistics any way you want.  Two
+        convenience methods are provided: printStatistics(..., stderr) and printStatistics(..., writer).  You could call
+        one of these to output statistics to stdout, stderr, or to a file of your choosing.  You can of course output
+        statistics any other way you see fit.
     */
     public void outputStatistics(int statType, double[] times, ArrayList<Stat>[][] stats, long startSteps, long endSteps)
         {
-        // For the moment we're just dumping the data to debug it
-        /*
-          System.err.println("STATISTICS OUTPUT " + statType);
-          for(long i = startSteps; i < endSteps; i++)
-          {
-          System.err.print("Step: " + i + "\tTime: " + times[(int)(i - startSteps)]);
-          System.out.println("stats : "+stats);
-          System.out.println("startSteps "+startSteps);
-          System.out.println("endSteps "+endSteps);
-          System.out.println("stat size "+stats.length);
-          System.out.println("stats[] : "+stats[(int)(i - startSteps)]); //OOV ind: 4
-          System.out.println("--");
 
-                
-          for (int j = 0; j < stats[(int)(i - startSteps)].length; j++)
-          {
-          ArrayList<Stat> statList = stats[(int)(i - startSteps)][j];
-          if (!statList.isEmpty())
-          {
-          System.err.print("\t" + j + ": ");
-          boolean first = true;
-          for(Stat stat : statList)
-          {
-          if (!first) System.err.println(", ");
-          first = false;
-          System.err.print(stat.data);
-          }
-          }
-          }
-          }
-        */
-        
-        //System.err.println("STATISTICS OUTPUT " + statType);
+    	}
+    
+    Writer err = new OutputStreamWriter(System.err);
+    Writer out = new OutputStreamWriter(System.err);
+    
+    /** 
+    	A convenience method for printing statistics from outputStatistics(...) to either stdout or stderr, depending on
+    	the setting of the STDERR parameter.  This method flushes after each print.
+    */
+    public void printStatistics(int statType, double[] times, ArrayList<Stat>[][] stats, long startSteps, long endSteps, boolean stderr)
+    	{
+    	try
+			{
+			if (stderr)
+				{
+				printStatistics(statType, times, stats, startSteps, endSteps, err);
+				err.flush();
+				}
+			else 
+				{
+				printStatistics(statType, times, stats, startSteps, endSteps, out);
+				out.flush();
+				}
+			}
+		catch (IOException ex)
+			{
+			}
+    	}
+    	
+    /** 
+    	A convenience method for printing statistics from outputStatistics(...) to a Writer of your choosing.  Be sure to close the
+    	writer after the fact.  This method does not flush.
+    */
+    public void printStatistics(int statType, double[] times, ArrayList<Stat>[][] stats, long startSteps, long endSteps, Writer writer)
+    	{
+    	PrintWriter buf = new PrintWriter(new BufferedWriter(writer));
+        buf.println("STATISTICS OUTPUT " + statType);
         for(long i = startSteps; i < endSteps; i++)
             {
-                
             for (int j = 0; j < stats.length; j++) //for each partition
                 {
                 ArrayList<Stat> statList = stats[j][(int)(i - startSteps)];
                 if (!statList.isEmpty())
                     {
-                    //System.err.print("\t" + j + ": ");
+
+                    buf.print("\t" + j + ": ");
                     boolean first = true;
                     for(Stat stat : statList)
                         {
-                        //if (!first) System.err.println(", ");
+                        if (!first) buf.println(", ");
                         first = false;
-                        //System.err.print(stat.data);
+                        buf.print(stat.data);
                         }
                     }
                 }
             }
-        
         }
     
     //this probably won't work bc properties can't be sent remotely

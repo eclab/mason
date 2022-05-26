@@ -360,7 +360,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     /** 
         Resets the receiver shuffling
     */
-    void shuffle() 
+    void shuffleReceivers() 
         {
         currentShuffledReceiver = 0;
         }
@@ -444,6 +444,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
             }
         else if (offerOrder == OFFER_ORDER_FIFO)
             {
+            if (entities.isEmpty()) return false;
             Entity e = entities.getFirst();
             boolean result = offerReceiver(receiver, e);                        // CHECK
             if (result)
@@ -454,6 +455,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
             }
         else // if (offerOrder == OFFER_ORDER_LIFO)
             {
+            if (entities.isEmpty()) return false;
             Entity e = entities.getLast();
             boolean result = offerReceiver(receiver, e);                        // CHECK
             if (result)
@@ -465,8 +467,8 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
         }
        
     // only warn about problems with the distribution a single time
-    boolean distributionWarned = false; 
-    boolean selectWarned = false;
+    boolean offerDistributionWarned = false; 
+    boolean offerSelectWarned = false;
     
     /** Simply calls offerReceivers(receivers). */
     protected boolean offerReceivers()
@@ -535,7 +537,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
             break;
             case OFFER_POLICY_SHUFFLE:
                 {
-                shuffle();
+                shuffleReceivers();
                 while(true)
                     {
                     Receiver r = nextShuffledReceiver();
@@ -560,10 +562,10 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
                     int val = offerDistribution.nextInt();
                     if (val < 0 || val >= size )
                         {
-                        if (!distributionWarned)
+                        if (!offerDistributionWarned)
                             {
                             new RuntimeException("Warning: Offer distribution for Provider " + this + " returned a value outside the Receiver range: " + val).printStackTrace();
-                            distributionWarned = true;
+                            offerDistributionWarned = true;
                             }
                         result = false;
                         }
@@ -579,15 +581,30 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
                 int size = receivers.size();
                 if (size == 0) 
                     {
-                    if (!selectWarned)
+                    if (!offerSelectWarned)
                         {
                         new RuntimeException("Warning: Offer policy is SELECT but there are no receivers to select from in " + this).printStackTrace();
-                        selectWarned = true;
+                        offerSelectWarned = true;
                         }
                     }
                 else
                     {                
-                    result = offerReceiver(selectReceiver(receivers, entities == null ? resource : entities.getFirst()), Double.POSITIVE_INFINITY);
+                    Resource oldResource;
+                    if (entities == null) 
+                    	{
+                    	oldResource = resource.duplicate();
+                    	}
+                    else
+                    	{
+                    	oldResource = entities.getFirst();
+                    	}
+                    Receiver receiver = selectReceiver(receivers);
+                    if (receiver == null) break;
+                    result = offerReceiver(receiver, Double.POSITIVE_INFINITY);
+                    if (result)
+                    	{
+                    	selectedOfferAccepted(receiver, oldResource, resource);
+                    	}
                     }
                 }
             break;
@@ -597,6 +614,13 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
         return result;
         }
     
+    // This is here so that If can override it
+    Receiver selectReceiver(ArrayList<Receiver> receivers)
+    	{
+    	return selectReceiver(receivers, entities == null ? resource : entities.getFirst());
+    	}
+    
+    
     /**
        If the offer policy is OFFER_POLICY_SELECT, then when the receivers are non-empty,
        this method will be called to specify which receiver should be offered the given resource.
@@ -605,6 +629,18 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     public Receiver selectReceiver(ArrayList<Receiver> receivers, Resource resource)
         {
         return receivers.get(0);
+        }
+        
+    /**
+       If the offer policy is OFFER_POLICY_SELECT, then if a receiver accepts an offer of a resource,
+       this method is called, with (a copy of) the original resource, the revised resource after then
+       receiver accepted it. If the resource was an ENTITY, then the revised resource will likely be unchanged.
+       If the resource was a COUNTABLE RESOURCE, then the revised resource will be reduced by the amount
+       that the receiver accepted (relative to the original resource).
+    */
+    protected void selectedOfferAccepted(Receiver receiver, Resource originalResource, Resource revisedResource)
+        {
+        return;
         }
         
     /**

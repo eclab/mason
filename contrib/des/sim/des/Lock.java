@@ -102,7 +102,9 @@ public class Lock extends Filter
 
     public String toString()
         {
-        return "Lock@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical.getName() + ", " + pool + ", " + numResources + ")";
+        return "Lock@" + System.identityHashCode(this) + "(" + 
+        	(pool.getName() == null ? "Pool@" + System.identityHashCode(pool) : pool.getName()) + ", " +
+        	typical.getName() + ", " + numResources + ")";
         }  
                      
     public String getName() 

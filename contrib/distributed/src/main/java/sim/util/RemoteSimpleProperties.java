@@ -89,11 +89,9 @@ public class RemoteSimpleProperties extends SimpleProperties
             // TODO Auto-generated catch block
             e.printStackTrace();
             System.exit(-1);
-        
             }
         
         return null;
-
         }
 
     public Object getDomain(int index)
