@@ -6,6 +6,7 @@ import sim.field.geo.GeomVectorContinuousStorage;
 import sim.field.geo.GeomVectorField;
 import sim.app.geo.dcampusworld.display.CampusWorldProxy;
 import sim.engine.*;
+import sim.engine.rmi.RemoteProcessorRMI;
 import sim.field.storage.*;
 import sim.field.partitioning.*;
 import java.rmi.*;
@@ -60,7 +61,7 @@ public class GeomVectorContinuousStorageProxy extends GeomVectorField implements
 		*/
 		
 		int p0 = quad_tree_partitions[0];
-		VisualizationProcessor vp0 = stateProxy.visualizationProcessor(p0);
+		RemoteProcessorRMI vp0 = stateProxy.RemoteProcessorRMI(p0);
 		halo_size = vp0.getAOI();
 
 		IntRect2D fullBounds = vp0.getWorldBounds();
@@ -95,7 +96,7 @@ public class GeomVectorContinuousStorageProxy extends GeomVectorField implements
 		{
 			
 
-			VisualizationProcessor vp1 = stateProxy.visualizationProcessor(p);
+			RemoteProcessorRMI vp1 = stateProxy.RemoteProcessorRMI(p);
 		    IntRect2D partBound = vp1.getStorageBounds();
 		    
 		    System.out.println("partBound : "+partBound);

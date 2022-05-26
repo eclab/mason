@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 
 
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -13,8 +14,8 @@ import com.vividsolutions.jts.geom.Envelope;
 import sim.app.geo.dcampusworld.DCampusWorld;
 import sim.engine.DObject;
 import sim.engine.DSimState;
-import sim.engine.DistributedIterativeRepeat;
-import sim.engine.DistributedTentativeStep;
+import sim.engine.DIterativeRepeat;
+import sim.engine.DTentativeStep;
 import sim.engine.Promise;
 import sim.engine.Promised;
 import sim.engine.Stoppable;
@@ -444,13 +445,13 @@ public class DGeomVectorField<T extends DGeomObject> extends DAbstractGrid2D
 				{
 				// we're done
 				}
-			else if ((stop instanceof DistributedTentativeStep))
+			else if ((stop instanceof DTentativeStep))
 				{
-				((DistributedTentativeStep)stop).stop();
+				((DTentativeStep)stop).stop();
 				}
-			else if ((stop instanceof DistributedIterativeRepeat))
+			else if ((stop instanceof DIterativeRepeat))
 				{
-				((DistributedIterativeRepeat)stop).stop();
+				((DIterativeRepeat)stop).stop();
 				}
 			else
 				{
@@ -502,11 +503,11 @@ public class DGeomVectorField<T extends DGeomObject> extends DAbstractGrid2D
 					removeLocal(agent);
 					halo.addToRemote(to, agent);
 					}
-				else if (stop instanceof DistributedTentativeStep)
+				else if (stop instanceof DTentativeStep)
 					{
                     //System.out.println("xy "+((DParticle)agent).position+" from"+getObjectLocationLocal(agent.ID())+" to "+to);
                     
-					DistributedTentativeStep _stop = (DistributedTentativeStep)stop;
+					DTentativeStep _stop = (DTentativeStep)stop;
 					double time = _stop.getTime();
 					int ordering = _stop.getOrdering();
 					_stop.stop();
@@ -527,10 +528,10 @@ public class DGeomVectorField<T extends DGeomObject> extends DAbstractGrid2D
 
 						}
 					}
-				else if (stop instanceof DistributedIterativeRepeat)
+				else if (stop instanceof DIterativeRepeat)
 					{
 					
-					DistributedIterativeRepeat _stop = (DistributedIterativeRepeat)stop;
+					DIterativeRepeat _stop = (DIterativeRepeat)stop;
 					double time = _stop.getTime();
 					int ordering = _stop.getOrdering();
 					double interval = _stop.getInterval();

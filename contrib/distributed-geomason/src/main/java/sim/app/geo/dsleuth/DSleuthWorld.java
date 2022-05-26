@@ -2,6 +2,7 @@ package sim.app.geo.dsleuth;
 
 import java.io.FileNotFoundException;
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -15,12 +16,15 @@ import java.util.zip.GZIPInputStream;
 
 import sim.app.geo.dsleuth.data.DSleuthData;
 import sim.engine.DSimState;
-import sim.field.geo.DGeomGridField;
-import sim.field.geo.DGeomGridField.GridDataType;
+import sim.field.geo.GeomGridField;
+import sim.field.geo.GeomGridField.GridDataType;
+//import sim.field.geo.DGeomGridField;
+//import sim.field.geo.DGeomGridField.GridDataType;
 import sim.field.grid.DDoubleGrid2D;
 import sim.field.grid.DIntGrid2D;
 import sim.field.grid.DObjectGrid2D;
-import sim.io.geo.DArcInfoASCGridImporter;
+import sim.io.geo.ArcInfoASCGridImporter;
+//import sim.io.geo.DArcInfoASCGridImporter;
 import sim.util.Bag;
 import sim.util.Double2D;
 import sim.util.Int2D;
@@ -262,7 +266,7 @@ public class DSleuthWorld  extends DSimState{
     }
     
     
-    private void readData(DGeomGridField excludedGridField, final String fileName) throws FileNotFoundException
+    private void readData(GeomGridField excludedGridField, final String fileName) throws FileNotFoundException
     {
         InputStream inputStream = DSleuthData.class.getResourceAsStream(fileName);
 
@@ -275,7 +279,7 @@ public class DSleuthWorld  extends DSimState{
         {
             GZIPInputStream compressedInputStream = new GZIPInputStream(inputStream);
 
-            DArcInfoASCGridImporter.read(compressedInputStream, GridDataType.INTEGER, excludedGridField, this);
+            ArcInfoASCGridImporter.read(compressedInputStream, GridDataType.INTEGER, excludedGridField);
 
         } catch (IOException ex)
         {
@@ -668,7 +672,7 @@ public class DSleuthWorld  extends DSimState{
      * @param width - the width of the landscape
      * @param height - the height of the landscape
      */
-    void setupLandscape(final DGeomGridField slope)
+    void setupLandscape(final GeomGridField slope)
     {
         grid_width = slope.getGridWidth();
         grid_height = slope.getGridHeight();
@@ -842,7 +846,7 @@ public class DSleuthWorld  extends DSimState{
 	        // Let's read in all the slope data first.  Not only will that give us
 	        // the dimensions, but we can use that to determine where to put new tiles.
 
-	        DGeomGridField slopeField = new DGeomGridField();
+	        GeomGridField slopeField = new GeomGridField();
 
 	        readData(slopeField, SLOPE_DATA_FILE_NAME);
 
@@ -860,7 +864,7 @@ public class DSleuthWorld  extends DSimState{
 	    {
 	        System.out.println("Reading land use data ...");
 	        
-	        DGeomGridField landuseGridField = new DGeomGridField();
+	        GeomGridField landuseGridField = new GeomGridField();
 
 	        readData(landuseGridField, LAND_USE_DATA_FILE_NAME);
 
@@ -897,7 +901,7 @@ public class DSleuthWorld  extends DSimState{
 	    {
 	        System.out.println("Reading excluded area data ...");
 	        
-	        DGeomGridField excludedGridField = new DGeomGridField();
+	        GeomGridField excludedGridField = new GeomGridField();
 	        
 	        readData(excludedGridField, EXCLUDED_DATA_FILE_NAME);
 	        
@@ -930,7 +934,7 @@ public class DSleuthWorld  extends DSimState{
 	    {
 	        System.out.println("Reading urban area data ...");
 	        
-	        DGeomGridField urbanAreaGridField = new DGeomGridField();
+	        GeomGridField urbanAreaGridField = new GeomGridField();
 
 	        readData(urbanAreaGridField,URBAN_AREA_DATA_FILE_NAME);
 
@@ -979,7 +983,7 @@ public class DSleuthWorld  extends DSimState{
 	    {
 	        System.out.println("Reading transport data ...");
 	        
-	        DGeomGridField transportGridField = new DGeomGridField();
+	        GeomGridField transportGridField = new GeomGridField();
 
 	        readData(transportGridField, TRANSPORT_DATA_FILE_NAME);
 
@@ -1015,7 +1019,7 @@ public class DSleuthWorld  extends DSimState{
 	    {
 	        System.out.println("Reading hill shade data ...");
 	        
-	        DGeomGridField hillshadeGridField = new DGeomGridField();
+	        GeomGridField hillshadeGridField = new GeomGridField();
 
 	        readData(hillshadeGridField, HILLSIDE_DATA_FILE_NAME);
 
