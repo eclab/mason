@@ -127,7 +127,8 @@ public class HaloGrid2D<T extends Serializable, S extends GridStorage<T>>
         this.deleteHaloInfo();
                 
         localBounds = partition.getLocalBounds();
-                
+        //TODO here we have to check aoi < partition size? how
+
         // Get the partition representing halo and local area by expanding the original
         // partition by aoi at each dimension
         haloBounds = localBounds.expand(partition.getAOI());

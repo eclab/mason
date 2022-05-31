@@ -8,8 +8,6 @@ package sim.engine;
 
 import java.io.Serializable;
 
-import sim.engine.rmi.RemotePromise;
-
 /**
    The message placed on the DSimState's queue to be processed on behalf of a Distinguished object.
    It contains the TAG of the message, its ARGUMENTS (which many be null), the Distinguished object
