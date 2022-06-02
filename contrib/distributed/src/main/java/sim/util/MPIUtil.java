@@ -128,17 +128,28 @@ public class MPIUtil
      * @param buffer to write the serialized objects into
      * @param count
      */
+
     static void serialize(final Serializable[] objs, final ByteBuffer buffer, final int[] count)
         {
-        // try (ByteBufferOutputStream out = new ByteBufferOutputStream(buffer);
-        //     ObjectOutputStream os = new ObjectOutputStream(out)) 
-        //     {
+        try (ByteBufferOutputStream out = new ByteBufferOutputStream(buffer);
+            ObjectOutputStream os = new ObjectOutputStream(out)) 
+            {
 			for (int i = 0, prevPos = buffer.position(); i < objs.length; i++)
 				{
-                serialize(objs[i], buffer);
+                os.writeObject(objs[i]);
+                os.flush();
+                // serialize(objs[i], buffer);
 				count[i] = buffer.position() - prevPos;
 				prevPos = buffer.position();
 				}
+			os.close();
+			}
+        catch (final IOException e)
+            {
+            try { os.close(); } catch (IOException ex) { }
+            e.printStackTrace();
+            System.exit(-1);
+            }
         }
 
     /**
