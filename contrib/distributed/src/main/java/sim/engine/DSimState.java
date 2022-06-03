@@ -44,6 +44,8 @@ import sim.util.*;
 public class DSimState extends SimState
     {
     private static final long serialVersionUID = 1L;
+    
+    static boolean distinguishedFlag = true;
 
     // Our PID
     static int pid = -1;
@@ -262,6 +264,11 @@ public class DSimState extends SimState
      */
     public boolean registerDistinguishedObject(Distinguished obj) throws AccessException, RemoteException
         {
+    	
+    	if (distinguishedFlag == false) {
+    		throw new RuntimeException("distinguishedFlag set to false");
+    	}
+    	
         try 
             {
             return registry.registerObject(obj, this);
@@ -279,6 +286,11 @@ public class DSimState extends SimState
     */
     public Promised sendRemoteMessage(String name, int tag, Serializable arguments) throws RemoteException
         {
+    	
+    	if (distinguishedFlag == false) {
+    		throw new RuntimeException("distinguishedFlag set to false");
+    	}
+    	
         RemotePromise callback = new RemotePromise();
         try 
             {
@@ -297,6 +309,11 @@ public class DSimState extends SimState
     // Called by DistinguishedRemoteObject when it receives a message it must put on the queue to process
     void addRemoteMessage(DistinguishedRemoteMessage message)
         {
+    	
+    	if (distinguishedFlag == false) {
+    		throw new RuntimeException("distinguishedFlag set to false");
+    	}
+    	
         synchronized(this.distinguishedMessageQueue)
             {
             distinguishedMessageQueue.add(message);
@@ -401,7 +418,9 @@ public class DSimState extends SimState
         super.start();
 
         // distributed registry inizialization
-        registry = DistinguishedRegistry.getInstance();
+    	if (distinguishedFlag == true) {
+           registry = DistinguishedRegistry.getInstance();
+        }
 
         try
             {
@@ -766,6 +785,7 @@ public class DSimState extends SimState
                         
             transporter.sync();
 
+        	if (distinguishedFlag == true) {
             // After the synchronization we can unregister migrated object!
             // remove exported-migrated object from local node
             for (DistinguishedRemoteObject exportedObj : DistinguishedRegistry.getInstance().getAllLocalExportedObjects())
@@ -784,6 +804,7 @@ public class DSimState extends SimState
                     }
                 }
             DistinguishedRegistry.getInstance().clearMigratedNames();
+        	}
 
             //wait all nodes to finish the unregister phase.
             MPI.COMM_WORLD.barrier();
@@ -815,17 +836,23 @@ public class DSimState extends SimState
 
             if (payloadWrapper.isAgent())
                 {
-                if (payloadWrapper.payload instanceof Distinguished)
-                    {
-                    try
+            	
+            	if (distinguishedFlag == true) {
+
+            	
+            		if (payloadWrapper.payload instanceof Distinguished)
+                    	{
+            			try
                         {
-                        DistinguishedRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload, this);
+            				DistinguishedRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload, this);
                         }
-                    catch (RemoteException e)
+            			catch (RemoteException e)
                         {
                         e.printStackTrace();
                         }
                     }
+                
+            	}
 
                 if (payloadWrapper.isRepeating())
                     {
@@ -858,6 +885,8 @@ public class DSimState extends SimState
         updateGlobals(); //only happens every updateGlobalInterval steps
                 
 
+    	if (distinguishedFlag == true) {
+
         /* we invoke the fullfill for every message in the distinguishedMessageQueue
            to make the Promise ready
         */
@@ -879,6 +908,7 @@ public class DSimState extends SimState
             {
             e.printStackTrace();
             }
+    	}
                 
         }
 
@@ -942,6 +972,9 @@ public class DSimState extends SimState
                                         
                     if (payloadWrapper.isAgent())
                         {
+                    	
+                    	if (distinguishedFlag == true) {
+
 
                         // I am currently unclear on how this works
                         if(payloadWrapper.payload instanceof Distinguished)
@@ -955,6 +988,7 @@ public class DSimState extends SimState
                                 e.printStackTrace();
                                 }
                             }
+                    	}
 
                         if (payloadWrapper.isRepeating())
                             {

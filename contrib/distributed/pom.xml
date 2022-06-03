@@ -27,6 +27,11 @@
 		</repository>
 	</repositories>
 	<dependencies>
+	    <dependency>
+            <groupId>de.ruedigermoeller</groupId>
+            <artifactId>fst</artifactId>
+            <version>2.56</version>
+        </dependency>
 		<dependency>
 			<groupId>cs.gmu.edu.eclab</groupId>
 			<artifactId>mason</artifactId>

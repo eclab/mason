@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
+import org.nustaq.serialization.FSTConfiguration;
+import org.nustaq.serialization.util.FSTInputStream;
+import org.nustaq.serialization.util.FSTOutputStream;
+
 import mpi.Comm;
 import mpi.Datatype;
 import mpi.Intracomm;
@@ -44,6 +48,8 @@ public class MPIUtil
 
     // static final int MAX_SIZE = 1 << 30; // 1024MBytes
     static final int MAX_SIZE = 134217728; // 128 MB
+    
+    static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
 
     // TODO
     // Such shared is not protected with locks or anything
@@ -75,8 +81,11 @@ public class MPIUtil
         {
         // TODO: Makes a ginormous and inappropriate buffer for sending.
         // This needs to be fixed.
-        if (MPIUtil.pSendBuf == null)
+        if (MPIUtil.pSendBuf == null) {
+        	//is this initiallizing array?
             MPIUtil.pSendBuf = ByteBuffer.allocateDirect(MPIUtil.MAX_SIZE);
+
+        }
         else
             MPIUtil.pSendBuf.clear();
 
@@ -90,8 +99,9 @@ public class MPIUtil
         {
         // TODO: Makes a ginormous and inappropriate buffer for receiving.
         // This needs to be fixed.
-        if (MPIUtil.pRecvBuf == null)
+        if (MPIUtil.pRecvBuf == null) {
             MPIUtil.pRecvBuf = ByteBuffer.allocateDirect(MPIUtil.MAX_SIZE);
+        }
         else
             MPIUtil.pRecvBuf.clear();
 
@@ -120,6 +130,106 @@ public class MPIUtil
             System.exit(-1);
             }
         }
+    
+    /**
+     * Serialize a Serializable using Java's builtin serialization and return the
+     * ByteBuffer
+     * 
+     * @param obj
+     * @param buf
+     */
+    static void fastSerialize2(final Serializable obj, final ByteBuffer buf)
+        {
+        try (OutputStream out = new ByteBufferOutputStream(buf);
+            FSTOutputStream os = new FSTOutputStream(out)) {
+            os.write(conf.asByteArray(obj));
+            os.flush();
+            
+
+
+            /// SEAN QUESTION: Why are we flushing rather than closing this stream?
+            }
+        catch (final IOException e)
+            {
+            e.printStackTrace();
+            System.exit(-1);
+            }
+        }
+    
+    static void fastSerialize2(final Serializable[] objs, final ByteBuffer buffer, final int[] count)
+    {
+    for (int i = 0, prevPos = buffer.position(); i < objs.length; i++)
+        {
+    	fastSerialize2(objs[i], buffer);
+        count[i] = buffer.position() - prevPos;
+        prevPos = buffer.position();
+        }
+    }
+    
+    static <T extends Serializable> T  fastDeserialize2(final ByteBuffer buffer, final int pos, final int len) {
+        T obj = null;
+
+        buffer.position(pos);
+        ByteBufferInputStream in = new ByteBufferInputStream(buffer);
+        //ObjectInputStream is = new ObjectInputStream(in);)
+        FSTInputStream is = new FSTInputStream(in);
+            
+        obj = (T) conf.asObject(is.buf);
+            
+
+
+        return obj;
+    }
+    
+    //experimenting with a faster serialize
+    //https://github.com/RuedigerMoeller/fast-serialization/wiki/Serialization
+    static void fastSerialize(final Serializable[] objs, final ByteBuffer buf, final int[] count) {
+    	
+    	//ArrayList<byte[]> barray_array = new ArrayList<byte[]>();
+    	int totalLen = 0;
+        for (int i = 0; i < objs.length; i++)
+        {
+        //serialize(objs[i], buffer);
+        
+    	byte barray[] = conf.asByteArray(objs[i]);
+    	buf.put(barray);
+    	
+    	//totalLen = totalLen + barray.length;
+    	count[i] = barray.length;
+    	//barray_array.add(barray);
+
+        }
+        
+        /*
+        
+        byte fullarray[] = new byte[totalLen];
+        
+        int newCount = 0;
+        for (int i =0; i < barray_array.size(); i++) {
+        	
+        	byte[] aaa =  barray_array.get(i);
+        	
+        	for (int j=0; j< aaa.length; j++) {
+        		fullarray[newCount] = aaa[j];
+        		newCount = newCount + 1;
+        	}
+        	
+        	
+        }
+        */
+        
+        //buf = ByteBuffer.wrap(fullarray);
+        //buf.put(fullarray);
+    }
+    
+    static <T extends Serializable> T  fastDeserialize(final ByteBuffer buffer, final int pos, final int len) {
+    	
+    	byte[] barray = buffer.array();
+    	T object = (T)conf.asObject(barray);
+    	//T object = null;
+    	return object;
+    }
+    
 
     /// SEAN QUESTION: why are we reallocating ByteBufferOutputStream and
     /// ObjectOutputStream every single time?
@@ -203,6 +313,8 @@ public class MPIUtil
 
         return obj;
         }
+    
+
 
     //// SEAN QUESTION: Why are we using a lambda here? This is nuts, we should not
     //// be using lambdas in this context.
@@ -536,7 +648,9 @@ public class MPIUtil
         final ArrayList<T> recvObjs = new ArrayList<>();
         final ByteBuffer srcBuf = initSendBuf(), dstBuf = initRecvBuf();
 
-        serialize(sendObjs, srcBuf, srcCount);
+        //serialize(sendObjs, srcBuf, srcCount);
+        //fastSerialize(sendObjs, srcBuf, srcCount);
+        fastSerialize2(sendObjs, srcBuf, srcCount);
         srcDispl = getDispl(srcCount);
 
         comm.neighborAllToAll(srcCount, 1, MPI.INT, dstCount, 1, MPI.INT);
@@ -544,8 +658,12 @@ public class MPIUtil
 
         comm.neighborAllToAllv(srcBuf, srcCount, srcDispl, MPI.BYTE, dstBuf, dstCount, dstDispl, MPI.BYTE);
 
-        for (int i = 0; i < nc; i++)
-            recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i], dstCount[i])); //expensive
+        for (int i = 0; i < nc; i++) {
+            //recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i], dstCount[i])); //expensive
+            //recvObjs.add(MPIUtil.<T>fastDeserialize(dstBuf, dstDispl[i], dstCount[i])); //expensive
+            recvObjs.add(MPIUtil.<T>fastDeserialize2(dstBuf, dstDispl[i], dstCount[i])); //expensive
+
+        }
 
         return recvObjs;
         }
