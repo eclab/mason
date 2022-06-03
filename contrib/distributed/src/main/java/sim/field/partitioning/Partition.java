@@ -42,6 +42,7 @@ public class Partition
         this.height = height;
         this.toroidal = toroidal;
         this.aoi = aoi;
+        // TODO here check aoi < partition?
 
         try
             {
