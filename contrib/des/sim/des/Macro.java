@@ -7,6 +7,9 @@
 package sim.des;
 
 import sim.engine.*;
+import sim.des.portrayal.*;
+import sim.portrayal.simple.*;
+import sim.portrayal.*;
 import java.util.*;
 
 /**
@@ -24,26 +27,29 @@ import java.util.*;
    going to be stepped at all, presuming you have wired them up yourself.
 */
 
-public class Macro implements Named
-    {
+public class Macro extends DESPortrayal implements Parented
+	{
     private static final long serialVersionUID = 1;
 
     class Node
         {
-        Named object;
+        Parented object;
         boolean shouldStep;
-        public Node(Named obj, boolean b) { object = obj; shouldStep = b; }
+        public Node(Parented obj, boolean b) { object = obj; shouldStep = b; }
         };
         
     ArrayList<Node> steppables = new ArrayList<>();
+    ArrayList<Parented> everything = new ArrayList<>();
     ArrayList<Receiver> receivers = new ArrayList<>();
     ArrayList<Provider> providers = new ArrayList<>();
 
     /** Adds the object to the graph and indicates whether it should be stepped when Macro is stepped. */
-    public boolean add(Named obj, boolean step)
+    public boolean add(Parented obj, boolean step)
         {
-        if (!steppables.contains(obj))
+        if (!everything.contains(obj))
             {
+            everything.add(obj);
+            obj.setParent(this);
             steppables.add(new Node(obj, step));
             return true;
             }
@@ -111,10 +117,20 @@ public class Macro implements Named
                 }
             }
         }
-
+        
     String name;
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-
+    public boolean hideName() { return true; }
+	Object parent;
+    public Object getParent() { return parent; }
+    public void setParent(Object parent) { this.parent = parent; }    
+    
     public void reset(SimState state) { }
+
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+      {
+      return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_PILL, 
+      getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
+      }
     }

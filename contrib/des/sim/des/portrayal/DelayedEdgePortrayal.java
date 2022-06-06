@@ -37,7 +37,6 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
         setLabelScaling(SimpleEdgePortrayal2D.SCALE_WHEN_SMALLER);
         }
     
-    
 	public static final double DEFAULT_CIRCLE_WIDTH = 0;
 	double circleWidth = DEFAULT_CIRCLE_WIDTH;
 	public void setCircleWidth(double val) { circleWidth = val; }
@@ -151,13 +150,19 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
 			    // Draw the little circles
 			    graphics.setColor(Color.BLACK);
 			    if (object != null &&
-			    	object instanceof Edge)
+			    	object instanceof ResourceEdge)
 			    	{
-			    	Object to = ((Edge)object).to();
-			    	if (to != null &&
-			    		to instanceof SimpleDelay)
-			    		{
-			    		SimpleDelay delay = (SimpleDelay)to;
+			    	// find the delay to draw
+			    	SimpleDelay delay = null;
+					Receiver receiver = ((ResourceEdge)object).getReceiver();
+					if (receiver != null &&
+						receiver instanceof SimpleDelay)
+						{
+						delay = (SimpleDelay) receiver;
+						}
+
+					if (delay != null)	 // we have something to draw
+						{
 			    		DelayNode[] delayed = delay.getDelayedResources();
 						double delayTime = delay.getDelayTime();
 						double time = info.gui.state.schedule.getTime();
@@ -209,8 +214,9 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
     protected double getPositiveWeight(Object edge, EdgeDrawInfo2D info)
         {
         ResourceEdge e = (ResourceEdge)edge;
-        Provider provider = (Provider)(e.getFrom());
-        Receiver receiver = (Receiver)(e.getTo());
+        Provider provider = (Provider)(e.getProvider());
+        Receiver receiver = (Receiver)(e.getReceiver());
+        if (provider == null || receiver == null) return 0.0;
         if (provider.getState().schedule.getTime() == provider.getLastAcceptedOfferTime())
             {
             ArrayList<Resource> offers = provider.getLastAcceptedOffers();

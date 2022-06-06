@@ -33,7 +33,7 @@ import sim.des.portrayal.*;
    offers.
 */
 
-public abstract class Provider extends DESPortrayal implements Named, Resettable, ProvidesBarData
+public abstract class Provider extends DESPortrayal implements Named, Resettable, ProvidesBarData, Parented
     {
     public boolean hideDrawState() { return true; }
     public boolean getDrawState() { return false; }
@@ -707,6 +707,10 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     String name;
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+    public boolean hideName() { return true; }
+	Object parent;
+    public Object getParent() { return parent; }
+    public void setParent(Object parent) { this.parent = parent; }    
     
     public void reset(SimState state) 
         {

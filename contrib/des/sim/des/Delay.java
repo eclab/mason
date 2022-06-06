@@ -67,7 +67,8 @@ public class Delay extends SimpleDelay
         Object[] objs = delayHeap.getObjects();
         for(int i = 0; i < nodes.length; i++)
             {
-            nodes[i] = new DelayNode((Resource)(objs[i]),((Double)(keys[i])).doubleValue());
+            nodes[i] = (DelayNode)objs[i];
+            //new DelayNode((Resource)(objs[i]),((Double)(keys[i])).doubleValue());
             }
         return nodes;
         }
@@ -134,14 +135,14 @@ public class Delay extends SimpleDelay
             CountableResource token = (CountableResource)(cr.duplicate());
             token.setAmount(maxIncoming);
             cr.decrease(maxIncoming);
-            delayHeap.add(token, nextTime);
+            delayHeap.add(new DelayNode(token, nextTime, provider), nextTime);
             totalDelayedResource += maxIncoming;            
             totalReceivedResource += maxIncoming;
             }
         else
             {
             if (delayHeap.size() >= capacity) return false;      // we're at capacity
-            delayHeap.add(amount, nextTime);
+            delayHeap.add(new DelayNode(amount, nextTime, provider), nextTime);
             totalDelayedResource += 1;            
             totalReceivedResource += 1.0;
             }
@@ -163,7 +164,8 @@ public class Delay extends SimpleDelay
         Double minKey = (Double)delayHeap.getMinKey();
         while(minKey != null && minKey <= time)
             {
-            Resource _res = (Resource)(delayHeap.extractMin());
+            DelayNode node = (DelayNode)(delayHeap.extractMin());
+            Resource _res = node.getResource();
             if (entities == null)
                 {
                 CountableResource res = ((CountableResource)_res);

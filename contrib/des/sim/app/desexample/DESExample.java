@@ -83,10 +83,16 @@ public class DESExample extends SimState
         simpleDelay.addReceiver(unlock);
         unlock.addReceiver(sink);
         
+        // Add A Macro
+        Macro macro = new Macro();
+        macro.addProvider(source1, false);
+        macro.addProvider(source2, false);
+        
         // Set up our network for display purposes
         field = new DES2D(100, 100);
-        field.add(source1, 20, 40);
-        field.add(source2, 20, 60);
+        //field.add(source1, 20, 40);
+        //field.add(source2, 20, 60);
+        field.add(macro, 20, 50);
         field.add(lock1, 35, 40);
         field.add(lock2, 35, 60);
         field.add(simpleDelay, 50, 50);

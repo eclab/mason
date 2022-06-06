@@ -22,6 +22,7 @@ import java.awt.*;
 import sim.field.network.*;
 import sim.portrayal.network.*;
 import sim.portrayal.*;
+import java.util.*;
 
 /**
    A subclass of Edge which allows the display and weighting of resources which
@@ -32,15 +33,35 @@ public class ResourceEdge extends Edge
     {
     private static final long serialVersionUID = 1;
     
-    public ResourceEdge(Provider provider, Receiver receiver, Network network)
+    /// FROM is the object where the edge starts at
+    /// TO is the object where the edge ends at
+    /// PROVIDER is the object which represents the provider of the edge, for purposes of
+    /// things like measuring edge thickness
+    /// RECEIVER is the object which represents the receiver of the edge, for purposes of
+    /// things like measuring edge thickness
+    
+    Provider provider;
+    Receiver receiver;
+
+    public Provider getProvider() { return provider; }
+    public Receiver getReceiver() { return receiver; }
+
+    public ResourceEdge(Object from, Provider provider, Receiver receiver, Object to)
         {
-        super(provider, receiver, null);                // we have a null info because we grab it from the provider
+        super(from, to, null);		// we have a null info because we grab it from the provider
+        this.provider = provider;
+        this.receiver = receiver;
+        }
+
+    public ResourceEdge(Provider provider, Receiver receiver)
+        {
+        this(provider, provider, receiver, receiver);                
         }
                 
     public Object getInfo() 
         { 
-        Provider provider = (Provider)getFrom();
-        Receiver receiver = (Receiver)getTo();
+        Provider provider = getProvider();
+        Receiver receiver = getReceiver();
         double offerTime = provider.getLastAcceptedOfferTime();
         if (offerTime > Schedule.BEFORE_SIMULATION)
             {

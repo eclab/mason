@@ -3,6 +3,9 @@ package sim.des;
 import sim.engine.*;
 import sim.util.*;
 import java.util.*;
+import sim.des.portrayal.*;
+import sim.portrayal.simple.*;
+import sim.portrayal.*;
 
 /**
    MULTI is a general Steppable object which is meant to enable objects which Provide and Receive multiple channels and multiple resources.
@@ -15,7 +18,7 @@ import java.util.*;
         
 **/
 
-public abstract class Multi implements Named, Resettable
+public abstract class Multi extends DESPortrayal implements Resettable, Parented
     {
     private static final long serialVersionUID = 1;
 
@@ -68,12 +71,14 @@ public abstract class Multi implements Named, Resettable
         for(int i = 0; i < receiverResources.length; i++)
             {
             multiReceivers[i] = new MultiReceiver(state, receiverResources[i], i);
+            multiReceivers[i].setParent(this);
             }
                         
         multiProviders = new MultiProvider[providerResources.length];
         for(int i = 0; i < providerResources.length; i++)
             {
             multiProviders[i] = new MultiProvider(state, providerResources[i], i);
+            multiProviders[i].setParent(this);
             }
         setName("Multi");
         }
@@ -97,7 +102,13 @@ public abstract class Multi implements Named, Resettable
         {
         // does nothing by default
         }
-                
+       
+    public int getNumReceivers() { return multiReceivers.length; }
+    public int getNumProviders() { return multiProviders.length; }
+    
+    public Receiver[] getReceivers() { return multiReceivers; }
+    public Provider[] getProviders() { return multiProviders; }
+             
     /** Returns the Receiver corresponding to the given receiver port.  You can customize it as you see fit.  */ 
     public Receiver getReceiver(int receiverPort)
         {
@@ -241,4 +252,18 @@ public abstract class Multi implements Named, Resettable
             // do nothing
             }
         } 
+
+    String name;
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public boolean hideName() { return true; }
+	Object parent;
+    public Object getParent() { return parent; }
+    public void setParent(Object parent) { this.parent = parent; }    
+
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+      {
+      return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_PILL, 
+      getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
+      }
     }

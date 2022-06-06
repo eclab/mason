@@ -15,7 +15,7 @@ import java.util.*;
    Receivers can also register themselves with providers to be informed of offers.
 */
 
-public interface Receiver extends Named, Resettable
+public interface Receiver extends Named, Parented, Resettable
     {
     /**
        Offers a resource from a Provider to a Receiver.

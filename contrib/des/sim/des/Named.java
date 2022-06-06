@@ -26,5 +26,5 @@ public interface Named extends Steppable
     */
     public void setName(String name);
     
-    public void reset(SimState state);
+//    public void reset(SimState state);
     }

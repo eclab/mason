@@ -144,14 +144,14 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
             CountableResource token = (CountableResource)(cr.duplicate());
             token.setAmount(maxIncoming);
             cr.decrease(maxIncoming);
-            delayQueue.add(new DelayNode(token, nextTime));
+            delayQueue.add(new DelayNode(token, nextTime, provider));
             totalDelayedResource += maxIncoming;            
             totalReceivedResource += maxIncoming;
             }
         else
             {
             if (delayQueue.size() >= capacity) return false; // we're at capacity
-            delayQueue.add(new DelayNode(amount, nextTime));
+            delayQueue.add(new DelayNode(amount, nextTime, provider));
             totalDelayedResource += 1;            
             totalReceivedResource += 1.0;
             }

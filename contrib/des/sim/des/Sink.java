@@ -21,7 +21,7 @@ import sim.des.portrayal.*;
    A Sink accepts all incoming offers of resources matching a given type, then throws them away.
 */
 
-public class Sink extends DESPortrayal implements Receiver, StatReceiver, ProvidesBarData
+public class Sink extends DESPortrayal implements Receiver, StatReceiver, ProvidesBarData, Parented
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
         {
@@ -102,6 +102,9 @@ public class Sink extends DESPortrayal implements Receiver, StatReceiver, Provid
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public boolean hideName() { return true; }
+	Object parent;
+    public Object getParent() { return parent; }
+    public void setParent(Object parent) { this.parent = parent; }    
 
     public void reset(SimState state) { totalReceivedResource = 0; }
         

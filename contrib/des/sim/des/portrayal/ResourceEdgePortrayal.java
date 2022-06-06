@@ -57,8 +57,9 @@ public class ResourceEdgePortrayal extends SimpleEdgePortrayal2D
     protected double getPositiveWeight(Object edge, EdgeDrawInfo2D info)
         {
         ResourceEdge e = (ResourceEdge)edge;
-        Provider provider = (Provider)(e.getFrom());
-        Receiver receiver = (Receiver)(e.getTo());
+        Provider provider = e.getProvider();
+        Receiver receiver = e.getReceiver();
+        if (provider == null || receiver == null) return 0.0;
         if (provider.getState().schedule.getTime() == provider.getLastAcceptedOfferTime())
             {
             ArrayList<Resource> offers = provider.getLastAcceptedOffers();

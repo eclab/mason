@@ -14,14 +14,17 @@ public class DelayNode
     {
     Resource resource;
     double timestamp;
+    Provider provider;
                 
-    public DelayNode(Resource resource, double timestamp)
+    public DelayNode(Resource resource, double timestamp, Provider provider)
         {
         this.resource = resource;
         this.timestamp = timestamp;
+        this.provider = provider;
         }
         
     public Resource getResource() { return resource; }
     public double getTimestamp() { return timestamp; }
+    public Provider getProvider() { return provider; }
     }
         
