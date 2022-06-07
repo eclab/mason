@@ -209,7 +209,7 @@ public class Macro extends DESPortrayal implements Parented
 												ContinuousPortrayal2D c = (ContinuousPortrayal2D)(p.portrayal);
 												
 												// Okay we found a ContinuousPortrayal2D.  Is it portraying the field we're looking for?
-												if (c.getField() == field.getNodes())  // GOT IT
+												if (c != null && field != null && c.getField() == field.getNodes())  // GOT IT
 													{
 													
 													// Great!  So let's bring that frame to the front and return true
