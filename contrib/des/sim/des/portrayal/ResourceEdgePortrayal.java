@@ -29,6 +29,8 @@ public class ResourceEdgePortrayal extends SimpleEdgePortrayal2D
     
     double scale = 1.0;
     
+    HashMap<Integer, Paint> paintMap;
+
     public ResourceEdgePortrayal()
         {
         this(1.0, false);
@@ -54,6 +56,20 @@ public class ResourceEdgePortrayal extends SimpleEdgePortrayal2D
         this.scale = scale;
         }
     
+    public void putPaint(int resourceType, Paint paint)
+    	{
+    	if (paintMap == null) paintMap = new HashMap<>();
+    	paintMap.put(resourceType, paint);
+    	}
+    
+    public Paint getPaint(int resourceType)
+    	{
+    	if (paintMap == null) return fromPaint;
+    	Paint paint = paintMap.get(resourceType);
+    	if (paint == null) return fromPaint;
+    	else return paint;
+    	}
+
     protected double getPositiveWeight(Object edge, EdgeDrawInfo2D info)
         {
         ResourceEdge e = (ResourceEdge)edge;
@@ -78,6 +94,29 @@ public class ResourceEdgePortrayal extends SimpleEdgePortrayal2D
             {
             return 0.0;
             }
+        }
+    
+    public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+    	{
+		if (!(object instanceof ResourceEdge))
+			throw new RuntimeException("Expected this to be a ResourceEdge: " + object);
+		ResourceEdge edge = (ResourceEdge)object;
+
+		int resource = edge.getProvider().getTypicalProvided().getType();
+
+    	Paint f = fromPaint;
+    	fromPaint = getPaint(resource);
+    	super.draw(object, graphics, info);
+    	fromPaint = f;		// restore
+    	}
+
+    public String getName(LocationWrapper wrapper)
+        {
+		if (!(wrapper.getLocation() instanceof ResourceEdge))
+			throw new RuntimeException("Expected this to be a ResourceEdge: " + wrapper.getLocation());
+
+        ResourceEdge edge = (ResourceEdge)(wrapper.getLocation());
+        return "" + edge.getProvider().getTypicalProvided().getName() + ": " + edge.getProvider().getName() + " --> " + edge.getReceiver().getName();
         }
     }
         

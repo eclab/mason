@@ -62,9 +62,9 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
 
     public Paint getCirclePaint(int resourceType)
     	{
-    	if (circlePaintMap == null) return fromPaint;
+    	if (circlePaintMap == null) return toPaint;
     	Paint paint = circlePaintMap.get(resourceType);
-    	if (paint == null) return fromPaint;
+    	if (paint == null) return toPaint;
     	else return paint;
     	}
     
@@ -271,6 +271,15 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
             {
             return 0.0;
             }
+        }
+
+    public String getName(LocationWrapper wrapper)
+        {
+		if (!(wrapper.getLocation() instanceof ResourceEdge))
+			throw new RuntimeException("Expected this to be a ResourceEdge: " + wrapper.getLocation());
+
+        ResourceEdge edge = (ResourceEdge)(wrapper.getLocation());
+        return "" + edge.getProvider().getTypicalProvided().getName() + ": " + edge.getProvider().getName() + " --> " + edge.getReceiver().getName();
         }
     }
         
