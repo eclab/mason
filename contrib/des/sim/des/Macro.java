@@ -11,6 +11,13 @@ import sim.des.portrayal.*;
 import sim.portrayal.simple.*;
 import sim.portrayal.*;
 import java.util.*;
+import sim.display.*;
+import java.awt.event.*;
+import java.awt.*;
+import java.awt.geom.*;
+import sim.util.*;
+import javax.swing.*;
+import sim.portrayal.continuous.*;
 
 /**
    A Macro encapsulates a subgraph of DES objects.  This subgraph consists of objects of three types.
@@ -42,6 +49,10 @@ public class Macro extends DESPortrayal implements Parented
     ArrayList<Parented> everything = new ArrayList<>();
     ArrayList<Receiver> receivers = new ArrayList<>();
     ArrayList<Provider> providers = new ArrayList<>();
+    DES2D field;
+
+	public void setField(DES2D field) { this.field = field; }
+	public DES2D getField() { return field; }
 
     /** Adds the object to the graph and indicates whether it should be stepped when Macro is stepped. */
     public boolean add(Parented obj, boolean step)
@@ -130,7 +141,99 @@ public class Macro extends DESPortrayal implements Parented
 
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
       {
-      return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_PILL, 
-      getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
+      return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_PILL, getFillPaint(), getStrokePaint(), getStrokeWidth(), scale)
+      	{
+      	
+      	// Okay, all this code has one goal: to pop up a display associated with the macro when the user TRIPLE-clicks on it.
+		public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper,
+			MouseEvent event, DrawInfo2D range, int type)
+			{
+			// This first chunk of code is mostly co-opted from MovablePortrayal2D
+	        synchronized(guistate.state.schedule)
+    	        {
+				int id = event.getID();
+				Point2D.Double objPos = ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).getObjectPosition(wrapper.getObject(), range);
+
+				if (id == MouseEvent.MOUSE_CLICKED && event.getClickCount() >= 3 && objPos != null)			// We're looking for 3 clicks
+					{
+					Point2D originalMousePosition = event.getPoint();     
+					Point2D originalObjectPosition = objPos;  
+
+					// we need to determine if we were actually hit
+					DrawInfo2D hitRange = new DrawInfo2D(range);
+					Double2D scale = ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).getScale(range);
+
+					// this magic basically creates a rectangle representing the hittable region of the object
+					// and a small pixel where the mouse clicked.
+					hitRange.draw.x = originalObjectPosition.getX();
+					hitRange.draw.y = originalObjectPosition.getY();
+					hitRange.draw.width = scale.x;
+					hitRange.draw.height = scale.y;
+					hitRange.clip.x = originalMousePosition.getX();
+					hitRange.clip.y = originalMousePosition.getY();
+					hitRange.clip.width = 1;
+					hitRange.clip.height = 1;
+					hitRange.parent = range;
+														
+					if (hitObject(wrapper.getObject(), hitRange))
+						{
+						
+					/// END chunk of code copted from MovablePortrayal2D
+						
+						// Now we know we've been triple-clicked on.  So Let's see if we can find a display associated with the macro
+						Console console = ((Console)(guistate.controller));
+						ArrayList list = console.getAllFrames();
+						
+						// Go through every frame registered with the console
+						for(Object obj : list)
+							{
+							JFrame frame = (JFrame)obj;	
+							
+							// The Display2D is a child of the content pane.  So we go through the children
+							synchronized(frame.getContentPane().getTreeLock())		// this is dumb, there's no contains child command
+								{
+								Component[]	components = frame.getContentPane().getComponents();
+								for(int i = 0; i < components.length; i++)
+									{
+									if (components[i] instanceof Display2D)
+										{
+										Display2D display2D = (Display2D)components[i];
+
+										// Okay we found a Display2D.  Now we go through its portrayals one by one, looking for a ContinuousPortrayal2D
+										Iterator iter = display2D.portrayals.iterator();
+										while (iter.hasNext())
+											{
+											Display2D.FieldPortrayal2DHolder p = (Display2D.FieldPortrayal2DHolder)(iter.next());
+											if (p.portrayal instanceof ContinuousPortrayal2D)
+												{
+												ContinuousPortrayal2D c = (ContinuousPortrayal2D)(p.portrayal);
+												
+												// Okay we found a ContinuousPortrayal2D.  Is it portraying the field we're looking for?
+												if (c.getField() == field.getNodes())  // GOT IT
+													{
+													
+													// Great!  So let's bring that frame to the front and return true
+													SwingUtilities.invokeLater(new Runnable()
+														{
+														public void run()
+															{
+															frame.toFront();
+															frame.setVisible(true);
+															}
+														});
+													return true;		// we processed the event
+													}
+												}
+											}	
+										}		
+									}
+								}
+							}
+						}
+					}
+				return false;			// we did NOT process the event
+				}
+			}
+      	};
       }
     }

@@ -24,6 +24,13 @@ public class DESExampleWithUI extends GUIState
 	
     ContinuousPortrayal2D layoutPortrayal = new ContinuousPortrayal2D();
     NetworkPortrayal2D graphPortrayal = new NetworkPortrayal2D();
+
+    public Display2D macroDisplay;
+	public JFrame macroDisplayFrame;
+	
+    ContinuousPortrayal2D macroLayoutPortrayal = new ContinuousPortrayal2D();
+    NetworkPortrayal2D macroGraphPortrayal = new NetworkPortrayal2D();
+        
         
     public static void main(String[] args)
         {
@@ -80,6 +87,15 @@ public class DESExampleWithUI extends GUIState
         display.reset();
         display.setBackdrop(Color.white);
         display.repaint();
+
+
+        macroLayoutPortrayal.setField(example.macroField.getNodes());
+        macroGraphPortrayal.setField(example.macroField);
+        macroGraphPortrayal.setPortrayalForAll(edge);
+
+        macroDisplay.reset();
+        macroDisplay.setBackdrop(Color.white);
+        macroDisplay.repaint();
         }
 
     public void init(Controller c)
@@ -99,6 +115,17 @@ public class DESExampleWithUI extends GUIState
         displayFrame.setTitle("Amazing!");
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
         displayFrame.setVisible(true);
+
+        // make the macro display
+        macroDisplay = new Display2D(600,600,this);
+        // turn off clipping
+        macroDisplay.setClipping(false);
+        macroDisplay.attach( macroGraphPortrayal, "Connections" );
+        macroDisplay.attach( macroLayoutPortrayal, "Layout" );
+
+        macroDisplayFrame = macroDisplay.createFrame();
+        macroDisplayFrame.setTitle("The Macro");
+        c.registerFrame(macroDisplayFrame);   // register the frame so it appears in the "Display" list
         }
 
     public void quit()

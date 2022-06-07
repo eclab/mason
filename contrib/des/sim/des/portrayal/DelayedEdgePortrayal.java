@@ -28,14 +28,45 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
     {
     private static final long serialVersionUID = 1;
     
+    HashMap<Integer, Paint> paintMap;
+    HashMap<Integer, Paint> circlePaintMap;
+    
     public DelayedEdgePortrayal()
         {
-        super(Color.BLUE, Color.RED, Color.BLACK, new Font("SansSerif", Font.PLAIN, 10));
+        super(Color.BLUE, Color.BLACK, Color.BLACK, new Font("SansSerif", Font.PLAIN, 10));
         setShape(SimpleEdgePortrayal2D.SHAPE_LINE_BUTT_ENDS);
         setAdjustsThickness(true);
         setScaling(SimpleEdgePortrayal2D.ALWAYS_SCALE);
         setLabelScaling(SimpleEdgePortrayal2D.SCALE_WHEN_SMALLER);
         }
+        
+    public void putPaint(int resourceType, Paint paint)
+    	{
+    	if (paintMap == null) paintMap = new HashMap<>();
+    	paintMap.put(resourceType, paint);
+    	}
+    
+    public void putCirclePaint(int resourceType, Paint paint)
+    	{
+    	if (circlePaintMap == null) circlePaintMap = new HashMap<>();
+    	circlePaintMap.put(resourceType, paint);
+    	}
+    
+    public Paint getPaint(int resourceType)
+    	{
+    	if (paintMap == null) return fromPaint;
+    	Paint paint = paintMap.get(resourceType);
+    	if (paint == null) return fromPaint;
+    	else return paint;
+    	}
+
+    public Paint getCirclePaint(int resourceType)
+    	{
+    	if (circlePaintMap == null) return fromPaint;
+    	Paint paint = circlePaintMap.get(resourceType);
+    	if (paint == null) return fromPaint;
+    	else return paint;
+    	}
     
 	public static final double DEFAULT_CIRCLE_WIDTH = 0;
 	double circleWidth = DEFAULT_CIRCLE_WIDTH;
@@ -47,7 +78,12 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
 			if (!(info instanceof EdgeDrawInfo2D))
 				throw new RuntimeException("Expected this to be an EdgeDrawInfo2D: " + info);
 			EdgeDrawInfo2D e = (EdgeDrawInfo2D) info;
-		
+			
+			if (!(object instanceof ResourceEdge))
+				throw new RuntimeException("Expected this to be a ResourceEdge: " + object);
+			ResourceEdge edge = (ResourceEdge)object;
+			
+			int resource = edge.getProvider().getTypicalProvided();
 		    double width = getBaseWidth();
 
                 double scale = info.scale;
@@ -120,7 +156,7 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
 					 eYd2 += offsetEnd2 * sin * beta;
 					}
         		
-        		graphics.setPaint(fromPaint);
+        		graphics.setPaint(getPaint(resource));
 
 				if (len > TRIANGLE_WIDTH * width * scale)	// draw line
 					{
@@ -148,7 +184,7 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
 			    graphics.setTransform(old);
 			    
 			    // Draw the little circles
-			    graphics.setColor(Color.BLACK);
+			    graphics.setColor(getCirclePaint(resource));
 			    if (object != null &&
 			    	object instanceof ResourceEdge)
 			    	{

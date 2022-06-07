@@ -21,6 +21,7 @@ public class DESExample extends SimState
     private static final long serialVersionUID = 1;
 
     public DES2D field = new DES2D(100, 100);
+    public DES2D macroField = new DES2D(100, 100);
     
     public DESExample(long seed)
         {
@@ -101,6 +102,13 @@ public class DESExample extends SimState
         
         // Connect all objects with edges
         field.connectAll();
+        
+        // Let's make another display.  This has to be improved.
+        // Maybe we could store the location information in the Macro proper,
+        // and then make a method which builds a DES2D around the Macro
+        macroField.add(source1, 20, 40);
+        macroField.add(source2, 20, 60);
+        macro.setField(macroField);
 
         /*
         // Alternatively we could connect the objects individually
