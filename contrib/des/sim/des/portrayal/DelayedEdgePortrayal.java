@@ -83,7 +83,7 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
 				throw new RuntimeException("Expected this to be a ResourceEdge: " + object);
 			ResourceEdge edge = (ResourceEdge)object;
 			
-			int resource = edge.getProvider().getTypicalProvided();
+			int resource = edge.getProvider().getTypicalProvided().getType();
 		    double width = getBaseWidth();
 
                 double scale = info.scale;
@@ -184,7 +184,7 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
 			    graphics.setTransform(old);
 			    
 			    // Draw the little circles
-			    graphics.setColor(getCirclePaint(resource));
+			    graphics.setPaint(getCirclePaint(resource));
 			    if (object != null &&
 			    	object instanceof ResourceEdge)
 			    	{
