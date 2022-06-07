@@ -27,6 +27,8 @@ public class DESExample extends SimState
         {
         super(seed);
         }
+              
+    public Macro macro;
                 
     public void start()
         {
@@ -85,7 +87,7 @@ public class DESExample extends SimState
         unlock.addReceiver(sink);
         
         // Add A Macro
-        Macro macro = new Macro();
+     	macro = new Macro("My Awesome Macro");
         macro.addProvider(source1, false);
         macro.addProvider(source2, false);
         

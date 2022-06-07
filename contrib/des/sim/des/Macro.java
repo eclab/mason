@@ -51,6 +51,9 @@ public class Macro extends DESPortrayal implements Parented
     ArrayList<Provider> providers = new ArrayList<>();
     DES2D field;
 
+	public Macro() { }
+	public Macro(String name) { setName(name); }
+
 	public void setField(DES2D field) { this.field = field; }
 	public DES2D getField() { return field; }
 
