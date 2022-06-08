@@ -120,7 +120,7 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Named
         {
         if (baseImagePath != null)
             {
-            return wrapPortrayal(new ImagePortrayal2D(new ImageIcon(
+            return wrapPortrayal(buildDefaultImagePortrayal(new ImageIcon(
                                     (usesGlobalImageClass ? DESPortrayalParameters.getImageClass() : 
                                     this.getClass()).getResource(baseImagePath)), portrayalScale));
             }
@@ -140,5 +140,10 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Named
             ShapePortrayal2D.POLY_SQUARE,
             getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
         }
+
+	public ImagePortrayal2D buildDefaultImagePortrayal(ImageIcon icon, double scale)
+		{
+			return new ImagePortrayal2D(icon, scale);
+		}
     }       
         

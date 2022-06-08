@@ -9,6 +9,7 @@ package sim.des;
 import sim.engine.*;
 import sim.des.portrayal.*;
 import sim.portrayal.simple.*;
+import sim.portrayal.network.*;
 import sim.portrayal.*;
 import java.util.*;
 import sim.display.*;
@@ -18,6 +19,8 @@ import java.awt.geom.*;
 import sim.util.*;
 import javax.swing.*;
 import sim.portrayal.continuous.*;
+import sim.field.network.*;
+import sim.engine.*;
 
 /**
    A Macro encapsulates a subgraph of DES objects.  This subgraph consists of objects of three types.
@@ -132,25 +135,9 @@ public class Macro extends DESPortrayal implements Parented
             }
         }
         
-    String name;
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public boolean hideName() { return true; }
-	Object parent;
-    public Object getParent() { return parent; }
-    public void setParent(Object parent) { this.parent = parent; }    
-    
-    public void reset(SimState state) { }
-
-    public SimplePortrayal2D buildDefaultPortrayal(double scale)
-      {
-      return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_PILL, getFillPaint(), getStrokePaint(), getStrokeWidth(), scale)
-      	{
-      	
       	// Okay, all this code has one goal: to pop up a display associated with the macro when the user TRIPLE-clicks on it.
-		public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper,
-			MouseEvent event, DrawInfo2D range, int type)
-			{
+    boolean doMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper, MouseEvent event, DrawInfo2D range, int type)
+    	{
 			// This first chunk of code is mostly co-opted from MovablePortrayal2D
 	        synchronized(guistate.state.schedule)
     	        {
@@ -236,6 +223,38 @@ public class Macro extends DESPortrayal implements Parented
 					}
 				return false;			// we did NOT process the event
 				}
+	    	}
+        
+    String name;
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public boolean hideName() { return true; }
+	Object parent;
+    public Object getParent() { return parent; }
+    public void setParent(Object parent) { this.parent = parent; }    
+    
+    public void reset(SimState state) { }
+
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+      {
+      return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_PILL, getFillPaint(), getStrokePaint(), getStrokeWidth(), scale)
+      	{
+		public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper,
+			MouseEvent event, DrawInfo2D range, int type)
+			{
+			return doMouseEvent(guistate, manipulating, wrapper, event, range, type);
+			}
+      	};
+      }
+
+	public ImagePortrayal2D buildDefaultImagePortrayal(ImageIcon icon, double scale)
+      {
+      return new ImagePortrayal2D(icon, scale)
+      	{
+		public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper,
+			MouseEvent event, DrawInfo2D range, int type)
+			{
+			return doMouseEvent(guistate, manipulating, wrapper, event, range, type);
 			}
       	};
       }
