@@ -15779,9 +15779,9 @@ Sets stop object.
 Returns boolean on whether the object is stopped.
 \end{methods}
 
-%\subsection{Distributed Grids}
+\subsection{Distributed Grids}
 
-%GeoMason has a standard grid class called \class{sim.field.geo.GeomGridField}.  This class has utility methods to load GIS raster data, though often it's just used to load the data and then transfer it to an IntGrid2D or DoubleGrid2D or ObjectGrid2D.  Distributed MASON has and equivalent class called  %\class{sim.field.geo.DGeomGridField}.  This class isn't spectacularly efficient: so we imagine you might employ a similar strategy: each partition loading into a (non-distributed)  GeomGridField, and then transferring each partition's portion into its local region of a DIntGrid2D, DDoubleGrid2D, or DObjectGrid2D.  However, we provide DGeomGridField in case you really need to use it.
+GeoMason has a standard grid class called \class{sim.field.geo.GeomGridField}.  This class has utility methods to load GIS raster data, though often it's just used to load the data and then transfer it to an IntGrid2D or DoubleGrid2D or ObjectGrid2D.  For this reason we have elected not to include an equivalent ``DGeomGridField'' class in Distributed MASON.  Rather, if you are using a large {\it read-only} grid map, every partition should independently load the map via GeomGridField, and then perhaps convert it to an IntGrid2D or DoubleGrid2D or ObjectGrid2D.  If you are using a large {\it read-write} distributed grid, simply use a DIntGrid2D, DDoubleGrid2D, or DObjectGrid2D.
 
 
 \section{Visualization and Statistics}
@@ -15898,11 +15898,15 @@ Stops a given stats stream.
 
 There is also a public method called \method{getStats(...)}, but you should not call this.  It is called by the remote visualization tool to grab and clear the latest statistics.
 
-On your visualization laptop, all statistics streams are started when you press the Play button (and thus start() is called internally).  All statistics streams stopped when you press the Stop button (and thus finish() is called internally).  Your SimStateProxy class has the following method you can override:
+On your visualization laptop, all statistics streams are started when you press the Play button (and thus start() is called internally).  All statistics streams stopped when you press the Stop button (and thus finish() is called internally).  Your SimStateProxy class will pass statistics to the \class{outputStatistics(...)} method, which you override as you see fit (by default it does nothing).  Two simple statistics-printers are provided for your convenience to call from within outputStatistics.
 
 \begin{methods}{\class{sim.display.SimStateProxy}}
  \mthd{public void outputStatistics(int statType, double[] times, ArrayList\(\langle\)Serializable\(\rangle\)[][] stats, long startSteps, long endSteps)}
-Called to output the latest statistics from the partitions (to a file, to a chart, or whatever).  The statistics type is provided in statType, and the Schedule's start and end steps are provided in startSteps and endSteps inclusive.  Each step in that range is represented by two arrays, the times array and the stats array.  The first entry in each array is at step startSteps, the second is at step startSteps\(+\)1, and so on, up to endSteps.  The times array holds the simulation time for each step.  The stats array holds, for each step, an array of ArrayLists, one for each partition.  The ArrayLists hold the actual \class{sim.engine.Stat} objects, which in turn hold the serialized statistics log entries.  It is possible for a partition to log more than one Stat object in a given step.  These arrays are yours and you are free to modify them.
+Called to output the latest statistics from the partitions (to a file, to a chart, or whatever).  The statistics type is provided in statType, and the Schedule's start and end steps are provided in startSteps and endSteps inclusive.  Each step in that range is represented by two arrays, the times array and the stats array.  The first entry in each array is at step startSteps, the second is at step startSteps\(+\)1, and so on, up to endSteps.  The times array holds the simulation time for each step.  The stats array holds, for each step, an array of ArrayLists, one for each partition.  The ArrayLists hold the actual \class{sim.engine.Stat} objects, which in turn hold the serialized statistics log entries.  It is possible for a partition to log more than one Stat object in a given step.  These arrays are yours and you are free to modify them. By default this method does nothing: override it as you see fit.
+ \mthd{public void printStatistics(int statType, double[] times, ArrayList\(\langle\)Serializable\(\rangle\)[][] stats, long startSteps, long endSteps, boolean stderr)}
+ Prints statistics to stderr or to stdout, as specified, then flushes.  You can call this method from within outputStatistics(...).
+ \mthd{public void printStatistics(int statType, double[] times, ArrayList\(\langle\)Serializable\(\rangle\)[][] stats, long startSteps, long endSteps, Writer writer)}
+ Prints statistics to the given writer.  You can call this method from within outputStatistics(...).  This method does not flush after each call.  Remember to close the writer when you're finished.
 \end{methods}
 
 
