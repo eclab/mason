@@ -52,7 +52,7 @@ public class DHeatBugs extends DSimState
 
 	public DHeatBugs(final long seed)
 	{
-		this(seed, 100, 100, 100, 1);
+		this(seed, 100, 100, 6400, 1);
 	}
 
 	public DHeatBugs(final long seed, final int width, final int height, final int count, final int aoi)
