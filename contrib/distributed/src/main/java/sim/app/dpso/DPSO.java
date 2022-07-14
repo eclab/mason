@@ -229,7 +229,10 @@ public class DPSO extends DSimState {
                     prevSuccessCount = successCount;
                     //System.out.println("SuccessCount = " + successCount);                                         
                     if (successCount == numParticles)
-                        state.kill();
+                    {
+                        //state.kill();
+                    }
+                    
                     }
             
 
