@@ -67,7 +67,7 @@ public class Entity extends Resource
     /** Returns the current info object in the Entity, or null if there is none. */
     public Object getInfo()
         {
-        return storage;
+        return info;
         }
         
     /** Sets the current info object in the Entity, or null if there is none. */

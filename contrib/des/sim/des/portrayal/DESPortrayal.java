@@ -141,6 +141,11 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Named
             getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
         }
 
+    /** 
+        Builds an "image portrayal" for the object, if the image path and class have been set.  
+    	Normally you'd not bother overriding this method (though Macro does to customize its triple-clicking
+    	feature). The default just makes a basic ImagePortrayal2D.
+    */
 	public ImagePortrayal2D buildDefaultImagePortrayal(ImageIcon icon, double scale)
 		{
 			return new ImagePortrayal2D(icon, scale);
