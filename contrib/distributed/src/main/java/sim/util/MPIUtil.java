@@ -271,7 +271,20 @@ public class MPIUtil
         //ObjectInputStream is = new ObjectInputStream(in);)
         FSTInputStream is = new FSTInputStream(in);
             
-        obj = (T) conf.asObject(is.buf);
+        //obj = (T) conf.asObject(is.buf);
+        
+        try {
+			obj = (T)  conf.getObjectInput(is).readObject();
+			
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
             
 
 

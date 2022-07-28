@@ -45,7 +45,8 @@ public class DSimState extends SimState
     {
     private static final long serialVersionUID = 1L;
     
-    static boolean distinguishedFlag = true;
+    static boolean distinguishedFlag = false;
+    static boolean updateGlobalFlag = false;
 
     // Our PID
     static int pid = -1;
@@ -882,7 +883,15 @@ public class DSimState extends SimState
         Timing.stop(Timing.MPI_SYNC_OVERHEAD);
         loadBalance();
                 
-        updateGlobals(); //only happens every updateGlobalInterval steps
+        if (updateGlobalFlag == true) {
+            updateGlobals(); //only happens every updateGlobalInterval steps
+        }
+        
+        /*
+        if (schedule.getSteps() >= 100000) {
+        	System.exit(-1);
+        }
+        */
                 
 
     	if (distinguishedFlag == true) {

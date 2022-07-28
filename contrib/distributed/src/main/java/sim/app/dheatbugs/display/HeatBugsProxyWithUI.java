@@ -66,16 +66,20 @@ public class HeatBugsProxyWithUI extends GUIState
         //Inspector ins = Inspector.getInspector(((SimStateProxy)state).getStats(), this, "Properties");   
         //Inspector ins = Inspector.getInspector(((SimStateProxy)state).getStatsAligned(), this, "Properties");   
         //call a SimStateProxy getProperties I think (implement this, make it return a property object with all values
-        System.out.println("hello");
+        
+
+        
+        
+        System.out.println("hello"); //hello
         Properties prop_test = ((SimStateProxy)state).getProperties(0);  //null for some reason?
         
-        System.out.println(prop_test.getClass());
+        System.out.println(prop_test.getClass()); //class sim.util.RemoteSimpleProperties
         
         int numProp = ((SimStateProxy)state).getProperties(0).numProperties();
-        System.out.println(prop_test);
+        System.out.println(prop_test); //RemoteSimpleProperties
         //System.exit(-1);
         String method_name = ((SimStateProxy)state).getProperties(0).getName(0);
-        System.out.println(method_name);        
+        System.out.println(method_name);  //DiffusionConstant       
         
         Inspector ins = Inspector.getInspector(((SimStateProxy)state).getProperties(0), this, "Properties");   
 
@@ -86,9 +90,9 @@ public class HeatBugsProxyWithUI extends GUIState
         insName.add("stats_inspector : "+state);
         this.controller.setInspectors(insBag, insName);
         
-        System.out.println(insName);
+        System.out.println(insName); //sim.util.Bag@36d531bc
         System.out.println("----");
-        System.out.println(insBag);
+        System.out.println(insBag); //sim.util.Bag@28f3507e
         //System.exit(-1);
         
         }
