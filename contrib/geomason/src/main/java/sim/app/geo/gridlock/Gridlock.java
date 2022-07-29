@@ -239,7 +239,7 @@ public class Gridlock extends SimState
 
         try
         {
-            FileInputStream fstream = Gridlock.class.getResourceAsStream(filename);
+            InputStream fstream = Gridlock.class.getResourceAsStream(filename);
             BufferedReader d = new BufferedReader(new InputStreamReader(fstream));
             String s;
 
