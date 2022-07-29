@@ -239,14 +239,9 @@ public class Gridlock extends SimState
 
         try
         {
-            String filePath = Gridlock.class
-                .getResource(filename).getPath();
-
-            FileInputStream fstream = new FileInputStream(filePath);
+            FileInputStream fstream = Gridlock.class.getResourceAsStream(filename);
             BufferedReader d = new BufferedReader(new InputStreamReader(fstream));
             String s;
-
-
 
             d.readLine(); // get rid of the header
 
