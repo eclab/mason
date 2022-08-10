@@ -1,87 +1,132 @@
+/*
+  Copyright 2022 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+        
 package sim.field.storage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import mpi.*;
-import static mpi.MPI.slice;
-
-import sim.field.partitioning.IntHyperRect;
-import sim.field.partitioning.NdPoint;
+import mpi.Datatype;
+import mpi.MPI;
+import mpi.MPIException;
+import sim.util.Int2D;
+import sim.util.IntRect2D;
 import sim.util.MPIParam;
+import sim.util.Number2D;
 
-public class DoubleGridStorage<T extends Serializable> extends GridStorage<T>{
-	
-	//TODO CHANGE HERE TO BE EQUAL TO THE ABSTRACT METHODS
-	@Override
-	public void setLocation(T obj, NdPoint p) {
-		// TODO Auto-generated method stub
-		
-	}
+public class DoubleGridStorage extends GridStorage<Double>
+    {
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public NdPoint getLocation(T obj) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public double[] storage;
 
-	@Override
-	public void removeObject(T obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeObjects(NdPoint p) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public ArrayList<T> getObjects(NdPoint p) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-    public DoubleGridStorage(IntHyperRect shape, double initVal) {
+    public DoubleGridStorage(final IntRect2D shape)
+        {
         super(shape);
-        baseType = MPI.DOUBLE;
-        storage = allocate(shape.getArea());
-        Arrays.fill((double[])storage, initVal);
-    }
+        clear();
+        }
 
-    public GridStorage getNewStorage(IntHyperRect shape) {
-        return new DoubleGridStorage(shape, 0);
-    }
-
-    public byte[] pack(MPIParam mp) throws MPIException {
-        byte[] buf = new byte[MPI.COMM_WORLD.packSize(mp.size, baseType)];
-        MPI.COMM_WORLD.pack(slice((double[])storage, mp.idx), 1, mp.type, buf, 0);
+    public Datatype getMPIBaseType()
+        {
+        return MPI.DOUBLE;
+        }
+       
+    
+    public byte[] pack(MPIParam mp) throws MPIException
+        {
+        byte[] buf = new byte[MPI.COMM_WORLD.packSize(mp.size, MPI.DOUBLE)];
+        MPI.COMM_WORLD.pack(MPI.slice((double[]) storage, mp.idx), 1, mp.type, buf, 0);
         return buf;
-    }
+        }
 
-    public int unpack(MPIParam mp, Serializable buf) throws MPIException {
-        return MPI.COMM_WORLD.unpack((byte[])buf, 0, slice((double[])storage, mp.idx), 1, mp.type);
-    }
-
-    public String toString() {
-        int[] size = shape.getSize();
-        double[] array = (double[])storage;
+    public void unpack(MPIParam mp, Serializable buf) throws MPIException
+        {
+        MPI.COMM_WORLD.unpack((byte[]) buf, 0, MPI.slice((double[]) storage, mp.idx), 1, mp.type);
+        }
+ 
+    
+    
+    public String toString()
+        {
+        int width = shape.getWidth();
+        int height = shape.getHeight();
+        double[] array = (double[]) storage;
         StringBuffer buf = new StringBuffer(String.format("DoubleGridStorage-%s\n", shape));
 
-        if (shape.getNd() == 2)
-            for (int i = 0; i < size[0]; i++) {
-                for (int j = 0; j < size[1]; j++)
-                    buf.append(String.format(" %4.2f ", array[i * size[1] + j]));
-                buf.append("\n");
+        for (int i = 0; i < width; i++)
+            {
+            for (int j = 0; j < height; j++)
+                buf.append(String.format(" %4.2f ", array[i * height + j]));
+            buf.append("\n");
             }
 
         return buf.toString();
-    }
+        }
 
-    protected Object allocate(int size) {
-        return new double[size];
-    }
+    public double get(Int2D p)
+        {
+        return storage[getFlatIndex((Int2D) p)];
+        }
 
-}
+    public void set(Int2D p, double t)
+        {
+        storage[getFlatIndex((Int2D) p)] = t;
+        }
+
+    public double get(int x, int y)
+        {
+        return storage[getFlatIndex(x, y)];
+        }
+
+    public void set(int x, int y, double t)
+        {
+        storage[getFlatIndex(x, y)] = t;
+        }
+
+
+    public void addObject(Number2D p, Double t)
+        {
+        Int2D localP = toLocalPoint((Int2D) p);
+        set(localP, t);
+        }
+
+    public Double getObject(Number2D p, long id)
+        {
+        Int2D localP = toLocalPoint((Int2D) p);
+
+        return storage[getFlatIndex(localP)];
+        }
+
+    // Don't call this method, it'd be foolish
+    public ArrayList<Double> getAllObjects(Number2D p)
+        {
+        Int2D localP = toLocalPoint((Int2D) p);
+
+        ArrayList<Double> list = new ArrayList<Double>();
+        list.add(storage[getFlatIndex(localP)]);
+        return list;
+        }
+
+    public boolean removeObject(Number2D p, long id)
+        {
+        Int2D localP = toLocalPoint((Int2D) p);
+
+        set(localP, 0);
+        return true;
+        }
+
+    public void clear(Number2D p)
+        {
+        Int2D localP = toLocalPoint((Int2D) p);
+
+        set(localP, 0);
+        }
+
+    public void clear()
+        {
+        storage = new double[shape.getArea()];
+        }
+    }

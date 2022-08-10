@@ -6,19 +6,19 @@ MASON_DIR="$(pwd)/../"
 
 # AWS EC2 Configuration
 runId="default"
-count="1"
+count="4"
 instance="c5.large"
 
 # --------------------------------------------------
 
-JAR_NAME="mason.19.jar"
+JAR_NAME="DFlockers.jar"
 HF_PUBLIC="hostfile"
 HF_PRIVATE="mpi_hostfile"
 
 # AWS Config
-key=$MASON_KEY
-security_gid=$SECURITY_GID # Set this up via AWS Security Group
-subnet_id=$SUBNET_ID # Set this up in AWS VPC -> Subnet
+key=mason3
+security_gid=sg-03b0d2e50845a7b4f # Set this up via AWS Security Group
+subnet_id=subnet-0e2fa352 # Set this up in AWS VPC -> Subnet
 
 # ubuntu-xenial-16.04-amd64-server-20180109
 ami="ami-41e0b93b" 
@@ -30,7 +30,7 @@ INST_UP_DELAY="90"
 INST_CREATE_DELAY="15"
 
 # SSH login config
-identity="$HOME/.ssh/$key.pem"
+identity="$HOME/.ssh/mason3.pem"
 ssh_opts="-i $identity -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -l $REMOTE_USERNAME"
 
 # Setup the files

@@ -1,5 +1,5 @@
 /*
-\  Copyright 2006 by Sean Luke and George Mason University
+  Copyright 2006 by Sean Luke and George Mason University
   Licensed under the Academic Free License version 3.0
   See the file "LICENSE" for more information
 */
@@ -7,208 +7,256 @@
 package sim.app.dflockers;
 
 import java.rmi.Remote;
+import java.util.ArrayList;
 import java.util.List;
 
 import ec.util.MersenneTwisterFast;
 import sim.engine.DSteppable;
-import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
-import sim.field.partitioning.DoublePoint;
+import sim.portrayal.Oriented2D;
+import sim.util.Double2D;
 
-public class DFlocker extends DSteppable implements Remote {
-	private static final long serialVersionUID = 1;
-	public DoublePoint loc;
-	public DoublePoint lastd = new DoublePoint(0, 0);
-	public boolean dead = false;
-	
-	public int id;
+public class DFlocker extends DSteppable implements Oriented2D
+    {
 
-	public DFlocker(final DoublePoint location, final int id) {
-		this.loc = location;
-		this.id = id;
-	}
+    private static final long serialVersionUID = 1;
+    public Double2D loc;
+    public Double2D lastd = new Double2D(0, 0);
+    public boolean dead = false;
 
-	public double getOrientation() {
-		return orientation2D();
-	}
+    public DFlocker(final Double2D location)
+        {
+        this.loc = location;
+        }
 
-	public boolean isDead() {
-		return dead;
-	}
+    public double getOrientation()
+        {
+        return orientation2D();
+        }
 
-	public void setDead(final boolean val) {
-		dead = val;
-	}
+    public boolean isDead()
+        {
+        return dead;
+        }
 
-	public void setOrientation2D(final double val) {
-		lastd = new DoublePoint(Math.cos(val), Math.sin(val));
-	}
+    public void setDead(final boolean val)
+        {
+        dead = val;
+        }
 
-	public double orientation2D() {
-		if (lastd.c[0] == 0 && lastd.c[1] == 0)
-			return 0;
-		return Math.atan2(lastd.c[1], lastd.c[0]);
-	}
+    public void setOrientation2D(final double val)
+        {
+        lastd = new Double2D(Math.cos(val), Math.sin(val));
+        }
 
-	public DoublePoint momentum() {
-		return lastd;
-	}
+    public double orientation2D()
+        {
+        if (lastd.x == 0 && lastd.y == 0)
+            return 0;
+        return Math.atan2(lastd.y, lastd.x);
+        }
 
-	public DoublePoint consistency(final List<DFlocker> b, final DContinuous2D<DFlocker> flockers) {
-		if (b == null || b.size() == 0)
-			return new DoublePoint(0, 0);
+    public Double2D momentum()
+        {
+        return lastd;
+        }
 
-		double x = 0;
-		double y = 0;
-		int i = 0;
-		int count = 0;
-		for (i = 0; i < b.size(); i++) {
-			final DFlocker other = (b.get(i));
-			if (!other.dead) {
-				final DoublePoint m = b.get(i).momentum();
-				count++;
-				x += m.c[0];
-				y += m.c[1];
-			}
-		}
-		if (count > 0) {
-			x /= count;
-			y /= count;
-		}
-		return new DoublePoint(x, y);
-	}
+    public Double2D consistency(final List<DFlocker> b, final DContinuous2D<DFlocker> flockers)
+        {
+        if (b == null || b.size() == 0)
+            return new Double2D(0, 0);
 
-	public DoublePoint cohesion(final List<DFlocker> b, final DContinuous2D<DFlocker> flockers) {
-		if (b == null || b.size() == 0)
-			return new DoublePoint(0, 0);
+        double x = 0;
+        double y = 0;
+        int i = 0;
+        int count = 0;
+        for (i = 0; i < b.size(); i++)
+            {
+            final DFlocker other = (b.get(i));
+            if (!other.dead)
+                {
+                final Double2D m = b.get(i).momentum();
+                count++;
+                x += m.x;
+                y += m.y;
+                }
+            }
+        if (count > 0)
+            {
+            x /= count;
+            y /= count;
+            }
+        return new Double2D(x, y);
+        }
 
-		double x = 0;
-		double y = 0;
+    public Double2D cohesion(final List<DFlocker> b, final DContinuous2D<DFlocker> flockers)
+        {
+        if (b == null || b.size() == 0)
+            return new Double2D(0, 0);
 
-		int count = 0;
-		int i = 0;
-		for (i = 0; i < b.size(); i++) {
-			final DFlocker other = (b.get(i));
-			if (!other.dead) {
-				final double dx = flockers.tdx(loc.c[0], other.loc.c[0]);
-				final double dy = flockers.tdy(loc.c[1], other.loc.c[1]);
-				count++;
-				x += dx;
-				y += dy;
-			}
-		}
-		if (count > 0) {
-			x /= count;
-			y /= count;
-		}
-		return new DoublePoint(-x / 10, -y / 10);
-	}
+        double x = 0;
+        double y = 0;
 
-	public DoublePoint avoidance(final List<DFlocker> b, final DContinuous2D<DFlocker> flockers) {
-		if (b == null || b.size() == 0)
-			return new DoublePoint(0, 0);
-		double x = 0;
-		double y = 0;
+        int count = 0;
+        int i = 0;
+        for (i = 0; i < b.size(); i++)
+            {
+            final DFlocker other = (b.get(i));
+            if (!other.dead)
+                {
+                final double dx = flockers.tdx(loc.x, other.loc.x);
+                final double dy = flockers.tdy(loc.y, other.loc.y);
+                count++;
+                x += dx;
+                y += dy;
+                }
+            }
+        if (count > 0)
+            {
+            x /= count;
+            y /= count;
+            }
+        return new Double2D(-x / 10, -y / 10);
+        }
 
-		int i = 0;
-		int count = 0;
+    public Double2D avoidance(final List<DFlocker> b, final DContinuous2D<DFlocker> flockers)
+        {
+        if (b == null || b.size() == 0)
+            return new Double2D(0, 0);
+        double x = 0;
+        double y = 0;
 
-		for (i = 0; i < b.size(); i++) {
-			final DFlocker other = (b.get(i));
-			if (other != this) {
-				final double dx = flockers.tdx(loc.c[0], other.loc.c[0]);
-				final double dy = flockers.tdy(loc.c[1], other.loc.c[1]);
-				final double lensquared = dx * dx + dy * dy;
-				count++;
-				x += dx / (lensquared * lensquared + 1);
-				y += dy / (lensquared * lensquared + 1);
-			}
-		}
-		if (count > 0) {
-			x /= count;
-			y /= count;
-		}
-		return new DoublePoint(400 * x, 400 * y);
-	}
+        int i = 0;
+        int count = 0;
 
-	public DoublePoint randomness(final MersenneTwisterFast r) {
-		final double x = r.nextDouble() * 2 - 1.0;
-		final double y = r.nextDouble() * 2 - 1.0;
-		final double l = Math.sqrt(x * x + y * y);
-		return new DoublePoint(0.05 * x / l, 0.05 * y / l);
-	}
+        for (i = 0; i < b.size(); i++)
+            {
+            final DFlocker other = (b.get(i));
+            if (other != this)
+                {
+                final double dx = flockers.tdx(loc.x, other.loc.x);
+                final double dy = flockers.tdy(loc.y, other.loc.y);
+                final double lensquared = dx * dx + dy * dy;
+                count++;
+                x += dx / (lensquared * lensquared + 1);
+                y += dy / (lensquared * lensquared + 1);
+                }
+            }
+        if (count > 0)
+            {
+            x /= count;
+            y /= count;
+            }
+        return new Double2D(400 * x, 400 * y);
+        }
 
-	public void step(final SimState state) {
-		final DFlockers dFlockers = (DFlockers) state;
-		
-		dFlockers.idLocal.add(this.id);
-		
-		final DoublePoint oldloc = loc;
+    public Double2D randomness(final MersenneTwisterFast r)
+        {
+        final double x = r.nextDouble() * 2 - 1.0;
+        final double y = r.nextDouble() * 2 - 1.0;
+        final double l = Math.sqrt(x * x + y * y);
+        return new Double2D(0.05 * x / l, 0.05 * y / l);
+        }
 
-		if (dead)
-			return;
-		 List<DFlocker> b = null;
-		
-		try {
-		 b = dFlockers.flockers.getNeighborsWithin(this, DFlockers.neighborhood);
-		}catch (Exception e) {
-			System.out.println(dFlockers.getPartitioning().getPid());
-		}
+    public ArrayList<DFlocker> getNeighbors(DFlockers dFlockers)
+        {
+        return dFlockers.flockers.getNeighborsExactlyWithinDistance(loc, (double)DFlockers.neighborhood);
+        }
 
-		final DoublePoint avoid = avoidance(b, dFlockers.flockers);
-		final DoublePoint cohe = cohesion(b, dFlockers.flockers);
-		final DoublePoint rand = randomness(dFlockers.random);
-		final DoublePoint cons = consistency(b, dFlockers.flockers);
-		final DoublePoint mome = momentum();
 
-		double dx = DFlockers.cohesion * cohe.c[0] + DFlockers.avoidance * avoid.c[0]
-				+ DFlockers.consistency * cons.c[0]
-				+ DFlockers.randomness * rand.c[0] + DFlockers.momentum * mome.c[0];
-		double dy = DFlockers.cohesion * cohe.c[1] + DFlockers.avoidance * avoid.c[1]
-				+ DFlockers.consistency * cons.c[1]
-				+ DFlockers.randomness * rand.c[1] + DFlockers.momentum * mome.c[1];
+    public void step(final SimState state)
+        {
+                
+                
+        final DFlockers dFlockers = (DFlockers) state;
 
-		// re-normalize to the given step size
-		final double dis = Math.sqrt(dx * dx + dy * dy);
-		if (dis > 0) {
-			dx = dx / dis * DFlockers.jump;
-			dy = dy / dis * DFlockers.jump;
-		}
-		lastd = new DoublePoint(dx,dy);
-		loc = new DoublePoint(dFlockers.flockers.stx(loc.c[0] + dx), dFlockers.flockers.sty(loc.c[1] + dy));
-		try {
-			dFlockers.flockers.moveAgent(oldloc, loc, this);
-		}catch (Exception e) {
-			System.err.println("error on agent "+this+ " in step "+dFlockers.schedule.getSteps()+ "on pid "+dFlockers.getPartitioning().pid);
-			System.exit(1);
-		}
-	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		return result;
-	}
+        final Double2D oldloc = loc;
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof DFlocker))
-			return false;
-		DFlocker other = (DFlocker) obj;
-		return (id == other.id);
-	}
+        if (dead)
+            return;
+        //List<DFlocker> b = null;
+        //List<DFlocker> b = new ArrayList<DFlocker>();
 
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return "{ "+this.getClass()+"@"+Integer.toHexString(hashCode())+" id: "+this.id+"}";
-	}
-	
-}
+        // try {
+        //b = dFlockers.flockers.getNeighborsWithin(this, DFlockers.neighborhood);
+        //b = dFlockers.flockers.getStorage().getNeighborsWithin(this, DFlockers.neighborhood); //this works too
+
+        //this is the newest version
+                
+        //Bag b_bag = dFlockers.flockers.getNeighborsWithinDistance(this.loc, (double)DFlockers.neighborhood, true, true, null);
+        //ArrayList b_bag = dFlockers.flockers.getNeighborsWithinDistance(this.loc, (double)DFlockers.neighborhood, null);
+        //for(int i=0; i<b_bag.size(); i++)
+        //{
+        //      b.add((DFlocker)b_bag.get(i));
+        //}
+        ArrayList<DFlocker> b = getNeighbors(dFlockers);
+                
+                
+                
+                
+                
+                
+//              }catch (Exception e) {
+//                      System.out.println("SIMULATION ERROR: agent "+this+ " on pid"+dFlockers.getPartition().getPid());
+//              }
+
+        final Double2D avoid = avoidance(b, dFlockers.flockers);
+        final Double2D cohe = cohesion(b, dFlockers.flockers);
+        final Double2D rand = randomness(dFlockers.random);
+        final Double2D cons = consistency(b, dFlockers.flockers);
+        final Double2D mome = momentum();
+
+        double dx = DFlockers.cohesion * cohe.x + DFlockers.avoidance * avoid.x
+            + DFlockers.consistency * cons.x
+            + DFlockers.randomness * rand.x + DFlockers.momentum * mome.x;
+        double dy = DFlockers.cohesion * cohe.y + DFlockers.avoidance * avoid.y
+            + DFlockers.consistency * cons.y
+            + DFlockers.randomness * rand.y + DFlockers.momentum * mome.y;
+
+        // re-normalize to the given step size
+        final double dis = Math.sqrt(dx * dx + dy * dy);
+        if (dis > 0)
+            {
+            dx = dx / dis * DFlockers.jump;
+            dy = dy / dis * DFlockers.jump;
+            }
+        lastd = new Double2D(dx, dy);
+        loc = new Double2D(dFlockers.flockers.stx(loc.x + dx), dFlockers.flockers.sty(loc.y + dy));
+                
+//              // TESTING >>>>>>>>
+//              // Sometimes, randomly send flocker to root node
+//              if (state.random.nextBoolean(0.0001)) {
+//                      //TODO lastd?
+//                      loc = new Double2D(0,0);
+//                      System.out.println("moved flocker to origin");
+//              }
+//              // <<<<<<<<<<<<<<<<
+                
+        dFlockers.addStat(loc.getX(), 0); //testing stats
+        dFlockers.addStat(loc.getY(), 1); //testing stats
+                
+        try
+            {
+            dFlockers.flockers.moveAgent(loc, this);
+            }
+        catch (Exception e)
+            {
+            System.err.println("error on agent " + this + " in step " + dFlockers.schedule.getSteps() + "on pid "
+                + dFlockers.getPartition().getPID());
+            throw new RuntimeException(e);
+            }
+                
+
+
+
+
+        }
+        
+
+    public String toString()
+        {
+        return super.toString() +
+            " [loc=" + loc + ", lastd=" + lastd + ", dead=" + dead + "]";
+        }
+    }

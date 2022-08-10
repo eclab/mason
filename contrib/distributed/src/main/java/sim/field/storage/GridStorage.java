@@ -1,158 +1,207 @@
+/*
+  Copyright 2022 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+        
 package sim.field.storage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.stream.IntStream;
 
 import mpi.Datatype;
 import mpi.MPI;
 import mpi.MPIException;
-import sim.field.partitioning.IntHyperRect;
-import sim.field.partitioning.IntPoint;
-import sim.field.partitioning.NdPoint;
+import sim.util.Int2D;
+import sim.util.IntRect2D;
 import sim.util.MPIParam;
+import sim.util.Number2D;
 
 /**
  * internal local storage for distributed grids.
  *
  * @param <T> Type of objects to store
  */
-public abstract class GridStorage<T extends Serializable> {
-	Object storage;
-	IntHyperRect shape;
-	Datatype baseType = MPI.BYTE;
+public abstract class GridStorage<T extends Serializable> implements java.io.Serializable
+    {
+    private static final long serialVersionUID = 1L;
 
-	int[] stride;
+    protected IntRect2D shape;
+    int height; // this is the same as shape.getHeight(), to save a bit of computation
+    Int2D offset; // moved here
 
-	/* Abstract Method of generic storage based on N-dimensional Point */
-	public abstract void setLocation(final T obj, final NdPoint p);
+    //// NOTE: Subclasses are responsible for allocating the storage
+    //// and setting the base type
+    public GridStorage(IntRect2D shape)
+        {
+        this.shape = shape;
+        height = shape.getHeight(); // getHeight(shape.getSizes());
+        }
 
-	public abstract NdPoint getLocation(final T obj);
+    /** Returns the base MPI type.  By default this is BYTE.  For Int and Double
+        grids, is INT or DOUBLE respectively. */
+    public Datatype getMPIBaseType()
+        {
+        return MPI.BYTE;
+        }
 
-	public abstract void removeObject(final T obj);
+    public IntRect2D getShape()
+        {
+        return shape;
+        }
 
-	public abstract void removeObjects(final NdPoint p);
+    public abstract String toString();
 
-	public abstract ArrayList<T> getObjects(final NdPoint p);
+    public abstract Serializable pack(MPIParam mp) throws MPIException;
 
-	public GridStorage(final IntHyperRect shape) {
-		this.shape = shape;
-		stride = getStride(shape.getSize());
-	}
+    public abstract void unpack(MPIParam mp, Serializable buf) throws MPIException;
 
-	public GridStorage(final Object storage, final IntHyperRect shape) {
-		super();
-		this.storage = storage;
-		this.shape = shape;
-		stride = shape.getSize();
-	}
+    /**
+     * Adds or sets the given object at the given point. Dense and Continuous
+     * storage add the object. Int, Object, and Double grid storage set it.
+     */
+    public abstract void addObject(Number2D p, final T obj);
 
-	public GridStorage(final Object storage, final IntHyperRect shape, final Datatype baseType) {
-		super();
-		this.storage = storage;
-		this.shape = shape;
-		this.baseType = baseType;
-		stride = shape.getSize();
-	}
+    /**
+     * Object, Int, and Double grid storage ignore the id and return whatever is
+     * currently present.
+     * 
+     * @throws Exception
+     */
+    public abstract T getObject(Number2D p, long id);
 
-	public Object getStorage() {
-		return storage;
-	}
+    /**
+     * Returns an ArrayList consisting of all the elements at a given location.
+     * 
+     * @throws Exception
+     */
+    public abstract ArrayList<T> getAllObjects(Number2D p);
 
-	public Datatype getMPIBaseType() {
-		return baseType;
-	}
+    /**
+     * Returns true if the object is at this location and was removed. Continuous
+     * storage ignores the location and simply removes the object, returning true if
+     * the object was successfully remeoved. Int and Double grid storage ignore the
+     * id and set the value to 0, always returning true. Object grid storage sets
+     * the value to null, always returning true.
+     * 
+     * @throws Exception
+     */
+    public abstract boolean removeObject(Number2D p, long id);
 
-	public IntHyperRect getShape() {
-		return shape;
-	}
+    /**
+     * Clears all objects at the given point. Int and Double grid storage set all
+     * values to 0. Object grid storage sets all values to null.
+     * 
+     * @throws Exception
+     */
+    public abstract void clear(Number2D p);
 
-	// Return a new instance of the subclass (IntStorage/DoubleStorage/etc...)
-	public abstract GridStorage getNewStorage(IntHyperRect shape);
+    /**
+     * Clears all objects from the storage entirely. Int and Double grid storage set
+     * all values to 0. Object grid storage sets all values to null.
+     */
+    public abstract void clear();
 
-	public abstract String toString();
+    // Method that allocates an array of objects of desired type
+    // This method will be called after the new shape has been set
+    // protected abstract Object allocate(int size);
 
-	public abstract Serializable pack(MPIParam mp) throws MPIException;
+    /**
+     * Reset the shape, height, and storage w.r.t. newShape
+     * 
+     * @param newShape
+     */
+    void reload(final IntRect2D newShape)
+        {
+        shape = newShape;
+        height = newShape.getHeight();
+        clear();
+        }
 
-	public abstract int unpack(MPIParam mp, Serializable buf) throws MPIException;
+    /**
+     * Reshapes HyperRect to a newShape
+     * 
+     * @param newShape
+     */
+    public void setShape(IntRect2D newShape)
+        {
+        if (newShape.equals(shape))
+            return;
 
-	// Method that allocates an array of objects of desired type
-	// This method will be called after the new shape has been set
-	protected abstract Object allocate(int size);
+        if (newShape.intersects(shape))
+            {
+            final IntRect2D overlap = newShape.getIntersection(shape);
+            final Datatype baseType = getMPIBaseType();
+            final MPIParam fromParam = new MPIParam(overlap, shape, baseType);
+            final MPIParam toParam = new MPIParam(overlap, newShape, baseType);
 
-	/**
-	 * Reset the shape, stride, and storage w.r.t. newShape
-	 * 
-	 * @param newShape
-	 */
-	private void reload(final IntHyperRect newShape) {
-		shape = newShape;
-		stride = getStride(newShape.getSize());
-		storage = allocate(newShape.getArea());
-	}
+            try
+                {
+                final Serializable buf = pack(fromParam);
+                reload(newShape);
+                unpack(toParam, buf);
 
-	/**
-	 * Reshapes HyperRect to a newShape
-	 * 
-	 * @param newShape
-	 */
-	public void reshape(final IntHyperRect newShape) {
-		if (newShape.equals(shape))
-			return;
+                fromParam.type.free();
+                toParam.type.free();
+                }
+            catch (final MPIException e)
+                {
+                e.printStackTrace();
+                System.exit(-1);
+                }
+            }
+        else
+            {
+            reload(newShape);
+            }
+        }
 
-		if (newShape.isIntersect(shape)) {
+    /**
+     * @param p
+     * 
+     * @return flattened index
+     */
+    public int getFlatIndex(final Int2D p)
+        {
+        return getFlatIndex(p.x, p.y);
+        }
 
-			final IntHyperRect overlap = newShape.getIntersection(shape);
+    /**
+     * @param p
+     * 
+     * @return flattened index
+     */
+    public int getFlatIndex(int x, int y)
+        {
+        return x * height + y;
+        }
 
-			final MPIParam fromParam = new MPIParam(overlap, shape, baseType);
-			final MPIParam toParam = new MPIParam(overlap, newShape, baseType);
+    /** 
+        Returns the index of the given point in SOME storage array with the given height;
+        this isn't the index in THIS grid storage's array necessarily. 
+    */
+    public static int getFlatIndex(final Int2D p, int wrtHeight) {
+        return p.x * wrtHeight + p.y;
+        }
 
-			try {
-				final Serializable buf = pack(fromParam);
-				reload(newShape);
-				unpack(toParam, buf);
+    public Int2D getOffset()
+        {
+        return offset;
+        }
 
-				fromParam.type.free();
-				toParam.type.free();
-			} catch (final MPIException e) {
-				e.printStackTrace();
-				System.exit(-1);
-			}
-		} else
-			reload(newShape);
-	}
+    public void setOffset(Int2D offset)
+        {
+        this.offset = offset;
+        }
 
-	/**
-	 * @param p
-	 * 
-	 * @return flattened index
-	 */
-	public int getFlatIdx(final IntPoint p) {
-		return IntStream.range(0, p.nd).map(i -> p.c[i] * stride[i]).sum();
-	}
+    public Int2D toLocalPoint(final Int2D p)
+        {
+        return p.subtract(offset);
+        }
 
-	/**
-	 * @param p
-	 * @param wrtSize
-	 * 
-	 * @return flattened index with respect to the given size
-	 */
-	public static int getFlatIdx(final IntPoint p, final int[] wrtSize) {
-		final int[] s = getStride(wrtSize);
-		return IntStream.range(0, p.nd).map(i -> p.c[i] * s[i]).sum();
-	}
-
-	/**
-	 * @param size
-	 * @return stride
-	 */
-	protected static int[] getStride(final int[] size) {
-		final int[] ret = new int[size.length];
-
-		ret[size.length - 1] = 1;
-		for (int i = size.length - 2; i >= 0; i--)
-			ret[i] = ret[i + 1] * size[i + 1];
-
-		return ret;
-	}
-}
+    public Int2D toGlobalPoint(final Int2D p)
+        {
+        return p.add(offset);
+        }
+        
+    }

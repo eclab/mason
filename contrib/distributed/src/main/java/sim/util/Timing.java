@@ -1,157 +1,221 @@
+/*
+  Copyright 2022 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+        
 package sim.util;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Internal distributed MASON class to time simulation steps
- *
+ * TIMING is used to time simulation steps in order to compute model load
+ * for purposes of load balancing by the partition scheme.
  */
-public class Timing {
+ 
+public class Timing 
+    {
+    public static final String LB_RUNTIME = "_MASON_LOAD_BALANCING_RUNTIME";
+    public static final String LB_OVERHEAD = "_MASON_LOAD_BALANCING_OVERHEAD";
+    public static final String MPI_SYNC_OVERHEAD = "_MASON_MPI_SYNC_OVERHEAD";
 
-	public static final String LB_RUNTIME = "_MASON_LOAD_BALANCING_RUNTIME";
-	public static final String LB_OVERHEAD = "_MASON_LOAD_BALANCING_OVERHEAD";
-	public static final String MPI_SYNC_OVERHEAD = "_MASON_MPI_SYNC_OVERHEAD";
+    private static int window = 100;
+    // hashmap containing the different timer for each operation
+    private static HashMap<String, TimingStat> timers = new HashMap<String, TimingStat>();
 
-	private static int window = 100;
-	private static HashMap<String, TimingStat> m = new HashMap<String, TimingStat>();
-	private static NanoClock clock = new NanoClock() {
-		public long nanoTime() {
-			return System.nanoTime();
-		}
+    public static void setWindow(int win) 
+        {
+        window = win;
+        }
 
-		public void advance(long val) {
-			throw new UnsupportedOperationException("Cannot set nano time for real clock");
-		}
-	};
+    /**
+     * for each operation
+     * create the timer if does not exist and put it in the hasmap
+     * then start the timer
+     **/
+    public static void start(String... ids) 
+        {
+        for (String id : ids) 
+            {
+            timers.putIfAbsent(id, new TimingStat(window));
+            timers.get(id).start(System.nanoTime());
+            }
+        }
 
-	private static class FakeClock implements NanoClock {
-		public long val = 0;
+    /**
+     * for each operation check if it exist in the timers hashmap
+     * then stop the timer
+     **/
+    public static void stop(String... ids) 
+        {
+        for (String id : ids) 
+            {
+            if (!timers.containsKey(id))
+                throw new NoSuchElementException("Timer for " + id + " does not exist");
+            timers.get(id).stop(System.nanoTime());
+            }
+        }
 
-		public long nanoTime() {
-			return val;
-		}
+    /**
+     * check if the timer exist in the timers hashmap
+     * then get the total time
+     */
+    public static TimingStat get(String id) 
+        {
+        if (!timers.containsKey(id))
+            throw new NoSuchElementException("Timer for " + id + " does not exist");
+        return timers.get(id);
+        }
 
-		public void advance(long val) {
-			this.val += val;
-		}
-	}
+    /**
+     *
+     * Internal Class used by Timing.java
+     */
+    public static class TimingStat 
+        {
+        int window;
+        long count, conversion, timeStart;
+        double avg, min, max, var, last;
+        MovingAverage mav;
+        TimeUnit unit;
 
-	private interface NanoClock {
-		long nanoTime();
+        TimingStat(int window) 
+            {
+            this.window = window;
+            this.unit = TimeUnit.MILLISECONDS;
+            this.conversion = TimeUnit.NANOSECONDS.convert(1L, TimeUnit.MILLISECONDS);
+            this.mav = new MovingAverage(this.window);
+            this.min = Double.MAX_VALUE;
+            this.timeStart = -1L;
+            }
 
-		void advance(long val);
-	}
+        void add(double val) 
+            {
+            last = val;
+            min = Math.min(min, val);
+            max = Math.max(max, val);
 
-	public static void useFakeClock() {
-		clock = new FakeClock();
-	}
+            double avgOld = avg;
+            avg += (val - avg) / ++count;
+            var += (val - avgOld) * (val - avg);
 
-	public static void advanceFakeClock(long time) {
-		clock.advance(time);
-	}
+            mav.next(val);
+            }
 
-	public static void advanceFakeClockMS(int time) {
-		clock.advance(time * 1000000L);
-	}
+        void start(long curr) 
+            {
+            if (timeStart != -1L)
+                throw new IllegalStateException("Timer is already started");
+            timeStart = curr;
+            }
 
-	public static void setWindow(int win) {
-		window = win;
-	}
+        void stop(long current) 
+            {
+            add((double) (current - timeStart));
+            timeStart = -1L;
+            }
 
-	public static void start(String... ids) {
-		for (String id : ids) {
-			m.putIfAbsent(id, new TimingStat(window));
-			m.get(id).start(clock.nanoTime());
-		}
-	}
+        public String toString() 
+            {
+            return String.format("%d\t%f\t%f\t%f\t%f\t%f\t%f\t%s",
+                getCount(),
+                getMin(),
+                getMax(),
+                getMean(),
+                getStdev(),
+                getMovingAverage(),
+                getMovingStdev(),
+                unit);
+            }
 
-	public static void stop(String... ids) {
-		for (String id : ids) {
-			check(id);
-			m.get(id).stop(clock.nanoTime());
-		}
-	}
+        public long getCount() 
+            {
+            return count;
+            }
 
-	public static void reset(String... ids) {
-		for (String id : ids) {
-			check(id);
-			m.get(id).reset();
-		}
-	}
+        public double getMean() 
+            {
+            return avg / conversion;
+            }
 
-	public static TimingStat get(String id) {
-		check(id);
-		return m.get(id);
-	}
+        public double getMin() 
+            {
+            return min / conversion;
+            }
 
-	public static double getLast(String id) {
-		check(id);
-		return m.get(id).last();
-	}
+        public double getMax() 
+            {
+            return max / conversion;
+            }
 
-	private static void check(String id) {
-		if (!m.containsKey(id))
-			throw new NoSuchElementException("Timer for " + id + " does not exist");
-	}
+        public double getStdev() 
+            {
+            if (count > 1)
+                return Math.sqrt(var / (count - 1)) / conversion;
+            return 0;
+            }
 
-	public static void main(String[] args) {
-		useFakeClock();
+        public double getMovingAverage() 
+            {
+            return mav.average() / conversion;
+            }
 
-		System.out.println(
-				"Name  \tCount \tMinimum \tMaximum \tOverall Mean \tOverall Stdev \tMoving Average \tMoving Stdev \tUnit");
+        public double getMovingStdev() 
+            {
+            return mav.stdev() / conversion;
+            }
 
-		start("Test1");
-		advanceFakeClock(5000000L);
-		stop("Test1");
-		System.out.println("Test1\t" + get("Test1"));
+        }
 
-		start("Test1");
-		advanceFakeClock(6000000L);
-		stop("Test1");
-		System.out.println("Test1\t" + get("Test1"));
+    /**
+     * Internal utility class used to calculate moving average. Used by TimingStat.
+     */
+    static class MovingAverage 
+        {
+        double average;
+        double[] queue;
+        int count, startTime;
+        final int window;
 
-		start("Test1");
-		advanceFakeClock(7000000L);
-		stop("Test1");
-		System.out.println("Test1\t" + get("Test1"));
+        public MovingAverage(int window) 
+            {
+            this.queue = new double[window];
+            this.window = window;
+            }
 
-		start("Test1");
-		advanceFakeClock(3000000L);
-		stop("Test1");
-		System.out.println("Test1\t" + get("Test1"));
+        public double next(double value) 
+            {
+            if (count < window) 
+                {
+                queue[startTime + count] = value;
+                average += (value - average) / ++count;
+                } 
+            else 
+                {
+                average += (value - queue[startTime]) / window;
+                queue[startTime] = value;
+                startTime = (startTime + 1) % window;
+                }
 
-		start("Test1");
-		advanceFakeClock(4000000L);
-		stop("Test1");
-		System.out.println("Test1\t" + get("Test1"));
+            return average;
+            }
 
-		start("Test1", "Test2");
-		advanceFakeClock(4000000L);
-		stop("Test1");
-		advanceFakeClock(4000000L);
-		stop("Test2");
-		System.out.println("Test1\t" + get("Test1"));
-		System.out.println("Test2\t" + get("Test2"));
+        public double average() 
+            {
+            return average;
+            }
 
-		reset("Test1");
-
-		start("Test1", "Test2");
-		advanceFakeClock(4000000L);
-		stop("Test2", "Test1");
-		System.out.println("Test1\t" + get("Test1"));
-		System.out.println("Test2\t" + get("Test2"));
-
-		start("Test1", "Test2");
-		advanceFakeClock(100000000L);
-		stop("Test2", "Test1");
-		System.out.println("Test1\t" + get("Test1"));
-		System.out.println("Test2\t" + get("Test2"));
-
-		start("Test1", "Test2");
-		advanceFakeClock(40000000L);
-		stop("Test2", "Test1");
-		System.out.println("Test1\t" + get("Test1"));
-		System.out.println("Test2\t" + get("Test2"));
-	}
-}
+        public double stdev() 
+            {
+            if (count < 2)
+                return 0;
+            return Math.sqrt(Arrays.stream(queue)
+                .limit(count)
+                .map(x -> (x - average) * (x - average))
+                .sum() / (count - 1));
+            }
+        }
+    }

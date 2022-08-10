@@ -1,23 +1,31 @@
 /*
-   Copyright 2006 by Sean Luke and George Mason University
-   Licensed under the Academic Free License version 3.0
-   See the file "LICENSE" for more information
-   */
+  Copyright 2006 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
 
-package sim.app.dHeatBugs;
+package sim.app.dheatbugs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import sim.engine.DSimState;
+import sim.engine.DSteppable;
 import sim.engine.Schedule;
+import sim.engine.SimState;
 import sim.field.grid.DDenseGrid2D;
 import sim.field.grid.DDoubleGrid2D;
-import sim.field.partitioning.IntPoint;
+import sim.util.Int2D;
 import sim.util.Interval;
 
-public class DHeatBugs extends DSimState {
+public class DHeatBugs extends DSimState
+{
 	private static final long serialVersionUID = 1;
+
+	static
+	{
+		DSimState.setMultiThreaded(true);
+	}
 
 	public double minIdealTemp = 17000;
 	public double maxIdealTemp = 31000;
@@ -42,136 +50,183 @@ public class DHeatBugs extends DSimState {
 	public DDoubleGrid2D valgrid2; // Instead of DoubleGrid2D
 	public DDenseGrid2D<DHeatBug> bugs; // Instead of SparseGrid2D
 
-	public DHeatBugs(final long seed) {
-		this(seed, 1000, 1000, 1000, 5);
+	public DHeatBugs(final long seed)
+	{
+		this(seed, 100, 100, 6400, 1);
 	}
 
-	public DHeatBugs(final long seed, final int width, final int height, final int count, final int aoi) {
-		super(seed, width, height, aoi);
+	public DHeatBugs(final long seed, final int width, final int height, final int count, final int aoi)
+	{
+		super(seed, width, height, aoi, true);
 		gridWidth = width;
 		gridHeight = height;
 		bugCount = count;
-		privBugCount = bugCount / getPartitioning().numProcessors;
-		try {
-			valgrid = new DDoubleGrid2D(getPartitioning(), this.aoi, 0, this);
-			valgrid2 = new DDoubleGrid2D(getPartitioning(), this.aoi, 0, this);
-			bugs = new DDenseGrid2D<DHeatBug>(getPartitioning(), this.aoi, this);
-		} catch (final Exception e) {
+		privBugCount = bugCount / getPartition().getNumProcessors();
+		try
+		{
+			valgrid = new DDoubleGrid2D(this);
+			valgrid2 = new DDoubleGrid2D(this);
+			bugs = new DDenseGrid2D<DHeatBug>(this);
+		}
+		catch (final Exception e)
+		{
 			e.printStackTrace();
 			System.exit(-1);
 		}
+
+//		balanceInterval = 100000;
 	}
 
 	// Same getters and setters as HeatBugs
-	public double getMinimumIdealTemperature() {
+	public double getMinimumIdealTemperature()
+	{
 		return minIdealTemp;
 	}
 
-	public void setMinimumIdealTemperature(final double temp) {
+	public void setMinimumIdealTemperature(final double temp)
+	{
 		if (temp <= maxIdealTemp)
 			minIdealTemp = temp;
 	}
 
-	public double getMaximumIdealTemperature() {
+	public double getMaximumIdealTemperature()
+	{
 		return maxIdealTemp;
 	}
 
-	public void setMaximumIdealTemperature(final double temp) {
+	public void setMaximumIdealTemperature(final double temp)
+	{
 		if (temp >= minIdealTemp)
 			maxIdealTemp = temp;
 	}
 
-	public double getMinimumOutputHeat() {
+	public double getMinimumOutputHeat()
+	{
 		return minOutputHeat;
 	}
 
-	public void setMinimumOutputHeat(final double temp) {
+	public void setMinimumOutputHeat(final double temp)
+	{
 		if (temp <= maxOutputHeat)
 			minOutputHeat = temp;
 	}
 
-	public double getMaximumOutputHeat() {
+	public double getMaximumOutputHeat()
+	{
 		return maxOutputHeat;
 	}
 
-	public void setMaximumOutputHeat(final double temp) {
+	public void setMaximumOutputHeat(final double temp)
+	{
 		if (temp >= minOutputHeat)
 			maxOutputHeat = temp;
 	}
 
-	public double getEvaporationConstant() {
+	public double getEvaporationConstant()
+	{
 		return evaporationRate;
 	}
 
-	public void setEvaporationConstant(final double temp) {
+	public void setEvaporationConstant(final double temp)
+	{
 		if (temp >= 0 && temp <= 1)
 			evaporationRate = temp;
 	}
 
-	public Object domEvaporationConstant() {
+	public Object domEvaporationConstant()
+	{
 		return new Interval(0.0, 1.0);
 	}
 
-	public double getDiffusionConstant() {
+	public double getDiffusionConstant()
+	{
 		return diffusionRate;
 	}
 
-	public void setDiffusionConstant(final double temp) {
+	public void setDiffusionConstant(final double temp)
+	{
 		if (temp >= 0 && temp <= 1)
 			diffusionRate = temp;
 	}
 
-	public Object domDiffusionConstant() {
+	public Object domDiffusionConstant()
+	{
 		return new Interval(0.0, 1.0);
 	}
 
-	public Object domRandomMovementProbability() {
+	public Object domRandomMovementProbability()
+	{
 		return new Interval(0.0, 1.0);
 	}
 
-	public double getRandomMovementProbability() {
+	public double getRandomMovementProbability()
+	{
 		return randomMovementProbability;
 	}
 
-	public double getMaximumHeat() {
+	public double getMaximumHeat()
+	{
 		return DHeatBugs.MAX_HEAT;
 	}
 
-	protected void startRoot() {
-		HashMap<IntPoint, ArrayList<DHeatBug>> agents = new HashMap<IntPoint, ArrayList<DHeatBug>>();
+	protected void startRoot()
+	{
+		HashMap<Int2D, ArrayList<DHeatBug>> agents = new HashMap<Int2D, ArrayList<DHeatBug>>();
 		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
 		final double rangeOutputHeat = maxOutputHeat - minOutputHeat;
-		for (int x = 0; x < bugCount; x++) {
+		for (int x = 0; x < bugCount; x++)
+		{
 			final double idealTemp = random.nextDouble() * rangeIdealTemp + minIdealTemp;
 			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
 			int px = random.nextInt(gridWidth);
 			int py = random.nextInt(gridHeight);
 			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
-			IntPoint point = new IntPoint(px, py);
+			Int2D point = new Int2D(px, py);
 			if (!agents.containsKey(point))
 				agents.put(point, new ArrayList<DHeatBug>());
 			agents.get(point).add(b);
 		}
-		
-		sendRootInfoToAll("agents",agents);
 
-	}
+		sendRootInfoToAll("agents", agents);
 
-	public void start() {
-		super.start();
+		schedule.scheduleRepeating(new DSteppable()
+		{
+			public void step(SimState state)
+			{
 
-		HashMap<IntPoint, ArrayList<DHeatBug>> agents = (HashMap<IntPoint, ArrayList<DHeatBug>>) getRootInfo("agents");
-		for (IntPoint p : agents.keySet()) {
-			for (DHeatBug a : agents.get(p)) {
-				if (partition.getPartition().contains(p))
-					bugs.addRepeatingAgent(p, a, 1, 1);
 			}
 		}
-		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);
+		, 10, 1);
 	}
 
-	public static void main(final String[] args) {
+
+
+	public void start()
+	{
+		super.start();
+
+		HashMap<Int2D, ArrayList<DHeatBug>> agents = (HashMap<Int2D, ArrayList<DHeatBug>>) getRootInfo("agents");
+		for (Int2D p : agents.keySet())
+		{
+			for (DHeatBug a : agents.get(p))
+			{
+				if (getPartition().getLocalBounds().contains(p))
+				{
+					bugs.addAgent(p, a, 0, 0, 1);
+					System.out.println("start : " + a+" "+a.loc_x+" "+a.loc_y+p);
+				}
+
+			}
+		}
+		schedule.scheduleRepeating(Schedule.EPOCH, 1, new Diffuser(), 1);
+
+
+	}
+
+	public static void main(final String[] args)
+	{
 		doLoopDistributed(DHeatBugs.class, args);
 		System.exit(0);
 	}
 }
+

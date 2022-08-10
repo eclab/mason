@@ -1,107 +1,86 @@
+/*
+  Copyright 2022 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+        
 package sim.field;
 
-import sim.field.partitioning.PartitionInterface;
+import sim.engine.DSimState;
+import sim.field.grid.AbstractGrid2D;
+import sim.util.Double2D;
+import sim.util.Int2D;
+import sim.util.IntRect2D;
+import sim.util.Number2D;
 
 /**
- * A abstract distributed grid 2d. It wraps all methods of distributed grid.
+ * A abstract distributed Grid2D. It wraps all methods of distributed grid.
  * 
  * @author Carmine Spagnuolo
  */
 
-public abstract class DAbstractGrid2D {
+public abstract class DAbstractGrid2D extends AbstractGrid2D
+    {
+    private static final long serialVersionUID = 1L;
 
-	protected int[] fieldSize;
+    protected DSimState state;
 
-	public DAbstractGrid2D(final PartitionInterface ps) {
-		fieldSize = ps.getFieldSize();
-	}
+    public DAbstractGrid2D(DSimState state)
+        {
+        width = state.getPartition().getWorldWidth();
+        height = state.getPartition().getWorldHeight();
+        this.state = state;
+        }
 
-	/* UTILS METHODS */
-
-	/**
-	 * Wraps around a toroidal field
-	 * 
-	 * @param x
-	 * @param dim
-	 * @return wrapped around value for value x in this field for dimention dim.
-	 */
-	public int toToroidal(final int x, final int dim) {
-		final int s = fieldSize[dim];
-		if (x >= s)
-			return x - s;
-		else if (x < 0)
-			return x + s;
-		return x;
-	}
-
-	/**
-	 * Wraps around a toroidal field
-	 * 
-	 * @param x
-	 * @param dim
-	 * @return wrapped around value for value x in this field for dimention dim.
-	 */
-	public double toToroidal(final double x, final int dim) {
-		final int s = fieldSize[dim];
-		if (x >= s)
-			return x - s;
-		else if (x < 0)
-			return x + s;
-		return x;
-	}
-
-	/**
-	 * Difference in a toroidal field
-	 * 
-	 * @param x1
-	 * @param x2
-	 * @param dim
-	 * @return difference between two value x1 and x2 in this field for dimention
-	 *         dim.
-	 */
-	public double toToroidalDiff(final double x1, final double x2, final int dim) {
-		final int s = fieldSize[dim];
-		if (Math.abs(x1 - x2) <= s / 2)
-			return x1 - x2; // no wraparounds -- quick and dirty check
-
-		final double dx = toToroidal(x1, dim) - toToroidal(x2, dim);
-		if (dx * 2 > s)
-			return dx - s;
-		if (dx * 2 < -s)
-			return dx + s;
-		return dx;
-	}
-
-	public int stx(final int x) {
-		return toToroidal(x, 0);
-	}
-
-	public int sty(final int y) {
-		return toToroidal(y, 1);
-	}
-
-	public double stx(final double x) {
-		return toToroidal(x, 0);
-	}
-
-	public double sty(final double y) {
-		return toToroidal(y, 1);
-	}
-
-	public double tdx(final double x1, final double x2) {
-		return toToroidalDiff(x1, x2, 0);
-	}
-
-	public double tdy(final double y1, final double y2) {
-		return toToroidalDiff(y1, y2, 1);
-	}
-
-	public int getWidth() {
-		return fieldSize[0];
-	}
-
-	public int getHeight() {
-		return fieldSize[1];
-	}
-
-}
+    protected void throwNotLocalException(Number2D p)
+        {
+        throw new RuntimeException("Point: " + p + ", is Not Local");
+        }
+        
+    public abstract HaloGrid2D getHaloGrid();
+    public IntRect2D getLocalBounds()
+        {
+        return getHaloGrid().getLocalBounds();
+        }
+        
+    public IntRect2D getHaloBounds()
+        {
+        return getHaloGrid().getHaloBounds();
+        }
+        
+    public boolean isLocal(Int2D p)
+        {
+        return getHaloGrid().inLocal(p);
+        }
+        
+    public boolean isHalo(Int2D p)
+        {
+        return getHaloGrid().inHalo(p);
+        }
+        
+    public boolean isHaloToroidal(Number2D p)
+        {
+        return getHaloGrid().inHaloToroidal(p);
+        }
+        
+    public Double2D toHaloToroidal(Double2D p)
+        {
+        return getHaloGrid().toHaloToroidal(p);
+        }
+        
+    public Int2D toHaloToroidal(Int2D p)
+        {
+        return getHaloGrid().toHaloToroidal(p);
+        }
+        
+    /** Returns true if the square centered at x, y and going out to distance
+        is entirely within the halo toroidal region. */
+    public boolean isHaloToroidal(double x, double y, double distance) 
+        {
+        HaloGrid2D grid = getHaloGrid();
+        return  grid.inHaloToroidal(x + distance, y + distance) &&
+            grid.inHaloToroidal(x + distance, y - distance) &&
+            grid.inHaloToroidal(x - distance, y + distance) &&
+            grid.inHaloToroidal(x - distance, y - distance);
+        }
+    }

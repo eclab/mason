@@ -1,285 +1,362 @@
+/*
+  Copyright 2022 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+        
 package sim.field.partitioning;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.ArrayList;
 
-// TODO Currently all shapes are restricted to IntHyperRect - switch to NdRectangle once it is completed
+import sim.util.Double2D;
+import sim.util.Int2D;
+import sim.util.IntRect2D;
+import sim.util.Number2D;
+
+// TODO Currently all shapes are restricted to IntRect2D - switch to NdRectangle once it is completed
 /**
  * A node in a Quad Tree.
  *
  */
-public class QuadTreeNode {
-	final int nd;
-	int level, id; // which level in the tree the node is in, its node id
-	int processor; // which processer this node is mapped to
+public class QuadTreeNode
+    {
+    private static final long serialVersionUID = 1L;
 
-	IntPoint origin;
-	IntHyperRect shape;
+    /** level in the tree the node is in */
+    int level;
+    /** its node id */
+    int id;
+    /** which processer this node is mapped to */
+    int processor;
 
-	QuadTreeNode parent = null;
-	List<QuadTreeNode> children;
+    Int2D origin;
+    IntRect2D shape;
 
-	public QuadTreeNode(final IntHyperRect shape, final QuadTreeNode parent) {
-		nd = shape.getNd();
-		this.shape = shape;
-		this.parent = parent;
-		children = new ArrayList<QuadTreeNode>();
-		level = parent == null ? 0 : parent.getLevel() + 1;
-	}
+    QuadTreeNode parent = null;
+    ArrayList<QuadTreeNode> children;
 
-	public int getId() {
-		return id;
-	}
+    public QuadTreeNode(final IntRect2D shape, final QuadTreeNode parent)
+        {
+        this.shape = shape;
+        this.parent = parent;
+        children = new ArrayList<QuadTreeNode>();
+        level = parent == null ? 0 : parent.getLevel() + 1;
+        }
 
-	public void setId(final int newId) {
-		id = newId;
-	}
+    public int getId()
+        {
+        return id;
+        }
 
-	public int getProcessor() {
-		return processor;
-	}
+    public void setId(final int newId)
+        {
+        id = newId;
+        }
 
-	public void setProcessor(final int newProcessor) {
-		processor = newProcessor;
-	}
+    public int getProcessor()
+        {
+        return processor;
+        }
 
-	public int getLevel() {
-		return level;
-	}
+    public void setProcessor(final int newProcessor)
+        {
+        processor = newProcessor;
+        }
 
-	public IntPoint getOrigin() {
-		return origin;
-	}
+    public int getLevel()
+        {
+        return level;
+        }
 
-	public IntHyperRect getShape() {
-		return shape;
-	}
+    public Int2D getOrigin()
+        {
+        return origin;
+        }
 
-	public QuadTreeNode getParent() {
-		return parent;
-	}
+    public IntRect2D getShape()
+        {
+        return shape;
+        }
 
-	// Get my child of the given index
-	public QuadTreeNode getChild(final int i) {
-		return children.get(i);
-	}
+    public QuadTreeNode getParent()
+        {
+        return parent;
+        }
 
-	public List<QuadTreeNode> getChildren() {
-		return children;
-	}
+    // Get my child of the given index
+    public QuadTreeNode getChild(final int i)
+        {
+        return children.get(i);
+        }
 
-	public boolean isRoot() {
-		return parent == null;
-	}
+    public ArrayList<QuadTreeNode> getChildren()
+        {
+        return children;
+        }
 
-	public boolean isLeaf() {
-		return children.size() == 0;
-	}
+    public boolean isRoot()
+        {
+        return parent == null;
+        }
 
-	// Return whether I am the ancester of the given node
-	public boolean isAncestorOf(final QuadTreeNode node) {
-		QuadTreeNode curr = node;
+    public boolean isLeaf()
+        {
+        return children.size() == 0;
+        }
 
-		while (curr != null) {
-			curr = curr.getParent();
-			if (curr == this)
-				return true;
-		}
+    // Return whether I am the ancester of the given node
+    public boolean isAncestorOf(final QuadTreeNode node)
+        {
+        QuadTreeNode curr = node;
 
-		return false;
-	}
+        while (curr != null)
+            {
+            curr = curr.getParent();
+            if (curr == this)
+                return true;
+            }
 
-	// Return siblings (not including the node itself) if exist, empty list
-	// otherwise
-	public List<QuadTreeNode> getSiblings() {
-		final List<QuadTreeNode> ret = new ArrayList<QuadTreeNode>();
+        return false;
+        }
 
-		if (isRoot())
-			return ret;
+    // Return siblings (not including the node itself) if exist, empty list
+    // otherwise
+    public ArrayList<QuadTreeNode> getSiblings()
+        {
+        final ArrayList<QuadTreeNode> ret = new ArrayList<>();
 
-		ret.addAll(parent.getChildren());
-		ret.remove(this);
+        if (isRoot())
+            return ret;
 
-		return ret;
-	}
+        ret.addAll(parent.getChildren());
+        ret.remove(this);
 
-	// Get the immediate child node that contains the given point
-	public QuadTreeNode getChildNode(final NdPoint p) {
-		return children.get(toChildIdx(p));
-	}
+        return ret;
+        }
 
-	// Get the leaf node that contains the given point
-	public QuadTreeNode getLeafNode(final NdPoint p) {
-		QuadTreeNode curr = this;
+    // Get the immediate child node that contains the given point
+    public QuadTreeNode getChildNode(final Number2D p)
+        {
+        return children.get(toChildIdx(p));
+        }
 
-		while (!curr.isLeaf())
-			curr = curr.getChildNode(p);
+    // Get the leaf node that contains the given point
+    public QuadTreeNode getLeafNode(final Number2D p)
+        {
+        QuadTreeNode curr = this;
 
-		return curr;
-	}
+        while (!curr.isLeaf())
+            curr = curr.getChildNode(p);
 
-	// Get all the leaves that are my offsprings
-	public List<QuadTreeNode> getLeaves() {
-		final List<QuadTreeNode> ret = new ArrayList<QuadTreeNode>();
-		final List<QuadTreeNode> stack = new ArrayList<QuadTreeNode>() {
-			{
-				addAll(children);
-			}
-		};
+        return curr;
+        }
 
-		while (stack.size() > 0) {
-			final QuadTreeNode curr = stack.remove(0);
-			if (curr.isLeaf())
-				ret.add(curr);
-			else
-				stack.addAll(curr.getChildren());
-		}
+    // Get all the leaves that are my offsprings
+    public ArrayList<QuadTreeNode> getLeaves()
+        {
+        final ArrayList<QuadTreeNode> ret = new ArrayList<>();
+        final ArrayList<QuadTreeNode> stack = new ArrayList<QuadTreeNode>() {{addAll(children);}};
 
-		return ret;
-	}
+        while (stack.size() > 0)
+            {
+            final QuadTreeNode curr = stack.remove(0);
+            if (curr.isLeaf())
+                ret.add(curr);
+            else
+                stack.addAll(curr.getChildren());
+            }
 
-	/**
-	 * Split this node based on the given origin or move the origin if already split
-	 * 
-	 * @param newOrigin
-	 * @return the newly created QTNodes (if any)
-	 */
-	public List<QuadTreeNode> split(final IntPoint newOrigin) {
-		final List<QuadTreeNode> ret = new ArrayList<QuadTreeNode>();
+        return ret;
+        }
 
-		if (!shape.contains(newOrigin))
-			throw new IllegalArgumentException("newOrigin " + newOrigin + " is outside the region " + shape);
+    /**
+     * Split this node based on the given origin or move the origin if already split
+     * 
+     * @param newOrigin
+     * @return the newly created QTNodes (if any)
+     */
+    public ArrayList<QuadTreeNode> split(final Int2D newOrigin)
+        {
+        final ArrayList<QuadTreeNode> ret = new ArrayList<>();
 
-		origin = newOrigin;
+        if (!shape.contains(newOrigin))
+            throw new IllegalArgumentException("newOrigin " + newOrigin + " is outside the region " + shape);
 
-		if (isLeaf()) {
-			children = IntStream.range(0, 1 << nd)
-					.mapToObj(i -> new QuadTreeNode(getChildShape(i), this))
-					.collect(Collectors.toList());
-			ret.addAll(children);
-		} else
-			for (int i = 0; i < children.size(); i++)
-				children.get(i).reshape(getChildShape(i));
+        origin = newOrigin;
 
-		return ret;
-	}
+        if (isLeaf())
+            {
+            children = new ArrayList<>();
+            for (int i = 0; i < 4; i++)
+                {
+                children.add(new QuadTreeNode(getChildShape(i), this));
+                }
+            ret.addAll(children);
+            }
+        else
+            for (int i = 0; i < children.size(); i++)
+                children.get(i).reshape(getChildShape(i));
 
-	/**
-	 * Merge all the children and make this node a leaf node
-	 * 
-	 * @return all the nodes that are merged
-	 */
-	public List<QuadTreeNode> merge() {
-		final List<QuadTreeNode> ret = new ArrayList<QuadTreeNode>();
+        return ret;
+        }
 
-		if (!isLeaf()) {
-			for (final QuadTreeNode child : children) {
-				ret.addAll(child.merge());
-				ret.add(child);
-			}
+    /**
+     * Merge all the children and make this node a leaf node
+     * 
+     * @return all the nodes that are merged
+     */
+    public ArrayList<QuadTreeNode> merge()
+        {
+        final ArrayList<QuadTreeNode> ret = new ArrayList<QuadTreeNode>();
 
-			children.clear();
-			origin = null;
-		}
+        if (!isLeaf())
+            {
+            for (final QuadTreeNode child : children)
+                {
+                ret.addAll(child.merge());
+                ret.add(child);
+                }
 
-		return ret;
-	}
+            children.clear();
+            origin = null;
+            }
 
-	private int getIndexInSiblings() {
-		if (isRoot())
-			throw new IllegalArgumentException("root node does not have position");
+        return ret;
+        }
 
-		return parent.getChildren().indexOf(this);
-	}
+    private int getIndexInSiblings()
+        {
+        if (isRoot())
+            throw new IllegalArgumentException("root node does not have position");
 
-	/**
-	 * @param dim
-	 * @return the direction (forward/backward) on the given dimension
-	 */
-	public boolean getDir(final int dim) {
-		return ((getIndexInSiblings() >> (nd - dim - 1)) & 0x1) == 0x1;
-	}
+        return parent.getChildren().indexOf(this);
+        }
 
-	/**
-	 * Print the current QTNode only
-	 */
-	public String toString() {
-		String s = String.format("ID %2d PID %2d L%1d %s", id, processor, level, shape.toString());
+    /**
+     * @param dim
+     * @return the direction (forward/backward) on the given dimension
+     */
+    public boolean getDir(final int dim)
+        {
+        return ((getIndexInSiblings() >> (2 - dim - 1)) & 0x1) == 0x1; // 2 is num dimensions
+        }
 
-		if (origin != null)
-			s += " Origin " + origin;
+    /**
+     * Print the current QTNode only
+     */
+    public String toString()
+        {
+        String s = String.format("ID %2d PID %2d L%1d %s", id, processor, level, shape.toString());
 
-		return s;
-	}
+        if (origin != null)
+            s += " Origin " + origin;
 
-	/**
-	 * Print the QTNode and all its children
-	 */
-	public String toStringAll() {
-		return toStringRecursive(new StringBuffer("Quad Tree\n"), "", true).toString();
-	}
+        return s;
+        }
 
-	protected StringBuffer toStringRecursive(final StringBuffer buf, final String prefix, final boolean isTail) {
-		buf.append(prefix + (isTail ? "└── " : "├── ") + this + "\n");
+    /**
+     * Print the QTNode and all its children
+     */
+    public String toStringAll()
+        {
+        return toStringRecursive(new StringBuffer("Quad Tree\n"), "", true).toString();
+        }
 
-		for (int i = 0; i < children.size() - 1; i++)
-			children.get(i).toStringRecursive(buf, prefix + (isTail ? "    " : "│   "), false);
+    protected StringBuffer toStringRecursive(final StringBuffer buf, final String prefix, final boolean isTail)
+        {
+        buf.append(prefix + (isTail ? "└── " : "├── ") + this + "\n");
 
-		if (children.size() > 0)
-			children.get(children.size() - 1).toStringRecursive(buf, prefix + (isTail ? "    " : "│   "), true);
+        for (int i = 0; i < children.size() - 1; i++)
+            children.get(i).toStringRecursive(buf, prefix + (isTail ? "    " : "│   "), false);
 
-		return buf;
-	}
+        if (children.size() > 0)
+            children.get(children.size() - 1).toStringRecursive(buf, prefix + (isTail ? "    " : "│   "), true);
 
-	/**
-	 * Change my shape as well as all my children's
-	 * 
-	 * @param newShape
-	 */
-	protected void reshape(final IntHyperRect newShape) {
-		shape = newShape;
-		if (isLeaf())
-			return;
+        return buf;
+        }
 
-		if (!newShape.contains(origin))
-			origin = newShape.getCenter();
+    /**
+     * Change my shape as well as all my children's
+     * 
+     * @param newShape
+     */
+    protected void reshape(final IntRect2D newShape)
+        {
+        shape = newShape;
+        if (isLeaf())
+            return;
 
-		for (int i = 0; i < children.size(); i++)
-			children.get(i).reshape(getChildShape(i));
-	}
+        if (!newShape.contains(origin))
+            {
+            // origin = newShape.getCenter();
+            Double2D d = newShape.getCenter();
+            origin = new Int2D((int) Math.floor(d.x), (int) Math.floor(d.y));
+            }
 
-	/**
-	 * Construct the child's shape based the given id and the origin
-	 * 
-	 * @param childId
-	 * @return child's shape
-	 */
-	protected IntHyperRect getChildShape(final int childId) {
-		final int[] ul = shape.ul().getArray();
-		final int[] br = origin.getArray();
-		final int[] sbr = shape.br().getArray();
+        for (int i = 0; i < children.size(); i++)
+            children.get(i).reshape(getChildShape(i));
+        }
 
-		for (int i = 0; i < nd; i++)
-			if (((childId >> (nd - i - 1)) & 0x1) == 1) {
-				ul[i] = br[i];
-				br[i] = sbr[i];
-			}
+    /**
+     * Construct the child's shape based the given id and the origin
+     * 
+     * @param childId
+     * @return child's shape
+     */
+    protected IntRect2D getChildShape(final int childId)
+        {
+        final int[] ul = shape.ul().toArray();
+        final int[] br = origin.toArray();
+        final int[] sbr = shape.br().toArray();
 
-		return new IntHyperRect(-1, new IntPoint(ul), new IntPoint(br));
-	}
+        for (int i = 0; i < 2; i++)
+            if (((childId >> (2 - i - 1)) & 0x1) == 1) // FIXME: what is this?
+                {
+                ul[i] = br[i];
+                br[i] = sbr[i];
+                }
 
-	/**
-	 * @param p
-	 * @return the index of my immediate child that contains the given point
-	 */
-	protected int toChildIdx(final NdPoint p) {
-		if (!shape.contains(p))
-			throw new IllegalArgumentException("p " + p + " must be inside the shape " + shape);
+        return new IntRect2D(new Int2D(ul), new Int2D(br));
+        }
 
-		final double[] oc = origin.getArrayInDouble(), pc = p.getArrayInDouble();
+    /**
+     * @param p
+     * @return the index of my immediate child that contains the given point
+     */
+    protected int toChildIdx(final Number2D p)
+        {
+        if (!shape.contains(p))
+            throw new IllegalArgumentException("p " + p + " must be inside the shape " + shape);
 
-		return IntStream.range(0, nd)
-				.map(i -> pc[i] < oc[i] ? 0 : 1)
-				.reduce(0, (r, x) -> r << 1 | x);
-	}
-}
+        final double[] oc = origin.toArrayAsDouble(), pc = p.toArrayAsDouble();
+
+        int[] mapd = new int[2];
+        for (int i = 0; i < 2; i++)
+            {
+            int map = 1; // 0 or 1
+            if (pc[i] < oc[i])
+                {
+                map = 0;
+                }
+            mapd[i] = map;
+            }
+                
+        int r = 0;
+        for (int i = 0; i < 2; i++)
+            {
+            int x = mapd[i];
+            r = r << 1 | x;
+            }
+                
+        for(int i=0; i<children.size(); i++)
+            {
+            if(children.get(i).shape.contains(p))
+                {
+                //System.out.println("*************p " + p + " is contained in " + children.get(i)+" "+children.get(i).shape);
+                // System.out.println("*************r " + r);
+                return i;
+                }
+            }
+        return -1; //error
+        }
+    }
