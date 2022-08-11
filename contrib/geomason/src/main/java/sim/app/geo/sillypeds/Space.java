@@ -23,7 +23,7 @@ import sim.field.grid.ObjectGrid2D;
 
 
 public class Space
-{
+    {
     /** Indicates grid cells that are outside the building.
      *
      */
@@ -46,7 +46,7 @@ public class Space
 
 
     Space(GeomGridField floorPlan)
-    {
+        {
         width = floorPlan.getGridWidth();
         height = floorPlan.getGridHeight();
 
@@ -61,9 +61,9 @@ public class Space
 
         // initialize the Tiles in the correct places with the appropriate gradients
         for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
             {
+            for (int y = 0; y < height; y++)
+                {
                 double baseHeight = heightField.get(x, y);
 
                 // If the current grid cell is outside the building, we need
@@ -74,18 +74,18 @@ public class Space
                 // pedestrians would eagerly pass through the walls of the
                 // building.
                 if (baseHeight == NO_DATA)
-                {
+                    {
                     t = new Tile(x, y, Double.MAX_VALUE);
-                } else
-                {
+                    } else
+                    {
                     t = new Tile(x, y, baseHeight);
                     validTiles.add(t);
-                }
+                    }
                 
                 field.set(x, y, t);
+                }
             }
         }
-    }
 
 
 
@@ -100,7 +100,7 @@ public class Space
      * @return list of all new, added Pedestrians
      */
     ArrayList<Pedestrian> populate(SillyPeds sp, int numPeds)
-    {
+        {
         ArrayList<Pedestrian> peds = new ArrayList<Pedestrian>();
 
         // Copy over the valid tiles and shuffle them.  Then we iterate
@@ -118,7 +118,7 @@ public class Space
 
         // go through all Pedestrians to create and schedule them
         for (int i = 0; i < numPeds; i++)
-        {
+            {
             Tile t = randomTiles.get(i);
 
             Pedestrian p = new Pedestrian(sp, this, t);
@@ -130,17 +130,17 @@ public class Space
             // also note that it schedules its ordering according to the value
             // of its current tile's gradient, i.e. distance from an exit
             sp.schedule.scheduleOnce(p, (int) (1 + t.baseheight));
-        }
+            }
 
         return peds;
-    }
+        }
 
     // tells a Pedestrian what space a Tile/exit leads to
 
 
     public Entrance exit(Tile t)
-    {
+        {
         return exits.get(t);
-    }
+        }
 
-}
+    }

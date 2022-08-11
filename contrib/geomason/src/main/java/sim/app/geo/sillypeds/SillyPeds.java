@@ -27,7 +27,7 @@ import sim.io.geo.ArcInfoASCGridImporter;
  * The SillyPeds simulation core.
  */
 public class SillyPeds extends SimState
-{
+    {
     private static final long serialVersionUID = 1L;
 
 
@@ -53,14 +53,14 @@ public class SillyPeds extends SimState
      * @param seed
      */
     public SillyPeds(long seed)
-    {
+        {
         super(seed);
-    }
+        }
 
 
 
     void scenarioSimpleRoom()
-    {
+        {
         landscape = new ArrayList<Space>();
 
         // Read in the exit gradient corresponding to a single building floor
@@ -74,14 +74,14 @@ public class SillyPeds extends SimState
         // Exits are denoted by a zero.  So scan through all the tiles and flag
         // those grid locations that have a base height of zero as exits.
         for (Tile t : room.validTiles)
-        {
-            if (t.baseheight == 0)
             {
+            if (t.baseheight == 0)
+                {
                 t.makeExit();
                 room.exits.put(t, null);
+                }
             }
         }
-    }
 
 
 
@@ -91,7 +91,7 @@ public class SillyPeds extends SimState
      */
     @Override
     public void start()
-    {
+        {
         super.start();
 
         //
@@ -107,11 +107,11 @@ public class SillyPeds extends SimState
 
         peds = new ArrayList<Pedestrian>();
         for (Space s : landscape)
-        {
+            {
             boolean addAll = peds.addAll(s.populate(this, initialAgentsPerFloor));
-        }
+            }
 
-    }
+        }
 
 
 
@@ -123,33 +123,33 @@ public class SillyPeds extends SimState
      * @return newly created Space
      */
     Space setupLandscapeSpace(final String filename)
-    {
+        {
         Space result = null;
 
         try
-        {
+            {
             GeomGridField floorPlan = new GeomGridField();
 
             InputStream inputStream = SillyPeds.class.getResourceAsStream(filename);
 
             if (inputStream == null)
-            {
+                {
                 throw new FileNotFoundException(filename);
-            }
+                }
 
             GZIPInputStream compressedInputStream = new GZIPInputStream(inputStream);
 
             ArcInfoASCGridImporter.read(compressedInputStream, GridDataType.DOUBLE, floorPlan);
 
             result = new Space(floorPlan);
-        }
+            }
         catch (Exception e)
-        {
+            {
             System.out.println(e);
-        }
+            }
 
         return result;
-    }
+        }
 
 
 
@@ -158,9 +158,9 @@ public class SillyPeds extends SimState
      * @param args
      */
     public static void main(String[] args)
-    {
+        {
         doLoop(SillyPeds.class, args);
         System.exit(0);
-    }
+        }
 
-}
+    }

@@ -28,7 +28,7 @@ import sim.field.grid.IntGrid2D;
  *
  */
 public class ArcInfoASCGridImporter //extends GeomImporter
-{
+    {
     /** Not intended to be instantiated as there is no local state
      */
     private ArcInfoASCGridImporter() {}
@@ -46,9 +46,9 @@ public class ArcInfoASCGridImporter //extends GeomImporter
      * 
      */
     public static void read(InputStream source, final GeomGridField.GridDataType type, GeomGridField field)
-    {
-        try
         {
+        try
+            {
             int width = 0;
             int height = 0;
 
@@ -78,13 +78,13 @@ public class ArcInfoASCGridImporter //extends GeomImporter
 
             // Skip the optional NODATA line if it exists
             if ( scanner.hasNext("NODATA_value") )
-            {
+                {
                 // Have to do this twice to get past the NODATA line
                 String nextLine = scanner.nextLine();
                 nextLine = scanner.nextLine();
 
 //                System.out.println("nextLine: " + nextLine);
-            }
+                }
 
             // We should now be at the first line of data.  Given how the user
             // wants to interpret the data (i.e., as integers or floats) we'll
@@ -93,7 +93,7 @@ public class ArcInfoASCGridImporter //extends GeomImporter
             AbstractGrid2D grid = null;
 
             switch (type)
-            {
+                {
                 case INTEGER:
                     grid = new IntGrid2D(width, height);
                     readIntegerBased(scanner, width, height, (IntGrid2D) grid);
@@ -102,7 +102,7 @@ public class ArcInfoASCGridImporter //extends GeomImporter
                     grid = new DoubleGrid2D(width, height);
                     readDoubleBased(scanner, width, height, (DoubleGrid2D) grid);
                     break;
-            }
+                }
 
             field.setGrid(grid);
 
@@ -113,19 +113,19 @@ public class ArcInfoASCGridImporter //extends GeomImporter
             field.setPixelWidth(cellSize);
 
             Envelope MBR = new Envelope(xllcorner, xllcorner + cellSize * width,
-                                        yllcorner + cellSize * height, yllcorner);
+                yllcorner + cellSize * height, yllcorner);
 
             field.setMBR(MBR);
 
             scanner.close();
             
-        } catch (IOException ex)
-        {  // XXX Yes, but is this due to missing file or some other problem?
+            } catch (IOException ex)
+            {  // XXX Yes, but is this due to missing file or some other problem?
             Logger.getLogger(ArcInfoASCGridImporter.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
-        }
+            }
 
-    }
+        }
 
     /** Reads integer-based geospatial data from ARC/INFO ASCII GRID file
      *
@@ -136,18 +136,18 @@ public class ArcInfoASCGridImporter //extends GeomImporter
      * @see read()
      */
     private static void readIntegerBased(Scanner scanner, int width, int height, IntGrid2D intGrid2D) throws IOException
-    {
+        {
         int currentInt;
 
         for (int y = 0; y < height; y++)
-        {
-            for (int x = 0; x < width; x++)
             {
+            for (int x = 0; x < width; x++)
+                {
                 currentInt = scanner.nextInt();
                 intGrid2D.set(x, y, currentInt);
+                }
             }
         }
-    }
     
 
     /** Reads real-based geospatial data from ARC/INFO ASCII GRID file
@@ -159,17 +159,17 @@ public class ArcInfoASCGridImporter //extends GeomImporter
      * @see read()
      */
     private static void readDoubleBased(Scanner scanner, int width, int height, DoubleGrid2D doubleGrid2D) throws IOException
-    {
+        {
         double currentDouble;
 
         for (int y = 0; y < height; y++)
-        {
-            for (int x = 0; x < width; x++)
             {
+            for (int x = 0; x < width; x++)
+                {
                 currentDouble = scanner.nextDouble();
                 doubleGrid2D.set(x, y, currentDouble);
+                }
             }
         }
-    }
 
-}
+    }

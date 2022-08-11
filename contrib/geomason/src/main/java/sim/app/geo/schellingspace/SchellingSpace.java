@@ -27,7 +27,7 @@ import sim.util.geo.MasonGeometry;
 
 //@SuppressWarnings("restriction")
 public class SchellingSpace extends SimState
-{
+    {
     private static final long serialVersionUID = 1L;
 
     /** Contains polygons defining DC ward boundaries
@@ -59,9 +59,9 @@ public class SchellingSpace extends SimState
      *  constructor function
      */
     public SchellingSpace(long seed)
-    {
+        {
         super(seed);
-    }
+        }
 
 
 
@@ -71,7 +71,7 @@ public class SchellingSpace extends SimState
      * Polygons and sets up the list of Persons.
      */
     void setup()
-    {
+        {
 
         // copy over the geometries into a list of Polygons
         Bag ps = world.getGeometries();
@@ -82,7 +82,7 @@ public class SchellingSpace extends SimState
         
         // process the polygons for neighbor and Person info
         for (int i = 0; i < polys.size(); i++)
-        {
+            {
             if ( i % 10 == 0 ) { System.out.print("."); }
 
             SchellingGeometry p1 = polys.get(i);
@@ -90,18 +90,18 @@ public class SchellingSpace extends SimState
 
             // add all neighbors
             for (int j = i + 1; j < polys.size(); j++)
-            {
+                {
                 SchellingGeometry p2 = polys.get(j);
                 if (p1.geometry.touches(p2.geometry))
-                {
+                    {
                     p1.neighbors.add(p2);
                     p2.neighbors.add(p1);
+                    }
                 }
-            }
 
             // add all of the Red People in this SchellingGeometry
             for (int k = 0; k < p1.initRed; k++)
-            {
+                {
 
                 // initialize the Person
                 Person p = new Person(Person.Affiliation.RED);
@@ -116,11 +116,11 @@ public class SchellingSpace extends SimState
                 agents.addGeometry(p.location);
                 people.add(p);
                 p1.residents.add(p);
-            }
+                }
 
             // add all of the blue People in this SchellingGeometry
             for (int k = 0; k < p1.initBlue; k++)
-            {
+                {
 
                 // initialize the Person
                 Person p = new Person(Person.Affiliation.BLUE);
@@ -134,12 +134,12 @@ public class SchellingSpace extends SimState
                 agents.addGeometry(p.location);
                 people.add(p);
                 p1.residents.add(p);
-            }
+                }
             // update the total population counts
             totalReds += p1.initRed;
             totalBlues += p1.initBlue;
 
-        }
+            }
 
         // schedule all of the Persons to update every tick. By default, they are called
         // in random order
@@ -148,12 +148,12 @@ public class SchellingSpace extends SimState
 
         int i = 0;
         for (Person p : people)
-        {
+            {
             schedule.scheduleRepeating(p);
             i++;
-        }
+            }
 
-    }
+        }
 
 
 
@@ -164,16 +164,16 @@ public class SchellingSpace extends SimState
      * @return
      */
     MasonGeometry randomPointInsidePolygon(Polygon p, GeometryFactory gfact)
-    {
+        {
 
         if (p == null)
-        {
+            {
             return null;
-        } // nothing here
+            } // nothing here
         if (p.isEmpty())
-        {
+            {
             return null;
-        } // can never find anything inside this empty geometry!
+            } // can never find anything inside this empty geometry!
 
         Envelope e = p.getEnvelopeInternal();
 
@@ -186,38 +186,38 @@ public class SchellingSpace extends SimState
 
         // continue searching until the point found is within the polygon
         while (!p.covers(pnt))
-        {//p.contains(pnt) ){
+            {//p.contains(pnt) ){
             addX = random.nextDouble() * (xmax - xmin) + xmin; // the proposed x value
             addY = random.nextDouble() * (ymax - ymin) + ymin; // the proposed y value
             pnt = gfact.createPoint(new Coordinate(addX, addY));
-        }
+            }
 
         // return the found point
         return new MasonGeometry(pnt);
-    }
+        }
 
 
 
     /** Import the data and then set up the simulation */
     @Override
     public void start()
-    {
+        {
         super.start();
 
         try // to import the data from the shapefile
-        {
+            {
             System.out.print("Reading boundary data ... ");
             
             URL wardsFile = SchellingSpaceData.class.getResource("DCreprojected.shp");
             URL wardsDB = SchellingSpaceData.class.getResource("DCreprojected.dbf");
 
             ShapeFileImporter.read( wardsFile, wardsDB, world, SchellingGeometry.class);
-        }
+            }
         catch (Exception ex)
-        {
+            {
             System.out.println("Error opening shapefile!" + ex);
             System.exit(-1);
-        }
+            }
 
         // Sync MBRs
         agents.setMBR(world.getMBR());
@@ -234,7 +234,7 @@ public class SchellingSpace extends SimState
 
         // once the data is read in, set up the Polygons and Persons
         setup();
-    }
+        }
 
 
 
@@ -243,9 +243,9 @@ public class SchellingSpace extends SimState
      * @param args
      */
     public static void main(String[] args)
-    {
+        {
         doLoop(SchellingSpace.class, args);
         System.exit(0);
-    }
+        }
 
-}
+    }

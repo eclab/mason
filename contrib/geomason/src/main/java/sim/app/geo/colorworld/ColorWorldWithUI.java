@@ -6,7 +6,7 @@
  * See the file "LICENSE" for more information
  *
  * $Id$
-*/
+ */
 package sim.app.geo.colorworld;
 
 import java.awt.Color;
@@ -28,7 +28,7 @@ import sim.util.gui.SimpleColorMap;
  *
  */
 public class ColorWorldWithUI extends GUIState
-{
+    {
     Display2D display;
     JFrame displayFrame;
 
@@ -37,14 +37,14 @@ public class ColorWorldWithUI extends GUIState
     GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
 
     public ColorWorldWithUI(SimState state)
-    {
+        {
         super(state);
-    }
+        }
 
     public ColorWorldWithUI()
-    {
+        {
         super(new ColorWorld(System.currentTimeMillis()));
-    }
+        }
 
     public static String getName() { return "GeoMASON: Color World"; }
     
@@ -53,7 +53,7 @@ public class ColorWorldWithUI extends GUIState
 
     @Override
     public void init(Controller controller)
-    {
+        {
         super.init(controller);
 
         display = new Display2D(ColorWorld.WIDTH, ColorWorld.HEIGHT, this);
@@ -64,31 +64,31 @@ public class ColorWorldWithUI extends GUIState
         displayFrame = display.createFrame();
         controller.registerFrame(displayFrame);
         displayFrame.setVisible(true);
-    }
+        }
 
     @Override
     public void quit()
-    {
+        {
         super.quit();
 
         if (displayFrame!=null)
-        {
+            {
             displayFrame.dispose();
-        }
+            }
 
         displayFrame = null;
         display = null;
-    }
+        }
 
     @Override
     public void start()
-    {
+        {
         super.start();
         setupPortrayals();
-    }
+        }
 
     private void setupPortrayals()
-    {
+        {
         ColorWorld world = (ColorWorld) state;
 
         agentPortrayal.setField(ColorWorld.agents);
@@ -97,18 +97,18 @@ public class ColorWorldWithUI extends GUIState
         // the county portrayal (ie, the voting districts) to use our custom portrayal 
         countyPortrayal.setField(world.county);
         countyPortrayal.setPortrayalForAll(new ColorWorldPortrayal(
-            new SimpleColorMap(0.0, ColorWorld.NUM_AGENTS, Color.WHITE, Color.BLUE)));
+                new SimpleColorMap(0.0, ColorWorld.NUM_AGENTS, Color.WHITE, Color.BLUE)));
 
         display.reset();
         display.setBackdrop(Color.WHITE);
         display.repaint();
-    }
+        }
 
     public static void main(String[] args)
-    {
+        {
         ColorWorldWithUI worldGUI = new ColorWorldWithUI();
         Console console = new Console(worldGUI);
         console.setVisible(true);
-    }
+        }
 
-}
+    }

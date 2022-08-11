@@ -84,7 +84,7 @@ public class HaitiFood extends SimState {
 
     // Relief File Settings ///
     URL [] reliefFiles = new URL [] {HaitiData.class.getResource("relief1.txt"), HaitiData.class.getResource("reliefBETTA.txt"), 
-        HaitiData.class.getResource("reliefOKBETTA.txt"), HaitiData.class.getResource("reliefBAD.txt"), HaitiData.class.getResource("reliefSingle.txt")};
+                                     HaitiData.class.getResource("reliefOKBETTA.txt"), HaitiData.class.getResource("reliefBAD.txt"), HaitiData.class.getResource("reliefSingle.txt")};
     String [] reliefFilesNames = new String [] {"Neutral", "Good", "Better", "Bad", "Single"};
 
     // making the Relief file modifiable
@@ -105,10 +105,10 @@ public class HaitiFood extends SimState {
             reliefFile =HaitiData.class.getResource("relief1.txt");
         popFile =HaitiData.class.getResource("pop.txt");
 
-    }
+        }
 
     public HaitiFood(long seed, int maxDen, int riotDen, int initFood, int energyFood, double enToStay, 
-            double enWalkPaved, double enWalkUnpav, double enRiot, int interval){
+        double enWalkPaved, double enWalkUnpav, double enRiot, int interval){
         super(seed);
         maximumDensity = maxDen;
         riotDensity = riotDen;
@@ -129,7 +129,7 @@ public class HaitiFood extends SimState {
         popFile = HaitiData.class.getResource("pop.txt");
         if (reliefFile == null)
             reliefFile = reliefFiles[0]; // pick the default
-    }
+        }
 
     /** Initialization */
     public void start(){
@@ -176,7 +176,7 @@ public class HaitiFood extends SimState {
             // set them up
             for (Center c : centersList) {
                 c.loc = (Location) locations.get(c.loc.x, c.loc.y);
-            }
+                }
 
             // ---- AGENTS ----
             System.out.println("reading population layer...");
@@ -184,13 +184,13 @@ public class HaitiFood extends SimState {
             population = new SparseGrid2D(tempPop.getWidth(),tempPop.getHeight());
             populate(tempPop); // set it up
 
-        } catch (FileNotFoundException e) {
+            } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }catch(MalformedURLException e){
+            }catch(MalformedURLException e){
             e.printStackTrace();
-        }catch(Exception e){
+            }catch(Exception e){
             e.printStackTrace();
-        }
+            }
 
         // ---- set up rumors/information spread ----
 
@@ -211,9 +211,9 @@ public class HaitiFood extends SimState {
             public void step(SimState state){
                 deaths_this_tick = 0;
                 rioting = 0;
-            } 
-        }, resetOrder, 1);
-    }
+                } 
+            }, resetOrder, 1);
+        }
 
     /**
      * Converts information extracted from the shapefile into links determined
@@ -232,16 +232,16 @@ public class HaitiFood extends SimState {
             MasonGeometry gm = (MasonGeometry) o;
             if (gm.getGeometry() instanceof LineString)
                 readLineString((LineString) gm.getGeometry(), xcols, ycols,
-                        xmin, ymin, xmax, ymax);
+                    xmin, ymin, xmax, ymax);
             else if (gm.getGeometry() instanceof MultiLineString) {
                 MultiLineString mls = (MultiLineString) gm.getGeometry();
                 for (int i = 0; i < mls.getNumGeometries(); i++) {
                     readLineString((LineString) mls.getGeometryN(i), xcols,
-                            ycols, xmin, ymin, xmax, ymax);
+                        ycols, xmin, ymin, xmax, ymax);
+                    }
                 }
             }
         }
-    }
 
     /**
      * Converts an individual linestring into a series of links and nodes in the
@@ -256,7 +256,7 @@ public class HaitiFood extends SimState {
      * @param ymax - maximum y value in shapefile
      */
     void readLineString(LineString geometry, int xcols, int ycols, double xmin,
-            double ymin, double xmax, double ymax) {
+        double ymin, double xmax, double ymax) {
 
         CoordinateSequence cs = geometry.getCoordinateSequence();
 
@@ -281,7 +281,7 @@ public class HaitiFood extends SimState {
             if (ns == null) {
                 n = new Node(new Location(xint, yint));
                 nodes.setObjectLocation(n, xint, yint);
-            } else
+                } else
                 n = (Node) ns.get(0);
 
             if (oldNode == n) // don't link a node to itself
@@ -293,7 +293,7 @@ public class HaitiFood extends SimState {
             if (i == 0) { // can't connect previous link to anything
                 oldNode = n; // save this node for reference in the next link
                 continue;
-            }
+                }
 
             int weight = (int) n.loc.distanceTo(oldNode.loc); // weight is just
             // distance
@@ -305,8 +305,8 @@ public class HaitiFood extends SimState {
             n.links.add(e);
 
             oldNode = n; // save this node for reference in the next link
+            }
         }
-    }
 
     // set up locations on the location grid for ease of reference
     void initializeLocations() {
@@ -315,9 +315,9 @@ public class HaitiFood extends SimState {
             for (int j = 0; j < gridHeight; j++) {
                 Location l = new Location(i, j);
                 locations.set(i, j, l);
+                }
             }
         }
-    }
 
     /**
      * Trigger the initial rumors in a 5 tile area around the centers
@@ -329,14 +329,14 @@ public class HaitiFood extends SimState {
             Center c = centersList.get(i);
             Bag seeFoodAtCenter = new Bag();
             population.getNeighborsMaxDistance(c.loc.x, c.loc.y, infoRadius,
-                    false, seeFoodAtCenter, null, null); 
+                false, seeFoodAtCenter, null, null); 
             for( Object o: seeFoodAtCenter){
                 Agent a = (Agent) o; 
                 a.centerInfo += Math.pow(2, i);
+                }
             }
-        }
 
-    }
+        }
 
     void populate(IntGrid2D pop) {
 
@@ -375,17 +375,17 @@ public class HaitiFood extends SimState {
                             a = new Agent(here, here.copy(), destructionLevel);
                         else
                             a = new Agent(here, here.copy(), destructionLevel, enToStay, 
-                                    enWalkPaved, enWalkUnpav, enRiot, interval);
+                                enWalkPaved, enWalkUnpav, enRiot, interval);
 
                         population.setObjectLocation(a, i, j);
 
-                        //			a.stopper = schedule.scheduleRepeating(a, personOrder, 1);
+                        //                      a.stopper = schedule.scheduleRepeating(a, personOrder, 1);
 
                         peopleList.add(a);
+                        }
                     }
                 }
             }
-        }
 
         Steppable [] steppers = new Steppable [peopleList.size()];
         for(int i = 0; i < steppers.length; i++){
@@ -393,7 +393,7 @@ public class HaitiFood extends SimState {
             Agent a = (Agent) steppers[i];
             steppers[i] = new TentativeStep(a);
             a.stopper = (Stoppable) steppers[i];
-        }
+            }
 
         RandomSequence seq = new RandomSequence(steppers);
         schedule.scheduleRepeating(seq, personOrder);
@@ -405,9 +405,9 @@ public class HaitiFood extends SimState {
             enWalkPaved = Agent.ENERGY_TO_WALK_PAVED;
             enWalkUnpav = Agent.ENERGY_TO_WALK_UNPAVED;
             enRiot = Agent.ENERGY_TO_RIOT;
-        }
+            }
 
-    }
+        }
 
     /**
      * @param filename
@@ -445,7 +445,7 @@ public class HaitiFood extends SimState {
                     nodata = Double.parseDouble(trimmed);
                 else
                     continue;
-            }
+                }
 
             // set up the field to hold the data
             field = new IntGrid2D(width, height);
@@ -464,18 +464,18 @@ public class HaitiFood extends SimState {
                     // update the field
                     field.set(j, i, value);
                     j++; // increase the column count
-                }
+                    }
 
                 j = 0; // reset the column count
                 i++; // increase the row count
+                }
             }
-        }
         // if it messes up, print out the error
         catch (Exception e) {
             e.printStackTrace();
-        }
+            }
         return field;
-    }
+        }
 
     /**
      * @param filename
@@ -515,7 +515,7 @@ public class HaitiFood extends SimState {
                     nodata = Double.parseDouble(trimmed);
                 else
                     continue;
-            }
+                }
 
             // set up the field to hold the data
             field = new IntGrid2D(width, height);
@@ -546,18 +546,18 @@ public class HaitiFood extends SimState {
                     // update the field
                     field.set(j, i, value);
                     j++; // increase the column count
-                }
+                    }
 
                 j = 0; // reset the column count
                 i++; // increase the row count
+                }
             }
-        }
         // if it messes up, print out the error
         catch (Exception e) {
             e.printStackTrace();
-        }
+            }
         return field;
-    }
+        }
 
     /**
      * @param filename - the name of the file that holds the data
@@ -595,7 +595,7 @@ public class HaitiFood extends SimState {
                     nodata = Double.parseDouble(trimmed);
                 else
                     continue;
-            }
+                }
 
             // set up the field to hold the data
             field = new SparseGrid2D(width, height);
@@ -611,7 +611,7 @@ public class HaitiFood extends SimState {
                     if (value == 1) {
                         // update the field
                         Bag otherCenters = field.getNeighborsHamiltonianDistance( 
-                                j, i, 5, false, new Bag(), null, null);
+                            j, i, 5, false, new Bag(), null, null);
                         if(otherCenters.size() > 0)
                             // there is already another center established here: we're describing the same center
                             continue; 
@@ -625,32 +625,32 @@ public class HaitiFood extends SimState {
                         field.setObjectLocation(c, j, i);
                         centersList.add(c);
                         schedule.scheduleRepeating(c, centerOrder, 1);
-                    }
+                        }
                     j++; // increase the column count
-                }
+                    }
 
                 j = 0; // reset the column count
                 i++; // increase the row count
-            }
+                }
 
             if(centersInitialFood < 0){
                 centersInitialFood = 100;
                 energyPerFood = Center.ENERGY_FROM_FOOD;
+                }
             }
-        }
         // if it messes up, print out the error
         catch (Exception e) {
             System.out.println(e);
-        }
+            }
         return field;
-    }
+        }
 
     /** Main function allows simulation to be run in stand-alone, non-GUI mode */
 
     public static void main(String[] args) {
         doLoop(HaitiFood.class, args);
         System.exit(0);
-    }
+        }
 
     /**
      * Used to store information about the road network
@@ -662,8 +662,8 @@ public class HaitiFood extends SimState {
         public Node(Location l) {
             loc = l;
             links = new ArrayList<Edge>();
+            }
         }
-    }
 
     /**
      * Used to find the nearest node for each space
@@ -677,8 +677,8 @@ public class HaitiFood extends SimState {
         public Crawler(Node n, Location l) {
             node = n;
             loc = l;
+            }
         }
-    }
 
     /**
      * Calculate the nodes nearest to each location and store the information
@@ -694,7 +694,7 @@ public class HaitiFood extends SimState {
             Node n = (Node) o;
             Crawler c = new Crawler(n, n.loc);
             crawlers.add(c);
-        }
+            }
 
         // while there is unexplored space, continue!
         while (crawlers.size() > 0) {
@@ -720,21 +720,21 @@ public class HaitiFood extends SimState {
                     // reproduce
                     Bag neighbors = new Bag();
                     locations.getNeighborsHamiltonianDistance(c.loc.x, c.loc.y,
-                            1, false, neighbors, null, null);
+                        1, false, neighbors, null, null);
                     for (Object o : neighbors) {
                         Location l = (Location) o;
                         if (l == c.loc)
                             continue;
                         Crawler newc = new Crawler(c.node, l);
                         nextGeneration.add(newc);
+                        }
                     }
-                }
                 // otherwise just die
-            }
+                }
             crawlers = nextGeneration;
-        }
+            }
         return closestNodes;
-    }
+        }
 
     /** Write the results out to file and clean up after the model */
     public void finish(){
@@ -766,11 +766,11 @@ public class HaitiFood extends SimState {
 
             w.close();
 
-        } catch (Exception e) {
+            } catch (Exception e) {
             System.err.println("File input error");
-        }
+            }
 
 
         kill(); 
+        }
     }
-}

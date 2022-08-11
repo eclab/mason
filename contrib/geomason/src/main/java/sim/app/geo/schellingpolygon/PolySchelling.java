@@ -24,7 +24,7 @@ import sim.util.Bag;
 
 
 public class PolySchelling extends SimState
-{
+    {
 
     private static final long serialVersionUID = 1L;
     // storing the data
@@ -41,9 +41,9 @@ public class PolySchelling extends SimState
      *  constructor function
      */
     public PolySchelling(long seed)
-    {
+        {
         super(seed);
-    }
+        }
 
 
 
@@ -53,7 +53,7 @@ public class PolySchelling extends SimState
      * Polygons and sets up the list of Persons.
      */
     void setup()
-    {
+        {
 
         // copy over the geometries into a list of Polygons
         Bag ps = world.getGeometries();
@@ -61,73 +61,73 @@ public class PolySchelling extends SimState
 
         // process the polygons for neighbor and Person info
         for (int i = 0; i < polys.size(); i++)
-        {
+            {
             Polygon p1 = polys.get(i);
             p1.init();
 
             for (int j = i + 1; j < polys.size(); j++)
-            {
+                {
                 Polygon p2 = polys.get(j);
                 if (p1.geometry.touches(p2.geometry))
-                {
+                    {
                     p1.neighbors.add(p2);
                     p2.neighbors.add(p1);
+                    }
                 }
-            }
 
             if (p1.soc == null) // no agent is initialized in this location
-            {
+                {
                 continue;
-            } else if (p1.soc.equals("RED"))
-            { // a red Person is initialized here
+                } else if (p1.soc.equals("RED"))
+                { // a red Person is initialized here
                 Person p = new Person("RED");
                 p.updateLocation(p1);
                 totalReds++;
                 people.add(p);
-            } else if (p1.soc.equals("BLUE"))
-            { // a blue Person is initialized here
+                } else if (p1.soc.equals("BLUE"))
+                { // a blue Person is initialized here
                 Person p = new Person("BLUE");
                 p.updateLocation(p1);
                 totalBlues++;
                 people.add(p);
+                }
             }
-        }
 
         // schedule all of the Persons to update. One agent updates per tick,
         // so agents start updating in the order they appear in the list of Persons
         // and update every (number of Persons) ticks.
         int i = 0;
         for (Person p : people)
-        {
+            {
             schedule.scheduleRepeating(i, p, people.size());
             i++;
-        }
+            }
 
-    }
+        }
 
 
 
     /** Import the data and then set up the simulation */
     public void start()
-    {
+        {
         super.start();
 
         try // to import the data from the shapefile
-        {
+            {
             URL wardsFile = SchellingPolygonData.class.getResource("1991_wards_disolved_Project.shp");
             URL wardsDB  = SchellingPolygonData.class.getResource("1991_wards_disolved_Project.dbf");
 
             ShapeFileImporter.read(wardsFile, wardsDB, world, Polygon.class);
 
-        } catch (Exception ex)
-        {
+            } catch (Exception ex)
+            {
             System.out.println("Error opening shapefile!" + ex);
             System.exit(-1);
-        }
+            }
 
         // once the data is read in, set up the Polygons and Persons
         setup();
-    }
+        }
 
 
 
@@ -136,9 +136,9 @@ public class PolySchelling extends SimState
      * @param args
      */
     public static void main(String[] args)
-    {
+        {
         doLoop(PolySchelling.class, args);
         System.exit(0);
-    }
+        }
 
-}
+    }

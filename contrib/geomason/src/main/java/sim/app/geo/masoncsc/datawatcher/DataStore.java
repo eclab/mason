@@ -13,7 +13,7 @@ package sim.app.geo.masoncsc.datawatcher;
  * @author Joey Harrison
  */
 public interface DataStore<T, U> extends DataListener<T>
-{
+    {
     public U getData();
     public void clear();
-}
+    }

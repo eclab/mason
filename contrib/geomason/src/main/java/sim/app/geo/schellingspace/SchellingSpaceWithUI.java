@@ -28,7 +28,7 @@ import sim.util.media.chart.TimeSeriesChartGenerator;
 
 @SuppressWarnings("restriction")
 public class SchellingSpaceWithUI extends GUIState
-{
+    {
 
     Display2D display;
     JFrame displayFrame;
@@ -46,30 +46,30 @@ public class SchellingSpaceWithUI extends GUIState
 
 
     protected SchellingSpaceWithUI(SimState state)
-    {
+        {
         super(state);
-    }
+        }
 
 
 
     public SchellingSpaceWithUI()
-    {
+        {
         super(new SchellingSpace(System.currentTimeMillis()));
-    }
+        }
 
 
 
     /** return the name of the simulation */
     public static String getName()
-    {
+        {
         return "SpaceSchelling";
-    }
+        }
 
 
 
     /** initialize the simulation */
     public void init(Controller controller)
-    {
+        {
         super.init(controller);
 
         display = new Display2D(600, 600, this);
@@ -98,31 +98,31 @@ public class SchellingSpaceWithUI extends GUIState
         JFrame histoFrame = numMovesHisto.createFrame(this);
         histoFrame.pack();
         controller.registerFrame(histoFrame);
-    }
+        }
 
 
 
     /** quit the simulation, cleaning up after itself*/
     public void quit()
-    {
+        {
         super.quit();
 
         if (displayFrame != null)
-        {
+            {
             displayFrame.dispose();
-        }
+            }
         displayFrame = null;
         display = null;
-    }
+        }
 
 
 
     /** start the simulation, setting up the portrayals and charts for a new run */
     public void start()
-    {
+        {
         super.start();
         setupPortrayals();
-    }
+        }
 
 
 
@@ -130,7 +130,7 @@ public class SchellingSpaceWithUI extends GUIState
      * Sets up the portrayals and charts for the simulation
      */
     private void setupPortrayals()
-    {
+        {
         SchellingSpace world = (SchellingSpace) state;
 
         // reset the chart info
@@ -162,70 +162,70 @@ public class SchellingSpaceWithUI extends GUIState
         display.reset();
 
         display.repaint();
-    }
+        }
 
 
 
     /** Keeps track of the rates of happy Reds and happy Blues in the simulation */
     class HappyTracker implements Steppable
-    {
+        {
 
         public void step(SimState state)
-        {
+            {
             SchellingSpace ps = (SchellingSpace) state;
             double hReds = 0, hBlues = 0;
 
             // query all Persons whether their position is acceptable
             for (Person p : ps.people)
-            {
-                if (p.acceptable(ps))
                 {
+                if (p.acceptable(ps))
+                    {
                     if (p.getAffiliation().equals(Person.Affiliation.RED))
-                    {
+                        {
                         hReds++;
-                    } else
-                    {
+                        } else
+                        {
                         hBlues++;
+                        }
                     }
                 }
-            }
             // add this data to the chart
             happyReds.add(state.schedule.time(),
-                          hReds / ps.totalReds, true);
+                hReds / ps.totalReds, true);
             happyBlues.add(state.schedule.time(),
-                           hBlues / ps.totalBlues, true);
-        }
+                hBlues / ps.totalBlues, true);
+            }
 
-    }
+        }
 
 
 
     /** Keeps track of the number of moves agents have made */
     class MoveTracker implements Steppable
-    {
+        {
 
         public void step(SimState state)
-        {
+            {
             SchellingSpace ps = (SchellingSpace) state;
             int numPeople = ps.people.size();
             peoplesMoves = new double[numPeople];
             for (int i = 0; i < numPeople; i++)
-            {
+                {
                 Person p = ps.people.get(i);
                 peoplesMoves[i] = p.numMoves;
-            }
+                }
             numMovesHisto.updateSeries(0, peoplesMoves);
-        }
+            }
 
-    }
+        }
 
 
 
     public static void main(String[] args)
-    {
+        {
         SchellingSpaceWithUI worldGUI = new SchellingSpaceWithUI();
         Console console = new Console(worldGUI);
         console.setVisible(true);
-    }
+        }
 
-}
+    }

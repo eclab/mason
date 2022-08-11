@@ -26,7 +26,7 @@ import sim.util.geo.MasonGeometry;
  *  along the network, choosing a random direction at each junction.   
  */
 public class NetworkWorld extends SimState
-{
+    {
 
     private static final long serialVersionUID = 2025934565604118804L;
     
@@ -44,7 +44,7 @@ public class NetworkWorld extends SimState
     Agent a = new Agent();
 
     public NetworkWorld(long seed)
-    {
+        {
         super(seed);
 
         // Add a lines and a polygon
@@ -53,7 +53,7 @@ public class NetworkWorld extends SimState
         LineString line = null;
 
         try
-        {
+            {
             line = (LineString) (rdr.read("LINESTRING (10 50, 20 50)"));
             world.addGeometry(new MasonGeometry(line));
 
@@ -72,10 +72,10 @@ public class NetworkWorld extends SimState
 
             agents.addGeometry(new MasonGeometry(a.getGeometry()));
 
-        } catch (ParseException parseException)
-        {
+            } catch (ParseException parseException)
+            {
             System.out.println("Bogus line string" + parseException);
-        }
+            }
 
         network.createFromGeomField(world);
         addIntersectionNodes(network.nodeIterator(), junctions);
@@ -94,7 +94,7 @@ public class NetworkWorld extends SimState
         agents.setMBR(mbr);
         world.setMBR(mbr);
         junctions.setMBR(mbr);
-    }
+        }
     
 
     /** adds nodes corresponding to road intersections to GeomVectorField
@@ -105,39 +105,39 @@ public class NetworkWorld extends SimState
      * Nodes will belong to a planar graph populated from LineString network.
      */
     private void addIntersectionNodes(Iterator nodeIterator, GeomVectorField intersections)
-    {
+        {
         GeometryFactory fact = new GeometryFactory();
         Coordinate coord = null;
         Point point = null;
 
         while (nodeIterator.hasNext())
-        {
+            {
             Node node = (Node) nodeIterator.next();
             System.out.println("node: " + node.getCoordinate() + " " + node.getDegree());
             coord = node.getCoordinate();
             point = fact.createPoint(coord);
             junctions.addGeometry(new MasonGeometry(point));
+            }
         }
-    }
 
     public void start()
-    {
+        {
         super.start();
         a.start(this);
         schedule.scheduleRepeating(a);
-    }
+        }
 
     void addPoint(final double x, final double y)
-    {
+        {
         GeometryFactory fact = new GeometryFactory();
         Point location = fact.createPoint(new Coordinate(x, y));
         world.addGeometry(new MasonGeometry(location));
-    }
+        }
 
     public static void main(String[] args)
-    {
+        {
         doLoop(NetworkWorld.class, args);
         System.exit(0);
-    }
+        }
 
-}
+    }

@@ -15,13 +15,13 @@ package sim.app.geo.sillypeds;
 
 
 public class Entrance
-{
+    {
     Space space;
     Tile entrance;
 
     public Entrance(Space s, Tile t)
-    {
+        {
         space = s;
         entrance = t;
+        }
     }
-}

@@ -19,7 +19,7 @@ import sim.engine.Steppable;
 
 
 public class Person implements Steppable
-{
+    {
 
     String color;
     double preference;
@@ -34,9 +34,9 @@ public class Person implements Steppable
      * @param c
      */
     public Person(String c)
-    {
+        {
         color = c;
-    }
+        }
 
 
 
@@ -45,14 +45,14 @@ public class Person implements Steppable
      * @param p - the Polygon to which the Person should move
      */
     public void updateLocation(Polygon p)
-    {
+        {
 
         // leave old tile, if previously was on a tile
         if (region != null)
-        {
+            {
             region.residents.remove(this);
             region.soc = "UNOCCUPIED";
-        }
+            }
 
         // go to new tile
         region = p;
@@ -60,7 +60,7 @@ public class Person implements Steppable
         region.soc = color;
 
         numMoves++; // increment the number of times moved
-    }
+        }
 
 
 
@@ -71,34 +71,34 @@ public class Person implements Steppable
      * based on the Person's personalThreshold
      */
     boolean acceptable(Polygon poly)
-    {
+        {
 
         // decide if Person is unhappy with surroundings
         double unlike = 0, total = 0.;
         for (Polygon p : poly.neighbors)
-        {
+            {
 
             if (p.soc.equals("UNOCCUPIED")) // empty spaces don't count
-            {
+                {
                 continue;
-            }
+                }
             if (!p.soc.equals(color)) // is this neighbor an unlike neighbor?
-            {
+                {
                 unlike++;
-            }
+                }
             total++; // total count of neighbors
-        }
+            }
         double percentUnlike = unlike / Math.max(total, 1); // don't divide by 0!
 
         // if unhappy, return false
         if (percentUnlike >= personalThreshold)
-        {
+            {
             return false;
-        } else // if happy, return true
-        {
+            } else // if happy, return true
+            {
             return true;
+            }
         }
-    }
 
 
 
@@ -108,36 +108,36 @@ public class Person implements Steppable
      * a Polygon exists. If no such Polygon exists, returns null.
      */
     Polygon bestMove(ArrayList<Polygon> ps)
-    {
+        {
 
         Polygon result = null;
         double bestDist = Double.MAX_VALUE;
 
         // go through all polygons and determine the best move to make
         for (Polygon p : ps)
-        {
+            {
 
             if (!p.soc.equals("UNOCCUPIED"))
-            {
+                {
                 continue; // not available
-            } else if (p.geometry.getCentroid().distance(
-                region.geometry.getCentroid()) >= bestDist) // distance between centroids
-            //else if( p.geometry.distance( region.geometry ) >= bestDist)
-            // distance between region borders
-            {
+                } else if (p.geometry.getCentroid().distance(
+                        region.geometry.getCentroid()) >= bestDist) // distance between centroids
+                //else if( p.geometry.distance( region.geometry ) >= bestDist)
+                // distance between region borders
+                {
                 continue; // we already have a better option
-            } else if (!acceptable(p))
-            {
+                } else if (!acceptable(p))
+                {
                 continue; // not an acceptable neighborhood
-            } else
-            { // otherwise it's an acceptable region and the closest region yet
+                } else
+                { // otherwise it's an acceptable region and the closest region yet
                 result = p;
                 bestDist = p.geometry.distance(region.geometry);
+                }
             }
-        }
 
         return result;
-    }
+        }
 
 
 
@@ -147,10 +147,10 @@ public class Person implements Steppable
      */
     @Override
     public void step(SimState state)
-    {
+        {
 
         if (!acceptable(region))
-        { // the current location is unacceptable
+            { // the current location is unacceptable
 
 //            System.out.println("unacceptable!");
 
@@ -158,14 +158,14 @@ public class Person implements Steppable
             Polygon potentialNew = bestMove(((PolySchelling) state).polys);
 
             if (potentialNew != null) // a better location was found
-            {
+                {
                 updateLocation(potentialNew);
-            } else // no better location was found. Stay in place.
-            {
+                } else // no better location was found. Stay in place.
+                {
 //                System.out.println("...but immobile");
+                }
             }
+
         }
 
     }
-
-}

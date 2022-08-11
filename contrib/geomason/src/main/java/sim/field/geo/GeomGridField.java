@@ -6,7 +6,7 @@
  * See the file "LICENSE" for more information
  *
  * $Id$
-*/
+ */
 package sim.field.geo;
 
 import com.vividsolutions.jts.geom.*;
@@ -20,7 +20,7 @@ import sim.field.grid.IntGrid2D;
  *
  */
 public class GeomGridField extends GeomField
-{
+    {
     private static final long serialVersionUID = 5804948960128647172L;
 
 
@@ -28,9 +28,9 @@ public class GeomGridField extends GeomField
      * Used to determine the GeomGridField storage type.
      */
     public enum GridDataType
-    {
+        {
         INTEGER, DOUBLE
-    }
+        }
 
 
     /**
@@ -38,21 +38,21 @@ public class GeomGridField extends GeomField
      * @return the data type of the grid cells; null if there is no assigned grid
      */
     public GridDataType getGridDataType()
-    {
+        {
         if (getGrid() instanceof IntGrid2D)
-        {
+            {
             return GridDataType.INTEGER;
-        }
+            }
         else if (getGrid() instanceof DoubleGrid2D)
-        {
+            {
             return GridDataType.DOUBLE;
-        }
+            }
 
         return null;
-    }
+        }
 
 
-	/** Grid container
+    /** Grid container
      * 
      * Allows for the user to use an arbitrary grid of integers, doubles, or objects.
      *
@@ -63,17 +63,17 @@ public class GeomGridField extends GeomField
     private Grid2D grid = null;
 
     public GeomGridField()
-    {
+        {
         super();
-    }
+        }
 
 
     public GeomGridField(Grid2D wrappedGrid)
-    {
+        {
         super();
         
         setGrid(wrappedGrid);
-    }
+        }
 
     /** width of grid point in projection coordinate system
      *
@@ -91,42 +91,42 @@ public class GeomGridField extends GeomField
 
     /** Height of pixels in units of the underlying coordinate reference system */
     public double getPixelHeight()
-    {
+        {
         return pixelHeight;
-    }
+        }
 
     /** Set heigh of pixels in units of the underlying coordinate reference system */
     public void setPixelHeight(double pixelHeight)
-    {
+        {
         this.pixelHeight = pixelHeight;
-    }
+        }
 
     /** Width of pixels in units of the underlying coordinate reference system */
     public double getPixelWidth()
-    {
+        {
         return pixelWidth;
-    }
+        }
 
     /** Set pixel width in units of underlying coordinate reference system */
     public void setPixelWidth(double pixelWidth)
-    {
+        {
         this.pixelWidth = pixelWidth;
-    }
+        }
    
 
     public final Grid2D getGrid()
-    {
+        {
         return grid;
-    }
+        }
 
     
     public final void setGrid(Grid2D newGrid)
-    {
+        {
         grid = newGrid;
 
         setPixelWidth(grid.getWidth());
         setPixelHeight(grid.getHeight());
-    }
+        }
 
     /**
      * Returns width of grid in pixels.
@@ -138,9 +138,9 @@ public class GeomGridField extends GeomField
      * @throws NullPointerException if grid not assigned
      */
     public final int getGridWidth()
-    {
+        {
         return grid.getWidth();
-    }
+        }
 
 
     /**
@@ -151,33 +151,33 @@ public class GeomGridField extends GeomField
      * @throws NullPointerException if grid not assigned
      */
     public final int getGridHeight()
-    {
+        {
         return grid.getHeight();
-    }
+        }
 
 
 
     @Override
     public void clear()
-    {
+        {
         super.clear();
 
         this.grid = null;
-    }
+        }
     
 
     @Override
     public void setMBR(Envelope MBR)
-    {
+        {
         super.setMBR(MBR);
 
         // update pixelWidth and pixelHeight iff grid is set
         if (grid != null)
-        {
+            {
             setPixelWidth(MBR.getWidth() / getGridWidth());
             setPixelHeight(MBR.getHeight() / getGridHeight());
+            }
         }
-    }
 
 
 
@@ -185,13 +185,13 @@ public class GeomGridField extends GeomField
      * @return true if (x,y) within grid boundaries
      */
     public boolean isInGrid(int x, int y)
-    {
-        if ( x < 0 || y < 0 || x >= getGridWidth() || y >= getGridHeight() )
         {
+        if ( x < 0 || y < 0 || x >= getGridWidth() || y >= getGridHeight() )
+            {
             return false;
-        }
+            }
         return true;
-    }
+        }
 
     
     /**
@@ -199,9 +199,9 @@ public class GeomGridField extends GeomField
      * @return x grid coordinate for cell 'p' is in
      */
     public int toXCoord(final Point p)
-    {
+        {
         return (int) Math.floor((p.getX() - getMBR().getMinX()) / getPixelWidth());
-    }
+        }
 
     /**
      *
@@ -209,9 +209,9 @@ public class GeomGridField extends GeomField
      * @return x grid coordinate for cell 'x'
      */
     public int toXCoord(final double x)
-    {
+        {
         return (int) Math.floor((x - getMBR().getMinX()) / getPixelWidth());
-    }
+        }
 
 
     /**
@@ -219,11 +219,11 @@ public class GeomGridField extends GeomField
      * @return y grid coordinate for cell 'p' is in
      */
     public int toYCoord(final Point p)
-    {
+        {
         // Note that we have to flip the y coordinate because the origin in
         // MASON is in the upper left corner.
         return (int) Math.floor((getMBR().getMaxY() - p.getY()) / getPixelHeight());
-    }
+        }
 
     /**
      *
@@ -231,11 +231,11 @@ public class GeomGridField extends GeomField
      * @return y grid coordinate for cell 'y' is in
      */
     public int toYCoord(final double y)
-    {
+        {
         // Note that we have to flip the y coordinate because the origin in
         // MASON is in the upper left corner.
         return (int) Math.floor((getMBR().getMaxY() - y) / getPixelHeight());
-    }
+        }
 
 
 
@@ -246,13 +246,13 @@ public class GeomGridField extends GeomField
      * @return Point for center of given grid cell
      */
     public Point toPoint(int x, int y)
-    {
+        {
         assert x >= 0 && y >= 0 && x < getGridWidth() && y < getGridHeight() : "x: " + x + "y: " + y;
 
         if ( ! isInGrid(x,y) )
-        {
+            {
             throw new IndexOutOfBoundsException();
-        }
+            }
 
         // Invert the y axis to map from MASON coordinate system, which has
         // the origin in the upper left, to real world coordinate systems that
@@ -271,7 +271,7 @@ public class GeomGridField extends GeomField
         Point point = geometryFactory.createPoint(coordinate);
 
         return point;
-    }
+        }
 
 
     /** Return a Polygon corresponding to the grid cell perimeter
@@ -281,13 +281,13 @@ public class GeomGridField extends GeomField
      * @return Polygon representing grid cell area
      */
     public Polygon toPolygon(int x, int y)
-    {
+        {
         assert x >= 0 && y >= 0 && x < getGridWidth() && y < getGridHeight() : "x: " + x + "y: " + y;
 
         if ( ! isInGrid(x,y) )
-        {
+            {
             throw new IndexOutOfBoundsException();
-        }
+            }
 
         Coordinate[] coordinates = new Coordinate[5];
         double x_orig = getMBR().getMinX();
@@ -330,7 +330,7 @@ public class GeomGridField extends GeomField
         Polygon polygon = geometryFactory.createPolygon(ring, null); // null means no inner rings; i.e., no hollow parts
 
         return polygon;
-    }
+        }
 
     
 
@@ -340,4 +340,4 @@ public class GeomGridField extends GeomField
      */
     private static GeometryFactory geometryFactory = new GeometryFactory();
 
-}
+    }

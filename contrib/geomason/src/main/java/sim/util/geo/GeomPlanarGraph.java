@@ -30,12 +30,12 @@ import sim.util.Bag;
  *
  */
 public class GeomPlanarGraph extends PlanarGraph
-{
+    {
 
     public GeomPlanarGraph()
-    {
+        {
         super();
-    }
+        }
 
     /** populate network with lines from a GeomVectorField
      *
@@ -45,16 +45,16 @@ public class GeomPlanarGraph extends PlanarGraph
      *
      */
     public void createFromGeomField(GeomVectorField field)
-    {
+        {
         Bag geometries = field.getGeometries();
 
         for (int i = 0; i < geometries.numObjs; i++)
-        {
-            if (((MasonGeometry) geometries.get(i)).geometry instanceof LineString)
             {
+            if (((MasonGeometry) geometries.get(i)).geometry instanceof LineString)
+                {
                 addLineString((MasonGeometry)geometries.get(i));
+                }
             }
-        }
 
         // Abandoned work on rectifying non-planar data. MAC 8/24/10.
 //        field.clear();
@@ -75,7 +75,7 @@ public class GeomPlanarGraph extends PlanarGraph
 //            field.addGeometry(new MasonGeometry(line));
         //}
 
-    }
+        }
 
     /** Add the given line to the graph
      * 
@@ -85,20 +85,20 @@ public class GeomPlanarGraph extends PlanarGraph
      * to fit
      */
     private void addLineString(MasonGeometry wrappedLine)
-    {
+        {
         LineString line = (LineString) wrappedLine.geometry;
 
         if (line.isEmpty())
-        {
+            {
             return;
-        }
+            }
 
         Coordinate[] linePts = CoordinateArrays.removeRepeatedPoints(line.getCoordinates());
 
         if (linePts.length < 2)
-        {
+            {
             return;
-        }
+            }
 
         Coordinate startPt = linePts[0];
         Coordinate endPt = linePts[linePts.length - 1];
@@ -116,7 +116,7 @@ public class GeomPlanarGraph extends PlanarGraph
         edge.setAttributes(wrappedLine.getAttributes());
 
         add(edge);
-    }
+        }
 
     /** get the node corresponding to the coordinate
      *
@@ -128,16 +128,16 @@ public class GeomPlanarGraph extends PlanarGraph
      * @note Some code copied from JTS PolygonizeGraph.getNode() and hacked to fit
      */
     private Node getNode(Coordinate pt)
-    {
+        {
         Node node = findNode(pt);
         if (node == null)
-        {
+            {
             node = new Node(pt);
             // ensure node is only added once to graph
             add(node);
-        }
+            }
         return node;
-    }
+        }
 
     /** Create a MASON Network from this planar graph
      *
@@ -145,17 +145,17 @@ public class GeomPlanarGraph extends PlanarGraph
      * shortest distance and other common graph traversals.
      */
     public Network getNetwork()
-    {
+        {
         Network network = new Network(false); // false == not directed
 
         for (Iterator it = dirEdges.iterator(); it.hasNext();)
-        {
+            {
             Object object = it.next();
             GeomPlanarGraphDirectedEdge edge = (GeomPlanarGraphDirectedEdge) object;
             network.addEdge(edge.getFromNode(), edge.getToNode(), edge);
-        }
+            }
 
         return network;
-    }
+        }
 
-}
+    }

@@ -6,7 +6,7 @@
  * See the file "LICENSE" for more information
  *
  * $Id$
-*/
+ */
 package sim.app.geo.networkworld;
 
 import java.awt.Color;
@@ -27,7 +27,7 @@ import sim.portrayal.geo.GeomVectorFieldPortrayal;
  *  the agent moving along the network).  
  */
 public class NetworkWorldWithUI extends GUIState
-{
+    {
 
     private Display2D display;
     private JFrame displayFrame;
@@ -41,7 +41,7 @@ public class NetworkWorldWithUI extends GUIState
     public NetworkWorldWithUI()  { super(new NetworkWorld(System.currentTimeMillis())); }
     
     public void init(Controller controller)
-    {
+        {
         super.init(controller);
 
         display = new Display2D(NetworkWorld.WIDTH, NetworkWorld.HEIGHT, this);
@@ -52,16 +52,16 @@ public class NetworkWorldWithUI extends GUIState
         displayFrame = display.createFrame();
         controller.registerFrame(displayFrame);
         displayFrame.setVisible(true);
-    }
+        }
 
     public void start()
-    {
+        {
         super.start();
         setupPortrayals();
-    }
+        }
 
     private void setupPortrayals()
-    {
+        {
         NetworkWorld world = (NetworkWorld)state;
 
         geometryPortrayal.setField(world.world);
@@ -75,15 +75,15 @@ public class NetworkWorldWithUI extends GUIState
         display.reset();
         display.setBackdrop(Color.WHITE);
         display.repaint();
-    }
+        }
 
 
 
     public static void main(String[] args)
-    {
+        {
         NetworkWorldWithUI worldGUI =  new NetworkWorldWithUI();
         Console console = new Console(worldGUI);
         console.setVisible(true);
-    }
+        }
     
-}
+    }

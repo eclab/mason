@@ -6,7 +6,7 @@
  * See the file "LICENSE" for more information
  *
  * $Id$
-*/
+ */
 package sim.app.geo.colorworld;
 
 
@@ -19,19 +19,19 @@ import sim.util.geo.MasonGeometry;
  *  inside the voting district. 
  */
 public class CountingGeomWrapper extends MasonGeometry
-{
+    {
     private static final long serialVersionUID = 3186655744206152969L;
 
 
     public CountingGeomWrapper()
-    {
+        {
         super();
-    }
+        }
 
 
     public int numAgentsInGeometry()
-    {
+        {
         Bag coveredAgents = ColorWorld.agents.getCoveredObjects(this);
         return coveredAgents.numObjs;
+        }
     }
-}

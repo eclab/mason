@@ -33,7 +33,7 @@ import sim.app.geo.waterworld.data.WaterWorldData;
  * The WaterWorld simulation core.
  */
 public class WaterWorld extends SimState
-{
+    {
 
     ObjectGrid2D landscape;
     ArrayList<Raindrop> drops;
@@ -50,9 +50,9 @@ public class WaterWorld extends SimState
      * @param seed
      */
     public WaterWorld(long seed)
-    {
+        {
         super(seed);
-    }
+        }
 
 
 
@@ -62,7 +62,7 @@ public class WaterWorld extends SimState
      */
     @Override
     public void start()
-    {
+        {
         super.start();
 
         // various options for setting up the landscape
@@ -73,8 +73,8 @@ public class WaterWorld extends SimState
         drops = new ArrayList<Raindrop>();
 
         schedule.scheduleRepeating(new Raincloud());
-//		schedule.scheduleRepeating(new Printout()); // printout of depth data
-    }
+//              schedule.scheduleRepeating(new Printout()); // printout of depth data
+        }
 
 
 
@@ -83,24 +83,24 @@ public class WaterWorld extends SimState
      * @return new landscape
      */
     ObjectGrid2D setupLandscape()
-    {
+        {
 
         ObjectGrid2D result = new ObjectGrid2D(grid_width, grid_height);
 
         // go over the landscape and set up a basin at every grid point
         for (int i = 0; i < grid_width; i++)
-        {
-            for (int j = 0; j < grid_height; j++)
             {
+            for (int j = 0; j < grid_height; j++)
+                {
 
                 // initialize a Basin with elevation 0
                 Basin b = new Basin(i, j);
                 result.set(i, j, b);
+                }
             }
-        }
 
         return result;
-    }
+        }
 
 
 
@@ -110,19 +110,19 @@ public class WaterWorld extends SimState
      * @return new landscape
      */
     ObjectGrid2D setupLandscapeReadIn(final String filename)
-    {
+        {
         ObjectGrid2D result = null;
 
         try
-        {
+            {
             GeomGridField elevationsField = new GeomGridField();
 
             InputStream inputStream = WaterWorldData.class.getResourceAsStream(filename);
 
             if (inputStream == null)
-            {
+                {
                 throw new FileNotFoundException(filename);
-            }
+                }
 
             GZIPInputStream compressedInputStream = new GZIPInputStream(inputStream);
 
@@ -137,22 +137,22 @@ public class WaterWorld extends SimState
             
             
             for (int x = 0; x < grid_width; x++)
-            {
-                for (int y = 0; y < grid_height; y++)
                 {
+                for (int y = 0; y < grid_height; y++)
+                    {
                     Basin b = new Basin(x, y, elevations.get(x, y));
                     result.set(x, y, b);
+                    }
                 }
+
+            } // if it messes up, print out the error
+        catch (Exception e)
+            {
+            System.out.println(e);
             }
 
-        } // if it messes up, print out the error
-        catch (Exception e)
-        {
-            System.out.println(e);
-        }
-
         return result;
-    }
+        }
 
 
 
@@ -162,7 +162,7 @@ public class WaterWorld extends SimState
      * @return new landscape
      */
     ObjectGrid2D setupLandscapeGradientIn()
-    {
+        {
 
         ObjectGrid2D result = new ObjectGrid2D(grid_width, grid_height);
 
@@ -172,9 +172,9 @@ public class WaterWorld extends SimState
 
         // iterate over every Basin and set its height equal to its distance from the center
         for (int i = 0; i < grid_width; i++)
-        {
-            for (int j = 0; j < grid_height; j++)
             {
+            for (int j = 0; j < grid_height; j++)
+                {
 
                 // set its height to either the distance...
                 int height = (int) Math.sqrt(Math.pow(i - hwidth, 2) + Math.pow(j - hheight, 2));
@@ -183,11 +183,11 @@ public class WaterWorld extends SimState
 
                 Basin b = new Basin(i, j, height);
                 result.set(i, j, b);
+                }
             }
-        }
 
         return result;
-    }
+        }
 
 
 
@@ -195,7 +195,7 @@ public class WaterWorld extends SimState
      *  a Steppable that adds new Raindrops to the simulation
      */
     class Raincloud implements Steppable
-    {
+        {
 
         // the number of drops added to the simulation per tick
         int numDropsPerTurn = 500;
@@ -203,14 +203,14 @@ public class WaterWorld extends SimState
 
 
         public void step(SimState state)
-        {
+            {
 
             // to dump all raindrops into the center of the graph, uncomment here
             //int w = grid_width / 2, h = grid_height / 2;
 
             // randomly select a tile and add a new raindrop to it
             for (int i = 0; i < numDropsPerTurn; i++)
-            {
+                {
 
                 // select a random tile on the landscape
                 int x = random.nextInt(grid_width), y = random.nextInt(grid_height);
@@ -226,11 +226,11 @@ public class WaterWorld extends SimState
                 r.stopper = stopper; // give the raindrop the ability to stop itself
                 ((WaterWorld) state).drops.add(r);
                 b.addDrop(r);
+                }
+
             }
 
         }
-
-    }
 
 
 
@@ -238,31 +238,31 @@ public class WaterWorld extends SimState
      *  prints out a report about either the depth of the water or the overall elevation
      */
     class Printout implements Steppable
-    {
+        {
 
         public void step(SimState state)
-        {
+            {
 
             String output = "";
 
             for (int i = 0; i < grid_width; i++)
-            {
-                for (int j = 0; j < grid_height; j++)
                 {
+                for (int j = 0; j < grid_height; j++)
+                    {
 
                     // setting for measuring water depth...
                     output += ((Basin) landscape.get(i, j)).drops.size()
                         // setting for measuring overall elevation
                         //output += ((Basin)landscape.get(i, j)).baseheight
                         + "\t";
-                }
+                    }
                 output += "\n";
-            }
+                }
 
             System.out.println("STEP " + schedule.getSteps() + "\n" + output);
-        }
+            }
 
-    }
+        }
 
 
 
@@ -271,9 +271,9 @@ public class WaterWorld extends SimState
      * @param args
      */
     public static void main(String[] args)
-    {
+        {
         doLoop(WaterWorld.class, args);
         System.exit(0);
-    }
+        }
 
-}
+    }

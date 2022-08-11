@@ -78,8 +78,8 @@ import org.jfree.util.PublicCloneable;
  * function for the purpose of culling.
  */
 public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
-        implements TableXYDataset, IntervalXYDataset, DomainInfo,
-                   PublicCloneable {
+    implements TableXYDataset, IntervalXYDataset, DomainInfo,
+    PublicCloneable {
 
     /**
      * The backing data structure.
@@ -96,7 +96,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
         this.values = new DefaultKeyedValues2D(true);
         this.intervalDelegate = new IntervalXYDelegate(this);
         addChangeListener(this.intervalDelegate);
-    }
+        }
 
     /**
      * Adds a data item to this dataset and sends a {@link DatasetChangeEvent}
@@ -108,7 +108,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
      */
     public void add(double x, double y, String seriesName) {
         add(new Double(x), new Double(y), seriesName, true);
-    }
+        }
 
     /**
      * Adds a data item to this dataset and, if requested, sends a
@@ -123,8 +123,8 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
         this.values.addValue(y, (Comparable) x, seriesName);
         if (notify) {
             fireDatasetChanged();
+            }
         }
-    }
 
     /**
      * Removes a value from the dataset.
@@ -134,7 +134,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
      */
     public void remove(double x, String seriesName) {
         remove(new Double(x), seriesName, true);
-    }
+        }
 
     /**
      * Removes an item from the dataset.
@@ -147,8 +147,8 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
         this.values.removeValue((Comparable) x, seriesName);
         if (notify) {
             fireDatasetChanged();
+            }
         }
-    }
     
     /**
      * Remove the item at the given index from all series.
@@ -156,8 +156,8 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
      * @param index index of the item.
      */
     public void removeItem(int index) {
-    	this.values.removeRow(index);
-    }
+        this.values.removeRow(index);
+        }
 
     /**
      * Clears all data from the dataset and sends a {@link DatasetChangeEvent}
@@ -168,7 +168,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     public void clear() {
         this.values.clear();
         fireDatasetChanged();
-    }
+        }
 
     /**
      * Returns the number of series in the collection.
@@ -178,7 +178,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     @Override
     public int getSeriesCount() {
         return this.values.getColumnCount();
-    }
+        }
 
     /**
      * Returns the key for a series.
@@ -190,7 +190,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     @Override
     public Comparable getSeriesKey(int series) {
         return this.values.getColumnKey(series);
-    }
+        }
 
     /**
      * Returns the number of x values in the dataset.
@@ -200,7 +200,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     @Override
     public int getItemCount() {
         return this.values.getRowCount();
-    }
+        }
 
     /**
      * Returns the number of items in the specified series.
@@ -214,7 +214,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     public int getItemCount(int series) {
         return getItemCount();  // all series have the same number of items in
                                 // this dataset
-    }
+        }
 
     /**
      * Returns the x-value for the specified series and item.
@@ -227,7 +227,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     @Override
     public Number getX(int series, int item) {
         return (Number) this.values.getRowKey(item);
-    }
+        }
 
     /**
      * Returns the starting X value for the specified series and item.
@@ -240,7 +240,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     @Override
     public Number getStartX(int series, int item) {
         return this.intervalDelegate.getStartX(series, item);
-    }
+        }
 
     /**
      * Returns the ending X value for the specified series and item.
@@ -253,7 +253,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     @Override
     public Number getEndX(int series, int item) {
         return this.intervalDelegate.getEndX(series, item);
-    }
+        }
 
     /**
      * Returns the y-value for the specified series and item.
@@ -266,7 +266,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     @Override
     public Number getY(int series, int item) {
         return this.values.getValue(item, series);
-    }
+        }
 
     /**
      * Returns the starting Y value for the specified series and item.
@@ -279,7 +279,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     @Override
     public Number getStartY(int series, int item) {
         return getY(series, item);
-    }
+        }
 
     /**
      * Returns the ending Y value for the specified series and item.
@@ -292,7 +292,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     @Override
     public Number getEndY(int series, int item) {
         return getY(series, item);
-    }
+        }
 
     /**
      * Returns the minimum x-value in the dataset.
@@ -305,7 +305,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     @Override
     public double getDomainLowerBound(boolean includeInterval) {
         return this.intervalDelegate.getDomainLowerBound(includeInterval);
-    }
+        }
 
     /**
      * Returns the maximum x-value in the dataset.
@@ -318,7 +318,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     @Override
     public double getDomainUpperBound(boolean includeInterval) {
         return this.intervalDelegate.getDomainUpperBound(includeInterval);
-    }
+        }
 
     /**
      * Returns the range of the values in this dataset's domain.
@@ -332,11 +332,11 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     public Range getDomainBounds(boolean includeInterval) {
         if (includeInterval) {
             return this.intervalDelegate.getDomainBounds(includeInterval);
-        }
+            }
         else {
             return DatasetUtilities.iterateDomainBounds(this, includeInterval);
+            }
         }
-    }
 
     /**
      * Returns the interval position factor.
@@ -345,7 +345,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
      */
     public double getIntervalPositionFactor() {
         return this.intervalDelegate.getIntervalPositionFactor();
-    }
+        }
 
     /**
      * Sets the interval position factor. Must be between 0.0 and 1.0 inclusive.
@@ -358,7 +358,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     public void setIntervalPositionFactor(double d) {
         this.intervalDelegate.setIntervalPositionFactor(d);
         fireDatasetChanged();
-    }
+        }
 
     /**
      * Returns the full interval width.
@@ -367,7 +367,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
      */
     public double getIntervalWidth() {
         return this.intervalDelegate.getIntervalWidth();
-    }
+        }
 
     /**
      * Sets the interval width to a fixed value, and sends a
@@ -378,7 +378,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     public void setIntervalWidth(double d) {
         this.intervalDelegate.setFixedIntervalWidth(d);
         fireDatasetChanged();
-    }
+        }
 
     /**
      * Returns whether the interval width is automatically calculated or not.
@@ -387,7 +387,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
      */
     public boolean isAutoWidth() {
         return this.intervalDelegate.isAutoWidth();
-    }
+        }
 
     /**
      * Sets the flag that indicates whether the interval width is automatically
@@ -398,7 +398,7 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     public void setAutoWidth(boolean b) {
         this.intervalDelegate.setAutoWidth(b);
         fireDatasetChanged();
-    }
+        }
 
     /**
      * Tests this dataset for equality with an arbitrary object.
@@ -411,16 +411,16 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
     public boolean equals(Object obj) {
         if (!(obj instanceof CategoryTableXYDatasetAlt)) {
             return false;
-        }
+            }
         CategoryTableXYDatasetAlt that = (CategoryTableXYDatasetAlt) obj;
         if (!this.intervalDelegate.equals(that.intervalDelegate)) {
             return false;
-        }
+            }
         if (!this.values.equals(that.values)) {
             return false;
-        }
+            }
         return true;
-    }
+        }
 
     /**
      * Returns an independent copy of this dataset.
@@ -439,8 +439,8 @@ public class CategoryTableXYDatasetAlt extends AbstractIntervalXYDataset
         clone.intervalDelegate.setFixedIntervalWidth(getIntervalWidth());
         clone.intervalDelegate.setAutoWidth(isAutoWidth());
         clone.intervalDelegate.setIntervalPositionFactor(
-                getIntervalPositionFactor());
+            getIntervalPositionFactor());
         return clone;
-    }
+        }
 
-}
+    }

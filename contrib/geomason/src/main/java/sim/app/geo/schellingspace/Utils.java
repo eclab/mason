@@ -27,7 +27,7 @@ import sim.util.gui.SimpleColorMap;
  * society.
  */
 class PersonPortrayal extends GeomPortrayal
-{
+    {
     private static final long serialVersionUID = 1L;
     
     Color darkBlue = new Color(50, 50, 100);
@@ -40,7 +40,7 @@ class PersonPortrayal extends GeomPortrayal
      *
      */
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-    {
+        {
         MasonGeometry p = (MasonGeometry) object;
         Person person = (Person) p.getUserData();
 
@@ -57,12 +57,12 @@ class PersonPortrayal extends GeomPortrayal
 
         // set paint based on Person's choice of color
         if (person.getAffiliation().equals(Person.Affiliation.RED))
-        {
+            {
             paint = Color.MAGENTA;
-        } else
-        {
+            } else
+            {
             paint = Color.CYAN;
-        }
+            }
 
         super.draw(object, graphics, info);
 
@@ -96,9 +96,9 @@ class PersonPortrayal extends GeomPortrayal
 //            graphics.setPaint(darkBlue);
 //        }
 //        graphics.drawOval(x, y, w, h);
-    }
+        }
 
-}
+    }
 
 
 
@@ -107,7 +107,7 @@ class PersonPortrayal extends GeomPortrayal
  */
 //@SuppressWarnings("restriction")
 class WardPortrayal extends GeomPortrayal
-{
+    {
     private static final long serialVersionUID = 1L;
 
     ColorMap cmap = new SimpleColorMap(0, 1., Color.blue, Color.red);
@@ -115,7 +115,7 @@ class WardPortrayal extends GeomPortrayal
 
     @Override
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-    {
+        {
         SchellingGeometry poly = (SchellingGeometry) object;
 
         // calculate the percentage of Red Persons versus Blue Persons and choose
@@ -123,19 +123,19 @@ class WardPortrayal extends GeomPortrayal
         double numRed = 0;
         
         for (Person p : poly.residents)
-        {
-            if (p.getAffiliation().equals(Person.Affiliation.RED))
             {
+            if (p.getAffiliation().equals(Person.Affiliation.RED))
+                {
                 numRed++;
+                }
             }
-        }
 
         paint = cmap.getColor(numRed / poly.residents.size());
 
         graphics.setPaint(paint);
 
         super.draw(object, graphics, info);
+        }
+
+
     }
-
-
-}

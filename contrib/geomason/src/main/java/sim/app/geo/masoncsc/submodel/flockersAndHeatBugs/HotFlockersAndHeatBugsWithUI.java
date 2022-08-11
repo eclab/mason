@@ -16,38 +16,38 @@ import sim.portrayal.SimpleInspector;
 import sim.portrayal.inspector.TabbedInspector;
 
 public class HotFlockersAndHeatBugsWithUI extends MetaGUIState
-{
-	FlockersWithUI flockersWithUI;
-	HeatBugsWithUI heatBugsWithUI;
+    {
+    FlockersWithUI flockersWithUI;
+    HeatBugsWithUI heatBugsWithUI;
 
     public Display2D display;
     public JFrame displayFrame;
 
-	public HotFlockersAndHeatBugsWithUI() {
-		super(new HotFlockersAndHeatBugs(System.currentTimeMillis()));
-		flockersWithUI = new FlockersWithUI(((HotFlockersAndHeatBugs)state).flockers);
-		heatBugsWithUI = new HeatBugsWithUI(((HotFlockersAndHeatBugs)state).heatBugs);
-		setGUIStates(new GUIState[] { flockersWithUI, heatBugsWithUI });
-	}
+    public HotFlockersAndHeatBugsWithUI() {
+        super(new HotFlockersAndHeatBugs(System.currentTimeMillis()));
+        flockersWithUI = new FlockersWithUI(((HotFlockersAndHeatBugs)state).flockers);
+        heatBugsWithUI = new HeatBugsWithUI(((HotFlockersAndHeatBugs)state).heatBugs);
+        setGUIStates(new GUIState[] { flockersWithUI, heatBugsWithUI });
+        }
 
-	public Object getSimulationInspectedObject() {
-		return state;
-	} // non-volatile
-	
+    public Object getSimulationInspectedObject() {
+        return state;
+        } // non-volatile
+        
     @Override
     public Inspector getInspector() {
-		TabbedInspector i = new TabbedInspector();
-		i.addInspector(new SimpleInspector((HotFlockersAndHeatBugs)state, this), "Hybrid");
-		i.addInspector(new SimpleInspector(((HotFlockersAndHeatBugs)state).flockers, this), "Flockers");
-		i.addInspector(new SimpleInspector(((HotFlockersAndHeatBugs)state).heatBugs, this), "Heat Bugs");
-		i.setVolatile(false);
-		return i;
-	}
+        TabbedInspector i = new TabbedInspector();
+        i.addInspector(new SimpleInspector((HotFlockersAndHeatBugs)state, this), "Hybrid");
+        i.addInspector(new SimpleInspector(((HotFlockersAndHeatBugs)state).flockers, this), "Flockers");
+        i.addInspector(new SimpleInspector(((HotFlockersAndHeatBugs)state).heatBugs, this), "Heat Bugs");
+        i.setVolatile(false);
+        return i;
+        }
 
-	public void init(final Controller c) {
-		super.init(c);
-		
-		// ----- Flockers
+    public void init(final Controller c) {
+        super.init(c);
+                
+        // ----- Flockers
         // make the displayer
         display = new Display2D(750,750,this);
         display.setBackdrop(Color.black);
@@ -65,13 +65,13 @@ public class HotFlockersAndHeatBugsWithUI extends MetaGUIState
         // specify the backdrop color  -- what gets painted behind the displays
         display.setBackdrop(Color.black);
 
-		((Console)controller).setSize(400, 600);
+        ((Console)controller).setSize(400, 600);
 
-	}
+        }
 
-	public static void main(String[] args) {
-		new HotFlockersAndHeatBugsWithUI().createController();
-	}
+    public static void main(String[] args) {
+        new HotFlockersAndHeatBugsWithUI().createController();
+        }
 
-}
+    }
 

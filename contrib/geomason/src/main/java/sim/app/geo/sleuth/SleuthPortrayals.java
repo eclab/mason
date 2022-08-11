@@ -25,14 +25,14 @@ import sim.portrayal.simple.RectanglePortrayal2D;
 
 // slope-based portrayal
 class SlopePortrayal extends RectanglePortrayal2D
-{
+    {
 
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-    {
-        if (object == null)
         {
+        if (object == null)
+            {
             return;
-        }
+            }
 
         Rectangle2D.Double draw = info.draw;
         final double width = draw.width * scale;
@@ -47,26 +47,26 @@ class SlopePortrayal extends RectanglePortrayal2D
 
         // only draw areas for which we have data
         if (t.slope != -9999)
-        {
+            {
             graphics.setColor(SleuthWorldWithUI.getSlopeColor().getColor(t.slope));
             graphics.fillRect(x, y, w, h);
+            }
         }
-    }
 
-}
+    }
 
 
 // hillshade-based portrayal
 
 class HillshadePortrayal extends RectanglePortrayal2D
-{
+    {
 
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-    {
-        if (object == null)
         {
+        if (object == null)
+            {
             return;
-        }
+            }
 
         Rectangle2D.Double draw = info.draw;
         final double width = draw.width * scale;
@@ -81,26 +81,26 @@ class HillshadePortrayal extends RectanglePortrayal2D
 
         // only draw areas for which we have data
         if (t.hillshade != -9999)
-        {
+            {
             graphics.setColor(SleuthWorldWithUI.getHillshadeColor().getColor(t.hillshade));
             graphics.fillRect(x, y, w, h);
+            }
         }
-    }
 
-}
+    }
 
 
 // exclusion-based portrayal
 
 class ExcludedPortrayal extends RectanglePortrayal2D
-{
+    {
 
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-    {
-        if (object == null)
         {
+        if (object == null)
+            {
             return;
-        }
+            }
 
         Rectangle2D.Double draw = info.draw;
         final double width = draw.width * scale;
@@ -113,29 +113,29 @@ class ExcludedPortrayal extends RectanglePortrayal2D
 
         Tile t = (Tile) object;
         if (t.excluded)
-        {
+            {
             graphics.setColor(Color.black);
-        } else
-        {
+            } else
+            {
             graphics.setColor(Color.white);
-        }
+            }
         graphics.fillRect(x, y, w, h);
-    }
+        }
 
-}
+    }
 
 // urban-based portrayal
 
 
 class OriginalUrbanPortrayal extends RectanglePortrayal2D
-{
+    {
 
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-    {
-        if (object == null)
         {
+        if (object == null)
+            {
             return;
-        }
+            }
 
         Rectangle2D.Double draw = info.draw;
         final double width = draw.width * scale;
@@ -148,26 +148,26 @@ class OriginalUrbanPortrayal extends RectanglePortrayal2D
 
         Tile t = (Tile) object;
         if (t.urbanOriginally)
-        {
+            {
             graphics.setColor(Color.blue);
             graphics.fillRect(x, y, w, h);
+            }
         }
-    }
 
-}
+    }
 
 // transport-based portrayal
 
 
 class TransportPortrayal extends RectanglePortrayal2D
-{
+    {
 
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-    {
-        if (object == null)
         {
+        if (object == null)
+            {
             return;
-        }
+            }
 
         Rectangle2D.Double draw = info.draw;
         final double width = draw.width * scale;
@@ -180,26 +180,26 @@ class TransportPortrayal extends RectanglePortrayal2D
 
         Tile t = (Tile) object;
         if (t.transport != -9999)
-        {
+            {
             graphics.setColor(Color.black);
             graphics.fillRect(x, y, w, h);
+            }
         }
-    }
 
-}
+    }
 
 // landuse-based portrayal
 
 
 class LandusePortrayal extends RectanglePortrayal2D
-{
+    {
 
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-    {
-        if (object == null)
         {
+        if (object == null)
+            {
             return;
-        }
+            }
 
         Rectangle2D.Double draw = info.draw;
         final double width = draw.width * scale;
@@ -212,38 +212,38 @@ class LandusePortrayal extends RectanglePortrayal2D
 
         Tile t = (Tile) object;
         if (t.landuse == 1)
-        {
+            {
             graphics.setColor(Color.orange);
-        } else if (t.landuse == 2)
-        {
+            } else if (t.landuse == 2)
+            {
             graphics.setColor(Color.yellow);
-        } else if (t.landuse == 3)
-        {
+            } else if (t.landuse == 3)
+            {
             graphics.setColor(Color.blue);
-        } else if (t.landuse == 4)
-        {
+            } else if (t.landuse == 4)
+            {
             graphics.setColor(Color.green);
-        } else
-        {
+            } else
+            {
             return; // landuse is not provided for this Tile
-        }
+            }
         graphics.fillRect(x, y, w, h);
-    }
+        }
 
-}
+    }
 
 // urban growth-based portrayal
 
 
 class GrowingUrbanZonesPortrayal extends RectanglePortrayal2D
-{
+    {
 
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-    {
-        if (object == null)
         {
+        if (object == null)
+            {
             return;
-        }
+            }
 
         Rectangle2D.Double draw = info.draw;
         final double width = draw.width * scale;
@@ -256,10 +256,10 @@ class GrowingUrbanZonesPortrayal extends RectanglePortrayal2D
 
         Tile t = (Tile) object;
         if (t.urbanized)
-        {
+            {
             graphics.setColor(Color.red);
             graphics.fillRect(x, y, w, h);
+            }
         }
-    }
 
-}
+    }

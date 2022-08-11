@@ -33,7 +33,7 @@ import sim.util.geo.PointMoveTo;
  *
  */
 public class Agent implements Steppable
-{
+    {
 
     private static final long serialVersionUID = -1113018274619047013L;
     // point that denotes agent's position
@@ -53,38 +53,38 @@ public class Agent implements Steppable
     static private GeometryFactory fact = new GeometryFactory();
 
     public Agent(CampusWorld state)
-    {
+        {
         location = new MasonGeometry(fact.createPoint(new Coordinate(10, 10))); // magic numbers
 
         location.isMovable = true;
         
-                // Find the first line segment and set our position over the start coordinate.
+        // Find the first line segment and set our position over the start coordinate.
         int walkway = state.random.nextInt(state.walkways.getGeometries().numObjs);
         MasonGeometry mg = (MasonGeometry) state.walkways.getGeometries().objs[walkway];
         setNewRoute((LineString) mg.getGeometry(), true);
 
         // Now set up attributes for this agent
         if (state.random.nextBoolean())
-        {
+            {
             location.addStringAttribute("TYPE", "STUDENT");
 
             int age = (int) (20.0 + 2.0 * state.random.nextGaussian());
 
             location.addIntegerAttribute("AGE", age);
-        }
+            }
         else
-        {
+            {
             location.addStringAttribute("TYPE", "FACULTY");
 
             int age = (int) (40.0 + 9.0 * state.random.nextGaussian());
 
             location.addIntegerAttribute("AGE", age);
-        }
+            }
 
         // Not everyone walks at the same speed
         basemoveRate *= Math.abs(state.random.nextGaussian());
         location.addDoubleAttribute("MOVE RATE", basemoveRate);
-    }
+        }
 
 
 
@@ -92,50 +92,50 @@ public class Agent implements Steppable
      * @return geometry representing agent location
      */
     public MasonGeometry getGeometry()
-    {
+        {
         return location;
-    }
+        }
 
 
     
     /** true if the agent has arrived at the target intersection
      */
     private boolean arrived()
-    {
+        {
         // If we have a negative move rate the agent is moving from the end to
         // the start, else the agent is moving in the opposite direction.
         if ((moveRate > 0 && currentIndex >= endIndex)
             || (moveRate < 0 && currentIndex <= startIndex))
-        {
+            {
             return true;
-        }
+            }
 
         return false;
-    }
+        }
 
 
 
     /** @return string indicating whether we are "FACULTY" or a "STUDENT" */
     public String getType()
-    {
+        {
         return location.getStringAttribute("TYPE");
-    }
+        }
 
 
     /** randomly selects an adjacent route to traverse
-    */
+     */
     private void findNewPath(CampusWorld geoTest)
-    {
+        {
         // find all the adjacent junctions
         Node currentJunction = geoTest.network.findNode(location.getGeometry().getCoordinate());
 
         if (currentJunction != null)
-        {
+            {
             DirectedEdgeStar directedEdgeStar = currentJunction.getOutEdges();
             Object[] edges = directedEdgeStar.getEdges().toArray();
 
             if (edges.length > 0)
-            {
+                {
                 // pick one randomly
                 int i = geoTest.random.nextInt(edges.length);
                 GeomPlanarGraphDirectedEdge directedEdge = (GeomPlanarGraphDirectedEdge) edges[i];
@@ -147,21 +147,21 @@ public class Agent implements Steppable
                 Point endPoint = newRoute.getEndPoint();
 
                 if (startPoint.equals(location.geometry))
-                {
-                    setNewRoute(newRoute, true);
-                } else
-                {
-                    if (endPoint.equals(location.geometry))
                     {
-                        setNewRoute(newRoute, false);
+                    setNewRoute(newRoute, true);
                     } else
                     {
+                    if (endPoint.equals(location.geometry))
+                        {
+                        setNewRoute(newRoute, false);
+                        } else
+                        {
                         System.err.println("Where am I?");
+                        }
                     }
                 }
             }
         }
-    }
 
 
 
@@ -172,7 +172,7 @@ public class Agent implements Steppable
      * @param start true if agent at start of line else agent placed at end
      */
     private void setNewRoute(LineString line, boolean start)
-    {
+        {
         segment = new LengthIndexedLine(line);
         startIndex = segment.getStartIndex();
         endIndex = segment.getEndIndex();
@@ -180,40 +180,40 @@ public class Agent implements Steppable
         Coordinate startCoord = null;
 
         if (start)
-        {
+            {
             startCoord = segment.extractPoint(startIndex);
             currentIndex = startIndex;
             moveRate = basemoveRate; // ensure we move forward along segment
-        } else
-        {
+            } else
+            {
             startCoord = segment.extractPoint(endIndex);
             currentIndex = endIndex;
             moveRate = -basemoveRate; // ensure we move backward along segment
-        }
+            }
 
         moveTo(startCoord);
-    }
+        }
 
     // move the agent to the given coordinates
 
 
     public void moveTo(Coordinate c)
-    {
-    	System.out.println("moveto: " + c);
+        {
+        System.out.println("moveto: " + c);
         pointMoveTo.setCoordinate(c);
         location.getGeometry().apply(pointMoveTo);
         getGeometry().geometry.geometryChanged();
 
-    }
+        }
 
 
 
     public void step(SimState state)
-    {
+        {
         CampusWorld campState = (CampusWorld) state;
         move(campState);
 //        campState.agents.setGeometryLocation(getGeometry(), pointMoveTo);
-    }
+        }
 
 
 
@@ -226,42 +226,42 @@ public class Agent implements Steppable
      * the line segment to it. Then it will repeat.
      */
     private void move(CampusWorld geoTest)
-    {
+        {
         // if we're not at a junction move along the current segment
         if (!arrived())
-        {
+            {
             moveAlongPath();
-        } else
-        {
+            } else
+            {
             findNewPath(geoTest);
+            }
         }
-    }
 
 
 
     // move agent along current line segment
     private void moveAlongPath()
-    {
+        {
         currentIndex += moveRate;
 
         // Truncate movement to end of line segment
         if (moveRate < 0)
-        { // moving from endIndex to startIndex
+            { // moving from endIndex to startIndex
             if (currentIndex < startIndex)
-            {
+                {
                 currentIndex = startIndex;
-            }
-        } else
-        { // moving from startIndex to endIndex
+                }
+            } else
+            { // moving from startIndex to endIndex
             if (currentIndex > endIndex)
-            {
+                {
                 currentIndex = endIndex;
+                }
             }
-        }
 
         Coordinate currentPos = segment.extractPoint(currentIndex);
 
         moveTo(currentPos);
-    }
+        }
 
-}
+    }

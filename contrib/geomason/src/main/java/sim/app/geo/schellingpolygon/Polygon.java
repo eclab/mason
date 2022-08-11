@@ -18,7 +18,7 @@ import sim.util.geo.MasonGeometry;
 
 
 public class Polygon extends MasonGeometry
-{
+    {
     int id = -1;
     String soc;
 
@@ -28,40 +28,40 @@ public class Polygon extends MasonGeometry
 
 
     public Polygon()
-    {
+        {
         super();
         residents = new ArrayList<Person>();
         neighbors = new ArrayList<Polygon>();
-    }
+        }
 
 
 
     public void init()
-    {
+        {
         id = getDoubleAttribute("ID_ID").intValue();
         soc = getStringAttribute("SOC");
-    }
+        }
 
 
 
     int getID()
-    {
-        if (id == -1)
         {
+        if (id == -1)
+            {
             init();
-        }
+            }
         return id;
-    }
+        }
 
 
 
     String getSoc()
-    {
-        if (soc == null)
         {
+        if (soc == null)
+            {
             init();
-        }
+            }
         return soc;
-    }
+        }
 
-}
+    }

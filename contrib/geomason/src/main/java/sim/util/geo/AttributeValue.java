@@ -24,7 +24,7 @@ package sim.util.geo;
  *
  */
 public class AttributeValue implements java.io.Serializable
-{
+    {
     private static final long serialVersionUID = -2342742107342686581L;
     
     /** Attribute value */
@@ -36,24 +36,24 @@ public class AttributeValue implements java.io.Serializable
 
 
     public AttributeValue()
-    {
+        {
         this(null, false);
-    }
+        }
 
 
 
     public AttributeValue(Object v)
-    {
+        {
         this(v, false);
-    }
+        }
 
 
 
     public AttributeValue(Object v, boolean h)
-    {
+        {
         value = v;
         hidden = h;
-    }
+        }
 
 
 
@@ -61,62 +61,62 @@ public class AttributeValue implements java.io.Serializable
      */
     @Override
     public String toString()
-    {
+        {
         return "Value: " + getValue() + " Hidden: " + isHidden();
-    }
+        }
 
 
 
     /** Simple, shallow clone */
     @Override
     public Object clone()
-    {
+        {
         AttributeValue a = new AttributeValue(getValue(), isHidden());
         return a;
-    }
+        }
 
 
 
     @Override
     public boolean equals(Object obj)
-    {
-        if (obj == null)
         {
+        if (obj == null)
+            {
             return false;
-        }
+            }
         
         if (getClass() != obj.getClass())
-        {
+            {
             return false;
-        }
+            }
 
         final AttributeValue other = (AttributeValue) obj;
 
         if (this.value != other.value && (this.value == null || !this.value.equals(other.value)))
-        {
+            {
             return false;
-        }
+            }
 
         if (this.hidden != other.hidden)
-        {
+            {
             return false;
-        }
+            }
 
         return true;
-    }
+        }
 
 
 
     @Override
     public int hashCode()
-    {
+        {
         int hash = 3;
         
         hash = 79 * hash + (this.value != null ? this.value.hashCode() : 0);
         hash = 79 * hash + (this.hidden ? 1 : 0);
 
         return hash;
-    }
+        }
 
 
 
@@ -124,9 +124,9 @@ public class AttributeValue implements java.io.Serializable
      * @return the value
      */
     public Object getValue()
-    {
+        {
         return value;
-    }
+        }
 
 
 
@@ -134,43 +134,43 @@ public class AttributeValue implements java.io.Serializable
      * @param value the value to set
      */
     public void setValue(Object value)
-    {
+        {
         this.value = value;
-    }
+        }
 
 
     public void setInteger(int value)
-    {
+        {
         setValue(new Integer(value));
-    }
+        }
 
     public Integer getInteger()
-    {
+        {
         return (Integer) getValue();
-    }
+        }
 
 
     public void setDouble(double value)
-    {
+        {
         setValue(new Double(value) );
-    }
+        }
 
     public Double getDouble()
-    {
+        {
         return (Double) getValue();
-    }
+        }
 
 
     public void setString(String value)
-    {
+        {
         setValue(value);
-    }
+        }
 
 
     public String getString()
-    {
+        {
         return (String) getValue();
-    }
+        }
 
     
 
@@ -178,9 +178,9 @@ public class AttributeValue implements java.io.Serializable
      * @return whether this is visible to the inspector
      */
     public boolean isHidden()
-    {
+        {
         return hidden;
-    }
+        }
 
 
 
@@ -188,9 +188,9 @@ public class AttributeValue implements java.io.Serializable
      * @param hidden dictates visibility to the inspector
      */
     public void setHidden(boolean hidden)
-    {
+        {
         this.hidden = hidden;
+        }
+
+
     }
-
-
-}

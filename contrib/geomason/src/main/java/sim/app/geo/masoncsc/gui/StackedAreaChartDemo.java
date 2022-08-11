@@ -28,9 +28,9 @@ import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 
 public class StackedAreaChartDemo extends ApplicationFrame {
-	private static final long serialVersionUID = 1L;
-	
-	private static final String TITLE = "Dynamic Series";
+    private static final long serialVersionUID = 1L;
+        
+    private static final String TITLE = "Dynamic Series";
     private static final String START = "Start";
     private static final String STOP = "Stop";
     private static final float MINMAX = 100;
@@ -43,8 +43,8 @@ public class StackedAreaChartDemo extends ApplicationFrame {
     private static final String SERIES2 = "Negative";
     
 
-	int step = 0;
-	double time = 0.0;
+    int step = 0;
+    double time = 0.0;
     XYSeries series1 = new XYSeries("One", false, false);
     XYSeries series2 = new XYSeries("Two", false, false);     
     XYSeries series3 = new XYSeries("Three", false, false);
@@ -57,19 +57,19 @@ public class StackedAreaChartDemo extends ApplicationFrame {
         final DefaultTableXYDataset dataset = new DefaultTableXYDataset();
 //        final DefaultTableXYDataset dataset = new DefaultTableXYDataset() {
 //
-//        	double largestX = Double.NEGATIVE_INFINITY;
-//			@Override
-//			public void seriesChanged(SeriesChangeEvent event) {        
-//				if (this.propagateEvents) {
-//	            double x = ((XYSeries)event.getSource()).getMaxX();
-//	            if (x > largestX) {
-//	               largestX = x;
-//	               updateXPoints();
-//	            }
-//	            fireDatasetChanged();
-//	        }
-//			}
-//        	
+//              double largestX = Double.NEGATIVE_INFINITY;
+//                      @Override
+//                      public void seriesChanged(SeriesChangeEvent event) {        
+//                              if (this.propagateEvents) {
+//                  double x = ((XYSeries)event.getSource()).getMaxX();
+//                  if (x > largestX) {
+//                     largestX = x;
+//                     updateXPoints();
+//                  }
+//                  fireDatasetChanged();
+//              }
+//                      }
+//              
 //        };
         chart = createAreaChart(dataset);
         
@@ -86,20 +86,20 @@ public class StackedAreaChartDemo extends ApplicationFrame {
                 if (STOP.equals(cmd)) {
                     timer.stop();
                     run.setText(START);
-                } else {
+                    } else {
                     timer.start();
                     run.setText(STOP);
+                    }
                 }
-            }
-        });
+            });
         
         final JButton btnStep = new JButton("Step");
         btnStep.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-            	addData();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addData();
+                }
+            });
 
         final JComboBox<String> combo = new JComboBox<String>();
         combo.addItem("Fast");
@@ -109,11 +109,11 @@ public class StackedAreaChartDemo extends ApplicationFrame {
             public void actionPerformed(ActionEvent e) {
                 if ("Fast".equals(combo.getSelectedItem())) {
                     timer.setDelay(FAST);
-                } else {
+                    } else {
                     timer.setDelay(SLOW);
+                    }
                 }
-            }
-        });
+            });
 
         this.add(new ChartPanel(chart), BorderLayout.CENTER);
         JPanel btnPanel = new JPanel(new FlowLayout());
@@ -125,38 +125,38 @@ public class StackedAreaChartDemo extends ApplicationFrame {
         timer = new Timer(FAST, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	addData();
-            }
-        });
-    }
+                addData();
+                }
+            });
+        }
     
     private void addData() {
-//    	System.out.format("Step %d: addData\n", step);
+//      System.out.format("Step %d: addData\n", step);
 
-    	series1.addOrUpdate(time, 100 + randomValue());
-    	if ((step % 5) != 0)
-    		series2.addOrUpdate(time, 100 + randomValue());
-    	if ((step % 3) == 0)
-    		series3.addOrUpdate(time, 100 + randomValue());
+        series1.addOrUpdate(time, 100 + randomValue());
+        if ((step % 5) != 0)
+            series2.addOrUpdate(time, 100 + randomValue());
+        if ((step % 3) == 0)
+            series3.addOrUpdate(time, 100 + randomValue());
         time += 1;
         step++;
-    }
+        }
 
     private float randomValue() {
         float randValue = (float) (random.nextGaussian() * MINMAX / 3);
         return randValue < 0 ? -randValue : randValue;
-    }
+        }
 
     private JFreeChart createAreaChart(final DefaultTableXYDataset dataset) {
         final JFreeChart chart = ChartFactory.createStackedXYAreaChart(
-                "Live Sentiment Chart", "Time", "Sentiments", dataset, PlotOrientation.VERTICAL, true, true, false);
+            "Live Sentiment Chart", "Time", "Sentiments", dataset, PlotOrientation.VERTICAL, true, true, false);
 
         final StackedXYAreaRenderer render = new StackedXYAreaRenderer();
         render.setSeriesPaint(0, Color.RED);
         render.setSeriesPaint(1, Color.GREEN);
         render.setSeriesPaint(2, Color.BLUE);
 
-		// commented out by JFH
+        // commented out by JFH
 //        DateAxis domainAxis = new DateAxis();
 //        domainAxis.setAutoRange(true);
 //        domainAxis.setDateFormatOverride(new SimpleDateFormat("HH:mm:ss"));
@@ -173,23 +173,23 @@ public class StackedAreaChartDemo extends ApplicationFrame {
         rangeAxis.setAutoRange(true);
 
         return chart;
-    }
+        }
 
     public void start() {
         timer.start();
-    }
+        }
 
     public static void main(final String[] args) {
         EventQueue.invokeLater(new Runnable() {
 
             @Override
             public void run() {
-            	StackedAreaChartDemo demo = new StackedAreaChartDemo(TITLE);
+                StackedAreaChartDemo demo = new StackedAreaChartDemo(TITLE);
                 demo.pack();
                 RefineryUtilities.centerFrameOnScreen(demo);
                 demo.setVisible(true);
                 demo.start();
-            }
-        });
+                }
+            });
+        }
     }
-}

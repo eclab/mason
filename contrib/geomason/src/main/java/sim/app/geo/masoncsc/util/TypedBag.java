@@ -55,47 +55,47 @@ public class TypedBag<T> extends ArrayList<T> implements Indexed
     /** Returns null if the TypedBag is empty, else removes and returns the topmost object. */
     public T pop()
         {
-    	if (isEmpty())
-    		return null;
-    	
-    	return this.remove(size() - 1);
+        if (isEmpty())
+            return null;
+        
+        return this.remove(size() - 1);
         }
     
     /** Synonym for add(obj) -- stylistically, you should add instead unless you
         want to think of the TypedBag as a stack. */
     public boolean push(T obj)
         {
-    	return add(obj);
+        return add(obj);
         }
         
     public boolean add(T obj)
         {
-    	return add(obj);
+        return add(obj);
         }
       
     /** identical to get(index) */
     public T getValue(int index)
         {
-    	return get(index);
+        return get(index);
         }
 
     /** identical to set(index, element) */
     @SuppressWarnings("unchecked")
-	public T setValue(int index, Object element)
+    public T setValue(int index, Object element)
         {
-    	return set(index, (T)element);
+        return set(index, (T)element);
         }
 
     /** Removes the object at the given index, shifting the other objects down. */
     public T removeNondestructively(int index)
         {
-    	return remove(index);
+        return remove(index);
         }
     
     /** Removes the object, shifting the other objects down. */
     public boolean removeNondestructively(T o)
         {
-    	return remove(o);
+        return remove(o);
         }
         
     /** Removes multiple instantiations of an object */
@@ -104,26 +104,26 @@ public class TypedBag<T> extends ArrayList<T> implements Indexed
         boolean flag = false;
         Iterator<T> iter = this.iterator();
         while (iter.hasNext()) 
-        	{
-        	T item = iter.next();
-        	if (o == null ? item == null : o==item || o.equals(item)) 
-        		{
-        		iter.remove();
-        		flag = true;
-        		}
-        	}
+            {
+            T item = iter.next();
+            if (o == null ? item == null : o==item || o.equals(item)) 
+                {
+                iter.remove();
+                flag = true;
+                }
+            }
         return flag;
         }
 
 
     /**    
-        Copies 'len' elements from the TypedBag into the provided array.
-        The 'len' elements start at index 'fromStart' in the TypedBag, and
-        are copied into the provided array starting at 'toStat'.
+           Copies 'len' elements from the TypedBag into the provided array.
+           The 'len' elements start at index 'fromStart' in the TypedBag, and
+           are copied into the provided array starting at 'toStat'.
     */ 
     public void copyIntoArray(int fromStart, T[] to, int toStart, int len)
         {
-		T[] array = (T[])this.toArray();
+        T[] array = (T[])this.toArray();
         System.arraycopy(array, fromStart, to, toStart, len);
         }
     
@@ -135,18 +135,18 @@ public class TypedBag<T> extends ArrayList<T> implements Indexed
 
     /** Sorts the bag according to the provided comparator */
     /*public void sort(Comparator<T> c)
-        {
-    	Collections.sort(this, c);
-        }*/
+      {
+      Collections.sort(this, c);
+      }*/
 
     /** Sorts the bag under the assumption that all objects stored within are Comparable. */
     public void sort() 
         {
-    	Collections.sort(this, new Comparator<T>() {
-			public int compare(T arg0, T arg1) {
-				return ((Comparable)arg0).compareTo(arg1);
-				}
-			});
+        Collections.sort(this, new Comparator<T>() {
+            public int compare(T arg0, T arg1) {
+                return ((Comparable)arg0).compareTo(arg1);
+                }
+            });
         }
 
     /** Replaces all elements in the bag with the provided object. */
@@ -160,7 +160,7 @@ public class TypedBag<T> extends ArrayList<T> implements Indexed
 //            objs[x] = o;
 //        
         for (T t : this)
-        	t = o;
+            t = o;
         }
 
     /** Shuffles (randomizes the order of) the TypedBag */

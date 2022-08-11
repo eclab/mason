@@ -6,7 +6,7 @@
  * See the file "LICENSE" for more information
  *
  * $Id$
-*/
+ */
 package sim.app.geo.nearbyworld;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -26,11 +26,11 @@ import sim.util.geo.MasonGeometry;
  * 
  */
 public class Agent implements Steppable
-{
+    {
 
     private static final long serialVersionUID = -7366623247320036818L;
 
-	// point that denotes agent's position
+    // point that denotes agent's position
     private MasonGeometry location;
 
     // How much to move the agent by in each step()
@@ -42,25 +42,25 @@ public class Agent implements Steppable
     private static GeometryFactory fact = new GeometryFactory();
 
     public Agent()
-    {
-    	this(25, 25); 
-    }
+        {
+        this(25, 25); 
+        }
     
     public Agent(int x, int y)
-    {
+        {
         location = new MasonGeometry( fact.createPoint(new Coordinate(x,y)) );
 //        System.out.println("agent: " + location);
-    }
+        }
 
     // return geometry representing agent location
     public MasonGeometry getGeometry()
-    {
+        {
         return location;
-    }
+        }
     
 
     public void step(SimState state)
-    {
+        {
         NearbyWorld world = (NearbyWorld) state;
 
         // Clear out any objects previously identififed as being near
@@ -73,17 +73,17 @@ public class Agent implements Steppable
         Bag nearbyObjects = world.objects.getObjectsWithinDistance(location, Agent.DISTANCE);
 
         if (nearbyObjects.isEmpty())
-        {
+            {
 //            System.out.println("Nothing nearby");
-        } else
-        {
+            } else
+            {
 //            System.out.println("# nearby objects: " + nearbyObjects.numObjs);
             
             for (int i = 0; i < nearbyObjects.size(); i++)
-            {
+                {
 //                System.out.println(nearbyObjects.objs[i] + " is near me");
                 world.nearbyField.addGeometry((MasonGeometry) nearbyObjects.objs[i]);
-            }
+                }
 
             // nearbyField.clear() and all the addGeometry() will have reset the MBR
             // to something that doesn't match the MBR of the other layers;
@@ -93,27 +93,27 @@ public class Agent implements Steppable
             // comment out the following line to see the effect of not
             // synchronizing the MBR.
             world.nearbyField.setMBR(world.objects.getMBR());
+            }
         }
-    }
 
     
 
     // returns false if the given point is outside the bounds, else true
     private boolean isValidMove(final Coordinate c)
-    {
+        {
         // Uses magic numbers.  :(
         if (c.x < 0.0 || c.x > NearbyWorld.WIDTH ||
             c.y < 0.0 || c.y > NearbyWorld.HEIGHT)
             {
-                return false;
+            return false;
             }
 
         return true;
-    }
+        }
 
     // move the agent in a random direction within a bounds
     private void move(MersenneTwisterFast random)
-    {
+        {
         Coordinate coord = (Coordinate) location.geometry.getCoordinate().clone();
 
         int direction = random.nextInt(8);
@@ -164,8 +164,8 @@ public class Agent implements Steppable
 
         if (isValidMove(coord))
             {
-                location.geometry.apply(translate);
+            location.geometry.apply(translate);
 //                System.out.println("agent:" + location);
             }        
+        }
     }
-}

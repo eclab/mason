@@ -1,7 +1,7 @@
 /*
-    RoadsPortrayal.java
+  RoadsPortrayal.java
 
-    $Id$
+  $Id$
 */
 
 package sim.app.geo.haiti;
@@ -19,7 +19,7 @@ import sim.util.gui.ColorMap;
 
 
 public class RoadsPortrayal extends RectanglePortrayal2D
-{
+    {
     // colormap for roads, which have values between 0 and 12
     public static ColorMap RoadsColor = new sim.util.gui.SimpleColorMap(
         0, 50, new Color(100, 100, 50), new Color(0, 0, 0));
@@ -31,11 +31,11 @@ public class RoadsPortrayal extends RectanglePortrayal2D
 
     @Override
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-    {
-        if (object == null)
         {
+        if (object == null)
+            {
             return;
-        }
+            }
 
         Rectangle2D.Double draw = info.draw;
         final double width = draw.width * scale;
@@ -48,10 +48,10 @@ public class RoadsPortrayal extends RectanglePortrayal2D
 
         MutableDouble i = (MutableDouble) object;
         if (i.intValue() > -1)
-        {
+            {
             graphics.setColor(RoadsColor.getColor(i.intValue()));
             graphics.fillRect(x, y, w, h);
+            }
         }
-    }
 
-}
+    }

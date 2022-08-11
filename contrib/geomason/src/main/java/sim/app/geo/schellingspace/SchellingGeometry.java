@@ -17,7 +17,7 @@ import sim.util.geo.MasonGeometry;
 
 
 public class SchellingGeometry extends MasonGeometry
-{
+    {
 
     private int id = -1;
 
@@ -31,32 +31,32 @@ public class SchellingGeometry extends MasonGeometry
 
 
     public SchellingGeometry()
-    {
+        {
         super();
         residents = new ArrayList<Person>();
         neighbors = new ArrayList<SchellingGeometry>();
-    }
+        }
 
 
 
     public void init()
-    {
+        {
         initRed = getIntegerAttribute("RED");
         initBlue = getIntegerAttribute("BLUE");
-    }
+        }
 
 
 
     int getID()
-    {
+        {
         return getDoubleAttribute("ID_ID").intValue();
-    }
+        }
 
 
 
     String getSoc()
-    {
+        {
         return getStringAttribute("SOC");
-    }
+        }
 
-}
+    }

@@ -1,7 +1,7 @@
 /*
-    DestructionPortrayal.java
+  DestructionPortrayal.java
 
-    $Id$
+  $Id$
 */
 
 package sim.app.geo.haiti;
@@ -16,13 +16,13 @@ import sim.util.MutableDouble;
 
 /* Color based on extent of damage, as defined by data sources */
 class DestructionPortrayal extends RectanglePortrayal2D
-{
-    public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
     {
-        if (object == null)
+    public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
+        if (object == null)
+            {
             return;
-        }
+            }
         Rectangle2D.Double draw = info.draw;
         final double width = draw.width * scale;
         final double height = draw.height * scale;
@@ -34,22 +34,22 @@ class DestructionPortrayal extends RectanglePortrayal2D
         MutableDouble i = (MutableDouble) object;
         int value = i.intValue();
         if (value == 51)
-        {
+            {
             graphics.setColor(Color.gray);
-        } else if (value == 102)
-        {
+            } else if (value == 102)
+            {
             graphics.setColor(Color.green);
-        } else if (value == 153)
-        {
+            } else if (value == 153)
+            {
             graphics.setColor(Color.yellow);
-        } else if (value == 204)
-        {
+            } else if (value == 204)
+            {
             graphics.setColor(Color.orange);
-        } else if (value == 255)
-        {
+            } else if (value == 255)
+            {
             graphics.setColor(Color.red);
-        }
+            }
         graphics.fillRect(x, y, w, h);
-    }
+        }
 
-}
+    }

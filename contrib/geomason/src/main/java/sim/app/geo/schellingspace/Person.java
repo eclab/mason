@@ -31,7 +31,7 @@ import sim.util.geo.MasonGeometry;
  */
 //@SuppressWarnings("restriction")
 public class Person implements Steppable
-{
+    {
     private static final long serialVersionUID = 1L;
 
     /** What "class" the agent belongs to */
@@ -57,23 +57,23 @@ public class Person implements Steppable
      * Constructor function
      */
     public Person(Affiliation a)
-    {
+        {
         affiliation = a;
-    }
+        }
 
 
 
     public Affiliation getAffiliation()
-    {
+        {
         return affiliation;
-    }
+        }
 
 
 
     public void setAffiliation(Affiliation affiliation)
-    {
+        {
         this.affiliation = affiliation;
-    }
+        }
 
 
 
@@ -83,37 +83,37 @@ public class Person implements Steppable
      * based on the Person's personalThreshold
      */
     boolean acceptable(SchellingSpace world)
-    {
+        {
 
         Bag neighbors = world.agents.getObjectsWithinDistance(location, minDist);
 
         // calculate the proportion of unlike neighbors
         double unlikeNeighbors = 0.;
         for (Object o : neighbors)
-        {
+            {
             Person neighbor = (Person) ((MasonGeometry) o).getUserData();
             if (! neighbor.getAffiliation().equals(affiliation))
-            {
+                {
                 unlikeNeighbors++;
+                }
             }
-        }
 
         // if the location is unacceptable, return false
         if (unlikeNeighbors / neighbors.numObjs > personalThreshold)
-        {
+            {
             return false;
-        } else // if it is acceptable, return true
-        {
+            } else // if it is acceptable, return true
+            {
             return true;
+            }
         }
-    }
 
 
 
     public MasonGeometry getGeometry()
-    {
+        {
         return location;
-    }
+        }
 
 
 
@@ -123,7 +123,7 @@ public class Person implements Steppable
      * @param world the SchellingSpace instance, which holds the GeomVectorFields
      */
     public void moveRandomly(SchellingSpace world)
-    {
+        {
 
         // the current location
         Coordinate coord = (Coordinate) location.geometry.getCoordinate().clone();
@@ -137,14 +137,14 @@ public class Person implements Steppable
 
         // while the new position is not inside the space, keep trying
         while (!world.world.isInsideUnion(coord))
-        {
+            {
             coord.x -= xinc;
             coord.y -= yinc;
             xinc = moveDist * (rand.nextDouble() - .5);
             yinc = moveDist * (rand.nextDouble() - .5);
             coord.x += xinc;
             coord.y += yinc;
-        }
+            }
 
         // once the location works, move to the new location
         location.geometry.apply(AffineTransformation.translationInstance(xinc, yinc));
@@ -152,15 +152,15 @@ public class Person implements Steppable
         // if the Person has moved to a different region, update the SchellingPolygons
         // about their current contents
         if (!region.geometry.contains(location.geometry))
-        {
+            {
             region.residents.remove(this);
             determineCurrentRegion(region);
             region.residents.add(this);
-        }
+            }
 
         // update the number of moves made
         numMoves++;
-    }
+        }
 
 
 
@@ -171,16 +171,16 @@ public class Person implements Steppable
      */
     @Override
     public void step(SimState state)
-    {
+        {
 
         SchellingSpace world = (SchellingSpace) state;
 
         // check to see if the number of neighbors exceeds a given tolerance
         if (!acceptable(world))
-        {
+            {
             moveRandomly(world); // if it does, move randomly
+            }
         }
-    }
 
 
 
@@ -190,7 +190,7 @@ public class Person implements Steppable
      * @param poly the SchellingGeometry in which the Person last found himself
      */
     void determineCurrentRegion(SchellingGeometry poly)
-    {
+        {
 
         // keep track of which SchellingPolygons have been investigated and which
         // are about to be investigated
@@ -202,30 +202,30 @@ public class Person implements Steppable
 
         // while there is a Polygon to investigate, keep running
         while (toCheck.size() > 0)
-        {
+            {
             SchellingGeometry p = toCheck.remove(0);
 
             if (p.geometry.contains(location.geometry))
-            { // ---successfully located!---
+                { // ---successfully located!---
                 region = p;
                 return;
-            } else
-            {
+                } else
+                {
                 checked.add(p); // we have investigated this polygon
 
                 // add all uninvestigated neighbors not already slated for investigation
                 for (SchellingGeometry n : p.neighbors)
-                {
-                    if (!checked.contains(n) && !toCheck.contains(n))
                     {
+                    if (!checked.contains(n) && !toCheck.contains(n))
+                        {
                         toCheck.add(n);
+                        }
                     }
                 }
             }
-        }
 
         // if it's not anywhere, throw an error
         System.out.println("ERROR: Person is not located within any polygon");
-    }
+        }
 
-}
+    }
