@@ -14106,7 +14106,7 @@ However not all models are arranged like this.  For example, in a social network
 \item 2D bounded or toroidal grids of objects	[like ObjectGrid2D]
 \item 2D bounded or toroidal grids of collections of objects [like DenseGrid2D]
 \item 2D bounded or toroidal continuous space
-\item 2D bounded GIS/GeoMASON facilities
+\item 2D bounded GIS/GeoMason facilities
 \end{itemize}
 
 Distributed MASON does not at present have facilities for:
@@ -14308,7 +14308,7 @@ Currently, you can run the following demos:
 
 \end{itemize}
 
-They are located in the sim/app/ directory (from the distributed/ directory).  Additionally, we have the following GeoMASON demos:
+They are located in the sim/app/ directory (from the distributed/ directory).  Additionally, we have the following GeoMason demos:
 
 \begin{itemize}
     \item sim.app.dflockers.DCampusWorld 
@@ -15117,6 +15117,12 @@ public void start() {
 
 This is for demonstration only: Obviously a much better thing to do would be for the root processor to determine {\it how many} flockers each node should generate, then simply tell each node its value.  Then each node would create its own DFlockers and populate them randomly in its space.  That way we would reduce the amount of network traffic between the nodes at startup: we'd just send a number to each processor rather than an array of DFlocker objects.
 
+\subsection{Quitting}
+
+At present the only way you can quit a Distributed MASON simulation is by completing a maximum time or number of steps, as usual. from \method{doLoopDistributed(...)}.  You should not prematurely quit a Distributed MASON partition because the other partitions will still be running.  Thus you should never manually call \method{finish()} or \method{kill()} in Distributed MASON.
+
+Yes, we be doing more than just warning you here, but it's complicated.
+
 \subsection{Distinguished Objects}
 \label{distinguishedobjects}
 
@@ -15627,12 +15633,12 @@ Returns a collection of neighbors, including those at or within the given radial
 Returns only those neighbors within, or (if {\it inclusive} is true) at the given radial distance from the given position.  If {\it radial} is false, then rather than radial (circular) distance, objects at or within a square centered the position are returned.  You can pass in an ArrayList to be reused rather than produce a new one.  Also returned are some other neighbors you probably don't care about.  
 \end{methods}
 
-\section{Distributed Geomason}
-In addition to large-scale distributed versions of traditional MASON models, Distributed MASON can be used to build distributed versions of GeoMason, which we refer to as {\bf Distributed Geomason}.  Relevant classes and example apps are located in the \file{contrib/distributed-geomason} directory.  Distributed GeoMason largely introduces a new class: a version of GeomVectorField called \class{sim.field.geo.DGeomVectorField}.
+\section{Distributed GeoMason}
+In addition to large-scale distributed versions of traditional MASON models, Distributed MASON can be used to build distributed versions of GeoMason, which we refer to as {\bf Distributed GeoMason}.  Relevant classes and example apps are located in the \file{contrib/distributed-geomason} directory.  Distributed GeoMason largely introduces a new class: a version of GeomVectorField called \class{sim.field.geo.DGeomVectorField}.
 
 \paragraph{Initialization}
 
-Distributed MASON's \class{sim.engine.DSimState} must be constructed with a bounding box: a width and a height, plus an area of interest (AOI).  This can be a problem for GeoMASON applications as many may not know their bounding box until they have loaded files at \method{start()}-time.  How to deal with this?  You have two strategies:
+Distributed MASON's \class{sim.engine.DSimState} must be constructed with a bounding box: a width and a height, plus an area of interest (AOI).  This can be a problem for GeoMason applications as many may not know their bounding box until they have loaded files at \method{start()}-time.  How to deal with this?  You have two strategies:
 
 \begin{enumerate}
 \item Hard-code the width and height (and AOI( when constructing \class{sim.engine.DSimState}
@@ -15641,7 +15647,7 @@ Distributed MASON's \class{sim.engine.DSimState} must be constructed with a boun
 
 \paragraph{Using Standard Fields}
 
-As mentioned earlier, there's no reason you can't use a standard MASON field in Distributed MASON or Distributed GeoMASON: but it will be a copy local to your partition.  One common use for this is to have every partition load read-only information, such as a global map, into an IntGrid2D (say).  Now every partition has its own copy of the map and doesn't have to ask other partitions for information stored on it.  You can also use standard GeoMASON fields as well, and for the same reason: to load read-only maps rather than distributed ones.
+As mentioned earlier, there's no reason you can't use a standard MASON field in Distributed MASON or Distributed GeoMason: but it will be a copy local to your partition.  One common use for this is to have every partition load read-only information, such as a global map, into an IntGrid2D (say).  Now every partition has its own copy of the map and doesn't have to ask other partitions for information stored on it.  You can also use standard GeoMason fields as well, and for the same reason: to load read-only maps rather than distributed ones.
 
 It's also common to use distributed fields, such as DDoubleGrid2D, instead of something more heavyweight.  You are not restricted to the Geomason fields: you can absolutely use standard DistributedMASON fields.  Indeed, DGeomVectorField uses DContinuous2D internally to get around serialization problems in in JTS.
 
