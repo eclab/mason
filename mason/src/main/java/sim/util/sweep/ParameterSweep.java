@@ -462,7 +462,7 @@ class ParameterSweepSimulationJob
         // some rare cases people may rely on the parameters already having been modified.
         // For these cases we also initialize prior to start().
         
-       	initSweepValuesFromProperties(properties);
+        initSweepValuesFromProperties(properties);
         simState.start();
         initSweepValuesFromProperties(properties);
         for(int i = 0; i< sweep.numSteps; i++)
