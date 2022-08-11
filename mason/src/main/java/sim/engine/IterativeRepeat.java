@@ -43,33 +43,33 @@ public class IterativeRepeat implements  Steppable, Stoppable
     public void step(final SimState state)
         {
         synchronized(lock)
-        	{
-        if (step!=null)
             {
-            try
+            if (step!=null)
                 {
-                // reuse the Key to save some gc perhaps -- it's been pulled out and discarded at this point
-                key.time += interval;
-                if (key.time < Schedule.AFTER_SIMULATION) 
-                    state.schedule.scheduleOnce(key, this);  // may return false if we couldn't schedule, which is fine
+                try
+                    {
+                    // reuse the Key to save some gc perhaps -- it's been pulled out and discarded at this point
+                    key.time += interval;
+                    if (key.time < Schedule.AFTER_SIMULATION) 
+                        state.schedule.scheduleOnce(key, this);  // may return false if we couldn't schedule, which is fine
+                    }
+                catch (IllegalArgumentException e)
+                    {
+                    e.printStackTrace(); // something bad happened
+                    }
+                assert sim.util.LocationLog.set(step);
+                step.step(state);
+                assert sim.util.LocationLog.clear();
                 }
-            catch (IllegalArgumentException e)
-                {
-                e.printStackTrace(); // something bad happened
-                }
-            assert sim.util.LocationLog.set(step);
-            step.step(state);
-            assert sim.util.LocationLog.clear();
-            }
             }
         }
         
     public void stop()  
         {
         synchronized(lock)
-        	{
-        	step = null;
-        	}
+            {
+            step = null;
+            }
         }
         
     public String toString() { return "Schedule.IterativeRepeat[" + step + "]"; }

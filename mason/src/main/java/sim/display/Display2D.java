@@ -1128,13 +1128,13 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     
     
     /* Quits the Display2D.  Okay, so finalize is evil and we're not supposed to rely on it.
-        We're not.  But it's an additional cargo-cult programming measure just in case. */
+       We're not.  But it's an additional cargo-cult programming measure just in case. */
 /*
-    protected void finalize() throws Throwable
-        {
-        super.finalize();
-        quit();
-        }
+  protected void finalize() throws Throwable
+  {
+  super.finalize();
+  quit();
+  }
 */
     
     /** Quits the Display2D.  Called by the Display2D's frame if the Display2D made the frame itself.
@@ -1865,16 +1865,16 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         synchronized(Display2D.this.simulation.state.schedule)
             {
             /*
-            if (SimApplet.isApplet)
-                {
-                Object[] options = {"Oops"};
-                JOptionPane.showOptionDialog(
-                    this, "You cannot save snapshots from an applet.",
-                    "MASON Applet Restriction",
-                    JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
-                    null, options, options[0]);
-                return;
-                }
+              if (SimApplet.isApplet)
+              {
+              Object[] options = {"Oops"};
+              JOptionPane.showOptionDialog(
+              this, "You cannot save snapshots from an applet.",
+              "MASON Applet Restriction",
+              JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
+              null, options, options[0]);
+              return;
+              }
             */
 
             // do we have the PDFEncoder?
@@ -1972,15 +1972,15 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             /*
             // can't start a movie if we're in an applet
             if (SimApplet.isApplet)
-                {
-                Object[] options = {"Oops"};
-                JOptionPane.showOptionDialog(
-                    this, "You cannot create movies from an applet.",
-                    "MASON Applet Restriction",
-                    JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
-                    null, options, options[0]);
-                return;
-                }
+            {
+            Object[] options = {"Oops"};
+            JOptionPane.showOptionDialog(
+            this, "You cannot create movies from an applet.",
+            "MASON Applet Restriction",
+            JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
+            null, options, options[0]);
+            return;
+            }
             */
                         
             if (movieMaker != null) return;  // already running

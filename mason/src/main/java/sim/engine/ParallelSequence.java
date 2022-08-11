@@ -115,11 +115,11 @@ public class ParallelSequence extends Sequence
         }
 
 /*
-    protected void finalize() throws Throwable
-        {
-        try { cleanup(); } 
-        finally { super.finalize(); }
-        }
+  protected void finalize() throws Throwable
+  {
+  try { cleanup(); } 
+  finally { super.finalize(); }
+  }
 */
 
     /** Creates an immutable ParallelSequence with the specified number of threads, or if threads==ParallelSequence.CPUS, then the number of threads is determined

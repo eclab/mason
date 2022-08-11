@@ -18,7 +18,7 @@ public abstract class NumberND implements java.io.Serializable
     /** Returns the number of dimensions of this NumberND (normally 2 or 3) */
     public abstract int numDimensions();
 
-	public abstract double[] toArrayAsDouble();
+    public abstract double[] toArrayAsDouble();
         
     /** Returns the value at position VAL in this NumberND  (val should 0, 1, or sometimes 2) */
     public abstract double getVal(int pos);
@@ -203,64 +203,64 @@ public abstract class NumberND implements java.io.Serializable
         }
 
     /*
-	public NumberND add(int offset)
-		{
-		if (this instanceof Int2D)
-			return ((Int2D)this).add(offset);
-		else if (this instanceof Double2D)
-			return ((Double2D)this).add(offset);
-		else return null;
-		} 
+      public NumberND add(int offset)
+      {
+      if (this instanceof Int2D)
+      return ((Int2D)this).add(offset);
+      else if (this instanceof Double2D)
+      return ((Double2D)this).add(offset);
+      else return null;
+      } 
 
-	public NumberND add(int dim, int offset)
-		{
-		if (this instanceof Int2D)
-			return ((Int2D)this).add(dim, offset);
-		else if (this instanceof Double2D)
-			return ((Double2D)this).add(dim, offset);
-		else return null;
-		} 
+      public NumberND add(int dim, int offset)
+      {
+      if (this instanceof Int2D)
+      return ((Int2D)this).add(dim, offset);
+      else if (this instanceof Double2D)
+      return ((Double2D)this).add(dim, offset);
+      else return null;
+      } 
 
-	public NumberND add(Int2D offset)
-		{
-		if (this instanceof Int2D)
-			return ((Int2D)this).add(offset);
-		else if (this instanceof Double2D)
-			return ((Double2D)this).add(offset);
-		else return null;
-		} 
+      public NumberND add(Int2D offset)
+      {
+      if (this instanceof Int2D)
+      return ((Int2D)this).add(offset);
+      else if (this instanceof Double2D)
+      return ((Double2D)this).add(offset);
+      else return null;
+      } 
 
-	public NumberND subtract(Int2D offset)
-		{
-		if (this instanceof Int2D)
-			return ((Int2D)this).subtract(offset);
-		else if (this instanceof Double2D)
-			return ((Double2D)this).subtract(offset);
-		else return null;
-		} 
-		*/
+      public NumberND subtract(Int2D offset)
+      {
+      if (this instanceof Int2D)
+      return ((Int2D)this).subtract(offset);
+      else if (this instanceof Double2D)
+      return ((Double2D)this).subtract(offset);
+      else return null;
+      } 
+    */
 
-		public double[] getOffsets(final NumberND that) 
-			{
-			int d = numDimensions();
-			double[] ret = new double[d];
-			for(int i = 0; i < d; i++)
-				{
-				ret[i] = getVal(i) - that.getVal(i);
-				}
-			return ret;
-			}
+    public double[] getOffsets(final NumberND that) 
+        {
+        int d = numDimensions();
+        double[] ret = new double[d];
+        for(int i = 0; i < d; i++)
+            {
+            ret[i] = getVal(i) - that.getVal(i);
+            }
+        return ret;
+        }
 
-		public double getDistanceSq(final NumberND that) 
-			{
-			final double[] a = that.toArrayAsDouble();
-			final double[] c = this.toArrayAsDouble();
-			int x = a.length;
-			double sum = 0;
-			if (c.length < x) x = c.length;
-			for(int i = 0; i < x; i++)
-				sum += (a[i] - c[i]) * (a[i] - c[i]);
-			return sum;
-			}
+    public double getDistanceSq(final NumberND that) 
+        {
+        final double[] a = that.toArrayAsDouble();
+        final double[] c = this.toArrayAsDouble();
+        int x = a.length;
+        double sum = 0;
+        if (c.length < x) x = c.length;
+        for(int i = 0; i < x; i++)
+            sum += (a[i] - c[i]) * (a[i] - c[i]);
+        return sum;
+        }
     }
         

@@ -53,11 +53,11 @@ public class DenseGrid2D extends AbstractGrid2D
         field = new Bag[width][height];
         }
 
-	public void reshape(int width, int height)
-		{
-		super.reshape(width, height);
+    public void reshape(int width, int height)
+        {
+        super.reshape(width, height);
         field = new Bag[width][height];
-		}
+        }
 
     /** Returns a bag containing all the objects at a given location, or null when there are no objects at the location.
         You should NOT MODIFY THIS BAG. This is the actual container bag, and modifying it will almost certainly break

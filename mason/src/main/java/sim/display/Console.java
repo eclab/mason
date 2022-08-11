@@ -395,8 +395,8 @@ public class Console extends JFrame implements Controller
         
         //////// add any additional pane
         
-		JComponent additional = simulation.state.provideAdditionalTab();
-		String additionalLabel = simulation.state.provideAdditionalTabName();
+        JComponent additional = simulation.state.provideAdditionalTab();
+        String additionalLabel = simulation.state.provideAdditionalTabName();
 
 
         //////// create the "about" tab pane
@@ -970,8 +970,8 @@ public class Console extends JFrame implements Controller
                 
         tabPane.addTab("Console", outerPane);
         tabPane.addTab("Displays", frameListPanel);
-		if (additional != null)
-			tabPane.addTab("" + additionalLabel, additional);
+        if (additional != null)
+            tabPane.addTab("" + additionalLabel, additional);
 
         tabPane.addTab("Inspectors", inspectorPanel);
         // add an optional pane if the GUIState has an inspector
@@ -1050,13 +1050,13 @@ public class Console extends JFrame implements Controller
         
         JMenuItem optMenu = new JMenuItem("Optimize");
         if (!isOptimizeInstalled())
-        	{
-        	optMenu.setEnabled(false);
-        	optMenu.setToolTipText("To use this, build and install the contrib/optimize package.");
-        	}
+            {
+            optMenu.setEnabled(false);
+            optMenu.setToolTipText("To use this, build and install the contrib/optimize package.");
+            }
         /*
-        else if (SimApplet.isApplet) 
-        	optMenu.setEnabled(false);
+          else if (SimApplet.isApplet) 
+          optMenu.setEnabled(false);
         */
         optMenu.addActionListener(new ActionListener()
             {
@@ -2201,51 +2201,51 @@ public class Console extends JFrame implements Controller
         frame.setVisible(true);
         }
     
-	public boolean isOptimizeInstalled()
-		{
-		try
-			{
-			boolean result = Class.forName("sim.util.opt.OptimizeGUI") != null;
-			return result;
-			}
-		catch (Exception ex)
-			{
-			return false;
-			}
-		}
-		
+    public boolean isOptimizeInstalled()
+        {
+        try
+            {
+            boolean result = Class.forName("sim.util.opt.OptimizeGUI") != null;
+            return result;
+            }
+        catch (Exception ex)
+            {
+            return false;
+            }
+        }
+                
     public void doOptimize()
-	    {
-	    try
-	    	{
-		    Constructor c = Class.forName("sim.util.opt.OptimizeGUI").getConstructor(
-		    	sim.util.Properties.class,
-		    	GUIState.class); 
-	    	
-		    JComponent opt = (JComponent)(c.newInstance(sim.util.Properties.getProperties(simulation.state), simulation));
-		    JFrame frame = new JFrame("Optimize for " + simulation.getName(simulation.getClass()));
-		    frame.getContentPane().setLayout(new BorderLayout());
-		    frame.getContentPane().add(opt, BorderLayout.CENTER);
-		    frame.pack();
-		    frame.setVisible(true);
-		    }
-		catch (Exception ex)
-			{
-			ex.printStackTrace();
-			JOptionPane.showMessageDialog(null, "An error occurred trying to launch the optimization GUI.", "Optimization GUI Error", JOptionPane.ERROR_MESSAGE);
-			}
-	    /*
-        OptimizeGUI opt = 
-	        new OptimizeGUI(
-	            sim.util.Properties.getProperties(simulation.state),
-	            simulation);
-	    JFrame frame = new JFrame("Optimize for " + simulation.getName(simulation.getClass()));
-	    frame.getContentPane().setLayout(new BorderLayout());
-	    frame.getContentPane().add(opt, BorderLayout.CENTER);
-	    frame.pack();
-	    frame.setVisible(true);
-	    */
-	    }
+        {
+        try
+            {
+            Constructor c = Class.forName("sim.util.opt.OptimizeGUI").getConstructor(
+                sim.util.Properties.class,
+                GUIState.class); 
+                
+            JComponent opt = (JComponent)(c.newInstance(sim.util.Properties.getProperties(simulation.state), simulation));
+            JFrame frame = new JFrame("Optimize for " + simulation.getName(simulation.getClass()));
+            frame.getContentPane().setLayout(new BorderLayout());
+            frame.getContentPane().add(opt, BorderLayout.CENTER);
+            frame.pack();
+            frame.setVisible(true);
+            }
+        catch (Exception ex)
+            {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "An error occurred trying to launch the optimization GUI.", "Optimization GUI Error", JOptionPane.ERROR_MESSAGE);
+            }
+        /*
+          OptimizeGUI opt = 
+          new OptimizeGUI(
+          sim.util.Properties.getProperties(simulation.state),
+          simulation);
+          JFrame frame = new JFrame("Optimize for " + simulation.getName(simulation.getClass()));
+          frame.getContentPane().setLayout(new BorderLayout());
+          frame.getContentPane().add(opt, BorderLayout.CENTER);
+          frame.pack();
+          frame.setVisible(true);
+        */
+        }
 
 
 
@@ -2664,30 +2664,30 @@ public class Console extends JFrame implements Controller
         }
     
     /*
-    void updateTime(long steps, double time, double rate)
-        {
-        int showing;
-        boolean simulationExists = (simulation != null && simulation.state != null);
-        synchronized (this.time) { lastRate = rate; lastSteps = steps; lastTime = time; showing = this.showing; }
-        switch(showing)
-            {
-            case SHOWING_TIME:
-                updateTimeText(simulationExists ? 
-                    simulation.state.schedule.getTimestamp(lastTime, "At Start", "At End") : "");
-                break;
-            case SHOWING_STEPS:
-                updateTimeText(simulationExists ? "" + lastSteps: "");
-                break;
-            case SHOWING_TPS:
-                if (lastRate != 0) updateTimeText(lastRate < 0 ? "" : rateFormat.format(lastRate));
-                break;
-            case SHOWING_NOTHING:
-                updateTimeText("");
-                break;
-            default:
-                throw new RuntimeException("default case should never occur");
-            }
-        }
+      void updateTime(long steps, double time, double rate)
+      {
+      int showing;
+      boolean simulationExists = (simulation != null && simulation.state != null);
+      synchronized (this.time) { lastRate = rate; lastSteps = steps; lastTime = time; showing = this.showing; }
+      switch(showing)
+      {
+      case SHOWING_TIME:
+      updateTimeText(simulationExists ? 
+      simulation.state.schedule.getTimestamp(lastTime, "At Start", "At End") : "");
+      break;
+      case SHOWING_STEPS:
+      updateTimeText(simulationExists ? "" + lastSteps: "");
+      break;
+      case SHOWING_TPS:
+      if (lastRate != 0) updateTimeText(lastRate < 0 ? "" : rateFormat.format(lastRate));
+      break;
+      case SHOWING_NOTHING:
+      updateTimeText("");
+      break;
+      default:
+      throw new RuntimeException("default case should never occur");
+      }
+      }
     */
 
 
@@ -2700,39 +2700,39 @@ public class Console extends JFrame implements Controller
         switch(showing)
             {
             case SHOWING_TIME:
-            	{
-            	if (!simulationExists)
-            		updateTimeText("");
-            	else
-            		{
-	            	if (simulation.state.remoteProxy())		// are we a remote visualization proxy?  If so, get the "real" time
-	            		{
-		                updateTimeText("" + simulation.state.schedule.getTimestamp(simulation.state.remoteTime(), "At Start", "At End"));
-		                }
-	            	else
-	            		{
-		                updateTimeText("" + simulation.state.schedule.getTimestamp(lastTime, "At Start", "At End"));
-	            		}
-	            	}
+                {
+                if (!simulationExists)
+                    updateTimeText("");
+                else
+                    {
+                    if (simulation.state.remoteProxy())             // are we a remote visualization proxy?  If so, get the "real" time
+                        {
+                        updateTimeText("" + simulation.state.schedule.getTimestamp(simulation.state.remoteTime(), "At Start", "At End"));
+                        }
+                    else
+                        {
+                        updateTimeText("" + simulation.state.schedule.getTimestamp(lastTime, "At Start", "At End"));
+                        }
+                    }
                 }
-            	break;
+            break;
             case SHOWING_STEPS:
-            	{
-            	if (!simulationExists)
-            		updateTimeText("");
-            	else
-            		{
-	            	if (simulation.state.remoteProxy())		// are we a remote visualization proxy?  If so, get the "real" steps
-	            		{
-		                updateTimeText("" + simulation.state.remoteSteps());
-		                }
-	            	else
-	            		{
-		            	updateTimeText("" + lastSteps);
-		            	}
-	            	}
+                {
+                if (!simulationExists)
+                    updateTimeText("");
+                else
+                    {
+                    if (simulation.state.remoteProxy())             // are we a remote visualization proxy?  If so, get the "real" steps
+                        {
+                        updateTimeText("" + simulation.state.remoteSteps());
+                        }
+                    else
+                        {
+                        updateTimeText("" + lastSteps);
+                        }
+                    }
                 }
-                break;
+            break;
             case SHOWING_TPS:
                 if (lastRate != 0) updateTimeText(rate < 0 ? "" : rateFormat.format(rate));
                 break;

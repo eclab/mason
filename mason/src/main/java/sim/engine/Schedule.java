@@ -540,7 +540,7 @@ public class Schedule implements java.io.Serializable
             // bump up time to the next possible item, unless we're at infinity already (AFTER_SIMULATION)
             {
             key.time = Math.nextUp(key.time);  //Double.longBitsToDouble(Double.doubleToRawLongBits(t)+1L);
-			t = key.time; 
+            t = key.time; 
             }
 
         if (sealed || t >= AFTER_SIMULATION)             // situations where no further events can be added

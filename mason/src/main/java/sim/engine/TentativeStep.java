@@ -48,18 +48,18 @@ public class TentativeStep implements Steppable, Stoppable
     public void step(SimState state)
         {
         synchronized(lock)
-        	{
-        	if (step!=null)
-            	step.step(state);
+            {
+            if (step!=null)
+                step.step(state);
             }
         }
     
     public void stop()
         {
         synchronized(lock)
-			{
-			step = null;
-			}
+            {
+            step = null;
+            }
         }
         
     public Steppable getSteppable() { return step; }

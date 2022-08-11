@@ -69,7 +69,7 @@ public final class MutableDouble2D extends MutableNumberND
 
     public java.awt.geom.Point2D.Double toPoint2D() { return new java.awt.geom.Point2D.Double(x,y); }
 
-	public double[] toArrayAsDouble() { return new double[] { x, y}; }
+    public double[] toArrayAsDouble() { return new double[] { x, y}; }
 
     public Object clone()
         { 

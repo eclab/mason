@@ -60,7 +60,7 @@ public final class Double3D extends Number3D
     public String toString() { return "Double3D["+x+","+y+","+z+"]"; }
     public String toCoordinates() { return "(" + x + ", " + y + ", " + z + ")"; }
 
-	public double[] toArrayAsDouble() { return new double[] { x, y, z}; }
+    public double[] toArrayAsDouble() { return new double[] { x, y, z}; }
 
     public int hashCode()
         {
@@ -333,7 +333,7 @@ public final class Double3D extends Number3D
         return dx + dy + dz;
         }
 
-   /** Adds Double3D "other" to current Double3D using 
+    /** Adds Double3D "other" to current Double3D using 
      * vector addition */
     public final Double3D add(Double3D other)
         {
@@ -347,15 +347,15 @@ public final class Double3D extends Number3D
         return new Double3D(x - other.x, y - other.y, z - other.z);
         }
         
-	public Double3D add(Int3D other)
-		{
-		return new Double3D(x + other.x, y + other.y, z + other.z);
-		} 
+    public Double3D add(Int3D other)
+        {
+        return new Double3D(x + other.x, y + other.y, z + other.z);
+        } 
 
-	public Double3D subtract(Int3D other)
-		{
-		return new Double3D(x - other.x, y - other.y, z - other.z);
-		} 
+    public Double3D subtract(Int3D other)
+        {
+        return new Double3D(x - other.x, y - other.y, z - other.z);
+        } 
 
     /** Returns the vector length of the Double3D */
     public final double length()
@@ -422,13 +422,13 @@ public final class Double3D extends Number3D
         }
     
     public Double3D add(double dx, double dy, double dz)
-		{
-		return new Double3D(x + dx, y + dy, z + dz);
-		} 
+        {
+        return new Double3D(x + dx, y + dy, z + dz);
+        } 
 
     public Double3D add(int dx, int dy, int dz)
-		{
-		return new Double3D(x + dx, y + dy, z + dz);
-		} 
+        {
+        return new Double3D(x + dx, y + dy, z + dz);
+        } 
 
     }
