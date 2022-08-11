@@ -212,7 +212,8 @@ public class VectorPortrayal2D extends OrientedPortrayal2D
             else if (object instanceof Double2D)
                 {
                 Double2D num = (Double2D) object;
-                o = (usesExactOrientation || info.precise ? Math.atan2(num.y, num.x) : fastAtan2(num.y, num.x));  // ugh atan2
+                // we're always precise now
+                o = (true || usesExactOrientation || info.precise ? Math.atan2(num.y, num.x) : fastAtan2(num.y, num.x));  // ugh atan2
                 s = Math.sqrt(num.x * num.x + num.y * num.y);  // ugh sqrt
                 oset = true;
                 sset = true;
@@ -221,7 +222,8 @@ public class VectorPortrayal2D extends OrientedPortrayal2D
             else if (object instanceof Double3D)
                 {
                 Double3D num = (Double3D) object;
-                o = (usesExactOrientation || info.precise ? Math.atan2(num.y, num.x) : fastAtan2(num.y, num.x));  // ugh atan2
+                // we're always precise now
+                o = (true || usesExactOrientation || info.precise ? Math.atan2(num.y, num.x) : fastAtan2(num.y, num.x));  // ugh atan2
                 s = Math.sqrt(num.x * num.x + num.y * num.y);  // ugh sqrt
                 c = num.z;
                 oset = true;
@@ -231,7 +233,8 @@ public class VectorPortrayal2D extends OrientedPortrayal2D
             else if (object instanceof Int2D)
                 {
                 Int2D num = (Int2D) object;
-                o = (usesExactOrientation || info.precise ? Math.atan2(num.y, num.x) : fastAtan2(num.y, num.x));  // ugh atan2
+                // we're always precise now
+                o = (true || usesExactOrientation || info.precise ? Math.atan2(num.y, num.x) : fastAtan2(num.y, num.x));  // ugh atan2
                 s = Math.sqrt(num.x * num.x + num.y * num.y);  // ugh sqrt
                 oset = true;
                 sset = true;
@@ -240,7 +243,8 @@ public class VectorPortrayal2D extends OrientedPortrayal2D
             else if (object instanceof Int3D)
                 {
                 Int3D num = (Int3D) object;
-                o = (usesExactOrientation || info.precise ? Math.atan2(num.y, num.x) : fastAtan2(num.y, num.x));  // ugh atan2
+                // we're always precise now
+                o = (true || usesExactOrientation || info.precise ? Math.atan2(num.y, num.x) : fastAtan2(num.y, num.x));  // ugh atan2
                 s = Math.sqrt(num.x * num.x + num.y * num.y);  // ugh sqrt
                 c = num.z;
                 oset = true;
@@ -302,10 +306,6 @@ public class VectorPortrayal2D extends OrientedPortrayal2D
             {
             if (shape == SHAPE_LINE_T)
                 {
-                if (info.precise)
-                    {
-                                        
-                    }
                 }
             else 
                 super.draw(object, graphics, info);

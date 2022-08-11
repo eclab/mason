@@ -130,7 +130,7 @@ public class SparseGrid3DPortrayal2D extends SparseGridPortrayal2D
             final double xScale = info.draw.width / maxX;
             final double yScale = info.draw.height / maxY;
 
-            DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip, info);
+            DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), info.clip, info);
             newinfo.precise = info.precise;
 
             Int3D loc = (Int3D)location;
@@ -176,7 +176,7 @@ public class SparseGrid3DPortrayal2D extends SparseGridPortrayal2D
         int endy = /*starty +*/ (int)Math.floor((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
 
 
-        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip, info);  // we don't do further clipping 
+        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), info.clip, info);  // we don't do further clipping 
         newinfo.precise = info.precise;
         newinfo.fieldPortrayal = this;
 

@@ -1,3 +1,9 @@
+/*
+  Copyright 2006 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
 package sim.portrayal.simple;
 import java.awt.*;
 import sim.portrayal.*;
@@ -7,11 +13,10 @@ public class AbstractShapePortrayal2D extends SimplePortrayal2D
     public Paint paint;
     public double scale;
     public boolean filled;
-        
-    //public void setPaint(Paint paint) {this.paint = paint; }
-    //public Paint getPaint() { return paint; }
-    //public void setScale(double scale) { this.scale = scale; }
-    //public double getScale() { return scale; }
-    //public void setFilled(boolean filled) { this.filled = filled; }
-    //public boolean getFilled() { return filled; }
+
+    // New
+    public Stroke stroke;
+    public Paint strokePaint;
+    public Paint fillPaint;
+    protected static final Stroke defaultStroke = new BasicStroke();
     }

@@ -17,9 +17,7 @@ import java.awt.geom.*;
 
 public class ShapePortrayal2D extends AbstractShapePortrayal2D
     {
-    static final Stroke defaultStroke = new BasicStroke();
     public Shape shape;
-    public Stroke stroke;
     AffineTransform transform = new AffineTransform();
 
     double[] xPoints = null;
@@ -42,6 +40,14 @@ public class ShapePortrayal2D extends AbstractShapePortrayal2D
     public static final double[] Y_POINTS_TRIANGLE_RIGHT = new double[] {-0.5, 0.5, 0};
     public static final double[] X_POINTS_TRIANGLE_LEFT = new double[] {-0.5, 0.5, 0.5};
     public static final double[] Y_POINTS_TRIANGLE_LEFT = new double[] {0, 0.5, -0.5};
+    public static final double[] X_POINTS_POINTER_RIGHT = new double[] {-0.5, 0.0, 0.5, 0.0, -0.5};
+    public static final double[] Y_POINTS_POINTER_RIGHT = new double[] {-0.5, -0.5, 0,  0.5, 0.5};
+    public static final double[] X_POINTS_POINTER_LEFT = new double[] {0.5, 0.0, -0.5, 0.0, 0.5};
+    public static final double[] Y_POINTS_POINTER_LEFT = new double[] {-0.5, -0.5, 0,  0.5, 0.5};
+    public static final double[] X_POINTS_POINTER_DOWN = new double[] {-0.5, -0.5, 0,  0.5, 0.5};
+    public static final double[] Y_POINTS_POINTER_DOWN = new double[] {-0.5, 0.0, 0.5, 0.0, -0.5};
+    public static final double[] X_POINTS_POINTER_UP = new double[] {-0.5, -0.5, 0,  0.5, 0.5};
+    public static final double[] Y_POINTS_POINTER_UP = new double[] {0.5, 0.0, -0.5, 0.0, 0.5};
     public static final double[] X_POINTS_DIAMOND = new double[] {-0.5, 0, 0.5, 0};
     public static final double[] Y_POINTS_DIAMOND = new double[] {0, 0.5, 0, -0.5};
     public static final double[] X_POINTS_SQUARE = new double[] {-0.5, -0.5, 0.5, 0.5};
@@ -50,6 +56,12 @@ public class ShapePortrayal2D extends AbstractShapePortrayal2D
     public static final double[] Y_POINTS_BOWTIE = new double[] {-0.5, 0.5, -0.5, 0.5};
     public static final double[] X_POINTS_HOURGLASS = new double[] {-0.5, 0.5, -0.5, 0.5};
     public static final double[] Y_POINTS_HOURGLASS = new double[] {-0.5, 0.5, 0.5, -0.5};
+    public static final double[] X_POINTS_COMPASS = new double[] {-0.5, -0.125, 0, 0.125, 0.5, 0.125, 0, -0.125};
+    public static final double[] Y_POINTS_COMPASS = new double[] {0, -0.125, -0.5, -0.125, 0, 0.125, 0.5, 0.125};
+    public static final double[] X_POINTS_STAR = new double[] {-0.5, 0, 0.5, 0.25, 0.5, 0, -0.5, -0.25};
+    public static final double[] Y_POINTS_STAR = new double[] {-0.5, -0.25, -0.5, 0, 0.5, 0.25, 0.5, 0};
+    public static final double[] X_POINTS_PARALLELOGRAM = new double[] {-0.5, 0.25, 0.5, -0.25, -0.5};
+    public static final double[] Y_POINTS_PARALLELOGRAM = new double[] {0.5, 0.5, -0.5, -0.5, 0.5};
     
     static final double OCT_COORD = (1.0 / (1.0 + Math.sqrt(2))) / 2.0;  // About .2071067811, derived from Wikipedia's Octogon article :-)
     public static final double[] X_POINTS_OCTAGON = new double[] {-0.5, -0.5, -OCT_COORD, OCT_COORD, 0.5, 0.5, OCT_COORD, -OCT_COORD};
@@ -61,10 +73,72 @@ public class ShapePortrayal2D extends AbstractShapePortrayal2D
     public static final double[] X_POINTS_HEXAGON_ROTATED = new double[] {0, 0.5, 0.5, 0, -0.5, -0.5};
     public static final double[] Y_POINTS_HEXAGON_ROTATED = new double[] {-0.5, -0.25, 0.25, 0.5, 0.25, -0.25};
     
-    public static final Shape SHAPE_OVAL = new Ellipse2D.Float(-0.5f, -0.5f, 1.0f, 1.0f);
-    public static final Shape SHAPE_ROUND_RECT = new RoundRectangle2D.Float(-0.5f, -0.5f, 1.0f, 1.0f, 0.1f, 0.1f);
-    public static final Shape SHAPE_VERY_ROUND_RECT = new RoundRectangle2D.Float(-0.5f, -0.5f, 1.0f, 1.0f, 0.3f, 0.3f);
+    static final double[][] XPOINTS =
+        {
+        X_POINTS_TRIANGLE_UP, X_POINTS_TRIANGLE_DOWN, X_POINTS_TRIANGLE_LEFT, X_POINTS_TRIANGLE_RIGHT,
+        X_POINTS_POINTER_UP, X_POINTS_POINTER_DOWN, X_POINTS_POINTER_LEFT, X_POINTS_POINTER_RIGHT,
+        X_POINTS_DIAMOND, X_POINTS_SQUARE, X_POINTS_BOWTIE, X_POINTS_HOURGLASS, 
+        X_POINTS_COMPASS, X_POINTS_STAR, X_POINTS_PARALLELOGRAM, X_POINTS_OCTAGON, 
+        X_POINTS_HEXAGON, X_POINTS_HEXAGON_ROTATED
+        };
+
+    static final double[][] YPOINTS =
+        {
+        Y_POINTS_TRIANGLE_UP, Y_POINTS_TRIANGLE_DOWN, Y_POINTS_TRIANGLE_LEFT, Y_POINTS_TRIANGLE_RIGHT,
+        Y_POINTS_POINTER_UP, Y_POINTS_POINTER_DOWN, Y_POINTS_POINTER_LEFT, Y_POINTS_POINTER_RIGHT,
+        Y_POINTS_DIAMOND, Y_POINTS_SQUARE, Y_POINTS_BOWTIE, Y_POINTS_HOURGLASS, 
+        Y_POINTS_COMPASS, Y_POINTS_STAR, Y_POINTS_PARALLELOGRAM, Y_POINTS_OCTAGON, 
+        Y_POINTS_HEXAGON, Y_POINTS_HEXAGON_ROTATED
+        };
     
+    public static final int POLY_TRIANGLE_UP = 0;
+    public static final int POLY_TRIANGLE_DOWN = 1;
+    public static final int POLY_TRIANGLE_LEFT = 2;
+    public static final int POLY_TRIANGLE_RIGHT = 3;
+    public static final int POLY_POINTER_UP = 4;
+    public static final int POLY_POINTER_DOWN = 5;
+    public static final int POLY_POINTER_LEFT = 6;
+    public static final int POLY_POINTER_RIGHT = 7;
+    public static final int POLY_DIAMOND = 8;
+    public static final int POLY_SQUARE = 9;
+    public static final int POLY_BOWTIE = 10;
+    public static final int POLY_HOURGLASS = 11;
+    public static final int POLY_COMPASS = 12;
+    public static final int POLY_STAR = 13;
+    public static final int POLY_PARALLELOGRAM = 14;
+    public static final int POLY_OCTAGON = 15;
+    public static final int POLY_HEXAGON = 16;
+    public static final int POLY_HEXAGON_ROTATED = 17;
+    
+    public static final Shape SHAPE_CIRCLE = new Ellipse2D.Float(-0.5f, -0.5f, 1.0f, 1.0f);
+    public static final Shape SHAPE_ROUND_SQUARE = new RoundRectangle2D.Float(-0.5f, -0.5f, 1.0f, 1.0f, 0.1f, 0.1f);
+    public static final Shape SHAPE_VERY_ROUND_SQUARE = new RoundRectangle2D.Float(-0.5f, -0.5f, 1.0f, 1.0f, 0.3f, 0.3f);
+    public static final Area SHAPE_DELAY;
+    public static final Area SHAPE_REVERSE_DELAY;
+    public static final Area SHAPE_CHOMP;
+    public static final Area SHAPE_PILL;
+    public static final Area SHAPE_STORAGE;
+        
+    
+    static
+        {
+        SHAPE_DELAY = new Area(new Rectangle2D.Float(-0.5f, -0.5f, 0.5f, 1.0f));
+        SHAPE_DELAY.add(new Area(SHAPE_CIRCLE));
+        SHAPE_REVERSE_DELAY = new Area(new Rectangle2D.Float(0f, -0.5f, 0.5f, 1.0f));
+        SHAPE_REVERSE_DELAY.add(new Area(SHAPE_CIRCLE));
+        SHAPE_CHOMP = new Area(new Rectangle2D.Float(-0.5f, -0.5f, 1.0f, 1.0f));
+        SHAPE_CHOMP.subtract(new Area(new Ellipse2D.Float(0f, -0.5f, 1.0f, 1.0f)));
+        Shape bigCircleLeft = new Ellipse2D.Float(-0.5f, -1f, 2f, 2f);
+        Shape bigCircleRight = new Ellipse2D.Float(-1.5f, -1f, 2f, 2f);
+        Shape farCircleRight = new Ellipse2D.Float(0.33f, -1f, 2f, 2f);         // this is an ESTIMATE
+        SHAPE_PILL = new Area(bigCircleLeft);
+        SHAPE_PILL.intersect(new Area(bigCircleRight));
+        SHAPE_PILL.intersect(new Area(new Rectangle2D.Float(-0.5f, -0.5f, 1.0f, 1.0f))); 
+        SHAPE_STORAGE = new Area(bigCircleLeft);
+        SHAPE_STORAGE.subtract(new Area(farCircleRight));
+        SHAPE_STORAGE.intersect(new Area(new Rectangle2D.Float(-0.5f, -0.5f, 1.0f, 1.0f))); 
+        }
+        
     Shape buildPolygon(double[] xpoints, double[] ypoints)
         {
         GeneralPath path = new GeneralPath();
@@ -94,7 +168,9 @@ public class ShapePortrayal2D extends AbstractShapePortrayal2D
         this.translatedXPoints = new int[xpoints.length];
         this.translatedYPoints = new int[ypoints.length];
         }
-
+        
+        
+        
     public ShapePortrayal2D(Shape shape) { this(shape,Color.gray,1.0,true); }
     public ShapePortrayal2D(Shape shape, Paint paint) { this(shape,paint,1.0,true); }
     public ShapePortrayal2D(Shape shape, double scale) { this(shape,Color.gray,scale,true); }
@@ -110,83 +186,134 @@ public class ShapePortrayal2D extends AbstractShapePortrayal2D
         this.filled = filled;
         setStroke(null);
         }
+
+    /** New-style constructors.  Rather than having a "filled" flag which determines whether we
+        stroke versus fill, we can do BOTH.  We do this by specifying a fill paint and a stroke
+        paint, either of which can be NULL.  We also provide a stroke width and a scale. */
+    public ShapePortrayal2D(double[] xpoints, double[] ypoints, Paint fillPaint, Paint strokePaint, double strokeWidth, double scale)
+        {
+        this(xpoints, ypoints, fillPaint, strokePaint, new BasicStroke((float) strokeWidth), scale);
+        }
+
+    /** New-style constructors.  Rather than having a "filled" flag which determines whether we
+        stroke versus fill, we can do BOTH.  We do this by specifying a fill paint and a stroke
+        paint, either of which can be NULL.  We also provide a stroke and a scale. */
+    public ShapePortrayal2D(double[] xpoints, double[] ypoints, Paint fillPaint, Paint strokePaint, Stroke stroke, double scale)
+        {
+        this.shape = buildPolygon(xpoints, ypoints);
+        this.paint = fillPaint;
+        this.strokePaint = strokePaint;
+        this.fillPaint = fillPaint;
+        this.scale = scale;
+        this.filled = (fillPaint != null);
+        setStroke(stroke);
+        }
+
+    /** New-style constructors.  Rather than having a "filled" flag which determines whether we
+        stroke versus fill, we can do BOTH.  We do this by specifying a fill paint and a stroke
+        paint, either of which can be NULL.  We also provide a stroke width and a scale. */
+    public ShapePortrayal2D(int polygon, Paint fillPaint, Paint strokePaint, double strokeWidth, double scale)
+        {
+        this(polygon, fillPaint, strokePaint, new BasicStroke((float) strokeWidth), scale);
+        }
+
+    /** New-style constructors.  Rather than having a "filled" flag which determines whether we
+        stroke versus fill, we can do BOTH.  We do this by specifying a fill paint and a stroke
+        paint, either of which can be NULL.  We also provide a stroke and a scale. */
+    public ShapePortrayal2D(int polygon, Paint fillPaint, Paint strokePaint, Stroke stroke, double scale)
+        {
+        this(XPOINTS[polygon], YPOINTS[polygon], fillPaint, strokePaint, stroke, scale);
+        }
+
+
+    /** New-style constructors.  Rather than having a "filled" flag which determines whether we
+        stroke versus fill, we can do BOTH.  We do this by specifying a fill paint and a stroke
+        paint, either of which can be NULL.  We also provide a stroke width and a scale. */
+    public ShapePortrayal2D(Shape shape, Paint fillPaint, Paint strokePaint, double strokeWidth, double scale)
+        {
+        this(shape, fillPaint, strokePaint, new BasicStroke((float) strokeWidth), scale);
+        }
+
+    /** New-style constructors.  Rather than having a "filled" flag which determines whether we
+        stroke versus fill, we can do BOTH.  We do this by specifying a fill paint and a stroke
+        paint, either of which can be NULL.  We also provide a stroke and a scale. */
+    public ShapePortrayal2D(Shape shape, Paint fillPaint, Paint strokePaint, Stroke stroke, double scale)
+        {
+        this.shape = shape;
+        this.paint = fillPaint;
+        this.strokePaint = strokePaint;
+        this.fillPaint = fillPaint;
+        this.scale = scale;
+        this.filled = (fillPaint != null);
+        setStroke(stroke);
+        }
         
     public void setShape(Shape shape)
-    	{
-    	this.shape = shape;
-    	}
+        {
+        this.shape = shape;
+        }
 
     public void setShape(double[] xpoints, double[] ypoints)
-    	{
-    	this.shape = buildPolygon(xpoints, ypoints);
-    	}
-    	
+        {
+        this.shape = buildPolygon(xpoints, ypoints);
+        }
+        
     public void setStroke(Stroke s)
         {
         stroke = s;
         }
+
+    public void setStroke(double width)
+        {
+        setStroke(new BasicStroke((float) width));
+        }
+        
         
     // assumes the graphics already has its color set
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
+        final double width = info.draw.width*scale;
+        final double height = info.draw.height*scale;
+        if (bufferedShape == null || width != bufferedWidth || height != bufferedHeight)
+            {
+            transform.setToScale(bufferedWidth = width, bufferedHeight = height);
+            bufferedShape = transform.createTransformedShape(shape);
+            }
+
         graphics.setPaint(paint);
-        if (true)  //  We turn this off because it's no longer much slower (only 1% slower).     info.precise || xPoints == null || stroke != null)
-            {   
-            final double width = info.draw.width*scale;
-            final double height = info.draw.height*scale;
-            if (bufferedShape == null || width != bufferedWidth || height != bufferedHeight)
-                {
-                transform.setToScale(bufferedWidth = width, bufferedHeight = height);
-                bufferedShape = transform.createTransformedShape(shape);
-                }
 
-            // we are doing a simple draw, so we ignore the info.clip
+        // we are doing a simple draw, so we ignore the info.clip
 
-            // draw centered on the origin
-            transform.setToTranslation(info.draw.x,info.draw.y);
-            if (filled)
+        // draw centered on the origin
+        transform.setToTranslation(info.draw.x,info.draw.y);
+        Shape sh = transform.createTransformedShape(bufferedShape);
+                
+        if (fillPaint != null || strokePaint != null)           // New Style
+            {
+            if (fillPaint != null)
                 {
-                graphics.fill(transform.createTransformedShape(bufferedShape));
+                graphics.setPaint(fillPaint);
+                graphics.fill(sh);
                 }
-            else
+            if (strokePaint != null)
                 {
+                Stroke oldStroke = graphics.getStroke();
+                graphics.setPaint(strokePaint);
                 graphics.setStroke(stroke == null ? defaultStroke : stroke);
-                graphics.draw(transform.createTransformedShape(bufferedShape));
+                graphics.draw(sh);
+                graphics.setStroke(oldStroke);
                 }
             }
-        else   // faster by far         // NOTE:  Not any more.  On the Mac it's about 1% faster, not enough to worry about.
+        else if (filled)                // old style
             {
-            int len = xPoints.length;
-            double[] scaledXPoints = this.scaledXPoints;
-            double[] scaledYPoints = this.scaledYPoints;
-            int[] translatedXPoints = this.translatedXPoints;
-            int[] translatedYPoints = this.translatedYPoints;
-            double x = info.draw.x;
-            double y = info.draw.y;
-            double width = scale * info.draw.width;
-
-            // do we need to scale?
-            if (scaling != width)
-                {
-                double[] xPoints = this.xPoints;
-                double[] yPoints = this.yPoints;
-                double height = scale * info.draw.height;
-                for(int i=0;i<len;i++)
-                    {
-                    scaledXPoints[i] = xPoints[i] * width;
-                    scaledYPoints[i] = yPoints[i] * height;
-                    }
-                scaling = width;
-                }
-                
-            // always translate
-            for(int i=0;i<len;i++)
-                {
-                translatedXPoints[i] = (int)(scaledXPoints[i] + x);
-                translatedYPoints[i] = (int)(scaledYPoints[i] + y);
-                }
-            if (filled) graphics.fillPolygon(translatedXPoints, translatedYPoints,translatedXPoints.length);
-            else graphics.drawPolygon(translatedXPoints, translatedYPoints,translatedXPoints.length);
+            graphics.fill(sh);
+            }
+        else            // old style
+            {
+            Stroke oldStroke = graphics.getStroke();
+            graphics.setStroke(stroke == null ? defaultStroke : stroke);
+            graphics.draw(sh);
+            graphics.setStroke(oldStroke);
             }
         }
 

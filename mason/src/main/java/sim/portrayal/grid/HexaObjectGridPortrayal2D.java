@@ -100,7 +100,7 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
             //int endx = /*startx +*/ (int)(((info.clip.x - info.draw.x + info.clip.width)/xScale-0.5)/1.5) + 4;  // with rounding, width be as much as 1 off
             //int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height)/(yScale*2.0)) + 4;  // with rounding, height be as much as 1 off
 
-            DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, 
+            DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, 
                     Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
                     Math.ceil(info.draw.height / (maxY + 0.5))),
                 info.clip/*, xPoints, yPoints*/, info);  // we don't do further clipping 
@@ -202,7 +202,7 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
 
 //        final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 
-        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, 
+        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, 
                 Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
                 Math.ceil(info.draw.height / (maxY + 0.5))),
             info.clip/*, xPoints, yPoints*/, info);  // we don't do further clipping 

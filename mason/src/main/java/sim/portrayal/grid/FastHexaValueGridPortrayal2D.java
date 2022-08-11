@@ -95,7 +95,8 @@ public class FastHexaValueGridPortrayal2D extends HexaValueGridPortrayal2D
     // our object to pass to the portrayal
     final MutableDouble valueToPass = new MutableDouble(0);
 
-    protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
+    public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+    //protected void draw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
         {
         final Grid2D field = (Grid2D)this.field;
         if (field==null) return;
@@ -265,84 +266,86 @@ public class FastHexaValueGridPortrayal2D extends HexaValueGridPortrayal2D
             //                    graphics.setClip(clip);
             graphics.drawImage(buffer, (int)(info.draw.x+translateWidth), (int)info.draw.y, (int)(maxX*scaleWidth), (int)info.draw.height,null);
             }
-        else if (!info.precise)
-            {
-            buffer = null;  // GC the buffer in case the user had changed his mind
+        /*
+          else if (!info.precise)
+          {
+          buffer = null;  // GC the buffer in case the user had changed his mind
 
-            if (endx > maxX) endx = maxX;
-            if (endy > maxY) endy = maxY;
-            if( startx < 0 ) startx = 0;
-            if( starty < 0 ) starty = 0;
+          if (endx > maxX) endx = maxX;
+          if (endy > maxY) endy = maxY;
+          if( startx < 0 ) startx = 0;
+          if( starty < 0 ) starty = 0;
 
-            final int ex = endx;
-            final int ey = endy;
-            final int sx = startx;
-            final int sy = starty;
+          final int ex = endx;
+          final int ey = endy;
+          final int sx = startx;
+          final int sy = starty;
 
-            int _x = 0;
-            int _y = 0;
-            int _width = 0;
-            int _height = 0;
+          int _x = 0;
+          int _y = 0;
+          int _width = 0;
+          int _height = 0;
 
-            // locals are faster...
-            final ColorMap map = this.map;
-            final double infodrawx = info.draw.x;
-            final double infodrawy = info.draw.y;
+          // locals are faster...
+          final ColorMap map = this.map;
+          final double infodrawx = info.draw.x;
+          final double infodrawy = info.draw.y;
  
-            // 1.3.1 doesn't hoist -- does 1.4.1?
-            if (isDoubleGrid2D)
-                for(int x=sx;x<ex;x++)
-                    for(int y=sy;y<ey;y++)
-                        {
-                        final Color c = map.getColor(doubleField[x][y]);
-                        if (c.getAlpha() == 0) continue;
+          // 1.3.1 doesn't hoist -- does 1.4.1?
+          if (isDoubleGrid2D)
+          for(int x=sx;x<ex;x++)
+          for(int y=sy;y<ey;y++)
+          {
+          final Color c = map.getColor(doubleField[x][y]);
+          if (c.getAlpha() == 0) continue;
 
-                        _x = (int)(translateWidth + infodrawx + scaleWidth * x);
-                        _y = (int)(infodrawy + (yScale) * ((x&1)==0?2*y:2*y+1));
-                        _width = (int)(translateWidth + infodrawx + scaleWidth * (x+1)) - _x;
-                        _height = (int)(infodrawy + (yScale) * ((x&1)==0?2*y+2:2*y+3)) - _y;
+          _x = (int)(translateWidth + infodrawx + scaleWidth * x);
+          _y = (int)(infodrawy + (yScale) * ((x&1)==0?2*y:2*y+1));
+          _width = (int)(translateWidth + infodrawx + scaleWidth * (x+1)) - _x;
+          _height = (int)(infodrawy + (yScale) * ((x&1)==0?2*y+2:2*y+3)) - _y;
                     
-                        // draw
-                        // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
-                        //                    graphics.setClip(clip);
-                        if( graphics!=null )
-                            {
-                            graphics.setColor(c);
-                            graphics.fillRect(_x,_y,_width,_height);
-                            }
-                        else
-                            {
-                            if( info.clip.intersects(_x,_y,_width,_height) )
-                                putInHere.add(getWrapper((doubleField[x][y]), new Int2D(x, y)));
-                            }
-                        }
-            else
-                for(int x=sx;x<ex;x++)
-                    for(int y=sy;y<ey;y++)
-                        {
-                        final Color c = map.getColor(intField[x][y]);
-                        if (c.getAlpha() == 0) continue;
+          // draw
+          // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
+          //                    graphics.setClip(clip);
+          if( graphics!=null )
+          {
+          graphics.setColor(c);
+          graphics.fillRect(_x,_y,_width,_height);
+          }
+          else
+          {
+          if( info.clip.intersects(_x,_y,_width,_height) )
+          putInHere.add(getWrapper((doubleField[x][y]), new Int2D(x, y)));
+          }
+          }
+          else
+          for(int x=sx;x<ex;x++)
+          for(int y=sy;y<ey;y++)
+          {
+          final Color c = map.getColor(intField[x][y]);
+          if (c.getAlpha() == 0) continue;
 
-                        _x = (int)(translateWidth + infodrawx + scaleWidth * x);
-                        _y = (int)(infodrawy + (yScale) * ((x&1)==0?2*y:2*y+1));
-                        _width = (int)(translateWidth + infodrawx + scaleWidth * (x+1)) - _x;
-                        _height = (int)(infodrawy + (yScale) * ((x&1)==0?2*y+2:2*y+3)) - _y;
+          _x = (int)(translateWidth + infodrawx + scaleWidth * x);
+          _y = (int)(infodrawy + (yScale) * ((x&1)==0?2*y:2*y+1));
+          _width = (int)(translateWidth + infodrawx + scaleWidth * (x+1)) - _x;
+          _height = (int)(infodrawy + (yScale) * ((x&1)==0?2*y+2:2*y+3)) - _y;
                     
-                        // draw
-                        // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
-                        //                    graphics.setClip(clip);
-                        if( graphics!=null )
-                            {
-                            graphics.setColor(c);
-                            graphics.fillRect(_x,_y,_width,_height);
-                            }
-                        else
-                            {
-                            if( info.clip.intersects(_x,_y,_width,_height) )
-                                putInHere.add(getWrapper((intField[x][y]), new Int2D(x, y)));
-                            }
-                        }
-            }
+          // draw
+          // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
+          //                    graphics.setClip(clip);
+          if( graphics!=null )
+          {
+          graphics.setColor(c);
+          graphics.fillRect(_x,_y,_width,_height);
+          }
+          else
+          {
+          if( info.clip.intersects(_x,_y,_width,_height) )
+          putInHere.add(getWrapper((intField[x][y]), new Int2D(x, y)));
+          }
+          }
+          }
+        */
         else  // precise
             {
             graphics.setStroke(new BasicStroke(0.0f));

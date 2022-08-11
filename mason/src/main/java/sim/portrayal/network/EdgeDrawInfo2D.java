@@ -19,9 +19,9 @@ public class EdgeDrawInfo2D extends DrawInfo2D
     /** A pre-scaled point to draw to. */
     public Point2D.Double secondPoint;
     
-    public EdgeDrawInfo2D(GUIState state, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip, Point2D.Double secondPoint, DrawInfo2D parent)
+    public EdgeDrawInfo2D(RectangularShape draw, RectangularShape clip, Point2D.Double secondPoint, DrawInfo2D parent)
         {
-        super(state, fieldPortrayal, draw, clip, parent);
+        super(draw, clip, parent);
         this.secondPoint = secondPoint;
         }
                 

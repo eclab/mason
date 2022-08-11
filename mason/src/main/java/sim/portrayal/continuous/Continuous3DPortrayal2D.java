@@ -139,7 +139,7 @@ public class Continuous3DPortrayal2D extends ContinuousPortrayal2D
                 
             final double xScale = fieldPortrayalInfo.draw.width / field.width;
             final double yScale = fieldPortrayalInfo.draw.height / field.height;
-            DrawInfo2D newinfo = new DrawInfo2D(fieldPortrayalInfo.gui, fieldPortrayalInfo.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), fieldPortrayalInfo.clip, fieldPortrayalInfo);  // we don't do further clipping 
+            DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), fieldPortrayalInfo);  // we don't do further clipping 
             newinfo.precise = fieldPortrayalInfo.precise;
 
             Double3D loc = (Double3D) location;
@@ -172,7 +172,7 @@ public class Continuous3DPortrayal2D extends ContinuousPortrayal2D
         int endx = /*startx +*/ (int)Math.floor((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width be as much as 1 off
         int endy = /*starty +*/ (int)Math.floor((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
 
-        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip, info);  // we don't do further clipping 
+        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), info);  // we don't do further clipping 
         newinfo.precise = info.precise;
         newinfo.fieldPortrayal = this;
 

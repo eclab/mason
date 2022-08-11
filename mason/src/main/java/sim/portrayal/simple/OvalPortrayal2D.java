@@ -33,6 +33,27 @@ public class OvalPortrayal2D extends AbstractShapePortrayal2D
         this.filled = filled;
         }
 
+    /** New-style constructors.  Rather than having a "filled" flag which determines whether we
+        stroke versus fill, we can do BOTH.  We do this by specifying a fill paint and a stroke
+        paint, either of which can be NULL.  We also provide a stroke width and a scale. */
+    public OvalPortrayal2D(Paint fillPaint, Paint strokePaint, double strokeWidth, double scale)
+        {
+        this(fillPaint, strokePaint, new BasicStroke((float) strokeWidth), scale);
+        }
+
+    /** New-style constructors.  Rather than having a "filled" flag which determines whether we
+        stroke versus fill, we can do BOTH.  We do this by specifying a fill paint and a stroke
+        paint, either of which can be NULL.  We also provide a stroke and a scale. */
+    public OvalPortrayal2D(Paint fillPaint, Paint strokePaint, Stroke stroke, double scale)
+        {
+        this.paint = fillPaint;
+        this.strokePaint = strokePaint;
+        this.fillPaint = fillPaint;
+        this.scale = scale;
+        this.filled = (fillPaint != null);
+        setStroke(stroke);
+        }
+
     // we must be transient because Ellipse2D.Double is not serializable.
     // We also check to see if it's null elsewhere (because it's transient).
     transient Ellipse2D.Double preciseEllipse = new Ellipse2D.Double();
@@ -47,25 +68,30 @@ public class OvalPortrayal2D extends AbstractShapePortrayal2D
         graphics.setPaint(paint);
         // we are doing a simple draw, so we ignore the info.clip
 
-        if (info.precise)
+        if (preciseEllipse == null) preciseEllipse = new Ellipse2D.Double();    // could get reset because it's transient
+        preciseEllipse.setFrame(info.draw.x - width/2.0, info.draw.y - height/2.0, width, height);
+
+        if (fillPaint != null || strokePaint != null)           // New Style
             {
-            if (preciseEllipse == null) preciseEllipse = new Ellipse2D.Double();    // could get reset because it's transient
-            preciseEllipse.setFrame(info.draw.x - width/2.0, info.draw.y - height/2.0, width, height);
+            if (fillPaint != null)
+                {
+                graphics.setPaint(fillPaint);
+                graphics.fill(preciseEllipse);
+                }
+            if (strokePaint != null)
+                {
+                Stroke oldStroke = graphics.getStroke();
+                graphics.setPaint(strokePaint);
+                graphics.setStroke(stroke == null ? defaultStroke : stroke);
+                graphics.draw(preciseEllipse);
+                graphics.setStroke(oldStroke);
+                }
+            }
+        else
+            {
             if (filled) graphics.fill(preciseEllipse);
             else graphics.draw(preciseEllipse);
-            return;
             }
-            
-        final int x = (int)(draw.x - width / 2.0);
-        final int y = (int)(draw.y - height / 2.0);
-        int w = (int)(width);
-        int h = (int)(height);
-                
-        // draw centered on the origin
-        if (filled)
-            graphics.fillOval(x,y,w,h);
-        else
-            graphics.drawOval(x,y,w,h);
         }
 
     /** If drawing area intersects selected area, add last portrayed object to the bag */
@@ -77,5 +103,15 @@ public class OvalPortrayal2D extends AbstractShapePortrayal2D
         final double height = range.draw.height*scale;
         preciseEllipse.setFrame( range.draw.x-width/2-SLOP, range.draw.y-height/2-SLOP, width+SLOP*2,height+SLOP*2 );
         return ( preciseEllipse.intersects( range.clip.x, range.clip.y, range.clip.width, range.clip.height ) );
+        }
+
+    public void setStroke(Stroke s)
+        {
+        stroke = s;
+        }
+
+    public void setStroke(double width)
+        {
+        setStroke(new BasicStroke((float) width));
         }
     }

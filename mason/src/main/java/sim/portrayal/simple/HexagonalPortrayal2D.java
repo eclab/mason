@@ -39,4 +39,27 @@ public class HexagonalPortrayal2D extends ShapePortrayal2D
         super(new double[]{1*stretch,0.5*stretch,-0.5*stretch,-1*stretch,-0.5*stretch,0.5*stretch},
             new double[]{0,-0.5,-0.5,0,0.5,0.5}, paint, scale, filled);
         }
+
+    /** New-style constructors.  Rather than having a "filled" flag which determines whether we
+        stroke versus fill, we can do BOTH.  We do this by specifying a fill paint and a stroke
+        paint, either of which can be NULL.  We also provide a stroke width and a scale. */
+    public HexagonalPortrayal2D(Paint fillPaint, Paint strokePaint, double strokeWidth, double scale)
+        {
+        this(fillPaint, strokePaint, new BasicStroke((float) strokeWidth), scale);
+        }
+
+    /** New-style constructors.  Rather than having a "filled" flag which determines whether we
+        stroke versus fill, we can do BOTH.  We do this by specifying a fill paint and a stroke
+        paint, either of which can be NULL.  We also provide a stroke and a scale. */
+    public HexagonalPortrayal2D(Paint fillPaint, Paint strokePaint, Stroke stroke, double scale)
+        {
+        /*        4|5
+         *         |
+         *-------3-+-0-----
+         *         |
+         *        2|1
+         */
+        super(new double[]{1*stretch,0.5*stretch,-0.5*stretch,-1*stretch,-0.5*stretch,0.5*stretch},
+            new double[]{0,-0.5,-0.5,0,0.5,0.5}, fillPaint, strokePaint, stroke, scale);
+        }
     }
