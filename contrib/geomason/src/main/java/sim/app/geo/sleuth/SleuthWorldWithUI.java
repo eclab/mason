@@ -32,7 +32,7 @@ import sim.util.media.chart.TimeSeriesChartGenerator;
  *
  */
 public class SleuthWorldWithUI extends GUIState
-{
+    {
 
     SleuthWorld sleuthworld;
     private Display2D display;
@@ -56,9 +56,9 @@ public class SleuthWorldWithUI extends GUIState
 
 
     public Object getSimulationInspectedObject()
-    {
+        {
         return state;
-    }  // non-volatile
+        }  // non-volatile
 
 
 
@@ -67,10 +67,10 @@ public class SleuthWorldWithUI extends GUIState
      * @param state
      */
     protected SleuthWorldWithUI(SimState state)
-    {
+        {
         super(state);
         sleuthworld = (SleuthWorld) state;
-    }
+        }
 
 
 
@@ -79,11 +79,11 @@ public class SleuthWorldWithUI extends GUIState
      * @param args
      */
     public static void main(String[] args)
-    {
+        {
         SleuthWorldWithUI simple = new SleuthWorldWithUI(new SleuthWorld(System.currentTimeMillis()));
         Console c = new Console(simple);
         c.setVisible(true);
-    }
+        }
 
 
 
@@ -91,9 +91,9 @@ public class SleuthWorldWithUI extends GUIState
      * @return name of the simulation
      */
     public static String getName()
-    {
+        {
         return "SleuthWorld";
-    }
+        }
 
 
 
@@ -103,7 +103,7 @@ public class SleuthWorldWithUI extends GUIState
      */
     @Override
     public void start()
-    {
+        {
         super.start();
 
         // set up the chart info
@@ -113,16 +113,16 @@ public class SleuthWorldWithUI extends GUIState
 
         // schedule the chart to take data
         state.schedule.scheduleRepeating(new Steppable()
-        {
+            {
 
             public void step(SimState state)
-            {
+                {
                 SleuthWorld sw = (SleuthWorld) state;
                 numUrban.add(state.schedule.getTime(), sw.numUrban
                     / (double) (sw.numUrban + sw.numNonUrban));
-            }
+                }
 
-        });
+            });
         
         // set up the portrayals
         slope.setField(sleuthworld.landscape);
@@ -152,7 +152,7 @@ public class SleuthWorldWithUI extends GUIState
 
         // redraw the display
         display.repaint();
-    }
+        }
 
 
 
@@ -162,7 +162,7 @@ public class SleuthWorldWithUI extends GUIState
      */
     @Override
     public void init(Controller c)
-    {
+        {
         super.init(c);
 
         // make the displayer
@@ -195,22 +195,22 @@ public class SleuthWorldWithUI extends GUIState
         chartFrame.pack();
         c.registerFrame(chartFrame);
 
-    }
+        }
 
 
 
     /** called when quitting a simulation. Does appropriate garbage collection. */
     public void quit()
-    {
+        {
         super.quit();
 
         if (displayFrame != null)
-        {
+            {
             displayFrame.dispose();
-        }
+            }
         displayFrame = null; // let gc
         display = null; // let gc
-    }
+        }
 
     // COLORMAPS FOR PORTRAYALS
     // colormap for slope, which is assumed to be between 0 and 255.
@@ -222,16 +222,16 @@ public class SleuthWorldWithUI extends GUIState
 
 
     public static ColorMap getHillshadeColor()
-    {
+        {
         return hillshadeColor;
-    }
+        }
 
 
 
     public static ColorMap getSlopeColor()
-    {
+        {
         return slopeColor;
+        }
+
+
     }
-
-
-}

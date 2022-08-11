@@ -11,7 +11,7 @@ import sim.util.Int2D;
  * @author Eric 'Siggy' Scott
  */
 public interface DiscreteVoronoi
-{
+    {
     public int getWidth();
 
     public int getHeight();
@@ -26,4 +26,4 @@ public interface DiscreteVoronoi
     public ObjectGridPortrayal2D getPortrayal();
     
     public boolean repOK();
-}
+    }

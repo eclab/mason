@@ -6,7 +6,7 @@
  * See the file "LICENSE" for more information
  *
  * $Id$
-*/
+ */
 package sim.app.geo.colorworld;
 import sim.app.geo.colorworld.data.ColorWorldData;
 import java.io.FileNotFoundException;
@@ -41,14 +41,14 @@ import sim.util.geo.MasonGeometry;
  */
 
 public class ColorWorld extends SimState
-{
+    {
     private static final long serialVersionUID = -2568637684893865458L;
 
 
-	public static final int WIDTH = 300; 
-	public static final int HEIGHT = 300; 
+    public static final int WIDTH = 300; 
+    public static final int HEIGHT = 300; 
 
-	// number of agents in the simulation
+    // number of agents in the simulation
     public static int NUM_AGENTS = 20;
 
     // where all the county geometry lives
@@ -66,7 +66,7 @@ public class ColorWorld extends SimState
 
 
     public ColorWorld(long seed)
-    {
+        {
         super(seed);
 
         // this line allows us to replace the standard MasonGeometry with our
@@ -77,55 +77,55 @@ public class ColorWorld extends SimState
 
         Bag empty = new Bag();
         try
-        {
+            {
             ShapeFileImporter.read(politicalBoundaries, politicalDB, county, empty, CountingGeomWrapper.class);
-        } catch (Exception ex)
-        {
+            } catch (Exception ex)
+            {
             Logger.getLogger(ColorWorld.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            }
 
         // we use either the ConvexHull or Union to determine if the agents are within
         // Fairfax county or not
         county.computeConvexHull();
         county.computeUnion();
 
-    }
+        }
 
     private void addAgents()
-    {
+        {
         //Agent a = null;
 
         for (int i = 0; i < NUM_AGENTS; i++)
             {
-                // pick a random political region to plop the agent in
-                Bag allRegions = county.getGeometries();
+            // pick a random political region to plop the agent in
+            Bag allRegions = county.getGeometries();
 
-                if (allRegions.isEmpty())
-                    {
-                        // Something went wrong.  We *should* have regions.
-                        throw new RuntimeException("No regions found.");
-                    }
-                MasonGeometry region = ((MasonGeometry)allRegions.objs[random.nextInt(allRegions.numObjs)]);
+            if (allRegions.isEmpty())
+                {
+                // Something went wrong.  We *should* have regions.
+                throw new RuntimeException("No regions found.");
+                }
+            MasonGeometry region = ((MasonGeometry)allRegions.objs[random.nextInt(allRegions.numObjs)]);
            
-                // give each agent a random direction to initially move in
-                Agent a = new Agent(random.nextInt(8));
+            // give each agent a random direction to initially move in
+            Agent a = new Agent(random.nextInt(8));
 
-                // set each agent in the center of corresponding region
-                a.setLocation(region.getGeometry().getCentroid());
+            // set each agent in the center of corresponding region
+            a.setLocation(region.getGeometry().getCentroid());
 
-                // place the agents in the GeomVectorField
-                agents.addGeometry(new MasonGeometry(a.getGeometry()));
+            // place the agents in the GeomVectorField
+            agents.addGeometry(new MasonGeometry(a.getGeometry()));
 
-                // add the new agent the schedule
-                schedule.scheduleRepeating(a);
+            // add the new agent the schedule
+            schedule.scheduleRepeating(a);
             }        
-    }
+        }
 
 
 
     @Override
     public void start()
-    {
+        {
         super.start();
  
         agents.clear(); // remove any agents from previous runs
@@ -135,11 +135,11 @@ public class ColorWorld extends SimState
 
         // ensure both GeomFields Color same area
         agents.setMBR(county.getMBR());
-    }
+        }
 
     public static void main(String[] args)
-    {
+        {
         doLoop(ColorWorld.class, args);
         System.exit(0);
+        }
     }
-}

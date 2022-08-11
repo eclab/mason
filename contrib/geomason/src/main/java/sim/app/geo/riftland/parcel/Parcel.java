@@ -17,7 +17,7 @@ import sim.util.Valuable;
  * TODO: add test harness for this
  */
 public abstract class Parcel implements Valuable, java.io.Serializable
-{
+    {
     /** Where the parcel is located  */
     private Int2D coordinate;
     final public Int2D getCoordinate() { return coordinate; }
@@ -33,27 +33,27 @@ public abstract class Parcel implements Valuable, java.io.Serializable
     
 
     Parcel()
-    {
+        {
         super();
-    }
+        }
 
 
     public Parcel(int x, int y, int country)
-    {
+        {
         coordinate = new Int2D(x,y);
         this.country = country;        
-    }
+        }
 
 
     public int getX()
-    {
+        {
         return coordinate.x;
-    }
+        }
 
     public int getY()
-    {
+        {
         return coordinate.y;
-    }
+        }
 
 
     /**
@@ -76,42 +76,42 @@ public abstract class Parcel implements Valuable, java.io.Serializable
      * @return the amount of vegetation that has changed from previous day
      */
     public double getVegetationChange()
-    {
+        {
         return 0.0;
-    }
+        }
 
 
 
     @Override
     public boolean equals(Object obj)
-    {
+        {
         if (obj == null)
-        {
+            {
             return false;
-        }
+            }
         if (getClass() != obj.getClass())
-        {
+            {
             return false;
-        }
+            }
         final Parcel other = (Parcel) obj;
         if (this.coordinate != other.coordinate && (this.coordinate == null || !this.coordinate.equals(other.coordinate)))
-        {
+            {
             return false;
-        }
+            }
         return true;
-    }
+        }
 
 
 
     @Override
     public int hashCode()
-    {
+        {
         int hash = 7;
         hash = 23 * hash + (this.coordinate != null ? this.coordinate.hashCode() : 0);
         return hash;
+        }
+
+
+
     }
-
-
-
-}
 

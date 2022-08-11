@@ -5,5 +5,5 @@ package sim.app.geo.ebola;
  * Represents a ~90 by 90 meter cell
  */
 public class FieldUnit
-{
-}
+    {
+    }

@@ -55,7 +55,7 @@ import sim.util.media.chart.TimeSeriesChartGenerator;
  *
  */
 public class WorldGUI extends GUIState
-{
+    {
     /** This is the main display showing the terrain and activities */
     public Display2D display;
     /** This is the secondary display showing the population distribution
@@ -137,18 +137,18 @@ public class WorldGUI extends GUIState
     //</editor-fold>
 
     public WorldGUI(String[] args)
-    {
+        {
         //false means I tell World to not schedule the mediator.
         // XXX why is mediator schedulable in World *and* WorldGUI?!
         super(new World(System.currentTimeMillis(), args, false));
         initCustomPortrayals();
-    }
+        }
 
     public WorldGUI(SimState state)
-    {
+        {
         super(state);
         initCustomPortrayals();
-    }
+        }
     
     //=====================
     //
@@ -160,37 +160,37 @@ public class WorldGUI extends GUIState
      * Create custom portrayals. These must be initialized on construction of the class,
      * so this is called from the constructor.
      */
-	final public void initCustomPortrayals() {
-		final World world = (World)this.state;
-		
-		populationPortrayal = new FastObjectGridPortrayal2D() {
-			@Override
-			public double doubleValue(Object obj) {
-				if (!(obj instanceof GrazableArea)) return 0;
-				GrazableArea area = (GrazableArea) obj;
+    final public void initCustomPortrayals() {
+        final World world = (World)this.state;
+                
+        populationPortrayal = new FastObjectGridPortrayal2D() {
+            @Override
+            public double doubleValue(Object obj) {
+                if (!(obj instanceof GrazableArea)) return 0;
+                GrazableArea area = (GrazableArea) obj;
 
-				return area.getPopulation();
-			}
-		};
-		
+                return area.getPopulation();
+                }
+            };
+                
 
-		populationChangePortrayal = new FastObjectGridPortrayal2D() {
-			final IntGrid2D grid = (IntGrid2D) world.getPopulation().getPopulationGrid().getGrid();
-			@Override
-			public double doubleValue(Object obj) {
-				if (!(obj instanceof GrazableArea)) return 0;
-				GrazableArea area = (GrazableArea) obj;
-				double currentPop = area.getPopulation();
-				double startPop = grid.get(area.getX(), area.getY());
-				
-				return (currentPop - startPop) / (startPop+1);
-			}
-		};
-	}
-	
+        populationChangePortrayal = new FastObjectGridPortrayal2D() {
+            final IntGrid2D grid = (IntGrid2D) world.getPopulation().getPopulationGrid().getGrid();
+            @Override
+            public double doubleValue(Object obj) {
+                if (!(obj instanceof GrazableArea)) return 0;
+                GrazableArea area = (GrazableArea) obj;
+                double currentPop = area.getPopulation();
+                double startPop = grid.get(area.getX(), area.getY());
+                                
+                return (currentPop - startPop) / (startPop+1);
+                }
+            };
+        }
+        
     @Override
     public void init(Controller controller)
-    {
+        {
         super.init(controller);
         
         displays.clear();
@@ -224,55 +224,55 @@ public class WorldGUI extends GUIState
 
 
         for (Display2D d : displays)
-        	setViewToSubArea(d);
-    }
+            setViewToSubArea(d);
+        }
     
     /** Create a frame from the given display and register it using the given parameters. */
     private void registerFrame(Display2D display, String title, boolean visible, boolean setLocationByPlatform) {
-    	JFrame frame = display.createFrame();
-    	frame.setTitle(title);
-    	frame.setLocationByPlatform(setLocationByPlatform);
-    	controller.registerFrame(frame);
-    	frame.setVisible(visible);
-    	frames.add(frame);    	
-    }
+        JFrame frame = display.createFrame();
+        frame.setTitle(title);
+        frame.setLocationByPlatform(setLocationByPlatform);
+        controller.registerFrame(frame);
+        frame.setVisible(visible);
+        frames.add(frame);      
+        }
     
     /** Create a frame from the given chart and register it using the given parameters. */
     private void registerChartFrame(TimeSeriesChartGenerator chart, String title, String xLabel, String yLabel, boolean visible) {
-    	chart.setTitle(title);
-    	chart.setXAxisLabel(xLabel);
-    	chart.setYAxisLabel(yLabel);
-    	JFrame frame = chart.createFrame(this);
-    	frame.pack();
-    	controller.registerFrame(frame);
-    	frame.setVisible(visible);
-    	frames.add(frame);    	
-    }
+        chart.setTitle(title);
+        chart.setXAxisLabel(xLabel);
+        chart.setYAxisLabel(yLabel);
+        JFrame frame = chart.createFrame(this);
+        frame.pack();
+        controller.registerFrame(frame);
+        frame.setVisible(visible);
+        frames.add(frame);      
+        }
 
     /** Calculate the size of the subarea and set the zoom to view it. */
     public void setViewToSubArea(Display2D d) {
-    	World world = (World)state;
-    	if (!world.getLand().haveSubArea())
-    		return;
+        World world = (World)state;
+        if (!world.getLand().haveSubArea())
+            return;
 
-    	double width = world.getLand().getWidth();
-    	double height = world.getLand().getHeight();
-    	
-    	double subWidth = Math.abs(world.getLand().getSubAreaLowerRight().x - world.getLand().getSubAreaUpperLeft().x);
-    	double subHeight = Math.abs(world.getLand().getSubAreaLowerRight().y  - world.getLand().getSubAreaUpperLeft().y);
-    	
-    	double scaleX = width / subWidth;
-    	double scaleY = height / subHeight;
+        double width = world.getLand().getWidth();
+        double height = world.getLand().getHeight();
+        
+        double subWidth = Math.abs(world.getLand().getSubAreaLowerRight().x - world.getLand().getSubAreaUpperLeft().x);
+        double subHeight = Math.abs(world.getLand().getSubAreaLowerRight().y  - world.getLand().getSubAreaUpperLeft().y);
+        
+        double scaleX = width / subWidth;
+        double scaleY = height / subHeight;
 
-    	// Set the scroll based on the upper-left corner of the subarea, and where
-    	// it falls within the overall area. Since the upper-left corner cant't be
-    	// all the way to the right or down, we subtract off the size of the subarea.
-    	double scrollX = world.getLand().getSubAreaUpperLeft().x / (width - subWidth);
-    	double scrollY = world.getLand().getSubAreaUpperLeft().y / (height - subHeight);
-    	
-    	d.setScale(Math.min(scaleX, scaleY) * 0.95);
-    	d.setScrollPosition(scrollX, scrollY);
-    }
+        // Set the scroll based on the upper-left corner of the subarea, and where
+        // it falls within the overall area. Since the upper-left corner cant't be
+        // all the way to the right or down, we subtract off the size of the subarea.
+        double scrollX = world.getLand().getSubAreaUpperLeft().x / (width - subWidth);
+        double scrollY = world.getLand().getSubAreaUpperLeft().y / (height - subHeight);
+        
+        d.setScale(Math.min(scaleX, scaleY) * 0.95);
+        d.setScrollPosition(scrollX, scrollY);
+        }
 
     //=====================
     //
@@ -283,7 +283,7 @@ public class WorldGUI extends GUIState
 
     @Override
     public void start()
-    {
+        {
         super.start();
 
 //        setAllHerdersMaxTrailLengths();
@@ -294,7 +294,7 @@ public class WorldGUI extends GUIState
         // the display is updated, so that we can see the conflict objects
         // before the mediator nukes them.
         scheduleRepeatingImmediatelyAfter(((World) this.state).getMediator());
-    }
+        }
 
 
 
@@ -308,7 +308,7 @@ public class WorldGUI extends GUIState
      */
     @Override
     public void load(SimState state)
-    {
+        {
         super.load(state);
 //        setAllHerdersMaxTrailLengths();
         setupPortrayals();
@@ -317,7 +317,7 @@ public class WorldGUI extends GUIState
         // the display is updated, so that we can see the conflict objects
         // before the mediator nukes them.
         scheduleRepeatingImmediatelyAfter(((World) this.state).getMediator());
-    }
+        }
 
 
     /* I duplicated TimeSeriesChartingPropertyInspector.addToMainSeries cause
@@ -327,14 +327,14 @@ public class WorldGUI extends GUIState
      * data culling algorithm once!
      */
     private double[] getXValues(XYSeries series)
-    {
+        {
         double[] xValues = new double[series.getItemCount()];
         for (int i = 0; i < xValues.length; i++)
-        {
+            {
             xValues[i] = series.getX(i).doubleValue();
-        }
+            }
         return xValues;
-    }
+        }
 
     /**
      * XXX What is this?  <- As I recall, a global variable of agents for ??? //Bill
@@ -350,11 +350,11 @@ public class WorldGUI extends GUIState
      * @param series
      */
     private void deleteItems(IntBag items, XYSeries series)
-    {
-        if (items.numObjs == 0)
         {
+        if (items.numObjs == 0)
+            {
             return;
-        }
+            }
         
 //      //I would sure hate to to do this (O(n^2), plus each remove causes a SeriesChangeEvent):
 //      for(int i=items.numObjs-1;i>=0;i--)
@@ -367,39 +367,39 @@ public class WorldGUI extends GUIState
         java.util.Iterator iter = series.getItems().iterator();
         int index = 0;
         while (iter.hasNext())
-        {
+            {
             Object o = iter.next();
             if (index == currentTaboo)
-            {
+                {
                 //skip the copy, let's move on to next taboo index
                 if (currentTabooIndex < items.numObjs - 1)
-                {
+                    {
                     currentTabooIndex++;
                     currentTaboo = items.objs[currentTabooIndex];
-                } else
-                {
+                    } else
+                    {
                     currentTaboo = -1;//no more taboos
-                }
-            } else//save o
-            {
+                    }
+                } else//save o
+                {
                 tmpBag.add(o);
-            }
+                }
             index++;
-        }
+            }
         //now we clear the chartSeries and then put back the saved objects only.
         series.clear();
         //In my test this did not cause the chart to flicker.
         //But if it does, one could do an update for the part the will be refill and
         //only clear the rest using delete(start, end).
         for (int i = 0; i < tmpBag.numObjs; i++)
-        {
+            {
             series.add((XYDataItem) tmpBag.objs[i], false);//no notifying just yet.
-        }
+            }
         tmpBag.clear();
         //it doesn't matter that I clear this twice in a row
         //(once here, once at next time through this fn), the second time is O(1).
         series.fireSeriesChanged();
-    }
+        }
 
     /** Builds a color map for the given minimum and maximum values
      *
@@ -410,7 +410,7 @@ public class WorldGUI extends GUIState
      * @return color map suitable for SimpleColorMap ctor
      */
     private Color[] buildColorMap(int min, int max)
-    {
+        {
         Color[] colors = new Color[max];
 
         int curColor = 0;
@@ -418,23 +418,23 @@ public class WorldGUI extends GUIState
         double maxValue = java.lang.Math.log(max);
 
         try
-        {
-            for (int i = 1; i <= max; i++)
             {
+            for (int i = 1; i <= max; i++)
+                {
                 curColor = /* 255 - */ (int) (255.0 * java.lang.Math.log((double) i) / maxValue);
 
                 colors[i - 1] = new Color(curColor, curColor, curColor);
-            }
-        } catch (Exception e)
-        {
+                }
+            } catch (Exception e)
+            {
             System.err.println(e);
-        }
+            }
 
         return colors;
-    }
+        }
     
     private void setupPortrayals()
-    {
+        {
         final World world = (World) state;
 
         landPortrayal = world.getLand().getPortrayal();        
@@ -445,14 +445,14 @@ public class WorldGUI extends GUIState
 
         waterHolePortrayal.setField(world.getWaterHoles().getWaterHolesGrid());
         RectanglePortrayal2D individualWaterHolePortrayal = new RectanglePortrayal2D(1)
-        {
+            {
             final SimpleColorMap colorMap = new SimpleColorMap(0.0, 1.0, Color.WHITE, Color.BLUE);
 
             @Override
             public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-            {
+                {
                 if (object != null)
-                {   
+                    {   
                     assert(object instanceof WaterHole);
                     WaterHole waterHole = (WaterHole) object;
 
@@ -464,13 +464,13 @@ public class WorldGUI extends GUIState
                     paint = valuedColor;
 
                     super.draw(object, graphics, info);
-                } else
-                {
+                    } else
+                    {
                     super.draw(object, graphics, info);
+                    }
                 }
-            }
 
-        };
+            };
         
 
 //        waterHolePortrayal.setPortrayalForAll(new RectanglePortrayal2D(Color.BLUE));
@@ -487,13 +487,13 @@ public class WorldGUI extends GUIState
          *  Herders shown as circles with the color indicating their state
          */
         OvalPortrayal2D individualHerderPortrayal = new OvalPortrayal2D(0.5)
-        {
+            {
             @Override
             @SuppressWarnings("empty-statement")
             public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-            {
+                {
                 if (object != null)
-                {   
+                    {   
                     final double MIN_SIZE = world.getParams().gui.getMinHerdingScale();
                     final double MAX_SIZE = world.getParams().gui.getMaxHerdingScale();
                     final int TLUS_FOR_MAX_SIZE = world.getParams().herding.getHerdSplitThreshold();
@@ -501,17 +501,17 @@ public class WorldGUI extends GUIState
                     scale = (double)TLUS/TLUS_FOR_MAX_SIZE * (MAX_SIZE - MIN_SIZE) + MIN_SIZE;
                     
                     if (world.getParams().gui.getHerdingJitter() == Parameters.HerdingJitter.FIXED)
-                    {
+                        {
                         double jitterX = ((Herding)object).getJitterX()*info.draw.width;
                         double jitterY = ((Herding)object).getJitterY()*info.draw.height;
                         info = new DrawInfo2D(info, jitterX, jitterY);
-                    }
+                        }
                     else if (world.getParams().gui.getHerdingJitter() == Parameters.HerdingJitter.RANDOM)
-                    {
+                        {
                         double jitterX = (world.random.nextDouble()*0.8 - 0.4)*info.draw.width;
                         double jitterY = (world.random.nextDouble()*0.8 - 0.4)*info.draw.height;
                         info = new DrawInfo2D(info, jitterX, jitterY);
-                    }
+                        }
                     
                     double scaledHunger = ((Herding) object).getScaledHunger();
                     double scaledThirst = ((Herding) object).getScaledThirst();
@@ -525,12 +525,12 @@ public class WorldGUI extends GUIState
                     // Map normalized health from [0,1] to [64,255] levels of transparency
                     paint = getTransparentColor(Color.RED, 64 + (int)(191 * health));
                     super.draw(object, graphics, info);
-                } else
-                {
+                    } else
+                    {
                     super.draw(object, graphics, info);
+                    }
                 }
-            }
-        };
+            };
 
         herderPortrayal.setPortrayalForAll(individualHerderPortrayal);
 
@@ -563,32 +563,32 @@ public class WorldGUI extends GUIState
         // false: no fill
 
         RectanglePortrayal2D individualConflictPortrayal = new RectanglePortrayal2D(Color.MAGENTA, 5, true)
-        {
+            {
             @Override
             public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-            {
-                if (object != null)
                 {
+                if (object != null)
+                    {
                     double cType = ((Valuable) object).doubleValue();
 
                     if (cType == Conflict.CONFLICT_TYPE_HF)
-                    {
+                        {
                         paint = hfColor;
-                    } else if (cType == Conflict.CONFLICT_TYPE_HH_TBD) //CONFLICT_TYPE_HH_WITHIN_CULT)
-                    {
+                        } else if (cType == Conflict.CONFLICT_TYPE_HH_TBD) //CONFLICT_TYPE_HH_WITHIN_CULT)
+                        {
                         paint = hhInCultColor;//Color.CYAN;
+                        } else
+                        {
+                        paint = hhInterCultColor;//Color.MAGENTA;
+                        }
+                    super.draw(object, graphics, info);
                     } else
                     {
-                        paint = hhInterCultColor;//Color.MAGENTA;
+                    super.draw(object, graphics, info);
                     }
-                    super.draw(object, graphics, info);
-                } else
-                {
-                    super.draw(object, graphics, info);
                 }
-            }
 
-        };
+            };
 
         conflictPortrayal.setPortrayalForAll(individualConflictPortrayal);
 
@@ -622,10 +622,10 @@ public class WorldGUI extends GUIState
         populationDisplay.repaint();
         
         attachPortrayals();
-    }
+        }
     
     private void attachPortrayals()
-    {
+        {
         display.attach(landPortrayal, "Land");
         display.attach(farmLandPortrayal, "Farm Land");  
         display.attach(waterHolePortrayal, "Water Holes");
@@ -647,10 +647,10 @@ public class WorldGUI extends GUIState
         vegetationDiffDisplay.attach(vegetationDiffPortrayal, "Daily Vegetation Difference");
         
         voronoiDisplay.attach(waterHoleVoronoiPortrayal, "Voronoi Diagram for WaterHoles");
-    }
+        }
     
     private void setupCharts()
-    {
+        {
         popChart.removeAllSeries();
         popChangeChart.removeAllSeries();
         conflictChart.removeAllSeries();
@@ -688,10 +688,10 @@ public class WorldGUI extends GUIState
         conflictChart.addSeries(herderCooperationSeries, null);
 
         this.scheduleRepeatingImmediatelyBefore(new Steppable()
-        {
+            {
             @Override
             public void step(SimState state)
-            {                
+                {                
                 // at this stage we're adding data to our chart.  We
                 // need an X value and a Y value.  Typically the X
                 // value is the schedule's timestamp.  The Y value
@@ -717,12 +717,12 @@ public class WorldGUI extends GUIState
                 
                 // now add the data
                 if (x >= Schedule.EPOCH && x < Schedule.AFTER_SIMULATION)
-                {
+                    {
                     // Note: some conflicts may be ignored, so hf+hh is
                     //       now more accurate than y
                     // Also: If you add another plot here, you should probably
                     //       also write it to the csv file in WorldObserver.step()
-                	final double ticksToYears = 1.0 / 365.25;
+                    final double ticksToYears = 1.0 / 365.25;
                     weatherSeries.add(x*ticksToYears, y_w, false);
                     farmerSeries.add(x*ticksToYears, fpop, false);
                     herderSeries.add(x*ticksToYears, hpop, false);
@@ -741,7 +741,7 @@ public class WorldGUI extends GUIState
                     
                     DataCuller dataCuller = popChart.getDataCuller();
                     if (dataCuller != null && dataCuller.tooManyPoints(farmerSeries.getItemCount()))
-                    {
+                        {
                         double[] xValues = getXValues(farmerSeries);
                         IntBag droppedDataPointIndices = dataCuller.cull(xValues, true);
 
@@ -751,33 +751,33 @@ public class WorldGUI extends GUIState
                         deleteItems(droppedDataPointIndices, laborerSeries);
                         deleteItems(droppedDataPointIndices, displacedSeries);
                         deleteItems(droppedDataPointIndices, nonDisplacedSeries);
-                    } else
-                    {
+                        } else
+                        {
                         weatherSeries.fireSeriesChanged();
                         farmerSeries.fireSeriesChanged();
                         herderSeries.fireSeriesChanged();
                         laborerSeries.fireSeriesChanged();
                         displacedSeries.fireSeriesChanged();
                         nonDisplacedSeries.fireSeriesChanged();
-                    }
+                        }
 
                     // for 2th chart, show resulting population change rate
                     dataCuller = popChangeChart.getDataCuller();
                     if(dataCuller != null && dataCuller.tooManyPoints(conflictSeries.getItemCount()))
-                    {
+                        {
                         double[] xValues = getXValues(conflictSeries);
                         IntBag droppedDataPointIndices = dataCuller.cull(xValues, true);
 
                         deleteItems(droppedDataPointIndices, popChangeRateSeries);
-                    }
+                        }
                     else
-                    {
+                        {
                         popChangeRateSeries.fireSeriesChanged();
-                    }
+                        }
                     
                     dataCuller = conflictChart.getDataCuller();
                     if (dataCuller != null && dataCuller.tooManyPoints(conflictSeries.getItemCount()))
-                    {
+                        {
                         double[] xValues = getXValues(conflictSeries);
                         IntBag droppedDataPointIndices = dataCuller.cull(xValues, true);
 
@@ -785,19 +785,19 @@ public class WorldGUI extends GUIState
                         deleteItems(droppedDataPointIndices, herdingFarmerConflictSeries);
                         deleteItems(droppedDataPointIndices, herderHerderConflictSeries);
                         deleteItems(droppedDataPointIndices, herderCooperationSeries);
-                    } else
-                    {
+                        } else
+                        {
                         conflictSeries.fireSeriesChanged();
                         herdingFarmerConflictSeries.fireSeriesChanged();
                         herderHerderConflictSeries.fireSeriesChanged();
                         herderCooperationSeries.fireSeriesChanged();
+                        }
+
                     }
-
                 }
-            }
 
-        }); //, 3, 1.0); // schedule before mediator, which is at 2
-    }
+            }); //, 3, 1.0); // schedule before mediator, which is at 2
+        }
 
     /**
      * XXX What is this?  Parcel display color of herder-farmer conflicts //Bill
@@ -818,19 +818,19 @@ public class WorldGUI extends GUIState
      ** and an alpha value of 0 or 0.0 means that the color is completely transparent.
      */
     public static Color getTransparentColor(Color c, int transparency)
-    {
+        {
         return new Color(c.getRed(), c.getGreen(), c.getBlue(), transparency);
-    }
+        }
 
     @Override
     public Object getSimulationInspectedObject()
-    {
+        {
         return state;
-    }
+        }
 
     @Override
     public Inspector getInspector()
-    {
+        {
         super.getInspector();
 
         TabbedInspector i = new TabbedInspector();
@@ -849,344 +849,344 @@ public class WorldGUI extends GUIState
 //        i.addInspector(new SimpleInspector(new TimeSeriesScales(), this), "SeriesScales");
 
         return i;
-    }
+        }
 
     /**
      * @param args the command line arguments
      */
-      public static void main(String[] args)
-    {
+    public static void main(String[] args)
+        {
         WorldGUI worldGUI = new WorldGUI(args);
 
         Console console = new Console(worldGUI);
         console.setVisible(true);
 //        System.exit(0);
-    }
+        }
 
     public static class ConflictProperties
-    {
+        {
         World world_;
 
-		private ConflictProperties(World world) {
-			world_ = world;
-		}
+        private ConflictProperties(World world) {
+            world_ = world;
+            }
 
-		public boolean getHerderHerderConflict() {
-			return world_.getMediator().getHerderHerderConflictActive();
-		}
+        public boolean getHerderHerderConflict() {
+            return world_.getMediator().getHerderHerderConflictActive();
+            }
 
-		public void setHerderHerderConflict(boolean hh) {
-			world_.getMediator().setHerderHerderConflictActive(hh);
-		}
+        public void setHerderHerderConflict(boolean hh) {
+            world_.getMediator().setHerderHerderConflictActive(hh);
+            }
 
-		public boolean getWithinCultConflict() {
-			return world_.getMediator().getWithinCultConflictActive() && world_.getMediator().getHerderHerderConflictActive();
-		}
+        public boolean getWithinCultConflict() {
+            return world_.getMediator().getWithinCultConflictActive() && world_.getMediator().getHerderHerderConflictActive();
+            }
 
-		public void setWithinCultConflict(boolean wc) {
-			world_.getMediator().setWithinCultConflictActive(wc);
-		}
+        public void setWithinCultConflict(boolean wc) {
+            world_.getMediator().setWithinCultConflictActive(wc);
+            }
 
-		public boolean getHerderFarmerConflict() {
-			return world_.getMediator().getHerderFarmerConflictActive();
-		}
+        public boolean getHerderFarmerConflict() {
+            return world_.getMediator().getHerderFarmerConflictActive();
+            }
 
-		public void setHerderFarmerConflict(boolean hf) {
-			world_.getMediator().setHerderFarmerConflictActive(hf);
-		}
+        public void setHerderFarmerConflict(boolean hf) {
+            world_.getMediator().setHerderFarmerConflictActive(hf);
+            }
 
-		public boolean getEscalateConflict() {
-			return world_.getMediator().getEscalateConflictActive() && world_.getMediator().getHerderFarmerConflictActive();
-		}
+        public boolean getEscalateConflict() {
+            return world_.getMediator().getEscalateConflictActive() && world_.getMediator().getHerderFarmerConflictActive();
+            }
 
-		public void setEscalateConflict(boolean ec) {
-			world_.getMediator().setEscalateConflictActive(ec);
-		}
+        public void setEscalateConflict(boolean ec) {
+            world_.getMediator().setEscalateConflictActive(ec);
+            }
 
-		public int getNumStepsToEscalate() {
-			return world_.getMediator().getNumStepsToEscalate();
-		}
+        public int getNumStepsToEscalate() {
+            return world_.getMediator().getNumStepsToEscalate();
+            }
 
-		public void setNumStepsToEscalate(int val) {
-			world_.getMediator().setNumStepsToEscalate(val);
-		}
+        public void setNumStepsToEscalate(int val) {
+            world_.getMediator().setNumStepsToEscalate(val);
+            }
 
-		public int getEscalationDistance() {
-			return world_.getMediator().getEscalationDistance();
-		}
+        public int getEscalationDistance() {
+            return world_.getMediator().getEscalationDistance();
+            }
 
-		public void setEscalationDistance(int val) {
-			world_.getMediator().setEscalationDistance(val);
-		}
+        public void setEscalationDistance(int val) {
+            world_.getMediator().setEscalationDistance(val);
+            }
 
-		public double getDamageRatio() {
-			return world_.getMediator().getDamageRatio();
-		}
+        public double getDamageRatio() {
+            return world_.getMediator().getDamageRatio();
+            }
 
-		public void setDamageRatio(double val) {
-			world_.getMediator().setDamageRatio(val);
-		}
+        public void setDamageRatio(double val) {
+            world_.getMediator().setDamageRatio(val);
+            }
 
-	}
+        }
 
-	public static class WeatherProperties
-	{
+    public static class WeatherProperties
+        {
 
-		World world_;
+        World world_;
 
-		private WeatherProperties(World world) {
-			world_ = world;
-		}
-	}
+        private WeatherProperties(World world) {
+            world_ = world;
+            }
+        }
 
-	public static class ObservationProperties
-	{
-		World world_;
+    public static class ObservationProperties
+        {
+        World world_;
 
-		ObservationProperties(World world) {
-			world_ = world;
-		}
+        ObservationProperties(World world) {
+            world_ = world;
+            }
 
-		public int getGrazableParcels() {
-			return world_.getLand().getLandGrid().elements().size();
-		}
+        public int getGrazableParcels() {
+            return world_.getLand().getLandGrid().elements().size();
+            }
 
-		public double getFarmsPerGrazableParcel() {
-			return (double) world_.getPopulation().getFarmingGrid().size() / 
-					world_.getLand().getLandGrid().elements().size();
-		}
+        public double getFarmsPerGrazableParcel() {
+            return (double) world_.getPopulation().getFarmingGrid().size() / 
+                world_.getLand().getLandGrid().elements().size();
+            }
 
-		public double getCurrentFractionOpenParcels() {
-			return (world_.getLand().getLandGrid().elements().size() - world_.getPopulation().getFarmingGrid().size()) / 
-					world_.getLand().getLandGrid().elements().size();
-		}
+        public double getCurrentFractionOpenParcels() {
+            return (world_.getLand().getLandGrid().elements().size() - world_.getPopulation().getFarmingGrid().size()) / 
+                world_.getLand().getLandGrid().elements().size();
+            }
 
-		/** @return the current number of herding activities in the simulation */
-		public int getCurrentNumHerds() {
-			return world_.getPopulation().getCurrentNumHerds();
-		}
+        /** @return the current number of herding activities in the simulation */
+        public int getCurrentNumHerds() {
+            return world_.getPopulation().getCurrentNumHerds();
+            }
 
-		/**
-		 * @return the current number of herding activities divided by open
-		 *         parcels
-		 */
-		public double getHerdsPerAvailableOpenParcel() {
-			// open parcels
-			double divby = world_.getLand().getLandGrid().elements().size() - world_.getPopulation().getFarmingGrid().size();
-			double ans = 0.0;
-			if (divby > 0) ans = (double) world_.getPopulation().getCurrentNumHerds() / divby;
-			return ans;
-		}
+        /**
+         * @return the current number of herding activities divided by open
+         *         parcels
+         */
+        public double getHerdsPerAvailableOpenParcel() {
+            // open parcels
+            double divby = world_.getLand().getLandGrid().elements().size() - world_.getPopulation().getFarmingGrid().size();
+            double ans = 0.0;
+            if (divby > 0) ans = (double) world_.getPopulation().getCurrentNumHerds() / divby;
+            return ans;
+            }
 
-		public double getCurrentFractionOpenHectares() {
-			return (100.0 * world_.getLand().getLandGrid().elements().size() - world_.getPopulation().getCurrentSizeOfFarmsInHectares()) / (100.0 * world_.getLand().getLandGrid().elements().size());
-		}
+        public double getCurrentFractionOpenHectares() {
+            return (100.0 * world_.getLand().getLandGrid().elements().size() - world_.getPopulation().getCurrentSizeOfFarmsInHectares()) / (100.0 * world_.getLand().getLandGrid().elements().size());
+            }
 
-		public int getCurrentNumberHouseholds() {
-			return world_.getPopulation().getCurrentNumHouseholds();
-		}
+        public int getCurrentNumberHouseholds() {
+            return world_.getPopulation().getCurrentNumHouseholds();
+            }
                 
-                public int getNumberNonDisplacedHouseholds() {
-                    int n = 0;
-                    Bag households = world_.getPopulation().getHouseholdsGrid().getAllObjects();
-                    for (int i = 0; i < households.numObjs; i++)
-                        if (!((Household)households.objs[i]).isDisplaced())
-                            n++;
-                    return n;
-                }
+        public int getNumberNonDisplacedHouseholds() {
+            int n = 0;
+            Bag households = world_.getPopulation().getHouseholdsGrid().getAllObjects();
+            for (int i = 0; i < households.numObjs; i++)
+                if (!((Household)households.objs[i]).isDisplaced())
+                    n++;
+            return n;
+            }
 
-		public int getCurrentPopulationFarmers() {
-			return world_.getPopulation().getCurrentPopulationFarmers();
-		}
+        public int getCurrentPopulationFarmers() {
+            return world_.getPopulation().getCurrentPopulationFarmers();
+            }
 
-		public int getCurrentPopulationHerders() {
-			return world_.getPopulation().getCurrentPopulationHerders();
-		}
+        public int getCurrentPopulationHerders() {
+            return world_.getPopulation().getCurrentPopulationHerders();
+            }
 
-		public int getCurrentPopulationLaborers() {
-			return world_.getPopulation().getCurrentPopulationLaborers();
-		}
+        public int getCurrentPopulationLaborers() {
+            return world_.getPopulation().getCurrentPopulationLaborers();
+            }
 
-		public int getCurrentPopulationDisplaced() {
-			return world_.getPopulation().getCurrentPopulationDisplaced();
-		}
+        public int getCurrentPopulationDisplaced() {
+            return world_.getPopulation().getCurrentPopulationDisplaced();
+            }
 
-		public int getCurrentPopulationNonDisplaced() {
-			return world_.getPopulation().getNonDisplacedPopulation();
-		}
+        public int getCurrentPopulationNonDisplaced() {
+            return world_.getPopulation().getNonDisplacedPopulation();
+            }
 
-		public double getCurrentPopulationChangeRate() {
-			return world_.getPopulation().getCurrentPopulationChangeRate();
-		}
+        public double getCurrentPopulationChangeRate() {
+            return world_.getPopulation().getCurrentPopulationChangeRate();
+            }
 
                 
-//		public int getNumConflicts() {
-//			return world_.getMediator().getNumConflicts();
-//		}
+//              public int getNumConflicts() {
+//                      return world_.getMediator().getNumConflicts();
+//              }
 //
-//		public int getHFConflicts() {
-//			return world_.getMediator().getHFconflicts();
-//		}
+//              public int getHFConflicts() {
+//                      return world_.getMediator().getHFconflicts();
+//              }
 //
-//		public int getHHConflicts() {
-//			return world_.getMediator().getHHconflicts();
-//		}
+//              public int getHHConflicts() {
+//                      return world_.getMediator().getHHconflicts();
+//              }
 //
-//		public int getHHnonConflicts() {
-//			return world_.getMediator().getHHnonconflicts();
-//		}
+//              public int getHHnonConflicts() {
+//                      return world_.getMediator().getHHnonconflicts();
+//              }
                 
-                public int[] getFarmerCounts() {
-                    int n = getNumberNonDisplacedHouseholds();
-                    int[] counts = new int[n];
-                    Bag households = world_.getPopulation().getHouseholdsGrid().getAllObjects();
+        public int[] getFarmerCounts() {
+            int n = getNumberNonDisplacedHouseholds();
+            int[] counts = new int[n];
+            Bag households = world_.getPopulation().getHouseholdsGrid().getAllObjects();
                    
-                    int index = 0;
-                    for (int i = 0; i < households.numObjs; i++)
-                        if (!((Household)households.objs[i]).isDisplaced())
-                            counts[index++] = ((Household)households.objs[i]).getFarmingPopulation();
+            int index = 0;
+            for (int i = 0; i < households.numObjs; i++)
+                if (!((Household)households.objs[i]).isDisplaced())
+                    counts[index++] = ((Household)households.objs[i]).getFarmingPopulation();
                     
-                    return counts;
-                }
+            return counts;
+            }
                 
-                public int[] getHerderCounts() {
-                    int n = getNumberNonDisplacedHouseholds();
-                    int[] counts = new int[n];
-                    Bag households = world_.getPopulation().getHouseholdsGrid().getAllObjects();
+        public int[] getHerderCounts() {
+            int n = getNumberNonDisplacedHouseholds();
+            int[] counts = new int[n];
+            Bag households = world_.getPopulation().getHouseholdsGrid().getAllObjects();
                    
-                    int index = 0;
-                    for (int i = 0; i < households.numObjs; i++)
-                        if (!((Household)households.objs[i]).isDisplaced())
-                            counts[index++] = ((Household)households.objs[i]).getHerdingPopulation();
+            int index = 0;
+            for (int i = 0; i < households.numObjs; i++)
+                if (!((Household)households.objs[i]).isDisplaced())
+                    counts[index++] = ((Household)households.objs[i]).getHerdingPopulation();
                     
-                    return counts;
-                }
+            return counts;
+            }
                 
-                public int[] getLaborerCounts() {
-                    int n = getNumberNonDisplacedHouseholds();
-                    int[] counts = new int[n];
-                    Bag households = world_.getPopulation().getHouseholdsGrid().getAllObjects();
+        public int[] getLaborerCounts() {
+            int n = getNumberNonDisplacedHouseholds();
+            int[] counts = new int[n];
+            Bag households = world_.getPopulation().getHouseholdsGrid().getAllObjects();
                    
-                    int index = 0;
-                    for (int i = 0; i < households.numObjs; i++)
-                        if (!((Household)households.objs[i]).isDisplaced())
-                            counts[index++] = ((Household)households.objs[i]).getLaboringPopulation();
+            int index = 0;
+            for (int i = 0; i < households.numObjs; i++)
+                if (!((Household)households.objs[i]).isDisplaced())
+                    counts[index++] = ((Household)households.objs[i]).getLaboringPopulation();
                     
-                    return counts;
-                }
+            return counts;
+            }
                 
-                private final double sqrt3 = Math.sqrt(3);
-                public Double2D[] getActivitySimplex() {
-                    int n = getNumberNonDisplacedHouseholds();
-                    Double2D[] points = new Double2D[n];
-                    Bag households = world_.getPopulation().getHouseholdsGrid().getAllObjects();
+        private final double sqrt3 = Math.sqrt(3);
+        public Double2D[] getActivitySimplex() {
+            int n = getNumberNonDisplacedHouseholds();
+            Double2D[] points = new Double2D[n];
+            Bag households = world_.getPopulation().getHouseholdsGrid().getAllObjects();
                     
-                    int index = 0;
-                    for (int i = 0; i < households.numObjs; i++)
-                        if (!((Household)households.objs[i]).isDisplaced()) {
-                            Household h = (Household)households.objs[index];
-                            double total = (double)h.getPopulation();
-                            double a = h.getFarmingPopulation() / total;
-                            double b = h.getHerdingPopulation() / total;
-                            double c = h.getLaboringPopulation() / total;
+            int index = 0;
+            for (int i = 0; i < households.numObjs; i++)
+                if (!((Household)households.objs[i]).isDisplaced()) {
+                    Household h = (Household)households.objs[index];
+                    double total = (double)h.getPopulation();
+                    double a = h.getFarmingPopulation() / total;
+                    double b = h.getHerdingPopulation() / total;
+                    double c = h.getLaboringPopulation() / total;
                             
-                            double x = 0.5 * (2*b + c) / (a + b + c);
-                            double y = sqrt3 * 0.5 * c / (a + b + c);
-                            points[index++] = new Double2D(x,y);
-                        }
+                    double x = 0.5 * (2*b + c) / (a + b + c);
+                    double y = sqrt3 * 0.5 * c / (a + b + c);
+                    points[index++] = new Double2D(x,y);
+                    }
                     
                     
-                    return points;
-                }
+            return points;
+            }
                 
-                private final Double2D[] simplexPad = new Double2D[] { new Double2D(-0.1, -0.1), new Double2D(0.5, 1.1), new Double2D(1.1, -0.1) };
+        private final Double2D[] simplexPad = new Double2D[] { new Double2D(-0.1, -0.1), new Double2D(0.5, 1.1), new Double2D(1.1, -0.1) };
                 
-                public Double2D[] getActivitySimplexPad() {
-                    return simplexPad;
-                }
+        public Double2D[] getActivitySimplexPad() {
+            return simplexPad;
+            }
                     
 
-	}
+        }
 
-	public class TimeSeriesScales
-	{
+    public class TimeSeriesScales
+        {
 
-		private double getScale(YScalableXYSeries series) {
-			if (series == null) {
-				return Double.NaN;
-			}
-			return series.getScale();
-		}
+        private double getScale(YScalableXYSeries series) {
+            if (series == null) {
+                return Double.NaN;
+                }
+            return series.getScale();
+            }
 
-		private void setScale(YScalableXYSeries series, double newScale) {
-			if (series == null) {
-				return;
-			}
-			series.setScale(newScale);
-		}
+        private void setScale(YScalableXYSeries series, double newScale) {
+            if (series == null) {
+                return;
+                }
+            series.setScale(newScale);
+            }
 
-		public double getWeatherTimeSeriesScale() {
-			return getScale(weatherSeries);
-		}
+        public double getWeatherTimeSeriesScale() {
+            return getScale(weatherSeries);
+            }
 
-		public void setWeatherTimeSeriesScale(double newScale) {
-			setScale(weatherSeries, newScale);
-		}
+        public void setWeatherTimeSeriesScale(double newScale) {
+            setScale(weatherSeries, newScale);
+            }
 
-		public double getFarmerTimeSeriesScale() {
-			return getScale(farmerSeries);
-		}
+        public double getFarmerTimeSeriesScale() {
+            return getScale(farmerSeries);
+            }
 
-		public void setFarmerTimeSeriesScale(double newScale) {
-			setScale(farmerSeries, newScale);
-		}
+        public void setFarmerTimeSeriesScale(double newScale) {
+            setScale(farmerSeries, newScale);
+            }
 
-		public double getConflictTimeSeriesScale() {
-			return getScale(conflictSeries);
-		}
+        public double getConflictTimeSeriesScale() {
+            return getScale(conflictSeries);
+            }
 
-		public void setConflictTimeSeriesScale(double newScale) {
-			setScale(conflictSeries, newScale);
-		}
+        public void setConflictTimeSeriesScale(double newScale) {
+            setScale(conflictSeries, newScale);
+            }
 
-		public double getHFTimeSeriesScale() {
-			return getScale(herdingFarmerConflictSeries);
-		}
+        public double getHFTimeSeriesScale() {
+            return getScale(herdingFarmerConflictSeries);
+            }
 
-		public void setHFTimeSeriesScale(double newScale) {
-			setScale(herdingFarmerConflictSeries, newScale);
-		}
+        public void setHFTimeSeriesScale(double newScale) {
+            setScale(herdingFarmerConflictSeries, newScale);
+            }
 
-		public double getHHTimeSeriesScale() {
-			return getScale(herderHerderConflictSeries);
-		}
+        public double getHHTimeSeriesScale() {
+            return getScale(herderHerderConflictSeries);
+            }
 
-		public void setHHTimeSeriesScale(double newScale) {
-			setScale(herderHerderConflictSeries, newScale);
-		}
+        public void setHHTimeSeriesScale(double newScale) {
+            setScale(herderHerderConflictSeries, newScale);
+            }
 
-		public double getHNTimeSeriesScale() {
-			return getScale(herderCooperationSeries);
-		}
+        public double getHNTimeSeriesScale() {
+            return getScale(herderCooperationSeries);
+            }
 
-		public void setHNTimeSeriesScale(double newScale) {
-			setScale(herderCooperationSeries, newScale);
-		}
-    }
+        public void setHNTimeSeriesScale(double newScale) {
+            setScale(herderCooperationSeries, newScale);
+            }
+        }
 
     @Override
     public void quit()
-    {
+        {
         super.quit();        
         
         for (JFrame f : frames)
-        	if (f != null) {
-        		f.dispose();
-        		f = null;
-        	}
+            if (f != null) {
+                f.dispose();
+                f = null;
+                }
 
         for (Display2D d : displays) 
-        	d = null;
-    }
+            d = null;
+        }
 
-}
+    }

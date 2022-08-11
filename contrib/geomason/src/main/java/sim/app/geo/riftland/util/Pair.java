@@ -14,11 +14,11 @@ public class Pair<First, Second> {
     public Pair(First f, Second s){
         this.f = f;
         this.s = s;
-    }
+        }
     public First getFirst(){ return f; }
     public Second getSecond(){ return s; }
     public void setFirst(First f){ this.f = f; }
     public void setSecond(Second s){ this.s = s; }
-}
+    }
 
 

@@ -11,13 +11,13 @@ import java.awt.geom.Line2D;
 public class Legend extends Canvas {
         
     public void paint(Graphics legend)
-    {             
-    	Graphics2D leg = (Graphics2D)legend;
-    	leg.scale(0.7, 0.7);
-    	Line2D line = new Line2D.Double(20, 60, 70, 70);
-    	leg.setColor(Color.lightGray);
-    	leg.setStroke(new BasicStroke(3));
-    	leg.draw(line);
+        {             
+        Graphics2D leg = (Graphics2D)legend;
+        leg.scale(0.7, 0.7);
+        Line2D line = new Line2D.Double(20, 60, 70, 70);
+        leg.setColor(Color.lightGray);
+        leg.setStroke(new BasicStroke(3));
+        leg.draw(line);
 
         // agent 
         leg.setColor(Color.blue);
@@ -77,5 +77,5 @@ public class Legend extends Canvas {
         leg.drawString("Religious Facility", 70, 490);
         leg.drawString("Hospital", 70, 530);
               
+        }
     }
-}

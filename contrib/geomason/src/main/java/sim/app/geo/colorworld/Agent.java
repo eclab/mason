@@ -6,7 +6,7 @@
  * See the file "LICENSE" for more information
  *
  * $Id$
-*/
+ */
 package sim.app.geo.colorworld;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -26,7 +26,7 @@ import sim.field.geo.GeomVectorField;
 public class Agent implements Steppable {
 
     private static final long serialVersionUID = -5318720825474063385L;
-	// possible directions of movement
+    // possible directions of movement
     final int N  = 0; 
     final int NW = 1; 
     final int W  = 2;
@@ -46,19 +46,19 @@ public class Agent implements Steppable {
     double moveRate = 100.0;
      
     public Agent(int d)
-    {
+        {
         direction = d;
-    }
+        }
             
     public void setLocation(Point p) { location = p; }
 
     public Geometry getGeometry() { return location; }
     
     public void step(SimState state)
-    {
+        {
         // try to move the agent, keeping the agent inside its political region
                 
-    	ColorWorld cState = (ColorWorld)state; 
+        ColorWorld cState = (ColorWorld)state; 
         GeomVectorField world = cState.county;
         Coordinate coord = (Coordinate) location.getCoordinate().clone();
         AffineTransformation translate = null;
@@ -105,10 +105,10 @@ public class Agent implements Steppable {
 
         // is the new position still within the county?
         if (world.isInsideUnion(coord))  { 
-        	//cState.county.updateTree(location, translate); 
-        	location.apply(translate);
-        }
+            //cState.county.updateTree(location, translate); 
+            location.apply(translate);
+            }
         else // try randomly moving in different direction if trying to stray
             direction = state.random.nextInt(8);
+        }
     }
-}

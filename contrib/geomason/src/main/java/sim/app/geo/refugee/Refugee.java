@@ -13,56 +13,56 @@ import sim.util.Double2D;
 import sim.util.Int2D;
 
 class Refugee {
-	private int age;
-	private int sex; // 0 male, 1 female
-	private RefugeeFamily family;
-	private Int2D location;
-	private int healthStatus = 1; // default 1 (alive), dead 0
+    private int age;
+    private int sex; // 0 male, 1 female
+    private RefugeeFamily family;
+    private Int2D location;
+    private int healthStatus = 1; // default 1 (alive), dead 0
 
-	public Refugee(int sex, int age, RefugeeFamily family) {
-		this.sex = sex;
-		this.age = age;
-		this.family = family;
-	}
+    public Refugee(int sex, int age, RefugeeFamily family) {
+        this.sex = sex;
+        this.age = age;
+        this.family = family;
+        }
 
-	public int getHealthStatus() {
-		return healthStatus;
-	}
+    public int getHealthStatus() {
+        return healthStatus;
+        }
 
-	public void setHealthStatus(int status) {
-		this.healthStatus = status;
-	}
+    public void setHealthStatus(int status) {
+        this.healthStatus = status;
+        }
 
-	public int getAge() {
-		return age;
-	}
+    public int getAge() {
+        return age;
+        }
 
-	public void setAge(int age) {
-		this.age = age;
-	}
+    public void setAge(int age) {
+        this.age = age;
+        }
 
-	public Int2D getLocation() {
-		return location;
-	}
+    public Int2D getLocation() {
+        return location;
+        }
 
-	public void setLocation(Int2D location) {
-		this.location = location;
-	}
+    public void setLocation(Int2D location) {
+        this.location = location;
+        }
 
-	public int getSex() {
-		return sex;
-	}
+    public int getSex() {
+        return sex;
+        }
 
-	public void setSex(int sex) {
-		this.sex = sex;
-	}
+    public void setSex(int sex) {
+        this.sex = sex;
+        }
 
-	public RefugeeFamily getFamily() {
-		return family;
-	}
+    public RefugeeFamily getFamily() {
+        return family;
+        }
 
-	public void setFamily(RefugeeFamily family) {
-		this.family = family;
-	}
+    public void setFamily(RefugeeFamily family) {
+        this.family = family;
+        }
 
-}
+    }

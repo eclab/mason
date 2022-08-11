@@ -23,16 +23,16 @@ import sim.util.geo.GeomPlanarGraphDirectedEdge;
 
 @SuppressWarnings("restriction")
 public class AStar
-{
+    {
 
     public ArrayList<GeomPlanarGraphDirectedEdge> astarPath(Node start, Node goal)
-    {
+        {
 
         // initial check
         if (start == null || goal == null)
-        {
+            {
             System.out.println("Error: invalid node provided to AStar");
-        }
+            }
 
         // set up the containers for the result
         ArrayList<GeomPlanarGraphDirectedEdge> result =
@@ -59,21 +59,21 @@ public class AStar
 
 
         while (openSet.size() > 0)
-        { // while there are reachable nodes to investigate
+            { // while there are reachable nodes to investigate
 
             AStarNodeWrapper x = findMin(openSet); // find the shortest path so far
             if (x.node == goal)
-            { // we have found the shortest possible path to the goal!
+                { // we have found the shortest possible path to the goal!
                 // Reconstruct the path and send it back.
                 return reconstructPath(goalNode);
-            }
+                }
             openSet.remove(x); // maintain the lists
             closedSet.add(x);
 
             // check all the edges out from this Node
             DirectedEdgeStar des = x.node.getOutEdges();
             for (Object o : des.getEdges().toArray())
-            {
+                {
                 GeomPlanarGraphDirectedEdge l = (GeomPlanarGraphDirectedEdge) o;
                 Node next = null;
                 next = l.getToNode();
@@ -81,46 +81,46 @@ public class AStar
                 // get the A* meta information about this Node
                 AStarNodeWrapper nextNode;
                 if (foundNodes.containsKey(next))
-                {
+                    {
                     nextNode = foundNodes.get(next);
-                } else
-                {
+                    } else
+                    {
                     nextNode = new AStarNodeWrapper(next);
                     foundNodes.put(next, nextNode);
-                }
+                    }
 
                 if (closedSet.contains(nextNode)) // it has already been considered
-                {
+                    {
                     continue;
-                }
+                    }
 
                 // otherwise evaluate the cost of this node/edge combo
                 double tentativeCost = x.gx + length(l);
                 boolean better = false;
 
                 if (!openSet.contains(nextNode))
-                {
+                    {
                     openSet.add(nextNode);
                     nextNode.hx = heuristic(next, goal);
                     better = true;
-                } else if (tentativeCost < nextNode.gx)
-                {
+                    } else if (tentativeCost < nextNode.gx)
+                    {
                     better = true;
-                }
+                    }
 
                 // store A* information about this promising candidate node
                 if (better)
-                {
+                    {
                     nextNode.cameFrom = x;
                     nextNode.edgeFrom = l;
                     nextNode.gx = tentativeCost;
                     nextNode.fx = nextNode.gx + nextNode.hx;
+                    }
                 }
             }
-        }
 
         return result;
-    }
+        }
 
 
 
@@ -132,18 +132,18 @@ public class AStar
      * given Node to the Node from which the serach began
      */
     ArrayList<GeomPlanarGraphDirectedEdge> reconstructPath(AStarNodeWrapper n)
-    {
+        {
         ArrayList<GeomPlanarGraphDirectedEdge> result =
             new ArrayList<GeomPlanarGraphDirectedEdge>();
         AStarNodeWrapper x = n;
         while (x.cameFrom != null)
-        {
+            {
             result.add(0, x.edgeFrom); // add this edge to the front of the list
             x = x.cameFrom;
-        }
+            }
 
         return result;
-    }
+        }
 
 
 
@@ -155,12 +155,12 @@ public class AStar
      * @return notional "distance" between the given nodes.
      */
     double heuristic(Node x, Node y)
-    {
+        {
         Coordinate xnode = x.getCoordinate();
         Coordinate ynode = y.getCoordinate();
         return Math.sqrt(Math.pow(xnode.x - ynode.x, 2)
             + Math.pow(xnode.y - ynode.y, 2));
-    }
+        }
 
 
 
@@ -169,12 +169,12 @@ public class AStar
      * @return The length of an edge
      */
     double length(GeomPlanarGraphDirectedEdge e)
-    {
+        {
         Coordinate xnode = e.getFromNode().getCoordinate();
         Coordinate ynode = e.getToNode().getCoordinate();
         return Math.sqrt(Math.pow(xnode.x - ynode.x, 2)
             + Math.pow(xnode.y - ynode.y, 2));
-    }
+        }
 
 
 
@@ -185,19 +185,19 @@ public class AStar
      * @return
      */
     AStarNodeWrapper findMin(ArrayList<AStarNodeWrapper> set)
-    {
+        {
         double min = 100000;
         AStarNodeWrapper minNode = null;
         for (AStarNodeWrapper n : set)
-        {
-            if (n.fx < min)
             {
+            if (n.fx < min)
+                {
                 min = n.fx;
                 minNode = n;
+                }
             }
-        }
         return minNode;
-    }
+        }
 
 
 
@@ -206,7 +206,7 @@ public class AStar
      *
      */
     class AStarNodeWrapper
-    {
+        {
 
         // the underlying Node associated with the metainformation
         Node node;
@@ -219,14 +219,14 @@ public class AStar
 
 
         public AStarNodeWrapper(Node n)
-        {
+            {
             node = n;
             gx = 0;
             hx = 0;
             fx = 0;
             cameFrom = null;
             edgeFrom = null;
-        }
+            }
 
+        }
     }
-}

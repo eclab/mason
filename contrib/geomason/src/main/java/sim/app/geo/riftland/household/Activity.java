@@ -15,7 +15,7 @@ import sim.engine.SimState;
  *
  */
 public abstract class Activity
-{
+    {
     /** How many individuals are participating in this activity.*/
     private int population = 0;
 
@@ -30,45 +30,45 @@ public abstract class Activity
      * @param household to which this activity belongs
      */
     public Activity(Household household)
-    {
+        {
         super();
         this.household = household;
-    }
+        }
 
     /** thou shalt use the ctor that specifies a household */
     private Activity() {}
     
     public void step(SimState ss)
-    {
+        {
         // TODO insert code that would be common for all Activities, which may
         // turn out to be nothing
 
         //World world = (World) ss;
-    }
+        }
     
     abstract public void remove();
     
     public final int getPopulation()
-    {
+        {
         return population;
-    }
+        }
 
     public final void setPopulation(int population)
-    {
-    	assert(population >= 0);
+        {
+        assert(population >= 0);
         this.population = population;
         if (population == 0)
-        	remove();
-    }
+            remove();
+        }
 
     public final Household getHousehold()
-    {
+        {
         return household;
-    }
+        }
 
     public final void setHousehold(Household household)
-    {
+        {
         this.household = household;
-    }
+        }
 
-}
+    }

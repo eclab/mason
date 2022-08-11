@@ -39,27 +39,27 @@ public class Rainfall implements Steppable {
 
     public void setRainDay(int r) {
         this.rainDay = r;
-    }
+        }
 
     public int getRainDay() {
         return rainDay;
-    }
+        }
 
     public void setCurrentRain(double r) {
         this.currentRain = r;
-    }
+        }
 
     public double getCurrentRain() {
         return currentRain;
-    }
+        }
 
     public void setTotalBacterialLoad(double r) {
         this.totalBacterialLoad = r;
-    }
+        }
 
     public double getTotalBacterialLoad() {
         return totalBacterialLoad;
-    }
+        }
     int rainDuration = 20;
     int rainMinute = 0; // updated every day randomly
     //jan,feb,mar,apr,may ,jun ,jul, aug, sep, oct,nov ,dec
@@ -82,9 +82,9 @@ public class Rainfall implements Steppable {
             currentRain = d.dailyRain[indexSep] / (1.0 * rainDuration);
             rain_liter = currentRain * 0.001 * coversionFactor; // 1m3 = 1000 litre, change rainf from mm to meter and multiply 1000
 
-        } else {
+            } else {
             rain_liter = 0;
-        } // 1m3 = 1000 litre, change rainf from mm to meter and multiply 1000
+            } // 1m3 = 1000 litre, change rainf from mm to meter and multiply 1000
 
 
        
@@ -98,23 +98,23 @@ public class Rainfall implements Steppable {
 
                 // avoud camps - agent houses
                 if (field.getFieldID() == 11 || field.getFieldID() == 12 || field.getFieldID() == 21 || field.getFieldID() == 22
-                        || field.getFieldID() == 31 || field.getFieldID() == 32) {
+                    || field.getFieldID() == 31 || field.getFieldID() == 32) {
                     field.setWater(0);
 
-                } else {
+                    } else {
 
                     double newWater = rain_liter + field.getWater();
 
                     if (newWater < 0) {
                         newWater = 0;
-                    }
+                        }
                     field.setWater(newWater);
-                }// adding water on the field
+                    }// adding water on the field
 
+                }
             }
-        }
 
-    }
+        }
 
     /*
      * water flow is based on simple hydrology
@@ -134,17 +134,17 @@ public class Rainfall implements Steppable {
                 
                 // avoid camps
                 if (field.getFieldID() == 11 || field.getFieldID() == 12 || field.getFieldID() == 21 || field.getFieldID() == 22
-                        || field.getFieldID() == 31 || field.getFieldID() == 32) {
+                    || field.getFieldID() == 31 || field.getFieldID() == 32) {
                     continue;
-                }
+                    }
 
                 fieldDrainageSimple(field, d);
+
+                }
 
             }
 
         }
-
-    }
     
 //    public void fieldDrainage(FieldUnit field, Dadaab d){
 //                 Bag n = new Bag();
@@ -255,97 +255,97 @@ public class Rainfall implements Steppable {
     
     
     public void fieldDrainageSimple(FieldUnit field, Dadaab d){
-         Bag n = new Bag();
-                   n.clear();
-                // get moore neighborhood
+        Bag n = new Bag();
+        n.clear();
+        // get moore neighborhood
 
-                d.allCamps.getNeighborsMaxDistance(field.getX(), field.getY(), 1, false, n, null, null);
+        d.allCamps.getNeighborsMaxDistance(field.getX(), field.getY(), 1, false, n, null, null);
 
-                if (n.isEmpty() == true) {
-                    return;
+        if (n.isEmpty() == true) {
+            return;
+            }
+
+        // if field holds borehole avoid it, 
+        // no miz of water on borehole
+        if (d.boreHoles.contains(field) == true) {
+            return;
+            }
+
+
+        for (Object obj : n) {
+
+            FieldUnit nf = (FieldUnit) obj;
+
+            // water can not flow to itself
+            if (nf.equals(field) == true) {
+                continue;
+                }
+            if (nf.getWater() <= 0) {
+                continue;
                 }
 
-                // if field holds borehole avoid it, 
-                // no miz of water on borehole
-                if (d.boreHoles.contains(field) == true) {
-                    return;
+            // avoid camps or facility 
+            if (nf.getFieldID() == 11 || nf.getFieldID() == 12 || nf.getFieldID() == 21 || nf.getFieldID() == 22
+                || nf.getFieldID() == 31 || nf.getFieldID() == 32) {
+                continue;
                 }
 
+            // avoid borehole points
 
-                for (Object obj : n) {
-
-                    FieldUnit nf = (FieldUnit) obj;
-
-                    // water can not flow to itself
-                    if (nf.equals(field) == true) {
-                        continue;
-                    }
-                    if (nf.getWater() <= 0) {
-                        continue;
-                     }
-
-                    // avoid camps or facility 
-                    if (nf.getFieldID() == 11 || nf.getFieldID() == 12 || nf.getFieldID() == 21 || nf.getFieldID() == 22
-                            || nf.getFieldID() == 31 || nf.getFieldID() == 32) {
-                        continue;
-                    }
-
-                    // avoid borehole points
-
-                    if (d.boreHoles.contains(nf) == true) {
-                        continue;
-                    }
+            if (d.boreHoles.contains(nf) == true) {
+                continue;
+                }
                    
-                    double avoidW = 0;
-                    if (field.getX() == 0 || field.getY() == 0 || field.getX() >= 144 || field.getY() >= 268) {
-                        avoidW = 0;
-                    } else {
-                        avoidW = 1.0;
-                    }
-                    double h1 = field.getElevation(); // pseudo elevation of center cell
-                    double h2 = nf.getElevation();// pseudo elevation of center cell
-                    double virbThreshold  =  MAXVIBROFLOWWAtER *  0.001 * coversionFactor;
-                    double diff = h2 - h1;
+            double avoidW = 0;
+            if (field.getX() == 0 || field.getY() == 0 || field.getX() >= 144 || field.getY() >= 268) {
+                avoidW = 0;
+                } else {
+                avoidW = 1.0;
+                }
+            double h1 = field.getElevation(); // pseudo elevation of center cell
+            double h2 = nf.getElevation();// pseudo elevation of center cell
+            double virbThreshold  =  MAXVIBROFLOWWAtER *  0.001 * coversionFactor;
+            double diff = h2 - h1;
                     
-                    if (diff <= 0) {
-                        continue;
+            if (diff <= 0) {
+                continue;
+                }
+
+            if (diff > 0) {
+                double waterRemain = 0;
+                double waterflow =0;
+                double waterUpper = nf.getWater(); // hold for vibro calc
+                double rateFlowtoOtherCell =  nf.getWater()* (1.0 - 1.0/(1+diff)); // 60%
+                waterRemain = nf.getWater() - rateFlowtoOtherCell;
+                waterflow = field.getWater() +rateFlowtoOtherCell;
+
+                if (waterRemain < 0) {
+                    waterRemain = 0;
                     }
-
-                    if (diff > 0) {
-                              double waterRemain = 0;
-                              double waterflow =0;
-                              double waterUpper = nf.getWater(); // hold for vibro calc
-                              double rateFlowtoOtherCell =  nf.getWater()* (1.0 - 1.0/(1+diff)); // 60%
-                              waterRemain = nf.getWater() - rateFlowtoOtherCell;
-                              waterflow = field.getWater() +rateFlowtoOtherCell;
-
-                             if (waterRemain < 0) {
-                                    waterRemain = 0;
-                             }
                     
                    
-                            nf.setWater(waterRemain * avoidW);
-                            field.setWater(waterflow * avoidW);
+                nf.setWater(waterRemain * avoidW);
+                field.setWater(waterflow * avoidW);
 
                      
-                     if(waterUpper >virbThreshold){
-                         virbThreshold = waterUpper;
-                     }
-
-                    double vibroflow = nf.getVibrioCholerae() * rateFlowtoOtherCell / (virbThreshold) ;
-                    double virbroRemain = (nf.getVibrioCholerae() - vibroflow) * avoidW;
-                    if (virbroRemain < 0) {
-                        virbroRemain = 0;
+                if(waterUpper >virbThreshold){
+                    virbThreshold = waterUpper;
                     }
 
-                    nf.setVibrioCholerae(virbroRemain);
-                    field.setVibrioCholerae((field.getVibrioCholerae() + vibroflow) * avoidW);
-
+                double vibroflow = nf.getVibrioCholerae() * rateFlowtoOtherCell / (virbThreshold) ;
+                double virbroRemain = (nf.getVibrioCholerae() - vibroflow) * avoidW;
+                if (virbroRemain < 0) {
+                    virbroRemain = 0;
                     }
 
+                nf.setVibrioCholerae(virbroRemain);
+                field.setVibrioCholerae((field.getVibrioCholerae() + vibroflow) * avoidW);
 
                 }
-    }
+
+
+            }
+        }
     
 
     
@@ -353,7 +353,7 @@ public class Rainfall implements Steppable {
     // only happens if there is water- if not seepage is 0
     public void waterAbsorbtion(Dadaab d) {
 
-       for (int x = 0; x < d.allCamps.getWidth(); x++) {
+        for (int x = 0; x < d.allCamps.getWidth(); x++) {
             for (int y = 0; y < d.allCamps.getHeight(); y++) {
 
 
@@ -361,26 +361,26 @@ public class Rainfall implements Steppable {
                
                 double w = 0;
                         
-                       w = field.getWater() - (d.params.global.getAbsorbtionRatePerMinute() * coversionFactor * 0.001);
+                w = field.getWater() - (d.params.global.getAbsorbtionRatePerMinute() * coversionFactor * 0.001);
                 if(w  <= 0){
                     field.setWater(0);
-                }    
+                    }    
                 else{
                     field.setWater(w);
                     
-                }    
+                    }    
         
                 if (x == 0 || y == 0 || x == 145 || y == 269) {
                     field.setWater(0);
                     field.setVibrioCholerae(0);
+                    }
+
+
                 }
-
-
             }
+
+
         }
-
-
-    }
 
     // visualization of rain flows
     public void drawRiver(Dadaab d) {
@@ -405,11 +405,11 @@ public class Rainfall implements Steppable {
 
                 if (field.getWater() > d.params.global.getMaximumWaterRequirement()) {
                     d.rainfallWater.add(field);
+                    }
                 }
             }
-        }
         setTotalBacterialLoad(totBac);
-    }
+        }
 
     //
     public void step(SimState state) {
@@ -419,7 +419,7 @@ public class Rainfall implements Steppable {
         if ((int) d.schedule.getTime() % 1440 == 1) {
             int interval = 1440 - (2 * rainDuration);
             rainMinute = 2 + d.random.nextInt(interval);
-        }
+            }
 
 
         
@@ -431,5 +431,5 @@ public class Rainfall implements Steppable {
 
 
 
+        }
     }
-}

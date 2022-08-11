@@ -16,28 +16,28 @@ import sim.engine.SimState;
 public class SimpleMediator extends Mediator {
 
     public SimpleMediator(int width, int height)
-    {
+        {
         super(width, height);
-    }
+        }
     
     @Override
     public
     void reconcile(Conflict conflict)
-    {
+        {
         //System.out.println("reconciling conflict at " + conflict.getParcel());
-    }
+        }
 
     public
     void step(SimState state)
-    {
+        {
         System.err.println("# conflicts: " + this.getNumConflicts());
     
         for ( Conflict conflict : this.conflicts() )
-        {
+            {
             reconcile(conflict);
-        }
+            }
         
         this.clearConflicts();        
-    }
+        }
 
-}
+    }

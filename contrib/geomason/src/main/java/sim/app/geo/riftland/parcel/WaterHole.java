@@ -19,7 +19,7 @@ import sim.util.Int2D;
  * @author Eric 'Siggy' Scott
  */
 public class WaterHole
-{
+    {
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private Parameters params;
     final private WaterHoles waterHoles;
@@ -55,56 +55,56 @@ public class WaterHole
 
     // <editor-fold defaultstate="collapsed" desc="Accessors">
     public Int2D getLocation()
-    {
+        {
         return location.getCoordinate();
-    }
+        }
     
     public GrazableArea getGrazableArea()
-    {
+        {
         return location;
-    }
+        }
 
     public double getMaxWater()
-    {
+        {
         return maxWater;
-    }
+        }
 
     public double getWater()
-    {
+        {
         return water;
-    }
+        }
     
     /** Only stores distances to waterHoles in the List returned by
      * getNearbyWaterHoles. Any other query will result in a NPE. */
     public double getDistanceToWaterHole(WaterHole wh) throws NullPointerException
-    {
+        {
         return distanceToWaterHole.get(wh);
-    }
+        }
 
     public void setWater(double water)
-    {
+        {
         this.water = water;
-    }
+        }
     public double getFlow()
-    {
+        {
         return flow;
-    }
+        }
     
     public int getX()
-    {
+        {
         assert(location.getX() >= 0);
         return location.getX();
-    }
+        }
     
     public int getY()
-    {
+        {
         assert(location.getY() >= 0);
         return location.getY();
-    }
+        }
     //</editor-fold>
     
     public WaterHole(GrazableArea parcel, double flow, int maxWater, WaterHoles waterHoles, Parameters params)
-    {
+        {
         assert(parcel.getX() >= 0);
         assert(parcel.getY() >= 0);
         assert(flow >= 0);
@@ -118,7 +118,7 @@ public class WaterHole
         this.waterHoles = waterHoles;
         this.params = params;
         assert(repOK());
-    }
+        }
 
     /** Consume 'demand' amount of water from this parcel
      *
@@ -130,24 +130,24 @@ public class WaterHole
      * @return actual amount of water consumed
      */
     public double drinkWater(double demand)
-    {
-        if (demand > this.getWater())
         {
+        if (demand > this.getWater())
+            {
             double consumed = getWater();
             water = 0;
             return consumed;
-        } else
-        {
+            } else
+            {
             water -= demand;
             return demand;
+            }
         }
-    }
     
     /** Get a list of the nearest n waterHoles within migration range, where n
      * is given by params.maxNearbyWaterHoles.  This is done by lazy evaluation
      * -- i.e. it is cached after the first time it's called. */
     public synchronized List<WaterHole> getNearbyWaterHoles()
-    {
+        {
         if (nearbyWaterHoles != null)
             return nearbyWaterHoles;
         
@@ -165,33 +165,33 @@ public class WaterHole
             
             if (Misc.getEuclideanDistance(location.getCoordinate(), wh.getLocation()) <= migrationRange)
                 allWaterHolesInRange.add((WaterHole)o);
-        }
+            }
             
         Collections.sort(allWaterHolesInRange, new WaterHoleDistanceComparator()); // Running this sort also populates the distanceToWaterHole hash.
         
         // Copy the first maxNearbyWaterHoles WaterHoles into the cache.
         nearbyWaterHoles = new ArrayList<WaterHole>(params.herding.getMaxNearbyWaterHoles()) {{
-            for (int i = 0; i < allWaterHolesInRange.size(); i++)
-                add(allWaterHolesInRange.get(i));
-        }};
+                for (int i = 0; i < allWaterHolesInRange.size(); i++)
+                    add(allWaterHolesInRange.get(i));
+                }};
         
         assert(repOK());
         return nearbyWaterHoles;
-    }
+        }
     
     /** A score between 0 and 1, representing the quality of the grazable land around the WaterHole. */
     public synchronized double getGrazingQuality(int time, MersenneTwisterFast random)
-    {
+        {
         assert(time >= 0);
         if (time > lastGrazingAssessment)
             assessGrazingQuality(time, random);
         assert(grazingQuality >= 0);
         assert(grazingQuality <= 1.0);
         return grazingQuality;
-    }
+        }
     
     private void assessGrazingQuality(int time, MersenneTwisterFast random)
-    {
+        {
         lastGrazingAssessment = time;
         List<GrazableArea> sampleNearbyLand = Misc.sampleNearbyGrazableAreas(this.getGrazableArea(), params, random);
         
@@ -203,35 +203,35 @@ public class WaterHole
         assert(normalizedVegetationSum >= 0);
         assert(normalizedVegetationSum <= 1.0);
         grazingQuality = normalizedVegetationSum;
-    }
+        }
     /** Ranks the WaterHole that is *closer* to this *higher* than the one that
      * is *farther*.  i.e. sorts according to distance from this in ascending
      * order. */
     private class WaterHoleDistanceComparator implements Comparator<WaterHole>
-    {   
+        {   
         @Override
         public int compare(WaterHole w1, WaterHole w2)
-        {
+            {
             double w1Distance = lazyDistance(w1);
             double w2Distance = lazyDistance(w2);
             return w1Distance > w2Distance ? -1 : (w1Distance < w2Distance ? 1 : 0);
-        }
+            }
      
         private double lazyDistance(WaterHole target)
-        {
+            {
             if (!distanceToWaterHole.containsKey(target))
                 distanceToWaterHole.put(target, Misc.getEuclideanDistance(location.getCoordinate(), target.getLocation()));
             return distanceToWaterHole.get(target);
+            }
         }
-    }
     
     final public boolean repOK()
-    {
+        {
         return params != null
-                && waterHoles != null
-                && location != null
-                && (nearbyWaterHoles == null
-                    || !(params.system.isRunExpensiveAsserts() && !Misc.containsOnlyType(nearbyWaterHoles, WaterHole.class)));
+            && waterHoles != null
+            && location != null
+            && (nearbyWaterHoles == null
+                || !(params.system.isRunExpensiveAsserts() && !Misc.containsOnlyType(nearbyWaterHoles, WaterHole.class)));
                 
+        }
     }
-}

@@ -12,11 +12,11 @@ import sim.engine.*;
  *
  */
 public class Parcel {
-	
+        
     private int density;  // density of population on parcel
     private double remoteness; //variable for assessing government control
     private double diamondMineDistance; //variable for assessing resource availability
-		
+                
     public static final int ORDERING = 1; // scheduling parcel first
     ConflictDiamonds c;
     private Region region;
@@ -25,26 +25,26 @@ public class Parcel {
     private int yLoc; //the parcels y location
 
     Parcel(){
-       super();
-    }
+        super();
+        }
     
     Parcel(ConflictDiamonds conflictDiamonds, Region r){
         c = conflictDiamonds;
         region = r;
         residingPopulation = new ArrayList<Person>();
-    }
-		
+        }
+                
     Parcel(int x, int y) {
         xLoc = x;
         yLoc = y;
         residingPopulation = new ArrayList<Person>();
-    }
-		
+        }
+                
     Parcel(ConflictDiamonds conflictDiamonds){
         c = conflictDiamonds;
         residingPopulation = new ArrayList<Person>();
 
-    }
+        }
     
     //the remoteness of the parcel in terms of distance from cities and highways
     public double getRemoteness() { return remoteness; }
@@ -56,20 +56,20 @@ public class Parcel {
     
     //the region the parcel is located in
     public Region getRegion() { return region; }
-    public void setRegion(Region r) { region = r; }	
+    public void setRegion(Region r) { region = r; }     
 
     // hold population density. parcel can have different population densities
-    public int getPopulationDensity(){ return density; }	    
+    public int getPopulationDensity(){ return density; }            
     public void setPopulationDensity(int density){ this.density = density; }
     public void addPopulation(Person p) { residingPopulation.add(p); }
-	    
-     // remove a Person
-    public void removePerson(Person p){ residingPopulation.remove(p); }	
+            
+    // remove a Person
+    public void removePerson(Person p){ residingPopulation.remove(p); } 
     public Collection getResidingPopulation() { return residingPopulation; }
-	    	    
+                    
     public void step(SimState state) {
         //anyPopulation();
-    }
+        }
     // location X
     final public int getX() {return xLoc;}
     final public void setX(int x){this.xLoc = x;}
@@ -78,4 +78,4 @@ public class Parcel {
     final public int getY(){return yLoc;}
     final public void setY(int y){this.yLoc = y;}
 
-}
+    }

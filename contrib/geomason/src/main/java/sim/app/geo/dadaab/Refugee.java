@@ -40,7 +40,7 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
     private int currentAct;
     private int latUse; // laterine use // 1-2 per day is health up to 10 if infected
     
-   // private int[] activityAccomplished = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    // private int[] activityAccomplished = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     // if accomplsh0 if not 1
     
     public static final int ORDERING = 2;
@@ -88,163 +88,163 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
         //   frequencyLaterine = 1;
         
         allRefugees.setObjectLocation(this, new Double2D(hh.getCampLocation().getX() + jitterX, hh.getCampLocation().getY() + jitterY));
-    }
+        }
 
     private void setPosition(FieldUnit position) {
         this.position = position;
 
-    }
+        }
 
     public FieldUnit getPosition() {
         return position;
-    }
+        }
 
     // goal position - where to go
     public void setGoal(FieldUnit position) {
         this.goal = position;
 
-    }
+        }
 
     public FieldUnit getGoal() {
         return goal;
-    }
+        }
 
     // home location   
     public void setHome(FieldUnit home) {
         this.home = home;
 
-    }
+        }
 
     public FieldUnit getHome() {
         return home;
-    }
+        }
 
     public void setAge(int age) {
         this.age = age;
-    }
+        }
 
     public int getAge() {
         return age;
-    }
+        }
 
     public void setSex(int sex) {
         this.sex = sex;
-    }
+        }
 
     public int getSex() {
         return sex;
-    }
+        }
 
     // education status- student or not
     public void setStudyID(int id) {
         this.studyID = id;
-    }
+        }
 
     public int getStudyID() {
         return studyID;
-    }
+        }
 
     // faimly memeber
     public void setFamily(Family hh) {
         this.hh = hh;
-    }
+        }
 
     public Family getFamily() {
         return hh;
-    }
+        }
 
     public void setLaterineUse(int l){
         this.latUse =l;
-    }
+        }
     
     public int getLaterineUse(){
         return latUse;
-    }
+        }
     // health status
     public void setHealthStatus(int status) {
         this.healthStatus = status;
-    }
+        }
 
     public int getHealthStatus() {
         return healthStatus;
-    }
+        }
     
-     public void setPrevHealthStatus(int status) {
+    public void setPrevHealthStatus(int status) {
         this.prevHealthStatus = status;
-    }
+        }
 
     public int getPrevHealthStatus() {
         return prevHealthStatus;
-    }
+        }
 
     public void setSymtomaticType(int im) {
         this.symtomaticType = im;
 
-    }
+        }
 
     public int getSymtomaticType() {
         return symtomaticType;
-    }
+        }
     // water level
     
     public void setWaterLevel(double w) {
         this.waterDemand = w;
-    }
+        }
 
     public double getWaterLevel() {
         return waterDemand;
-    }
+        }
 
     //current activity
     public void setCurrentActivity(int a) {
         this.currentAct = a;
-    }
+        }
 
     public int getCurrentActivity() {
         return currentAct;
-    }
+        }
 
     // resistance to show symptom after infection -
     public void setBodyResistance(double r) {
         this.bodyResistance = r;
-    }
+        }
 
     public double getBodyResistance() {
         return bodyResistance;
-    }
+        }
 
     // counts time after infection
     public void setInfectionPeriod(int inf) {
         this.infectionPerdiod = inf;
-    }
+        }
 
     public int getInfectionPeriod() {
         return infectionPerdiod;
-    }
+        }
     
     public void setRecoveryPeriod(int inf) {
         this.recoveryPeriod = inf;
-    }
+        }
 
     public int getRecoveryPeriod() {
         return recoveryPeriod;
-    }
+        }
     
     public void setIsrecieveTreatment(boolean tr){
         isrecieveTreatment = tr;
-    }
+        }
     
     public boolean getIsrecieveTreatment(){
         return isrecieveTreatment;
-    }
+        }
     // counts time after infection
     public void setStayingTime(int sty) {
         this.stayingTime = sty;
-    }
+        }
 
     public int getStayingTime() {
         return stayingTime;
-    }
+        }
     
 
 //    public void setProtectiveImmunity(double pImm) {
@@ -259,35 +259,35 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
         if (this.getHealthStatus() == 3) {
             // childern may die sooner than old people
             this.setBodyResistance(this.getBodyResistance() - (d.params.global.getHealthDepreciation() * (1/ Math.pow(this.age,2))));
+            }
         }
-    }
 
     public void infected() {
 
         // now you are officially infected - will show sympom
-         if(this.getHealthStatus() == 2 ){
+        if(this.getHealthStatus() == 2 ){
         
-           if (cStep == this.getInfectionPeriod()) {
+            if (cStep == this.getInfectionPeriod()) {
            
-              if (this.getSymtomaticType() == 2) { // asymtomatic paitient
-                 this.setHealthStatus(4);// recovered
-                 this.setInfectionPeriod(0);
+                if (this.getSymtomaticType() == 2) { // asymtomatic paitient
+                    this.setHealthStatus(4);// recovered
+                    this.setInfectionPeriod(0);
 //              
-              } else {
-                this.setHealthStatus(3); // immediately infected
-                this.setInfectionPeriod(0);
-             }  
-            }
+                    } else {
+                    this.setHealthStatus(3); // immediately infected
+                    this.setInfectionPeriod(0);
+                    }  
+                }
         
+            }
+
+
         }
-
-
-    }
 
     // assign the best goal 
     public void calcGoal() {
 
-     if (this.getPosition().equals(this.getHome()) == true) {
+        if (this.getPosition().equals(this.getHome()) == true) {
             int cAct = actSelect();   //   select the best goal 
             Activity act = new Activity();
             this.setGoal(act.bestActivityLocation(this, this.getHome(), cAct, d)); // search the best location of your selected activity
@@ -296,22 +296,22 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
             
             return;
 
-        } // from goal to home             
-      else if (this.getPosition().equals(this.getGoal()) == true && this.getGoal().equals(this.getHome()) != true) {
+            } // from goal to home             
+        else if (this.getPosition().equals(this.getGoal()) == true && this.getGoal().equals(this.getHome()) != true) {
             
             this.setGoal(this.getHome());
             this.setStayingTime(stayingPeriod(0));
             this.setCurrentActivity(0);
             return;
             //
-        } // incase 
+            } // incase 
         else {
             this.setGoal(this.getHome());
             this.setCurrentActivity(0);
 
             return;
+            }
         }
-    }
     
     
 
@@ -322,39 +322,39 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
         if (this.getGoal() == null) {
             //this.setGoal(this.getHome());
             return;
-        } 
+            } 
         else if (this.getPosition().equals(this.getGoal()) == true && this.getGoal().equals(this.getHome()) != true && isStay() == true) {
             return;
-        }
+            }
         // at your goal- do activity and recalulate goal  
         else if (this.getPosition().equals(this.getGoal()) == true) {
             
-                doActivity(this.getGoal(), this.getCurrentActivity());
-              if(steps % 1440 < 17){
-                  if(randomN.nextDouble() > 0.3){
-                      calcGoal();
-                  }
-              }
-              else{
-                  calcGoal();
-              }
+            doActivity(this.getGoal(), this.getCurrentActivity());
+            if(steps % 1440 < 17){
+                if(randomN.nextDouble() > 0.3){
+                    calcGoal();
+                    }
+                }
+            else{
+                calcGoal();
+                }
                 
 //            if (steps%15 == 0) {
 //                doActivity(this.getGoal(), this.getCurrentActivity());
 //                calcGoal();
 //            }
-        } // else move to your goal
+            } // else move to your goal
         else {
 
 //                           make sure we have a path to the goal!
             if (path == null || path.size() == 0) {
                 path = AStar.astarPath(d,
-                        (Node) d.closestNodes.get(this.getPosition().getX(), this.getPosition().getY()),
-                        (Node) d.closestNodes.get(this.getGoal().getX(), this.getGoal().yLoc));
+                    (Node) d.closestNodes.get(this.getPosition().getX(), this.getPosition().getY()),
+                    (Node) d.closestNodes.get(this.getGoal().getX(), this.getGoal().yLoc));
                 if (path != null) {
                     path.add(this.getGoal());
+                    }
                 }
-            }
 
 
             // determine the best location to immediately move *toward*
@@ -365,20 +365,20 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
             // the goal until such a node is found.
             if (path == null) {
                 subgoal = this.getGoal();
-            } // Otherwise we have a path and should continue to move along it
+                } // Otherwise we have a path and should continue to move along it
             else {
                 // have we reached the end of an edge? If so, move to the next edge
                 if (path.get(0).equals(this.getPosition())) {
                     path.remove(0);
-                }
+                    }
 
                 // our current subgoal is the end of the current edge
                 if (path.size() > 0) {
                     subgoal = path.get(0);
-                } else {
+                    } else {
                     subgoal = this.getGoal();
+                    }
                 }
-            }
 
 
 
@@ -412,42 +412,42 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
 
             d.allRefugees.setObjectLocation(this, new Double2D(loc.getX() + this.jitterX, loc.getY() + jitterY));
 
-        }
+            }
 
-    }
+        }
 
     //<editor-fold defaultstate="collapsed" desc="Activity Weights">
     private double schoolActivityWeight()
-    {
+        {
         boolean isSchoolDay = (tm.currentDayInWeek(cStep) < 5); // school only open from monday to friday ( day 1 to 5 of the week)
 
         // if student second priority is school
         if (this.getStudyID() == 1 && isSchoolDay) {
             return 0.8 + 0.2 * randomN.nextDouble();
-        }
+            }
         else{
-             return 0;
+            return 0;
+            }
         }
-    }
 
     private double healthActivityWeight() {
         double wHealthC;
         if (this.getHealthStatus() == 3 && this.getIsrecieveTreatment()==false) {
             wHealthC = 0.8 + 0.2 * randomN.nextDouble();
             
-        }
+            }
         else if (randomN.nextDouble() < 0.05){
             wHealthC = 0.5 + 0.5 * randomN.nextDouble();
-        }
+            }
         else {
             wHealthC = randomN.nextDouble()*(0.1 +  0.2 * randomN.nextDouble());
-        }
+            }
         return wHealthC;
-    }
+        }
 
     private double foodActivityWeight() {
         
-         // food distibution will take third
+        // food distibution will take third
         // because ration is given on scheduled time, agent give priority for food at tat day
      
         
@@ -455,14 +455,14 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
         int foodDate = 1 + (tm.dayCount(cStep) % 9);
         int dummyFood = (foodDate == this.getFamily().getRationDate()) ? 1 : 0; // if the day is not a ration day, agent will not go to food center
         if(dummyFood == 1 && this.getAge()  > 15){
-               wFoodDist = 0.6  + 0.3 * randomN.nextDouble();
+            wFoodDist = 0.6  + 0.3 * randomN.nextDouble();
       
-        }
+            }
         else{
             wFoodDist =0.1 +  0.2 * randomN.nextDouble();
-        }
+            }
         return wFoodDist * randomN.nextDouble();
-    }
+        }
     
     private double collectWaterActivityWeight() {
         double wBorehole = 0;
@@ -470,26 +470,26 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
         if (this.getAge() > 10 ){
             if (this.getFamily().getWaterAtHome() < (d.params.global.getMinimumWaterRequirement() * (this.getFamily().getMembers().numObjs ))){
                 wBorehole = 0.7 *Math.sin(this.getAge()) + 0.2 * randomN.nextDouble();
-            }
+                }
             else{
                 wBorehole = 0.2 +  0.2 * randomN.nextDouble();
+                }
             }
-        }
         
         return wBorehole * randomN.nextDouble();
-    }
+        }
 
     private double marketActivityWeight() {
         double wMarket;
         //
         if( this.getAge() > 15 && minuteInDay < (16 * 60)) {
-                    wMarket = 0.7 *Math.sin(this.getAge()) + 0.2 * randomN.nextDouble();
-                 }
-       else {
-                    wMarket =0;
+            wMarket = 0.7 *Math.sin(this.getAge()) + 0.2 * randomN.nextDouble();
+            }
+        else {
+            wMarket =0;
             }
         return wMarket * randomN.nextDouble();
-    }
+        }
 
     private double mosqueActivityWeight() {
         // worship time
@@ -497,25 +497,25 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
         if (this.getAge() > 10 ) {
             
             if (minuteInDay > (60 * 5) && minuteInDay < (60 * 6) || minuteInDay > (60 * 12) && minuteInDay < (60 * 14)
-                    || minuteInDay > (60 * 15) && minuteInDay < (60 * 17)) {
+                || minuteInDay > (60 * 15) && minuteInDay < (60 * 17)) {
                 
-              if(this.getHome().getCampID() ==1 && minuteInDay > 60 * 14){
-                  wMosque = 0.4 * (this.getAge()/150.0) +  0.2 * randomN.nextDouble() ;
-              }  
-              else  wMosque = 0.5 * (this.getAge()/150.0) +  0.4 * randomN.nextDouble() ;
+                if(this.getHome().getCampID() ==1 && minuteInDay > 60 * 14){
+                    wMosque = 0.4 * (this.getAge()/150.0) +  0.2 * randomN.nextDouble() ;
+                    }  
+                else  wMosque = 0.5 * (this.getAge()/150.0) +  0.4 * randomN.nextDouble() ;
+                }
             }
-        }
         else {
             wMosque =0.0;
-        }
+            }
         // visiting other camp should be in the monring only - if it afternoon - agent will get late to return??
         return wMosque * randomN.nextDouble();
-    }
+        }
     // </editor-fold>
     
     // check the crowded level on the road or at your goal location
     // this method is taken from Haiti project   
- /*
+    /*
      * activity selection currently is made by simple assumption that consider age, sex, need and time in most cases
      * based on these each activity is given some weight and the best of all will e selected
      */
@@ -527,12 +527,12 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
             double wHealth = 0;
             if(this.getHealthStatus() ==3){
                 wHealth = healthActivityWeight();
-            }
+                }
             else{
                 wHealth = 0;
-            }
+                }
             return (wHealth < 0.3) ? Activity.STAY_HOME : Activity.HEALTH_CENTER;
-        } else {
+            } else {
             double[] activityPriortyWeight = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
             activityPriortyWeight[1] = schoolActivityWeight();//0.08;
             activityPriortyWeight[2] = collectWaterActivityWeight();//0.15;
@@ -552,19 +552,19 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
                 if (activityPriortyWeight[i] > maximum) {
                     maximum = activityPriortyWeight[i];   // new maximum
                     curAct = i;
+                    }
                 }
-            }
             
             // Maximum weight must be > 0.3, else stay home
             if (activityPriortyWeight[curAct] < 0.3) {
                 curAct = Activity.STAY_HOME;
-            }
+                }
 
             return curAct;
+            }
+
+
         }
-
-
-    }
 
     private double visitLatrineActivityWeight() {
         double wLatrine;
@@ -573,36 +573,36 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
         //
         //
         if(this.getLaterineUse() > 0){ 
-             wLatrine = 0.3 + 0.5 *randomN.nextDouble();//
-        }
+            wLatrine = 0.3 + 0.5 *randomN.nextDouble();//
+            }
         else {
             wLatrine =0.1 +  0.2 * randomN.nextDouble();
-        }
+            }
         return wLatrine* randomN.nextDouble();
-    }
+        }
 
     private double visitRelativeActivityWeight() {
         double wSocialRel;
         //
         if( this.getAge() > 10 && minuteInDay < (16 * 60)) {
-                    wSocialRel =  0.3 * Math.sin(this.getAge()) + 0.4 * randomN.nextDouble();
-                 }
+            wSocialRel =  0.3 * Math.sin(this.getAge()) + 0.4 * randomN.nextDouble();
+            }
         else {
-                    wSocialRel =0;
-                }
+            wSocialRel =0;
+            }
         return wSocialRel* randomN.nextDouble();
-    }
+        }
 
     private double socialVisitActivityWeight() {
         double wVisitSoc;
         if( this.getAge() > 18 && minuteInDay < (16 * 60)) {
-                    wVisitSoc =  0.3 * (this.getAge()/100.0) +  0.4 * randomN.nextDouble() ;
-                 }
+            wVisitSoc =  0.3 * (this.getAge()/100.0) +  0.4 * randomN.nextDouble() ;
+            }
         else {
-                    wVisitSoc =0;
-                }
+            wVisitSoc =0;
+            }
         return wVisitSoc * randomN.nextDouble();
-    }
+        }
 
     
 
@@ -612,34 +612,34 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
         double waterReq = 2 * d.params.global.getMaximumWaterRequirement() + (2 * randomN.nextDouble() * d.params.global.getMaximumWaterRequirement()); // how many litres you can collect?
         double waterFetched = 0.0;
         double concentration = 0.0; // cholera virus
-         // check the contamination level of the water you fetch
+        // check the contamination level of the water you fetch
        
         if(f.getWater() ==0){
             concentration = 0.0;
-        }
+            }
        
         else{
             //concentration = f.getVibrioCholerae() / (f.getWater());
             concentration = f.getVibrioCholerae();
-        }
+            }
         // water from borehole
         if(f.getWater()<=0){
-             waterFetched = 0;
-             f.setWater(0);
+            waterFetched = 0;
+            f.setWater(0);
              
-        }
+            }
         
         else if (waterReq >= f.getWater()) {  // if you collect all water, water level will be 0
             waterFetched = f.getWater();
            
             f.setWater(0);
 
-        } else {
+            } else {
             waterFetched = waterReq;
             
             f.setWater(f.getWater() - waterFetched); // water level will lower by the amount you take
 
-        }
+            }
      
         double currentWater = this.getFamily().getWaterAtHome() + waterFetched;   // add water to your family bucket
 
@@ -649,12 +649,12 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
 
         if (currentWater <= 0) {
             this.getFamily().setWaterBacteriaLevel(0);
-        } //          
+            } //          
         else {
             this.getFamily().setWaterBacteriaLevel(concentration*waterFetched + this.getFamily().getWaterrBacteriaLevel()); // update the contamination level
-        }
+            }
 
-    }
+        }
     //int per = cStep;
     //int curMin = minuteInDay;
     
@@ -676,12 +676,12 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
         
         if (this.getWaterLevel() >= d.params.global.getMaximumWaterRequirement()){
             return;
-        }
+            }
         double dailyUse = 1.2 *(d.params.global.getMaximumWaterRequirement()  - this.getWaterLevel()) * randomN.nextDouble() ; // randomly
         if(dailyUse < 0){
             dailyUse =0;
             return;
-        }
+            }
         
         
         
@@ -702,10 +702,10 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
                 
         if(this.getFamily().getWaterAtHome() <  dailyUse){
             WaterUsed = this.getFamily().getWaterAtHome();
-        }
+            }
         else{
             WaterUsed = this.getFamily().getWaterAtHome() - dailyUse;
-        }
+            }
         double maxWateruse  = this.getWaterLevel() + WaterUsed;
         
         this.setWaterLevel(maxWateruse);
@@ -729,18 +729,18 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
             
             if (this.getAge() < 5) {
                 duration = 60 *(d.params.global.getcholeraInfectionDurationMAX()- 3 *d.params.global.getcholeraInfectionDurationMIN()); // hours to minute
-            } else if (this.getAge() >= 5 && this.getAge() < 15) {
+                } else if (this.getAge() >= 5 && this.getAge() < 15) {
                 duration = 60 *(d.params.global.getcholeraInfectionDurationMAX()- 2 * d.params.global.getcholeraInfectionDurationMIN()); // hours to minute
-            } else {
+                } else {
                 duration = 60 *(d.params.global.getcholeraInfectionDurationMAX()- d.params.global.getcholeraInfectionDurationMIN()); // hours to minute
-            }
+                }
             
             this.setInfectionPeriod(cStep + (d.params.global.getcholeraInfectionDurationMIN() * 60) + randomN.nextInt(duration));
 
             
-        }
+            }
 
-    }
+        }
 
     /*
      * agent may do some actiity on some location
@@ -752,7 +752,7 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
     public void doActivity(FieldUnit f, int activ) {
 
         switch (activ)
-        {
+            {
             default:
             case Activity.STAY_HOME:
                 break;
@@ -778,14 +778,14 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
                 
             case Activity.SOCIAL_RELATIVES:
                 
-                 if(randomN.nextDouble()< d.params.global.getProbabilityGuestContaminationRate()){
-                     additionalWater(f);
-                 }
-                 break;
+                if(randomN.nextDouble()< d.params.global.getProbabilityGuestContaminationRate()){
+                    additionalWater(f);
+                    }
+                break;
             case Activity.VISIT_SOCIAL:
                 if(randomN.nextDouble() < d.params.global.getProbabilityGuestContaminationRate()){
-                     additionalWater(f);
-                 }
+                    additionalWater(f);
+                    }
                 break;
                 
             case Activity.VISIT_LATRINE:
@@ -794,10 +794,10 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
 
                 if(this.getLaterineUse() <=0){
                     this.setLaterineUse(0);
-                }
+                    }
                 break;
+            }
         }
-    }
     
     public int stayingPeriod(int act){
         int period =0;
@@ -806,93 +806,93 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
         int curMin = minuteInDay;
         
         switch(act){
-            case 0:
-                period = maxStay;
-                break;
-            case 1:
-                 // time at school max until 4;00pm
-                if(curMin + maxStay + 120 >(17*60)){
-                   period = minStay;
+        case 0:
+            period = maxStay;
+            break;
+        case 1:
+            // time at school max until 4;00pm
+            if(curMin + maxStay + 120 >(17*60)){
+                period = minStay;
                 }
-                else period = maxStay + 120 ;
+            else period = maxStay + 120 ;
                 
                
-                break;
-            case 2: 
-                // time borehole max 20 minute
+            break;
+        case 2: 
+            // time borehole max 20 minute
                 
-                period = minStay+20;
+            period = minStay+20;
                
-                break;
-            case 3:
-                 // time staying at mosq max 80 minute
+            break;
+        case 3:
+            // time staying at mosq max 80 minute
                 
-                if(curMin + maxStay >(16*60)){
-                   period = minStay;
+            if(curMin + maxStay >(16*60)){
+                period = minStay;
                 }
-                else period = minStay  + randomN.nextInt(maxStay) ;
+            else period = minStay  + randomN.nextInt(maxStay) ;
                 
-                break;
-            case 4:
-                // time at the market max 5 hour
-                if(curMin + maxStay >(12*60)){
-                   period = minStay;
+            break;
+        case 4:
+            // time at the market max 5 hour
+            if(curMin + maxStay >(12*60)){
+                period = minStay;
                 }
-                else period = minStay  + randomN.nextInt(maxStay) ;
+            else period = minStay  + randomN.nextInt(maxStay) ;
                 
-                break;
-            case 5:
-                 // time at  food dist  max 5 hour
-                if(curMin + maxStay >(15*60)){
-                   period = minStay;
+            break;
+        case 5:
+            // time at  food dist  max 5 hour
+            if(curMin + maxStay >(15*60)){
+                period = minStay;
                 }
-                else period = minStay  + randomN.nextInt(maxStay) ;
+            else period = minStay  + randomN.nextInt(maxStay) ;
                
-                break;
-            case 6:
-                // depend on time quee
-                period = 0;
+            break;
+        case 6:
+            // depend on time quee
+            period = 0;
 //                if(curMin + maxStay >(18*60)){
 //                   period = minStay;
 //                }
 //                else period = minStay  + random.nextInt(maxStay) ;
 //                
-                break;
-            case 7: 
-                // time for social max until 5;00pm
+            break;
+        case 7: 
+            // time for social max until 5;00pm
                 
-                if(curMin + maxStay >(12*60)){
-                   period = minStay;
-                }
-                else period = minStay  + randomN.nextInt(maxStay) ;
-                
-                break;
-                
-            case 8:
-                  // time vist  camp 2 hour 
-                
-                if(curMin + maxStay >(12*60)){
-                   period = minStay;
-                }
-                else period = minStay  + randomN.nextInt(maxStay-60) ;
-                
-                break;
-                
-            case 9:
-                  // time laterine max until 4;00pm
+            if(curMin + maxStay >(12*60)){
                 period = minStay;
-                break;
+                }
+            else period = minStay  + randomN.nextInt(maxStay) ;
+                
+            break;
+                
+        case 8:
+            // time vist  camp 2 hour 
+                
+            if(curMin + maxStay >(12*60)){
+                period = minStay;
+                }
+            else period = minStay  + randomN.nextInt(maxStay-60) ;
+                
+            break;
+                
+        case 9:
+            // time laterine max until 4;00pm
+            period = minStay;
+            break;
 //                
 //            default:
 //                  // minimum time to stay at any location
 //                period = minStay;
 //                break;
 //                      
-        }
+            }
         
        
         return (period + curMin);
-    }
+        }
 
     // how long agent need to stay at location
     public boolean isStay() {
@@ -903,12 +903,12 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
         
         if (minuteInDay < this.getStayingTime()){
             isStay = true;
-        } 
+            } 
         else isStay = false;
         
         return isStay;
 
-    }
+        }
 
     public void useLatrine(FieldUnit f) {
 
@@ -921,38 +921,38 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
             // count number of inc
 //            this.transimissionCholera(d);// may be get contaminated -due to contaminated laterine
             f.setVibrioCholerae(0);
-        } else {
+            } else {
             // if you use open laterine, your feces will contibute for the contamination
             if (this.getHealthStatus() == 3) {
                 // if you are infected, you pollute significantly
                 f.setVibrioCholerae(current + (d.params.global.getvibrioCholeraePerInfectedPerson()* quantFeces));
                
                 
-            } // if you are health, you still are carrier of the bacteria and will cause some contamiantion
+                } // if you are health, you still are carrier of the bacteria and will cause some contamiantion
             else if (this.getHealthStatus() == 2){
                 f.setVibrioCholerae(current + (d.params.global.getvibrioCholeraePerExposedPerson() * quantFeces));
-            }
+                }
             
             else {
                 f.setVibrioCholerae(current + (d.params.global.getvibrioCholeraePerHealthyPerson() * quantFeces));
+                }
             }
-        }
 
-    }
+        }
 
     // here the idea is to force agent to utilize water each day, they loose some amout every time
     // as they are more dehydrated, they intend to use more water
     public void dehydrate() {
 
         double dailyUse = this.getWaterLevel() - 0.01; // every minute they loose 0.01* 24 * 60 = 15 liter/day
-           if (dailyUse <= 0) {
-               this.setWaterLevel(0);
+        if (dailyUse <= 0) {
+            this.setWaterLevel(0);
 
-           } else {
+            } else {
             this.setWaterLevel(dailyUse);
             }
 
-    }
+        }
 
     // incase agent get thrusty on on the road, they may get water from their current goal location
     // currently only from relatives or friends house
@@ -962,17 +962,17 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
               
         //from household infection
       
-          double cv = 0.0;
+        double cv = 0.0;
           
           
         // if you visit other camp or friends, drking some water from there
-            if(f.getRefugeeHH().isEmpty() == true){
-                return;
+        if(f.getRefugeeHH().isEmpty() == true){
+            return;
             }
-            else {
-                int r = randomN.nextInt(f.getRefugeeHH().numObjs);
+        else {
+            int r = randomN.nextInt(f.getRefugeeHH().numObjs);
                 
-                if ( ((Family) f.getRefugeeHH().objs[r]).getWaterAtHome() > 2) {
+            if ( ((Family) f.getRefugeeHH().objs[r]).getWaterAtHome() > 2) {
                 
                 cv = ((Family) f.getRefugeeHH().objs[r]).getWaterrBacteriaLevel()/1000;
                 double water = ((Family) f.getRefugeeHH().objs[r]).getWaterAtHome();
@@ -982,36 +982,36 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
                 double w = this.getWaterLevel();
                 this.setWaterLevel(w + 2);
                 if(this.getHealthStatus()==1 && cv > d.params.global.getWaterContaminationThreshold()){
-                   this.setHealthStatus(2);
-                   int  duration = 60 *(d.params.global.getcholeraInfectionDurationMAX()- d.params.global.getcholeraInfectionDurationMIN()); // hours to minute
-                   this.setInfectionPeriod(cStep + (d.params.global.getcholeraInfectionDurationMIN() * 60) + randomN.nextInt(duration));
+                    this.setHealthStatus(2);
+                    int  duration = 60 *(d.params.global.getcholeraInfectionDurationMAX()- d.params.global.getcholeraInfectionDurationMIN()); // hours to minute
+                    this.setInfectionPeriod(cStep + (d.params.global.getcholeraInfectionDurationMIN() * 60) + randomN.nextInt(duration));
             
-                }
+                    }
                 
 
-            }
+                }
                
             }
             
 
         
-    }
+        }
 
     public void recieveTreatment(FieldUnit f, Dadaab d) {
         // based on the capacity of the
         
         if (this.getHealthStatus() == 3 && f.getFacility().isReachedCapacity(f,d) == false) {
-           f.setPatientCounter(f.getPatientCounter() + 1);
+            f.setPatientCounter(f.getPatientCounter() + 1);
             if(randomN.nextDouble() < d.params.global.getprobabilityOfEffectiveNessofmedicine()){
-            int recovery = cStep + (400 + randomN.nextInt(1440));
-            this.setIsrecieveTreatment(true);
-            this.setRecoveryPeriod(recovery);
-            this.setBodyResistance(1.0);
-            }
+                int recovery = cStep + (400 + randomN.nextInt(1440));
+                this.setIsrecieveTreatment(true);
+                this.setRecoveryPeriod(recovery);
+                this.setBodyResistance(1.0);
+                }
            
             
+            }
         }
-    }
 
 //    public void setLatrineField(FieldUnit l) {
 //        this.latrine = l;
@@ -1029,82 +1029,82 @@ public class Refugee implements Steppable, Valuable, java.io.Serializable {
         
         if(cStep < 1440){
             minuteInDay = cStep;
-        }
-       else {
+            }
+        else {
             minuteInDay = cStep % 1440;
             
-        }
+            }
         
         
       
         if (this.getWaterLevel() < (d.params.global.getMinimumWaterRequirement())) {
-           utilizeWater();
+            utilizeWater();
          
-        }
+            }
         
         
         this.setPrevHealthStatus(this.getHealthStatus()); // update prveois
         if (this.getHealthStatus()==2) {
             infected();
             
-        }
+            }
         if(this.getHealthStatus()==3){
-             if(this.getRecoveryPeriod() ==cStep && this.getIsrecieveTreatment()==true ){
+            if(this.getRecoveryPeriod() ==cStep && this.getIsrecieveTreatment()==true ){
                 this.setHealthStatus(4);
                 this.setRecoveryPeriod(0);
                 this.setBodyResistance(1.0);
                 this.setIsrecieveTreatment(false);
-            }
+                }
             
            
-        }
+            }
         
         if (randomN.nextDouble() < d.params.global.getProbRecoveryToSuscebtable() && this.getHealthStatus() == 4) {
             this.setHealthStatus(1);
-        }
+            }
 
         healthDepretiation();
 
         // death
         if (this.getBodyResistance() <= 0) {
             d.killrefugee(this);
-        }
+            }
 
         dehydrate();
 
         move(cStep);
         
-          // before the day started - laterine use
+        // before the day started - laterine use
         if (cStep % 1440 == 2) {//minuteInDay == 1440
             
             
             if(this.getHealthStatus()==3){
                 this.setLaterineUse(1 + randomN.nextInt(6));
-            }
+                }
             else {
                 this.setLaterineUse(randomN.nextInt(3));
                 
+                }
             }
-        }
         
 
 
-    }
+        }
 
     public void setStoppable(Stoppable stopp) {
 
         stopper = stopp;
-    }
+        }
 
     public void stop() {
 
         stopper.stop();
-    }
+        }
 
     public double doubleValue() {
 
         return this.getHealthStatus();
 
 
+        }
     }
-}

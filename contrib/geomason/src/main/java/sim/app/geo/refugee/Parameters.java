@@ -70,10 +70,10 @@ class Parameters {
     public static double convertToKilometers(double val) {
         return (val * (Parameters.POP_BLOCK_METERS / Parameters.WORLD_TO_POP_SCALE)) / 1000.0;
 
-    }
+        }
 
     public static double convertFromKilometers(double val) {
         return (val * 1000.0) / (Parameters.POP_BLOCK_METERS / Parameters.WORLD_TO_POP_SCALE);
-    }
+        }
 
-}
+    }

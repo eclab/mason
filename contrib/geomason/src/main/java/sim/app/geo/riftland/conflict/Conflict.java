@@ -42,7 +42,7 @@ import sim.util.Valuable;
  * 
  */
 public class Conflict implements Valuable, java.io.Serializable
-{
+    {
     
     private Activity attacker_;   // herder part of household
 
@@ -57,53 +57,53 @@ public class Conflict implements Valuable, java.io.Serializable
     public final static int CONFLICT_TYPE_HH_OTHER_CULT = 4;
     
     Conflict()
-    {
+        {
         attacker_ = null;
         defending_ = null;
-    }
+        }
     
     Conflict(Activity attacker, GrazableArea defending, int conflictType)
-    {
+        {
         attacker_ = attacker;
         defending_ = defending;
         conflictType_ = conflictType;
-    }
+        }
 
     public
     Activity getAttacker()
-    {
+        {
         return attacker_;
-    }
+        }
 
     public
     void setAttacker(ActivityAtLocation attacker)
-    {
+        {
         this.attacker_ = attacker;
-    }
+        }
 
     public
     GrazableArea getDefending()
-    {
+        {
         return defending_;
-    }
+        }
 
     public
     void setDefender(GrazableArea defence)
-    {
+        {
         this.defending_ = defence;
-    }
+        }
 
     public
     int getConflictType()
-    {
+        {
         return conflictType_;
-    }
+        }
 
     public
     void setConflictType(int conflictType)
-    {
+        {
         this.conflictType_ = conflictType;
-    }
+        }
 
     /** Returns conflict type to be used in visualization
      *
@@ -112,8 +112,8 @@ public class Conflict implements Valuable, java.io.Serializable
     @Override
     public
     double doubleValue()
-    {
+        {
         return conflictType_;
-    }
+        }
 
-}
+    }

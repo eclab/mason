@@ -20,7 +20,7 @@ import sim.field.grid.IntGrid2D;
  *
  */
 public class ArcInfoASCGridExporter
-{
+    {
     private static final int DEFAULT_NODATA_VALUE = -9999;
     
     /**
@@ -37,7 +37,7 @@ public class ArcInfoASCGridExporter
      * @throws IOException
      */
     public static void write(final GeomGridField gridField, int nodata, Writer outputStream) throws IOException
-    {
+        {
         outputStream.write( "ncols         " );
         outputStream.write( Integer.toString(gridField.getGridWidth()) );
         outputStream.write( "\n" );
@@ -67,36 +67,36 @@ public class ArcInfoASCGridExporter
 
 
         switch( gridField.getGridDataType() )
-        {
+            {
             case INTEGER :
                 IntGrid2D intGrid = (IntGrid2D) gridField.getGrid();
 
                 for (int y = 0; y < intGrid.getHeight(); y++)
-                {
-                    for (int x = 0; x < intGrid.getWidth(); x++)
                     {
+                    for (int x = 0; x < intGrid.getWidth(); x++)
+                        {
                         outputStream.write( Integer.toString(intGrid.get(x, y)) );
                         outputStream.write( " " );
-                    }
+                        }
                     outputStream.write( "\n" );
-                }
+                    }
                 break;
 
             case DOUBLE :
                 DoubleGrid2D doubleGrid = (DoubleGrid2D) gridField.getGrid();
 
                 for (int y = 0; y < doubleGrid.getHeight(); y++)
-                {
-                    for (int x = 0; x < doubleGrid.getWidth(); x++)
                     {
+                    for (int x = 0; x < doubleGrid.getWidth(); x++)
+                        {
                         outputStream.write( Double.toString(doubleGrid.get(x, y)) );
                         outputStream.write( " " );
-                    }
+                        }
                     outputStream.write( "\n" );
-                }
+                    }
                 break;
+            }
         }
-    }
 
 
     /** Like write() with default NODATA value of -9999.
@@ -106,7 +106,7 @@ public class ArcInfoASCGridExporter
      * @throws IOException
      */
     public static void write( final GeomGridField gridField, Writer outputStream ) throws IOException
-    {
+        {
         write(gridField, DEFAULT_NODATA_VALUE, outputStream );
+        }
     }
-}

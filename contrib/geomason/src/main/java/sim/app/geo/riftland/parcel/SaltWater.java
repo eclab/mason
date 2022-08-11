@@ -13,7 +13,7 @@ package sim.app.geo.riftland.parcel;
  * 
  */
 public class SaltWater extends Parcel
-{
+    {
     /** Used for color table lookup
      *
      */
@@ -24,14 +24,14 @@ public class SaltWater extends Parcel
 
     
     public SaltWater()
-    {
+        {
         super();
-    }
+        }
 
     public SaltWater(int x, int y, int country)
-    {
+        {
         super(x,y, country);
-    }
+        }
     
 
     /**
@@ -41,9 +41,9 @@ public class SaltWater extends Parcel
      * @return ???
      */
     public double doubleValue()
-    {
+        {
         return COLOR_VALUE;
-    }
+        }
 
     /**
      *
@@ -51,8 +51,8 @@ public class SaltWater extends Parcel
      */
     @Override
     public boolean isNavigable()
-    {
+        {
         return false;
-    }
+        }
 
-}
+    }

@@ -46,7 +46,7 @@ import sim.util.geo.MasonGeometry;
  * push it up.
  */
 public class Gridlock extends SimState
-{
+    {
 
     private static final long serialVersionUID = 1L;
 
@@ -56,10 +56,10 @@ public class Gridlock extends SimState
      * Main function allows simulation to be run in stand-alone, non-GUI mode
      */
     public static void main(String[] args)
-    {
+        {
         doLoop(Gridlock.class, args);
         System.exit(0);
-    }
+        }
     public GeomVectorField roads = new GeomVectorField();
     public GeomVectorField censusTracts = new GeomVectorField();
     // traversable network
@@ -79,9 +79,9 @@ public class Gridlock extends SimState
     // goal Nodes. Done because we cannot seem to read in .shp file for goal nodes because
     // of an NegativeArraySize error? Any suggestions very welcome!
     Integer[] goals =
-    {
+        {
         72142, 72176, 72235, 72178
-    };
+        };
 
 
 
@@ -89,21 +89,21 @@ public class Gridlock extends SimState
      * Constructor
      */
     public Gridlock(long seed)
-    {
+        {
         super(seed);
-    }
+        }
 
 
     public boolean getGoToWork()
-    {
+        {
         return goToWork;
-    }
+        }
     
 
     public void setGoToWork(boolean val)
-    {
+        {
         goToWork = val;
-    }
+        }
 
 
 
@@ -112,10 +112,10 @@ public class Gridlock extends SimState
      */
     @Override
     public void start()
-    {
+        {
         super.start();
         try
-        {
+            {
             // read in the roads to create the transit network
             System.out.println("reading roads layer...");
 
@@ -155,21 +155,21 @@ public class Gridlock extends SimState
              * destinations
              */
             Steppable flipper = new Steppable()
-            {
+                {
                 @Override
                 public void step(SimState state)
-                {
+                    {
 
                     Gridlock gstate = (Gridlock) state;
 
                     // pass to check if anyone has not yet reached work
                     for (Agent a : gstate.agentList)
-                    {
-                        if (!a.reachedDestination)
                         {
+                        if (!a.reachedDestination)
+                            {
                             return; // someone is still moving: let him do so
+                            }
                         }
-                    }
                     // send everyone back in the opposite direction now
                     boolean toWork = gstate.goToWork;
                     gstate.goToWork = !toWork;
@@ -177,27 +177,27 @@ public class Gridlock extends SimState
                     // otherwise everyone has reached their latest destination:
                     // turn them back
                     for (Agent a : gstate.agentList)
-                    {
+                        {
                         a.flipPath();
+                        }
                     }
-                }
 
-            };
+                };
             schedule.scheduleRepeating(flipper, 10);
 
 
-        } catch (FileNotFoundException ex)
-        {
+            } catch (FileNotFoundException ex)
+            {
             System.out.println("Error: missing required data file");
-        } catch (IOException ex)
-        {
+            } catch (IOException ex)
+            {
             Logger.getLogger(Gridlock.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex)
-        {
+            } catch (Exception ex)
+            {
             Logger.getLogger(Gridlock.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            }
 
-    }
+        }
 
 
 
@@ -206,22 +206,22 @@ public class Gridlock extends SimState
      * <p/>
      */
     private void createNetwork()
-    {
+        {
         System.out.println("creating network...");
 
         network.createFromGeomField(roads);
 
         for (Object o : network.getEdges())
-        {
+            {
             GeomPlanarGraphEdge e = (GeomPlanarGraphEdge) o;
             //System.out.println(e.getDoubleAttribute("ID_ID"));
             idsToEdges.put(e.getDoubleAttribute("ID_ID").intValue(), e);
 
             e.setData(new ArrayList<Agent>());
-        }
+            }
 
         addIntersectionNodes(network.nodeIterator(), junctions);
-    }
+        }
 
 
 
@@ -231,10 +231,10 @@ public class Gridlock extends SimState
      * @param filename
      */
     public void populate(String filename)
-    {
+        {
 
         try
-        {
+            {
             InputStream fstream = Gridlock.class.getResourceAsStream(filename);
             BufferedReader d = new BufferedReader(new InputStreamReader(fstream));
             String s;
@@ -242,7 +242,7 @@ public class Gridlock extends SimState
             d.readLine(); // get rid of the header
 
             while ((s = d.readLine()) != null)
-            { // read in all data
+                { // read in all data
                 String[] bits = s.split(",");
                 int pop = Integer.parseInt(bits[11]); // TODO: reset me if desired!
                 String workTract = bits[5];
@@ -250,19 +250,19 @@ public class Gridlock extends SimState
                 String id_id = bits[13];
                 GeomPlanarGraphEdge startingEdge =
                     idsToEdges.get(
-                    (int) Double.parseDouble(id_id));
+                        (int) Double.parseDouble(id_id));
                 GeomPlanarGraphEdge goalEdge = idsToEdges.get(
                     goals[ random.nextInt(goals.length)]);
                 for (int i = 0; i < 1; i++)
-                {//pop; i++){
+                    {//pop; i++){
                     Agent a = new Agent(this, homeTract, workTract, startingEdge, goalEdge);
 
                     boolean successfulStart = a.start(this);
 
                     if (!successfulStart)
-                    {
+                        {
                         continue; // DON'T ADD IT if it's bad
-                    }
+                        }
 
 //                    MasonGeometry newGeometry = new MasonGeometry(a.getGeometry());
                     MasonGeometry newGeometry = a.getGeometry();
@@ -270,18 +270,18 @@ public class Gridlock extends SimState
                     agents.addGeometry(newGeometry);
                     agentList.add(a);
                     schedule.scheduleRepeating(a);
+                    }
                 }
-            }
 
             // clean up
             d.close();
 
-        } catch (Exception e)
-        {
+            } catch (Exception e)
+            {
             System.out.println("ERROR: issue with population file: " + e);
-        }
+            }
 
-    }
+        }
 
 
 
@@ -294,22 +294,22 @@ public class Gridlock extends SimState
      * Nodes will belong to a planar graph populated from LineString network.
      */
     private void addIntersectionNodes(Iterator<?> nodeIterator,
-                                      GeomVectorField intersections)
-    {
+        GeomVectorField intersections)
+        {
         GeometryFactory fact = new GeometryFactory();
         Coordinate coord = null;
         Point point = null;
         int counter = 0;
 
         while (nodeIterator.hasNext())
-        {
+            {
             Node node = (Node) nodeIterator.next();
             coord = node.getCoordinate();
             point = fact.createPoint(coord);
 
             junctions.addGeometry(new MasonGeometry(point));
             counter++;
+            }
         }
-    }
 
-}
+    }

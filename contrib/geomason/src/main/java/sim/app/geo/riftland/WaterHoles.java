@@ -28,45 +28,45 @@ import java.util.logging.Logger;
  * @author Eric 'Siggy' Scott
  */
 public class WaterHoles extends ArrayList
-{
+    {
     /** locations of all the watering holes */
     private SparseGrid2D waterHolesGrid;
     final private Parameters params;
     private DiscreteVoronoi voronoi;
 
     public DiscreteVoronoi getVoronoi()
-    {
+        {
         return voronoi;
-    }
+        }
     
     public WaterHole getNearestWaterHole(int x, int y)
-    {
+        {
         if (voronoi == null)
             return null;
         Int2D loc = voronoi.getNearestPoint(x, y);
         Bag waterHoles;
         synchronized(waterHolesGrid) // getObjectsAtLocation() is not threadsafe!
-        {
+            {
             waterHoles = waterHolesGrid.getObjectsAtLocation(loc.x, loc.y);
-        }
+            }
         assert(waterHoles != null);
         assert(waterHoles.size() == 1);
         return (WaterHole) waterHoles.get(0);
-    }
+        }
     
     /** The constructor only initializes the grid.  placeWaterHoles() must be
      * called externally to population the data structures. */
     public WaterHoles(Parameters params, Land land)
-    {
+        {
         this.params = params;
         waterHolesGrid = new SparseGrid2D(land.getWidth(), land.getHeight());
         assert(repOK());
-    }
+        }
 
     public SparseGrid2D getWaterHolesGrid()
-    {
+        {
         return waterHolesGrid;
-    }
+        }
     
     /** Assigns watering holes to world grid
      * 
@@ -92,7 +92,7 @@ public class WaterHoles extends ArrayList
      * 
      */
     final public void placeWaterHoles(Land land, MersenneTwisterFast random, String datapath)
-    {
+        {
         Logger.getLogger(World.class.getName()).info("Entering WaterHoles.assignWaterHoleBiasedLocator(World world)");
 
         // Reset for between run invocations
@@ -116,28 +116,28 @@ public class WaterHoles extends ArrayList
         String riverDataFile = datapath + params.world.getRiverDataFile();
 
         try
-        {
+            {
             BufferedReader riverData;
             if ("".equals(datapath))
-            {
+                {
                 riverData = new BufferedReader(new InputStreamReader(RiftlandData.class.getResourceAsStream(params.world.getRiverDataFile())));
-            }
+                }
             else
-            {
+                {
                 riverData = new BufferedReader(new FileReader(riverDataFile));
-            }
+                }
 
             String riverDataLine;
             String[] tokens;
 
             // Skip the header lines.
             for (int i = 0; i < 6; ++i)
-            {
+                {
                 riverDataLine = riverData.readLine();
-            }
+                }
 
             for (int curr_row = 0; curr_row < land.getSubAreaLowerRight().y; ++curr_row)
-            {
+                {
                 riverDataLine = riverData.readLine();
 
                 // As with assignParcels(), we only bother with processing the
@@ -145,15 +145,15 @@ public class WaterHoles extends ArrayList
                 // again, will default to the entire RiftLand if the users has
                 // not selected a subarea.
                 if (curr_row >= land.getSubAreaUpperLeft().y)
-                {
+                    {
                     tokens = riverDataLine.split("\\s+");
 
                     for (int curr_col = land.getSubAreaUpperLeft().x; curr_col < land.getSubAreaLowerRight().x; ++curr_col)
-                    {
+                        {
                         Parcel p = (Parcel) land.getParcel(curr_col, curr_row);
 
                         if (p instanceof GrazableArea)
-                        {
+                            {
                             double parcelFlowRate = Double.parseDouble(tokens[curr_col]);
                             double parcelMaxFlow = java.lang.Math.min(parcelFlowRate, params.world.getPermanentWaterThreshold());
 
@@ -166,15 +166,15 @@ public class WaterHoles extends ArrayList
 //                            totalAccumulationSoFar += parcelFlowRate == 0.0 ? 0.0 : Math.log(parcelFlowRate); //riverGrid.get(curr_col, curr_row);
 
                             roulette[curr_col][curr_row] = totalAccumulationSoFar;
-                        }
+                            }
 
+                        }
                     }
                 }
-            }
-        } catch (IOException ex)
-        {
+            } catch (IOException ex)
+            {
             Logger.getLogger(Weather.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            }
 
         // assign waterhole based on flow accumulation
         // similar to population assignment in the parcel
@@ -188,36 +188,36 @@ public class WaterHoles extends ArrayList
 
         // For all the water holes we wish to place
         for (int i = 0; i < params.world.getNumInitialWateringHoles(); i++)
-        {
+            {
 
             // If we randomly happen to pick a location that already has a
             // water hole, try again until we pick a novel location.
             do
-            {
-                while (roulette[xx][yy] < r)
                 {
+                while (roulette[xx][yy] < r)
+                    {
                     // Increment to next coordinate
                     xx++;
 
                     if ( xx >= land.getSubAreaLowerRight().x )
-                    {
+                        {
                         // Time to scan the next row.
                         yy++;
 
                         // If we're out of parcels, reset to the whole thing,
                         // rejiggle the offset, and start over.
                         if ( yy >= land.getSubAreaLowerRight().y )
-                        {
+                            {
 //                            System.out.println("Exhausted area for water holes; restarting.");
 
                             r = random.nextDouble() * ticksize;
 
                             yy = land.getSubAreaUpperLeft().y;
-                        }
+                            }
                         
                         xx = land.getSubAreaUpperLeft().x;
+                        }
                     }
-                }
 
                 // Very large basins of attraction for water holes will try
                 // to assign more than one water hole to the same location;
@@ -225,12 +225,12 @@ public class WaterHoles extends ArrayList
                 // So, if there is already a wataer hole here, just move along
                 // and hope the next tick is at a different location.
                 if (waterHolesGrid.getObjectsAtLocation(xx, yy) != null)
-                {
+                    {
                     r += ticksize;
-                }
+                    }
 
 
-            } while (waterHolesGrid.getObjectsAtLocation(xx, yy) != null);
+                } while (waterHolesGrid.getObjectsAtLocation(xx, yy) != null);
 
             // (x,y) contains a viable location, so place one
             Parcel location = land.getParcel(xx, yy);
@@ -242,38 +242,38 @@ public class WaterHoles extends ArrayList
             this.add(newWaterHole);
 
             r += ticksize;
-        }
+            }
         Logger.getLogger(World.class.getName()).info("Computing Voronoi diagram for waterHoles...");
         computeVoronoi(land);
         Logger.getLogger(World.class.getName()).info("Leaving WaterHoles.assignWaterHoleBiasedLocator(World world)");
         assert(repOK());
-    }
+        }
     
     private void computeVoronoi(Land land)
-    {
-        if (waterHolesGrid.getAllObjects().isEmpty())
         {
+        if (waterHolesGrid.getAllObjects().isEmpty())
+            {
             voronoi = null;
             return;
-        }
+            }
         final Bag allWaterHoles = waterHolesGrid.getAllObjects();
         List<Int2D> waterHolePoints = new ArrayList<Int2D>(allWaterHoles.size()) {{
-            for (Object o : allWaterHoles)
-            {
-                assert(o instanceof WaterHole);
-                WaterHole wh = (WaterHole) o;
-                add(new Int2D(wh.getX(), wh.getY()));
-            }
-        }};
+                for (Object o : allWaterHoles)
+                    {
+                    assert(o instanceof WaterHole);
+                    WaterHole wh = (WaterHole) o;
+                    add(new Int2D(wh.getX(), wh.getY()));
+                    }
+                }};
         voronoi = new SquareDiscreteVoronoi(land.getWidth(), land.getHeight(), waterHolePoints);
-    }
+        }
     
     public int countWaterHoles(int upperLeftX, int upperLeftY, int lowerRightX, int lowerRightY)
-    {
+        {
         int counter = 0;
 
         for (Object o : waterHolesGrid.locationAndIndexHash.entrySet())
-        {
+            {
             Map.Entry pairs = (Map.Entry) o;
             Int2D waterHole = ((WaterHole) pairs.getKey()).getLocation();
             int x = waterHole.getX();
@@ -281,14 +281,14 @@ public class WaterHoles extends ArrayList
 
             if (x >= upperLeftX && x <= lowerRightX && y >= upperLeftY && y <= lowerRightY)
                 counter++;
-        }
+            }
         return counter;
-    }
+        }
     
     final public boolean repOK()
-    {
+        {
         return waterHolesGrid != null
-                && !(params.system.isRunExpensiveAsserts() && !Misc.containsOnlyType(waterHolesGrid.getAllObjects(), WaterHole.class))
-                && params != null;
+            && !(params.system.isRunExpensiveAsserts() && !Misc.containsOnlyType(waterHolesGrid.getAllObjects(), WaterHole.class))
+            && params != null;
+        }
     }
-}

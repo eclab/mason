@@ -17,7 +17,7 @@ package sim.app.geo.sleuth;
  * Stores information about the underlying qualities of the raster grid cells
  */
 public class Tile
-{
+    {
 
     // position in landscape
     int x;
@@ -46,9 +46,9 @@ public class Tile
 
 
     public Tile(int x, int y)
-    {
+        {
         this.x = x;
         this.y = y;
-    }
+        }
 
-}
+    }

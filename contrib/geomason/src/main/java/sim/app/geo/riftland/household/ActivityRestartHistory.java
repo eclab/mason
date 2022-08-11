@@ -11,7 +11,7 @@ import ec.util.MersenneTwisterFast;
  * @see ActivityManager
  */
 final class ActivityRestartHistory
-{
+    {
     // Default value of 4 is meant to mean that, at initialization, approximately 1 week passes before the first start attempt (see activityRestartDays()).
     private int herdingTries;
     private int lastHerdingTryDate;
@@ -25,48 +25,48 @@ final class ActivityRestartHistory
     // <editor-fold defaultstate="collapsed" desc="Accessors">
     public int getHerdingTries() {
         return herdingTries;
-    }
+        }
 
     public int getLastHerdingTryDate() {
         return lastHerdingTryDate;
-    }
+        }
 
     public int getFarmingTries() {
         return farmingTries;
-    }
+        }
 
     public int getLastFarmingTryDate() {
         return lastFarmingTryDate;
-    }
+        }
 
     public int getLaboringTries() {
         return laboringTries;
-    }
+        }
 
     public int getLastLaboringTryDate() {
         return lastLaboringTryDate;
-    }
+        }
 
     void setFarmingRestartTries(int count, int date)
-    {
+        {
         farmingTries = count;
         lastFarmingTryDate = date;
         assert(repOK());
-    }
+        }
 
     void setHerdingRestartTries(int count, int date)
-    {
+        {
         herdingTries = Math.max(0, count);
         lastHerdingTryDate = date;
         assert(repOK());
-    }
+        }
 
     void setLaboringRestartTries(int count, int date)
-    {
+        {
         laboringTries = count;
         lastLaboringTryDate = date;
         assert(repOK());
-    }
+        }
     // </editor-fold>
 
     /**
@@ -75,11 +75,11 @@ final class ActivityRestartHistory
      * that a little Gaussian jitter is added to the next scheduled retry event.
      */
     int activityRestartDays(MersenneTwisterFast random, int count)
-    {
+        {
         int days = 0;
 
         switch (count)
-        {
+            {
             case 5:
                 days = 0;
                 break;
@@ -98,13 +98,13 @@ final class ActivityRestartHistory
             default:
                 if (count <= 0)
                     days = (int) (365 * 18 + random.nextGaussian() * 365 * 2);
-        }
+            }
         assert(repOK());
         return days;
-    }
+        }
     
     void reset()
-    {
+        {
         // Default value of 4 is meant to mean that, at initialization, approximately 1 week passes before the first start attempt (see activityRestartDays()).
         herdingTries = 4;
         lastHerdingTryDate = 0;
@@ -112,18 +112,18 @@ final class ActivityRestartHistory
         lastFarmingTryDate = 0;
         laboringTries = 4;
         lastLaboringTryDate = 0;
-    }
+        }
     
     void resetHerding()
-    {
+        {
         herdingTries = 4;
         lastHerdingTryDate = 0;
-    }
+        }
 
     /** Have enough days passed since the last restart that we can
      * try farming again? */
     boolean isFarmingRestartDelayOk(int today, MersenneTwisterFast random)
-    {
+        {
         // determine days required to restart as func of restart number
         int daysRequired = activityRestartDays(random, farmingTries);
         // determine days since last restart
@@ -131,27 +131,27 @@ final class ActivityRestartHistory
         assert(repOK());
         return (daysSince >= daysRequired);
         //return true;
-    }
+        }
 
     /** Have enough days passed since the last restart that we can
      * try herding again? */
     boolean isHerdingRestartDelayOk(int today, MersenneTwisterFast random)
-    {
+        {
         // determine days required to restart as func of restart number
         int daysRequired = activityRestartDays(random, herdingTries);
         // determine days since last restart
         int daysSince = today - this.lastHerdingTryDate;
         assert(repOK());
         return (daysSince >= daysRequired);
-    }
+        }
     
     boolean repOK()
-    {
+        {
         return herdingTries >= 0
-                && lastHerdingTryDate >= 0
-                && farmingTries >= 0
-                && lastFarmingTryDate >= 0
-                && laboringTries >= 0
-                && lastLaboringTryDate >= 0;
+            && lastHerdingTryDate >= 0
+            && farmingTries >= 0
+            && lastFarmingTryDate >= 0
+            && laboringTries >= 0
+            && lastLaboringTryDate >= 0;
+        }
     }
-}

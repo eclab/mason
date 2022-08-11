@@ -21,22 +21,22 @@ public class HerderGridPortrayal2D extends ObjectGridPortrayal2D {
     @Override
     public
     void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-    {
+        {
         //super.draw(object, graphics, info);
         
         if ( object == null)
-        {
+            {
             return;
-        }
+            }
         
         GrazableArea parcel = (GrazableArea) object;
         
         if (! parcel.getHerds().isEmpty())
-        {
+            {
             System.out.println("Parcel has herders");
+            }
         }
-    }
     
     
 
-}
+    }

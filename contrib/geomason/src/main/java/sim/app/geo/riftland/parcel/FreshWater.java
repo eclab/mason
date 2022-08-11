@@ -13,7 +13,7 @@ package sim.app.geo.riftland.parcel;
  * 
  */
 public class FreshWater extends Parcel
-{
+    {
     /** Used for color table lookup
      *
      */
@@ -22,14 +22,14 @@ public class FreshWater extends Parcel
     private static final long serialVersionUID = 1L;
 
     public FreshWater()
-    {
+        {
         super();
-    }
+        }
 
     public FreshWater(int x, int y, int country)
-    {
+        {
         super(x,y,country);
-    }
+        }
     
 
     /**
@@ -39,9 +39,9 @@ public class FreshWater extends Parcel
      * @return
      */
     public double doubleValue()
-    {
+        {
         return COLOR_VALUE;
-    }
+        }
 
 
     /**
@@ -50,8 +50,8 @@ public class FreshWater extends Parcel
      */
     @Override
     public boolean isNavigable()
-    {
+        {
         return false;
-    }
+        }
 
-}
+    }

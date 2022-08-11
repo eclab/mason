@@ -6,7 +6,7 @@
  * See the file "LICENSE" for more information
  *
  * $Id$
-*/
+ */
 package sim.app.geo.nearbyworld;
 
 import java.awt.Color;
@@ -41,7 +41,7 @@ public class NearbyWorldWithUI extends GUIState {
 
 
     public void init(Controller controller)
-    {
+        {
         super.init(controller);
 
         display = new Display2D(NearbyWorld.WIDTH, NearbyWorld.HEIGHT, this);
@@ -52,16 +52,16 @@ public class NearbyWorldWithUI extends GUIState {
         displayFrame = display.createFrame();
         controller.registerFrame(displayFrame);
         displayFrame.setVisible(true);
-    }
+        }
 
     public void start()
-    {
+        {
         super.start();
         setupPortrayals();
-    }
+        }
 
     private void setupPortrayals()
-    {
+        {
         NearbyWorld world = (NearbyWorld)state;
 
         // Since no object portrayal is given, the default GeomPortrayal with
@@ -82,13 +82,13 @@ public class NearbyWorldWithUI extends GUIState {
         display.reset();
         display.setBackdrop(Color.WHITE);
         display.repaint();
-    }
+        }
 
     public static void main(String[] args)
-    {
+        {
         NearbyWorldWithUI worldGUI = new NearbyWorldWithUI();
         Console console = new Console(worldGUI);
         console.setVisible(true);
-    }
+        }
     
-}
+    }

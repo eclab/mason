@@ -36,7 +36,7 @@ import sim.util.media.chart.TimeSeriesChartGenerator;
  *
  */
 public class WaterWorldWithUI extends GUIState
-{
+    {
 
     WaterWorld waterworld;
     public Display2D display;
@@ -55,10 +55,10 @@ public class WaterWorldWithUI extends GUIState
      * @param state
      */
     protected WaterWorldWithUI(SimState state)
-    {
+        {
         super(state);
         waterworld = (WaterWorld) state;
-    }
+        }
 
 
 
@@ -67,11 +67,11 @@ public class WaterWorldWithUI extends GUIState
      * @param args
      */
     public static void main(String[] args)
-    {
+        {
         WaterWorldWithUI simple = new WaterWorldWithUI(new WaterWorld(System.currentTimeMillis()));
         Console c = new Console(simple);
         c.setVisible(true);
-    }
+        }
 
 
 
@@ -79,9 +79,9 @@ public class WaterWorldWithUI extends GUIState
      * @return name of the simulation
      */
     public static String getName()
-    {
+        {
         return "WaterWorld";
-    }
+        }
 
 
 
@@ -90,7 +90,7 @@ public class WaterWorldWithUI extends GUIState
      * and chart data.
      */
     public void start()
-    {
+        {
         super.start();
 
         // set up the chart info
@@ -100,16 +100,16 @@ public class WaterWorldWithUI extends GUIState
 
         // schedule the chart to take data
         state.schedule.scheduleRepeating(new Steppable()
-        {
+            {
 
             public void step(SimState state)
-            {
+                {
                 numRaindrops.add(state.schedule.getTime(),
-                                 ((WaterWorld) state).drops.size(),
-                                 true);
-            }
+                    ((WaterWorld) state).drops.size(),
+                    true);
+                }
 
-        });
+            });
 
         // set up the portrayals
         ground.setField(waterworld.landscape);
@@ -124,7 +124,7 @@ public class WaterWorldWithUI extends GUIState
 
         // redraw the display
         display.repaint();
-    }
+        }
 
 
 
@@ -133,7 +133,7 @@ public class WaterWorldWithUI extends GUIState
      * the JFrames, and the chart structure.
      */
     public void init(Controller c)
-    {
+        {
         super.init(c);
 
         // make the displayer
@@ -160,7 +160,7 @@ public class WaterWorldWithUI extends GUIState
         chartFrame.pack();
         c.registerFrame(chartFrame);
 
-    }
+        }
 
 
 
@@ -168,16 +168,16 @@ public class WaterWorldWithUI extends GUIState
      * called when quitting a simulation. Does appropriate garbage collection.
      */
     public void quit()
-    {
+        {
         super.quit();
 
         if (displayFrame != null)
-        {
+            {
             displayFrame.dispose();
-        }
+            }
         displayFrame = null; // let gc
         display = null; // let gc
-    }
+        }
 
     /////////////////////
     // PORTRAYALS
@@ -190,10 +190,10 @@ public class WaterWorldWithUI extends GUIState
 
 
     class GroundPortrayal extends RectanglePortrayal2D
-    {
+        {
 
         public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-        {
+            {
             Rectangle2D.Double draw = info.draw;
             final double width = draw.width * scale;
             final double height = draw.height * scale;
@@ -207,9 +207,9 @@ public class WaterWorldWithUI extends GUIState
             graphics.setColor(elevation.getColor(b.baseheight));
 
             graphics.fillRect(x, y, w, h);
-        }
+            }
 
-    }
+        }
     // colormap for water depth
     ColorMap depth = new sim.util.gui.SimpleColorMap(
         0, 10, new Color(70, 100, 200, 0), new Color(70, 100, 200, 255));
@@ -218,10 +218,10 @@ public class WaterWorldWithUI extends GUIState
 
 
     class WaterPortrayal extends RectanglePortrayal2D
-    {
+        {
 
         public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-        {
+            {
             Rectangle2D.Double draw = info.draw;
             final double width = draw.width * scale;
             final double height = draw.height * scale;
@@ -235,7 +235,7 @@ public class WaterWorldWithUI extends GUIState
             graphics.setColor(depth.getColor(b.drops.size()));
 
             graphics.fillRect(x, y, w, h);
-        }
+            }
 
+        }
     }
-}

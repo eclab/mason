@@ -13,18 +13,18 @@ public class CropHarverster implements Steppable {
 
     public void growCrop(final Landscape ls) {
 
-            for (final Object c : ls.crops.getAllObjects()) {
-                final Crop crop = (Crop) c;
-                crop.grow(ls);
-                crop.yield(ls);
+        for (final Object c : ls.crops.getAllObjects()) {
+            final Crop crop = (Crop) c;
+            crop.grow(ls);
+            crop.yield(ls);
 
             }
-    }
+        }
 
     @Override
     public void step(final SimState state) {
         final Landscape ls = (Landscape) state;
         growCrop(ls);
 
+        }
     }
-}

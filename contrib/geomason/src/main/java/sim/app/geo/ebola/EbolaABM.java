@@ -29,7 +29,7 @@ import java.net.*;
  * Created by rohansuri on 7/7/15.
  */
 public class EbolaABM extends SimState
-{
+    {
     public Continuous2D world;
     public SparseGrid2D worldPopResolution;//all agents within each km grid cell
     public SparseGrid2D householdGrid;
@@ -138,51 +138,51 @@ public class EbolaABM extends SimState
     boolean started_index_case = false;
 
     public EbolaABM(long seed)
-    {
+        {
         super(seed);
-    }
+        }
 
     @Override
     public void start()
-    {
+        {
         super.start();
         residents = new Bag();
         try
-        {
-        EbolaBuilder.initializeWorld(this, Parameters.POP_PATH, Parameters.ADMIN_PATH, Parameters.AGE_DIST_PATH);
-        System.err.println("Ebola Initialize");
-        readInActualCases(actualGuineaCases, Parameters.ACTUAL_CASES_GUINEA);
-        System.err.println("Guinea");
-        readInActualCases(actualLiberiaCases, Parameters.ACTUAL_CASES_LIBERIA);
-        System.err.println("Liberia");
-        readInActualCases(actualSierraLeoneCases, Parameters.ACTUAL_CASES_SIERRA_LEONE);
-        System.err.println("Sierra Leone");
-        }
+            {
+            EbolaBuilder.initializeWorld(this, Parameters.POP_PATH, Parameters.ADMIN_PATH, Parameters.AGE_DIST_PATH);
+            System.err.println("Ebola Initialize");
+            readInActualCases(actualGuineaCases, Parameters.ACTUAL_CASES_GUINEA);
+            System.err.println("Guinea");
+            readInActualCases(actualLiberiaCases, Parameters.ACTUAL_CASES_LIBERIA);
+            System.err.println("Liberia");
+            readInActualCases(actualSierraLeoneCases, Parameters.ACTUAL_CASES_SIERRA_LEONE);
+            System.err.println("Sierra Leone");
+            }
         catch (URISyntaxException e)
-        {
+            {
             e.printStackTrace();
-        }
+            }
 
         Steppable chartUpdater = new Steppable()
-        {
+            {
             @Override
             public void step(SimState simState)
-            {
+                {
 
                 long cStep = simState.schedule.getSteps();
 
                 if(!started_index_case && cStep == 0)
-                {
+                    {
                     //start the index case
                     Bag residents = world.getNeighborsWithinDistance(new Double2D(6045, 4935), 6);
                     Resident resident = (Resident)residents.get(random.nextInt(residents.size()));
                     resident.setWorkDayDestination(null);//effectively make them a toddler
                     resident.setHealthStatus(Constants.INFECTIOUS);
                     started_index_case = true;
-                }
+                    }
 
-                    if(cStep % Math.round(24.0/Parameters.TEMPORAL_RESOLUTION) == 0)//only do this on the daily)
-                {
+                if(cStep % Math.round(24.0/Parameters.TEMPORAL_RESOLUTION) == 0)//only do this on the daily)
+                    {
 //                    Bag allResidents = world.getAllObjects();
 //                    int total_sus = 0;
 //                    int total_infectious = 0;
@@ -223,35 +223,35 @@ public class EbolaABM extends SimState
 
                     //update actual
                     if(!actualGuineaCases.isEmpty() && actualGuineaCases.get(0).getX() == cStep / Math.round(24.0/Parameters.TEMPORAL_RESOLUTION))
-                    {
+                        {
                         totalGuineaActual.add(actualGuineaCases.get(0).getX(), actualGuineaCases.get(0).getY());
                         actualGuineaCases.remove(0);
-                    }
+                        }
                     if(!actualLiberiaCases.isEmpty() && actualLiberiaCases.get(0).getX() == cStep / Math.round(24.0/Parameters.TEMPORAL_RESOLUTION))
-                    {
+                        {
                         totalLiberiaActual.add(actualLiberiaCases.get(0).getX(), actualLiberiaCases.get(0).getY());
                         actualLiberiaCases.remove(0);
-                    }
+                        }
                     if(!actualSierraLeoneCases.isEmpty() && actualSierraLeoneCases.get(0).getX() == cStep / Math.round(24.0/Parameters.TEMPORAL_RESOLUTION))
-                    {
+                        {
                         totalSierraLeoneActual.add(actualSierraLeoneCases.get(0).getX(), actualSierraLeoneCases.get(0).getY());
                         actualSierraLeoneCases.remove(0);
+                        }
                     }
                 }
-            }
-        };
+            };
         this.schedule.scheduleRepeating(chartUpdater);
 
         Steppable movementManager = new Steppable()
-        {
+            {
             private long lastTime;
 
             @Override
             public void step(SimState simState)
-            {
+                {
                 long cStep = simState.schedule.getSteps();
                 if(cStep % Math.round(24.0/Parameters.TEMPORAL_RESOLUTION) == 0)//only do this on the daily
-                {
+                    {
                     long now = System.currentTimeMillis();
                     if(lastTime != 0)
                         System.out.println("Day " + cStep/24 + "[" + (now-lastTime)/1000 + " secs ]");
@@ -264,59 +264,59 @@ public class EbolaABM extends SimState
                     //System.out.println("LIB");
                     moveResidents(ebolaSim.movementPatternMapLIB, ebolaSim.admin_id_lib_residents, ebolaSim.random, ebolaSim, ebolaSim.admin_id_lib_urban);
                     //System.out.println("Managing population flow [" + (System.currentTimeMillis()-now)/1000 + " sec]");
+                    }
                 }
-            }
             private void moveResidents(Map<Integer, List<MovementPattern>> movementPatternMap, Map<Integer, Bag> admin_id_residents, MersenneTwisterFast random, EbolaABM ebolaSim, Map<Integer, List<Int2D>> urbanLocations)
-            {
+                {
                 Iterator<Integer> it = movementPatternMap.keySet().iterator();
                 while(it.hasNext())
-                {
+                    {
                     int key = it.next();
                     List<MovementPattern> list = movementPatternMap.get(key);
                     for(MovementPattern mp: list)
-                    {
+                        {
                         Poisson poisson = new Poisson(mp.annual_amnt/365.0*Parameters.POPULATION_FLOW_SCALE, random);
                         int move_num = poisson.nextInt();
                         //System.out.println("Moving " + move_num + " people w/ mean of " + mp.annual_amnt/365.0);
                         if(move_num > 0)
-                        {
+                            {
                             //System.out.println(mp.source_admin + " " + key);
                             Bag residents;
 //                            if(random.nextDouble() < Parameters.fromUrban)//this person must be from an urban center
 //                                residents = ebolaSim.worldPopResolution.getObjectsAtLocation(urbanLocations.get(mp.source_admin));
 //                            else
-                                residents = admin_id_residents.get(mp.source_admin);
+                            residents = admin_id_residents.get(mp.source_admin);
 
                             if(residents == null)
-                            {
+                                {
                                 //System.out.println("NO RESIDENTS IN DISTRICT " + mp.source_admin);
                                 return;
-                            }
+                                }
                             while(move_num > 0)
-                            {
+                                {
                                 Resident randomResident;
                                 int count = 0;
                                 do
-                                {
+                                    {
                                     randomResident = (Resident)residents.get(random.nextInt(residents.size()));
                                     count++;
                                     if(count > 1000)//timeout to ensure we don't infinitely loop
                                         return;
-                                }while(!residentGood(randomResident, ebolaSim) && !randomResident.moveResidency(mp.to_admin, mp.to_country, ebolaSim));
+                                    }while(!residentGood(randomResident, ebolaSim) && !randomResident.moveResidency(mp.to_admin, mp.to_country, ebolaSim));
                                 if(randomResident != null)
-                                {
+                                    {
                                     residents.remove(randomResident);
                                     //randomResident.moveResidency(mp.to_admin, ebolaSim);
-                                }
+                                    }
                                 move_num--;
+                                }
                             }
                         }
                     }
                 }
-            }
 
             private boolean residentGood(Resident resident, EbolaABM ebolaSim)
-            {
+                {
                 if(resident.getAge() < 15)
                     return false;
                 double rand = ebolaSim.random.nextDouble();
@@ -325,46 +325,46 @@ public class EbolaABM extends SimState
                 if(resident.getHealthStatus() == Constants.DEAD)
                     return false;
                 return true;
-            }
+                }
 
-        };
+            };
 
 
 
         this.schedule.scheduleRepeating(movementManager);
-    }
+        }
 
     @Override
     public void finish()
-    {
+        {
         super.finish();
-    }
+        }
 
     public static void main(String[] args)
-    {
+        {
         doLoop(EbolaABM.class, args);
         System.exit(0);
-    }
+        }
 
     public static class MovementPattern
-    {
+        {
         public int source_admin;
         public int source_country;
         public int to_admin;
         public int to_country;
         public double annual_amnt;
         public Int2D destination;
-    }
+        }
 
     private void readInActualCases(List<Double2D> cases, URL file) throws URISyntaxException
-    {
+        {
         int date_started = 30;
 
         //start out with 0,0
         cases.add(new Double2D(0,0));
 
         try
-        {
+            {
             // buffer reader for age distribution data
             CSVReader csvReader = new CSVReader(new InputStreamReader(file.openStream()));
             csvReader.readLine();//skip the headers
@@ -374,25 +374,25 @@ public class EbolaABM extends SimState
 
             List<String> line = csvReader.readLine();
             while(!line.isEmpty())
-            {
+                {
                 //read in the county ids
                 int day = NumberFormat.getNumberInstance(java.util.Locale.US).parse(line.get(7)).intValue() + 6 + (31-date_started);
                 int cases_num = NumberFormat.getNumberInstance(java.util.Locale.US).parse(line.get(8)).intValue();
                 cases.add(new Double2D(day, cases_num));
                 line = csvReader.readLine();
+                }
+            }
+        catch(FileNotFoundException e)
+            {
+            e.printStackTrace();
+            }
+        catch (IOException e)
+            {
+            e.printStackTrace();
+            }
+        catch(java.text.ParseException e)
+            {
+            e.printStackTrace();
             }
         }
-        catch(FileNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        catch(java.text.ParseException e)
-        {
-            e.printStackTrace();
-        }
     }
-}

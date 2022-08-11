@@ -6,7 +6,7 @@
  * See the file "LICENSE" for more information
  *
  * $Id$
-*/
+ */
 package sim.app.geo.campusworld;
 import sim.app.geo.campusworld.data.CampusWorldData;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -32,14 +32,14 @@ import sim.util.geo.MasonGeometry;
  * and roads provides the environment for the agents.  During the simulation, the agents wander randomly on the walkways.
  */
 public class CampusWorld extends SimState
-{
+    {
     private static final long serialVersionUID = -4554882816749973618L;
 
     public static final int WIDTH = 300;
     public static final int HEIGHT = 300;
 
     /** How many agents in the simulation */
-	public int numAgents = 1000;
+    public int numAgents = 1000;
 
     /** Fields to hold the associated GIS information */
     public GeomVectorField walkways = new GeomVectorField(CampusWorld.WIDTH, CampusWorld.HEIGHT);
@@ -58,11 +58,11 @@ public class CampusWorld extends SimState
 
 
     public CampusWorld(final long seed)
-    {
+        {
         super(seed);
 
         try
-        {
+            {
             System.out.println("reading buildings layer");
 
             // this Bag lets us only display certain fields in the Inspector, the non-masked fields
@@ -111,12 +111,12 @@ public class CampusWorld extends SimState
 
             addIntersectionNodes(network.nodeIterator(), junctions);
 
-        } catch (final Exception ex)
-        {
+            } catch (final Exception ex)
+            {
             Logger.getLogger(CampusWorld.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            }
 
-    }
+        }
 
 
     public int getNumAgents() { return numAgents; }
@@ -127,9 +127,9 @@ public class CampusWorld extends SimState
      * each agent does not have any attributes.
      */
     void addAgents()
-    {
-        for (int i = 0; i < numAgents; i++)
         {
+        for (int i = 0; i < numAgents; i++)
+            {
             final Agent a = new Agent(this);
 
             agents.addGeometry(a.getGeometry());
@@ -139,26 +139,26 @@ public class CampusWorld extends SimState
             // we can set the userData field of any MasonGeometry.  If the userData is inspectable,
             // then the inspector will show this information
             //if (i == 10)
-            //	buildings.getGeometry("CODE", "JC").setUserData(a);
+            //  buildings.getGeometry("CODE", "JC").setUserData(a);
+            }
         }
-    }
 
 
 
     @Override
     public void finish()
-    {
+        {
         super.finish();
 
         // Save the agents layer, which has no corresponding originating
         // shape file.
         ShapeFileExporter.write("agents", agents);
-    }
+        }
 
 
     @Override
     public void start()
-    {
+        {
         super.start();
 
         agents.clear(); // clear any existing agents from previous runs
@@ -168,7 +168,7 @@ public class CampusWorld extends SimState
         // Ensure that the spatial index is made aware of the new agent
         // positions.  Scheduled to guaranteed to run after all agents moved.
         schedule.scheduleRepeating( agents.scheduleSpatialIndexUpdater(), Integer.MAX_VALUE, 1.0);
-    }
+        }
 
 
 
@@ -180,7 +180,7 @@ public class CampusWorld extends SimState
      * Nodes will belong to a planar graph populated from LineString network.
      */
     private void addIntersectionNodes(final Iterator nodeIterator, final GeomVectorField intersections)
-    {
+        {
         final GeometryFactory fact = new GeometryFactory();
         Coordinate coord = null;
         Point point = null;
@@ -188,17 +188,17 @@ public class CampusWorld extends SimState
 
         while (nodeIterator.hasNext())
             {
-                final Node node = (Node) nodeIterator.next();
-                coord = node.getCoordinate();
-                point = fact.createPoint(coord);
+            final Node node = (Node) nodeIterator.next();
+            coord = node.getCoordinate();
+            point = fact.createPoint(coord);
 
-                junctions.addGeometry(new MasonGeometry(point));
-                counter++;
+            junctions.addGeometry(new MasonGeometry(point));
+            counter++;
             }
-    }
+        }
 
     public static void main(final String[] args) {
         doLoop(CampusWorld.class, args);
         System.exit(0);
+        }
     }
-}

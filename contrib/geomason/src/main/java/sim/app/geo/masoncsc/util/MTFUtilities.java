@@ -52,39 +52,39 @@ public class MTFUtilities
         }
     
     private static double calcHammingDistance(ArrayList<Integer> list) {
-    	double distance = 0;
-    	for (int i = 0; i < list.size(); i++)
-    		distance += Math.abs(i - list.get(i));
-    	
-    	return distance;
-    }
+        double distance = 0;
+        for (int i = 0; i < list.size(); i++)
+            distance += Math.abs(i - list.get(i));
+        
+        return distance;
+        }
 
-	public static void main(String[] args) {
-		int n = 10;
-		int numTests = 5000;
-		MersenneTwisterFast random = new MersenneTwisterFast();
-		ArrayList<Integer> sortedList = new ArrayList<Integer>();
-		for (int i = 0; i < n; i++)
-			sortedList.add(i);
-		
-		ArrayList<Integer> list = new ArrayList<Integer>(sortedList);
-		
-//		for (int i = 0; i < numTests; i++) {
-//			list = new ArrayList<Integer>(sortedList);
-//			MTFUtilities.shuffle(list, random);
-////			Collections.shuffle(list);
-//			System.out.format("%.0f\n", MTFUtilities.calcHammingDistance(list));
-//		}
-		
-		ArrayList<String> stringList = new ArrayList<String>();
-		stringList.add("A");
-		stringList.add("B");
-		stringList.add("C");
-		MTFUtilities.shuffle(stringList, random);
-		System.out.println(stringList.toString());
-		
-		// Conclusion: shuffle works with different types of lists
-	}
+    public static void main(String[] args) {
+        int n = 10;
+        int numTests = 5000;
+        MersenneTwisterFast random = new MersenneTwisterFast();
+        ArrayList<Integer> sortedList = new ArrayList<Integer>();
+        for (int i = 0; i < n; i++)
+            sortedList.add(i);
+                
+        ArrayList<Integer> list = new ArrayList<Integer>(sortedList);
+                
+//              for (int i = 0; i < numTests; i++) {
+//                      list = new ArrayList<Integer>(sortedList);
+//                      MTFUtilities.shuffle(list, random);
+////                    Collections.shuffle(list);
+//                      System.out.format("%.0f\n", MTFUtilities.calcHammingDistance(list));
+//              }
+                
+        ArrayList<String> stringList = new ArrayList<String>();
+        stringList.add("A");
+        stringList.add("B");
+        stringList.add("C");
+        MTFUtilities.shuffle(stringList, random);
+        System.out.println(stringList.toString());
+                
+        // Conclusion: shuffle works with different types of lists
+        }
     
     }
         

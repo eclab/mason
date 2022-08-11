@@ -15,7 +15,7 @@ import sim.util.*;
  *
  */
 public abstract class Person {
-	
+        
     ConflictDiamonds conflict;
     Parcel residingParcel; //the current position of the person
     Region residingRegion; //the person's residing region (impacts socioeconomic conditions)
@@ -24,7 +24,7 @@ public abstract class Person {
     OtherEmployers otherEmployer; //the employer a person can be assigned to (if employed)
     DiamondMiner diamondMiner; //the employer a person is assigned to if working in diamond mines
     
-    Stoppable stopper;	
+    Stoppable stopper;  
     
     private boolean eligible = false; //person is eligible (age 5-64) to work in informal market
     private boolean activeLaborForce = false; //person is part of active labor force (employed or unemployed)
@@ -35,26 +35,26 @@ public abstract class Person {
     private boolean isMiner = false; //this is someone that is employed and is a miner
     private boolean isInitialRebel;
 
-    private double unemployed;	//probability person is unemployed
-    private Goal currentGoal;	//the person's current goal
+    private double unemployed;  //probability person is unemployed
+    private Goal currentGoal;   //the person's current goal
     private Action currentAction; //the action the person is currently taking
 
-    private static final long serialVersionUID = 1L;		
+    private static final long serialVersionUID = 1L;            
     
     public Person() {
-    	super();
-    }
+        super();
+        }
   
     public Person( ConflictDiamonds c, Parcel p, Region r ) {
-    	conflict = c;
-    	residingParcel = p;
+        conflict = c;
+        residingParcel = p;
         residingRegion = r;
-    	stopper = null;   	  	
-    }   
+        stopper = null;                 
+        }   
      
     //Each person is given an income level depending on poverty rates in the region which they reside
     //Income level = 0 (very poor), 1 (poor), 2 (not poor)
-    public double determineIncomeLevel() {	
+    public double determineIncomeLevel() {      
         double probFoodPoor = residingParcel.getRegion().getFoodPoorRate();
         double probTotalPoor = residingParcel.getRegion().getTotalPoorRate();
 
@@ -67,10 +67,10 @@ public abstract class Person {
         else this.incomeLevel = 2;
 
         return incomeLevel;
-    }
-	
+        }
+        
     public void determineLaborStatistics() {
-	//assign employment status and age based on empirical data
+        //assign employment status and age based on empirical data
         double employed = residingParcel.getRegion().getPercentEmployed();
         double laborForce = residingParcel.getRegion().getPercentLaborForce();
         double miner = residingParcel.getRegion().getPercentMiners();
@@ -97,11 +97,11 @@ public abstract class Person {
         //person is a minor if between the ages of 7 and 17 (eligible to be a child soldier)
         if (rage >= minorMinRange && rage <= minorMaxRange) {
             minor = true;
-        }
+            }
         //person is eligible to mine
         if (rage >= minerMinRange && rage <= minerMaxRange) {
             eligible = true;
-        }
+            }
 
         //determine if resident is in active labor force (i.e. eligible to work in formal market)
         if (rage >= activeLaborForceMinRange && rage <= activeLaborForceMaxRange) {
@@ -109,8 +109,8 @@ public abstract class Person {
             
             if ( rlabor < laborForce ) {
                 activeLaborForce = true;
+                }
             }
-        }
 
         //determine if resident is employed
         if ( activeLaborForce == true ) {
@@ -124,9 +124,9 @@ public abstract class Person {
 
                 if ( rminer < miner ) {
                     this.isMiner = true;
+                    }
                 }
             }
-        }
 
         //determine if resident is part of an unemployed household (this is a rough estimate)
         //the average number of household members that are active is 2
@@ -138,20 +138,20 @@ public abstract class Person {
 
             if ( conflict.random.nextDouble() > unemployed ) {
                 isEmployedHousehold = true;
-            }		
-        }		
-    }
-	
+                }           
+            }               
+        }
+        
     //behaviors -- based on PECS
     //run the intensity analyzer and execute the associated action
     public void determineBehavior() {
         currentGoal = IntensityAnalyzer.runIntensityAnalyzer(this, conflict);
         setCurrentAction(ActionSequence.runActionSequence(this, currentGoal, conflict));
-    }	
+        }   
     
     //if person becomes a rebel, initialize person as rebel
     public void rebel() {
-	//assign rebel a parcel and region
+        //assign rebel a parcel and region
         Parcel rebelparcel = residingParcel;
         Region region = residingParcel.getRegion();
         
@@ -159,11 +159,11 @@ public abstract class Person {
         if ( conflict.otherEmployer.isEmployedHere(this) )  {
             conflict.otherEmployer.removeEmployee(this);
             residingRegion.removeFormalEmployee(this);
-        }
+            }
         if ( conflict.diamondMinerEmployer.isEmployedHere(this) ) {
             conflict.diamondMinerEmployer.removeEmployee(this);
             residingRegion.removeInformalEmployee(this);
-        }
+            }
         //initialize ner rebel
         Rebel rebel = new Rebel(conflict, residingParcel, region);  
    
@@ -178,14 +178,14 @@ public abstract class Person {
         conflict.allPopulation.setObjectLocation(rebel, rebelparcel.getX(), rebelparcel.getY());  
         
         residingParcel.removePerson(this);
-        this.setResidingParcel(null);	
+        this.setResidingParcel(null);   
 
         conflict.allPopulation.remove(this);
         conflict.allResidents.remove(this);
         
         conflict.schedule.scheduleOnce(rebel);
     
-    }
+        }
     
     //move to my goal
     public void move() {
@@ -196,7 +196,7 @@ public abstract class Person {
 
         // find the set of neighbors that has max opportunity
         ArrayList <Parcel> maxOpp = new ArrayList <Parcel> ();
-        double currentremote = residingParcel.getRemoteness();	
+        double currentremote = residingParcel.getRemoteness();  
         
         //move to a parcel that reduces my risk (i.e. remoteness is high)
         for(Object o: neighbors){
@@ -204,9 +204,9 @@ public abstract class Person {
             if(p.getRegion().getRegionID() == 0 ) continue; // the tile is outside of the modeling world, can't move there
             else if( p.getRemoteness() <= currentremote && p.getDiamondMineDistance() == 0 ) {
                 maxOpp.add(p); // add our new find to it
-            }
-        }	
-					
+                }
+            }       
+                                        
         if(maxOpp.size() > 0){ // somewhere is more desirable
             // select randomly from the eligible neighbors
             Random rand = new Random();
@@ -220,61 +220,61 @@ public abstract class Person {
                     Rebel me = (Rebel) this;
                     residingRegion.removeRebels(me);
                     newregion.addRebels(me);
-                }
+                    }
                 
                 //remove me from all collections in old region
                 if (residingRegion.getActiveLaborMarket().contains(this)) {
                     residingRegion.removeActiveLaborMarket(this);
                     newregion.addActiveLaborMarket(this);
-                }
+                    }
                 if (residingRegion.getEligibleToMine().contains(this)) {
                     residingRegion.removeEligibleToMine(this);
                     newregion.addEligibleToMine(this);
-                }
+                    }
                 if (residingRegion.getFoodPoor().contains(this)) {
                     residingRegion.removeFoodPoor(this);
                     newregion.addFoodPoor(this);
-                }
+                    }
                 if (residingRegion.getFormalEmployees().contains(this)) {
                     residingRegion.removeFormalEmployee(this);
                     newregion.addFormalEmployee(this);
-                }
+                    }
                 if (residingRegion.getGoalFindInformalEmployment().contains(this)) {
                     residingRegion.removeGoalFindInformalEmployment(this);
                     newregion.addGoalFindInformalEmployment(this);
-                }
+                    }
                 if (residingRegion.getGoalRebel().contains(this)) {
                     residingRegion.removeGoalRebel(this);
                     newregion.addGoalRebel(this);
-                }
+                    }
                 if (residingRegion.getGoalRemainEmployed().contains(this)) {
                     residingRegion.removeGoalRemainEmployed(this);
                     newregion.addGoalRemainEmployed(this);
-                }
+                    }
                 if (residingRegion.getGoalStayHome().contains(this)) {
                     residingRegion.removeGoalStayHome(this);
                     newregion.addGoalStayHome(this);
-                }
+                    }
                 if (residingRegion.getInformalEmployees().contains(this)) {
                     residingRegion.removeInformalEmployee(this);
                     newregion.addInformalEmployee(this);
-                }
+                    }
                 if (residingRegion.getInitialRebel().contains(this)) {
                     residingRegion.removeInitialRebel(this);
                     newregion.addInitialRebel(this);
-                }
+                    }
                 if (residingRegion.getMinors().contains(this)) {
                     residingRegion.removeMinors(this);
                     newregion.addMinors(this);
-                }
+                    }
                 if (residingRegion.getNotPoor().contains(this)) {
                     residingRegion.removeNotPoor(this);
                     newregion.addNotPoor(this);
-                }
+                    }
                 if (residingRegion.getTotalPoor().contains(this)) {
                     residingRegion.removeTotalPoor(this);
                     newregion.addTotalPoor(this);
-                }
+                    }
                 
                 residingRegion.removePerson(this);               
                 this.setResidingRegion(newregion);
@@ -285,7 +285,7 @@ public abstract class Person {
                 this.setResidingParcel(newparcel);             
                 
                 conflict.allPopulation.setObjectLocation(this, newparcel.getX(), newparcel.getY());          
-            }
+                }
             
             else {
                 // move to this new spot
@@ -293,29 +293,29 @@ public abstract class Person {
                 newparcel.addPopulation(this);
                 this.setResidingParcel(newparcel);
                 conflict.allPopulation.setObjectLocation(this, newparcel.getX(), newparcel.getY());
-            }
+                }
             
-        }			
-    }
-	
+            }                       
+        }
+        
     //getters and setters
     public void setOpposition(boolean opp) { opposition = opp; }    
     public boolean getOpposition() { return opposition; }
 
-    public void setIncomeLevel(int inc) { incomeLevel = inc; }	
+    public void setIncomeLevel(int inc) { incomeLevel = inc; }  
     public int getIncomeLevel() { return incomeLevel; }
 
-    public void setResidingParcel(Parcel p) { residingParcel = p; }	
+    public void setResidingParcel(Parcel p) { residingParcel = p; }     
     public Parcel getResidingParcel() { return residingParcel; }
     
-    public void setResidingRegion(Region r) { residingRegion = r; }	
+    public void setResidingRegion(Region r) { residingRegion = r; }     
     public Region getResidingRegion() { return residingRegion; }
 
     public void setDiamondMiner(DiamondMiner inf) { diamondMiner = inf; }
     public DiamondMiner getDiamondMiner() { return diamondMiner; }
 
     public void setOtherEmployer(OtherEmployers formal) { otherEmployer = formal; }
-    public OtherEmployers getOtherEmployer() { return otherEmployer; }	
+    public OtherEmployers getOtherEmployer() { return otherEmployer; }  
 
     public boolean isEligible() { return eligible; }
     public void setEligible(boolean eligible) { this.eligible = eligible; }
@@ -348,5 +348,5 @@ public abstract class Person {
     public void setInitialRebel(boolean isInitialRebel) { this.isInitialRebel = isInitialRebel; }
 
     public abstract boolean isPersonType(Person obj);
-	
-}
+        
+    }

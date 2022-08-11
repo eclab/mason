@@ -24,24 +24,24 @@ import sim.util.gui.SimpleColorMap;
  * Portrayal for People in the simulation. Colors them based on their society.
  */
 class PersonPortrayal extends GeomPortrayal {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	Color darkBlue = new Color(50, 50, 100);
-	Color darkRed = new Color(100, 50, 50);
+    Color darkBlue = new Color(50, 50, 100);
+    Color darkRed = new Color(100, 50, 50);
 
-	public PersonPortrayal() {
-		super(50.0);
-	}
+    public PersonPortrayal() {
+        super(50.0);
+        }
 
-	@Override
-	/**
-	 * Render the agent as a red or blue circle with a gray outline so that it
-	 * stands out from the background.
-	 *
-	 */
-	public void draw(final Object object, final Graphics2D graphics, final DrawInfo2D info) {
-		final MasonGeometry p = (MasonGeometry) object;
-		final Person person = (Person) p.getUserData();
+    @Override
+    /**
+     * Render the agent as a red or blue circle with a gray outline so that it
+     * stands out from the background.
+     *
+     */
+    public void draw(final Object object, final Graphics2D graphics, final DrawInfo2D info) {
+        final MasonGeometry p = (MasonGeometry) object;
+        final Person person = (Person) p.getUserData();
 
 //        // First draw the gray outline
 //
@@ -54,14 +54,14 @@ class PersonPortrayal extends GeomPortrayal {
 //
 //        scale = savedScale;
 
-		// set paint based on Person's choice of color
-		if (person.getAffiliation().equals(Person.Affiliation.RED)) {
-			paint = Color.MAGENTA;
-		} else {
-			paint = Color.CYAN;
-		}
+        // set paint based on Person's choice of color
+        if (person.getAffiliation().equals(Person.Affiliation.RED)) {
+            paint = Color.MAGENTA;
+            } else {
+            paint = Color.CYAN;
+            }
 
-		super.draw(object, graphics, info);
+        super.draw(object, graphics, info);
 
 //        graphics.setPaint(paint);
 //
@@ -93,9 +93,9 @@ class PersonPortrayal extends GeomPortrayal {
 //            graphics.setPaint(darkBlue);
 //        }
 //        graphics.drawOval(x, y, w, h);
-	}
+        }
 
-}
+    }
 
 /**
  * The portrayal used to render the wards with color based on relative
@@ -103,29 +103,29 @@ class PersonPortrayal extends GeomPortrayal {
  */
 //@SuppressWarnings("restriction")
 class WardPortrayal extends GeomPortrayal {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	ColorMap cmap = new SimpleColorMap(0, 1., Color.blue, Color.red);
+    ColorMap cmap = new SimpleColorMap(0, 1., Color.blue, Color.red);
 
-	@Override
-	public void draw(final Object object, final Graphics2D graphics, final DrawInfo2D info) {
-		final SchellingGeometry poly = (SchellingGeometry) object;
+    @Override
+    public void draw(final Object object, final Graphics2D graphics, final DrawInfo2D info) {
+        final SchellingGeometry poly = (SchellingGeometry) object;
 
-		// calculate the percentage of Red Persons versus Blue Persons and choose
-		// a color accordingly
-		double numRed = 0;
+        // calculate the percentage of Red Persons versus Blue Persons and choose
+        // a color accordingly
+        double numRed = 0;
 
-		for (final Person p : poly.residents) {
-			if (p.getAffiliation().equals(Person.Affiliation.RED)) {
-				numRed++;
-			}
-		}
+        for (final Person p : poly.residents) {
+            if (p.getAffiliation().equals(Person.Affiliation.RED)) {
+                numRed++;
+                }
+            }
 
-		paint = cmap.getColor(numRed / poly.residents.size());
+        paint = cmap.getColor(numRed / poly.residents.size());
 
-		graphics.setPaint(paint);
+        graphics.setPaint(paint);
 
-		super.draw(object, graphics, info);
-	}
+        super.draw(object, graphics, info);
+        }
 
-}
+    }

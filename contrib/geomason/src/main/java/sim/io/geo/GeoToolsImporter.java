@@ -34,18 +34,18 @@ import sim.util.geo.MasonGeometry;
 
 /** 
     Use the GeoTools Java API to read geospatial data into the GeomVectorField.
- */
+*/
 public class GeoToolsImporter
-{
-    private GeoToolsImporter()
     {
-    }
+    private GeoToolsImporter()
+        {
+        }
 
 
     public static void read(final URL input, GeomVectorField field, final Bag masked) throws FileNotFoundException
-    {
-        try
         {
+        try
+            {
             Map<String, Serializable> connectParameters = new HashMap<String, Serializable>();
 
             connectParameters.put("url", input);
@@ -64,9 +64,9 @@ public class GeoToolsImporter
             iterator = collection.features();
 
             try
-            {
-                while (iterator.hasNext())
                 {
+                while (iterator.hasNext())
+                    {
                     SimpleFeature feature = iterator.next();
                     Geometry geometry = (Geometry) feature.getDefaultGeometry();
                     
@@ -74,45 +74,45 @@ public class GeoToolsImporter
                     mg.addAttributes(readAttributes(feature, masked));
 
                     field.addGeometry(mg);
-                }
-            } finally
-            {
-                if (iterator != null)
+                    }
+                } finally
                 {
+                if (iterator != null)
+                    {
                     iterator.close();
+                    }
                 }
-            }
-        } catch (Exception e)
-        {
+            } catch (Exception e)
+            {
             System.out.println("Exception in GeoToolsImportor::ingest:");
             e.printStackTrace();
+            }
         }
-    }
 
 
 
     public static Map<String,AttributeValue> readAttributes(SimpleFeature feature, Bag masked)
-    {
+        {
         Map<String, AttributeValue> fields = new TreeMap<String, AttributeValue>();
 
         for (Property property : feature.getProperties())
-        {
+            {
             String name = property.getName().getLocalPart();
 
             if (name.equals("the_geom"))
-            {
+                {
                 continue;
-            }
+                }
 
             if (masked == null || masked.contains(name))
-            {
+                {
                 Object value = property.getValue();
 
                 fields.put(name, new AttributeValue(value));
+                }
             }
-        }
 
         return fields;
-    }
+        }
 
-}
+    }

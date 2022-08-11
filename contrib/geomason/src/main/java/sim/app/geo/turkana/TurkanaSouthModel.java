@@ -38,14 +38,14 @@ import sim.io.geo.ArcInfoASCGridImporter;
  * 
  */
 public class TurkanaSouthModel extends SimState
-{
+    {
 
     private static final long serialVersionUID = 1L;
-    GeomGridField populationDensityGrid;	// integer [0,inf] indicating relative density
-    DoubleGrid2D rainGrid; 			// double [0,inf] indicating rain in mm/hr
-    GeomGridField[] monthlyRainGrids;	// array of rain grids
-    GeomGridField NdviGrid;			// double [0,1] indicating level of vegetation
-    DoubleGrid2D vegetationGrid;			// double [0,maxVegetationLevel]
+    GeomGridField populationDensityGrid;        // integer [0,inf] indicating relative density
+    DoubleGrid2D rainGrid;                      // double [0,inf] indicating rain in mm/hr
+    GeomGridField[] monthlyRainGrids;   // array of rain grids
+    GeomGridField NdviGrid;                     // double [0,1] indicating level of vegetation
+    DoubleGrid2D vegetationGrid;                        // double [0,maxVegetationLevel]
     SparseGrid2D agentGrid;
     ArrayList<Turkanian> agents = new ArrayList<Turkanian>();
     
@@ -54,7 +54,7 @@ public class TurkanaSouthModel extends SimState
     public int getTicksPerMonth() { return ticksPerMonth; }
     public void setTicksPerMonth(int val) { ticksPerMonth = val; }
 
-    public double vegetationGrowthRate = 0.1;	// for tweaking the vegetation growth
+    public double vegetationGrowthRate = 0.1;   // for tweaking the vegetation growth
     public double getVegetationGrowthRate() { return vegetationGrowthRate; }
     public void setVegetationGrowthRate(double val) { vegetationGrowthRate = val; }
 
@@ -66,23 +66,23 @@ public class TurkanaSouthModel extends SimState
     public double getMaxVegetationLevel() { return maxVegetationLevel; }
     public void setMaxVegetationLevel(double val) { maxVegetationLevel = val; }
 
-    public double energyPerUnitOfVegetation = 15;	// energy gained from eating one unit of vegetation
+    public double energyPerUnitOfVegetation = 15;       // energy gained from eating one unit of vegetation
     public double getEnergyPerUnitOfVegetation() { return energyPerUnitOfVegetation; }
     public void setEnergyPerUnitOfVegetation(double val) { energyPerUnitOfVegetation = val; }
 
-    public double birthEnergy = 20;	// new agents/herds begin with this much energy
+    public double birthEnergy = 20;     // new agents/herds begin with this much energy
     public double getBirthEnergy() { return birthEnergy; }
     public void setBirthEnergy(double val) { birthEnergy = val; }
 
-    public double energyConsumptionRate = 1;	// energy used per month
+    public double energyConsumptionRate = 1;    // energy used per month
     public double getEnergyConsumptionRate() { return energyConsumptionRate; }
     public void setEnergyConsumptionRate(double val) { energyConsumptionRate = val; }
 
-    public double starvationLevel = -2;		// cows can survive for up to 60 days without food
+    public double starvationLevel = -2;         // cows can survive for up to 60 days without food
     public double getStarvationLevel() { return starvationLevel; }
     public void setStarvationLevel(double val) { starvationLevel = val; }
 
-    public boolean initWithNDVI = true;	// if false, the initial vegetaion will be zero
+    public boolean initWithNDVI = true; // if false, the initial vegetaion will be zero
     public boolean getInitWithNDVI() { return initWithNDVI; }
     public void setInitWithNDVI(boolean val) { initWithNDVI = val; }
 
@@ -90,38 +90,38 @@ public class TurkanaSouthModel extends SimState
     public int getNumberOfAgents() { return numberOfAgents; }
     public void setNumberOfAgents(int val) { numberOfAgents = val; }
 
-    public int herderVision = 1;	// how far away herders look when considering where to go (not yet implemented)
-//	public int getHerderVision() { return herderVision; }
-//	public void setHerderVision(int val) { herderVision = val; }
+    public int herderVision = 1;        // how far away herders look when considering where to go (not yet implemented)
+//      public int getHerderVision() { return herderVision; }
+//      public void setHerderVision(int val) { herderVision = val; }
     public int windowWidth = 400;
-//	public int getWindowWidth() { return windowWidth; }
-//	public void setWindowWidth(int val) { windowWidth = val; }
+//      public int getWindowWidth() { return windowWidth; }
+//      public void setWindowWidth(int val) { windowWidth = val; }
     public int windowHeight = 400;
-//	public int getWindowHeight() { return windowHeight; }
-//	public void setWindowHeight(int val) { windowHeight = val; }
-    public boolean printStats = true;	// useful for printing the stats when running from the cmd line but not the gui
+//      public int getWindowHeight() { return windowHeight; }
+//      public void setWindowHeight(int val) { windowHeight = val; }
+    public boolean printStats = true;   // useful for printing the stats when running from the cmd line but not the gui
 
-    public int monthsOfWeather = 144;	// there are 144 files of monthly rainfall data
-    public int month = 0;	// current month
+    public int monthsOfWeather = 144;   // there are 144 files of monthly rainfall data
+    public int month = 0;       // current month
 
 
 
     public TurkanaSouthModel(long seed)
-    {
+        {
         super(seed);
-    }
+        }
 
 
 
     @Override
     public void finish()
-    {
+        {
         super.finish();
 
         // This is an example of how to automatically write grid data when the 
         // simulation finishes.
         try
-        {
+            {
             // Write out the population density grid field; it should be exactly
             // like "data/tspop2007.txt".
             BufferedWriter fos = new BufferedWriter( new FileWriter("newpop.asc") );
@@ -130,22 +130,22 @@ public class TurkanaSouthModel extends SimState
 
             fos.close();
 
-        } catch (IOException ex)
-        {
+            } catch (IOException ex)
+            {
             Logger.getLogger(TurkanaSouthModel.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-    }
 
 
 
     @Override
     public void start()
-    {
+        {
         super.start();
         month = 0;
 
         try
-        {
+            {
             // Read the raster GIS data
             populationDensityGrid = new GeomGridField();
 
@@ -164,66 +164,66 @@ public class TurkanaSouthModel extends SimState
             // Read all 144 months of rainfall data into an array
             monthlyRainGrids = new GeomGridField[monthsOfWeather];
             for (int i = 0; i < monthsOfWeather; i++)
-            {
+                {
                 monthlyRainGrids[i] = new GeomGridField();
                 
                 inputStream = TurkanaSouthModel.class.getResourceAsStream(String.format("data/%d.txt", i + 1));
                 ArcInfoASCGridImporter.read(inputStream, GridDataType.DOUBLE, monthlyRainGrids[i]);
-            }
+                }
 
             // rainGrid will hold the current month's rainfall data. Just need the dimensions for now.
             rainGrid = (DoubleGrid2D) monthlyRainGrids[0].getGrid();
-        } catch (Exception e)
-        {
+            } catch (Exception e)
+            {
             e.printStackTrace();
-        }
+            }
 
         // create the agent and vegetation grids to match the pop. grid's dimensions
         agentGrid = new SparseGrid2D(populationDensityGrid.getGridWidth(), populationDensityGrid.getGridHeight());
         vegetationGrid = new DoubleGrid2D(populationDensityGrid.getGridWidth(), populationDensityGrid.getGridHeight());
         if (initWithNDVI)
-        {
+            {
             vegetationGrid.setTo((DoubleGrid2D)NdviGrid.getGrid());
-        }
+            }
 
         createInitialPopulation();
         for (int i = 0; i < numberOfAgents; i++)
-        {
+            {
             schedule.scheduleOnce(agents.get(i));
-        }
+            }
 
         schedule.scheduleRepeating(new Steppable()
-        {
+            {
 
             @Override
             public void step(SimState state)
-            {
+                {
                 // check to see if it's time to switch months and rain grids
                 if (schedule.getSteps() % ticksPerMonth == 0)
-                {
+                    {
                     rainGrid.setTo((DoubleGrid2D)monthlyRainGrids[month % monthlyRainGrids.length].getGrid());
                     month++;
-                }
+                    }
 
                 // grow the grass
                 for (int j = 0; j < vegetationGrid.getHeight(); j++)
-                {
-                    for (int i = 0; i < vegetationGrid.getWidth(); i++)
                     {
+                    for (int i = 0; i < vegetationGrid.getWidth(); i++)
+                        {
                         double rainfall = getRainfall(i, j);
                         vegetationGrid.field[i][j] += 1.057 * Math.pow((rainfall / ticksPerMonth), 1.001) * ((DoubleGrid2D)NdviGrid.getGrid()).field[i][j] * vegetationGrowthRate;
                         vegetationGrid.field[i][j] = clamp(vegetationGrid.field[i][j], 0, maxVegetationLevel);
+                        }
+                    }
+
+                if (printStats)
+                    {
+                    System.out.format("Step: %d Population: %d\n", schedule.getSteps(), agents.size());
                     }
                 }
 
-                if (printStats)
-                {
-                    System.out.format("Step: %d Population: %d\n", schedule.getSteps(), agents.size());
-                }
-            }
-
-        });
-    }
+            });
+        }
 
 
 
@@ -231,17 +231,17 @@ public class TurkanaSouthModel extends SimState
      * Clamp the given value to be between min and max.
      */
     private double clamp(double value, double min, double max)
-    {
+        {
         if (value < min)
-        {
+            {
             return min;
-        }
+            }
         if (value > max)
-        {
+            {
             return max;
-        }
+            }
         return value;
-    }
+        }
 
 
 
@@ -249,7 +249,7 @@ public class TurkanaSouthModel extends SimState
      * Create the initial population based on the prior population densities.
      */
     public void createInitialPopulation()
-    {
+        {
         int width = populationDensityGrid.getGridWidth();
         int height = populationDensityGrid.getGridHeight();
         int length = width * height;
@@ -259,25 +259,25 @@ public class TurkanaSouthModel extends SimState
 
         // calculate a 1D array of cumulative probabilities
         for (int j = 0; j < height; j++)
-        {
-            for (int i = 0; i < width; i++)
             {
+            for (int i = 0; i < width; i++)
+                {
                 total += ((IntGrid2D)populationDensityGrid.getGrid()).field[i][j];
                 cumul[k++] = total;
+                }
             }
-        }
 
         // create the agents and add them
         agents.clear();
         for (int i = 0; i < numberOfAgents; i++)
-        {
+            {
             double val = random.nextDouble() * total; // [0,total)
             int index = linearSearch(cumul, val);
             if (index == -1)
-            {	// this should never happen
+                {   // this should never happen
                 System.out.println("ERROR: population sampling range failure.");
                 continue;
-            }
+                }
 
             // calculate the x and y indices based on the linear index
             int x = index % width;
@@ -287,8 +287,8 @@ public class TurkanaSouthModel extends SimState
             t.energy = random.nextDouble() * birthEnergy;
             agents.add(t);
             agentGrid.setObjectLocation(t, x, y);
+            }
         }
-    }
 
 
 
@@ -296,7 +296,7 @@ public class TurkanaSouthModel extends SimState
      * @return the current rainfall corresponding to the given coordinates in the vegetation grid.
      */
     public double getRainfall(int i, int j)
-    {
+        {
 
         int vWidth = vegetationGrid.getWidth();
         int vHeight = vegetationGrid.getHeight();
@@ -322,13 +322,13 @@ public class TurkanaSouthModel extends SimState
 
         // this was crucial during debugging
         if ((rx >= rWidth) || (ry >= rHeight))
-        {
+            {
             System.out.format("ERROR: getRainfall index calculation out of range.\n");
             return 0;
-        }
+            }
 
         return rainGrid.field[rx][ry];
-    }
+        }
 
 
 
@@ -337,11 +337,11 @@ public class TurkanaSouthModel extends SimState
      * @param parent
      */
     public void createOffspring(Turkanian parent)
-    {
-        if (parent.energy <= birthEnergy)
         {
+        if (parent.energy <= birthEnergy)
+            {
             return;
-        }
+            }
 
         Turkanian offspring = new Turkanian(this, parent.x, parent.y);
         parent.energy -= birthEnergy;
@@ -349,7 +349,7 @@ public class TurkanaSouthModel extends SimState
         agents.add(offspring);
         agentGrid.setObjectLocation(offspring, offspring.x, offspring.y);
         schedule.scheduleOnce(offspring);
-    }
+        }
 
 
 
@@ -357,10 +357,10 @@ public class TurkanaSouthModel extends SimState
      * Remove an agent who has died.
      */
     public void removeAgent(Turkanian t)
-    {
+        {
         agents.remove(t);
         agentGrid.remove(t);
-    }
+        }
 
 
 
@@ -369,17 +369,17 @@ public class TurkanaSouthModel extends SimState
      * in the array, it returns the first one larger than the value.
      */
     static public int linearSearch(double[] array, double value)
-    {
-        for (int i = 0; i < array.length; i++)
         {
-            if (value <= array[i])
+        for (int i = 0; i < array.length; i++)
             {
+            if (value <= array[i])
+                {
                 return i;
+                }
             }
-        }
 
         return -1;
-    }
+        }
 
 
 
@@ -390,9 +390,9 @@ public class TurkanaSouthModel extends SimState
      * @param args
      */
     public static void main(String[] args)
-    {
+        {
         doLoop(TurkanaSouthModel.class, args);
         System.exit(0);
-    }
+        }
 
-}
+    }

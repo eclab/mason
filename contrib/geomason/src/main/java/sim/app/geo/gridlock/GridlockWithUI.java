@@ -29,7 +29,7 @@ import sim.util.media.chart.TimeSeriesChartGenerator;
 
 
 public class GridlockWithUI extends GUIState
-{
+    {
 
     public Display2D display;
     public JFrame displayFrame;
@@ -44,9 +44,9 @@ public class GridlockWithUI extends GUIState
 
 
     protected GridlockWithUI(SimState state)
-    {
+        {
         super(state);
-    }
+        }
 
 
 
@@ -55,11 +55,11 @@ public class GridlockWithUI extends GUIState
      * @param args
      */
     public static void main(String[] args)
-    {
+        {
         GridlockWithUI simple = new GridlockWithUI(new Gridlock(System.currentTimeMillis()));
         Console c = new Console(simple);
         c.setVisible(true);
-    }
+        }
 
 
 
@@ -67,9 +67,9 @@ public class GridlockWithUI extends GUIState
      * @return name of the simulation
      */
     public static String getName()
-    {
+        {
         return "Gridlock";
-    }
+        }
 
 
 
@@ -78,9 +78,9 @@ public class GridlockWithUI extends GUIState
      *  modification of the coefficients
      */
     public Object getSimulationInspectedObject()
-    {
+        {
         return state;
-    }  // non-volatile
+        }  // non-volatile
 
 
 
@@ -89,7 +89,7 @@ public class GridlockWithUI extends GUIState
      * and chart data.
      */
     public void start()
-    {
+        {
         super.start();
 
         Gridlock world = (Gridlock) state;
@@ -103,38 +103,38 @@ public class GridlockWithUI extends GUIState
         trafficChart.addSeries(minSpeed, null);
 
         state.schedule.scheduleRepeating(new Steppable()
-        {
+            {
 
             public void step(SimState state)
-            {
+                {
                 Gridlock world = (Gridlock) state;
                 double maxS = 0, minS = 10000, avgS = 0, count = 0;
                 for (Agent a : world.agentList)
-                {
-                    if (a.reachedDestination)
                     {
+                    if (a.reachedDestination)
+                        {
                         continue;
-                    }
+                        }
                     count++;
                     double speed = Math.abs(a.speed);
                     avgS += speed;
                     if (speed > maxS)
-                    {
+                        {
                         maxS = speed;
-                    }
+                        }
                     if (speed < minS)
-                    {
+                        {
                         minS = speed;
+                        }
                     }
-                }
                 double time = state.schedule.time();
                 avgS /= count;
                 maxSpeed.add(time, maxS, true);
                 minSpeed.add(time, minS, true);
                 avgSpeed.add(time, avgS, true);
-            }
+                }
 
-        });
+            });
 
         roadsPortrayal.setField(world.roads);
 //        roadsPortrayal.setPortrayalForAll(new RoadPortrayal());//GeomPortrayal(Color.DARK_GRAY,0.001,false));
@@ -152,7 +152,7 @@ public class GridlockWithUI extends GUIState
 
         display.repaint();
 
-    }
+        }
 
 
 
@@ -161,7 +161,7 @@ public class GridlockWithUI extends GUIState
      * the JFrames, and the chart structure.
      */
     public void init(Controller c)
-    {
+        {
         super.init(c);
 
         // make the displayer
@@ -188,7 +188,7 @@ public class GridlockWithUI extends GUIState
         chartFrame.pack();
         c.registerFrame(chartFrame);
 
-    }
+        }
 
 
 
@@ -196,15 +196,15 @@ public class GridlockWithUI extends GUIState
      * called when quitting a simulation. Does appropriate garbage collection.
      */
     public void quit()
-    {
+        {
         super.quit();
 
         if (displayFrame != null)
-        {
+            {
             displayFrame.dispose();
-        }
+            }
         displayFrame = null; // let gc
         display = null; // let gc
-    }
+        }
 
-}
+    }

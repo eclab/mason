@@ -11,7 +11,7 @@ package sim.app.geo.riftland.parcel;
  *
  */
 public class ParkLand extends Parcel
-{
+    {
     /** Used for color table lookup
      *
      */
@@ -22,25 +22,25 @@ public class ParkLand extends Parcel
     
 
     public ParkLand()
-    {
+        {
         super();
-    }
+        }
 
     public ParkLand(int x, int y, int country)
-    {
+        {
         super(x,y,country);
-    }
+        }
 
     @Override
     public boolean isNavigable()
-    {
+        {
         return false;
-    }
+        }
 
 
     public double doubleValue()
-    {
+        {
         return COLOR_VALUE;
-    }
+        }
 
-}
+    }

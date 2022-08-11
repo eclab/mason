@@ -31,7 +31,7 @@ import sim.util.media.chart.TimeSeriesChartGenerator;
 
 
 public class PolySchellingWithUI extends GUIState
-{
+    {
 
     Display2D display;
     JFrame displayFrame;
@@ -49,31 +49,31 @@ public class PolySchellingWithUI extends GUIState
 
     /** constructor function */
     protected PolySchellingWithUI(SimState state)
-    {
+        {
         super(state);
-    }
+        }
 
 
 
     /** constructor function */
     public PolySchellingWithUI()
-    {
+        {
         super(new PolySchelling(System.currentTimeMillis()));
-    }
+        }
 
 
 
     /** return the name of the simulation */
     public static String getName()
-    {
+        {
         return "PolySchelling";
-    }
+        }
 
 
 
     /** initialize the simulation */
     public void init(Controller controller)
-    {
+        {
         super.init(controller);
 
         display = new Display2D(800, 600, this);
@@ -101,31 +101,31 @@ public class PolySchellingWithUI extends GUIState
         JFrame histoFrame = numMovesHisto.createFrame(this);
         histoFrame.pack();
         controller.registerFrame(histoFrame);
-    }
+        }
 
 
 
     /** quit the simulation, cleaning up after itself*/
     public void quit()
-    {
+        {
         super.quit();
 
         if (displayFrame != null)
-        {
+            {
             displayFrame.dispose();
-        }
+            }
         displayFrame = null;
         display = null;
-    }
+        }
 
 
 
     /** start the simulation, setting up the portrayals and charts for a new run */
     public void start()
-    {
+        {
         super.start();
         setupPortrayals();
-    }
+        }
 
 
 
@@ -133,7 +133,7 @@ public class PolySchellingWithUI extends GUIState
      * Sets up the portrayals and charts for the simulation
      */
     private void setupPortrayals()
-    {
+        {
         PolySchelling world = (PolySchelling) state;
 
         // reset the chart info
@@ -162,77 +162,77 @@ public class PolySchellingWithUI extends GUIState
         display.reset();
 
         display.repaint();
-    }
+        }
 
 
 
     /** Keeps track of the rates of happy Reds and happy Blues in the simulation */
     class HappyTracker implements Steppable
-    {
+        {
 
         public void step(SimState state)
-        {
+            {
             PolySchelling ps = (PolySchelling) state;
             double hReds = 0, hBlues = 0;
 
             // query all Persons whether their position is acceptable
             for (Person p : ps.people)
-            {
-                if (p.acceptable(p.region))
                 {
+                if (p.acceptable(p.region))
+                    {
                     if (p.color.equals("RED"))
-                    {
+                        {
                         hReds++;
-                    } else
-                    {
+                        } else
+                        {
                         hBlues++;
+                        }
                     }
                 }
-            }
             // add this data to the chart
             happyReds.add(state.schedule.getTime() / ps.people.size(),
-                          hReds / ps.totalReds, true);
+                hReds / ps.totalReds, true);
             happyBlues.add(state.schedule.getTime() / ps.people.size(),
-                           hBlues / ps.totalBlues, true);
-        }
+                hBlues / ps.totalBlues, true);
+            }
 
-    }
+        }
 
 
 
     /** Keeps track of the number of moves agents have made */
     class MoveTracker implements Steppable
-    {
+        {
 
         public void step(SimState state)
-        {
+            {
             PolySchelling ps = (PolySchelling) state;
             int numPeople = ps.people.size();
             peoplesMoves = new double[numPeople];
             for (int i = 0; i < numPeople; i++)
-            {
+                {
                 Person p = ps.people.get(i);
                 peoplesMoves[i] = p.numMoves;
-            }
+                }
             numMovesHisto.updateSeries(0, peoplesMoves);
-        }
+            }
 
-    }
+        }
 
 
 
     public static void main(String[] args)
-    {
+        {
         PolySchellingWithUI worldGUI = new PolySchellingWithUI();
         Console console = new Console(worldGUI);
         console.setVisible(true);
-    }
+        }
 
 
 
     /** The portrayal used to display Polygons with the appropriate color */
     class PolyPortrayal extends GeomPortrayal
-    {
+        {
 
         private static final long serialVersionUID = 1L;
 
@@ -240,25 +240,25 @@ public class PolySchellingWithUI extends GUIState
 
         @Override
         public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-        {
+            {
             Polygon poly = (Polygon) object;
 
             if (poly.residents.isEmpty())
-            {
+                {
                 paint = Color.gray;
-            } else if (poly.getSoc().equals("RED"))
-            {
+                } else if (poly.getSoc().equals("RED"))
+                {
                 paint = Color.red;
-            } else if (poly.getSoc().equals("BLUE"))
-            {
+                } else if (poly.getSoc().equals("BLUE"))
+                {
                 paint = Color.blue;
-            } else
-            {
+                } else
+                {
                 paint = Color.gray;
-            }
+                }
 
             super.draw(object, graphics, info);
-        }
+            }
 
+        }
     }
-}

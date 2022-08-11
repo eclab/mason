@@ -12,11 +12,11 @@ import sim.engine.Steppable;
  *
  */
 public class Resident extends Person implements Steppable {
-	
+        
     public Resident(ConflictDiamonds conflict, Parcel par, Region r) {
         super(conflict, par, r);       
-    }	
-	
+        }   
+        
     public void step(SimState state) {
 
         if ( this.residingParcel != null ) {
@@ -31,38 +31,38 @@ public class Resident extends Person implements Steppable {
                     this.setDiamondMiner(conflict.diamondMinerEmployer);
                     conflict.diamondMinerEmployer.addEmployee(this);
                     this.getResidingRegion().addInformalEmployee(this);
-                }
+                    }
                 //otherwise, join diamond miner employer
-                else {    	
+                else {          
                     this.setDiamondMiner(conflict.diamondMinerEmployer);
                     conflict.diamondMinerEmployer.addEmployee(this);
                     this.getResidingRegion().addInformalEmployee(this);
-                }
+                    }
                 if (this.getIncomeLevel() == 0) { this.getResidingRegion().removeFoodPoor(this); }
                 
                 //as a diamond miner, income is set to level one
                 this.setIncomeLevel(1);
                 this.getResidingRegion().addTotalPoor(this);
    
-            }  	
+                }   
             //if employed as a diamond miner, move closer to diamond mines
             if ( conflict.diamondMinerEmployer.isEmployedHere(this)) {
-                this.move();   			
-            }
+                this.move();                    
+                }
 
             //if should rebel is true, make person a rebel object
             if ( this.getCurrentAction() == Action.Move_Close_to_Diamond_Mines_Rebel ) {
                 rebel();   
-            }  		 			
-    	}
-      	// schedule self to update next turn!
-    	state.schedule.scheduleOnce( this );
-    }	
+                }                                   
+            }
+        // schedule self to update next turn!
+        state.schedule.scheduleOnce( this );
+        }   
 
     //determine if person object is a resident
     public boolean isPersonType(Person obj) {
         if (obj!=null && obj instanceof Resident) { return false; }
         else { return true; }
+        }
+                
     }
-		
-}

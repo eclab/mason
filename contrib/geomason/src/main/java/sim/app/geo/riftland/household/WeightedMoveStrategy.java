@@ -17,15 +17,15 @@ import sim.util.Bag;
  * @see HerdMover
  */
 class WeightedMoveStrategy implements MoveStrategy
-{
+    {
     private final Parameters params;
     
     WeightedMoveStrategy(Parameters params)
-    {
+        {
         assert(params != null);
         this.params = params;
         assert(repOK());
-    }
+        }
 
     /** Return a quality score for the given parcel
      *
@@ -40,7 +40,7 @@ class WeightedMoveStrategy implements MoveStrategy
      * @return score indicating parcel fitness
      */
     private double evaluateParcelScore(GrazableArea parcel, Herding herding, double distanceToWater)
-    {
+        {
         assert(parcel != null);
         assert(herding != null);
         assert (herding.getLocation() != null) : "evaluateParcelScore called with null location...";
@@ -89,7 +89,7 @@ class WeightedMoveStrategy implements MoveStrategy
 //        score = foodScore + waterScore + distanceScore; //
 
         return score;
-    }
+        }
 
     /** Move the herd based on Tim's weighted decision making approach
      *
@@ -103,7 +103,7 @@ class WeightedMoveStrategy implements MoveStrategy
      */
     @Override
     public GrazableArea computeTarget(World world, MersenneTwisterFast random, Herding herding)
-    {
+        {
         // Incrementally check adjacent parcels for best score up to
         // max herder vision. Break loop when a good parcel is found.
         // or herder vision is reached.
@@ -139,7 +139,7 @@ class WeightedMoveStrategy implements MoveStrategy
         double distanceToWater = CachedDistance.distance(herding.getLocation().getCoordinate(), herding.getCurrentWaterHole().getLocation());
 
         for (GrazableArea p : parcelsToSearch)
-        {
+            {
             double parcelScore = evaluateParcelScore(p, herding, distanceToWater);
 
 //          assert (!Double.isInfinite(parcelScore)) : parcelScore;
@@ -147,37 +147,37 @@ class WeightedMoveStrategy implements MoveStrategy
 
             // if this is a new best score
             if (parcelScore > bestScoreSoFar)
-            {
+                {
                 bestScoreSoFar = parcelScore;
                 bestScoreParcels.clear(); //clear the tie-bag (the bag of parcels tied for best score so far)
                 bestScoreParcels.add(p);
-            }
+                }
             else if (parcelScore == bestScoreSoFar)
                 bestScoreParcels.add(p);
           
-        }
+            }
 
         assert bestScoreParcels.numObjs > 0;
 
         int winningIndex = 0;
         if (bestScoreParcels.numObjs > 1)
-        {
+            {
             winningIndex = random.nextInt(bestScoreParcels.numObjs);
-        }
+            }
 
         GrazableArea newLocation = (GrazableArea) bestScoreParcels.objs[winningIndex];
 
         return newLocation;
-    }
+        }
     
     public final boolean repOK()
-    {
+        {
         return params != null;
-    }
+        }
     
     @Override
     public String toString()
-    {
+        {
         return "[WeightedMoveStrategy]";
+        }
     }
-}

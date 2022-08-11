@@ -34,11 +34,11 @@ public class ConflictDiamondsObserver implements Steppable {
         // both in createLogFile, and step
         conflictDiamonds = null;
         startLogFile();
-    }
+        }
 
     ConflictDiamondsObserver() {
         startLogFile();
-    }
+        }
     
     private void startLogFile() {
         // Create a CSV file to capture data for this run.
@@ -47,19 +47,19 @@ public class ConflictDiamondsObserver implements Steppable {
             // First line of file contains field names
    
             String [] header = new String [] {"Job", "Step", "RegionID", "Total Population", "Total Residents", 
-                "Total Rebels", "Initial Rebel", "Total Minors", "Eligible to Mine", "Food Poor", "Total Poor", "Not Poor", 
-                "Active Labor Market", "Formal Employees", "Informal Employees",
-                "Goal Stay Home", "Goal Find Informal Employment", "Goal Remain Employed", "Goal Rebel", "risk",
-                "Motivation Very Poor", "Motivation Poor", "Opposition Density", "Rebel Density Miner", "Rebel Density Not Miner",
-                "Rebel Density Minor", "Vision", "Government Control", "Proximate"};
+                                              "Total Rebels", "Initial Rebel", "Total Minors", "Eligible to Mine", "Food Poor", "Total Poor", "Not Poor", 
+                                              "Active Labor Market", "Formal Employees", "Informal Employees",
+                                              "Goal Stay Home", "Goal Find Informal Employment", "Goal Remain Employed", "Goal Rebel", "risk",
+                                              "Motivation Very Poor", "Motivation Poor", "Opposition Density", "Rebel Density Miner", "Rebel Density Not Miner",
+                                              "Rebel Density Minor", "Vision", "Government Control", "Proximate"};
             
             dataCSVFile.writeLine(header);
-        }
+            }
 
         catch (IOException ex) {
             Logger.getLogger(ConflictDiamonds.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-    }
     
     public void step(SimState state) {
         conflictDiamonds  = (ConflictDiamonds)state;
@@ -121,29 +121,29 @@ public class ConflictDiamondsObserver implements Steppable {
             String initialRebel = Integer.toString(regionInitialRebels);
              
             data = new String [] {job, step, regionID, totalPopulation, totalResidents, totalRebels, initialRebel,
-                totalMinors, totalEligibleToMine, totalFoodPoor, totalTotalPoor, totalNotPoor, totalActiveLaborMarket,
-                totalFormalEmployees, totalInformalEmployees, goalStayHome, goalFindInformalEmployment,
-                goalRemainEmployed, goalRebel, risk, motivationVeryPoor, motivationPoor, opposition, rebelDensityMiner,
-                rebelDensityNotMiner, rebelDensityMinor, vision, governmentControl, proximate };
+                                  totalMinors, totalEligibleToMine, totalFoodPoor, totalTotalPoor, totalNotPoor, totalActiveLaborMarket,
+                                  totalFormalEmployees, totalInformalEmployees, goalStayHome, goalFindInformalEmployment,
+                                  goalRemainEmployed, goalRebel, risk, motivationVeryPoor, motivationPoor, opposition, rebelDensityMiner,
+                                  rebelDensityNotMiner, rebelDensityMinor, vision, governmentControl, proximate };
             
-             try {
-                    this.dataCSVFile.writeLine(data);
+            try {
+                this.dataCSVFile.writeLine(data);
                 }
-                catch (IOException ex) {
-                    Logger.getLogger(ConflictDiamondsObserver.class.getName()).log(Level.SEVERE, null, ex);
+            catch (IOException ex) {
+                Logger.getLogger(ConflictDiamondsObserver.class.getName()).log(Level.SEVERE, null, ex);
                 }           
-        }
+            }
         this.step++;
-    }
+        }
     
     void finish() {
         try {
             this.dataFileBuffer.close();
-        }
+            }
         catch (IOException ex) {
             Logger.getLogger(ConflictDiamondsObserver.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-    }
     
     //create files
     private void createLogFile() throws IOException {
@@ -155,20 +155,20 @@ public class ConflictDiamondsObserver implements Steppable {
         this.dataFileBuffer = new BufferedWriter(new FileWriter(filename));
         this.dataCSVFile = new CSVWriter(dataFileBuffer);
         
-    }
+        }
     
     private void writeObject(java.io.ObjectOutputStream out)
         throws IOException {
         out.writeInt(step);
 
-    }
+        }
 
     private void readObject(java.io.ObjectInputStream in)
         throws IOException, ClassNotFoundException {
         step = in.readInt();
 
         startLogFile();
-    }
+        }
         
     
-}
+    }

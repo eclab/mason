@@ -31,7 +31,7 @@ import sim.util.geo.MasonGeometry;
  *
  */
 public class OGRImporter 
-{
+    {
 
     /**
      * @param inputResource for the data
@@ -40,53 +40,53 @@ public class OGRImporter
      * @throws FileNotFoundException
      */
     public static void read(final URL inputResource, GeomVectorField field, Bag masked) throws FileNotFoundException
-    {
+        {
         // register all the data format drivers
         ogr.RegisterAll();
 
         DataSource dataSource = ogr.Open(inputResource.toString(), false);
         if (dataSource == null)
-        {
+            {
             throw new FileNotFoundException(inputResource + " not found");
-        }
+            }
 
         Driver driver = dataSource.GetDriver();
         if (driver == null)
-        {
+            {
             throw new FileNotFoundException(inputResource + " not found");
-        }
+            }
 
 //        System.out.println("INFO: Open of `" + input + "'\n"
 //            + "      using driver `" + driver.GetName() + "' successful.");
 
         for (int i = 0; i < dataSource.GetLayerCount(); i++)
-        {
+            {
             Layer layer = dataSource.GetLayer(i);
 
             if (layer == null)
-            {
+                {
                 System.out.println("FAILURE: Couldn't fetch advertised layer " + i + "!");
                 return;
-            } else
-            {
+                } else
+                {
                 readLayer(layer, field, masked);
+                }
             }
         }
-    }
 
 
 
     private static void readLayer(Layer layer, GeomVectorField field, Bag masked)
-    {
+        {
         FeatureDefn poDefn = layer.GetLayerDefn();
 
         if (poDefn.GetGeomType() != ogr.wkbLineString
             && poDefn.GetGeomType() != ogr.wkbPolygon
             && poDefn.GetGeomType() != ogr.wkbPoint)
-        {
+            {
             System.out.println("Unsupported type: " + poDefn.GetGeomType());
             return;
-        }
+            }
 
         WKTReader rdr = new WKTReader();
         String wktString = null;
@@ -96,85 +96,85 @@ public class OGRImporter
 
 
         while (feature != null)
-        {
+            {
             Geometry ogrGeometry = feature.GetGeometryRef();
 
             if (ogrGeometry == null)
-            {
+                {
                 feature = layer.GetNextFeature();
                 continue;
-            }
+                }
 
             wktString = ogrGeometry.ExportToWkt();
             try
-            {
+                {
                 Map<String, AttributeValue> myAttributeInfo = readAttributes(feature, masked);
                 geometry = rdr.read(wktString);
 
                 if (geometry instanceof GeometryCollection)
-                {
+                    {
                     GeometryCollection gc = (GeometryCollection) geometry;
                     for (int i = 0; i < gc.getNumGeometries(); i++)
-                    {
+                        {
                         com.vividsolutions.jts.geom.Geometry geom = gc.getGeometryN(i);
                         MasonGeometry mg = new MasonGeometry(geom);
                         mg.addAttributes(myAttributeInfo);
                         field.addGeometry(mg);
-                    }
-                } else
-                {
+                        }
+                    } else
+                    {
                     MasonGeometry mg = new MasonGeometry(geometry);
                     mg.addAttributes(myAttributeInfo);
                     field.addGeometry(mg);
-                }
-            } catch (Exception ex)
-            {
+                    }
+                } catch (Exception ex)
+                {
                 Logger.getLogger(OGRImporter.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                }
 
             feature.delete(); // free up resources
             feature = layer.GetNextFeature();
+            }
         }
-    }
 
 
 
     public static Map<String, AttributeValue> readAttributes(Feature feature, Bag masked)
-    {
+        {
         String key = "";
         Object val;
         TreeMap<String, AttributeValue> fields = new TreeMap<String, AttributeValue>();
         for (int i = 0; i < feature.GetFieldCount(); i++)
-        {
+            {
             FieldDefn fieldDef = feature.GetFieldDefnRef(i);
             key = fieldDef.GetNameRef();
 
             if (masked == null || masked.contains(key))
-            {
+                {
                 int fieldType = fieldDef.GetFieldType();
 
                 if (fieldType == ogrConstants.OFTString)
-                {
+                    {
                     val = feature.GetFieldAsString(i);
-                } else if (fieldType == ogrConstants.OFTInteger)
-                {
+                    } else if (fieldType == ogrConstants.OFTInteger)
+                    {
                     val = new Integer(feature.GetFieldAsInteger(i));
-                } else if (fieldType == ogrConstants.OFTReal)
-                {
+                    } else if (fieldType == ogrConstants.OFTReal)
+                    {
                     val = new Double(feature.GetFieldAsDouble(i));
-                }
+                    }
                 else // If it's not a number or a string, just convert to string
-                {
+                    {
                     val = feature.GetFieldAsString(i);
-                }
+                    }
 
                 AttributeValue attr = new AttributeValue(val);
 //                attr.setValue(val);
 
                 fields.put(key, attr);
+                }
             }
-        }
         return fields;
-    }
+        }
 
-}
+    }

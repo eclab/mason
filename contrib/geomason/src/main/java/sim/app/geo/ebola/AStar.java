@@ -32,12 +32,12 @@ public class AStar {
         long startTime = System.currentTimeMillis();
         if (start == null || goal == null) {
             System.out.println("Error: invalid node provided to AStar");
-        }
+            }
 
         // containers for the metainformation about the Nodes relative to the 
         // A* search
         HashMap<EbolaBuilder.Node, AStarNodeWrapper> foundNodes =
-                new HashMap<EbolaBuilder.Node, AStarNodeWrapper>();
+            new HashMap<EbolaBuilder.Node, AStarNodeWrapper>();
 
 
         AStarNodeWrapper startNode = new AStarNodeWrapper(start);
@@ -51,7 +51,7 @@ public class AStar {
 
         // A* containers: allRoadNodes to be investigated, allRoadNodes that have been investigated
         HashSet<AStarNodeWrapper> closedSet = new HashSet<>(10000),
-                openSet = new HashSet<>(10000);
+            openSet = new HashSet<>(10000);
         PriorityQueue<AStarNodeWrapper> openSetQueue = new PriorityQueue<>(10000);
         openSet.add(startNode);
         openSetQueue.add(startNode);
@@ -60,13 +60,13 @@ public class AStar {
             //AStarNodeWrapper x = findMin(openSet); // find the shortest path so far
             AStarNodeWrapper x = openSetQueue.peek();
             if(x == null)
-            {
+                {
                 AStarNodeWrapper n = findMin(openSet);
-            }
+                }
             if(x.node == goal ){ // we have found the shortest possible path to the goal!
                 // Reconstruct the path and send it back.
                 return reconstructRoute(goalNode, startNode, goalNode, speed);
-            }
+                }
             openSet.remove(x); // maintain the lists
             openSetQueue.remove();
             closedSet.add(x);
@@ -85,7 +85,7 @@ public class AStar {
                 else{
                     nextNode = new AStarNodeWrapper(n);
                     foundNodes.put( n, nextNode );
-                }
+                    }
 
                 if(closedSet.contains(nextNode)) // it has already been considered
                     continue;
@@ -99,25 +99,25 @@ public class AStar {
                     openSetQueue.add(nextNode);
                     nextNode.hx = heuristic(n, goal);
                     better = true;
-                }
+                    }
                 else if(tentativeCost < nextNode.gx){
                     better = true;
-                }
+                    }
 
                 // store A* information about this promising candidate node
                 if(better){
                     nextNode.cameFrom = x;
                     nextNode.gx = tentativeCost;
                     nextNode.fx = nextNode.gx + nextNode.hx;
+                    }
                 }
-            }
 
 //            if(foundNodes.size()%10000 == 0)
 //                System.out.println("Time = " + System.currentTimeMillis());
-        }
+            }
         //System.out.println("Searched " + foundNodes.size() + " nodes but could not find it");
         return null;
-    }
+        }
 
     /**
      * Uses Djikstra to find the closest in the list of endNodes.  Returns the endNode that is closest.
@@ -128,7 +128,7 @@ public class AStar {
      * @return
      */
     public static Route getNearestNode(EbolaBuilder.Node start, Map<EbolaBuilder.Node, List<Structure>> endNodes, double max_distance, boolean check_capacity, double speed)
-    {
+        {
         //        int[] cacheKey = new int[] {start.location.xLoc, start.location.yLoc, goal.location.xLoc, goal.location.yLoc};
 //        if (cache.containsKey(cacheKey))
 //            return cache.get(cacheKey);
@@ -137,12 +137,12 @@ public class AStar {
         long startTime = System.currentTimeMillis();
         if (start == null || endNodes == null) {
             System.out.println("Error: invalid node provided to AStar");
-        }
+            }
 
         // containers for the metainformation about the Nodes relative to the
         // A* search
         HashMap<EbolaBuilder.Node, AStarNodeWrapper> foundNodes =
-                new HashMap<EbolaBuilder.Node, AStarNodeWrapper>();
+            new HashMap<EbolaBuilder.Node, AStarNodeWrapper>();
 
 
         AStarNodeWrapper startNode = new AStarNodeWrapper(start);
@@ -156,7 +156,7 @@ public class AStar {
 
         // A* containers: allRoadNodes to be investigated, allRoadNodes that have been investigated
         HashSet<AStarNodeWrapper> closedSet = new HashSet<>(),
-                openSet = new HashSet<>();
+            openSet = new HashSet<>();
         PriorityQueue<AStarNodeWrapper> openSetQueue = new PriorityQueue<>(10000);
 
 
@@ -171,19 +171,19 @@ public class AStar {
             if(x.hx > max_distance)
                 return null;
             if(x == null)
-            {
+                {
                 AStarNodeWrapper n = findMin(openSet);
-            }
+                }
             if(endNodes.containsKey(x.node)){ // we have found the shortest possible path to the goal!
                 if(check_capacity)//check if this structure is already full!
-                {
+                    {
                     for(Structure structure: endNodes.get(x.node))
                         if(!(structure.getMembers().size() >= structure.getCapacity()))//means it is not full
                             return reconstructRoute(x, startNode, x, speed);
-                }
+                    }
                 else // Reconstruct the path and send it back.
                     return reconstructRoute(x, startNode, x, speed);
-            }
+                }
             openSet.remove(x); // maintain the lists
             openSetQueue.remove();
             closedSet.add(x);
@@ -202,7 +202,7 @@ public class AStar {
                 else{
                     nextNode = new AStarNodeWrapper(n);
                     foundNodes.put( n, nextNode );
-                }
+                    }
 
                 if(closedSet.contains(nextNode)) // it has already been considered
                     continue;
@@ -216,25 +216,25 @@ public class AStar {
                     openSetQueue.add(nextNode);
                     nextNode.hx = heuristic(x.node, nextNode.node) + x.hx;
                     better = true;
-                }
+                    }
                 else if(tentativeCost < nextNode.gx){
                     better = true;
-                }
+                    }
 
                 // store A* information about this promising candidate node
                 if(better){
                     nextNode.cameFrom = x;
                     nextNode.gx = tentativeCost;
                     nextNode.fx = nextNode.gx + nextNode.hx;
+                    }
                 }
-            }
 
 //            if(foundNodes.size()%10000 == 0)
 //                System.out.println("Time = " + System.currentTimeMillis());
-        }
+            }
         //System.out.println("Searched " + foundNodes.size() + " nodes but could not find it");
         return null;
-    }
+        }
 
     /**
      * Uses Djikstra to find all nodes within the distance that are a part of endNodes.  Returns the list of endNodes within the distance.
@@ -244,7 +244,7 @@ public class AStar {
      * @return A list of nodes within the maximum distance sorted in ascending order by distance to start (index 0 means closest)
      */
     public static List<EbolaBuilder.Node> getNodesWithinDistance(EbolaBuilder.Node start, Map endNodes, double max_distance, double speed)
-    {
+        {
         //        int[] cacheKey = new int[] {start.location.xLoc, start.location.yLoc, goal.location.xLoc, goal.location.yLoc};
 //        if (cache.containsKey(cacheKey))
 //            return cache.get(cacheKey);
@@ -253,12 +253,12 @@ public class AStar {
         long startTime = System.currentTimeMillis();
         if (start == null || endNodes == null) {
             System.out.println("Error: invalid node provided to AStar");
-        }
+            }
 
         // containers for the metainformation about the Nodes relative to the
         // A* search
         HashMap<EbolaBuilder.Node, AStarNodeWrapper> foundNodes =
-                new HashMap<EbolaBuilder.Node, AStarNodeWrapper>();
+            new HashMap<EbolaBuilder.Node, AStarNodeWrapper>();
 
 
         AStarNodeWrapper startNode = new AStarNodeWrapper(start);
@@ -273,7 +273,7 @@ public class AStar {
         // A* containers: allRoadNodes to be investigated, allRoadNodes that have been investigated
         //was ArrayList
         HashSet<AStarNodeWrapper> closedSet = new HashSet<>(),
-                openSet = new HashSet<>();
+            openSet = new HashSet<>();
         PriorityQueue<AStarNodeWrapper> openSetQueue = new PriorityQueue<>(10000);//added
 
 
@@ -289,16 +289,16 @@ public class AStar {
             AStarNodeWrapper x = openSetQueue.peek();
             //check if we have reached maximum route distance
             if(x.hx > max_distance)
-            {
+                {
                 return nodesToReturn;
-            }
+                }
             if(x == null)
-            {
+                {
                 AStarNodeWrapper n = findMin(openSet);
-            }
+                }
             if(endNodes.containsKey(x.node)){ // we have found the shortest possible path to the goal!
                 listIterator.add(x.node);
-            }
+                }
 
             openSet.remove(x); // maintain the lists
             openSetQueue.remove();
@@ -318,7 +318,7 @@ public class AStar {
                 else{
                     nextNode = new AStarNodeWrapper(n);
                     foundNodes.put( n, nextNode );
-                }
+                    }
 
                 if(closedSet.contains(nextNode)) // it has already been considered
                     continue;
@@ -332,25 +332,25 @@ public class AStar {
                     openSetQueue.add(nextNode);
                     nextNode.hx = heuristic(x.node, nextNode.node) + x.hx;
                     better = true;
-                }
+                    }
                 else if(tentativeCost < nextNode.gx){
                     better = true;
-                }
+                    }
 
                 // store A* information about this promising candidate node
                 if(better){
                     nextNode.cameFrom = x;
                     nextNode.gx = tentativeCost;
                     nextNode.fx = nextNode.gx + nextNode.hx;
+                    }
                 }
-            }
 
 //            if(foundNodes.size()%10000 == 0)
 //                System.out.println("Time = " + System.currentTimeMillis());
-        }
+            }
         //System.out.println("Searched " + foundNodes.size() + " nodes but could not find it");
         return nodesToReturn;
-    }
+        }
 
     /**
      * Uses Djikstra to find the closest in the list of endNodes.  Returns the endNode that is closest.
@@ -359,7 +359,7 @@ public class AStar {
      * @return
      */
     public static Route getNodeAtDistance(EbolaBuilder.Node start, double distance, double speed)
-    {
+        {
         //        int[] cacheKey = new int[] {start.location.xLoc, start.location.yLoc, goal.location.xLoc, goal.location.yLoc};
 //        if (cache.containsKey(cacheKey))
 //            return cache.get(cacheKey);
@@ -368,12 +368,12 @@ public class AStar {
         long startTime = System.currentTimeMillis();
         if (start == null) {
             System.out.println("Error: invalid node provided to AStar");
-        }
+            }
 
         // containers for the metainformation about the Nodes relative to the
         // A* search
         HashMap<EbolaBuilder.Node, AStarNodeWrapper> foundNodes =
-                new HashMap<EbolaBuilder.Node, AStarNodeWrapper>();
+            new HashMap<EbolaBuilder.Node, AStarNodeWrapper>();
 
 
         AStarNodeWrapper startNode = new AStarNodeWrapper(start);
@@ -387,7 +387,7 @@ public class AStar {
 
         // A* containers: allRoadNodes to be investigated, allRoadNodes that have been investigated
         HashSet<AStarNodeWrapper> closedSet = new HashSet<>(),
-                openSet = new HashSet<>();
+            openSet = new HashSet<>();
         PriorityQueue<AStarNodeWrapper> openSetQueue = new PriorityQueue<>(10000);
 
         openSet.add(startNode);
@@ -400,13 +400,13 @@ public class AStar {
 
             //check if we have reached maximum route distance
             if(x.hx > distance)////we are at the distance!!!
-            {
+                {
                 return reconstructRoute(x, startNode, x, speed);
-            }
+                }
             if(x == null)
-            {
+                {
                 AStarNodeWrapper n = findMin(openSet);
-            }
+                }
             openSet.remove(x); // maintain the lists
             openSetQueue.remove();
             closedSet.add(x);
@@ -425,7 +425,7 @@ public class AStar {
                 else{
                     nextNode = new AStarNodeWrapper(n);
                     foundNodes.put( n, nextNode );
-                }
+                    }
 
                 if(closedSet.contains(nextNode)) // it has already been considered
                     continue;
@@ -439,25 +439,25 @@ public class AStar {
                     openSetQueue.add(nextNode);
                     nextNode.hx = heuristic(x.node, nextNode.node) + x.hx;
                     better = true;
-                }
+                    }
                 else if(tentativeCost < nextNode.gx){
                     better = true;
-                }
+                    }
 
                 // store A* information about this promising candidate node
                 if(better){
                     nextNode.cameFrom = x;
                     nextNode.gx = tentativeCost;
                     nextNode.fx = nextNode.gx + nextNode.hx;
+                    }
                 }
-            }
 
 //            if(foundNodes.size()%10000 == 0)
 //                System.out.println("Time = " + System.currentTimeMillis());
-        }
+            }
         //System.out.println("Searched " + foundNodes.size() + " nodes but could not find it");
         return null;
-    }
+        }
 
     /**
      * Takes the information about the given node n and returns the path that
@@ -466,7 +466,7 @@ public class AStar {
      * @return an Route from start to goal
      */
     static Route reconstructRoute(AStarNodeWrapper n, AStarNodeWrapper start, AStarNodeWrapper end, double speed)
-    {
+        {
         List<Int2D> result = new ArrayList<>(20);
 
         //adjust speed to temporal resolution
@@ -483,31 +483,31 @@ public class AStar {
         result.add(0, x.node.location);
 
         if(x.cameFrom != null)
-        {
+            {
             x = x.cameFrom;
 
             while (x != null)
-            {
+                {
                 double dist = x.node.location.distance(result.get(0));
 
                 while(mod_speed < dist)
-                {
+                    {
                     result.add(0, getPointAlongLine(result.get(0), x.node.location, mod_speed/dist));
                     dist = x.node.location.distance(result.get(0));
                     mod_speed = speed;
-                }
+                    }
                 mod_speed -= dist;
 
                 x = x.cameFrom;
 
                 if(x != null && x.cameFrom != null)
                     totalDistance += x.node.location.distance(x.cameFrom.node.location);
+                }
             }
-        }
 
         result.add(0, start.node.location);
         return new Route(result, totalDistance, start.node, end.node, Parameters.WALKING_SPEED);
-    }
+        }
 
     /**
      * Gets a point a certain percent a long the line
@@ -517,9 +517,9 @@ public class AStar {
      * @return
      */
     public static Int2D getPointAlongLine(Int2D start, Int2D end, double percent)
-    {
+        {
         return new Int2D((int)Math.round((end.getX()-start.getX())*percent + start.getX()), (int)Math.round((end.getY()-start.getY())*percent + start.getY()));
-    }
+        }
 
     /**
      * Measure of the estimated distance between two Nodes.
@@ -527,7 +527,7 @@ public class AStar {
      */
     static double heuristic(EbolaBuilder.Node x, EbolaBuilder.Node y) {
         return x.location.distance(y.location);
-    }
+        }
 
     /**
      *  Considers the list of Nodes open for consideration and returns the node 
@@ -542,10 +542,10 @@ public class AStar {
             if (n.fx < min) {
                 min = n.fx;
                 minNode = n;
+                }
             }
-        }
         return minNode;
-    }
+        }
 
     /**
      * A wrapper to contain the A* meta information about the Nodes
@@ -565,11 +565,11 @@ public class AStar {
             hx = 0;
             fx = 0;
             cameFrom = null;
-        }
+            }
 
         @Override
         public int compareTo(AStarNodeWrapper aStarNodeWrapper) {
             return Double.compare(this.hx, aStarNodeWrapper.hx);
+            }
         }
     }
-}

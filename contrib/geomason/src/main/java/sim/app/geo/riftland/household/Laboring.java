@@ -15,7 +15,7 @@ import sim.engine.SimState;
  * 
  */
 public class Laboring extends Activity
-{
+    {
     /** ID of PopulationCenter in which this Activity is occurring */
     private int city = 0;
 
@@ -25,42 +25,42 @@ public class Laboring extends Activity
     private Parameters params;
 
     public Laboring(Household household, int laborers, Parameters params)
-    {
+        {
         super(household);
-    	this.params = params;
+        this.params = params;
         setPopulation(laborers);
-    }
+        }
 
     @Override
     public void remove()
-    {
+        {
         // Remove this from the household
         getHousehold().endLaboring();
-    }
+        }
 
 
     @Override
     public void step(SimState ss)
-    {
+        {
         super.step(ss);
 
         // add pay into household assets
         getHousehold().depositCash(getPopulation() * params.households.getLaborProductionRate());
-    }
+        }
 
     public float getCash()
-    {
+        {
         return cash;
-    }
+        }
 
     public int getCity()
-    {
+        {
         return city;
-    }
+        }
 
     public void setCity(int city)
-    {
+        {
         this.city = city;
-    }
+        }
 
-}
+    }

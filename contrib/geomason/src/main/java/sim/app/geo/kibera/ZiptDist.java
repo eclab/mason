@@ -24,8 +24,8 @@ public class ZiptDist {
 
         for (int i = 1; i < size; i++) {
             this.bottom += (1 / Math.pow(i, this.skew));
+            }
         }
-    }
     // the next() method returns an random rank id.
     // The frequency of returned rank ids are follows Zipf distribution.
 
@@ -42,15 +42,15 @@ public class ZiptDist {
             rank = rnd.nextInt(size);
             friquency = (1.0d / Math.pow(rank, this.skew)) / this.bottom;
             dice = rnd.nextDouble();
-        }
+            }
         return rank;
 
-    }
+        }
     // This method returns a probability that the given rank occurs.
 
     public double getProbability(int rank) {
         return (1.0d / Math.pow(rank, this.skew)) / this.bottom;
-    }
+        }
 
    
-}
+    }

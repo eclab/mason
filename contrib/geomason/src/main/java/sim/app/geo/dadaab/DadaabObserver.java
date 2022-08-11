@@ -35,12 +35,12 @@ public class DadaabObserver implements Steppable{
     private CSVWriter dataCSVFile_act; // CSV file that contains run data
     
     // hold by camp
-     private BufferedWriter dataFileBuffer_camp; // output file buffer for dataCSVFile_
-     private CSVWriter dataCSVFile_camp; 
+    private BufferedWriter dataFileBuffer_camp; // output file buffer for dataCSVFile_
+    private CSVWriter dataCSVFile_camp; 
      
      
-     private BufferedWriter dataFileBuffer_cStatus; // output file buffer for dataCSVFile_
-     private CSVWriter dataCSVFile_cStatus; 
+    private BufferedWriter dataFileBuffer_cStatus; // output file buffer for dataCSVFile_
+    private CSVWriter dataCSVFile_cStatus; 
     
     Bag choleraGridBag = new Bag();
     
@@ -49,29 +49,29 @@ public class DadaabObserver implements Steppable{
     
     public final static int ORDERING = 3;
 
-     private int step = 0;
-     private boolean writeGrid =false;
+    private int step = 0;
+    private boolean writeGrid =false;
      
-  DadaabObserver(Dadaab dadaab)
-    {
-//    	setup(world);
-    	//<GCB>: you may want to adjust the number of columns based on these flags.
-    	// both in createLogFile, and step
+    DadaabObserver(Dadaab dadaab)
+        {
+//      setup(world);
+        //<GCB>: you may want to adjust the number of columns based on these flags.
+        // both in createLogFile, and step
         d = null;
         startLogFile();
-    }
+        }
 
     DadaabObserver()
-    {
+        {
         startLogFile();
-    }
+        }
    
      
-   private void startLogFile()
-    {
+    private void startLogFile()
+        {
         // Create a CSV file to capture data for this run.
         try
-        {
+            {
             createLogFile();
 
             // First line of file contains field names
@@ -82,26 +82,26 @@ public class DadaabObserver implements Steppable{
             dataCSVFile_cStatus.writeLine(header_cStatus);
             // activity
             
-             String [] header_act = new String [] {"Job","Step","total refugee", "At Home","School","Water", "Mosque",
-                                                 "Market", "Food C.", "Health C.","Visit R.", "Social","Hygiene"};
+            String [] header_act = new String [] {"Job","Step","total refugee", "At Home","School","Water", "Mosque",
+                                                  "Market", "Food C.", "Health C.","Visit R.", "Social","Hygiene"};
                       
-             dataCSVFile_act.writeLine(header_act);
+            dataCSVFile_act.writeLine(header_act);
              
-              String [] header_camp = new String [] {"Job","Step","Total Pop","Dag_sus","Dag_exp", "Dag_inf","Dag_rec",
-                  "Info_sus","Info_exp", "Info_inf","Info_rec","Hag_sus","Hag_exp", "Hag_inf","Hag_rec"};
+            String [] header_camp = new String [] {"Job","Step","Total Pop","Dag_sus","Dag_exp", "Dag_inf","Dag_rec",
+                                                   "Info_sus","Info_exp", "Info_inf","Info_rec","Hag_sus","Hag_exp", "Hag_inf","Hag_rec"};
               
-              dataCSVFile_camp.writeLine(header_camp);
+            dataCSVFile_camp.writeLine(header_camp);
             
-        }
+            }
         catch (IOException ex)
-        {
+            {
             Logger.getLogger(Dadaab.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-    }
   
     int count = 0;
     public void step(SimState state)
-    {
+        {
         d  = (Dadaab)state;
         
         String job = Long.toString(state.job());
@@ -151,25 +151,25 @@ public class DadaabObserver implements Steppable{
 //        // writeGrid =true;
         if(d.schedule.getSteps() % 1440 ==5){
             writeGrid =true;
-        }
+            }
         else {
             writeGrid =false;
-        }
+            }
         //writeGrid =false;
         
         String [] data = new String [] {job, Integer.toString(this.step),numSuscpitable,numExposed, numInfected, numRecovered, numDeath, totVibroCh};
         String [] data_cS = new String [] {job, Integer.toString(this.step),numSuscpitable_cS,numExposed_cS, numInfected_cS, numRecovered_cS, numDeath};
         
         String [] data_act = new String [] {job, Integer.toString(this.step), numTotAgent, numAtHome, numSchool, numWater,
-         numMosque,numMarket,numFoodC,numHealthC,numVisitR,numSocail,numHygeiene};
+                                            numMosque,numMarket,numFoodC,numHealthC,numVisitR,numSocail,numHygeiene};
        
         String [] data_camp = new String[]{job,Integer.toString(this.step),numTotAgent,numSusDag,numExpDag,numInfDag,numRecDag,numSusInfo,numExpInfo,
-                numInfInfo,numRecInfo,numSusHag,numExpHag,numInfHag,numRecHag};
+                                           numInfInfo,numRecInfo,numSusHag,numExpHag,numInfHag,numRecHag};
                 
         
         
         try
-        {
+            {
             this.dataCSVFile_.writeLine(data);
             
             this.dataCSVFile_act.writeLine(data_act);
@@ -181,32 +181,32 @@ public class DadaabObserver implements Steppable{
             // some trick to write grid every x step
             if(writeGrid ==true){
                 count = count+1;
-               long now = System.currentTimeMillis();
-               String filename = String.format("%ty%tm%td%tH%tM%tS", now, now, now, now, now, now)
-               + "d_"+ count+  "_choleraASC.asc";   
+                long now = System.currentTimeMillis();
+                String filename = String.format("%ty%tm%td%tH%tM%tS", now, now, now, now, now, now)
+                    + "d_"+ count+  "_choleraASC.asc";   
              
-             BufferedWriter dataASCCholera = new BufferedWriter(new FileWriter(filename));   
+                BufferedWriter dataASCCholera = new BufferedWriter(new FileWriter(filename));   
             
-             writeCholeraSpread();
+                writeCholeraSpread();
              
-             ArcInfoASCGridExporter.write(d.allCampGeoGrid, dataASCCholera);
-             choleraGridBag.add(dataASCCholera);
+                ArcInfoASCGridExporter.write(d.allCampGeoGrid, dataASCCholera);
+                choleraGridBag.add(dataASCCholera);
         
-            }
+                }
             
-        }
+            }
         catch (IOException ex)
-        {
+            {
             Logger.getLogger(DadaabObserver.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            }
         
         this.step++;
-    }
+        }
     
-     void finish()
-    {
-        try
+    void finish()
         {
+        try
+            {
             this.dataFileBuffer_.close();
             this.dataFileBuffer_act.close();
             this.dataFileBuffer_camp.close();
@@ -215,18 +215,18 @@ public class DadaabObserver implements Steppable{
             for(Object o:choleraGridBag){
                 BufferedWriter bw = (BufferedWriter)o;
                 bw.close();
-            }
+                }
             
-        }
+            }
         catch (IOException ex)
-        {
+            {
             Logger.getLogger(DadaabObserver.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-    }
 
     
     private void createLogFile() throws IOException
-    {
+        {
         long now = System.currentTimeMillis();
 //
         String filename = String.format("%ty%tm%td%tH%tM%tS", now, now, now, now, now, now)
@@ -264,60 +264,60 @@ public class DadaabObserver implements Steppable{
         
   
   
-    }
+        }
 
     
 //  
-  public void writeCholeraSpread(){
+    public void writeCholeraSpread(){
       
-     DoubleGrid2D grid = new DoubleGrid2D(d.allCamps.getWidth(),d.allCamps.getHeight());
-      // first put all values zero
+        DoubleGrid2D grid = new DoubleGrid2D(d.allCamps.getWidth(),d.allCamps.getHeight());
+        // first put all values zero
      
-            for (int i = 0; i < d.allCamps.getWidth(); i++)
+        for (int i = 0; i < d.allCamps.getWidth(); i++)
             {
-                 for (int j = 0; j < d.allCamps.getHeight(); j++)
-                  {
+            for (int j = 0; j < d.allCamps.getHeight(); j++)
+                {
                
                 FieldUnit faci = (FieldUnit) d.allCamps.get(i, j);
                 if(faci.getCampID() > 0){
                     grid.field[i][j] = 0;
-                }
+                    }
               
+                }
             }
-        }
-     // then write the current refugee health status
-      for(Object o:d.allRefugees.allObjects){
-          Refugee r = (Refugee)o;
-          double tot = grid.field[r.getPosition().getX()][r.getPosition().getY()] ;
-          if(r.getHealthStatus()==3){
-             grid.field[r.getPosition().getX()][r.getPosition().getY()] = tot + 1;
-          }
-          else{
-              grid.field[r.getPosition().getX()][r.getPosition().getY()] = tot;
-          }
+        // then write the current refugee health status
+        for(Object o:d.allRefugees.allObjects){
+            Refugee r = (Refugee)o;
+            double tot = grid.field[r.getPosition().getX()][r.getPosition().getY()] ;
+            if(r.getHealthStatus()==3){
+                grid.field[r.getPosition().getX()][r.getPosition().getY()] = tot + 1;
+                }
+            else{
+                grid.field[r.getPosition().getX()][r.getPosition().getY()] = tot;
+                }
           
           
-      }
+            }
       
-     d.allCampGeoGrid.setGrid(grid);
+        d.allCampGeoGrid.setGrid(grid);
        
-  }
+        }
     private void writeObject(java.io.ObjectOutputStream out)
         throws IOException
-    {
+        {
         out.writeInt(step);
 
-    }
+        }
 
 
     private void readObject(java.io.ObjectInputStream in)
         throws IOException, ClassNotFoundException
-    {
+        {
         step = in.readInt();
          
         startLogFile();
-    }
+        }
     
 
-}
+    }
 

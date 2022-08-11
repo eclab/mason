@@ -11,7 +11,7 @@ package sim.app.geo.riftland.parcel;
  *
  */
 public class Forest extends Parcel
-{
+    {
     /** Used for color table lookup
      *
      */
@@ -22,27 +22,27 @@ public class Forest extends Parcel
     
 
     public Forest()
-    {
+        {
         super();
-    }
+        }
 
     public Forest(int x, int y, int country)
-    {
+        {
         super(x,y,country);
-    }
+        }
     
 
     @Override
     public boolean isNavigable()
-    {
+        {
         return false;
-    }
+        }
 
  
 
     public double doubleValue()
-    {
+        {
         return COLOR_VALUE;
-    }
+        }
 
-}
+    }

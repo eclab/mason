@@ -49,12 +49,12 @@ public class CityTIN {
             for (int i = 0; i < geoms.numObjs; i++) {
                 MasonGeometry mg = (MasonGeometry) geoms.get(i);
                 mg.isMovable = true;
-            }
+                }
             geoms = edges.getGeometries();
             System.out.format("CityTIN: edges.size: %d\n", geoms.numObjs);
-        } catch (Exception ex) {
+            } catch (Exception ex) {
+            }
         }
-    }
 
 
     public CityTIN(String nodesFilename, String edgesFilename, int width, int height) {
@@ -83,22 +83,22 @@ public class CityTIN {
             for (int i = 0; i < geoms.numObjs; i++) {
                 MasonGeometry mg = (MasonGeometry) geoms.get(i);
                 mg.isMovable = true;
-//            	System.out.format("Node[%d]: %s\n", i, mg.geometry);
-            }
+//              System.out.format("Node[%d]: %s\n", i, mg.geometry);
+                }
 
             geoms = edges.getGeometries();
             System.out.format("CityTIN: edges.size: %d\n", geoms.numObjs);
-        } catch (Exception ex) {
-        }
+            } catch (Exception ex) {
+            }
 
-    }
+        }
 
     private URL getUrl(String nodesFilename) throws IOException {
         InputStream nodeStream = TinData.class.getResourceAsStream(nodesFilename);
         try {
             if (!new File("./shapeFiles/").exists()) {
                 new File("./shapeFiles/").mkdir();
-            }
+                }
             File targetFile = new File("./shapeFiles/" + nodesFilename.split("/")[nodesFilename.split("/").length - 1]);
             OutputStream outStream = new FileOutputStream(targetFile);
             //outStream.write(buffer);
@@ -106,7 +106,7 @@ public class CityTIN {
             byte[] bytes = new byte[1024];
             while ((read = nodeStream.read(bytes)) != -1) {
                 outStream.write(bytes, 0, read);
-            }
+                }
             outStream.close();
             nodeStream.close();
             if (nodesFilename.endsWith(".shp")) {
@@ -115,18 +115,18 @@ public class CityTIN {
                 getUrl(nodesFilename.replace("shp", "sbx"));
                 getUrl(nodesFilename.replace("shp", "sbn"));
                 getUrl(nodesFilename.replace("shp", "shx"));
-            }
+                }
             return targetFile.toURI().toURL();
-        } catch (Exception e) {
+            } catch (Exception e) {
             if (nodesFilename.endsWith("shp")) {
                 e.printStackTrace();
                 return null;
-            } else {
+                } else {
                 //e.printStackTrace();
                 return null;
+                }
             }
         }
-    }
 
     public void matchPopulationCenters(GeomGridField grid, Map<String, PopulationCenter> populationCenters) {
 
@@ -143,14 +143,14 @@ public class CityTIN {
             if (id == -9999)
                 id = findNearestPopulationCenter(intGrid, x, y);
 
-//        	System.out.format("%s : %d\n", pt, id);
+//              System.out.format("%s : %d\n", pt, id);
 
             PopulationCenter city = populationCenters.get(Integer.toString(id));
             city.setCentroid(new Double2D(x, y));
             nodesToCities.put(mg, city);
-        }
+            }
 
-    }
+        }
 
     public int findNearestPopulationCenter(IntGrid2D intGrid, int x, int y) {
         IntBag xPos = new IntBag();
@@ -163,11 +163,11 @@ public class CityTIN {
                 id = intGrid.get(xPos.get(j), yPos.get(j));
                 if (id != -9999)
                     return id;
+                }
             }
-        }
 
         return -9999;
-    }
+        }
 
     public ArrayList<CityEdge> matchEdges() {
 
@@ -194,21 +194,21 @@ public class CityTIN {
                         else {
                             city2 = nodesToCities.get(node);
                             break;
+                            }
                         }
-                    }
-                } // end loop through nodes
+                    } // end loop through nodes
 
                 if ((city1 != null) && (city2 != null))
                     // add edge
                     edgeList.add(new CityEdge(city1, city2));
+                }
             }
-        }
 
         System.out.format("EdgeGeoms.size: %d\n", edgeGeoms.numObjs);
         System.out.format("EdgeList.size: %d\n", edgeList.size());
 
         return edgeList;
-    }
+        }
 
     public void buildNetwork(Map<String, PopulationCenter> populationCenters) {
 
@@ -226,9 +226,9 @@ public class CityTIN {
 
             double edgeDistance = city.getCentroid().distance(cityPartner.getCentroid());
             network.addEdge(new Edge(city, cityPartner, edgeDistance));
-        }
+            }
 
         allPairsShortestPath = new AllPairsShortestPath(network);
-    }
+        }
 
-}
+    }

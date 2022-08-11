@@ -20,7 +20,7 @@ import java.util.Map;
  * XXX Should consider making this an internal class to GeomPlanarGraph?
  */
 public class GeomPlanarGraphEdge extends Edge
-{
+    {
     /** Optional set of attributes associated with this edge
      *  <p>
      *  Typically a link to the corresponding MasonGeometry from which
@@ -33,9 +33,9 @@ public class GeomPlanarGraphEdge extends Edge
     private LineString line; // line that corresponds to this edge
 
     public GeomPlanarGraphEdge(LineString line)
-    {
+        {
         this.line = line;
-    }
+        }
   
     public LineString getLine() { return line; }
 
@@ -44,17 +44,17 @@ public class GeomPlanarGraphEdge extends Edge
      * @return true iff there are any attributes associated with this edge
      */
     public boolean hasAttributes()
-    {
+        {
         return attributes != null && ! attributes.isEmpty();
-    }
+        }
 
     public void setAttributes(final Map<String,AttributeValue> attributes )
-    {
+        {
         // Yes, copying this would be safer, but we want to be in sync with
         // any attribute changes that occur in the originating MasonGeometry
         // from wence the line, and its corresponding attributes, came.
         this.attributes = attributes;
-    }
+        }
 
 
     /**
@@ -63,30 +63,30 @@ public class GeomPlanarGraphEdge extends Edge
      * @return true if this edge has an attribute of that name
      */
     public boolean hasAttribute(final String name)
-    {
+        {
         return this.attributes.containsKey(name);
-    }
+        }
 
 
     public Object getAttribute(final String name)
-    {
+        {
         return this.attributes.get(name);
-    }
+        }
 
     public Integer getIntegerAttribute(final String name)
-    {
+        {
         return this.attributes.get(name).getInteger();
-    }
+        }
 
     public Double getDoubleAttribute(final String name)
-    {
+        {
         return this.attributes.get(name).getDouble();
-    }
+        }
 
     public String getStringAttribute(final String name)
-    {
+        {
         return this.attributes.get(name).getString();
+        }
+
+
     }
-
-
-}

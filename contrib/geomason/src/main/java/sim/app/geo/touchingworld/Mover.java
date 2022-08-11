@@ -6,7 +6,7 @@
  * See the file "LICENSE" for more information
  *
  * $Id$
-*/
+ */
 package sim.app.geo.touchingworld;
 
 import sim.engine.SimState;
@@ -21,15 +21,15 @@ import sim.util.geo.MasonGeometry;
  *
  */
 public class Mover implements Steppable
-{
+    {
     private static final long serialVersionUID = 5456255360842258779L;
 
 
-	public Mover() {}
+    public Mover() {}
 
     
     public void step(SimState state)
-    {
+        {
         TouchingWorld world = (TouchingWorld)state;
 
         // Find all shapes touching the current one
@@ -43,11 +43,11 @@ public class Mover implements Steppable
         // We have a serious problem if there are no shapes adjacent to the
         // current one.
         if (adjacentShapes.isEmpty())
-        {
+            {
             throw new RuntimeException("No adjacent shapes");
-        }
+            }
         else
-        {
+            {
             // TODO: Sean hates std out; so replace with inspectors, or something.
 //            System.out.println(world.selectedShape);
 //            System.out.println("\t" + adjacentShapes.size() + " adjacent shapes");
@@ -55,23 +55,23 @@ public class Mover implements Steppable
 //            {
 //                System.out.println("\t\t" + adjacentShapes.objs[i]);
 //            }
-        }
+            }
 
         // Pick one randomly
         MasonGeometry nextShape = null;
 
         if ( 1 == adjacentShapes.size() )
-        {
+            {
             nextShape = (MasonGeometry) adjacentShapes.objs[0];
-        }
+            }
         else
-        {
+            {
             nextShape = (MasonGeometry) adjacentShapes.objs[state.random.nextInt(adjacentShapes.size())];
-        }
+            }
 
 //        System.out.println("\tselected " + nextShape);
 
         // And then do the swap
         world.selectShape(nextShape);
+        }
     }
-}

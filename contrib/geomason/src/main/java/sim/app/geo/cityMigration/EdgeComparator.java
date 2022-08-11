@@ -14,17 +14,17 @@ import sim.field.network.*;
 
 public class EdgeComparator implements Comparator{
 
-        public int compare (Object edge1, Object edge2){
-            Edge e1 = (Edge) edge1;
-            Edge e2 = (Edge) edge2;
+    public int compare (Object edge1, Object edge2){
+        Edge e1 = (Edge) edge1;
+        Edge e2 = (Edge) edge2;
 
-            if (e1.getWeight() > e2.getWeight())
-                return -1;
-            else if (e1.getWeight() < e2.getWeight())
-                return 1;
-            else
-                return 0;
+        if (e1.getWeight() > e2.getWeight())
+            return -1;
+        else if (e1.getWeight() < e2.getWeight())
+            return 1;
+        else
+            return 0;
         }
 
 
-}
+    }

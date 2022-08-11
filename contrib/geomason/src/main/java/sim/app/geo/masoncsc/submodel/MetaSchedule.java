@@ -118,8 +118,8 @@ public class MetaSchedule extends Schedule
                 int candidateOrdering = candidate.getScheduleOrdering();
                 double candidateTime = candidate.getScheduleTime();
                 if (best == null ||
-                        candidateTime < bestTime ||
-                        (candidateTime == bestTime && candidateOrdering < bestOrdering))
+                    candidateTime < bestTime ||
+                    (candidateTime == bestTime && candidateOrdering < bestOrdering))
                     {
                     best = candidate;
                     bestTime = candidateTime;

@@ -11,33 +11,33 @@ import java.util.Collection;
  *
  */
 public class Employer {
-	
+        
     private Collection<Person> employees; //People employed by this employer
     ConflictDiamonds conflict;
 
-    //income distribution	
+    //income distribution       
     public Employer( ConflictDiamonds c ) {
-        conflict = c;		
+        conflict = c;           
         employees = new ArrayList<Person>();
-    }
+        }
 
     public Employer() {
         super();
-    }
+        }
 
 
     public void addEmployee(Person e) {
         employees.add(e);
 
-    }
+        }
 
     public Collection getEmployees() {
         return employees;
 
-    }
+        }
 
     public void removeEmployee(Person e) {
         employees.remove(e);
-    }
+        }
 
-}
+    }

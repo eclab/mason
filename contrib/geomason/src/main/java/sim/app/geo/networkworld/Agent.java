@@ -27,7 +27,7 @@ import sim.util.geo.PointMoveTo;
  * randomly along the network, choosing a random direction at each intersection.
  */
 public class Agent implements Steppable
-{
+    {
 
     private static final long serialVersionUID = -7060584745540577823L;
     // point that denotes agent's position
@@ -46,57 +46,57 @@ public class Agent implements Steppable
 
 
     public Agent()
-    {
+        {
         final GeometryFactory fact = new GeometryFactory();
         location = fact.createPoint(new Coordinate(10, 10)); // magic numbers
-    }
+        }
 
     // return geometry representing agent location
 
 
     public Geometry getGeometry()
-    {
+        {
         return location;
-    }
+        }
 
     // true if the agent has arrived at the target intersection
     private boolean arrived()
-    {
+        {
         // If we have a negative move rate the agent is moving from the end to
         // the start, else the agent is moving in the opposite direction.
         if ((moveRate > 0 && currentIndex >= endIndex)
             || (moveRate < 0 && currentIndex <= startIndex))
-        {
+            {
             return true;
-        }
+            }
 
         return false;
-    }
+        }
 
 
 
     public void start(final NetworkWorld state)
-    {
+        {
         // Find the first line segment and set our position over the start coordinate.
 
         final MasonGeometry line = (MasonGeometry) state.world.getGeometries().objs[0];
         setNewRoute((LineString) line.geometry, true);
-    }
+        }
 
 
     // randomly selects an adjacent route to traverse
     private void findNewPath(final NetworkWorld NetworkWorld)
-    {
+        {
         // find all the adjacent junctions
         final Node currentJunction = NetworkWorld.network.findNode(location.getCoordinate());
 
         if (currentJunction != null)
-        {
+            {
             final DirectedEdgeStar directedEdgeStar = currentJunction.getOutEdges();
             final Object[] edges = directedEdgeStar.getEdges().toArray();
 
             if (edges.length > 0)
-            {
+                {
                 // pick one randomly
                 final int i = NetworkWorld.random.nextInt(edges.length);
                 final GeomPlanarGraphDirectedEdge directedEdge = (GeomPlanarGraphDirectedEdge) edges[i];
@@ -108,24 +108,24 @@ public class Agent implements Steppable
                 final Point endPoint = newRoute.getEndPoint();
 
                 if (startPoint.equals(location))
-                {
-                    setNewRoute(newRoute, true);
-                } else
-                {
-                    if (endPoint.equals(location))
                     {
+                    setNewRoute(newRoute, true);
+                    } else
+                    {
+                    if (endPoint.equals(location))
+                        {
                         setNewRoute(newRoute, false);
-                    } else // some how the agent is neither at the beginning or
-                    { // the end of the selected line segment
+                        } else // some how the agent is neither at the beginning or
+                        { // the end of the selected line segment
                         System.err.println("Where the hell am I?");
+                        }
                     }
                 }
-            }
-        } else
-        {
+            } else
+            {
             System.err.println("Cannot find node nearest to " + location);
+            }
         }
-    }
 
 
 
@@ -136,7 +136,7 @@ public class Agent implements Steppable
      * @param start true if agent at start of line else agent placed at end
      */
     private void setNewRoute(final LineString line, final boolean start)
-    {
+        {
         segment = new LengthIndexedLine(line);
 
         startIndex = segment.getStartIndex();
@@ -145,41 +145,41 @@ public class Agent implements Steppable
         Coordinate startCoord = null;
 
         if (start)
-        {
+            {
             startCoord = segment.extractPoint(startIndex);
             currentIndex = startIndex;
             moveRate = Math.abs(moveRate); // ensure we move forward along segment
-        } // by using a positive value
+            } // by using a positive value
         else
-        {
+            {
             startCoord = segment.extractPoint(endIndex);
             currentIndex = endIndex;
             moveRate = -Math.abs(moveRate); // ensure we move backward along segment
-        }                                    // by using a negative value
+            }                                    // by using a negative value
 
         moveTo(startCoord);
-    }
+        }
 
     // move the agent to the given coordinates
     public void moveTo(final Coordinate c)
-    {
+        {
         pointMoveTo.setCoordinate(c);
         location.apply(pointMoveTo);
-    }
+        }
 
 
 
     public void step(final SimState state)
-    {
+        {
         // if we're not at a junction move along the current segment
         if (!arrived())
-        {
+            {
             moveAlongPath((NetworkWorld) state);
-        } else
-        {
+            } else
+            {
             findNewPath((NetworkWorld) state);
+            }
         }
-    }
 
 
 
@@ -189,22 +189,22 @@ public class Agent implements Steppable
      * @param currentIndex that's guaranteed to be on the current line
      */
     private double clipCurrentIndex(final double currentIndex)
-    {
+        {
         // If move rate is positive ensure we're not off the end of the line.
         if (moveRate > 0)
-        {
+            {
             return Math.min(currentIndex, endIndex);
-        } else // else we're moving backwards from the other end, so ensure
-        {    // we're not going to fall off the front
+            } else // else we're moving backwards from the other end, so ensure
+            {    // we're not going to fall off the front
             return Math.max(currentIndex, startIndex);
+            }
         }
-    }
 
 
 
     // move agent along current line segment
     private void moveAlongPath(final NetworkWorld world)
-    {
+        {
         currentIndex += moveRate;
 
         currentIndex = clipCurrentIndex(currentIndex);
@@ -214,6 +214,6 @@ public class Agent implements Steppable
 
         world.agents.clear();
         world.agents.addGeometry(new MasonGeometry(location));
-    }
+        }
 
-}
+    }

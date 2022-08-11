@@ -35,7 +35,7 @@ import sim.util.geo.MasonGeometry;
  *
  */
 public class ShapeFileExporter
-{
+    {
 
     /** Write the given vector field to a shape file.
      * <p>
@@ -46,9 +46,9 @@ public class ShapeFileExporter
      * @param field to be exported
      */
     public static void write(String baseFileName, GeomVectorField field)
-    {
-        try
         {
+        try
+            {
             String shpFileName = baseFileName + ".shp";
             RandomAccessFile shpFile = new RandomAccessFile(new File(shpFileName), "rw");
 
@@ -65,9 +65,9 @@ public class ShapeFileExporter
 
             // bytes 4 - 23 are five unused int32 
             for (int i = 0; i < 5; i++)
-            {
+                {
                 headerBig.putInt(0);
-            }
+                }
 
             // bytes 24 - 27 are the file length
             // don't know this yet, so write a placeholder value, and we'll 
@@ -94,17 +94,17 @@ public class ShapeFileExporter
             Geometry g = ((MasonGeometry)geometries.objs[0]).geometry;
 
             if (g instanceof Point)
-            {
+                {
                 shapeType = 1;
-            }
+                }
             else if (g instanceof LineString)
-            {
+                {
                 shapeType = 3;
-            }
+                }
             else if (g instanceof Polygon)
-            {
+                {
                 shapeType = 5;
-            }
+                }
 
 
             headerLittle.putInt(shapeType);
@@ -157,7 +157,7 @@ public class ShapeFileExporter
             //TreeSet<String> uniqueAttributes = new TreeSet<String>();
 
             for (int i = 0; i < geometries.size(); i++)
-            {
+                {
                 MasonGeometry wrapper = (MasonGeometry) geometries.objs[i];
                 Geometry geometry = wrapper.getGeometry();
 
@@ -172,18 +172,18 @@ public class ShapeFileExporter
                 // content size, 48 is from p8 of the ESRI shapefile spec
                 int size = 20;
                 if (geometry instanceof LineString)
-                {
+                    {
                     LineString line = (LineString) wrapper.getGeometry();
                     size = line.getCoordinates().length * 16 + 48;
-                } else if (geometry instanceof Polygon)
-                {
+                    } else if (geometry instanceof Polygon)
+                    {
                     Polygon poly = (Polygon) wrapper.getGeometry();
                     size = poly.getCoordinates().length * 16 + 48;
-                } else if (geometry instanceof MultiPolygon)
-                {
+                    } else if (geometry instanceof MultiPolygon)
+                    {
                     MultiPolygon poly = (MultiPolygon) wrapper.getGeometry();
                     size = poly.getCoordinates().length * 16 + 48;
-                }
+                    }
 
                 shxFile.writeInt(fileSize / 2);
                 shxFile.writeInt(size / 2);
@@ -194,7 +194,7 @@ public class ShapeFileExporter
 
                 // now store the actual record information, in little-endian format
                 if (geometry instanceof Point)
-                {
+                    {
                     ByteBuffer pointBufferLittle = ByteBuffer.allocate(20);
                     pointBufferLittle.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -206,8 +206,8 @@ public class ShapeFileExporter
                     pointBufferLittle.putDouble(p.getY());
 
                     shpFile.write(pointBufferLittle.array());
-                } else
-                {
+                    } else
+                    {
                     g = wrapper.getGeometry();
                     Coordinate coords[] = g.getCoordinates();
                     Envelope en = g.getEnvelopeInternal();
@@ -217,12 +217,12 @@ public class ShapeFileExporter
 
                     // record type, from spec
                     if (g instanceof LineString)
-                    {
+                        {
                         polyBufferLittle.putInt(3);
-                    } else
-                    {
+                        } else
+                        {
                         polyBufferLittle.putInt(5);
-                    }
+                        }
 
                     // get the MBR
                     polyBufferLittle.putDouble(en.getMinX());
@@ -240,13 +240,13 @@ public class ShapeFileExporter
                     polyBufferLittle.putInt(0);
 
                     for (int k = 0; k < coords.length; k++)
-                    {
+                        {
                         polyBufferLittle.putDouble(coords[k].x);
                         polyBufferLittle.putDouble(coords[k].y);
-                    }
+                        }
                     shpFile.write(polyBufferLittle.array());
+                    }
                 }
-            }
 
             // file size is in number of 16-bit words, not bytes
             headerBig.putInt(24, fileSize / 2);
@@ -313,9 +313,9 @@ public class ShapeFileExporter
             int recordSize = 0;
 
             for (String attributeName : attributeSizes.keySet())
-            {
+                {
                 recordSize += attributeSizes.get(attributeName);
-            }
+                }
 
             headerBuffer.putShort((short) (1 + recordSize));
 
@@ -353,21 +353,21 @@ public class ShapeFileExporter
             //
 
             for( String key : attributeSizes.keySet() )
-            {
+                {
                 ByteBuffer fieldDescriptorArrayBuffer = ByteBuffer.allocate(32);
 
                 // Write out the field name, and pad it out with zeroes up
                 // to byte 10
                 for (int i = 0; i < 11; i++)
-                {
+                    {
                     if (i >= key.length())
-                    {
+                        {
                         fieldDescriptorArrayBuffer.put((byte) 0);
-                    } else
-                    {
+                        } else
+                        {
                         fieldDescriptorArrayBuffer.put((byte) key.charAt(i));
+                        }
                     }
-                }
 
                 // write out the field type; we do this by arbitrarily grabbing
                 // the first record, finding the current attribute for which
@@ -380,19 +380,19 @@ public class ShapeFileExporter
 
                 // And then ask what type it is
                 if (value.getValue() instanceof String)
-                {
+                    {
                     fieldDescriptorArrayBuffer.put((byte) 'C');
-                } else if (value.getValue() instanceof Integer)
-                {
+                    } else if (value.getValue() instanceof Integer)
+                    {
                     fieldDescriptorArrayBuffer.put((byte) 'N');
-                }
+                    }
                 else if (value.getValue() instanceof Double)
-                {
+                    {
                     fieldDescriptorArrayBuffer.put((byte) 'F');
-                } else if (value.getValue() instanceof Boolean)
-                {
+                    } else if (value.getValue() instanceof Boolean)
+                    {
                     fieldDescriptorArrayBuffer.put((byte) 'L');
-                }
+                    }
 
 
                 // field data address 
@@ -403,13 +403,13 @@ public class ShapeFileExporter
 
                 // decimal count
                 if (value.getValue() instanceof Double)
-                {
+                    {
                     fieldDescriptorArrayBuffer.put((byte) decimalCount);
-                }
+                    }
                 else
-                {
+                    {
                     fieldDescriptorArrayBuffer.put((byte) 0);
-                }
+                    }
 
                 // reserved 
                 fieldDescriptorArrayBuffer.putShort((byte) 0);
@@ -425,15 +425,15 @@ public class ShapeFileExporter
 
                 // reserved 
                 for (int i = 0; i < 7; i++)
-                {
+                    {
                     fieldDescriptorArrayBuffer.put((byte) 0);
-                }
+                    }
 
                 // index field flag
                 fieldDescriptorArrayBuffer.put((byte) 0);
 
                 attrFile.write(fieldDescriptorArrayBuffer.array());
-            }
+                }
 
             // terminator 
             attrFile.write(0x0D);
@@ -448,7 +448,7 @@ public class ShapeFileExporter
             // now write the individual records 
 
             for (int j = 0; j < geometries.size(); j++)
-            {
+                {
                 MasonGeometry wrapper = (MasonGeometry) geometries.objs[j];
 
                 ByteBuffer recordBuff = ByteBuffer.allocate(1 + recordSize);
@@ -458,35 +458,35 @@ public class ShapeFileExporter
                 recordBuff.put((byte) 0x20);
 
                 for (String attributeName : attributeSizes.keySet())
-                {
+                    {
                     AttributeValue f = (AttributeValue) wrapper.getAttribute(attributeName);
 
                     Object value = f.getValue();
 
                     if (value instanceof Boolean)
-                    {
+                        {
                         Boolean truthiness = (Boolean) value;
 
                         if (truthiness)
-                        {
+                            {
                             recordBuff.putChar('T');
-                        }
+                            }
                         else
-                        {
+                            {
                             recordBuff.putChar('F');
+                            }
                         }
-                    }
                     else if (value instanceof Double)
-                    {
+                        {
                         // TODO make 19 and 11 variable values
                         String doubleValueString = String.format("%19.11E", f.getDouble());
 
                         byte [] rawValue = doubleValueString.getBytes("US-ASCII");
 
                         recordBuff.put(rawValue);
-                    }
+                        }
                     else
-                    {
+                        {
                         byte [] rawValue = value.toString().getBytes("US-ASCII");
 
                         byte [] outValue = new byte [attributeSizes.get(attributeName)];
@@ -497,19 +497,19 @@ public class ShapeFileExporter
                         System.arraycopy(rawValue, 0, outValue, 0, rawValue.length);
                         
                         recordBuff.put(outValue);
+                        }
                     }
-                }
 
                 attrFile.write(recordBuff.array());
-            }
+                }
             attrFile.close();
 
-        } catch (Exception ex)
-        {
+            } catch (Exception ex)
+            {
             System.out.println("Error in ShapeFileExporter:write: ");
             ex.printStackTrace();
+            }
         }
-    }
 
 
 
@@ -519,9 +519,9 @@ public class ShapeFileExporter
      * @return byte array containing object
      */
     private static byte[] getBytes(Object obj)
-    {
-        try
         {
+        try
+            {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(bos);
             oos.writeObject(obj);
@@ -530,12 +530,12 @@ public class ShapeFileExporter
             bos.close();
             byte[] data = bos.toByteArray();
             return data;
-        } catch (IOException e)
-        {
+            } catch (IOException e)
+            {
             System.out.println(e);
-        }
+            }
         return null;
-    }
+        }
 
 
 
@@ -546,11 +546,11 @@ public class ShapeFileExporter
      * @return map of attribute name to its respective size requirements
      */
     private static Map<String, Integer> determineAttributeSizes(Bag geometries)
-    {
+        {
         Map<String,Integer> attributeSizes = new HashMap<String,Integer>();
 
         for (int i = 0; i < geometries.size(); i++)
-        {
+            {
             MasonGeometry mg = (MasonGeometry) geometries.objs[i];
 
             // Update the attribute sizes by iterating through all the attributes
@@ -558,29 +558,29 @@ public class ShapeFileExporter
             // stored size for that attribute is smaller, then update that size
             // with the larger.
             for ( String attributeName : mg.getAttributes().keySet() )
-            {
+                {
                 Integer attributeSize = null;
                 
                 try
-                {
+                    {
                     AttributeValue av = (AttributeValue) mg.getAttribute(attributeName);
 
                     if (av.getValue() instanceof Boolean)
-                    {
+                        {
                         attributeSize = 1;
-                    }
+                        }
                     else
-                    {
+                        {
                         Object value = av.getValue();
                         String stringValue = value.toString();
                         byte [] rawValue = stringValue.getBytes("US-ASCII");
 
                         if (value instanceof String)
-                        { // Strings limited to 256 characters
+                            { // Strings limited to 256 characters
                             attributeSize = Math.min(rawValue.length,256);
-                        }
+                            }
                         else if (value instanceof Double)
-                        {
+                            {
                             // Arbitrarily basing this what I've seen actual
                             // shape values use for real value attributes.
                             // XXX So there's probably a more intelligent way
@@ -589,37 +589,37 @@ public class ShapeFileExporter
                             // doing string conversions and byte counts for
                             // real value attributes.
                             attributeSize = 19;
-                        }
+                            }
                         else
-                        { // Numeric values limited to 18 characters
+                            { // Numeric values limited to 18 characters
                             attributeSize = Math.min(rawValue.length,18);
+                            }
                         }
-                    }
-                } catch (UnsupportedEncodingException ex)
-                {
+                    } catch (UnsupportedEncodingException ex)
+                    {
                     Logger.getLogger(ShapeFileExporter.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                    }
 
                 
                 if (attributeSizes.containsKey(attributeName))
-                {
+                    {
                     Integer storedSize = attributeSizes.get(attributeName);
 
                     if (storedSize < attributeSize)
-                    {
+                        {
                         attributeSizes.put(attributeName, attributeSize);
+                        }
+                    }
+                else
+                    {
+                    attributeSizes.put(attributeName, attributeSize);
                     }
                 }
-                else
-                {
-                    attributeSizes.put(attributeName, attributeSize);
-                }
+
             }
 
+        return attributeSizes;
         }
 
-        return attributeSizes;
+
     }
-
-
-}

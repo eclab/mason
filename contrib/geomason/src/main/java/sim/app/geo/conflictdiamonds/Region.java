@@ -11,7 +11,7 @@ import sim.util.Bag;
  *
  */
 public class Region {
-	
+        
     private int regionID;
     private Collection<Parcel> regionParcels;
     private ArrayList<Person> population;
@@ -70,8 +70,8 @@ public class Region {
         goalRemainEmployed = new Bag();
         goalRebel = new Bag();
         initialRebel = new Bag();
-    }
-	
+        }
+        
     public Region(ConflictDiamonds conflictDiamonds) {
         c = conflictDiamonds;
         regionParcels = new ArrayList<Parcel>();
@@ -90,7 +90,7 @@ public class Region {
         goalRemainEmployed = new Bag();
         goalRebel = new Bag();
         initialRebel = new Bag();
-    }
+        }
 
     public Region(ConflictDiamonds conflictDiamonds, int id) {
         setRegionID(id);
@@ -111,7 +111,7 @@ public class Region {
         goalRemainEmployed = new Bag();
         goalRebel = new Bag();
         initialRebel = new Bag();
-    }
+        }
     
     //getter and setters
     public void addRegionParcels(Parcel par) { regionParcels.add(par); }
@@ -124,7 +124,7 @@ public class Region {
     public void addPerson(Person p) { population.add(p); }
     public void removePerson(Person p) { population.remove(p); }
     public ArrayList<Person> getResidingPopulation() { return population; }
-	
+        
     public void addFormalEmployee(Person r) { formalEmployees.add(r); }
     public void removeFormalEmployee(Person r) { formalEmployees.remove(r); }
     public Bag getFormalEmployees() { return formalEmployees; }
@@ -183,11 +183,11 @@ public class Region {
     public void setPovertyRate(double frate, double trate) {
         foodPoorRate = frate;
         totalPoorRate = trate;
-    }
+        }
 
     public double getFoodPoorRate() { return foodPoorRate; }
     public double getTotalPoorRate() { return totalPoorRate; }
-	
+        
     //public void setLaborStats(double employed, double laborForce, double under5, double under15, double under65, double miner) {
     public void setLaborStats(double employed, double laborForce, double age0to4, double age5to6, double age7to14, double age15to17, double age18to64, double age65Over, double miner) {
         percentEmployed = employed;
@@ -201,8 +201,8 @@ public class Region {
         percent18to64 = age18to64;
         percent65Over = age65Over;
         
-    }
-	
+        }
+        
     public double getPercentEmployed() { return percentEmployed; }
     public double getPercentLaborForce() { return percentLaborForce; }
     public double getPercentEligibleInformal() { return eligibleToWorkAsMiner; }
@@ -229,5 +229,5 @@ public class Region {
     public void setPercentMiners(double percentMiners) { this.percentMiners = percentMiners; }
     
     
-	
-}
+        
+    }

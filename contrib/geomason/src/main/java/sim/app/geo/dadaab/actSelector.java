@@ -16,4 +16,4 @@ public class actSelector {
     private double priorWeighIndex; // priority
     
     
-}
+    }

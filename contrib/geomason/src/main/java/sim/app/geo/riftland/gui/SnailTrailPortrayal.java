@@ -20,7 +20,7 @@ import sim.util.gui.SimpleColorMap;
  *
  */
 public class SnailTrailPortrayal extends SimplePortrayal2D
-{
+    {
 
     /**
      * XXX What are these for?
@@ -50,9 +50,9 @@ public class SnailTrailPortrayal extends SimplePortrayal2D
      * @param drawIntermediaryPoints is true if trajectory detail to be rendered
      */
     public SnailTrailPortrayal(Color color, boolean drawIntermediaryPoints)
-    {
+        {
         this(color, color, drawIntermediaryPoints);
-    }
+        }
 
 
     /**
@@ -61,16 +61,16 @@ public class SnailTrailPortrayal extends SimplePortrayal2D
      * @param drawIntermediaryPoints is true if trajectory detail to be rendered
      */
     public SnailTrailPortrayal(Color maxColor, Color minColor, boolean drawIntermediaryPoints)
-    {
+        {
         this.maxColor = maxColor;
         this.minColor = minColor;
         this.drawIntermediaryPoints = drawIntermediaryPoints;
-    }
+        }
 
     
     @Override
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-    {
+        {
         Herding herding = (Herding) object;
 
         int maxTrailLength = herding.getMaxTrailLength();
@@ -79,10 +79,10 @@ public class SnailTrailPortrayal extends SimplePortrayal2D
         // Re-calibrate the color map if the movement history is less than the
         // maximum to be remembered.
         if (previousMaxTrail != maxTrailLength && maxTrailLength != 0)
-        {
+            {
             previousMaxTrail = maxTrailLength;
             previousColorMap = new SimpleColorMap(1, maxTrailLength, minColor, maxColor);
-        }
+            }
 
         double cellSizeWidth = info.draw.width;
         double cellSizeHeight = info.draw.height;
@@ -112,39 +112,39 @@ public class SnailTrailPortrayal extends SimplePortrayal2D
         
 
         while (trailIterator.hasNext())
-        {
+            {
             Parcel segmentEndParcel = trailIterator.next();
 
             int segmentEndGridX = segmentEndParcel.getX();
             int segmentEndGridY = segmentEndParcel.getY();
 
             int segmentEndGraphicsX = (int) (currentParcelGraphicsX
-                    + (segmentEndGridX - currentParcelGridX) * cellSizeWidth);
+                + (segmentEndGridX - currentParcelGridX) * cellSizeWidth);
             int segmentEndGraphicsY = (int) (currentParcelGraphicsY
-                    + (segmentEndGridY - currentParcelGridY) * cellSizeHeight);
+                + (segmentEndGridY - currentParcelGridY) * cellSizeHeight);
 
             if (drawIntermediaryPoints)
-            {
+                {
                 graphics.drawOval(segmentEndGraphicsX - iCellSizeHalfWidth,
-                        segmentEndGraphicsY - iCellSizeHalfhHeight,
-                        iCellSizeWidth/2,
-                        iCellSizeHeight/2);
-            }
+                    segmentEndGraphicsY - iCellSizeHalfhHeight,
+                    iCellSizeWidth/2,
+                    iCellSizeHeight/2);
+                }
 
 
             segment++;
             graphics.setColor(previousColorMap.getColor(segment));
 
             //set color of each segment separately?
-//      		graphics.setColor(trailColor);
+//                      graphics.setColor(trailColor);
             graphics.drawLine(segmentStartGraphicsX,
-                    segmentStartGraphicsY,
-                    segmentEndGraphicsX,
-                    segmentEndGraphicsY);
+                segmentStartGraphicsY,
+                segmentEndGraphicsX,
+                segmentEndGraphicsY);
 
             segmentStartGraphicsX = segmentEndGraphicsX;
             segmentStartGraphicsY = segmentEndGraphicsY;
-        }
+            }
 
+        }
     }
-}

@@ -13,7 +13,7 @@ import sim.app.geo.riftland.PopulationCenter;
  * Represents a 1 km^2 of developed area.
  */
 public class UrbanArea extends Parcel
-{
+    {
     /** Used for color table lookup
      *
      */
@@ -29,39 +29,39 @@ public class UrbanArea extends Parcel
     private PopulationCenter populationCenter = null;
 
     public UrbanArea()
-    {
+        {
         super();
-    }
+        }
 
     public UrbanArea(int x, int y, int country)
-    {
+        {
         super(x,y,country);
-    }
+        }
 
     public UrbanArea(PopulationCenter p)
-    {
+        {
         this.populationCenter = p;
-    }
+        }
 
 
     public PopulationCenter getPopulationCenter()
-    {
+        {
         return populationCenter;
-    }
+        }
 
     public void setPopulationCenter(PopulationCenter populationCenter)
-    {
+        {
         this.populationCenter = populationCenter;
-    }
+        }
 
 
     /**
      * @return color value used to lookup in color table in GUI version
      */
     public double doubleValue()
-    {
+        {
         return COLOR_VALUE;
-    }
+        }
 
     
     /**
@@ -70,7 +70,7 @@ public class UrbanArea extends Parcel
      */
     @Override
     public boolean isNavigable()
-    {
+        {
         return false;
+        }
     }
-}

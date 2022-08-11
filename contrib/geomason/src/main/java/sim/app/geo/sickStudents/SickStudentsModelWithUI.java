@@ -52,20 +52,20 @@ public class SickStudentsModelWithUI extends GUIState {
     public SickStudentsModelWithUI() {
         super(new SickStudentsModel(System.currentTimeMillis()));
         model = (SickStudentsModel) state;
-    }
+        }
 
     public SickStudentsModelWithUI(SimState state) {
         super(state);
         model = (SickStudentsModel) state;
-    }
+        }
 
     public static String getName() {
         return "Sick Students";
-    }
+        }
 
     public Object getSimulationInspectedObject() {
         return state;
-    } // non-volatile
+        } // non-volatile
 
     public void start() {
         super.start();
@@ -75,12 +75,12 @@ public class SickStudentsModelWithUI extends GUIState {
         susceptibleSeries.clear();
         infectedSeries.clear();
         recoveredSeries.clear();
-    }
+        }
 
     public void load(SimState state) {
         super.load(state);
         setupPortrayals();
-    }
+        }
 
     public void init(final Controller c) {
         super.init(c);
@@ -98,18 +98,18 @@ public class SickStudentsModelWithUI extends GUIState {
 
         displayFrame = display.createFrame();
         controller.registerFrame(displayFrame);
-        displayFrame.setVisible(true);		// this makes the map window visible by default
+        displayFrame.setVisible(true);          // this makes the map window visible by default
 
         c.registerFrame(createDiseaseTimeSeriesFrame());
-        diseaseTimeSeriesFrame.setVisible(true);		// this makes the SIR chart visible by default
+        diseaseTimeSeriesFrame.setVisible(true);                // this makes the SIR chart visible by default
 
         ((Console) controller).setSize(380, 540);
-    }
+        }
 
     @SuppressWarnings("serial")
     public void setupPortrayals() {
 
-		// setup GIS portrayals
+        // setup GIS portrayals
 
         elementarySchoolCatchmentsPortrayal.setField(model.elementarySchoolZones);
         elementarySchoolCatchmentsPortrayal.setPortrayalForAll(new CatchmentPortrayal(
@@ -146,32 +146,32 @@ public class SickStudentsModelWithUI extends GUIState {
                 time = state.schedule.getTime();
                 if (time == Schedule.AFTER_SIMULATION) {
                     return;
-                }
+                    }
 
                 int sCount = 0, iCount = 0, rCount = 0;
                 for (Student s : model.students) {
                     switch (s.status) {
-                        case SUSCEPTIBLE:
-                            sCount++;
-                            break;
-                        case INFECTED:
-                            iCount++;
-                            break;
-                        case RECOVERED:
-                            rCount++;
-                            break;
+                    case SUSCEPTIBLE:
+                        sCount++;
+                        break;
+                    case INFECTED:
+                        iCount++;
+                        break;
+                    case RECOVERED:
+                        rCount++;
+                        break;
+                        }
                     }
-                }
 
                 susceptibleSeries.add(time, (sCount / (double) model.students.size()));
                 infectedSeries.add(time, (iCount / (double) model.students.size()));
                 recoveredSeries.add(time, (rCount / (double) model.students.size()));
                 diseaseTimeSeriesChart.update(ChartGenerator.FORCE_KEY, true);
-            }
-        });
+                }
+            });
 
         diseaseTimeSeriesChart.repaint();
-    }
+        }
 
     public JFrame createDiseaseTimeSeriesFrame() {
 
@@ -191,24 +191,24 @@ public class SickStudentsModelWithUI extends GUIState {
         diseaseTimeSeriesFrame.pack();
 
         return diseaseTimeSeriesFrame;
-    }
+        }
 
     public void quit() {
         super.quit();
 
         if (displayFrame != null) {
             displayFrame.dispose();
-        }
+            }
         displayFrame = null; // let gc
         display = null; // let gc
 
         if (diseaseTimeSeriesFrame != null) {
             diseaseTimeSeriesFrame.dispose();
-        }
+            }
         diseaseTimeSeriesFrame = null;
-    }
+        }
 
     public static void main(String[] args) {
         new SickStudentsModelWithUI().createController();
+        }
     }
-}

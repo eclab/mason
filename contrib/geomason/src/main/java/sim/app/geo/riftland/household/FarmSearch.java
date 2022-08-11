@@ -20,16 +20,16 @@ import java.util.Random;
  * @author Eric 'Siggy' Scott
  */
 public class FarmSearch
-{
+    {
     /**
      * @return True if g has at least half as much land available as this owns.
      * This makes it so that, when Household's split, the child Household can
      * have a farm as or less dense than the parent.
      */
     public static boolean enoughLand(double minimumAcceptableHectares, GrazableArea g)
-    {
+        {
         return (g.getAvailableAreaInHectares()>= minimumAcceptableHectares);
-    }
+        }
     
     /**
      * @param startParcel
@@ -40,31 +40,31 @@ public class FarmSearch
      * Otherwise, it searches the Moore neighborhood at different radiuses to find a suitable parcel to locate the newly created Farm
      */
     public static GrazableArea findNewFarmLoc(Land land, Population population, Household household, double desiredHectares,
-                                              final GrazableArea startParcel, MersenneTwisterFast random, int maxDepth)
-    {
+        final GrazableArea startParcel, MersenneTwisterFast random, int maxDepth)
+        {
         GrazableArea targetParcel = null;
 
         if (!enoughLand(desiredHectares, startParcel))
-        {
-            for (int depth = 1; depth < maxDepth; depth++)
             {
+            for (int depth = 1; depth < maxDepth; depth++)
+                {
                 GrazableArea newLoc = findNewFarmLoc(land, population, household, desiredHectares, startParcel, depth, random); // we will iteratively explore Moore neighborhoods of different radii to find a sutiable parcel.
                 if (newLoc != null)
-                {
+                    {
                     targetParcel = newLoc;
                     break;
+                    }
                 }
-            }
 
 
-        } else
-        {
+            } else
+            {
             // Set up a farm adjacent to the parent without reducing the parent's land.
             targetParcel = startParcel;
-        }
+            }
 
         return targetParcel;
-    }
+        }
 
     /**
      * @param grazableArea
@@ -72,21 +72,21 @@ public class FarmSearch
      * @return Author: CRC 
      */
     private static GrazableArea findNewFarmLoc(Land land, Population population, Household household, double desiredHectares, GrazableArea grazableArea, int depth, MersenneTwisterFast random)
-    {
+        {
         GrazableArea targetParcel = null;
 
         // This nested class is used to contain the x and y coordinates of candidate parcels.
         class parcelCor
-        {
+            {
             public int xCor = 0;
             public int yCor = 0;
 
             public parcelCor(int x, int y)
-            {
+                {
                 xCor = x;
                 yCor = y;
+                }
             }
-        }
         
         // The following list will contain the coordinates of all the parcels in the Moore neighborhood with the radius equal to "depth" parameter of a given parcel.
         List<parcelCor> perimeter = new ArrayList<parcelCor>();
@@ -96,13 +96,13 @@ public class FarmSearch
 
         // Add all parcels on the perimeter
         for (int i = -depth; i <= depth; i++)
-        {
+            {
             perimeter.add(new parcelCor(parcelX + i, parcelY + depth));
             perimeter.add(new parcelCor(parcelX + i, parcelY - depth));
             perimeter.add(new parcelCor(parcelX + depth, parcelY + i));
             perimeter.add(new parcelCor(parcelX - depth, parcelY + i));
 
-        }
+            }
 
         // Shuffling the list so that we minimize direction bias in placing the new farm.
         MersenneTwisterFast mtw = new MersenneTwisterFast(random.nextLong());
@@ -111,7 +111,7 @@ public class FarmSearch
         // Now we loop though the parcels in the list to find a parcel that qualifies to be the home of newly created Farm.
         // Once we find it we break from the loop and stop searching further.
         for (ListIterator<parcelCor> it = perimeter.listIterator(); it.hasNext();)
-        {
+            {
             parcelCor currentParcel = it.next();
             int x = currentParcel.xCor;
             int y = currentParcel.yCor;
@@ -119,14 +119,14 @@ public class FarmSearch
             // Checking that we are conisdering only parcels within the Riftland area udner consideration. Tha last condition sees if the parcel under consideration belongs to different country than the original one.
             // We are are not considering the situation where the new farm can be placed in a different coutnry. Coutnry borders are strictly observed.
             if (y < 0 || y >= land.getHeight() || x < 0 || x >= land.getWidth() || (land.getCountry(x, y) != land.getCountry(parcelX, parcelY)))
-            {
+                {
                 continue;
-            }
+                }
 
             Parcel p = (Parcel) land.getParcel(x, y);
 
             if (p instanceof GrazableArea) // Make sure that the parcel is of GrazableArea type.
-            {
+                {
 
                 //XXX If the farm is placed in the new parcel of different ethnicity then that should ideally lead to conflict. So this should be given further thought.
                 boolean conflictFlag = false; // This flag will be used to trigger conflict
@@ -151,19 +151,19 @@ public class FarmSearch
 //                }
 
                 if (sameNeighbors >= Math.round(totalNeighbors / 2.0)) // The criteria is met
-                {
+                    {
                     GrazableArea q = (GrazableArea) p;
                     if (enoughLand(desiredHectares, q))
-                    {
+                        {
                         targetParcel = q; // This will the parcel where the newly created Farm will be placed. 
                         break;
+                        }
                     }
+
                 }
 
             }
 
-        }
-
         return targetParcel;
+        }
     }
-}

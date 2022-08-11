@@ -22,13 +22,13 @@ import sim.util.geo.MasonGeometry;
  *
  */
 public class TouchingWorld extends SimState
-{
+    {
     private static final long serialVersionUID = 7508584126243256514L;
 
     public static final int WIDTH = 300; 
     public static final int HEIGHT = 300; 
     
-	// where all the shapes geometry lives
+    // where all the shapes geometry lives
     public GeomVectorField shapes = new GeomVectorField(WIDTH, HEIGHT);
 
     // currently selected shape
@@ -37,10 +37,10 @@ public class TouchingWorld extends SimState
     // responsible for changing selected shape
     private Mover mover = new Mover();
 
-	
+        
 
     public TouchingWorld(long seed)
-    {
+        {
         super(seed);
 
         createWorld();
@@ -48,15 +48,15 @@ public class TouchingWorld extends SimState
         // Bump out the main viewport a bit for aesthetics
         this.shapes.getMBR().expandBy(5.0);
 
-		// ensure both GeomFields cover same area
-		selectedShape.setMBR(shapes.getMBR());
-    }
+        // ensure both GeomFields cover same area
+        selectedShape.setMBR(shapes.getMBR());
+        }
 
     
     
     @Override
-	public void start()
-    {
+    public void start()
+        {
         super.start();
 
         // Randomly select a shape as "current"
@@ -64,19 +64,19 @@ public class TouchingWorld extends SimState
         selectShape((MasonGeometry) shapes.getGeometries().objs[0]); // select retangle
 
         schedule.scheduleRepeating(mover);
-    }
+        }
     
     public static void main(String[] args)
-    {
+        {
         doLoop(TouchingWorld.class, args);
         System.exit(0);
-    }
+        }
 
     private
     void createWorld()
-    {
-        try
         {
+        try
+            {
             WKTReader rdr = new WKTReader();
             Polygon polygon = null;
 
@@ -99,16 +99,16 @@ public class TouchingWorld extends SimState
 
             polygon = (Polygon) (rdr.read("POLYGON ((2 0, 5 -3, 8 0, 2 0))"));
             this.shapes.addGeometry(new MasonGeometry(polygon));
-        }
+            }
         catch (ParseException ex)
-        {
+            {
             Logger.getLogger(TouchingWorld.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            }
 
-    }
+        }
 
     public void selectShape(MasonGeometry shape)
-    {
+        {
         selectedShape.clear();
 
         // selecteShape.clear() will have zeroed the MBR, so we need to resync
@@ -117,6 +117,6 @@ public class TouchingWorld extends SimState
         selectedShape.setMBR(shapes.getMBR());
         
         selectedShape.addGeometry(shape);
-    }
+        }
 
-}
+    }

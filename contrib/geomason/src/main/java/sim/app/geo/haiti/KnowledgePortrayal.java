@@ -10,19 +10,19 @@ import sim.portrayal.simple.RectanglePortrayal2D;
 
 
 class KnowledgePortrayal extends RectanglePortrayal2D
-{
+    {
     private static final long serialVersionUID = 1L;
 
     // colormap for people in tile levels, which varies between 0 and 30
-//	public static ColorMap PeopleColor = new sim.util.gui.SimpleColorMap(
-//			0, 30, new Color(0, 0, 0, 0), new Color(255, 0, 0, 255));
+//      public static ColorMap PeopleColor = new sim.util.gui.SimpleColorMap(
+//                      0, 30, new Color(0, 0, 0, 0), new Color(255, 0, 0, 255));
     @Override
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-    {
-        if (object == null)
         {
+        if (object == null)
+            {
             return;
-        }
+            }
 
         Rectangle2D.Double draw = info.draw;
         final double width = draw.width * scale;
@@ -34,11 +34,11 @@ class KnowledgePortrayal extends RectanglePortrayal2D
         final int h = (int) (height);
 
         if (((Agent) object).centerInfo > 0)
-        {
-            //	if( ((Agent)object).centerInfo.size() > 0){
+            {
+            //  if( ((Agent)object).centerInfo.size() > 0){
             graphics.setColor(Color.red);
             graphics.fillRect(x, y, w, h);
+            }
         }
-    }
 
-}
+    }

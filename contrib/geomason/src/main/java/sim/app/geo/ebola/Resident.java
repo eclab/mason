@@ -15,7 +15,7 @@ import java.util.List;
  * Created by rohansuri on 7/7/15.
  */
 public class Resident implements Steppable
-{
+    {
     private Int2D location;
     private boolean inactive;
 
@@ -48,7 +48,7 @@ public class Resident implements Steppable
     double time_to_infectious = -1;
 
     public Resident(Int2D location, Household household, int sex, int age, boolean isUrban)
-    {
+        {
         this.location = location;
         this.household = household;
         this.age = age;
@@ -57,11 +57,11 @@ public class Resident implements Steppable
         this.sector_id = -1;//set default to no sector
         this.employed = false;//default isfalse
         this.healthStatus = Constants.SUSCEPTIBLE;
-    }
+        }
 
     @Override
     public void step(SimState state)
-    {
+        {
         if(healthStatus == Constants.DEAD)
             return;
 
@@ -69,9 +69,9 @@ public class Resident implements Steppable
         long cStep = ebolaSim.schedule.getSteps();
 
         if(healthStatus == Constants.EXPOSED)
-        {
-            if(time_to_infectious == -1)//time to infectious has not been determined yet
             {
+            if(time_to_infectious == -1)//time to infectious has not been determined yet
+                {
                 time_to_infectious = ((ebolaSim.random.nextGaussian()*Parameters.INCUBATION_PERIOD_STDEV)+Parameters.INCUBATION_PERIOD_AVERAGE)*24.0 * Parameters.TEMPORAL_RESOLUTION;
 
                 //decide whether you will die or stay alive
@@ -84,34 +84,34 @@ public class Resident implements Steppable
                 //update the hotspots
                 if(ebolaSim.hotSpotsGrid.getObjectsAtLocation(location.getX()/10, location.getY()/10) == null)
                     ebolaSim.hotSpotsGrid.setObjectLocation(new Object(), location.getX()/10, location.getY()/10);
-            }
+                }
             else if(time_to_infectious <= 0)//now become infectious
-            {
+                {
                 this.setHealthStatus(Constants.INFECTIOUS);
-            }
+                }
             else
                 time_to_infectious--;
 
-        }
+            }
         else if(healthStatus == Constants.INFECTIOUS)//infect everyone!!!
-        {
-            if(doomed_to_die && time_to_resolution == -1)
             {
+            if(doomed_to_die && time_to_resolution == -1)
+                {
                 //decide to kill or be recovered
                 time_to_resolution = ((ebolaSim.random.nextGaussian()*Parameters.FATALITY_PERIOD_STDEV)+Parameters.FATALITY_PERIOD_AVERAGE)*24.0 * Parameters.TEMPORAL_RESOLUTION;
-            }
+                }
             else if(time_to_resolution == -1)
-            {
+                {
                 //decide when to recover
                 time_to_resolution = ((ebolaSim.random.nextGaussian()*Parameters.RECOVERY_PERIOD_STDEV)+Parameters.RECOVERY_PERIOD_AVERAGE)*24.0 * Parameters.TEMPORAL_RESOLUTION;
-            }
+                }
             else if(time_to_resolution <= 0)
-            {
+                {
                 if(doomed_to_die)
                     setHealthStatus(Constants.DEAD);
                 else
                     setHealthStatus(Constants.RECOVERED);
-            }
+                }
             else if(!isMoving())
                 time_to_resolution--;
 
@@ -128,15 +128,15 @@ public class Resident implements Steppable
             if(nearByPeople == null)//if you are nearby no one just return
                 return;
             for(Object o: nearByPeople)
-            {
+                {
                 Resident resident = (Resident)o;
                 if(resident.getHealthStatus() == Constants.SUSCEPTIBLE)
-                {
-                    if(!Parameters.INFECT_ONLY_YOUR_STRUCTURE || (currentStructure != null && currentStructure.getMembers().contains(resident)))
                     {
+                    if(!Parameters.INFECT_ONLY_YOUR_STRUCTURE || (currentStructure != null && currentStructure.getMembers().contains(resident)))
+                        {
                         double rand = ebolaSim.random.nextDouble();
                         if(rand < (resident.isMoving()?Parameters.SUSCEPTIBLE_TO_EXPOSED_TRAVELERS:Parameters.SUSCEPTIBLE_TO_EXPOSED))//infect this agent
-                        {
+                            {
                             resident.setHealthStatus(Constants.EXPOSED);
                             if(resident.getHousehold().getCountry() == Parameters.LIBERIA)
                                 ebolaSim.totalLiberiaInt++;
@@ -144,12 +144,12 @@ public class Resident implements Steppable
                                 ebolaSim.totalSierra_LeoneInt++;
                             else if(resident.getHousehold().getCountry() == Parameters.GUINEA)
                                 ebolaSim.totalGuineaInt++;
+                            }
                         }
                     }
                 }
-            }
 
-        }
+            }
         if(workDayDestination == null)
             return;
 
@@ -161,38 +161,38 @@ public class Resident implements Steppable
 
         //check if we have a goal
         if(goal == null)//calc goal
-        {
-            calcGoal(cStep, ebolaSim);
-        }
-        if(goal != null)
-        {
-            if(this.location.equals(goal.getLocation()))//we are at goal
             {
-                if(!this.location.equals(household.getLocation()))//make sure we are not at home
+            calcGoal(cStep, ebolaSim);
+            }
+        if(goal != null)
+            {
+            if(this.location.equals(goal.getLocation()))//we are at goal
                 {
+                if(!this.location.equals(household.getLocation()))//make sure we are not at home
+                    {
                     if (atGoalLength < 0) {
                         //go back home
                         setGoal(this.goal, household, 100, Parameters.WALKING_SPEED);
-                    }
+                        }
                     atGoalLength -= 1*Parameters.TEMPORAL_RESOLUTION ;
-                }
+                    }
                 else
-                {
+                    {
                     if(isMoving)
                         isMoving = false;
                     goal = null;
+                    }
                 }
-            }
             else//if we aren't at goal just move towards it
-            {
-                if(routePosition < route.getNumSteps())
                 {
+                if(routePosition < route.getNumSteps())
+                    {
                     Int2D nextStep = route.getLocation(routePosition++);
                     this.setLocation(nextStep);
                     updatePositionOnMap(ebolaSim);
+                    }
                 }
             }
-        }
 
 //        if(route == null && goToSchool && !cannotMove)
 //        {
@@ -254,156 +254,156 @@ public class Resident implements Steppable
 //        location = new Int2D(x.get(index), y.get(index));
 //
 //        updatePositionOnMap(ebolaSim);
-    }
+        }
 
     private void calcGoal(long cStep, EbolaABM ebolaSim)
-    {
+        {
         int dayOfWeek = (int)((cStep*Parameters.TEMPORAL_RESOLUTION)/24%7);
         if(dayOfWeek < 5)//weekday
-        {
+            {
             int hourOfDay = (int)((cStep*Parameters.TEMPORAL_RESOLUTION)%24);
             if(hourOfDay > 8 && hourOfDay < 14)
-            {
+                {
                 double rand = ebolaSim.random.nextDouble();
                 if(rand < 0.7)
-                {
+                    {
                     setGoal(this.getHousehold(), workDayDestination, dailyWorkHours, Parameters.WALKING_SPEED);
+                    }
                 }
-            }
 
+            }
         }
-    }
 
     private void setGoal(Structure from, Structure to, int stayDuration, double speed)
-    {
+        {
         this.goal = to;
         this.atGoalLength = stayDuration;
         this.route = from.getRoute(to, speed);
         this.routePosition = 0;
-    }
+        }
 
     public void updatePositionOnMap(EbolaABM ebolaSim)
-    {
+        {
         double randX = ebolaSim.random.nextDouble();
         double randY = ebolaSim.random.nextDouble();
         ebolaSim.world.setObjectLocation(this, new Double2D(location.getX() + randX, location.getY() + randY));
         ebolaSim.worldPopResolution.setObjectLocation(this, location.getX()/10, location.getY()/10);
-    }
+        }
 
 
     //-----------Getters and Setters--------------//
 
     public Household getHousehold()
-    {
+        {
         return household;
-    }
+        }
 
     public void setHousehold(Household household)
-    {
+        {
         this.household = household;
-    }
+        }
 
     public Int2D getLocation() {
         return location;
-    }
+        }
 
     public void setLocation(Int2D location) {
         this.location = location;
-    }
+        }
 
     public void setIsUrban(boolean val)
-    {
+        {
         isUrban = val;
-    }
+        }
 
     public boolean getIsUrban()
-    {
+        {
         return isUrban;
-    }
+        }
 
     public int getAge() {
         return age;
-    }
+        }
 
     public void setAge(int age) {
         this.age = age;
-    }
+        }
 
     public School getNearestSchool()
-    {
+        {
         return nearestSchool;
-    }
+        }
 
     public void setNearestSchool(School school)
-    {
+        {
         this.nearestSchool = school;
-    }
+        }
 
     public int getPop_density()
-    {
+        {
         return pop_density;
-    }
+        }
 
     public void setPop_density(int pop_density)
-    {
+        {
         this.pop_density = pop_density;
-    }
+        }
 
     public boolean isInactive() {
         return inactive;
-    }
+        }
 
     public void setInactive(boolean inactive) {
         this.inactive = inactive;
-    }
+        }
 
     public int getSex() {
         return sex;
-    }
+        }
 
     public void setSex(int sex) {
         this.sex = sex;
-    }
+        }
 
     public Structure getWorkDayDestination() {
         return workDayDestination;
-    }
+        }
 
     public void setWorkDayDestination(Structure workDayDestination) {
         this.workDayDestination = workDayDestination;
-    }
+        }
 
     public int getSector_id() {
         return sector_id;
-    }
+        }
 
     public void setSector_id(int sector_id) {
         this.sector_id = sector_id;
-    }
+        }
 
     public boolean isEmployed() {
         return employed;
-    }
+        }
 
     public void setEmployed(boolean employed) {
         this.employed = employed;
-    }
+        }
 
     public int getDailyWorkHours() {
         return dailyWorkHours;
-    }
+        }
 
     public void setDailyWorkHours(int dailyWorkHours) {
         this.dailyWorkHours = dailyWorkHours;
-    }
+        }
 
     public int getHealthStatus() {
         return healthStatus;
-    }
+        }
 
     public void setHealthStatus(int healthStatus) {
         this.healthStatus = healthStatus;
-    }
+        }
 
     /**
      * @param newAdminId
@@ -411,7 +411,7 @@ public class Resident implements Steppable
      * @return true when route is not null, if route is null this person cannot move and stays and returns false
      */
     public boolean moveResidency(int newAdminId, int to_country, EbolaABM ebolaSim)
-    {
+        {
         //first pick a location for the new house
         List<Int2D> urban_locations = null;
         if(to_country == Parameters.GUINEA)
@@ -423,10 +423,10 @@ public class Resident implements Steppable
 
         //pick a random urban location
         if(urban_locations == null )
-        {
+            {
             //System.out.println("NO URBAN LOCATIONS!!! on id " + newAdminId);
             return true;
-        }
+            }
         Int2D urban_location = urban_locations.get(ebolaSim.random.nextInt(urban_locations.size()));
 
         //convert to world scale and randomize
@@ -444,12 +444,12 @@ public class Resident implements Steppable
         newHousehold.setNearestNode(newNode);
 
         if(workDayDestination == null || newHousehold.getRoute(this.household, 50.0) == null)
-        {
+            {
             //bail out we can't get to it
             //but first we must remove the link we just made
             household.getNearestNode().links.remove(e);
             return false;
-        }
+            }
         //find work near your new household
         if(isEmployed())
             EbolaBuilder.setWorkDestination(this);
@@ -458,29 +458,29 @@ public class Resident implements Steppable
         //used for movement flow
         int country = household.getCountry();
         if(country == Parameters.SL)
-        {
+            {
             Bag residents;
             if(!ebolaSim.admin_id_sle_residents.containsKey(getHousehold().getAdmin_id()))
                 residents = ebolaSim.admin_id_sle_residents.put(getHousehold().getAdmin_id(), new Bag());
             residents = ebolaSim.admin_id_sle_residents.get(getHousehold().getAdmin_id());
             residents.add(this);
-        }
+            }
         else if(country == Parameters.GUINEA)
-        {
+            {
             Bag residents;
             if(!ebolaSim.admin_id_gin_residents.containsKey(getHousehold().getAdmin_id()))
                 residents = ebolaSim.admin_id_gin_residents.put(getHousehold().getAdmin_id(), new Bag());
             residents = ebolaSim.admin_id_gin_residents.get(getHousehold().getAdmin_id());
             residents.add(this);
-        }
+            }
         else if(country == Parameters.LIBERIA)
-        {
+            {
             Bag residents;
             if(!ebolaSim.admin_id_lib_residents.containsKey(getHousehold().getAdmin_id()))
                 residents = ebolaSim.admin_id_lib_residents.put(getHousehold().getAdmin_id(), new Bag());
             residents = ebolaSim.admin_id_lib_residents.get(getHousehold().getAdmin_id());
             residents.add(this);
-        }
+            }
         isMoving = true;
 //        if(ebolaSim.firstResidentHash == 0  && workDayDestination instanceof WorkLocation && isMoving())
 //            ebolaSim.firstResidentHash = this.hashCode();
@@ -492,12 +492,12 @@ public class Resident implements Steppable
         setGoal(this.getHousehold(), newHousehold, 0, 50.0);
         setHousehold(newHousehold);
         return true;
-    }
+        }
 
 
 
     public boolean isMoving()
-    {
+        {
         return isMoving;
+        }
     }
-}

@@ -19,7 +19,7 @@ import sim.field.grid.SparseGrid2D;
  *
  */
 public abstract class Farming extends ActivityAtLocation
-{
+    {
 
     // <editor-fold defaultstate="collapsed" desc="State Variables">
     
@@ -93,32 +93,32 @@ public abstract class Farming extends ActivityAtLocation
     // <editor-fold defaultstate="collapsed" desc="Accessors">
 
     public double getCropVegetationDensity()
-    {
+        {
         return cropVegetationDensity;
-    }
+        }
 
     public void setCropVegetationDensity(double cropVegetationDensity)
-    {
+        {
         assert(cropVegetationDensity >= params.vegetation.getMinVegetationKgPerKm2());
         assert(cropVegetationDensity <= params.vegetation.getMaxVegetationKgPerKm2());
         this.cropVegetationDensity = cropVegetationDensity;
-    }
+        }
     
     public void setHasHarvested(boolean val) {
         hasHarvested = val;
-    }
+        }
 
     public boolean getHasHarvested() {
         return hasHarvested;
-    }
+        }
     
     public void setHasPlanted(boolean val) {
         hasPlanted = val;
-    }
+        }
 
     public boolean getHasPlanted() {
         return hasPlanted;
-    }
+        }
     
     /**
      * planting focus keeps track of which of two seasons
@@ -127,70 +127,70 @@ public abstract class Farming extends ActivityAtLocation
      * @return
      */
     public int getWhichSeason()
-    {
+        {
         return whichSeason;
-    }
+        }
 
     public void setWhichSeason(int flag)
-    {
+        {
         whichSeason = flag;
-    }
+        }
     
     public GrowingSeason getGrowingSeason(){
         return growingSeasons[whichSeason];
-    }
+        }
     
     public GrowingSeason getOtherGrowingSeason(){
         return growingSeasons[(whichSeason + 1) % 2];
-    }
+        }
 
 
     public int getLengthOfGrowingSeason()
-    {
+        {
         return growingSeasons[whichSeason].getSeasonLength();
-    }
+        }
 
     public double getRainAtEndofGrowingSeason (){
         return rainAtEndOfGrowingSeason;
-    }
+        }
     
     public double getRainBeforeGrowingSeason() {
         return rainBeforeGrowingSeason;
-    }
+        }
 
     public int getNextHarvestDate() {
         return growingSeasons[whichSeason].getHarvestDate();
-    }
+        }
 
     protected int getPlantedDate() {
         return plantedDate;
-    }
+        }
 
     protected void setPlantedDate(int plantedDate) {
         this.plantedDate = plantedDate;
-    }
+        }
 
     protected boolean hasPlanted() {
         return hasPlanted;
-    }
+        }
 
     public double getVegetationBeforeHarvesting()
-    {
+        {
         return vegetationBeforeHarvesting;
-    }
+        }
 
     private void setVegetationBeforeHarvesting(double veg)
-    {
+        {
         this.vegetationBeforeHarvesting = veg;
-    }
+        }
 
     public int getUnsatYields() {
         return unsatYields;
-    }
+        }
 
     public void setUnsatYields(int newcount) {
         this.unsatYields = newcount;
-    }
+        }
 
     // </editor-fold>
 
@@ -199,7 +199,7 @@ public abstract class Farming extends ActivityAtLocation
      * @param parcel on which the farm is located
      */
     Farming(Parameters params, SparseGrid2D farmingGrid, Household household, Parcel parcel, MersenneTwisterFast random)
-    {
+        {
         super(household, parcel);
         growingSeason0 = new GrowingSeason(this, getHousehold().getEndOfPseudoAnnualWorkCycle(), params);
         growingSeason1 = new GrowingSeason(this, (getHousehold().getEndOfPseudoAnnualWorkCycle() + 180), params);
@@ -218,7 +218,7 @@ public abstract class Farming extends ActivityAtLocation
 //        if (growingSeason1.getPlantDate() < 0)
 //            System.err.print("--- Error: negative plant date:" + growingSeason1.getPlantDate());
 
-    }
+        }
     
     /**
      * Copy all the state parameters from another instance of Farming. This is
@@ -228,20 +228,20 @@ public abstract class Farming extends ActivityAtLocation
      */
     public void copyStateFrom(Farming other) {
 
-//    	firstPlantingDate = other.firstPlantingDate;
-//    	nextPlantDate = other.nextPlantDate;
-//    	nextHarvestDate = other.nextHarvestDate;
-    	whichSeason = other.whichSeason;
-    	lastHarvestDate = other.lastHarvestDate;
-//    	lengthOfFirstGrowingSeason = other.lengthOfFirstGrowingSeason;
-//    	lengthOfSecondGrowingSeason = other.lengthOfSecondGrowingSeason;
-//    	secondPlantingDate = other.secondPlantingDate;
-    	plantedDate = other.plantedDate;
-    	hasPlanted = other.hasPlanted;
-    	hasHarvested = other.hasHarvested;
+//      firstPlantingDate = other.firstPlantingDate;
+//      nextPlantDate = other.nextPlantDate;
+//      nextHarvestDate = other.nextHarvestDate;
+        whichSeason = other.whichSeason;
+        lastHarvestDate = other.lastHarvestDate;
+//      lengthOfFirstGrowingSeason = other.lengthOfFirstGrowingSeason;
+//      lengthOfSecondGrowingSeason = other.lengthOfSecondGrowingSeason;
+//      secondPlantingDate = other.secondPlantingDate;
+        plantedDate = other.plantedDate;
+        hasPlanted = other.hasPlanted;
+        hasHarvested = other.hasHarvested;
         growingSeasons[0] = new GrowingSeason(other.growingSeasons[0]);
         growingSeasons[1] = new GrowingSeason(other.growingSeasons[1]);
-    }
+        }
     
     // <editor-fold defaultstate="collapsed" desc="Abstract Methods">
     /**
@@ -264,21 +264,21 @@ public abstract class Farming extends ActivityAtLocation
 
     @Override
     public void step(SimState ss)
-    {
+        {
         super.step(ss);
         
         World world = (World) ss;
 
         if (getHasPlanted()){
-             growCrops(world);
-        }
+            growCrops(world);
+            }
 
         manageCrops((int) world.schedule.getTime(), world.getRandom(), world);
-    }
+        }
 
 
     void manageCrops(int today, MersenneTwisterFast random, World world)
-    {
+        {
 
         //System.out.println(whichSeason);//(growingSeasons[whichSeason]);
         int nextPlantDate = growingSeasons[whichSeason].getPlantDate();
@@ -290,57 +290,57 @@ public abstract class Farming extends ActivityAtLocation
         
         if (today > nextPlantDate - 14 && today < nextPlantDate){
             rainBeforeGrowingSeason = rainBeforeGrowingSeason + rainfall;
-        }
+            }
         if (today > nextHarvestDate - 14 && today < nextHarvestDate){
             rainAtEndOfGrowingSeason = rainAtEndOfGrowingSeason + rainfall;
-        }
+            }
 
         // if haven't planted and today is planting day, plant!
         if (!hasPlanted() && today == nextPlantDate && getLengthOfGrowingSeason() > 0)
-        {
+            {
             plantCrops(today);
-        }
+            }
 
         if (hasPlanted())
-        {
+            {
             // Note crop level prior to harvesting
             if (today == (nextHarvestDate - 7))
-            {
+                {
                 setVegetationBeforeHarvesting(getCropVegetationDensity());
-            } else if (today == nextHarvestDate) // if harvesting season, harvestCrops & calc farming fraction
-            {
+                } else if (today == nextHarvestDate) // if harvesting season, harvestCrops & calc farming fraction
+                {
                 harvestCrops(today, random, world);
 
                 rainBeforeGrowingSeason = 0;
                 rainAtEndOfGrowingSeason = 0;
+                }
             }
         }
-    }
     
     /**
      * Increase the vegetation level on this farm as a function of rainfall.
      * @param world Used to access rainfall information for this farm's location.
      */
     private void growCrops(World world)
-    {
+        {
         final int patchX = getLocation().getRainfallPatch().x;
         final int patchY = getLocation().getRainfallPatch().y;
         final double rainfall = world.getWeather().getDailyRainfall(patchX,patchY);
         setCropVegetationDensity(Gardener.getUpdatedVegetation(rainfall, (GrazableArea)this.getLocation(), cropVegetationDensity, world.getParams()));
-    }
+        }
     
     /** Delete this farming activity and all references to it. */
     @Override
     public void remove()
-    {
+        {
         getHousehold().setFarmAreaInHectares(0.0); // give land back to GrazableArea
         getHousehold().endFarming();
         farmingGrid.remove(this);
         ((GrazableArea) getLocation()).removeFarm(this);
-    }
+        }
 
     void adjustFarmSize()
-    {
+        {
         double farmArea_ = this.getHousehold().getFarmAreaInHectares();
         int farmWorkers_ = this.getPopulation();
         GrazableArea myGrazableArea = (GrazableArea) (getHousehold().getLocation());
@@ -349,7 +349,7 @@ public abstract class Farming extends ActivityAtLocation
         this.getHousehold().setFarmAreaInHectares(farmArea_ + desiredLandChange);
 
         //myGrazableArea.debugFarmedLandArea();
-    }
+        }
     
     //</editor-fold>
-}
+    }

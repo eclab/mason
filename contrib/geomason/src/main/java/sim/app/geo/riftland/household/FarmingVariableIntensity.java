@@ -10,7 +10,7 @@ import sim.field.grid.SparseGrid2D;
  * @author Tim
  */
 public class FarmingVariableIntensity extends Farming
-{
+    {
     /** Multiplier applied to the vegetation on this farm at harvest time. This
      * is our way of implementing the idea that a farm is more productive than
      * naturally growing vegetation: if farmYieldRate = 2.0, then the amount
@@ -32,19 +32,19 @@ public class FarmingVariableIntensity extends Farming
     
     //<editor-fold defaultstate="collapsed" desc="Accessors">
     private void setFarmYieldRate(double yieldRate)
-    {
+        {
         this.farmYieldRate = yieldRate;
 
-    }
+        }
 
     public double getFarmYieldRate()
-    {
+        {
         return farmYieldRate;
 
-    }
+        }
     //</editor-fold>
     
-     /**
+    /**
      * Create the FarmingVariableIntensity activity and notify the household of it. Then populate
      * the activity, set the grain store, and the area within the parcel dedicated
      * to farming.  Finally, call adjustFarmSize() once.
@@ -56,7 +56,7 @@ public class FarmingVariableIntensity extends Farming
      * @return newly created VariableIntenistyFarming activity
      */
     public FarmingVariableIntensity(Parameters params, SparseGrid2D farmingGrid, Household household, GrazableArea farmland, double farmSize, int population, MersenneTwisterFast initRandom)
-    {
+        {
         super(params, farmingGrid, household, farmland, initRandom);
         assert(farmSize >= 0); // Ought only to be zero temporarily!
         assert(population > 0);
@@ -64,9 +64,9 @@ public class FarmingVariableIntensity extends Farming
 
         // Plug this activity into the corresponding MASON layer
         synchronized(farmingGrid)
-        {
+            {
             farmingGrid.setObjectLocation(this, farmland.getX(), farmland.getY());
-        }
+            }
         farmland.setIsaFarmland();
         farmland.addFarm(this);
 
@@ -80,7 +80,7 @@ public class FarmingVariableIntensity extends Farming
 //                "farmed availalbe on parcel:" + farmland.getAvailableAreaInHectares());
         
 
-    }
+        }
 
     /**
      * Calculate the decreasing returns factor for farm efficiency.
@@ -89,25 +89,25 @@ public class FarmingVariableIntensity extends Farming
      * @see FarmingVariableIntensity#farmYieldRate
      */
     private double computeYieldRate()
-    {
+        {
 
         // Farm produces twice wild vegetation with 1 farmer per hectare.
         // Higher intensity produces reduced yield per farmer following Boserup.
         double farmAreaInHectares = this.getHousehold().getFarmAreaInHectares();
         int farmWorkers = this.getPopulation();
         if (farmWorkers == 0)
-        	return 0;
+            return 0;
         
         assert (farmAreaInHectares > 0);
 
         double efficiency = BASE_FARM_YIELD_FACTOR * Math.pow(farmWorkers/(farmAreaInHectares * params.farming.getMaxWorkableLandPerFarmer()), 
-        		params.farming.getFarmIntensificationExponent());
+            params.farming.getFarmIntensificationExponent());
         return efficiency;
-    }
+        }
     
     @Override
     void plantCrops(int today)
-    {
+        {
         // presume all hectars of farm size are planted
         // plant hectars up to the lower of land owned & labor available
 
@@ -124,14 +124,14 @@ public class FarmingVariableIntensity extends Farming
         setHasPlanted(true);
         setPlantedDate(today);
         // if (hasRestarted) System.out.println("restarted farm planted" );
-    }
+        }
     
     /**
      * @param today
      */
     @Override
     protected void harvestCrops(int today, MersenneTwisterFast random, World world)
-    {
+        {
         // This is a conditional activity
 
         // harvest planted hectars up to the lower of planted & labor available
@@ -139,7 +139,7 @@ public class FarmingVariableIntensity extends Farming
         // This needs to be updated to move the growing inside the farming activity so that different farmers can harvest at different times.  TRG
 
         if (hasPlanted()) // make sure there's something planted
-        {
+            {
             double vegDensity = getCropVegetationDensity();
             double harvestedVegDensity = (vegDensity - params.vegetation.getMinVegetationKgPerKm2());
             setCropVegetationDensity(params.vegetation.getMinVegetationKgPerKm2());
@@ -152,12 +152,12 @@ public class FarmingVariableIntensity extends Farming
             getHousehold().depositGrain(harvestPFD);
             
             double altHarvestPFD = ((getVegetationBeforeHarvesting() - params.vegetation.getMinVegetationKgPerKm2()) 
-                    * getHousehold().getFarmAreaInKm2() * getFarmYieldRate()) / params.farming.getKgOfGrainPerPersonDay();
+                * getHousehold().getFarmAreaInKm2() * getFarmYieldRate()) / params.farming.getKgOfGrainPerPersonDay();
             
-    //public void updatePlantDate(double harvestDensity, double rainBeforeStart, double rainAtEnd, GrowingSeason other)
+            //public void updatePlantDate(double harvestDensity, double rainBeforeStart, double rainAtEnd, GrowingSeason other)
             growingSeasons[whichSeason].updateSeasonLength(harvestPFD, altHarvestPFD, getPopulation());
             growingSeasons[whichSeason].updatePlantDate(harvestedVegDensity, getRainBeforeGrowingSeason(), 
-                    getRainAtEndofGrowingSeason(), getOtherGrowingSeason());
+                getRainAtEndofGrowingSeason(), getOtherGrowingSeason());
           
             setHasPlanted(false); // Resetting planted flag.
 
@@ -165,8 +165,8 @@ public class FarmingVariableIntensity extends Farming
             setWhichSeason(((getWhichSeason() + 1) % 2)); // switch to the other season
 //            System.out.println("Switched Seasons: " + getWhichSeason());
             //if (hasRestarted) System.out.println("restarted farm harvested " + harvestPFD );
+            }
         }
-    }
     
     /**
      * @param world supplies the MASON layer and random number generator
@@ -176,7 +176,7 @@ public class FarmingVariableIntensity extends Farming
      */
     @Override
     public void restartFarming(int time, MersenneTwisterFast random, int pop, World world) 
-    {
+        {
 
         hasRestarted = true;
         growingSeasons[getWhichSeason()].restartPlantDate(time);
@@ -185,5 +185,5 @@ public class FarmingVariableIntensity extends Farming
 
 
         
+        }
     }
-}

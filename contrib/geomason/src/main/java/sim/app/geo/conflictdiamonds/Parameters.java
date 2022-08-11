@@ -22,8 +22,8 @@ public class Parameters {
     public Parameters(String[] args) {
         if (args != null) {
             loadParameters(openParameterDatabase(args));
+            }
         }
-    }
     
     /**
      * Initialize parameter database from file
@@ -44,18 +44,18 @@ public class Parameters {
                 try {
                     File parameterDatabaseFile = new File(args[x + 1]);
                     parameters = new ParameterDatabase(parameterDatabaseFile.getAbsoluteFile());
-                } catch (IOException ex) {
+                    } catch (IOException ex) {
                     ex.printStackTrace();
-                }
+                    }
                 break;
+                }
             }
-        }
         if (parameters == null) {
             System.out.println("\nNot in a parameter Mode");//("\nNo parameter file was specified");
             parameters = new ParameterDatabase();
-        }
+            }
         return parameters;
-    }
+        }
 
     private void loadParameters(ParameterDatabase parameterDB) {       
         // global - enterprise    
@@ -87,19 +87,19 @@ public class Parameters {
                 global.isProximateExperiment()));
 
         
-    }
+        }
     
     public int returnIntParameter(ParameterDatabase paramDB, String parameterName, int defaultValue) {
         return paramDB.getIntWithDefault(new Parameter(parameterName), null, defaultValue);
-    }
+        }
 
     public boolean returnBooleanParameter(ParameterDatabase paramDB, String parameterName, boolean defaultValue) {
         return paramDB.getBoolean(new Parameter(parameterName), null, defaultValue);
-    }
+        }
 
     double returnDoubleParameter(ParameterDatabase paramDB, String parameterName, double defaultValue) {
         return paramDB.getDoubleWithDefault(new Parameter(parameterName), null, defaultValue);
-    }
+        }
 
     public class GlobalParamters {
       
@@ -146,7 +146,7 @@ public class Parameters {
         public double getMinRebelDensityMiner() { return minRebelDensityMiner; }
         public void setMinRebelDensityMiner(double val) { if (val > 0) minRebelDensityMiner = val; }
         public double getMinRebelDensityNotMiner() { return minRebelDensityNotMiner; }
-        public void setMinRebelDensityNotMiner(double val) { if (val > 0) minRebelDensityNotMiner = val; }	
+        public void setMinRebelDensityNotMiner(double val) { if (val > 0) minRebelDensityNotMiner = val; }      
         public double getMinRebelDensityMinor() { return minRebelDensityMinor; }
         public void setMinRebelDensityMinor(double val) { if (val > 0) minRebelDensityMinor = val; }
         public boolean isInitialRebelPositionActualEvents() { return initialRebelPositionActualEvents; }
@@ -157,7 +157,7 @@ public class Parameters {
         public void useMinerProportions(boolean val) { this.useMiningProportions = val; }
         public boolean useMinerProportions() { return useMiningProportions; }
                      
+        }
+    
+    
     }
-    
-    
-}

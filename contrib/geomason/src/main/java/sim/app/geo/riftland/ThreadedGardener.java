@@ -1,8 +1,8 @@
 /*
-    ThreadedGardener.java
+  ThreadedGardener.java
 
-    $Id$
- */
+  $Id$
+*/
 package sim.app.geo.riftland;
 
 import sim.app.geo.riftland.parcel.GrazableArea;
@@ -15,7 +15,7 @@ import sim.engine.Steppable;
 /** Spins off as many separate Gardener threads as there are processors
  */
 public class ThreadedGardener implements Steppable
-{
+    {
     private static final long serialVersionUID = 1L;
 
     /** Number of available cores */
@@ -39,55 +39,55 @@ public class ThreadedGardener implements Steppable
     
 
     ThreadedGardener(Parameters params)
-    {
+        {
         NUMCORES = params.system.getNumthreads();
         gardeners = new Gardener[NUMCORES];
         for (int i = 0; i < gardeners.length; i++)
-        {
+            {
             gardeners[i] = new Gardener();
-        }
+            }
 
         gardenerSequence = new ParallelSequence(gardeners, NUMCORES);
-    }
+        }
 
     @Override
     public void step(SimState state)
-    {
+        {
         gardenerSequence.step(state);
-    }
+        }
 
     public void setWaterHoles(WaterHoles waterHoles)
-    {
+        {
         for (int i = 0; i < gardeners.length; i++)
             gardeners[i].setWaterHoles(waterHoles);
-    }
+        }
 
     /**
      *  @see World#finish()
      */
     protected void finish()
-    {
+        {
         gardenerSequence.cleanup();
-    }
+        }
 
 
 
     @Override
     protected void finalize() throws Throwable
-    {
+        {
         super.finalize();
 
         gardenerSequence.cleanup();
-    }
+        }
 
 
     public void reset(World world)
-    {
-        for (int i = 0; i < gardeners.length; i++)
         {
+        for (int i = 0; i < gardeners.length; i++)
+            {
             gardeners[i].reset();
+            }
         }
-    }
 
 
 
@@ -96,10 +96,10 @@ public class ThreadedGardener implements Steppable
      * @param ga
      */
     synchronized public void addGrazableArea(GrazableArea ga)
-    {
+        {
         gardeners[currentGrazableArea % NUMCORES].addGrazableArea(ga);
         this.currentGrazableArea++;
+        }
+
+
     }
-
-
-}

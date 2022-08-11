@@ -5,4 +5,4 @@ public class Constants {
     public static int FEMALE = 1;
     public static int DEAD = 0;
     public static int ALIVE = 1;
-}
+    }

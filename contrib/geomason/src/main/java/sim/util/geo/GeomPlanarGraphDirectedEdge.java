@@ -19,14 +19,14 @@ import com.vividsolutions.jts.planargraph.Node;
  *
  */
 public class GeomPlanarGraphDirectedEdge extends DirectedEdge
-{
+    {
 
     public GeomPlanarGraphDirectedEdge(Node from, Node to,
-            Coordinate directionPt,
-            boolean edgeDirection)
-    {
+        Coordinate directionPt,
+        boolean edgeDirection)
+        {
         super(from, to, directionPt, edgeDirection);
+        }
+
+
     }
-
-
-}

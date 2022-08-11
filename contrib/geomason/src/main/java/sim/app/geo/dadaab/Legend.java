@@ -20,18 +20,18 @@ public class Legend extends Canvas {
     
     
     public void paint(Graphics legend)
-    {
+        {
          
 //        legend.setColor(Color.red);
 //        legend.drawRect(10, 10, 260, 660);
 //        
         
-         Graphics2D leg = (Graphics2D)legend;
-         leg.scale(0.7, 0.7);
-         Line2D line = new Line2D.Double(20, 60, 70, 70);
-         leg.setColor(Color.lightGray);
-         leg.setStroke(new BasicStroke(3));
-         leg.draw(line);
+        Graphics2D leg = (Graphics2D)legend;
+        leg.scale(0.7, 0.7);
+        Line2D line = new Line2D.Double(20, 60, 70, 70);
+        leg.setColor(Color.lightGray);
+        leg.setStroke(new BasicStroke(3));
+        leg.draw(line);
         
        
         // river
@@ -64,7 +64,7 @@ public class Legend extends Canvas {
         leg.fillRect(20, 370, 30, 30);
         
         
-          // facilities
+        // facilities
        
         leg.setColor(new Color(0,255,0));       
         leg.drawRect(20, 430, 30, 30);
@@ -85,7 +85,7 @@ public class Legend extends Canvas {
         leg.drawRect(20,630, 30, 30);
         
        
-       // Graphics2D fontL = (Graphics2D)legend;
+        // Graphics2D fontL = (Graphics2D)legend;
         Font f = new Font("Serif", Font.BOLD, 24);       
         leg.setFont(f);   
         
@@ -136,7 +136,7 @@ public class Legend extends Canvas {
         
                 
                 
+        }
+    
+    
     }
-    
-    
-}

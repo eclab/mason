@@ -69,17 +69,17 @@ public class EbolaBuilder {
     public static HashSet<LineString> allLineStrings = new HashSet<LineString>();
 
     public static void initializeWorld(final EbolaABM sim, final URL pop_file, final URL admin_file,
-            final URL age_dist_file) throws URISyntaxException {
+        final URL age_dist_file) throws URISyntaxException {
         EbolaBuilder.ebolaSim = sim;
         EbolaBuilder.age_dist = new HashMap<Integer, ArrayList<Double>>();
         EbolaBuilder.ebolaSim.world_height = 9990;
         EbolaBuilder.ebolaSim.world_width = 9390;
 
         EbolaBuilder.ebolaSim.allRoadNodes = new SparseGrid2D(EbolaBuilder.ebolaSim.world_width,
-                EbolaBuilder.ebolaSim.world_height);
+            EbolaBuilder.ebolaSim.world_height);
         EbolaBuilder.ebolaSim.roadNetwork = new Network();
         EbolaBuilder.ebolaSim.roadLinks = new GeomVectorField(EbolaBuilder.ebolaSim.world_width,
-                EbolaBuilder.ebolaSim.world_height);
+            EbolaBuilder.ebolaSim.world_height);
         System.out.println("(" + EbolaBuilder.ebolaSim.world_width + ", " + EbolaBuilder.ebolaSim.world_height + ")");
         final GeomVectorField schools_vector = new GeomVectorField();
         final GeomVectorField farms_vector = new GeomVectorField();
@@ -87,13 +87,13 @@ public class EbolaBuilder {
         final GeomVectorField places_vector = new GeomVectorField();
 
         EbolaBuilder.ebolaSim.schoolGrid = new SparseGrid2D(EbolaBuilder.ebolaSim.world_width,
-                EbolaBuilder.ebolaSim.world_height);
+            EbolaBuilder.ebolaSim.world_height);
         EbolaBuilder.ebolaSim.farmGrid = new SparseGrid2D(EbolaBuilder.ebolaSim.world_width,
-                EbolaBuilder.ebolaSim.world_height);
+            EbolaBuilder.ebolaSim.world_height);
         EbolaBuilder.ebolaSim.hospitalGrid = new SparseGrid2D(EbolaBuilder.ebolaSim.world_width,
-                EbolaBuilder.ebolaSim.world_height);
+            EbolaBuilder.ebolaSim.world_height);
         EbolaBuilder.ebolaSim.placesGrid = new SparseGrid2D(EbolaBuilder.ebolaSim.world_width,
-                EbolaBuilder.ebolaSim.world_height);
+            EbolaBuilder.ebolaSim.world_height);
 
         // initialize node map for all work locations
         for (int i = 0; i < Parameters.WORK_SIZE_BY_SECTOR.length; i++)
@@ -101,11 +101,11 @@ public class EbolaBuilder {
 
         try {
             final URL[] files = { Parameters.ROADS_SHAPE_PATH, Parameters.ROADS_DBF_PATH, Parameters.SCHOOLS_PATH,
-                Parameters.SCHOOLS_DBF, Parameters.FARMS_PATH, Parameters.FARMS_DBF, Parameters.HOSPITALS_PATH,
-                Parameters.HOSPITALS_DBF, PlacesShapefileData.class.getResource("all_places.shp"),
-                PlacesShapefileData.class.getResource("all_places.dbf") };// all the files we want to read in
+                                  Parameters.SCHOOLS_DBF, Parameters.FARMS_PATH, Parameters.FARMS_DBF, Parameters.HOSPITALS_PATH,
+                                  Parameters.HOSPITALS_DBF, PlacesShapefileData.class.getResource("all_places.shp"),
+                                  PlacesShapefileData.class.getResource("all_places.dbf") };// all the files we want to read in
             final GeomVectorField[] vectorFields = { EbolaBuilder.ebolaSim.roadLinks, schools_vector, farms_vector,
-                hospitals_vector, places_vector };// all the vector fields we want to fill
+                                                     hospitals_vector, places_vector };// all the vector fields we want to fill
             readInShapefile(files, vectorFields);
 
             System.out.println("Done getting information, now analyzing.");
@@ -116,7 +116,7 @@ public class EbolaBuilder {
             // TODO: Do we use shapeFIleImporter to open files??
             InputStream inputStream = DataObjectImporter.open(Parameters.ADMIN_ID_PATH);
 
-            //			InputStream inputStream = new FileInputStream(new File(Parameters.ADMIN_ID_PATH.toURI()));
+            //                  InputStream inputStream = new FileInputStream(new File(Parameters.ADMIN_ID_PATH.toURI()));
 
             ArcInfoASCGridImporter.read(inputStream, GeomGridField.GridDataType.INTEGER, gridField);
             EbolaBuilder.ebolaSim.admin_id = (IntGrid2D) gridField.getGrid();
@@ -133,9 +133,9 @@ public class EbolaBuilder {
             System.out.print("Reading in road_cost ");
             readInRoadCost();
             System.out.println("[" + (System.currentTimeMillis() - now) / 1000 + " secs ]");
-        } catch (final Exception e) {
+            } catch (final Exception e) {
             e.printStackTrace();
-        }
+            }
 
         // read in movement patters
         setUpMovementMap(Parameters.MOVEMENT_PATH);
@@ -162,7 +162,7 @@ public class EbolaBuilder {
 
         // assignNearest Nodes to all facilities except households
         assignNearestNode(EbolaBuilder.ebolaSim.schoolGrid,
-                EbolaBuilder.ebolaSim.workNodeStructureMap.get(Constants.EDUCATION));
+            EbolaBuilder.ebolaSim.workNodeStructureMap.get(Constants.EDUCATION));
         System.out.println("Connect the facilities together");
         // assignNearestNode(ebolaSim.farmGrid,
         // ebolaSim.workNodeStructureMap.get(Constants.AGRICULTURE));
@@ -189,7 +189,7 @@ public class EbolaBuilder {
         System.out.println("Assigning nearestNodes...");
         // assignNearestNode(ebolaSim.householdGrid, ebolaSim.householdNodes);
         System.out.println("time = " + ((System.currentTimeMillis() - time) / 1000 / 60) + " minutes");
-    }
+        }
 
     static void alignVectorFields(final GeomGridField base, final GeomVectorField[] others) {
         final Envelope globalMBR = base.getMBR();
@@ -198,23 +198,23 @@ public class EbolaBuilder {
             globalMBR.expandToInclude(vf.getMBR());
         for (final GeomVectorField vf : others)
             vf.setMBR(globalMBR);
-    }
+        }
 
     private static URL getUrl(final String nodesFilename) throws IOException {
         final InputStream nodeStream = EbolaBuilder.class.getResourceAsStream(nodesFilename);
         try {
             if (!new File("./shapeFiles/").exists()) {
                 new File("./shapeFiles/").mkdir();
-            }
+                }
             final File targetFile = new File(
-                    "./shapeFiles/" + nodesFilename.split("/")[nodesFilename.split("/").length - 1]);
+                "./shapeFiles/" + nodesFilename.split("/")[nodesFilename.split("/").length - 1]);
             final OutputStream outStream = new FileOutputStream(targetFile);
             // outStream.write(buffer);
             int read = 0;
             final byte[] bytes = new byte[1024];
             while ((read = nodeStream.read(bytes)) != -1) {
                 outStream.write(bytes, 0, read);
-            }
+                }
             outStream.close();
             nodeStream.close();
             if (nodesFilename.endsWith(".shp")) {
@@ -223,18 +223,18 @@ public class EbolaBuilder {
                 getUrl(nodesFilename.replace("shp", "sbx"));
                 getUrl(nodesFilename.replace("shp", "sbn"));
                 getUrl(nodesFilename.replace("shp", "shx"));
-            }
+                }
             return targetFile.toURI().toURL();
-        } catch (final Exception e) {
+            } catch (final Exception e) {
             if (nodesFilename.endsWith("shp")) {
                 e.printStackTrace();
                 return null;
-            } else {
+                } else {
                 // e.printStackTrace();
                 return null;
+                }
             }
         }
-    }
 
     static void readInShapefile(final URL[] files, final GeomVectorField[] vectorFields) {
         try {
@@ -244,11 +244,11 @@ public class EbolaBuilder {
                 final Bag schools_masked = new Bag();
                 // eh
                 ShapeFileImporter.read(fileShp, fileDbf, vectorFields[i / 2], schools_masked);
-            }
-        } catch (final Exception e) {
+                }
+            } catch (final Exception e) {
             e.printStackTrace();
+            }
         }
-    }
 
     static void readInShapefile(final String[] files, final GeomVectorField[] vectorFields) {
         try {
@@ -259,32 +259,32 @@ public class EbolaBuilder {
                 final URL shapeURI = getUrl(filePath);
                 final URL shapeDBF = getUrl(filePath.replace("shp", "dbf"));
                 ShapeFileImporter.read(shapeURI, shapeDBF, vectorFields[i], schools_masked);
-            }
-        } catch (final Exception e) {
+                }
+            } catch (final Exception e) {
             e.printStackTrace();
+            }
         }
-    }
 
     static void readInRoadCost() {
         try {
             EbolaBuilder.ebolaSim.road_cost = new DoubleGrid2D(EbolaBuilder.ebolaSim.world_width,
-                    EbolaBuilder.ebolaSim.world_height);
+                EbolaBuilder.ebolaSim.world_height);
 
             // FileInputStream fileInputStream = new FileInputStream(new
             // File(Parameters.ROADS_COST_PATH));
             final DataInputStream dataInputStream = new DataInputStream(
-                    DataObjectImporter.open(Parameters.ROADS_COST_PATH));
+                DataObjectImporter.open(Parameters.ROADS_COST_PATH));
 
             for (int i = 0; i < EbolaBuilder.ebolaSim.world_width; i++)
                 for (int j = 0; j < EbolaBuilder.ebolaSim.world_height; j++)
                     EbolaBuilder.ebolaSim.road_cost.set(i, j, dataInputStream.readDouble());
-        } catch (final FileNotFoundException e) {
+            } catch (final FileNotFoundException e) {
             e.printStackTrace();
-        } catch (final IOException e) {
+            } catch (final IOException e) {
             e.printStackTrace();
-        }
+            }
 
-    }
+        }
 
     private static void editAndWriteRaster() {
         // TEMP
@@ -307,7 +307,7 @@ public class EbolaBuilder {
         //        /* handle exception */
         //            ex.printStackTrace();
         //        }
-    }
+        }
 
     private static void remove() {
         // int sum = 0;
@@ -369,7 +369,7 @@ public class EbolaBuilder {
         //            }
         //            System.out.println("\nExporting...");
         //            GeoToolsImporter.removeAndExport(removeGeometry);
-    }
+        }
 
     /**
      * Reads in from a vector_field and adds to SparseGrid2d and the bag supplied
@@ -381,7 +381,7 @@ public class EbolaBuilder {
      *                     it just uses a generic structure
      */
     static void readInStructures(final GeomVectorField vector_field, final SparseGrid2D grid, final Bag addTo, final Structure type)
-    {
+        {
         final Bag school_geom = vector_field.getGeometries();
 
         final Envelope e = vector_field.getMBR();
@@ -392,13 +392,13 @@ public class EbolaBuilder {
             final Point point = vector_field.getGeometryLocation(school);
             final double x = point.getX(), y = point.getY();
             final int xint = (int) Math.floor(xcols * (x - xmin) / (xmax - xmin)),
-                  yint = (int) (ycols - Math.floor(ycols * (y - ymin) / (ymax - ymin))); // REMEMBER TO FLIP THE Y
+                yint = (int) (ycols - Math.floor(ycols * (y - ymin) / (ymax - ymin))); // REMEMBER TO FLIP THE Y
             // VALUE
             Structure structure;
             if (type instanceof School) {
                 structure = new School(new Int2D(xint, yint));
                 EbolaBuilder.ebolaSim.allWorkLocations.add((WorkLocation) structure);
-            } else if (type instanceof WorkLocation) {
+                } else if (type instanceof WorkLocation) {
                 structure = new WorkLocation(new Int2D(xint, yint), ((WorkLocation) type).getSector_id());
                 EbolaBuilder.ebolaSim.allWorkLocations.add((WorkLocation) structure);
 
@@ -406,14 +406,14 @@ public class EbolaBuilder {
                 //                    farmDistanceFrequency[structure.getCapacity()]++;
                 //                else
                 //                    farmDistanceFrequency[farmDistanceFrequency.length-1]++;
-            } else{
+                } else{
                 structure = new Structure(new Int2D(xint, yint));
-            }
+                }
             addTo.add(structure);
             // System.out.println("(" + xint + ", " + yint + ")");
             grid.setObjectLocation(structure, xint, yint);
+            }
         }
-    }
 
     /**
      * Function will assign each structure in the SparseGrid a nearest node on the
@@ -445,17 +445,17 @@ public class EbolaBuilder {
                 distance *= (Parameters.POP_BLOCK_METERS / Parameters.WORLD_TO_POP_SCALE) / 1000.0;
                 if (distance > max_distance) {
                     max_distance = distance;
-                }
+                    }
                 sum += distance;
                 count++;
+                }
             }
-        }
         for (int i = 0; i < EbolaBuilder.frequency.length; i++) {
             System.out.print(EbolaBuilder.frequency[i] + "\t\t");
-        }
+            }
         System.out.println("\nAverage distance = " + sum / count + " km");
         System.out.println("Max distance household to node = " + max_distance + " kilometers");
-    }
+        }
 
     private static void addToListInMap(final Map map, final Object key, final Object value) {
         List list;
@@ -463,7 +463,7 @@ public class EbolaBuilder {
             map.put(key, new LinkedList<Structure>());
         list = (List) map.get(key);
         list.add(value);
-    }
+        }
 
     private static int[] frequency = new int[300];
 
@@ -488,10 +488,10 @@ public class EbolaBuilder {
                 if (val.get(i) < min) {
                     min = val.get(i);
                     index = i;
-                }
+                    }
             cY = yBag.get(index);
             cX = xBag.get(index);
-        }
+            }
 
         final Bag nodes = EbolaBuilder.ebolaSim.allRoadNodes.getObjectsAtLocation(cX, cY);
         final Bag val = new Bag();
@@ -505,20 +505,20 @@ public class EbolaBuilder {
                     EbolaBuilder.frequency[i]++;
                     // System.out.println("Radial neihghbor found!! at " + i);
                     return (Node) val.get(0);
+                    }
                 }
-            }
 
             System.out.println("NO NODE NEARBY!!!!!!!!!!!!!");
             EbolaBuilder.frequency[9]++;
             return new Node(new Int2D(cX, cY));
-        } else {
+            } else {
             EbolaBuilder.frequency[0]++;
             //System.out.println("On a NODE!!");
-        }
+            }
 
         return (Node) nodes.get(0);
 
-    }
+        }
 
     static void extractFromRoadLinks(final GeomVectorField roadLinks, final EbolaABM ebolaSim) {
         final Bag geoms = roadLinks.getGeometries();
@@ -536,19 +536,19 @@ public class EbolaBuilder {
                 count++;
                 readLineString((LineString) gm.getGeometry(), xcols, ycols, xmin, ymin, xmax, ymax, ebolaSim);
 
-            } else if (gm.getGeometry() instanceof MultiLineString) {
+                } else if (gm.getGeometry() instanceof MultiLineString) {
                 final MultiLineString mls = (MultiLineString) gm.getGeometry();
                 for (int i = 0; i < mls.getNumGeometries(); i++) {
                     count++;
                     readLineString((LineString) mls.getGeometryN(i), xcols, ycols, xmin, ymin, xmax, ymax, ebolaSim);
+                    }
                 }
-            }
             if (count % 10000 == 0)
                 System.out.println("# of linestrings = " + count);
 
-        }
+            }
 
-    }
+        }
 
     //    /**
     //     * Converts an individual linestring into a series of links and nodes in the
@@ -632,7 +632,7 @@ public class EbolaBuilder {
      * @param ymax     - maximum y value in shapefile
      */
     static void readLineString(final LineString geometry, final int xcols, final int ycols, final double xmin,
-            final double ymin, final double xmax, final double ymax, final EbolaABM ebolaSim) {
+        final double ymin, final double xmax, final double ymax, final EbolaABM ebolaSim) {
 
         final CoordinateSequence cs = geometry.getCoordinateSequence();
         // iterate over each pair of coordinates and establish a link between
@@ -654,7 +654,7 @@ public class EbolaBuilder {
             // calculate the location of the node in question
             final double x = cs.getX(i), y = cs.getY(i);
             final int xint = (int) Math.floor(xcols * (x - xmin) / (xmax - xmin)),
-                  yint = (int) (ycols - Math.floor(ycols * (y - ymin) / (ymax - ymin))); // REMEMBER TO FLIP THE Y
+                yint = (int) (ycols - Math.floor(ycols * (y - ymin) / (ymax - ymin))); // REMEMBER TO FLIP THE Y
             // VALUE
 
             if (xint >= ebolaSim.world_width)
@@ -670,8 +670,8 @@ public class EbolaBuilder {
                 n.lineStrings.add(geometry);
                 n.index = i;
                 ebolaSim.allRoadNodes.setObjectLocation(n, xint, yint);
-            } else // this means that we are connected to another linestring or this linestring
-            {
+                } else // this means that we are connected to another linestring or this linestring
+                {
                 n = (Node) ns.get(0);
                 // USE FOR NETWORK COLLAPSE
                 //                LineString searchFor = n.lineString;
@@ -709,7 +709,7 @@ public class EbolaBuilder {
                 //                        break;
                 //                    }
                 //                }
-            }
+                }
 
             // attach the node to the previous node in the chain (or continue if
             // this is the first node in the chain of links)
@@ -717,16 +717,16 @@ public class EbolaBuilder {
             if (i == 0) { // can't connect previous link to anything
                 oldNode = n; // save this node for reference in the next link
                 continue;
-            }
+                }
 
             final int weight = (int) n.location.distance(oldNode.location); // weight is just
             // distance
             // add it to the thinned network if it is the first or last in the cs.
 
             if (oldNode == n) // don't link a node to itself
-            {
+                {
                 continue;
-            }
+                }
 
             // create the new link and save it
             final Edge e = new Edge(oldNode, n, weight);
@@ -736,11 +736,11 @@ public class EbolaBuilder {
             n.links.add(e);
             n.weightOnLineString = trimmed_distance;
             oldNode = n; // save this node for reference in the next link
-        }
+            }
 
         // if we haven't found any links the network should be null
 
-    }
+        }
 
     private static void setUpAgeDist(final URL age_dist_file) throws URISyntaxException {
         try {
@@ -761,21 +761,21 @@ public class EbolaBuilder {
                     if (i != 5)
                         list.set(i - 5, list.get(i - 5) + list.get(i - 5 - 1));
                     // System.out.print(list.get(i-5));
-                }
+                    }
                 // System.out.println("sum = " + sum);
                 // System.out.println();
                 // now add it to the hashmap
                 EbolaBuilder.age_dist.put(county_id, list);
                 line = csvReader.readLine();
+                }
+            } catch (final FileNotFoundException e) {
+            e.printStackTrace();
+            } catch (final IOException e) {
+            e.printStackTrace();
+            } catch (final java.text.ParseException e) {
+            e.printStackTrace();
             }
-        } catch (final FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (final IOException e) {
-            e.printStackTrace();
-        } catch (final java.text.ParseException e) {
-            e.printStackTrace();
         }
-    }
 
     private static void addHousesAndResidents(final URL pop_file, final URL admin_file) throws URISyntaxException {
         try {
@@ -783,12 +783,12 @@ public class EbolaBuilder {
             final long time = System.currentTimeMillis();
             // buffer reader - read ascii file for population data
             final BufferedReader pop_reader = new BufferedReader(
-                    new InputStreamReader(DataObjectImporter.open(pop_file)));
+                new InputStreamReader(DataObjectImporter.open(pop_file)));
             String pop_line;
 
             // buffer reader - read ascii file for admin data
             final BufferedReader admin_reader = new BufferedReader(
-                    new InputStreamReader(DataObjectImporter.open(admin_file)));
+                new InputStreamReader(DataObjectImporter.open(admin_file)));
             String admin_line;
             String[] admin_tokens;
 
@@ -809,10 +809,10 @@ public class EbolaBuilder {
 
             // instantiate world to hold agents
             EbolaBuilder.ebolaSim.world = new Continuous2D(Parameters.WORLD_DISCRETIZTION,
-                    width * Parameters.WORLD_TO_POP_SCALE, height * Parameters.WORLD_TO_POP_SCALE);
+                width * Parameters.WORLD_TO_POP_SCALE, height * Parameters.WORLD_TO_POP_SCALE);
             // instantiate grid to hold houses
             EbolaBuilder.ebolaSim.householdGrid = new SparseGrid2D(width * Parameters.WORLD_TO_POP_SCALE,
-                    height * Parameters.WORLD_TO_POP_SCALE);
+                height * Parameters.WORLD_TO_POP_SCALE);
             EbolaBuilder.ebolaSim.urbanAreasGrid = new SparseGrid2D((width), (height));
             EbolaBuilder.ebolaSim.worldPopResolution = new SparseGrid2D((width), (height));
             EbolaBuilder.ebolaSim.hotSpotsGrid = new SparseGrid2D(width, height);
@@ -829,16 +829,16 @@ public class EbolaBuilder {
             // System.out.println(curr_tokens.length);
             for (int i = 0; i < height; i++) {
                 if (i != 0)// store three lines at a time so you can check surrounding cells
-                {
+                    {
                     prev_tokens = curr_tokens;
                     curr_tokens = next_tokens;
-                }
+                    }
 
                 if (i != width - 1) {
                     pop_line = pop_reader.readLine();
                     pop_line = pop_line.substring(1);
                     next_tokens = pop_line.split("\\s+");
-                }
+                    }
 
                 admin_line = admin_reader.readLine();
                 admin_tokens = admin_line.split("\\s+");
@@ -869,9 +869,9 @@ public class EbolaBuilder {
 
                         boolean isUrban = false;
                         if (num_people > Parameters.MIN_POP_URBAN
-                                || nearbyUrban(prev_tokens, curr_tokens, next_tokens, i, j))// determine if location is
+                            || nearbyUrban(prev_tokens, curr_tokens, next_tokens, i, j))// determine if location is
                             // urban
-                        {
+                            {
                             EbolaBuilder.ebolaSim.urbanAreasGrid.setObjectLocation(new Object(), j, i);
                             EbolaBuilder.ebolaSim.total_urban_pop += num_people;
                             EbolaBuilder.ebolaSim.total_scaled_urban_pop += scaled_num_people;
@@ -882,7 +882,7 @@ public class EbolaBuilder {
                                 EbolaBuilder.ebolaSim.lib_urban_pop += num_people;
                             else
                                 EbolaBuilder.ebolaSim.sl_urban_pop += num_people;
-                        } else
+                            } else
                             EbolaBuilder.ebolaSim.total_scaled_rural_pop += num_people;
 
                         // add urban center to maps
@@ -890,32 +890,32 @@ public class EbolaBuilder {
                             if (country == Parameters.GUINEA) {
                                 List list;
                                 if (!EbolaBuilder.ebolaSim.admin_id_gin_urban
-                                        .containsKey(EbolaBuilder.ebolaSim.admin_id.get(j, i)))
+                                    .containsKey(EbolaBuilder.ebolaSim.admin_id.get(j, i)))
                                     EbolaBuilder.ebolaSim.admin_id_gin_urban
                                         .put(EbolaBuilder.ebolaSim.admin_id.get(j, i), new LinkedList<Int2D>());
                                 list = EbolaBuilder.ebolaSim.admin_id_gin_urban
                                     .get(EbolaBuilder.ebolaSim.admin_id.get(j, i));
                                 list.add(new Int2D(j, i));
-                            } else if (country == Parameters.LIBERIA) {
+                                } else if (country == Parameters.LIBERIA) {
                                 List list;
                                 if (!EbolaBuilder.ebolaSim.admin_id_lib_urban
-                                        .containsKey(EbolaBuilder.ebolaSim.admin_id.get(j, i)))
+                                    .containsKey(EbolaBuilder.ebolaSim.admin_id.get(j, i)))
                                     EbolaBuilder.ebolaSim.admin_id_lib_urban
                                         .put(EbolaBuilder.ebolaSim.admin_id.get(j, i), new LinkedList<Int2D>());
                                 list = EbolaBuilder.ebolaSim.admin_id_lib_urban
                                     .get(EbolaBuilder.ebolaSim.admin_id.get(j, i));
                                 list.add(new Int2D(j, i));
-                            } else {
+                                } else {
                                 List list;
                                 if (!EbolaBuilder.ebolaSim.admin_id_sle_urban
-                                        .containsKey(EbolaBuilder.ebolaSim.admin_id.get(j, i)))
+                                    .containsKey(EbolaBuilder.ebolaSim.admin_id.get(j, i)))
                                     EbolaBuilder.ebolaSim.admin_id_sle_urban
                                         .put(EbolaBuilder.ebolaSim.admin_id.get(j, i), new LinkedList<Int2D>());
                                 list = EbolaBuilder.ebolaSim.admin_id_sle_urban
                                     .get(EbolaBuilder.ebolaSim.admin_id.get(j, i));
                                 list.add(new Int2D(j, i));
+                                }
                             }
-                        }
 
                         // iterate over each house
                         while (scaled_num_people > 0) {
@@ -924,12 +924,12 @@ public class EbolaBuilder {
                             do {
                                 y_coord = (i * Parameters.WORLD_TO_POP_SCALE)
                                     + (int) (EbolaBuilder.ebolaSim.random.nextDouble()
-                                            * Parameters.WORLD_TO_POP_SCALE);
+                                        * Parameters.WORLD_TO_POP_SCALE);
                                 x_coord = (j * Parameters.WORLD_TO_POP_SCALE)
                                     + (int) (EbolaBuilder.ebolaSim.random.nextDouble()
-                                            * Parameters.WORLD_TO_POP_SCALE);
+                                        * Parameters.WORLD_TO_POP_SCALE);
 
-                            } while (false);// ebolaSim.householdGrid.getObjectsAtLocation(x_coord, y_coord) != null);
+                                } while (false);// ebolaSim.householdGrid.getObjectsAtLocation(x_coord, y_coord) != null);
                             final Household h = new Household(new Int2D(x_coord, y_coord));
                             h.setCountry(country);
                             h.setNearestNode(getNearestNode(h.getLocation().getX(), h.getLocation().getY()));// give it
@@ -940,7 +940,7 @@ public class EbolaBuilder {
                             // addNearestNode to the network
                             final Node newNode = new Node(h.location);
                             final Edge e = new Edge(newNode, h.getNearestNode(),
-                                    (int) newNode.location.distance(h.getNearestNode().location));
+                                (int) newNode.location.distance(h.getNearestNode().location));
                             newNode.links.add(e);
                             h.getNearestNode().links.add(e);
                             h.setNearestNode(newNode);
@@ -969,55 +969,55 @@ public class EbolaBuilder {
                                 if (country == Parameters.SL) {
                                     Bag residents;
                                     if (!EbolaBuilder.ebolaSim.admin_id_sle_residents
-                                            .containsKey(r.getHousehold().getAdmin_id()))
+                                        .containsKey(r.getHousehold().getAdmin_id()))
                                         residents = EbolaBuilder.ebolaSim.admin_id_sle_residents
                                             .put(r.getHousehold().getAdmin_id(), new Bag());
                                     residents = EbolaBuilder.ebolaSim.admin_id_sle_residents
                                         .get(r.getHousehold().getAdmin_id());
                                     residents.add(r);
-                                } else if (country == Parameters.GUINEA) {
+                                    } else if (country == Parameters.GUINEA) {
                                     Bag residents;
                                     if (!EbolaBuilder.ebolaSim.admin_id_gin_residents
-                                            .containsKey(r.getHousehold().getAdmin_id()))
+                                        .containsKey(r.getHousehold().getAdmin_id()))
                                         residents = EbolaBuilder.ebolaSim.admin_id_gin_residents
                                             .put(r.getHousehold().getAdmin_id(), new Bag());
                                     residents = EbolaBuilder.ebolaSim.admin_id_gin_residents
                                         .get(r.getHousehold().getAdmin_id());
                                     residents.add(r);
-                                } else if (country == Parameters.LIBERIA) {
+                                    } else if (country == Parameters.LIBERIA) {
                                     Bag residents;
                                     if (!EbolaBuilder.ebolaSim.admin_id_lib_residents
-                                            .containsKey(r.getHousehold().getAdmin_id()))
+                                        .containsKey(r.getHousehold().getAdmin_id()))
                                         residents = EbolaBuilder.ebolaSim.admin_id_lib_residents
                                             .put(r.getHousehold().getAdmin_id(), new Bag());
                                     residents = EbolaBuilder.ebolaSim.admin_id_lib_residents
                                         .get(r.getHousehold().getAdmin_id());
                                     residents.add(r);
-                                }
+                                    }
                                 EbolaBuilder.ebolaSim.worldPopResolution.setObjectLocation(r, j, i);
                                 EbolaBuilder.ebolaSim.world.setObjectLocation(r, new Double2D(x_coord, y_coord));
                                 h.addMember(r);// add the member to the houshold
+                                }
                             }
                         }
                     }
                 }
-            }
             System.out.println("[" + (System.currentTimeMillis() - time) / 1000 + " secs]");
             System.out.println("total scaled pop = " + EbolaBuilder.ebolaSim.total_scaled_pop);
             System.out.println("total pop = " + EbolaBuilder.ebolaSim.total_pop);
             System.out.println("expected scaled pop = " + EbolaBuilder.ebolaSim.total_pop * 1.0 * Parameters.SCALE);
             System.out.println("total_urban_pop = " + EbolaBuilder.ebolaSim.total_urban_pop);
             System.out.println(
-                    "total_rural_pop = " + (EbolaBuilder.ebolaSim.total_pop - EbolaBuilder.ebolaSim.total_urban_pop));
+                "total_rural_pop = " + (EbolaBuilder.ebolaSim.total_pop - EbolaBuilder.ebolaSim.total_urban_pop));
             System.out.println("sierra_leone urban percentage = "
-                    + EbolaBuilder.ebolaSim.sl_urban_pop * 1.0 / EbolaBuilder.ebolaSim.total_sl_pop);
+                + EbolaBuilder.ebolaSim.sl_urban_pop * 1.0 / EbolaBuilder.ebolaSim.total_sl_pop);
             System.out.println("liberia urban percentage = "
-                    + EbolaBuilder.ebolaSim.lib_urban_pop * 1.0 / EbolaBuilder.ebolaSim.total_lib_pop);
+                + EbolaBuilder.ebolaSim.lib_urban_pop * 1.0 / EbolaBuilder.ebolaSim.total_lib_pop);
             System.out.println("guinea urban percentage = "
-                    + EbolaBuilder.ebolaSim.guinea_urban_pop * 1.0 / EbolaBuilder.ebolaSim.total_guinea_pop);
+                + EbolaBuilder.ebolaSim.guinea_urban_pop * 1.0 / EbolaBuilder.ebolaSim.total_guinea_pop);
             System.out.println("no school count = " + EbolaBuilder.ebolaSim.no_school_count);
             System.out.println(
-                    "average distance = " + EbolaBuilder.ebolaSim.distance_sum / EbolaBuilder.ebolaSim.distance_count);
+                "average distance = " + EbolaBuilder.ebolaSim.distance_sum / EbolaBuilder.ebolaSim.distance_count);
             System.out.println("max distance = " + EbolaBuilder.ebolaSim.max_distance);
             int sum = 0;
             int count = 0;
@@ -1028,7 +1028,7 @@ public class EbolaBuilder {
                 count++;
                 if (school.getMembers().size() > max_size)
                     max_size = school.getMembers().size();
-            }
+                }
             System.out.println("average school population = " + sum * 1.0 / count);
             System.out.println("max school pop = " + max_size);
 
@@ -1039,14 +1039,14 @@ public class EbolaBuilder {
             for (final Object o : allResidents) {
                 final Resident resident = (Resident) o;
                 final Route route = AStar.getNearestNode(resident.getHousehold().getNearestNode(),
-                        EbolaBuilder.ebolaSim.placesNodes, Parameters.convertFromKilometers(100), false,
-                        Parameters.WALKING_SPEED);
+                    EbolaBuilder.ebolaSim.placesNodes, Parameters.convertFromKilometers(100), false,
+                    Parameters.WALKING_SPEED);
                 double distance;// = 50;
                 if (route != null) {
                     distance = route.getTotalDistance();
                     if (Math.round(distance) < EbolaBuilder.farmDistanceFrequency.length)
                         EbolaBuilder.farmDistanceFrequency[(int) Math.round(distance)]++;
-                }
+                    }
 
                 // stats for printing
                 if (resident.isEmployed() && resident.getWorkDayDestination() == null)
@@ -1054,31 +1054,31 @@ public class EbolaBuilder {
                 if (resident.isEmployed())
                     employed++;
 
-            }
+                }
             System.out
                 .println("Percent of employed people who are at a bad node = " + go_nowhere * 1.0 / employed * 100);
             for (int i = 0; i < EbolaBuilder.farmDistanceFrequency.length; i++) {
                 EbolaBuilder.ebolaSim.distribution.addValue(
-                        (Number) (EbolaBuilder.farmDistanceFrequency[i] * 1.0 / EbolaBuilder.ebolaSim.total_scaled_pop),
-                        "All distances", i);
+                    (Number) (EbolaBuilder.farmDistanceFrequency[i] * 1.0 / EbolaBuilder.ebolaSim.total_scaled_pop),
+                    "All distances", i);
                 if ((EbolaBuilder.farmDistanceFrequency[i] * 1.0 / EbolaBuilder.ebolaSim.total_scaled_pop
-                            * 100) > EbolaBuilder.ebolaSim.max)
+                        * 100) > EbolaBuilder.ebolaSim.max)
                     EbolaBuilder.ebolaSim.max = (EbolaBuilder.farmDistanceFrequency[i] * 1.0
-                            / EbolaBuilder.ebolaSim.total_scaled_pop * 100);
+                        / EbolaBuilder.ebolaSim.total_scaled_pop * 100);
                 System.out.print(
-                        EbolaBuilder.farmDistanceFrequency[i] * 1.0 * 1.0 / EbolaBuilder.ebolaSim.total_scaled_pop * 100
-                        + "%" + "\t\t");
-            }
+                    EbolaBuilder.farmDistanceFrequency[i] * 1.0 * 1.0 / EbolaBuilder.ebolaSim.total_scaled_pop * 100
+                    + "%" + "\t\t");
+                }
             System.out.println("");
-        } catch (final FileNotFoundException e) {
+            } catch (final FileNotFoundException e) {
             e.printStackTrace();
-        } catch (final IOException e) {
+            } catch (final IOException e) {
             e.printStackTrace();
+            }
         }
-    }
 
     private static Resident createResident(final Int2D location, final Household household, final boolean isUrban,
-            final int county_id) {
+        final int county_id) {
         // first pick sex
         int sex;
         if (EbolaBuilder.ebolaSim.random.nextBoolean())
@@ -1094,42 +1094,42 @@ public class EbolaBuilder {
         if (age < 5)// if so young must be inactive and just stay home
             resident.setInactive(true);
         else if (isUrban)// Urban
-        {
-            if (sex == Constants.MALE)// urban male
             {
+            if (sex == Constants.MALE)// urban male
+                {
                 setWorkDemographics(resident, Parameters.URBAN_MALE_LF_BY_AGE, Parameters.URBAN_MALE_INACTIVE_SCHOOL,
-                        Parameters.URBAN_MALE_UNEMPLOYMENT, Parameters.URBAN_MALE_SECTORS);
+                    Parameters.URBAN_MALE_UNEMPLOYMENT, Parameters.URBAN_MALE_SECTORS);
                 // setDailyWorkHours(resident, Parameters.MALE_WEEKLY_HOURS_BY_SECTOR);
                 if (resident.isEmployed())
                     EbolaBuilder.ebolaSim.urban_male_employed++;
-            } else// urban female
-            {
+                } else// urban female
+                {
                 setWorkDemographics(resident, Parameters.URBAN_FEMALE_LF_BY_AGE,
-                        Parameters.URBAN_FEMALE_INACTIVE_SCHOOL, Parameters.URBAN_FEMALE_UNEMPLOYMENT,
-                        Parameters.URBAN_FEMALE_SECTORS);
+                    Parameters.URBAN_FEMALE_INACTIVE_SCHOOL, Parameters.URBAN_FEMALE_UNEMPLOYMENT,
+                    Parameters.URBAN_FEMALE_SECTORS);
                 // setDailyWorkHours(resident, Parameters.FEMALE_WEEKLY_HOURS_BY_SECTOR);
                 if (resident.isEmployed())
                     EbolaBuilder.ebolaSim.urban_female_employed++;
-            }
-        } else// rural
-        {
-            if (sex == Constants.MALE)// rural male
+                }
+            } else// rural
             {
+            if (sex == Constants.MALE)// rural male
+                {
                 setWorkDemographics(resident, Parameters.RURAL_MALE_LF_BY_AGE, Parameters.RURAL_MALE_INACTIVE_SCHOOL,
-                        Parameters.RURAL_MALE_UNEMPLOYMENT, Parameters.RURAL_MALE_SECTORS);
+                    Parameters.RURAL_MALE_UNEMPLOYMENT, Parameters.RURAL_MALE_SECTORS);
                 // setDailyWorkHours(resident, Parameters.MALE_WEEKLY_HOURS_BY_SECTOR);
                 if (resident.isEmployed())
                     EbolaBuilder.ebolaSim.rural_male_employed++;
-            } else// rural female
-            {
+                } else// rural female
+                {
                 setWorkDemographics(resident, Parameters.RURAL_FEMALE_LF_BY_AGE,
-                        Parameters.RURAL_FEMALE_INACTIVE_SCHOOL, Parameters.RURAL_FEMALE_UNEMPLOYMENT,
-                        Parameters.RURAL_FEMALE_SECTORS);
+                    Parameters.RURAL_FEMALE_INACTIVE_SCHOOL, Parameters.RURAL_FEMALE_UNEMPLOYMENT,
+                    Parameters.RURAL_FEMALE_SECTORS);
                 // setDailyWorkHours(resident, Parameters.FEMALE_WEEKLY_HOURS_BY_SECTOR);
                 if (resident.isEmployed())
                     EbolaBuilder.ebolaSim.rural_female_employed++;
+                }
             }
-        }
 
         // now we have to set the daily destination
         // don't set work destination because that will be done later
@@ -1137,7 +1137,7 @@ public class EbolaBuilder {
         //            setWorkDestination(resident);
 
         return resident;
-    }
+        }
 
     /**
      * Modifies the resident to set inactivity, unemployment
@@ -1151,7 +1151,7 @@ public class EbolaBuilder {
      * @param economic_sectors    Distribution in each economic sector by age.
      */
     private static void setWorkDemographics(final Resident resident, final double[] labour_force_by_age,
-            final double[] inactive_school, final double[] unemployment, final double[] economic_sectors) {
+        final double[] inactive_school, final double[] unemployment, final double[] economic_sectors) {
         boolean inactive;
         final int age_index = (resident.getAge() - 5) / 5;// subtract five because first age group (0-4) is not included
         double rand = EbolaBuilder.ebolaSim.random.nextDouble();
@@ -1170,19 +1170,19 @@ public class EbolaBuilder {
                 index = 3;
             if (rand < inactive_school[index]) {
                 final Structure nearestSchool = getNearestStructureByRoute(resident.getHousehold(),
-                        EbolaBuilder.ebolaSim.workNodeStructureMap.get(Constants.EDUCATION), Double.MAX_VALUE, false);
+                    EbolaBuilder.ebolaSim.workNodeStructureMap.get(Constants.EDUCATION), Double.MAX_VALUE, false);
                 resident.setWorkDayDestination(nearestSchool);// add school as workday destination
-            } else
+                } else
                 resident.setWorkDayDestination(resident.getHousehold());// if you don't go to school you pretty much
             // just stay home doing nothing (retired or
             // something)
-        } else// resident is a part of the labour force
-        {
+            } else// resident is a part of the labour force
+            {
             // decide if employed or not
             if (resident.getAge() < 15)// different statistics for 15+ and <15//TODO Incoroporate child labour
-            {
+                {
 
-            } else {
+                } else {
                 rand = EbolaBuilder.ebolaSim.random.nextDouble();
                 int index = (resident.getAge() - 5) / 10;
                 if (index >= 5)// it combines one group for 20 years
@@ -1190,18 +1190,18 @@ public class EbolaBuilder {
                 else if (index == 4)
                     index = 3;
                 if (rand < unemployment[index])// unemployed
-                {
+                    {
                     resident.setEmployed(false);
-                } else// employment
-                {
+                    } else// employment
+                    {
                     resident.setEmployed(true);
                     // now decide what economic sector
                     // setSectorId(resident, economic_sectors);//COMMENT FOR FILLING WORKLOCATION TO
                     // CAPCITY
+                    }
                 }
             }
         }
-    }
 
     private static void setSectorId(final Resident resident, final double[] economic_sectors) {
         final double rand = EbolaBuilder.ebolaSim.random.nextDouble();
@@ -1209,20 +1209,20 @@ public class EbolaBuilder {
         for (int i = 0; i < economic_sectors.length; i++) {
             sum += economic_sectors[i];
             if (rand < sum)// set the sector
-            {
+                {
                 resident.setSector_id(i);
                 return;
+                }
             }
-        }
         System.out.println("No sector id fits!!!!");
-    }
+        }
 
     private static void setDailyWorkHours(final Resident resident, final int sector_id,
-            final double[][] weekly_hours_by_sector) {
+        final double[][] weekly_hours_by_sector) {
         if (resident.isInactive()) {
             resident.setDailyWorkHours(Parameters.STUDENT_DAILY_HOURS);
             return;
-        }
+            }
         if (!resident.isEmployed())
             return;
         final int sector = resident.getSector_id();
@@ -1249,9 +1249,9 @@ public class EbolaBuilder {
                 // change hours to daily
                 hours /= 5.0;
                 resident.setDailyWorkHours((int) Math.round(hours));
+                }
             }
         }
-    }
 
     private static int[] farmDistanceFrequency = new int[101];
 
@@ -1263,12 +1263,12 @@ public class EbolaBuilder {
      */
     public static void setWorkDestination(final Resident resident) {
         double max_distance = Stats.normalToLognormal(
-                Stats.calcLognormalMu(Parameters.AVERAGE_FARM_MAX, Parameters.STDEV_FARM_MAX),
-                Stats.calcLognormalSigma(Parameters.AVERAGE_FARM_MAX, Parameters.STDEV_FARM_MAX),
-                EbolaBuilder.ebolaSim.random.nextGaussian());
+            Stats.calcLognormalMu(Parameters.AVERAGE_FARM_MAX, Parameters.STDEV_FARM_MAX),
+            Stats.calcLognormalSigma(Parameters.AVERAGE_FARM_MAX, Parameters.STDEV_FARM_MAX),
+            EbolaBuilder.ebolaSim.random.nextGaussian());
         max_distance = Parameters.convertFromKilometers(max_distance);// convert back to world units
         WorkLocation workLocation = (WorkLocation) getNearestStructureByRoute(resident.getHousehold(),
-                EbolaBuilder.ebolaSim.workNodeStructureMap.get(resident.getSector_id()), max_distance, true);
+            EbolaBuilder.ebolaSim.workNodeStructureMap.get(resident.getSector_id()), max_distance, true);
         resident.setWorkDayDestination(workLocation);
         if (workLocation != null) {
             workLocation.addMember(resident);
@@ -1278,59 +1278,59 @@ public class EbolaBuilder {
             //                    farmDistanceFrequency[distance]++;
             //                else
             //                    farmDistanceFrequency[farmDistanceFrequency.length-1]++;
-        } else {
+            } else {
             // could not find a nearby farm, now create one
             double farm_commute_on_road = Stats.normalToLognormal(
-                    Stats.calcLognormalMu(Parameters.AVERAGE_FARM_DISTANCE, Parameters.STDEV_FARM_DISTANCE),
-                    Stats.calcLognormalSigma(Parameters.AVERAGE_FARM_DISTANCE, Parameters.STDEV_FARM_DISTANCE),
-                    EbolaBuilder.ebolaSim.random.nextGaussian());
+                Stats.calcLognormalMu(Parameters.AVERAGE_FARM_DISTANCE, Parameters.STDEV_FARM_DISTANCE),
+                Stats.calcLognormalSigma(Parameters.AVERAGE_FARM_DISTANCE, Parameters.STDEV_FARM_DISTANCE),
+                EbolaBuilder.ebolaSim.random.nextGaussian());
             // System.out.println("Looking for node " + farm_commute_on_road + " km away");
             farm_commute_on_road = Parameters.convertFromKilometers(farm_commute_on_road);// convert back to world units
             // System.out.println("converted back to km = " +
             // Parameters.convertToKilometers(farm_commute_on_road));
             double farm_commute_off_road = Stats.normalToLognormal(
-                    Stats.calcLognormalMu(Parameters.OFF_ROAD_AVERAGE, Parameters.OFF_ROAD_STDEV),
-                    Stats.calcLognormalSigma(Parameters.OFF_ROAD_AVERAGE, Parameters.OFF_ROAD_STDEV),
-                    EbolaBuilder.ebolaSim.random.nextGaussian());
+                Stats.calcLognormalMu(Parameters.OFF_ROAD_AVERAGE, Parameters.OFF_ROAD_STDEV),
+                Stats.calcLognormalSigma(Parameters.OFF_ROAD_AVERAGE, Parameters.OFF_ROAD_STDEV),
+                EbolaBuilder.ebolaSim.random.nextGaussian());
             farm_commute_off_road = Parameters.convertFromKilometers(farm_commute_off_road);// convert back to world
             // units
 
             workLocation = createWorkLocation(resident, farm_commute_on_road, farm_commute_off_road,
-                    EbolaBuilder.ebolaSim.workNodeStructureMap.get(resident.getSector_id()),
-                    EbolaBuilder.ebolaSim.farmGrid);
+                EbolaBuilder.ebolaSim.workNodeStructureMap.get(resident.getSector_id()),
+                EbolaBuilder.ebolaSim.farmGrid);
             if (workLocation != null) {
                 resident.setWorkDayDestination(workLocation);
                 workLocation.addMember(resident);
-            } // TODO why are we getting zeroed out parameters?? look into null pointer
+                } // TODO why are we getting zeroed out parameters?? look into null pointer
             // exception
+            }
         }
-    }
 
     private static void setWorkLocationsForAllResidents(final Set<WorkLocation> existingLocations,
-            final Bag residents) {
+        final Bag residents) {
         // let us start by filling up existing locations
         for (final WorkLocation workLocation : existingLocations) {
             fillMembers(workLocation);
-        }
+            }
 
         for (final Object o : residents) {
             final Resident resident = (Resident) o;
             if (resident.isEmployed() && resident.getWorkDayDestination() == null) {
                 setSectorId(resident,
-                        resident.getIsUrban()
-                        ? (resident.getSex() == Constants.MALE ? Parameters.URBAN_MALE_SECTORS
-                            : Parameters.URBAN_FEMALE_SECTORS)
-                        : (resident.getSex() == Constants.MALE ? Parameters.RURAL_MALE_SECTORS
-                            : Parameters.RURAL_FEMALE_SECTORS));
+                    resident.getIsUrban()
+                    ? (resident.getSex() == Constants.MALE ? Parameters.URBAN_MALE_SECTORS
+                        : Parameters.URBAN_FEMALE_SECTORS)
+                    : (resident.getSex() == Constants.MALE ? Parameters.RURAL_MALE_SECTORS
+                        : Parameters.RURAL_FEMALE_SECTORS));
                 setWorkDestination(resident);
                 if (resident.getWorkDayDestination() != null)
                     fillMembers((WorkLocation) resident.getWorkDayDestination());
-            }
+                }
             setDailyWorkHours(resident, resident.getSector_id(),
-                    resident.getSex() == Constants.MALE ? Parameters.MALE_WEEKLY_HOURS_BY_SECTOR
-                    : Parameters.FEMALE_WEEKLY_HOURS_BY_SECTOR);
+                resident.getSex() == Constants.MALE ? Parameters.MALE_WEEKLY_HOURS_BY_SECTOR
+                : Parameters.FEMALE_WEEKLY_HOURS_BY_SECTOR);
+            }
         }
-    }
 
     /**
      * Tries to fill up the worklocation to needed capacity. Assumes agents and
@@ -1345,13 +1345,13 @@ public class EbolaBuilder {
             return;// no need to add more members, capacity reached
 
         double max_distance = Stats.normalToLognormal(
-                Stats.calcLognormalMu(Parameters.AVERAGE_FARM_MAX, Parameters.STDEV_FARM_MAX),
-                Stats.calcLognormalSigma(Parameters.AVERAGE_FARM_MAX, Parameters.STDEV_FARM_MAX),
-                EbolaBuilder.ebolaSim.random.nextGaussian());
+            Stats.calcLognormalMu(Parameters.AVERAGE_FARM_MAX, Parameters.STDEV_FARM_MAX),
+            Stats.calcLognormalSigma(Parameters.AVERAGE_FARM_MAX, Parameters.STDEV_FARM_MAX),
+            EbolaBuilder.ebolaSim.random.nextGaussian());
         max_distance = Parameters.convertFromKilometers(max_distance);// convert back to world units
 
         final List<Node> nearByNodes = AStar.getNodesWithinDistance(workLocation.getNearestNode(),
-                EbolaBuilder.ebolaSim.householdNodes, max_distance, Parameters.WALKING_SPEED);
+            EbolaBuilder.ebolaSim.householdNodes, max_distance, Parameters.WALKING_SPEED);
         final ListIterator listIterator = nearByNodes.listIterator();
 
         while (listIterator.hasNext()) {
@@ -1364,23 +1364,23 @@ public class EbolaBuilder {
                         // persons and people who
                         // have not already been
                         // assigned a place
-                    {
+                        {
                         double[] economic_sector_probabilities;
                         int total;
                         if (resident.getIsUrban())
                             if (resident.getSex() == Constants.MALE) {
                                 economic_sector_probabilities = Parameters.URBAN_MALE_SECTORS;
                                 total = EbolaBuilder.ebolaSim.urban_male_employed;
-                            } else {
+                                } else {
                                 economic_sector_probabilities = Parameters.URBAN_FEMALE_SECTORS;
                                 total = EbolaBuilder.ebolaSim.urban_female_employed;
-                            }
-                            else if (resident.getSex() == Constants.MALE) {
-                                economic_sector_probabilities = Parameters.RURAL_MALE_SECTORS;
-                                total = EbolaBuilder.ebolaSim.rural_male_employed;
+                                }
+                        else if (resident.getSex() == Constants.MALE) {
+                            economic_sector_probabilities = Parameters.RURAL_MALE_SECTORS;
+                            total = EbolaBuilder.ebolaSim.rural_male_employed;
                             } else {
-                                economic_sector_probabilities = Parameters.RURAL_FEMALE_SECTORS;
-                                total = EbolaBuilder.ebolaSim.rural_female_employed;
+                            economic_sector_probabilities = Parameters.RURAL_FEMALE_SECTORS;
+                            total = EbolaBuilder.ebolaSim.rural_female_employed;
                             }
 
                         // abort if probability is below zero
@@ -1407,12 +1407,12 @@ public class EbolaBuilder {
                         // return if the workLocation is filled up
                         if (workLocation.getMembers().size() >= workLocation.getCapacity())
                             return;
-                    }
+                        }
+            }
         }
-    }
 
     private static void setSexBasedOnSector(final Resident resident, final int sector_id, final double[] maleBySectorId,
-            final double[] femaleBySectorId) {
+        final double[] femaleBySectorId) {
         // we should know urban/rural
         // let's first decide if their sex (use Bayes Rule)
         final double probability_male = (maleBySectorId[sector_id] * 0.5)
@@ -1421,7 +1421,7 @@ public class EbolaBuilder {
             resident.setSex(Constants.MALE);
         else
             resident.setSex(Constants.FEMALE);
-    }
+        }
 
     private static void reduceProbability(final double[] sectorProbabilities, final int index, final int total) {
         final double newValue = ((sectorProbabilities[index] * total) - 1) / (total - 1);
@@ -1432,13 +1432,13 @@ public class EbolaBuilder {
                 sectorProbabilities[i] = ((sectorProbabilities[i] * total)) / (total - 1);
         if (sectorProbabilities[index] < 0)
             System.out.println("Sector Id dropped below zero for sector " + index);
-    }
+        }
 
     private static WorkLocation createWorkLocation(final Resident resident, final double on_road_distance,
-            final double off_road_distance, final Map<Node, List<Structure>> nodeStructureMap,
-            final SparseGrid2D grid) {
+        final double off_road_distance, final Map<Node, List<Structure>> nodeStructureMap,
+        final SparseGrid2D grid) {
         final Route route = AStar.getNodeAtDistance(resident.getHousehold().getNearestNode(), on_road_distance,
-                Parameters.WALKING_SPEED);
+            Parameters.WALKING_SPEED);
         if (route != null) {
             final Node tempEndNode = route.getEnd();
             final Int2D endLocation = moveAwayFromRoad(tempEndNode.location, off_road_distance);
@@ -1464,9 +1464,9 @@ public class EbolaBuilder {
             // cache the route
             resident.getHousehold().cacheRoute(route, workLocation);
             return workLocation;
-        }
+            }
         return null;// nothing we can do if can't get a route
-    }
+        }
 
     private static Int2D moveAwayFromRoad(final Int2D location, final double off_road_distance) {
         int cX = location.getX();
@@ -1485,14 +1485,14 @@ public class EbolaBuilder {
                 if (val.get(i) > max) {
                     max = val.get(i);
                     index = i;
-                }
+                    }
             if (cX == xBag.get(index) && cY == yBag.get(index))// if no change then just return
                 break;
             cY = yBag.get(index);
             cX = xBag.get(index);
-        }
+            }
         return new Int2D(cX, cY);
-    }
+        }
 
     /**
      * Reads in the movement patterns from csv file and populates given map
@@ -1503,7 +1503,7 @@ public class EbolaBuilder {
         try {
             // buffer reader for age distribution data
             final CSVReader csvReader = new CSVReader(
-                    new InputStreamReader(DataObjectImporter.open(file)));
+                new InputStreamReader(DataObjectImporter.open(file)));
             csvReader.readLine();// skip the headers
             List<String> line = csvReader.readLine();
             while (!line.isEmpty()) {
@@ -1538,47 +1538,47 @@ public class EbolaBuilder {
                     List list;
                     if (!EbolaBuilder.ebolaSim.movementPatternMapSLE.containsKey(from_admin_id))
                         EbolaBuilder.ebolaSim.movementPatternMapSLE.put(from_admin_id,
-                                new LinkedList<EbolaABM.MovementPattern>());
+                            new LinkedList<EbolaABM.MovementPattern>());
                     list = EbolaBuilder.ebolaSim.movementPatternMapSLE.get(from_admin_id);
                     list.add(mp);
-                } else if (from_country == Parameters.LIBERIA) {
+                    } else if (from_country == Parameters.LIBERIA) {
                     List list;
                     if (!EbolaBuilder.ebolaSim.movementPatternMapLIB.containsKey(from_admin_id))
                         EbolaBuilder.ebolaSim.movementPatternMapLIB.put(from_admin_id,
-                                new LinkedList<EbolaABM.MovementPattern>());
+                            new LinkedList<EbolaABM.MovementPattern>());
                     list = EbolaBuilder.ebolaSim.movementPatternMapLIB.get(from_admin_id);
                     list.add(mp);
-                } else if (from_country == Parameters.GUINEA) {
+                    } else if (from_country == Parameters.GUINEA) {
                     List list;
                     if (!EbolaBuilder.ebolaSim.movementPatternMapGIN.containsKey(from_admin_id))
                         EbolaBuilder.ebolaSim.movementPatternMapGIN.put(from_admin_id,
-                                new LinkedList<EbolaABM.MovementPattern>());
+                            new LinkedList<EbolaABM.MovementPattern>());
                     list = EbolaBuilder.ebolaSim.movementPatternMapGIN.get(from_admin_id);
                     list.add(mp);
-                }
+                    }
 
                 line = csvReader.readLine();
+                }
+            } catch (final FileNotFoundException e) {
+            e.printStackTrace();
+            } catch (final IOException e) {
+            e.printStackTrace();
+            } catch (final java.text.ParseException e) {
+            e.printStackTrace();
             }
-        } catch (final FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (final IOException e) {
-            e.printStackTrace();
-        } catch (final java.text.ParseException e) {
-            e.printStackTrace();
         }
-    }
 
     private static int convertCountryStringToInt(final String countryString) {
         if (countryString.equals("SLE")) {
             return Parameters.SL;
-        } else if (countryString.equals("LBR")) {
+            } else if (countryString.equals("LBR")) {
             return Parameters.LIBERIA;
-        } else if (countryString.equals("GIN")) {
+            } else if (countryString.equals("GIN")) {
             return Parameters.GUINEA;
-        }
+            }
         System.out.println("ERROR ERROR countryString invalid");
         return -1;
-    }
+        }
 
     /**
      * Takes lat/lng and converts it to a INT2d on the world
@@ -1593,12 +1593,12 @@ public class EbolaBuilder {
         final int xcols = EbolaBuilder.ebolaSim.world_width - 1, ycols = EbolaBuilder.ebolaSim.world_height - 1;
 
         final int xint = (int) Math.floor(xcols * (x - xmin) / (xmax - xmin)),
-              yint = (int) (ycols - Math.floor(ycols * (y - ymin) / (ymax - ymin))); // REMEMBER TO FLIP THE Y VALUE
+            yint = (int) (ycols - Math.floor(ycols * (y - ymin) / (ymax - ymin))); // REMEMBER TO FLIP THE Y VALUE
         return new Int2D(xint, yint);
-    }
+        }
 
     private static Structure getNearestStructureByRoute(final Structure start,
-            final Map<Node, List<Structure>> endNodes, final double max_distance, final boolean check_capacity) {
+        final Map<Node, List<Structure>> endNodes, final double max_distance, final boolean check_capacity) {
         // first check if route is cached TODO: Assumes that all cached paths are
         // closest to the structure
         final Iterator<Structure> it = start.getCachedRoutes().keySet().iterator();
@@ -1606,10 +1606,10 @@ public class EbolaBuilder {
             final Structure st = it.next();
             if (endNodes.containsKey(st.getNearestNode()))
                 return st;
-        }
+            }
 
         final Route route = AStar.getNearestNode(start.getNearestNode(), endNodes, max_distance, check_capacity,
-                Parameters.WALKING_SPEED);
+            Parameters.WALKING_SPEED);
 
         if (route == null)
             return null;
@@ -1621,23 +1621,23 @@ public class EbolaBuilder {
 
         // pick a random structure to return for all that are at the same location
         return structureList.get(EbolaBuilder.ebolaSim.random.nextInt(structureList.size()));
-    }
+        }
 
     private static School getNearestSchool(final int x, final int y) {
         // find nearest school
         final Bag schools = new Bag();
 
         for (int i = 3; i <= 54; i += 3)// increment the radius to lookup i in kilometers
-        {
+            {
             final int radius = (int) Math.round(i * 1000 / Parameters.POP_BLOCK_METERS * Parameters.WORLD_TO_POP_SCALE);// convert
             // to
             // grid
             // units
             EbolaBuilder.ebolaSim.schoolGrid.getRadialNeighborsAndLocations(x, y, radius, SparseGrid2D.BOUNDED, false,
-                    schools, null, null);
+                schools, null, null);
             if (schools.size() != 0)
                 break;
-        }
+            }
 
         School nearest_school = null;
         double min_distance = Double.MAX_VALUE;
@@ -1647,8 +1647,8 @@ public class EbolaBuilder {
             if (distance < min_distance) {
                 min_distance = distance;
                 nearest_school = school;
+                }
             }
-        }
         min_distance *= (Parameters.POP_BLOCK_METERS / Parameters.WORLD_TO_POP_SCALE) / 1000.0;// convert to kilometers
         if (nearest_school == null)
             EbolaBuilder.ebolaSim.no_school_count++;
@@ -1657,9 +1657,9 @@ public class EbolaBuilder {
             EbolaBuilder.ebolaSim.distance_sum += min_distance;
             if (min_distance > EbolaBuilder.ebolaSim.max_distance)
                 EbolaBuilder.ebolaSim.max_distance = min_distance;
-        }
+            }
         return nearest_school;
-    }
+        }
 
     /**
      * @param county_id Id of county
@@ -1676,7 +1676,7 @@ public class EbolaBuilder {
 
         // System.out.println("!!!!!!ERRORRORORORORO!!!!!!! " + county_id);
         // return 10000;
-    }
+        }
 
     /**
      *
@@ -1689,57 +1689,57 @@ public class EbolaBuilder {
      *         500 people per square mile
      */
     private static boolean nearbyUrban(final String[] prev_tokens, final String[] curr_tokens,
-            final String[] next_tokens, final int i, final int j) {
+        final String[] next_tokens, final int i, final int j) {
         int sum = 0;
         int count = 0;
         if (i < EbolaBuilder.ebolaSim.pop_height - 1)// not the last row
-        {
+            {
             if (Integer.parseInt(next_tokens[j]) > 0) {
                 sum += Integer.parseInt(next_tokens[j]);// add cell underneath
                 count++;
-            }
+                }
             if (j > 0 && Integer.parseInt(next_tokens[j - 1]) > 0) {
                 sum += Integer.parseInt(next_tokens[j - 1]);// add the cell diagnol bottom left
                 count++;
-            }
+                }
             if (j < EbolaBuilder.ebolaSim.pop_width - 1 && Integer.parseInt(next_tokens[j + 1]) > 0) {
                 sum += Integer.parseInt(next_tokens[j + 1]);// add the cell diagnol bottom right
                 count++;
+                }
             }
-        }
         if (i > 0)// not the first row
-        {
+            {
             if (Integer.parseInt(prev_tokens[j]) > 0) {
                 sum += Integer.parseInt(prev_tokens[j]);// add cell above
                 count++;
-            }
+                }
             if (j > 0) {
                 sum += Integer.parseInt(prev_tokens[j - 1]);// add cell the diagnol top left
                 count++;
-            }
+                }
             if (j < EbolaBuilder.ebolaSim.pop_width - 1) {
                 if (Integer.parseInt(prev_tokens[j + 1]) > 0) {
                     sum += Integer.parseInt(prev_tokens[j + 1]);// add cell diagnol top right
                     count++;
+                    }
                 }
             }
-        }
         if (j < EbolaBuilder.ebolaSim.pop_width - 1)// not last column
-        {
+            {
             if (Integer.parseInt(curr_tokens[j + 1]) > 0) {
                 count++;
                 sum += Integer.parseInt(curr_tokens[j + 1]);// add cell to the right
+                }
             }
-        }
         if (j > 0)// not first column
-        {
+            {
             if (Integer.parseInt(curr_tokens[j - 1]) > 0) {
                 sum += Integer.parseInt(curr_tokens[j - 1]);// add cell to the left
                 count++;
+                }
             }
-        }
         return sum > (count * Parameters.MIN_POP_SURROUNDING);
-    }
+        }
 
     /**
      * Scales integer values and rounds the number appropiately so aggregate scaling
@@ -1757,7 +1757,7 @@ public class EbolaBuilder {
         if (EbolaBuilder.ebolaSim.random.nextDouble() < val_scaled)
             scaled += 1;
         return scaled;
-    }
+        }
 
     public static int pickHouseholdSize(final int country) {
         double average;
@@ -1770,9 +1770,9 @@ public class EbolaBuilder {
 
         final double stdv = Parameters.LIB_HOUSEHOLD_STDEV;
         return (int) Stats.normalToLognormal(Stats.calcLognormalMu(average, stdv),
-                Stats.calcLognormalSigma(average, stdv),
-                EbolaBuilder.ebolaSim.random.nextGaussian());
-    }
+            Stats.calcLognormalSigma(average, stdv),
+            EbolaBuilder.ebolaSim.random.nextGaussian());
+        }
 
     /**
      * Picks an age based on the the age_dist hashmap. Pick the highest age within
@@ -1787,11 +1787,11 @@ public class EbolaBuilder {
         for (i = 0; i < dist.size(); i++) {
             if (rand < dist.get(i))
                 break;
-        }
+            }
         final int age = i * 5 + EbolaBuilder.ebolaSim.random.nextInt(5);
         // System.out.println(age + " years");
         return age;
-    }
+        }
 
     public static class Node {
         public Int2D location;
@@ -1804,16 +1804,16 @@ public class EbolaBuilder {
         public Node(final Int2D l) {
             location = l;
             links = new ArrayList<Edge>();
-        }
+            }
 
         public ArrayList<Edge> getLinks() {
             return links;
-        }
+            }
 
         @Override
         public String toString() {
             return "(" + location.getX() + ", " + location.getY() + ")";
+            }
         }
-    }
 
-}
+    }

@@ -30,19 +30,19 @@ import java.awt.*;
  * Created by rohansuri on 7/8/15.
  */
 public class EbolaWithUI extends GUIState
-{
+    {
     Display2D display; //displaying the model
     JFrame displayFrame; //frame containing all the displays
 
 
     public EbolaWithUI(final EbolaABM sim)
-    {
+        {
         super(sim);
-    }
+        }
 
     @Override
     public void init(final Controller c)
-    {
+        {
         super.init(c);
         display = new Display2D(1000, 1000, this); //creates the display
         displayFrame = display.createFrame();
@@ -51,8 +51,8 @@ public class EbolaWithUI extends GUIState
 
         JFreeChart roadNetworkChart;
         roadNetworkChart = ChartFactory.createBarChart("Distribution Chart", "Distance",
-                "Frequency", ((EbolaABM) state).distribution, PlotOrientation.VERTICAL, false, false,
-                false);
+            "Frequency", ((EbolaABM) state).distribution, PlotOrientation.VERTICAL, false, false,
+            false);
         roadNetworkChart.setBackgroundPaint(Color.WHITE);
         roadNetworkChart.getTitle().setPaint(Color.BLACK);
 
@@ -220,26 +220,26 @@ public class EbolaWithUI extends GUIState
         timeframe.setSize(200, 100);
         timeframe.pack();
         c.registerFrame(timeframe);
-    }
+        }
 
     @Override
     public void start()
-    {
+        {
         super.start();
         System.err.println("Start Drawing");
         setupPortrayals();
         System.err.println("Portrayals Done");
-    }
+        }
 
     public void setupPortrayals()
-    {
+        {
         final FieldPortrayal2D householdortrayal = new SparseGridPortrayal2D();
         householdortrayal.setField(((EbolaABM)state).householdGrid);
         householdortrayal.setPortrayalForAll(new RectanglePortrayal2D(new Color(0, 128, 255), 1.0, false)
-        {
+            {
             @Override
             public void draw(final Object object, final Graphics2D graphics, final DrawInfo2D info)
-            {
+                {
                 final Household house = (Household)object;
 
                 if(house.getCountry() == Parameters.GUINEA)
@@ -251,8 +251,8 @@ public class EbolaWithUI extends GUIState
                 else
                     paint = new Color(8, 20, 255);
                 super.draw(object, graphics, info);
-            }
-        });
+                }
+            });
         display.attach(householdortrayal, "Household");
 
         final FieldPortrayal2D urbanPortrayal = new SparseGridPortrayal2D();
@@ -280,25 +280,25 @@ public class EbolaWithUI extends GUIState
         final FieldPortrayal2D farmPortrayal = new SparseGridPortrayal2D();
         farmPortrayal.setField(((EbolaABM) state).farmGrid);
         farmPortrayal.setPortrayalForAll(new RectanglePortrayal2D(new Color(17, 202, 255), 1.0, false)
-        {
+            {
             @Override
             public void draw(final Object object, final Graphics2D graphics, final DrawInfo2D info)
-            {
+                {
                 final WorkLocation wl = (WorkLocation)object;
 
                 if(wl.getSector_id() == Constants.HEALTH)
-                {
+                    {
                     paint = new Color(193, 0, 255);
                     //super.scale = 4.0;
-                }
+                    }
                 else
-                {
+                    {
                     paint = new Color(17, 202, 255);
-                }
+                    }
 
                 super.draw(object, graphics, info);
-            }
-        });
+                }
+            });
         display.attach(farmPortrayal, "Work Locations");
 
 //        NetworkPortrayal2D roadNetworkPortrayal = new NetworkPortrayal2D();
@@ -310,9 +310,9 @@ public class EbolaWithUI extends GUIState
 
         residentPortrayal.setField(((EbolaABM)state).world);
         residentPortrayal.setPortrayalForAll(new OvalPortrayal2D()
-        {
-            public void draw (final Object object, final Graphics2D graphics, final DrawInfo2D info)
             {
+            public void draw (final Object object, final Graphics2D graphics, final DrawInfo2D info)
+                {
                 final Resident resident = (Resident)object;
                 if(resident.getHealthStatus() == Constants.DEAD)
                     paint = new Color(124, 115, 92);
@@ -326,26 +326,26 @@ public class EbolaWithUI extends GUIState
                     paint = new Color(255, 20, 215);
 
                 if(resident.isMoving())
-                {
+                    {
                     //paint = new Color(255, 151, 71);
                     super.scale = 10.0;
-                }
+                    }
                 else
                     super.scale = 1.0;
                 super.draw(object, graphics, info);
-            }
-        });
+                }
+            });
         display.attach(residentPortrayal, "Residents");
 
         final FieldPortrayal2D hotspotsPortrayal = new SparseGridPortrayal2D();
         hotspotsPortrayal.setField(((EbolaABM)state).hotSpotsGrid);
         hotspotsPortrayal.setPortrayalForAll(new RectanglePortrayal2D(new Color(255, 21, 19), 1.0, false));
         display.attach(hotspotsPortrayal, "Hotspot Area");
-    }
+        }
 
     @Override
     public void quit()
-    {
+        {
         super.quit();
 
         if (displayFrame != null)
@@ -353,12 +353,12 @@ public class EbolaWithUI extends GUIState
         displayFrame = null;
         display = null;
 
-    }
+        }
 
     public static void main(final String[] args)
-    {
+        {
         final EbolaWithUI ebUI = new EbolaWithUI(new EbolaABM(System.currentTimeMillis()));
         final Console c = new Console(ebUI);
         c.setVisible(true);
+        }
     }
-}

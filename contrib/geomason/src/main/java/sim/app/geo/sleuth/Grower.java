@@ -19,20 +19,20 @@ import sim.engine.Steppable;
 /**
  */
 class Grower implements Steppable
-{
+    {
     private static final long serialVersionUID = 1L;
 
 
     Grower()
-    {
+        {
         super();
-    }
+        }
 
 
 
     @Override
     public void step(SimState state)
-    {
+        {
         SleuthWorld world = (SleuthWorld) state;
 
         // calculate the coefficients
@@ -67,6 +67,6 @@ class Grower implements Steppable
         // prime for urbanization, two further neighbors of our new roadside cell
         // are urbanized.
         world.roadInfluencedGrowth(max_search_index, allGrowthThisTurn);
-    }
+        }
 
-}
+    }

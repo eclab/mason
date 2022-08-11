@@ -22,7 +22,7 @@ import ec.util.MersenneTwisterFast;
  *
  */
 public class PopulationCenter implements Cloneable
-{
+    {
     /** All towns, cities, and villages have names */
     private String name = "";    
     public String getName() { return name; }
@@ -36,7 +36,7 @@ public class PopulationCenter implements Cloneable
     /** total current number of refugees */
     private int numRefugees = 0;
     public int getNumRefugees() { return numRefugees; }
-    public void setNumRefugees(int val) { numRefugees = val; }	// TODO this should go away, since numRefugees should be set only by adding households
+    public void setNumRefugees(int val) { numRefugees = val; }  // TODO this should go away, since numRefugees should be set only by adding households
 
     /** total current population of non-refugees */
     private int urbanites = 0;
@@ -57,16 +57,16 @@ public class PopulationCenter implements Cloneable
     private ArrayList<RefugeeGroup> refugeeGroups = new ArrayList<RefugeeGroup>();
 
     public PopulationCenter()
-    {
-    }   
+        {
+        }   
 
     public PopulationCenter(String name, int id, int urbanites, Double2D centroid) {
-		super();
-		this.name = name;
-		this.id = id;
-		this.urbanites = urbanites;
-		this.centroid = centroid;
-	}
+        super();
+        this.name = name;
+        this.id = id;
+        this.urbanites = urbanites;
+        this.centroid = centroid;
+        }
 
 
     /** @param ID unique ID # of population center
@@ -74,52 +74,52 @@ public class PopulationCenter implements Cloneable
      * This ID is converted to a string and assigned to the name.
      */
     public PopulationCenter(Integer ID)
-    {
-    	id = ID;
+        {
+        id = ID;
         name = ID.toString();
-    }
+        }
 
-	public Object clone() {
-		try {
-			return super.clone();
-		}
-		catch (CloneNotSupportedException e) {
-			return null; 
-		}
-	}
+    public Object clone() {
+        try {
+            return super.clone();
+            }
+        catch (CloneNotSupportedException e) {
+            return null; 
+            }
+        }
     
     public void addRefugees(Household h) {
-    	refugees.add(h);
-    	numRefugees += h.getDisplacing().getPopulation();
-    }
+        refugees.add(h);
+        numRefugees += h.getDisplacing().getPopulation();
+        }
     
     /**
      * Add the given refugee group to this city. If this is the group's final destination,
      * absorb them into the local population of refugees and dissolve the group.
      */
     public void addRefugees(RefugeeGroup rg) {
-    	// if this is the group's destination, absorb them
-    	if (rg.destination == this)
-    		refugees.addAll(rg.households);
-    	else
-    		refugeeGroups.add(rg);
-    	numRefugees += rg.getPopulation();
-    }
+        // if this is the group's destination, absorb them
+        if (rg.destination == this)
+            refugees.addAll(rg.households);
+        else
+            refugeeGroups.add(rg);
+        numRefugees += rg.getPopulation();
+        }
     
     public void removeRefugees(Household h) {
-    	refugees.remove(h);
-    	numRefugees -= h.getDisplacing().getPopulation();
-    }
+        refugees.remove(h);
+        numRefugees -= h.getDisplacing().getPopulation();
+        }
     
     public void removeRefugees(RefugeeGroup rg) {
-    	refugeeGroups.remove(rg);
-    	numRefugees -= rg.getPopulation();
-    }
+        refugeeGroups.remove(rg);
+        numRefugees -= rg.getPopulation();
+        }
     
     public void clearRefugees() {
-    	refugeeGroups.clear();
-    	numRefugees = 0;
-    }
+        refugeeGroups.clear();
+        numRefugees = 0;
+        }
     
 
     /** 
@@ -127,46 +127,46 @@ public class PopulationCenter implements Cloneable
      * population center.
      */
     public RefugeeGroup spawnRefugeeGroup(int numHouseholds, MersenneTwisterFast random) {
-    	if (refugees.isEmpty())
-    		return null;
-    	
-    	RefugeeGroup group = new RefugeeGroup();
-    	
-    	for (int i = 0; (i < numHouseholds) && !refugees.isEmpty(); i++) {
-    		// pick a random household
-    		int index = random.nextInt(refugees.size());
-    		group.addHousehold(refugees.get(index));
-    		numRefugees -= refugees.get(index).getDisplacing().getPopulation();
-    		refugees.remove(index);
-    	}
-    	
-    	group.currentCity = this;
-    	this.addRefugees(group);
-    	
-    	return group;
-    }
+        if (refugees.isEmpty())
+            return null;
+        
+        RefugeeGroup group = new RefugeeGroup();
+        
+        for (int i = 0; (i < numHouseholds) && !refugees.isEmpty(); i++) {
+            // pick a random household
+            int index = random.nextInt(refugees.size());
+            group.addHousehold(refugees.get(index));
+            numRefugees -= refugees.get(index).getDisplacing().getPopulation();
+            refugees.remove(index);
+            }
+        
+        group.currentCity = this;
+        this.addRefugees(group);
+        
+        return group;
+        }
     
     /**
      * If there are already refugee groups in this city, randomly pick one and return it.
      * @return
      */
 //    public RefugeeGroup expellRefugeeGroup(int numHouseholds, World world) {
-//    	if (refugeeGroups.size() == 0)
-//    		return spawnRefugeeGroup(numHouseholds, world);
-//    	
-//    	RefugeeGroup rg = refugeeGroups.get(world.random.nextInt(refugeeGroups.size()));
-//    	removeRefugees(rg);
-//    	
-//    	return rg;
+//      if (refugeeGroups.size() == 0)
+//              return spawnRefugeeGroup(numHouseholds, world);
+//      
+//      RefugeeGroup rg = refugeeGroups.get(world.random.nextInt(refugeeGroups.size()));
+//      removeRefugees(rg);
+//      
+//      return rg;
 //    }
     
     public int getRefugeeGroupPopulation() {
-    	int total = 0;
-    	for (RefugeeGroup rg : refugeeGroups)
-    		total += rg.getPopulation();
-    			
-    	return total;
-    }
+        int total = 0;
+        for (RefugeeGroup rg : refugeeGroups)
+            total += rg.getPopulation();
+                        
+        return total;
+        }
 
     /** find work for current refugees
      *
@@ -180,37 +180,37 @@ public class PopulationCenter implements Cloneable
      */
     public void employRefugees() {
         // TODO
-    }
+        }
     
     public double refugeeCapacity = 0;
     public double getRefugeeCapacity() { return refugeeCapacity; }
     public void setRefugeeCapacity(double val) { refugeeCapacity = val; }
     
     public void consumeCapacity(double rate) {
-    	refugeeCapacity = Math.max(0, refugeeCapacity - numRefugees * rate);
-    }
+        refugeeCapacity = Math.max(0, refugeeCapacity - numRefugees * rate);
+        }
     
 //    public double getRefugeeCapacity() { return 0.1 * urbanites; }
     
     public double getRefugeeLoad() {
-    	return (double)numRefugees / (double)getRefugeeCapacity();
-    }
+        return (double)numRefugees / (double)getRefugeeCapacity();
+        }
     
     public double getSpareRefugeeCapacity() {
-    	return getRefugeeCapacity() - numRefugees;
-    }
+        return getRefugeeCapacity() - numRefugees;
+        }
     
     public int getNumRefugeeHouseholds() {
-    	return refugees.size();
-    }
+        return refugees.size();
+        }
     
     public int getNumRefugeeGroups() {
-    	return refugeeGroups.size();
-    }
+        return refugeeGroups.size();
+        }
     
     public String toString() {
-    	return name;
-    }
+        return name;
+        }
 
 //    @Override
 //    public boolean equals(Object obj) {
@@ -239,4 +239,4 @@ public class PopulationCenter implements Cloneable
 //    }
 
 
-}
+    }

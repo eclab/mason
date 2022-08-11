@@ -18,7 +18,7 @@ import sim.field.grid.SparseGrid2D;
  * @author mcoletti
  */
 public abstract class Mediator implements Steppable
-{
+    {
     protected boolean herderFarmerConflictActive = false;
     protected boolean herderHerderConflictActive = false;
     protected boolean withinCultConflictActive = false;
@@ -53,49 +53,49 @@ public abstract class Mediator implements Steppable
     
     //<editor-fold defaultstate="collapsed" desc="Accessors">
     public List<Conflict> conflicts()
-    {
+        {
         return conflictsList;
-    }
+        }
     
     public int getNumConflicts()
-    {
+        {
         return conflicts().size();
-    }
+        }
     
     public int getHFconflicts()
-    {
+        {
         return HFconflicts;
-    }
+        }
 
     public int getHHTBDconflicts()
-    {
+        {
         return HHTBDconflicts;
-    }
+        }
 
     public int getHHconflicts()
-    {
+        {
         return HHconflicts;
-    }
+        }
 
     public int getHHnonconflicts()
-    {
+        {
         return HHnonconflicts;
-    }
+        }
 
     public void setHHconflicts(int num)
-    {
+        {
         HHconflicts = num;
-    }
+        }
 
     public void setHHnonconflicts(int num)
-    {
+        {
         HHnonconflicts = num;
-    }
+        }
 
     public int getNumEscalations()
-    {
+        {
         return numEscalations;
-    }
+        }
 
     public boolean getHerderFarmerConflictActive() {return herderFarmerConflictActive;}
     public boolean getHerderHerderConflictActive() {return herderHerderConflictActive;}
@@ -111,54 +111,54 @@ public abstract class Mediator implements Steppable
     public void setEscalateConflictActive(boolean val) {escalateConflictActive = val;}
 
     public void setNumStepsToEscalate(int val)
-    {
-        if (val >= 0)
         {
+        if (val >= 0)
+            {
             numStepsToEscalate = val;
+            }
         }
-    }
 
     public void setEscalationDistance(int val)
-    {
-        if (val > 0)
         {
+        if (val > 0)
+            {
             escalationDistance = val;
+            }
         }
-    }
 
     public void setDamageRatio(double val)
-    {
-        if (val > 0.0 && val <= 1.0)
         {
+        if (val > 0.0 && val <= 1.0)
+            {
             damageRatio = val;
+            }
         }
-    }
 
     public SparseGrid2D getConflictsGrid( )
-    {
+        {
         return conflictsGrid;
-    }
+        }
     
     public SparseGrid2D getPrevConflictsGrid( )
-    {
+        {
         return prevConflictsGrid;
-    }
+        }
 
     public SparseGrid2D getEscalationsGrid( )
-    {
+        {
         return escalationsGrid;
-    }
+        }
     
     //</editor-fold>
     
     Mediator(int width, int height)
-    {
+        {
         super();
         conflictsGrid = new SparseGrid2D(width, height);
         prevConflictsGrid = new SparseGrid2D(width, height);
         escalationsGrid = new SparseGrid2D(width, height);
         conflictsList = new LinkedList<Conflict>();
-    }
+        }
 
 
     /** resolve the given conflict
@@ -168,19 +168,19 @@ public abstract class Mediator implements Steppable
     public abstract void reconcile(Conflict conflict);
 
     public void addConflict(Conflict conflict)
-    {
+        {
         conflictsList.add(conflict);
 
         conflictsGrid.setObjectLocation(conflict, 
-                                          conflict.getDefending().getX(), 
-                                          conflict.getDefending().getY());
+            conflict.getDefending().getX(), 
+            conflict.getDefending().getY());
 
         // keep counters of types of conflicts
         Activity attacker = conflict.getAttacker();
         GrazableArea defender = conflict.getDefending();
 
         switch(conflict.getConflictType())
-        {
+            {
             case Conflict.CONFLICT_TYPE_HF:
                 HFconflicts++;
                 break;
@@ -195,22 +195,22 @@ public abstract class Mediator implements Steppable
 
             default:
                 System.out.println("Unrecognized conflict type: " + conflict.getConflictType());
-        }
+            }
         
-    }
+        }
     
     public void addEscalation(Conflict conflict)
-    {
+        {
         escalationsGrid.setObjectLocation(conflict, 
-                                            conflict.getDefending().getX(),  
-                                            conflict.getDefending().getY());
+            conflict.getDefending().getX(),  
+            conflict.getDefending().getY());
 
         // keep counters of types of conflicts
         numEscalations++;
-    }
+        }
     
     public void clearConflicts()
-    {
+        {
         conflictsList.clear();
 
         // XXX Swapping these could mess with the GUI.  Need to test.
@@ -220,14 +220,14 @@ public abstract class Mediator implements Steppable
         conflictsGrid.clear();
 
         //escalationsField_.clear();
-    }
+        }
     
     public void resetConflictCounters()
-    {
+        {
         HFconflicts = 0;
         HHTBDconflicts = 0;
         HHconflicts = 0;
         HHnonconflicts = 0;
         numEscalations = 0;
+        }
     }
-}

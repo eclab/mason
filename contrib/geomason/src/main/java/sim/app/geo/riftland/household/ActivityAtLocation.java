@@ -13,7 +13,7 @@ import sim.app.geo.riftland.parcel.Parcel;
  *
  */
 abstract public class ActivityAtLocation extends Activity
-{
+    {
 
     /** Where this activity is taking place
      *
@@ -24,24 +24,24 @@ abstract public class ActivityAtLocation extends Activity
 
 
     public ActivityAtLocation(Household household, Parcel location)
-    {
+        {
         super(household);
         
         this.location = location;
-    }
+        }
 
     
     public Parcel getLocation()
-    {
+        {
         return location;
-    }
+        }
 
     public void setLocation(Parcel location)
-    {
+        {
         this.location = location;
+        }
+
+    @Override
+    abstract public void remove();
+
     }
-
-	@Override
-	abstract public void remove();
-
-}

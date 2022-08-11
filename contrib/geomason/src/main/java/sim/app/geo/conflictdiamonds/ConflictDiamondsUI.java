@@ -26,7 +26,7 @@ import sim.util.gui.ColorMap;
  * @author bpint
  */
 public class ConflictDiamondsUI extends GUIState {
-	
+        
     ConflictDiamonds conflictDiamonds;
 
     public Display2D display;
@@ -56,7 +56,7 @@ public class ConflictDiamondsUI extends GUIState {
     protected ConflictDiamondsUI(SimState state) {
         super(state);
         conflictDiamonds = (ConflictDiamonds)state;
-    }
+        }
 
     public static void main(String[] args) {
         ConflictDiamondsUI conflictGUI = new ConflictDiamondsUI(new ConflictDiamonds(System.currentTimeMillis(), args));
@@ -64,14 +64,14 @@ public class ConflictDiamondsUI extends GUIState {
         
         Console c = new Console(conflictGUI);
         c.setVisible(true);
-    }
+        }
 
     public static String getName() {
         return "ConflictDiamonds";
-    }
+        }
 
     public void start() {
-        super.start();			
+        super.start();                  
 
         Steppable chartUpdater = new Steppable() {
             public void step(SimState state) {
@@ -84,27 +84,27 @@ public class ConflictDiamondsUI extends GUIState {
                 residentSeries.add((double) (state.schedule.time()), numResident);
                 informalSeries.add((double) (state.schedule.time()), numInformal);
                 formalSeries.add((double) (state.schedule.time()), numFormal);
-            }
-        };
-		
+                }
+            };
+                
         conflictDiamonds.schedule.scheduleRepeating(chartUpdater);
 
         // set up the portrayals
         setupPortrayals();
-    }
+        }
     
     public Inspector getInspector() {
         super.getInspector();
-          TabbedInspector i = new TabbedInspector();
+        TabbedInspector i = new TabbedInspector();
 
 
         i.addInspector(new SimpleInspector(
                 ((ConflictDiamonds) state).params.global, this), "Paramters");
         return i;
-    }
+        }
 
     public void setupPortrayals() {
-        landPortrayal.setField(conflictDiamonds.allLand);	
+        landPortrayal.setField(conflictDiamonds.allLand);       
         landPortrayal.setPortrayalForAll(new LandscapePortrayal());
         //display.attach(landPortrayal, "land");
 
@@ -124,7 +124,7 @@ public class ConflictDiamondsUI extends GUIState {
         boundariesPortrayal.setField(conflictDiamonds.allBoundaries);
         boundariesPortrayal.setPortrayalForAll(new GeomPortrayal(Color.black, false));
         display.attach(boundariesPortrayal, "boundaries");
-	    
+            
         diamondsPortrayal.setField(conflictDiamonds.allDiamonds);
         diamondsPortrayal.setPortrayalForAll(new GeomPortrayal(Color.cyan, false));
         //display.attach(diamondsPortrayal, "diamond");
@@ -133,19 +133,19 @@ public class ConflictDiamondsUI extends GUIState {
         display.setBackdrop(Color.white);
         // redraw the display
         display.repaint();
-    }
+        }
     
     //portray the landscape
     class LandscapePortrayal extends RectanglePortrayal2D {
 
-        public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {			
+        public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {                 
             if(object == null) {
                 System.out.println("null");
                 return;
-            }		
+                }           
 
             Parcel p = (Parcel) object;
-            if ( p.getRegion() != null ) {					
+            if ( p.getRegion() != null ) {                                      
                 if( p.getRegion().getRegionID() == 1 ) //Kailahun
                     graphics.setColor( Color.orange );
                 else if( p.getRegion().getRegionID() == 2) //Kenema
@@ -179,77 +179,77 @@ public class ConflictDiamondsUI extends GUIState {
 
                 paint = graphics.getColor();
                 super.draw( p, graphics, info);
-				
+                                
+                }
             }
         }
-    }
     
     //portray population of agents
     class PopulationPortrayal extends OvalPortrayal2D {
 
         public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
-                Person p = (Person) object;
+            Person p = (Person) object;
 
-                if ( object != null && object instanceof Rebel && !p.isInitialRebel()) {
+            if ( object != null && object instanceof Rebel && !p.isInitialRebel()) {
                     
-                    paint = Color.red;		
-                    scale =1.5;
-                    super.draw(object, graphics, info);
+                paint = Color.red;          
+                scale =1.5;
+                super.draw(object, graphics, info);
                     
                 }
                 
-                else if ( object != null && p.getDiamondMiner() != null) {
-                    paint = Color.blue;
-                    scale = 1.5;
-                    super.draw(object, graphics, info);
+            else if ( object != null && p.getDiamondMiner() != null) {
+                paint = Color.blue;
+                scale = 1.5;
+                super.draw(object, graphics, info);
                 }
                 
-                else {
-                    //paint = Color.green;
-                    //super.draw(object, graphics, info);
+            else {
+                //paint = Color.green;
+                //super.draw(object, graphics, info);
                 }
+            }
         }
-    }
 
     // colormap for distance from mine, with alpha value 150 giving semi-transparency
     public static ColorMap diamondDistanceColor = new sim.util.gui.SimpleColorMap(
-                    0, .5, new Color(0, 0, 255, 150), new Color(0, 0, 0, 150));
+        0, .5, new Color(0, 0, 255, 150), new Color(0, 0, 0, 150));
 
-        class DiamondDistancePortrayal extends RectanglePortrayal2D {
-            public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {			
-                if(object == null) {
-                    System.out.println("null");
-                    return;
-                }			
+    class DiamondDistancePortrayal extends RectanglePortrayal2D {
+        public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {                     
+            if(object == null) {
+                System.out.println("null");
+                return;
+                }                       
 
-                Parcel p = (Parcel) object;
-                Color color = diamondDistanceColor.getColor( 
-                        p.getDiamondMineDistance() );
-                graphics.setColor( color );
-                paint = color;
-                super.draw( p, graphics, info);
-            }	
+            Parcel p = (Parcel) object;
+            Color color = diamondDistanceColor.getColor( 
+                p.getDiamondMineDistance() );
+            graphics.setColor( color );
+            paint = color;
+            super.draw( p, graphics, info);
+            }   
         }
     
     // colormap for distance from city, with alpha value 150 giving semi-transparency
     public static ColorMap cityDistanceColor = new sim.util.gui.SimpleColorMap(
-                    0, .5, new Color(255, 0, 0, 150), new Color(0, 0, 0, 150));
+        0, .5, new Color(255, 0, 0, 150), new Color(0, 0, 0, 150));
 
-	class CityDistancePortrayal extends RectanglePortrayal2D {
-            public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {			
-                if(object == null) {
-                    System.out.println("null");
-                    return;
-                }			
+    class CityDistancePortrayal extends RectanglePortrayal2D {
+        public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {                     
+            if(object == null) {
+                System.out.println("null");
+                return;
+                }                       
 
-                Parcel p = (Parcel) object;
-                Color color = cityDistanceColor.getColor( 
-                    p.getRemoteness() );
-                graphics.setColor( color );
-                paint = color;
-                super.draw( p, graphics, info);				
+            Parcel p = (Parcel) object;
+            Color color = cityDistanceColor.getColor( 
+                p.getRemoteness() );
+            graphics.setColor( color );
+            paint = color;
+            super.draw( p, graphics, info);                         
             }
-	}
+        }
         
     /**
      * Called when first beginning a ConflictsDiamondUI. Sets up the display windows,
@@ -276,7 +276,7 @@ public class ConflictDiamondsUI extends GUIState {
         frame.setVisible(true);
         frame.setSize(400, 350);
                 
-          //portray legend
+        //portray legend
         Dimension dl = new Dimension(300,425);
         Legend legend = new Legend();
         legend.setSize(dl);
@@ -314,7 +314,7 @@ public class ConflictDiamondsUI extends GUIState {
         //numRebel = new XYSeries("Number of Rebels");
         //diamondChart.removeAllSeries();
         //diamondChart.addSeries(numRebel, null);
-		
+                
         diamondChart.setTitle("Number of Rebels");
         diamondChart.setRangeAxisLabel("Number of Rebels");
         diamondChart.setDomainAxisLabel("Months");
@@ -331,8 +331,8 @@ public class ConflictDiamondsUI extends GUIState {
         employChart.addSeries(informalSeries  , null);
         JFrame frame2 = employChart.createFrame(this);
         frame2.pack();
-        c.registerFrame(frame2);						
-    }
+        c.registerFrame(frame2);                                                
+        }
 
     public void quit() {
         super.quit();
@@ -340,6 +340,6 @@ public class ConflictDiamondsUI extends GUIState {
         if (displayFrame!=null) displayFrame.dispose();
         displayFrame = null;
         display = null;
-    }
+        }
 
-}
+    }

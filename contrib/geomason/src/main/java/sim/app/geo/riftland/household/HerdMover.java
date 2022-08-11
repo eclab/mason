@@ -23,69 +23,69 @@ import sim.util.Bag;
  * @see Herding, MoveStrategy
  */
 public class HerdMover implements Steppable
-{
+    {
     private final MoveStrategy moveStrategy;
     private final Parameters params;
     private final SparseGrid2D herdingGrid;
     
     public HerdMover(Parameters params, SparseGrid2D herdingGrid)
-    {
+        {
         assert(params != null);
         this.params = params;
         this.herdingGrid = herdingGrid;
         moveStrategy = (params.herding.isUseHerdingRuleBased()) ? new RuleBasedMoveStrategy(params) : new WeightedMoveStrategy(params);
         assert(repOK());
-    }
+        }
 
     @Override
     public void step(SimState ss)
-    {
+        {
         assert(ss instanceof World);
         final World world = (World)ss;
         class HerdGroup implements Runnable
-        {
+            {
             private final MersenneTwisterFast localRandom;
             private final Bag herds;
             HerdGroup(Bag herds, long seed)
-            {
+                {
                 this.herds = herds;
                 localRandom = new MersenneTwisterFast(seed); // MersenneTwisterFast is not threadsafe, so we chain PRNG's.
-            }
+                }
             
             @Override
             public void run()
-            {
-                for (Object o : herds)
                 {
+                for (Object o : herds)
+                    {
                     Herding h = (Herding) o;
                     if (h.getHerdSize() > 0)
                         h.setNextLocation(moveStrategy.computeTarget(world, localRandom, h));
+                    }
                 }
             }
-        }
         
         ExecutorService executor = Executors.newFixedThreadPool(params.system.getNumthreads());
         List<Bag> partition = Misc.partition(herdingGrid.getAllObjects(), params.system.getNumthreads()*2);
         for (Bag herdGroup : partition)
-        {
+            {
             executor.execute(new HerdGroup(herdGroup, world.random.nextLong()));
-        }
+            }
         executor.shutdown();
         while(!executor.isTerminated()) { }
         assert(repOK());
-    }
+        }
     
     public final boolean repOK()
-    {
+        {
         return moveStrategy != null
-                && params != null
-                && herdingGrid != null
-                && !(params.system.isRunExpensiveAsserts() && !Misc.containsOnlyType(herdingGrid.getAllObjects(), Herding.class));
-    }
+            && params != null
+            && herdingGrid != null
+            && !(params.system.isRunExpensiveAsserts() && !Misc.containsOnlyType(herdingGrid.getAllObjects(), Herding.class));
+        }
     
     @Override
     public String toString()
-    {
+        {
         return String.format("[HerdMover: MoveStrategy=%s, Params=%s, Herders=%s]", moveStrategy.toString(), params.toString(), herdingGrid.toString());
+        }
     }
-}

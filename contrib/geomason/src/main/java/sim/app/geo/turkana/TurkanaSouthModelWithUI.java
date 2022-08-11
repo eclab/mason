@@ -37,7 +37,7 @@ import sim.util.media.chart.*;
  * 
  */
 public class TurkanaSouthModelWithUI extends GUIState
-{
+    {
     public Display2D display;
     public JFrame displayFrame;
     FastValueGridPortrayal2D populationDensityPortrayal = new FastValueGridPortrayal2D("Population Density");
@@ -51,46 +51,46 @@ public class TurkanaSouthModelWithUI extends GUIState
 
 
     public TurkanaSouthModelWithUI()
-    {
+        {
         super(new TurkanaSouthModel(System.currentTimeMillis()));
         model = (TurkanaSouthModel) state;
-    }
+        }
 
     public TurkanaSouthModelWithUI(SimState state)
-    {
+        {
         super(state);
         model = (TurkanaSouthModel) state;
-    }
+        }
 
     public static String getName()
-    {
+        {
         return "Turkana South";
-    }
+        }
 
     @Override
     public Object getSimulationInspectedObject()
-    {
+        {
         return state;
-    }  // non-volatile
+        }  // non-volatile
 
     @Override
     public void load(SimState state)
-    {
+        {
         super.load(state);
         setupPortrayals();
-    }
+        }
 
     @Override
     public void start()
-    {
+        {
         super.start();
         setupPortrayals();
-        populationSeries.clear();	// clear the data for the chart
-    }
+        populationSeries.clear();       // clear the data for the chart
+        }
 
     @SuppressWarnings("serial")
     public void setupPortrayals()
-    {
+        {
         int maxValue = ((IntGrid2D)model.populationDensityGrid.getGrid()).max();
             
         populationDensityPortrayal.setField(model.populationDensityGrid.getGrid());
@@ -102,8 +102,8 @@ public class TurkanaSouthModelWithUI extends GUIState
                     // a few verge large values, scale the color map nonlinearly
                     // so the low values don't just appear black
                     return Math.sqrt(level);
-                }
-            });
+                    }
+                });
 
         rainPortrayal.setField(model.rainGrid);
         rainPortrayal.setMap(new SimpleColorMap(0, 1, Color.black, Color.white));
@@ -118,17 +118,17 @@ public class TurkanaSouthModelWithUI extends GUIState
             @Override
             public void step(SimState state) {
                 populationSeries.add(state.schedule.getTime() / model.ticksPerMonth, model.agents.size());
-            }
-        });
+                }
+            });
 
         populationStatsChart.repaint();
         display.reset();
         display.repaint();
-    }
+        }
 
     @Override
     public void init(Controller c)
-    {
+        {
         super.init(c);
 
         // since we're running the GUI, don't print stats
@@ -149,10 +149,10 @@ public class TurkanaSouthModelWithUI extends GUIState
         c.registerFrame(createPopulationStatsFrame());
         //populationStatsFrame.setVisible(true);
 
-    }
+        }
 
     public JFrame createPopulationStatsFrame()
-    {
+        {
         populationSeries = new XYSeries("Population");
         populationStatsChart = new TimeSeriesChartGenerator();
         populationStatsChart.setTitle("Population Statistics");
@@ -166,25 +166,25 @@ public class TurkanaSouthModelWithUI extends GUIState
         populationStatsFrame.pack();
 
         return populationStatsFrame;
-    }
+        }
 
     public void quit()
-    {
+        {
         super.quit();
 
         if (populationStatsFrame != null)
-        {
+            {
             populationStatsFrame.dispose();
-        }
+            }
         populationStatsFrame = null;
-    }
+        }
 
     /**
      * @param args
      */
     public static void main(String[] args)
-    {
+        {
         new TurkanaSouthModelWithUI().createController();
-    }
+        }
 
-}
+    }

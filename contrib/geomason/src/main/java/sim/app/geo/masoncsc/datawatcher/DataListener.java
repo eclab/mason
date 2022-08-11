@@ -11,6 +11,6 @@ import java.util.EventListener;
  * @author Joey Harrison
  */
 public interface DataListener<T> extends EventListener
-{
+    {
     public void dataUpdated(DataWatcher<T> source);
-}
+    }
