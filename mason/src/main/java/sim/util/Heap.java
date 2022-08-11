@@ -119,7 +119,7 @@ public class Heap implements java.io.Serializable
     public Object getMin()
         {
         if (numElem == 0) return null;
-        return objects[1 - 1];			// that is, objects[0]
+        return objects[1 - 1];                  // that is, objects[0]
         }
         
     /* Removes elements in order and adds them to a Bag, so long as the provided
@@ -165,11 +165,11 @@ public class Heap implements java.io.Serializable
         if( numElem == 0 )
             return null;
         // remove the key
-        keys[1 - 1] = keys[numElem - 1];			// that is, 0
+        keys[1 - 1] = keys[numElem - 1];                        // that is, 0
         keys[numElem - 1] = null;
         // remove the info
         Object result = objects[1 - 1];
-        objects[1 - 1] = objects[numElem - 1];		// that is 0
+        objects[1 - 1] = objects[numElem - 1];          // that is 0
         objects[numElem - 1] = null;
         numElem--;
         // rebuild heap
