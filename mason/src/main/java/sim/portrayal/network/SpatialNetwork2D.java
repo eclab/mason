@@ -23,11 +23,13 @@ import sim.util.*;
     how their field portrayals draw them onscreen.  As a sanity check: you shouldn't have one field be a Continuous2D
     and the other be a SparseGrid2D.  */
 
-public class SpatialNetwork2D
+public class SpatialNetwork2D implements java.io.Serializable
     {
-    SparseField2D field;
-    SparseField2D field2;
-    Network network;
+    private static final long serialVersionUID = 1;
+
+    protected SparseField2D field;
+    protected SparseField2D field2;
+    protected Network network;
 
     public SpatialNetwork2D( final SparseField2D field, final Network network )
         {

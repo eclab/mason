@@ -28,8 +28,30 @@ public class RectanglePortrayal2D extends AbstractShapePortrayal2D
         this.paint = paint;
         this.scale = scale;
         this.filled = filled;
+        setStroke(null);
         }
                 
+    /** New-style constructors.  Rather than having a "filled" flag which determines whether we
+        stroke versus fill, we can do BOTH.  We do this by specifying a fill paint and a stroke
+        paint, either of which can be NULL.  We also provide a stroke width and a scale. */
+    public RectanglePortrayal2D(Paint fillPaint, Paint strokePaint, double strokeWidth, double scale)
+        {
+        this(fillPaint, strokePaint, new BasicStroke((float) strokeWidth), scale);
+        }
+
+    /** New-style constructors.  Rather than having a "filled" flag which determines whether we
+        stroke versus fill, we can do BOTH.  We do this by specifying a fill paint and a stroke
+        paint, either of which can be NULL.  We also provide a stroke and a scale. */
+    public RectanglePortrayal2D(Paint fillPaint, Paint strokePaint, Stroke stroke, double scale)
+        {
+        this.paint = fillPaint;
+        this.strokePaint = strokePaint;
+        this.fillPaint = fillPaint;
+        this.scale = scale;
+        this.filled = (fillPaint != null);
+        setStroke(stroke);
+        }
+
     /** If drawing area intersects selected area, add last portrayed object to the bag */
     public boolean hitObject(Object object, DrawInfo2D range)
         {
@@ -52,25 +74,40 @@ public class RectanglePortrayal2D extends AbstractShapePortrayal2D
         graphics.setPaint(paint);
         // we are doing a simple draw, so we ignore the info.clip
 
-        if (info.precise)
+        if (preciseRectangle == null) preciseRectangle= new Rectangle2D.Double();  // could get reset because it's transient
+        preciseRectangle.setFrame(info.draw.x - width/2.0, info.draw.y - height/2.0, width, height);
+
+        if (fillPaint != null || strokePaint != null)           // New Style
             {
-            if (preciseRectangle == null) preciseRectangle= new Rectangle2D.Double();  // could get reset because it's transient
-            preciseRectangle.setFrame(info.draw.x - width/2.0, info.draw.y - height/2.0, width, height);
+            if (fillPaint != null)
+                {
+                graphics.setPaint(fillPaint);
+                graphics.fill(preciseRectangle);
+                }
+            if (strokePaint != null)
+                {
+                Stroke oldStroke = graphics.getStroke();
+                graphics.setPaint(strokePaint);
+                graphics.setStroke(stroke == null ? defaultStroke : stroke);
+                graphics.draw(preciseRectangle);
+                graphics.setStroke(oldStroke);
+                }
+            }
+        else
+            {
             if (filled) graphics.fill(preciseRectangle);
             else graphics.draw(preciseRectangle);
-            return;
             }
-                
-        final int x = (int)(draw.x - width / 2.0);
-        final int y = (int)(draw.y - height / 2.0);
-        final int w = (int)(width);
-        final int h = (int)(height);
+        }
+        
+    public void setStroke(Stroke s)
+        {
+        stroke = s;
+        }
 
-        // draw centered on the origin
-        if (filled)
-            graphics.fillRect(x,y,w,h);
-        else
-            graphics.drawRect(x,y,w,h);
+    public void setStroke(double width)
+        {
+        setStroke(new BasicStroke((float) width));
         }
         
     }

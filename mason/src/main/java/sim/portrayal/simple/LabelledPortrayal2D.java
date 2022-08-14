@@ -91,20 +91,31 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
     
     public boolean onlyLabelWhenSelected;
         
+    /** Sets whether the label should only be shown when the object is selected */
     public void setOnlyLabelWhenSelected(boolean val) { onlyLabelWhenSelected = val; }
+
+    /** Returns whether the label should only be shown when the object is selected */
     public boolean getOnlyLabelWhenSelected() { return onlyLabelWhenSelected; }
     
+    /** Sets whether the label should be shown regardless. */
     public boolean isLabelShowing() { return showLabel; }
+
+    /** Returns whether the label should be shown regardless. */
     public void setLabelShowing(boolean val) { showLabel = val; }
     
-    Font scaledFont;
+    public Font scaledFont;
     int labelScaling = NEVER_SCALE;
     public static final int NEVER_SCALE = 0;
     public static final int SCALE_WHEN_SMALLER = 1;
     public static final int ALWAYS_SCALE = 2;
 
+    /** Returns the label scaling, one of NEVER_SCALE (the default), SCALE_WHEN_SMALLER, and ALWAYS_SCALE. */
     public int getLabelScaling() { return labelScaling; }
+
+    /** Sets the label scaling, one of NEVER_SCALE (the default), SCALE_WHEN_SMALLER, and ALWAYS_SCALE. */
     public void setLabelScaling(int val) { if (val>= NEVER_SCALE && val <= ALWAYS_SCALE) labelScaling = val; }
+
+    double labelScalingBaseWidth = 1.0;
 
     /** Draws [x=offsetx, y=offsety] pixels away from the [dx=scalex, dy=scaley] prescaled position of the Portrayal2D, 
         using the SansSerif 10pt font, blue, and left alignment.  If label is null, 
@@ -178,8 +189,8 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
 
             // build font
             float size = (labelScaling == ALWAYS_SCALE ||
-                (labelScaling == SCALE_WHEN_SMALLER && info.draw.width < 1)) ?
-                (float)(info.draw.width * labelFont.getSize2D()) :
+                (labelScaling == SCALE_WHEN_SMALLER && info.scale < 1.0)) ?
+                (float)(info.scale * labelFont.getSize2D()) :
                 labelFont.getSize2D();
             if (scaledFont == null || 
                 scaledFont.getSize2D() != size || 
@@ -197,11 +208,11 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
                 
                 if (align == ALIGN_CENTER)
                     {
-                    x -= graphics.getFontMetrics().stringWidth(s)/2;
+                    x -= graphics.getFontMetrics(scaledFont).stringWidth(s)/2;
                     }
                 else if (align == ALIGN_RIGHT)
                     {
-                    x -= graphics.getFontMetrics().stringWidth(s);
+                    x -= graphics.getFontMetrics(scaledFont).stringWidth(s);
                     }
                                 
                 if (s.contains("\n"))  // gotta split

@@ -101,7 +101,7 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
             //int endx = /*startx +*/ (int)(((info.clip.x - info.draw.x + info.clip.width)/xScale-0.5)/1.5) + 4;  // with rounding, width be as much as 1 off
             //int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height)/(yScale*2.0)) + 4;  // with rounding, height be as much as 1 off
 
-            DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, 
+            DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, 
                     Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
                     Math.ceil(info.draw.height / (maxY + 0.5))),
                 info.clip/*, xPoints, yPoints*/, info);  // we don't do further clipping 
@@ -245,7 +245,8 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
                         putInHere.add( getWrapper(valueToPass.val, new Int2D(x, y)) );
                         }
                     }
-                else if (info.precise)
+                else
+                    //else if (info.precise)
                     {
                     xPointsf[0] = (float)(xyC_urx-0.5*xScale);
                     yPointsf[0] = (float)(xyC_ury+yScale);
@@ -271,29 +272,30 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
                     generalPath.closePath();
                     graphics.fill(generalPath);
                     }
-                else
-                    {                    
-                    xPoints[0] = (int)(xyC_urx-0.5*xScale);
-                    yPoints[0] = (int)(xyC_ury+yScale);
-                    xPoints[1] = (int)(xyC_upx+0.5*xScale);
-                    yPoints[1] = (int)(xyC_upy+yScale);
-                    xPoints[2] = (int)(xyC_upx-0.5*xScale);
-                    yPoints[2] = (int)(xyC_upy+yScale);
-                    xPoints[3] = (int)(xyC_ulx+0.5*xScale);
-                    yPoints[3] = (int)(xyC_uly+yScale);
-                    xPoints[4] = (int)(xyC_x-0.5*xScale);
-                    yPoints[4] = (int)(xyC_y+yScale);
-                    xPoints[5] = (int)(xyC_x+0.5*xScale);
-                    yPoints[5] = (int)(xyC_y+yScale);
+                /* else
+                   {                    
+                   xPoints[0] = (int)(xyC_urx-0.5*xScale);
+                   yPoints[0] = (int)(xyC_ury+yScale);
+                   xPoints[1] = (int)(xyC_upx+0.5*xScale);
+                   yPoints[1] = (int)(xyC_upy+yScale);
+                   xPoints[2] = (int)(xyC_upx-0.5*xScale);
+                   yPoints[2] = (int)(xyC_upy+yScale);
+                   xPoints[3] = (int)(xyC_ulx+0.5*xScale);
+                   yPoints[3] = (int)(xyC_uly+yScale);
+                   xPoints[4] = (int)(xyC_x-0.5*xScale);
+                   yPoints[4] = (int)(xyC_y+yScale);
+                   xPoints[5] = (int)(xyC_x+0.5*xScale);
+                   yPoints[5] = (int)(xyC_y+yScale);
                                 
-                    Color c = map.getColor(isDoubleGrid2D ?  doubleField[x][y] : intField[x][y]);
-                    if (c.getAlpha() == 0) continue;
-                    graphics.setColor(c);
+                   Color c = map.getColor(isDoubleGrid2D ?  doubleField[x][y] : intField[x][y]);
+                   if (c.getAlpha() == 0) continue;
+                   graphics.setColor(c);
 
-                    // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
-                    //                    graphics.setClip(clip);
-                    graphics.fillPolygon(xPoints,yPoints,6);
-                    }
+                   // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
+                   //                    graphics.setClip(clip);
+                   graphics.fillPolygon(xPoints,yPoints,6);
+                   }
+                */
                 }
         
         }

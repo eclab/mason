@@ -39,7 +39,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
     public Paint toPaint = Color.black;
     public Paint labelPaint = null;  // indicates no label
     public Font labelFont;
-    Font scaledFont;
+    protected Font scaledFont;
     int labelScaling = ALWAYS_SCALE;
     int scaling = ALWAYS_SCALE;
     public static final int NEVER_SCALE = 0;
@@ -119,7 +119,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
             Object obj = edge;              // it's possible for the SimpleEdgePortrayal to be used for non-edges, as in TrailedPortrayal
             if (edge instanceof Edge) obj = ((Edge)edge).info;
             if (obj == null)
-            	return 0.0;
+                return 0.0;
             if (obj instanceof Number)
                 return Math.abs(((Number)obj).doubleValue());
             else if (obj instanceof Valuable)
@@ -138,7 +138,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
         return "" + obj;
         }
     
-    BasicStroke getBasicStroke(float thickness)
+    public BasicStroke getBasicStroke(float thickness)
         {
         return new BasicStroke(thickness, 
                 (shape == SHAPE_LINE_ROUND_ENDS ? 
@@ -178,11 +178,11 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
             double len = Math.sqrt((startXd - endXd)*(startXd - endXd) + (startYd - endYd)*(startYd - endYd));
             double vecX = ((startXd - endXd) * width * 0.5 * weight) / len;
             double vecY = ((startYd - endYd) * width * 0.5 * weight) / len;
-            double scaleWidth = info.draw.width;
-            double scaleHeight = info.draw.height;
+            double scaleWidth = info.scale; //info.draw.width;
+            double scaleHeight = info.scale; //info.draw.height;
             xPoints[0] = endX;  yPoints[0] = endY;
                         
-            if (scaling == SCALE_WHEN_SMALLER && info.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
+            if (scaling == SCALE_WHEN_SMALLER && info.scale >= 1 || scaling == NEVER_SCALE)  // no scaling
                 { scaleWidth = 1; scaleHeight = 1; }
             if (info.precise)
                 {
@@ -222,9 +222,8 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
                 {
                 graphics.setPaint (fromPaint);
                 double width = getBaseWidth();
-                //if (info.precise || width != 0.0)
-                //    { 
-                double scale = info.draw.width;
+
+                double scale = info.scale;
                 if (scaling == SCALE_WHEN_SMALLER && info.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
                     scale = 1;
 
@@ -234,21 +233,19 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
                 preciseLine.setLine(startXd, startYd, endXd, endYd);
                 graphics.draw(preciseLine);
                 graphics.setStroke(oldstroke);
-                //    }
-                //else graphics.drawLine(startX, startY, endX, endY);
                 }
             else
                 {
                 graphics.setPaint( fromPaint );
                 double width = getBaseWidth();
-                //if (info.precise || width != 0.0)
-                //    { 
-                double scale = info.draw.width;
+
+                double scale = info.scale;
                 if (scaling == SCALE_WHEN_SMALLER && info.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
                     scale = 1;
 
                 Stroke oldstroke = graphics.getStroke();
                 double weight = getPositiveWeight(object, e);
+
                 graphics.setStroke(getBasicStroke((float)(width * weight * scale)));  // duh, can't reset a stroke, have to make it new each time :-(
                 preciseLine.setLine(startXd, startYd, midXd, midYd); 
                 graphics.draw(preciseLine); 
@@ -256,13 +253,6 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
                 preciseLine.setLine(midXd, midYd, endXd, endYd); 
                 graphics.draw(preciseLine); 
                 graphics.setStroke(oldstroke);
-                //    }
-                //else
-                //    {
-                //    graphics.drawLine(startX,startY,midX,midY);
-                //    graphics.setPaint( toPaint );
-                //    graphics.drawLine(midX,midY,endX,endY);
-                //    }
                 }
             }
                 
@@ -275,8 +265,8 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
 
             // build font
             float size = (labelScaling == ALWAYS_SCALE ||
-                (labelScaling == SCALE_WHEN_SMALLER && info.draw.width < 1)) ?
-                (float)(info.draw.width * labelFont.getSize2D()) :
+                (labelScaling == SCALE_WHEN_SMALLER && info.scale < 1)) ?
+                (float)(info.scale * labelFont.getSize2D()) :
                 labelFont.getSize2D();
             if (scaledFont == null || 
                 scaledFont.getSize2D() != size || 
@@ -284,9 +274,8 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
                 scaledFont.getStyle() != labelFont.getStyle())
                 scaledFont = this.scaledFont = labelFont.deriveFont(size);
             
-            //Object infoval = ((Edge)object).info;
             String information = getLabel((Edge)object, e);
-            if( /* infoval != null && */ information.length() > 0 )
+            if( information.length() > 0 )
                 {
                 graphics.setPaint(labelPaint);
                 graphics.setFont(scaledFont);
@@ -313,7 +302,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
         final double SLOP = 5;  // allow some imprecision -- click 6 away from the line
         if (shape == SHAPE_LINE)
             {
-            double scale = range.draw.width;
+            double scale = range.scale;
             if (scaling == SCALE_WHEN_SMALLER && range.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
                 scale = 1;
 
@@ -329,11 +318,11 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
             double len = Math.sqrt((startXd - endXd)*(startXd - endXd) + (startYd - endYd)*(startYd - endYd));
             double vecX = ((startXd - endXd) * width * 0.5 * weight) / len;
             double vecY = ((startYd - endYd) * width * 0.5 * weight) / len;
-            double scaleWidth = range.draw.width;
-            double scaleHeight = range.draw.height;
+            double scaleWidth = range.scale;    // range.draw.width;
+            double scaleHeight = range.scale;   //range.draw.height;
             xPoints[0] = (int)endXd ;  yPoints[0] = (int)endYd; 
                         
-            if (scaling == SCALE_WHEN_SMALLER && range.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
+            if (scaling == SCALE_WHEN_SMALLER && range.scale >= 1 || scaling == NEVER_SCALE)  // no scaling
                 { scaleWidth = 1; scaleHeight = 1; }
             xPoints[1] = (int)(startXd + (vecY)*scaleWidth); yPoints[1] = (int)(startYd + (-vecX)*scaleHeight);
             xPoints[2] = (int)(startXd + (-vecY)*scaleWidth); yPoints[2] = (int)(startYd + (vecX)*scaleHeight); // rotate 180 degrees

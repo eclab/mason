@@ -76,33 +76,27 @@ public class ImagePortrayal2D extends RectanglePortrayal2D
         if (image==null) return;
         // in this example we ALWAYS draw the image, even if the color is set to 0 alpha...
 
-        final int iw = image.getWidth(null);
-        final int ih = image.getHeight(null);
+        final double iw = image.getWidth(null);
+        final double ih = image.getHeight(null);
         double width;
         double height;
         
         if (ih > iw)
             {
             width = info.draw.width*scale;
-            height = (ih*width)/iw;  // ih/iw = height / width
+            height = (ih * width)/iw;  // ih/iw = height / width
             }
         else
             {
             height = info.draw.height * scale;
             width = (iw * height)/ih;  // iw/ih = width/height
             }
-
+        
         final double x = (info.draw.x - width / 2.0);
         final double y = (info.draw.y - height / 2.0);
-
-        // draw centered on the origin
-        if (info.precise)
-            {
-            preciseTransform.setToScale(width, height);
-            preciseTransform.translate(x, y);
-            graphics.drawImage(image, preciseTransform, null);
-            }
-        else graphics.drawImage(image,(int)x,(int)y,(int)width,(int)height,null);
+        preciseTransform.setToTranslation(x, y);
+        preciseTransform.scale(width / iw, height / ih);
+        graphics.drawImage(image, preciseTransform, null);
         }
         
     }

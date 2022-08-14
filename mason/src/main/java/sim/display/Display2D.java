@@ -714,18 +714,18 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         }    
         
     /** Holds all the relevant information for a given FieldPortrayal. */
-    class FieldPortrayal2DHolder
+    public class FieldPortrayal2DHolder
         {
         /** The translation and scale of the FieldPortrayal.  Presently this
             is always 0,0 translation and 1.0 scale, but we'll allow the
             user to change this soon. */
-        Rectangle2D.Double bounds;
+        public Rectangle2D.Double bounds;
         /** The portrayal proper */
-        FieldPortrayal2D portrayal;
+        public FieldPortrayal2D portrayal;
         /** The name of the portrayal, as shown in the Layers menu on the Display2D window */
-        String name;
+        public String name;
         /** The menu item of the portrayal, in the Layers menu. */
-        JCheckBoxMenuItem menuItem;
+        public JCheckBoxMenuItem menuItem;
         /** Whether we should draw the portrayal on updates */
         boolean visible;
         /** Returns the portrayal's name in the Layers menu */
@@ -880,7 +880,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     public OptionPane optionPane = new OptionPane("");
     
     /** The list of portrayals the insideDisplay draws.  Each element in this list is a Portrayal2DHolder. */
-    ArrayList portrayals = new ArrayList();
+    public ArrayList portrayals = new ArrayList();
     /** The scroll view which holds the insideDisplay. */
     public JScrollPane display;
     /** The scroll view's viewport. */
@@ -967,7 +967,6 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 
         port.setViewPosition(topleft);
         Display2D.this.repaint();
-
         }
         
     /** Returns the scale (the zoom value) of the Display2D */
@@ -1636,9 +1635,21 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             (int)(holder.bounds.width * scale),
             (int)(holder.bounds.height * scale));
 
-        DrawInfo2D d2d = new DrawInfo2D(simulation, holder.portrayal, region, clip, null);
-        d2d.gui = simulation;
-        d2d.precise = forcePrecise || precise;
+//        DrawInfo2D d2d = new DrawInfo2D(simulation, holder.portrayal, region, clip, null);
+        
+        DrawInfo2D d2d = new DrawInfo2D(
+            region, 
+            clip, 
+            simulation, 
+            holder.portrayal,
+            forcePrecise || precise,
+            scale);
+
+/*
+  d2d.gui = simulation;
+  d2d.precise = forcePrecise || precise;
+  d2d.scale = scale;
+*/
         return d2d;
         }
                 

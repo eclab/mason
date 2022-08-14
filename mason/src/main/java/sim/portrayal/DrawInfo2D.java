@@ -48,6 +48,14 @@ import sim.portrayal.network.*;
    Fields are free to not store anything here if they see fit.  Further, this
    object may not be the actual kind of object used to store the location (for example,
    it might be a MutableDouble2D, even though the object is associated with a Double2D). 
+
+   <p>The <i>gui</i> object stores the current GUIState. 
+
+   <p>If this is a DrawInfo2D for a SimplePortrayal2D, then the <i>parent</i> object stores 
+   the parent DrawInfo2D for the outer FieldPortrayal2D.  Otherwise, it stores null.
+        
+   <p>The <i>scale</i> is the current zoom level of the Display2D.  It is by default 1.0.  
+   If you zoom in, the scale increases.
 */
 
 public class DrawInfo2D
@@ -60,25 +68,45 @@ public class DrawInfo2D
     public boolean selected;
     public boolean precise;
     public Object location;
+    public double scale;
     
-    /**
-       @deprecated
-    */
-    public DrawInfo2D(GUIState gui, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip)
-        {
-        this(gui, fieldPortrayal, draw, clip, null);
-        }
-
-    public DrawInfo2D(GUIState gui, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip, DrawInfo2D parent)
+    public DrawInfo2D(RectangularShape draw, RectangularShape clip, GUIState gui, FieldPortrayal2D fieldPortrayal, 
+        boolean precise, double scale)
         {
         this.draw = new Rectangle2D.Double();
         this.draw.setRect(draw.getFrame());
         this.clip = new Rectangle2D.Double();
         this.clip.setRect(clip.getFrame());
-        precise = false;
-        this.gui = gui;
+        
         this.parent = parent;
+        this.selected = false;
+        this.precise = precise;
+        this.gui = gui;
         this.fieldPortrayal = fieldPortrayal;
+        this.scale = scale;
+        this.location = null;
+        }
+
+    public DrawInfo2D(RectangularShape draw, RectangularShape clip, DrawInfo2D parent)
+        {
+        this.draw = new Rectangle2D.Double();
+        this.draw.setRect(draw.getFrame());
+        this.clip = new Rectangle2D.Double();
+        this.clip.setRect(clip.getFrame());
+        
+        this.parent = parent;
+        selected = false;
+        precise = parent.precise;
+        gui = parent.gui;
+        fieldPortrayal = parent.fieldPortrayal;
+        this.scale = parent.scale;
+        this.location = null;
+        // this.location = parent.location;                     // may not be valid
+        }
+
+    public DrawInfo2D(RectangularShape draw, DrawInfo2D parent)
+        {
+        this(draw, parent.clip, parent);
         }
 
     public DrawInfo2D(DrawInfo2D other, double translateX, double translateY)
@@ -87,22 +115,23 @@ public class DrawInfo2D
         draw = new Rectangle2D.Double(odraw.x+translateX,odraw.y+translateY,odraw.width,odraw.height);
         Rectangle2D.Double oclip = other.clip;
         clip = new Rectangle2D.Double(oclip.x+translateX,oclip.y+translateY,oclip.width,oclip.height);
+        
         precise = other.precise;
         gui = other.gui;
         fieldPortrayal = other.fieldPortrayal;
         selected = other.selected;
         parent = other.parent;
-        // location = other.location;  // would location be invalid?
+        location = other.location;
+        parent = other.parent;
+        scale = other.scale;
         }
         
     public DrawInfo2D(DrawInfo2D other)
         {
         this(other, 0, 0);
-        location = other.location;
-        parent = other.parent;
         }
     
-    public String toString() { return "DrawInfo2D[ Draw: " + draw + " Clip: " + clip + " Precise: " + precise + " Location : " + location + " portrayal: " + fieldPortrayal + "]"; }
+    public String toString() { return "DrawInfo2D[ Draw: " + draw + " Clip: " + clip + " Precise: " + precise + " Location : " + location + " portrayal: " + fieldPortrayal + " Scale : " + scale + " ]"; }
     }
     
     

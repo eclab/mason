@@ -7,6 +7,7 @@
 package sim.app.tutorial5;
 import sim.portrayal.network.*;
 import sim.portrayal.continuous.*;
+import sim.portrayal.simple.*;
 import sim.engine.*;
 import sim.display.*;
 import javax.swing.*;
@@ -62,6 +63,7 @@ public class Tutorial5WithUI extends GUIState
         edgePortrayal.setField( new SpatialNetwork2D( tut.balls, tut.bands ) );
         edgePortrayal.setPortrayalForAll(new BandPortrayal2D());
         nodePortrayal.setField( tut.balls );
+        nodePortrayal.setPortrayalForAll(new MovablePortrayal2D(null));
         
         // reschedule the displayer
         display.reset();
