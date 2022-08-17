@@ -24,7 +24,6 @@ public class DKeepaway extends DSimState{
     public double yMin = 0;
     public double yMax = 100;
     
-    
 
     /** Creates a Keepaway simulation with the given random number seed. */
     public DKeepaway(long seed)

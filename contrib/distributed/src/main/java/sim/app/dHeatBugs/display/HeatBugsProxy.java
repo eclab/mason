@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package sim.app.dheatbugs.display;
+package sim.app.dHeatBugs.display;
 
 import sim.display.DenseGrid2DProxy;
 import sim.display.DoubleGrid2DProxy;

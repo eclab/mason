@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package sim.app.dflockerstest;
+package sim.app.dflockersTest;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
