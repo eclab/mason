@@ -1,10 +1,10 @@
 package sim.app.geo.dturkana;
 
 import java.io.InputStream;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import sim.app.dheatbugs.DHeatBug;
 import sim.app.geo.dcampusworld.DCampusWorld;
 import sim.app.geo.turkana.TurkanaSouthModel;
 import sim.app.geo.turkana.Turkanian;

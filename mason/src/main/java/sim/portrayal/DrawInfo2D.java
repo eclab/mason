@@ -7,6 +7,8 @@
 package sim.portrayal;
 import java.awt.*;
 import java.awt.geom.*;
+import java.awt.geom.Rectangle2D.Double;
+
 import sim.display.*;
 import sim.portrayal.network.*;
 
@@ -131,7 +133,24 @@ public class DrawInfo2D
         this(other, 0, 0);
         }
     
-    public String toString() { return "DrawInfo2D[ Draw: " + draw + " Clip: " + clip + " Precise: " + precise + " Location : " + location + " portrayal: " + fieldPortrayal + " Scale : " + scale + " ]"; }
+    public DrawInfo2D(GUIState gui, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip)
+    {
+    this(gui, fieldPortrayal, draw, clip, null);
+    }
+    
+    public DrawInfo2D(GUIState gui, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip, DrawInfo2D parent)
+    {
+    this.draw = new Rectangle2D.Double();
+    this.draw.setRect(draw.getFrame());
+    this.clip = new Rectangle2D.Double();
+    this.clip.setRect(clip.getFrame());
+    precise = false;
+    this.gui = gui;
+    this.parent = parent;
+    this.fieldPortrayal = fieldPortrayal;
+    }
+
+	public String toString() { return "DrawInfo2D[ Draw: " + draw + " Clip: " + clip + " Precise: " + precise + " Location : " + location + " portrayal: " + fieldPortrayal + " Scale : " + scale + " ]"; }
     }
     
     

@@ -48,7 +48,7 @@ public class DPolySchelling extends DSimState{
     
     public DPolySchelling(long seed) {
 		super(seed, width, height, aoi, false);
-		world = new DGeomVectorField<DPolygon>(discretization, this);;
+		world = new DGeomVectorField<DPolygon>(discretization, this, null);
 	}
 
 
