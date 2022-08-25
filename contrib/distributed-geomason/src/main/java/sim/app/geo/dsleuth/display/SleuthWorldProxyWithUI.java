@@ -2,11 +2,12 @@ package sim.app.geo.dsleuth.display;
 
 import java.awt.Color;
 
+
 import javax.swing.JFrame;
 
 import org.jfree.data.xy.XYSeries;
 
-import sim.app.dheatbugs.display.HeatBugsProxy;
+//import sim.app.dheatbugs.display.HeatBugsProxy;
 import sim.app.geo.dsleuth.DSleuthWorld;
 import sim.app.geo.sleuth.SleuthWorld;
 import sim.display.Controller;

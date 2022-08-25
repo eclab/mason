@@ -1,3 +1,5 @@
+package sim.app.geo.dadaab;
+
 ///*
 // * To change this template, choose Tools | Templates
 // * and open the template in the editor.
@@ -13,7 +15,9 @@
 //import sim.util.*;
 //import sim.engine.*;
 //
-//public class WaterContamination implements Steppable{
+public class WaterContamination{
+
+}
 //    public static final int ORDERING = 1;
 //    
 //     TimeManager tm = new TimeManager();

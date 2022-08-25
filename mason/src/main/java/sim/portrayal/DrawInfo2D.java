@@ -149,6 +149,7 @@ public class DrawInfo2D
     this.parent = parent;
     this.fieldPortrayal = fieldPortrayal;
     }
+    
 
 	public String toString() { return "DrawInfo2D[ Draw: " + draw + " Clip: " + clip + " Precise: " + precise + " Location : " + location + " portrayal: " + fieldPortrayal + " Scale : " + scale + " ]"; }
     }

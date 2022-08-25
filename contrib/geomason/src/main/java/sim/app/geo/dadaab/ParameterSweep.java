@@ -1,3 +1,5 @@
+package sim.app.geo.dadaab;
+
 ///*
 // * To change this template, choose Tools | Templates
 // * and open the template in the editor.
@@ -8,7 +10,9 @@
 // *
 // * @author ates
 // */
-//public class ParameterSweep {
+public class ParameterSweep {
+}
+
 //
 //    public static int numRuns = 2; // the number of times to run each parameter setting
 //    public static int numSteps = 43200; // the number of ticks to iterate each simulation
