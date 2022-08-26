@@ -19,9 +19,9 @@ import java.util.Map;
 import sim.engine.rmi.*;
 
 /**
- REMOTESIMPLEPROPERTIES is a special subclass of SimpleProperties which
- allows property access of remote objects for purposes of model inspectors and charting. 
- */
+   REMOTESIMPLEPROPERTIES is a special subclass of SimpleProperties which
+   allows property access of remote objects for purposes of model inspectors and charting. 
+*/
 
 public class RemoteSimpleProperties extends SimpleProperties
     {

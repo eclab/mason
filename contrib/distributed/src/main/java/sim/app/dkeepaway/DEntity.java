@@ -71,7 +71,7 @@ public abstract class DEntity extends DSteppable{
     
     public boolean isValidMove( final DKeepaway keepaway, final Double2D newLoc)
         {
-    	
+        
 
 
         Bag objs = new Bag(keepaway.fieldEnvironment.getNeighborsWithinDistance(new Double2D(loc.x, loc.y), 10));
@@ -134,6 +134,6 @@ public abstract class DEntity extends DSteppable{
         if(velocity.length() > cap)
             velocity = velocity.resize(cap);
         }
-    	
-	
-}
+        
+        
+    }

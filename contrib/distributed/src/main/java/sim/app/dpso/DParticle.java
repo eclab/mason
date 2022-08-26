@@ -55,9 +55,9 @@ public class DParticle extends DSteppable{
             bestVal = currVal;
             bestPosition.setTo(currX, currY);
                     
-        }
+            }
 
-    }
+        }
 
     
     public double getFitness()
@@ -77,15 +77,15 @@ public class DParticle extends DSteppable{
         double y = position.y;
           
  
-    // calc new velocity
-    // calc x component
-    double inertia = velocity.x;
-    double pDelta = bestPosition.x - x;   
-    double nDelta = dpso_nBestPos.x - x;
+        // calc new velocity
+        // calc x component
+        double inertia = velocity.x;
+        double pDelta = bestPosition.x - x;   
+        double nDelta = dpso_nBestPos.x - x;
 
     
 
-    double gDelta = dpso_best_x - x;
+        double gDelta = dpso_best_x - x;
 
     
         double pWeight = Math.random() + 0.4;
@@ -101,7 +101,7 @@ public class DParticle extends DSteppable{
 
     
 
-    gDelta = dpso_best_y - y;
+        gDelta = dpso_best_y - y;
 
     
         pWeight = Math.random() + 0.4;
@@ -110,8 +110,8 @@ public class DParticle extends DSteppable{
         double vy = (0.9*inertia + pWeight*pDelta + nWeight*nDelta + gWeight*gDelta) / (1+pWeight+nWeight+gWeight);
 
 
-    vx *= dpso_velocityScalar;
-    vy *= dpso_velocityScalar;
+        vx *= dpso_velocityScalar;
+        vy *= dpso_velocityScalar;
 
     
         // update velocity

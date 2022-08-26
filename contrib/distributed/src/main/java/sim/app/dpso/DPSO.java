@@ -95,16 +95,16 @@ public class DPSO extends DSimState {
         super(seed, 10, 10, 1, false);  //what should these be
         }
     
-	@Override
-	public void preSchedule()
-	{
-		// TODO Auto-generated method stub
-		super.preSchedule(); // do not forget this line
+    @Override
+    public void preSchedule()
+        {
+        // TODO Auto-generated method stub
+        super.preSchedule(); // do not forget this line
 
-		System.out.println("Size of agents in proc " + getPID() + " " + space.getAllAgentsInStorage().size()+space.getHaloBounds());
+        System.out.println("Size of agents in proc " + getPID() + " " + space.getAllAgentsInStorage().size()+space.getHaloBounds());
 
-	}
-	
+        }
+        
     public void updateBest(double currVal, double currX, double currY)
         {
     
@@ -161,7 +161,7 @@ public class DPSO extends DSimState {
         Evaluatable f = mapFitnessFunction(fitnessFunction);            
 
         for (int i = 0; i < numParticles; i++)
-        {
+            {
  
 
         
@@ -229,9 +229,9 @@ public class DPSO extends DSimState {
                     prevSuccessCount = successCount;
                     //System.out.println("SuccessCount = " + successCount);                                         
                     if (successCount == numParticles)
-                    {
+                        {
                         //state.kill();
-                    }
+                        }
                     
                     }
             

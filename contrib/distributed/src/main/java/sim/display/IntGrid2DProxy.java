@@ -27,8 +27,8 @@ public class IntGrid2DProxy extends IntGrid2D implements UpdatableProxy
         {
 
 
-		
-		int halo_size = 0;
+                
+        int halo_size = 0;
 
 
         //calculate position in quadtree that encompasses all desired partitions

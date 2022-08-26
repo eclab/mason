@@ -13,7 +13,7 @@ import sim.portrayal.grid.DenseGridPortrayal2D;
 import sim.portrayal.grid.FastValueGridPortrayal2D;
 
 public class AntsForageProxywithUI extends GUIState{
-	
+        
     public Display2D display;
     public JFrame displayFrame;
 
@@ -38,7 +38,7 @@ public class AntsForageProxywithUI extends GUIState{
     
     public void setupPortrayals()
         {
-    	AntsForageProxy af = (AntsForageProxy)state;
+        AntsForageProxy af = (AntsForageProxy)state;
 
         // tell the portrayals what to portray and how to portray them
         homePheromonePortrayal.setField(af.toHomeGridGrid);
@@ -124,4 +124,4 @@ public class AntsForageProxywithUI extends GUIState{
         }
         
 
-}
+    }

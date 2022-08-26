@@ -266,7 +266,7 @@ public class SimStateProxy extends SimState
             statLists = new ArrayList[RemoteProcessorRMI.NUM_STAT_TYPES][numProcessors];
  
             for(int i = 0; i < statLists.length; i++)
-            	{
+                {
                 for(int j = 0; j < statLists[i].length; j++)
                     {
                     statLists[i][j] = new ArrayList<>();
@@ -613,7 +613,7 @@ public class SimStateProxy extends SimState
         }
     
     public Properties getProperties(int partition) 
-    	{
+        {
         try {
             RemoteProcessorRMI vp1 = RemoteProcessorRMI(partition);
 
@@ -622,7 +622,7 @@ public class SimStateProxy extends SimState
             }
         
         catch(Exception e) 
-        	{
+            {
             System.out.println("Problem with Remote Properties");
             System.out.println(e);
             System.exit(-1);
@@ -648,42 +648,42 @@ public class SimStateProxy extends SimState
     public void outputStatistics(int statType, double[] times, ArrayList<Stat>[][] stats, long startSteps, long endSteps)
         {
 
-    	}
+        }
     
     Writer err = new OutputStreamWriter(System.err);
     Writer out = new OutputStreamWriter(System.err);
     
     /** 
-    	A convenience method for printing statistics from outputStatistics(...) to either stdout or stderr, depending on
-    	the setting of the STDERR parameter.  This method flushes after each print.
+        A convenience method for printing statistics from outputStatistics(...) to either stdout or stderr, depending on
+        the setting of the STDERR parameter.  This method flushes after each print.
     */
     public void printStatistics(int statType, double[] times, ArrayList<Stat>[][] stats, long startSteps, long endSteps, boolean stderr)
-    	{
-    	try
-			{
-			if (stderr)
-				{
-				printStatistics(statType, times, stats, startSteps, endSteps, err);
-				err.flush();
-				}
-			else 
-				{
-				printStatistics(statType, times, stats, startSteps, endSteps, out);
-				out.flush();
-				}
-			}
-		catch (IOException ex)
-			{
-			}
-    	}
-    	
+        {
+        try
+            {
+            if (stderr)
+                {
+                printStatistics(statType, times, stats, startSteps, endSteps, err);
+                err.flush();
+                }
+            else 
+                {
+                printStatistics(statType, times, stats, startSteps, endSteps, out);
+                out.flush();
+                }
+            }
+        catch (IOException ex)
+            {
+            }
+        }
+        
     /** 
-    	A convenience method for printing statistics from outputStatistics(...) to a Writer of your choosing.  Be sure to close the
-    	writer after the fact.  This method does not flush.
+        A convenience method for printing statistics from outputStatistics(...) to a Writer of your choosing.  Be sure to close the
+        writer after the fact.  This method does not flush.
     */
     public void printStatistics(int statType, double[] times, ArrayList<Stat>[][] stats, long startSteps, long endSteps, Writer writer)
-    	{
-    	PrintWriter buf = new PrintWriter(new BufferedWriter(writer));
+        {
+        PrintWriter buf = new PrintWriter(new BufferedWriter(writer));
         buf.println("STATISTICS OUTPUT " + statType);
         for(long i = startSteps; i < endSteps; i++)
             {

@@ -82,10 +82,10 @@ public class MPIUtil
         // TODO: Makes a ginormous and inappropriate buffer for sending.
         // This needs to be fixed.
         if (MPIUtil.pSendBuf == null) {
-        	//is this initiallizing array?
+            //is this initiallizing array?
             MPIUtil.pSendBuf = ByteBuffer.allocateDirect(MPIUtil.MAX_SIZE);
 
-        }
+            }
         else
             MPIUtil.pSendBuf.clear();
 
@@ -101,7 +101,7 @@ public class MPIUtil
         // This needs to be fixed.
         if (MPIUtil.pRecvBuf == null) {
             MPIUtil.pRecvBuf = ByteBuffer.allocateDirect(MPIUtil.MAX_SIZE);
-        }
+            }
         else
             MPIUtil.pRecvBuf.clear();
 
@@ -116,22 +116,22 @@ public class MPIUtil
      * @param buf
      */
     /*
-    static void serialize(final Serializable obj, final ByteBuffer buf)
-        {
-        try (ByteBufferOutputStream out = new ByteBufferOutputStream(buf);
-            ObjectOutputStream os = new ObjectOutputStream(out)) 
-            {
-            os.writeObject(obj);
-            //os.close();
-            os.flush();
-            }
-        catch (final IOException e)
-            {
-            e.printStackTrace();
-            System.exit(-1);
-            }
-        }
-        */
+      static void serialize(final Serializable obj, final ByteBuffer buf)
+      {
+      try (ByteBufferOutputStream out = new ByteBufferOutputStream(buf);
+      ObjectOutputStream os = new ObjectOutputStream(out)) 
+      {
+      os.writeObject(obj);
+      //os.close();
+      os.flush();
+      }
+      catch (final IOException e)
+      {
+      e.printStackTrace();
+      System.exit(-1);
+      }
+      }
+    */
     
     /**
      * Serialize a Serializable using Java's builtin serialization and return the
@@ -254,14 +254,14 @@ public class MPIUtil
         }
     
     static void fastSerialize2(final Serializable[] objs, final ByteBuffer buffer, final int[] count)
-    {
-    for (int i = 0, prevPos = buffer.position(); i < objs.length; i++)
         {
-    	fastSerialize2(objs[i], buffer);
-        count[i] = buffer.position() - prevPos;
-        prevPos = buffer.position();
+        for (int i = 0, prevPos = buffer.position(); i < objs.length; i++)
+            {
+            fastSerialize2(objs[i], buffer);
+            count[i] = buffer.position() - prevPos;
+            prevPos = buffer.position();
+            }
         }
-    }
     
     static <T extends Serializable> T  fastDeserialize2(final ByteBuffer buffer, final int pos, final int len) {
         T obj = null;
@@ -274,73 +274,73 @@ public class MPIUtil
         //obj = (T) conf.asObject(is.buf);
         
         try {
-			obj = (T)  conf.getObjectInput(is).readObject();
-			
-			
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            obj = (T)  conf.getObjectInput(is).readObject();
+                        
+                        
+            } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            }
 
             
 
 
         return obj;
-    }
-    
-  static void fastSerialize(final Serializable[] objs, final ByteBuffer buf, final int[] count) {
-    	
-    	//ArrayList<byte[]> barray_array = new ArrayList<byte[]>();
-    	int totalLen = 0;
-        for (int i = 0; i < objs.length; i++)
-        {
-        //serialize(objs[i], buffer);
-        
-    	byte barray[] = conf.asByteArray(objs[i]);
-    	buf.put(barray);
-    	
-    	//totalLen = totalLen + barray.length;
-    	count[i] = barray.length;
-    	//barray_array.add(barray);
-
         }
+    
+    static void fastSerialize(final Serializable[] objs, final ByteBuffer buf, final int[] count) {
+        
+        //ArrayList<byte[]> barray_array = new ArrayList<byte[]>();
+        int totalLen = 0;
+        for (int i = 0; i < objs.length; i++)
+            {
+            //serialize(objs[i], buffer);
+        
+            byte barray[] = conf.asByteArray(objs[i]);
+            buf.put(barray);
+        
+            //totalLen = totalLen + barray.length;
+            count[i] = barray.length;
+            //barray_array.add(barray);
+
+            }
         
         /*
         
-        byte fullarray[] = new byte[totalLen];
+          byte fullarray[] = new byte[totalLen];
         
-        int newCount = 0;
-        for (int i =0; i < barray_array.size(); i++) {
-        	
-        	byte[] aaa =  barray_array.get(i);
-        	
-        	for (int j=0; j< aaa.length; j++) {
-        		fullarray[newCount] = aaa[j];
-        		newCount = newCount + 1;
-        	}
-        	
-        	
-        }
+          int newCount = 0;
+          for (int i =0; i < barray_array.size(); i++) {
+                
+          byte[] aaa =  barray_array.get(i);
+                
+          for (int j=0; j< aaa.length; j++) {
+          fullarray[newCount] = aaa[j];
+          newCount = newCount + 1;
+          }
+                
+                
+          }
         */
         
         //buf = ByteBuffer.wrap(fullarray);
         //buf.put(fullarray);
-    }
+        }
     
     static <T extends Serializable> T  fastDeserialize(final ByteBuffer buffer, final int pos, final int len) {
-    	
-    	buffer.position(pos);
-    	
-    	byte[] dst = new byte[len];
+        
+        buffer.position(pos);
+        
+        byte[] dst = new byte[len];
 
-    	buffer.get(dst, 0, len);
-    	T object = (T)conf.asObject(dst);
-    	//T object = null;
-    	return object;
-    }
+        buffer.get(dst, 0, len);
+        T object = (T)conf.asObject(dst);
+        //T object = null;
+        return object;
+        }
 
     /**
      * Serialize each Serializable in objs into buf. The length of each byte array
@@ -352,29 +352,29 @@ public class MPIUtil
      */
 
     /*
-    static void serialize(final Serializable[] objs, final ByteBuffer buffer, final int[] count)
-        {
-        try {ByteBufferOutputStream out = new ByteBufferOutputStream(buffer);
-            ObjectOutputStream os = new ObjectOutputStream(out);
+      static void serialize(final Serializable[] objs, final ByteBuffer buffer, final int[] count)
+      {
+      try {ByteBufferOutputStream out = new ByteBufferOutputStream(buffer);
+      ObjectOutputStream os = new ObjectOutputStream(out);
             
-			for (int i = 0, prevPos = buffer.position(); i < objs.length; i++)
-				{
-                os.writeObject(objs[i]);
-                os.flush();
-                // serialize(objs[i], buffer);
-				count[i] = buffer.position() - prevPos;
-				prevPos = buffer.position();
-				}
-			os.close();
-			}
-        catch (final IOException e)
-            {
-            //try { os.close(); } catch (IOException ex) { }
-            e.printStackTrace();
-            System.exit(-1);
-            }
-        }
-        */
+      for (int i = 0, prevPos = buffer.position(); i < objs.length; i++)
+      {
+      os.writeObject(objs[i]);
+      os.flush();
+      // serialize(objs[i], buffer);
+      count[i] = buffer.position() - prevPos;
+      prevPos = buffer.position();
+      }
+      os.close();
+      }
+      catch (final IOException e)
+      {
+      //try { os.close(); } catch (IOException ex) { }
+      e.printStackTrace();
+      System.exit(-1);
+      }
+      }
+    */
 
     /**
      * Deserialize the object of given type T that is stored in a given buffer
@@ -386,25 +386,25 @@ public class MPIUtil
      * @return the deserialized object
      */
     /*
-    static <T extends Serializable> T deserialize(final ByteBuffer buffer, final int pos)
-        {
-        T obj = null;
+      static <T extends Serializable> T deserialize(final ByteBuffer buffer, final int pos)
+      {
+      T obj = null;
 
-        buffer.position(pos);
-        try (
-            ByteBufferInputStream in = new ByteBufferInputStream(buffer);
-            ObjectInputStream is = new ObjectInputStream(in);)
-            {
-            obj = (T) is.readObject();
-            }
-        catch (IOException | ClassNotFoundException e)
-            {
-            e.printStackTrace();
-            System.exit(-1);
-            }
+      buffer.position(pos);
+      try (
+      ByteBufferInputStream in = new ByteBufferInputStream(buffer);
+      ObjectInputStream is = new ObjectInputStream(in);)
+      {
+      obj = (T) is.readObject();
+      }
+      catch (IOException | ClassNotFoundException e)
+      {
+      e.printStackTrace();
+      System.exit(-1);
+      }
 
-        return obj;
-        }
+      return obj;
+      }
     */
 
 
@@ -761,7 +761,7 @@ public class MPIUtil
             
             //recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i]));
 
-        }
+            }
 
 
         return recvObjs;
@@ -837,7 +837,7 @@ public class MPIUtil
      * 
      * @throws MPIException
      */
-     // BOXING!!!!
+    // BOXING!!!!
     public static Object neighborAllGather(final Partition partition, final Object val, final Datatype type) throws MPIException
         {
         final int nc = partition.getNumNeighbors();

@@ -103,11 +103,11 @@ public class DistinguishedRegistry
                 while(addresses.hasMoreElements()) {
                     InetAddress addr = addresses.nextElement();
                     myip = addr.getHostAddress();
+                    }
                 }
-            }
-        } catch (SocketException e) {
+            } catch (SocketException e) {
             throw new RuntimeException(e);
-        }
+            }
 
         if (rank == 0)
             {

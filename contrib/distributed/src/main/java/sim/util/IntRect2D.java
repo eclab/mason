@@ -9,11 +9,11 @@ package sim.util;
 import java.io.Serializable;
 
 /**
- INTRECT2D represents rectangles with integer coordinates.  It consists of two Int2D
- objects representing the upper left (ul) and bottom right (br) corners of the rectangle.
- The upper left corner is inclusive, and the bottom right corner is exclusive. Note that
- you are not permitted to have zero-length rects: that is, ul cannot be equal to br.
- */
+   INTRECT2D represents rectangles with integer coordinates.  It consists of two Int2D
+   objects representing the upper left (ul) and bottom right (br) corners of the rectangle.
+   The upper left corner is inclusive, and the bottom right corner is exclusive. Note that
+   you are not permitted to have zero-length rects: that is, ul cannot be equal to br.
+*/
 
 public class IntRect2D implements Serializable
     {

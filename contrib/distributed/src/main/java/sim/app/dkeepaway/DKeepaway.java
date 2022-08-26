@@ -44,12 +44,12 @@ public class DKeepaway extends DSimState{
         }
     
     
-	@Override
-	protected void startRoot()
-	{
+    @Override
+    protected void startRoot()
+        {
         
 
-		ArrayList<DEntity> entities = new ArrayList<DEntity>();
+        ArrayList<DEntity> entities = new ArrayList<DEntity>();
 
         DBot b;
         double x,y;
@@ -90,16 +90,16 @@ public class DKeepaway extends DSimState{
         ba = new DBall(x, y);
         entities.add(ba);
         try {
-			registerDistinguishedObject(ba);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            registerDistinguishedObject(ba);
+            } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            }
      
         
 
-		sendRootInfoToAll("entities", entities);
-	}    
+        sendRootInfoToAll("entities", entities);
+        }    
     
     
     /** Resets and starts a simulation */
@@ -107,28 +107,28 @@ public class DKeepaway extends DSimState{
         {
         super.start();  // clear out the schedule
 
-		ArrayList<DFlocker> entities = (ArrayList<DFlocker>) getRootInfo("entities");
+        ArrayList<DFlocker> entities = (ArrayList<DFlocker>) getRootInfo("entities");
 
-		for (Object p : entities)
-		{
-			DEntity a = (DEntity) p;
-			Double2D temploc = new Double2D(a.loc.getX(), a.loc.getY());
-			if (getPartition().getLocalBounds().contains(temploc)) {
-				fieldEnvironment.addAgent(temploc, a, 0, 0, 1);
-			}
-			
+        for (Object p : entities)
+            {
+            DEntity a = (DEntity) p;
+            Double2D temploc = new Double2D(a.loc.getX(), a.loc.getY());
+            if (getPartition().getLocalBounds().contains(temploc)) {
+                fieldEnvironment.addAgent(temploc, a, 0, 0, 1);
+                }
+                        
 
-		}
+            }
         
   
         }
 
     public static void main(String[] args)
         {
-		Timing.setWindow(20);
-		doLoopDistributed(DKeepaway.class, args);
-		System.exit(0);
+        Timing.setWindow(20);
+        doLoopDistributed(DKeepaway.class, args);
+        System.exit(0);
         }    
 
-	
-}
+        
+    }

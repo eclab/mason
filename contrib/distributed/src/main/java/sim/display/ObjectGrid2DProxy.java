@@ -23,11 +23,11 @@ public class ObjectGrid2DProxy extends ObjectGrid2D implements UpdatableProxy
         super(width, height);
         }
 
-	public void update(SimStateProxy stateProxy, int proxyIndex, int[] quad_tree_partitions) throws RemoteException, NotBoundException
-		{
+    public void update(SimStateProxy stateProxy, int proxyIndex, int[] quad_tree_partitions) throws RemoteException, NotBoundException
+        {
 
-		
-		int halo_size = 0;
+                
+        int halo_size = 0;
 
 
         //calculate position in quadtree that encompasses all desired partitions

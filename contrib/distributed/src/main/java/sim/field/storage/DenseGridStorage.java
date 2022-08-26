@@ -62,7 +62,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
     
     public Serializable pack(final MPIParam mp)
         {
-    	//mp.size = sum of all areas
+        //mp.size = sum of all areas
         final ArrayList<T>[] objs = new ArrayList[mp.size]; // alloc.apply(mp.size);
         final ArrayList<T>[] stor = storage;
         int curr = 0;
@@ -97,88 +97,88 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
     
     //Raj temp test
     /*
-    public Serializable pack(final MPIParam mp)
-    {
-	//mp.size = sum of all areas
-    //final ArrayList<T>[] objs = new ArrayList[mp.size]; // alloc.apply(mp.size);
+      public Serializable pack(final MPIParam mp)
+      {
+      //mp.size = sum of all areas
+      //final ArrayList<T>[] objs = new ArrayList[mp.size]; // alloc.apply(mp.size);
         
-    final HashMap<Integer, ArrayList<T>> objs = new HashMap<Integer, ArrayList<T>>();
+      final HashMap<Integer, ArrayList<T>> objs = new HashMap<Integer, ArrayList<T>>();
 
     
-    final ArrayList<T>[] stor = storage;
-    int curr = 0;
+      final ArrayList<T>[] stor = storage;
+      int curr = 0;
 
-    for (final IntRect2D rect : mp.rects)
-        {
-    	
-
-        for (final Int2D p : rect.getPointList())
-        {
-        	
-            //Adding elements to HashMap
-        	
-        	if ((stor[getFlatIndex(p)] != null) && (stor[getFlatIndex(p)].size() != 0)) {
-                objs.put(curr, stor[getFlatIndex(p)]);
-        	}
-        	
-        	
-        	curr = curr + 1;
-        	
-         }
+      for (final IntRect2D rect : mp.rects)
+      {
         
 
+      for (final Int2D p : rect.getPointList())
+      {
+                
+      //Adding elements to HashMap
+                
+      if ((stor[getFlatIndex(p)] != null) && (stor[getFlatIndex(p)].size() != 0)) {
+      objs.put(curr, stor[getFlatIndex(p)]);
+      }
+                
+                
+      curr = curr + 1;
+                
+      }
         
-        }
+
+        
+      }
 
 
     
-    return objs;
-    }
+      return objs;
+      }
 
     
-    //Raj temp test    
-    public void unpack(final MPIParam mp, final Serializable buf)
-    {
-    final ArrayList<T>[] stor = (ArrayList<T>[]) storage;
-    //final ArrayList<T>[] objs = (ArrayList<T>[]) buf;
-    final HashMap<Integer, ArrayList<T>> objs = (HashMap<Integer, ArrayList<T>>)buf;
+      //Raj temp test    
+      public void unpack(final MPIParam mp, final Serializable buf)
+      {
+      final ArrayList<T>[] stor = (ArrayList<T>[]) storage;
+      //final ArrayList<T>[] objs = (ArrayList<T>[]) buf;
+      final HashMap<Integer, ArrayList<T>> objs = (HashMap<Integer, ArrayList<T>>)buf;
 
-    int curr = 0;
+      int curr = 0;
 
-    for (final IntRect2D rect : mp.rects)
-        {
+      for (final IntRect2D rect : mp.rects)
+      {
 
 
-    	    
-            for (final Int2D p : rect.getPointList())
-            {
-            	if (objs.containsKey(curr)) {
-            		
+            
+      for (final Int2D p : rect.getPointList())
+      {
+      if (objs.containsKey(curr)) {
+                        
 
-            		
-        	    	stor[getFlatIndex(p)] = objs.get(curr);
+                        
+      stor[getFlatIndex(p)] = objs.get(curr);
 
-            	}
-            	
-            	else {
-            		stor[getFlatIndex(p)] = null; //need to overwrite
-            	}
-            	
-            	
-        	    curr = curr + 1;
+      }
+                
+      else {
+      stor[getFlatIndex(p)] = null; //need to overwrite
+      }
+                
+                
+      curr = curr + 1;
 
-            	
-            }
-    	    
+                
+      }
+            
 
-        }
+      }
     
 
     
     
     
     
-    }
+      }
     */
     
 

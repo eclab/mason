@@ -265,11 +265,11 @@ public class DSimState extends SimState
      */
     public boolean registerDistinguishedObject(Distinguished obj) throws AccessException, RemoteException
         {
-    	
-    	if (distinguishedFlag == false) {
-    		throw new RuntimeException("distinguishedFlag set to false");
-    	}
-    	
+        
+        if (distinguishedFlag == false) {
+            throw new RuntimeException("distinguishedFlag set to false");
+            }
+        
         try 
             {
             return registry.registerObject(obj, this);
@@ -287,11 +287,11 @@ public class DSimState extends SimState
     */
     public Promised sendRemoteMessage(String name, int tag, Serializable arguments) throws RemoteException
         {
-    	
-    	if (distinguishedFlag == false) {
-    		throw new RuntimeException("distinguishedFlag set to false");
-    	}
-    	
+        
+        if (distinguishedFlag == false) {
+            throw new RuntimeException("distinguishedFlag set to false");
+            }
+        
         RemotePromise callback = new RemotePromise();
         try 
             {
@@ -310,11 +310,11 @@ public class DSimState extends SimState
     // Called by DistinguishedRemoteObject when it receives a message it must put on the queue to process
     void addRemoteMessage(DistinguishedRemoteMessage message)
         {
-    	
-    	if (distinguishedFlag == false) {
-    		throw new RuntimeException("distinguishedFlag set to false");
-    	}
-    	
+        
+        if (distinguishedFlag == false) {
+            throw new RuntimeException("distinguishedFlag set to false");
+            }
+        
         synchronized(this.distinguishedMessageQueue)
             {
             distinguishedMessageQueue.add(message);
@@ -419,9 +419,9 @@ public class DSimState extends SimState
         super.start();
 
         // distributed registry inizialization
-    	if (distinguishedFlag == true) {
-           registry = DistinguishedRegistry.getInstance();
-        }
+        if (distinguishedFlag == true) {
+            registry = DistinguishedRegistry.getInstance();
+            }
 
         try
             {
@@ -786,26 +786,26 @@ public class DSimState extends SimState
                         
             transporter.sync();
 
-        	if (distinguishedFlag == true) {
-            // After the synchronization we can unregister migrated object!
-            // remove exported-migrated object from local node
-            for (DistinguishedRemoteObject exportedObj : DistinguishedRegistry.getInstance().getAllLocalExportedObjects())
-                {
-                try
+            if (distinguishedFlag == true) {
+                // After the synchronization we can unregister migrated object!
+                // remove exported-migrated object from local node
+                for (DistinguishedRemoteObject exportedObj : DistinguishedRegistry.getInstance().getAllLocalExportedObjects())
                     {
-                    // if the object is migrated unregister it
-                    if (DistinguishedRegistry.getInstance().isMigrated(exportedObj.object)) 
+                    try
                         {
-                        DistinguishedRegistry.getInstance().unregisterObject(exportedObj.object);
+                        // if the object is migrated unregister it
+                        if (DistinguishedRegistry.getInstance().isMigrated(exportedObj.object)) 
+                            {
+                            DistinguishedRegistry.getInstance().unregisterObject(exportedObj.object);
+                            }
+                        }
+                    catch (NotBoundException e)
+                        {
+                        e.printStackTrace();
                         }
                     }
-                catch (NotBoundException e)
-                    {
-                    e.printStackTrace();
-                    }
+                DistinguishedRegistry.getInstance().clearMigratedNames();
                 }
-            DistinguishedRegistry.getInstance().clearMigratedNames();
-        	}
 
             //wait all nodes to finish the unregister phase.
             MPI.COMM_WORLD.barrier();
@@ -837,23 +837,23 @@ public class DSimState extends SimState
 
             if (payloadWrapper.isAgent())
                 {
-            	
-            	if (distinguishedFlag == true) {
-
-            	
-            		if (payloadWrapper.payload instanceof Distinguished)
-                    	{
-            			try
-                        {
-            				DistinguishedRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload, this);
-                        }
-            			catch (RemoteException e)
-                        {
-                        e.printStackTrace();
-                        }
-                    }
                 
-            	}
+                if (distinguishedFlag == true) {
+
+                
+                    if (payloadWrapper.payload instanceof Distinguished)
+                        {
+                        try
+                            {
+                            DistinguishedRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload, this);
+                            }
+                        catch (RemoteException e)
+                            {
+                            e.printStackTrace();
+                            }
+                        }
+                
+                    }
 
                 if (payloadWrapper.isRepeating())
                     {
@@ -885,39 +885,39 @@ public class DSimState extends SimState
                 
         if (updateGlobalFlag == true) {
             updateGlobals(); //only happens every updateGlobalInterval steps
-        }
+            }
         
         /*
-        if (schedule.getSteps() >= 100000) {
-        	System.exit(-1);
-        }
+          if (schedule.getSteps() >= 100000) {
+          System.exit(-1);
+          }
         */
                 
 
-    	if (distinguishedFlag == true) {
+        if (distinguishedFlag == true) {
 
-        /* we invoke the fullfill for every message in the distinguishedMessageQueue
-           to make the Promise ready
-        */
-        try 
-            {
-            synchronized(this.distinguishedMessageQueue)
+            /* we invoke the fullfill for every message in the distinguishedMessageQueue
+               to make the Promise ready
+            */
+            try 
                 {
-                for(DistinguishedRemoteMessage message: distinguishedMessageQueue)
+                synchronized(this.distinguishedMessageQueue)
                     {
-                    Serializable data =
-                        message.object.remoteMessage(message.tag, message.arguments);
-                    message.callback.fulfill(data);
+                    for(DistinguishedRemoteMessage message: distinguishedMessageQueue)
+                        {
+                        Serializable data =
+                            message.object.remoteMessage(message.tag, message.arguments);
+                        message.callback.fulfill(data);
+                        }
+                    distinguishedMessageQueue.clear();
                     }
-                distinguishedMessageQueue.clear();
-                }
                    
-            } 
-        catch (Exception e) 
-            {
-            e.printStackTrace();
+                } 
+            catch (Exception e) 
+                {
+                e.printStackTrace();
+                }
             }
-    	}
                 
         }
 
@@ -981,23 +981,23 @@ public class DSimState extends SimState
                                         
                     if (payloadWrapper.isAgent())
                         {
-                    	
-                    	if (distinguishedFlag == true) {
+                        
+                        if (distinguishedFlag == true) {
 
 
-                        // I am currently unclear on how this works
-                        if(payloadWrapper.payload instanceof Distinguished)
-                            {
-                            try
+                            // I am currently unclear on how this works
+                            if(payloadWrapper.payload instanceof Distinguished)
                                 {
-                                DistinguishedRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload, this);
-                                }
-                            catch (RemoteException e)
-                                {
-                                e.printStackTrace();
+                                try
+                                    {
+                                    DistinguishedRegistry.getInstance().registerObject((Distinguished) payloadWrapper.payload, this);
+                                    }
+                                catch (RemoteException e)
+                                    {
+                                    e.printStackTrace();
+                                    }
                                 }
                             }
-                    	}
 
                         if (payloadWrapper.isRepeating())
                             {

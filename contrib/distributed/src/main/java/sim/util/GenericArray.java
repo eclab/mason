@@ -11,12 +11,12 @@ import java.util.Arrays;
 
 
 /** 
-	A wrapper class for a fixed-length array of type T.
+    A wrapper class for a fixed-length array of type T.
     Why is this needed?  Because Java's generics are largely
     broken with respect to arrays: you cannot easily make
     or copy arrays of a generic type.  This allows us to get
     around it in certain situations. 
-    */
+*/
         
 public class GenericArray<T> implements Serializable
     {

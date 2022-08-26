@@ -17,90 +17,90 @@ import sim.util.Double2D;
 import sim.util.Timing;
 
 public class DFlockers extends DSimState
-{
-	private static final long serialVersionUID = 1;
+    {
+    private static final long serialVersionUID = 1;
 
-	public final static int width = 600;
-	public final static int height = 600;
-	public final static int numFlockers = 1000;
-	public final static double cohesion = 1.0;
-	public final static double avoidance = 1.0;
-	public final static double randomness = 1.0;
-	public final static double consistency = 1.0;
-	public final static double momentum = 1.0;
-	public final static double deadFlockerProbability = 0;
-	public final static int neighborhood = 6; // aoi
-	public final static double jump = 0.7; // how far do we move in a time step?
-	
+    public final static int width = 600;
+    public final static int height = 600;
+    public final static int numFlockers = 1000;
+    public final static double cohesion = 1.0;
+    public final static double avoidance = 1.0;
+    public final static double randomness = 1.0;
+    public final static double consistency = 1.0;
+    public final static double momentum = 1.0;
+    public final static double deadFlockerProbability = 0;
+    public final static int neighborhood = 6; // aoi
+    public final static double jump = 0.7; // how far do we move in a time step?
+        
 
-	public final DContinuous2D<DFlocker> flockers;
+    public final DContinuous2D<DFlocker> flockers;
 
-	final SimpleDateFormat format = new SimpleDateFormat("ss-mm-HH-yyyy-MM-dd");
-	String dateString = format.format(new Date());
-	String dirname = System.getProperty("user.dir") + File.separator + dateString;
+    final SimpleDateFormat format = new SimpleDateFormat("ss-mm-HH-yyyy-MM-dd");
+    String dateString = format.format(new Date());
+    String dirname = System.getProperty("user.dir") + File.separator + dateString;
 
-	/** Creates a Flockers simulation with the given random number seed. */
-	public DFlockers(final long seed)
-	{
-		super(seed, DFlockers.width, DFlockers.height, DFlockers.neighborhood, true);
+    /** Creates a Flockers simulation with the given random number seed. */
+    public DFlockers(final long seed)
+        {
+        super(seed, DFlockers.width, DFlockers.height, DFlockers.neighborhood, true);
 
-		flockers = new DContinuous2D<>((int) (DFlockers.neighborhood / 1.5), this);
-		
-
-
-
-	}
-	
-	@Override
-	public void preSchedule()
-	{
-		// TODO Auto-generated method stub
-		super.preSchedule(); // do not forget this line
+        flockers = new DContinuous2D<>((int) (DFlockers.neighborhood / 1.5), this);
+                
 
 
-	}
 
-	@Override
-	protected void startRoot()
-	{
-		ArrayList<DFlocker> agents = new ArrayList<DFlocker>();
-		for (int x = 0; x < DFlockers.numFlockers; x++)
-		{
-			final Double2D loc = new Double2D(random.nextDouble() * width, random.nextDouble() * height);
-			DFlocker flocker = new DFlocker(loc);
-			if (random.nextBoolean(deadFlockerProbability))
-				flocker.dead = true;
-			agents.add(flocker);
-		}
-
-		sendRootInfoToAll("agents", agents);
-	}
-
-	@Override
-	public void start()
-	{
-		// TODO Auto-generated method stub
-		super.start(); // do not forget this line
-
-		ArrayList<DFlocker> agents = (ArrayList<DFlocker>) getRootInfo("agents");
-
-		for (Object p : agents)
-		{
-			DFlocker a = (DFlocker) p;
-			if (getPartition().getLocalBounds().contains(a.loc)) {
-				flockers.addAgent(a.loc, a, 0, 0, 1);
-			}
-		}
-
-	}
-	
+        }
+        
+    @Override
+    public void preSchedule()
+        {
+        // TODO Auto-generated method stub
+        super.preSchedule(); // do not forget this line
 
 
-	public static void main(final String[] args)
-	{
-		Timing.setWindow(20);
-		doLoopDistributed(DFlockers.class, args);
-		System.exit(0);
-	}
-}
+        }
+
+    @Override
+    protected void startRoot()
+        {
+        ArrayList<DFlocker> agents = new ArrayList<DFlocker>();
+        for (int x = 0; x < DFlockers.numFlockers; x++)
+            {
+            final Double2D loc = new Double2D(random.nextDouble() * width, random.nextDouble() * height);
+            DFlocker flocker = new DFlocker(loc);
+            if (random.nextBoolean(deadFlockerProbability))
+                flocker.dead = true;
+            agents.add(flocker);
+            }
+
+        sendRootInfoToAll("agents", agents);
+        }
+
+    @Override
+    public void start()
+        {
+        // TODO Auto-generated method stub
+        super.start(); // do not forget this line
+
+        ArrayList<DFlocker> agents = (ArrayList<DFlocker>) getRootInfo("agents");
+
+        for (Object p : agents)
+            {
+            DFlocker a = (DFlocker) p;
+            if (getPartition().getLocalBounds().contains(a.loc)) {
+                flockers.addAgent(a.loc, a, 0, 0, 1);
+                }
+            }
+
+        }
+        
+
+
+    public static void main(final String[] args)
+        {
+        Timing.setWindow(20);
+        doLoopDistributed(DFlockers.class, args);
+        System.exit(0);
+        }
+    }
 

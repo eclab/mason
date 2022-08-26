@@ -10,7 +10,7 @@ import sim.util.Bag;
 import sim.util.Double2D;
 
 public class DBall extends DEntity implements Distinguished{
-	
+        
     private static final long serialVersionUID = 1;
 
     // used to determine if the ball is stuck
@@ -142,33 +142,33 @@ public class DBall extends DEntity implements Distinguished{
 
 
 
-	@Override
-	public Serializable remoteMessage(int tag, Serializable arguments) throws RemoteException {
-		// TODO Auto-generated method stub
-		
-		//return the actual object
-		if (tag == 0) {
-			return loc; //return loc instead
-		}
-		
-		if (tag == 1) {
-			return radius; //return radius instead
-		}
-		
-		if (tag == 2) {
-			this.velocity = this.velocity.add((Double2D)arguments);
-			return null;
-		}
-		
-		return null;
-	}
+    @Override
+    public Serializable remoteMessage(int tag, Serializable arguments) throws RemoteException {
+        // TODO Auto-generated method stub
+                
+        //return the actual object
+        if (tag == 0) {
+            return loc; //return loc instead
+            }
+                
+        if (tag == 1) {
+            return radius; //return radius instead
+            }
+                
+        if (tag == 2) {
+            this.velocity = this.velocity.add((Double2D)arguments);
+            return null;
+            }
+                
+        return null;
+        }
 
 
 
-	@Override
-	public String distinguishedName() {
-		// TODO Auto-generated method stub
-		return "DBall";
-	}
+    @Override
+    public String distinguishedName() {
+        // TODO Auto-generated method stub
+        return "DBall";
+        }
 
-}
+    }

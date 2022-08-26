@@ -28,11 +28,11 @@ public class IntGridStorage extends GridStorage<Integer>
         super(shape);
         clear();
         }
-	
-	public Datatype getMPIBaseType()
-	{
-	return MPI.INT;
-	}
+        
+    public Datatype getMPIBaseType()
+        {
+        return MPI.INT;
+        }
 
     public byte[] pack(MPIParam mp) throws MPIException
         {

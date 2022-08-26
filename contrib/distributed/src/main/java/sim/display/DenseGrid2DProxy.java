@@ -28,14 +28,14 @@ public class DenseGrid2DProxy extends DenseGrid2D implements UpdatableProxy
     public void update(SimStateProxy stateProxy, int proxyIndex, int[] quad_tree_partitions) throws RemoteException, NotBoundException
         {
 
-		
-		//stitch together with all partition storages
-		
-		//rebuild bounds by combining each processor?
-		
+                
+        //stitch together with all partition storages
+                
+        //rebuild bounds by combining each processor?
+                
 
-		
-		int halo_size = 0;
+                
+        int halo_size = 0;
 
 
         //calculate position in quadtree that encompasses all desired partitions
