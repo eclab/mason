@@ -132,7 +132,7 @@ public class DrawInfo2D
         {
         this(other, 0, 0);
         }
-    
+
     public DrawInfo2D(GUIState gui, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip)
     {
     this(gui, fieldPortrayal, draw, clip, null);

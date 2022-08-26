@@ -7,6 +7,14 @@ mason-property.2 = Consistency
 mason-property.3 = Momentum
 mason-property.4 = Randomness
 
+# MASON properties passed in as an array
+# If you uncheck this, you don't need to specify the mason-property.0, mason-property.1,
+# etc. parameters above -- instead all five parameters will be passed in as an array
+# of doubles.  The genome will be set to 5 in size and you are welcome to specify min-gene
+# and max-gene values for each gene etc.  
+#mason-properties-as-array = true
+
+
 mason-steps = 1000
 mason-num-trials = 1
 mason-objectives = 1

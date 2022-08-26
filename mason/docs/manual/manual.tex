@@ -247,7 +247,7 @@ George Mason University}
 \clearpage
 
 \small 
-\noindent {\Large\bf Copyright }  2010--2019 by Sean Luke.
+\noindent {\Large\bf Copyright }  2010--2022 by Sean Luke.
 
 \vspace{0.25in}
 \noindent {\Large\bf Thanks to } Claudio Cioffi Revilla, Matteo D'Auria, Ryan Moffatt, and Carlotta Domeniconi.
@@ -13710,6 +13710,51 @@ pop.subpop.0.extra-behavior = wrap
 \end{verbatim}
 
 This tells the MASON Master to create the initial population of individuals by repeatedly loading in the \file{in.stat} file.  Now all the individuals start as this horrible individual.  Typically the first generation will now have a fitness of something like {\bf 1.025} (!!!), and after about 15 generations will work its way up to 15 or so, before suddenly getting a clue and rapidly climbing into the 160s.
+
+\subsection{Handling More Parameters}
+
+The above approach works fine if you have a {\it small} number of parameters (so you can name each one of the with getter/setter methods in your model).  But what if you have 1000 parameters?  That'd be a lot of Java Bean Properties you'd have to name.  As an alternative, you can have ECJ just hand the genome array of doubles directly to your model and go through the array as you like.
+
+To do this, you need to override this method:
+
+\begin{methods}{\class{sim.engine.SimState}}
+\mthd{public void setOptimizationParameters(double[] parameterValues)} This method may be called by the distributed optimizer in lieu of setting individual parameters in the model.  Here it will instead hand the parameters as an array of doubles.  It is assumed that you know the meaning of each of these parameters (since you defined them!).
+\end{methods}
+
+Now instead of calling \method{setAvoidance(...)} or \method{setCohesion(...)} to set our five parameters, MASON will simply have \method{setOptimizationParameters(...)} called with an array of all five of them. You'd then set up your model appropriately.
+
+To inform ECJ to use this alternative approach, you would do this:
+
+\begin{verbatim}
+num-mason-properties = 5
+mason-properties-as-array = true
+
+# We don't use these any more
+# mason-property.0 = Avoidance
+# mason-property.1 = Cohesion
+# mason-property.2 = Consistency
+# mason-property.3 = Momentum
+# mason-property.4 = Randomness
+\end{verbatim}
+
+Note that ECJ is no longer querying your MASON model's getters and setters to determine the types of the parameters (integer, boolean, double) nor their min/max ranges.  It's just optimizing arrays of doubles and passing them to your model.  You can manually set the min-max values for each parameter as:
+
+\begin{verbatim}
+pop.subpop.0.species.min-gene.0 = 0.0
+pop.subpop.0.species.max-gene.0 = 2.0
+pop.subpop.0.species.min-gene.1 = 0.5
+pop.subpop.0.species.max-gene.1 = 2.3
+# .... etc .....
+\end{verbatim}
+
+Or you can set all of the genes as:
+
+\begin{verbatim}
+pop.subpop.0.species.min-gene = 0.0
+pop.subpop.0.species.max-gene = 2.0
+\end{verbatim}
+
+... or do both: you per-gene settings override the general settings.  If you don't set min- and max-gene values, the default is 0.0 and 1.0 respectively.
 
 \subsection{More Optimization Methods}
 

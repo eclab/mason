@@ -82,52 +82,61 @@ public class Optimize extends Master
         int[] indexes = new int[numIndexes];
         Object[] throwaway = new Object[0];
                 
-        for(int i = 0; i < numIndexes; i++)
-            {
-            String name = base.getString(new ec.util.Parameter("mason-property." + i), null);
-            indexes[i] = properties.indexForName(name);
-            //System.err.println("Property " + name + " is " + indexes[i]);
-            Object domain = properties.getDomain(indexes[i]);
-            Class type = properties.getType(indexes[i]);
-            double _min = 0.0;
-            double _max = 1.0;
-            if (type == Boolean.TYPE)
-                {
-                if (domain != null)
-                    System.err.println("ERROR: boolean property " + name + " has a domain: " + domain);
-                else
-                    {
-                    // do nothing, we're set up
-                    }
-                }
-            else if (type == Integer.TYPE)
-                {
-                if (domain == null || !(throwaway.getClass().isAssignableFrom(domain.getClass())))
-                    System.err.println("ERROR: integer property " + name + " has a domain: " + domain);
-                else
-                    {
-                    _min = 0;
-                    _max = ((Object[])domain).length - 1;
-                    }
-                }
-            else if (type == Double.TYPE)
-                {
-                if (domain == null || !(domain instanceof sim.util.Interval))
-                    System.err.println("ERROR: double property " + name + " has a domain: " + domain);
-                else
-                    {
-                    sim.util.Interval interval = (sim.util.Interval)domain;
-                    _min = interval.getMin().doubleValue();
-                    _max = interval.getMax().doubleValue();
-                    }
-                }
-            else
-                {
-                System.err.println("ERROR: property " + name + " has is of invalid type: " + type);
-                }
-            base.set(new ec.util.Parameter("pop.subpop.0.species.min-gene." + i), "" + _min);
-            base.set(new ec.util.Parameter("pop.subpop.0.species.max-gene." + i), "" + _max);
-            }
+        boolean treatParametersAsArray = base.getBoolean(new ec.util.Parameter("mason-properties-as-array"), null, false);
+        if (!base.exists(new ec.util.Parameter("mason-properties-as-array"), null))
+        	{
+			System.err.println("mason-properties-as-array missing.  Default is false.");
+        	}
+        
+        if (!treatParametersAsArray)
+        	{
+			for(int i = 0; i < numIndexes; i++)
+				{
+				String name = base.getString(new ec.util.Parameter("mason-property." + i), null);
+				indexes[i] = properties.indexForName(name);
+				//System.err.println("Property " + name + " is " + indexes[i]);
+				Object domain = properties.getDomain(indexes[i]);
+				Class type = properties.getType(indexes[i]);
+				double _min = 0.0;
+				double _max = 1.0;
+				if (type == Boolean.TYPE)
+					{
+					if (domain != null)
+						System.err.println("ERROR: boolean property " + name + " has a domain: " + domain);
+					else
+						{
+						// do nothing, we're set up
+						}
+					}
+				else if (type == Integer.TYPE)
+					{
+					if (domain == null || !(throwaway.getClass().isAssignableFrom(domain.getClass())))
+						System.err.println("ERROR: integer property " + name + " has a domain: " + domain);
+					else
+						{
+						_min = 0;
+						_max = ((Object[])domain).length - 1;
+						}
+					}
+				else if (type == Double.TYPE)
+					{
+					if (domain == null || !(domain instanceof sim.util.Interval))
+						System.err.println("ERROR: double property " + name + " has a domain: " + domain);
+					else
+						{
+						sim.util.Interval interval = (sim.util.Interval)domain;
+						_min = interval.getMin().doubleValue();
+						_max = interval.getMax().doubleValue();
+						}
+					}
+				else
+					{
+					System.err.println("ERROR: property " + name + " has is of invalid type: " + type);
+					}
+				base.set(new ec.util.Parameter("pop.subpop.0.species.min-gene." + i), "" + _min);
+				base.set(new ec.util.Parameter("pop.subpop.0.species.max-gene." + i), "" + _max);
+				}
+			}
                 
                 
         // Other Model parameters
@@ -183,7 +192,7 @@ public class Optimize extends Master
         MASONProblem problem = (MASONProblem)(evolutionState.evaluator.masterproblem.problem);
         problem.modelClassName = simState.getClass().getName();
                 
-        problem.loadDefaults(simState, indexes, numObjectives, fitnessType, maximumSteps, numTrials, rebuildSimState);
+        problem.loadDefaults(simState, indexes, numObjectives, fitnessType, maximumSteps, numTrials, rebuildSimState, treatParametersAsArray);
 
 /*
         // We may need to reset the individuals now
