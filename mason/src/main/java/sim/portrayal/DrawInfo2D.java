@@ -134,24 +134,24 @@ public class DrawInfo2D
         }
 
     public DrawInfo2D(GUIState gui, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip)
-    {
-    this(gui, fieldPortrayal, draw, clip, null);
-    }
+        {
+        this(gui, fieldPortrayal, draw, clip, null);
+        }
     
     public DrawInfo2D(GUIState gui, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip, DrawInfo2D parent)
-    {
-    this.draw = new Rectangle2D.Double();
-    this.draw.setRect(draw.getFrame());
-    this.clip = new Rectangle2D.Double();
-    this.clip.setRect(clip.getFrame());
-    precise = false;
-    this.gui = gui;
-    this.parent = parent;
-    this.fieldPortrayal = fieldPortrayal;
-    }
+        {
+        this.draw = new Rectangle2D.Double();
+        this.draw.setRect(draw.getFrame());
+        this.clip = new Rectangle2D.Double();
+        this.clip.setRect(clip.getFrame());
+        precise = false;
+        this.gui = gui;
+        this.parent = parent;
+        this.fieldPortrayal = fieldPortrayal;
+        }
     
 
-	public String toString() { return "DrawInfo2D[ Draw: " + draw + " Clip: " + clip + " Precise: " + precise + " Location : " + location + " portrayal: " + fieldPortrayal + " Scale : " + scale + " ]"; }
+    public String toString() { return "DrawInfo2D[ Draw: " + draw + " Clip: " + clip + " Precise: " + precise + " Location : " + location + " portrayal: " + fieldPortrayal + " Scale : " + scale + " ]"; }
     }
     
     
