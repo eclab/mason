@@ -3,11 +3,13 @@ package sim.app.geo.dwaterworld;
 import java.io.FileNotFoundException;
 
 
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 
-import sim.app.geo.dwaterworld.data.DWaterWorldData;
+import sim.app.geo.waterworld.data.WaterWorldData;
+//import sim.app.geo.dwaterworld.data.DWaterWorldData;
 import sim.engine.DSimState;
 import sim.engine.DSteppable;
 import sim.engine.SimState;
@@ -109,7 +111,7 @@ public class DWaterWorld extends DSimState{
             //DGeomGridField elevationsField = new DGeomGridField();
         	GeomGridField elevationsField = new GeomGridField(); //I think we can just use the regular here, as mainly for loading data?
 
-            InputStream inputStream = DWaterWorldData.class.getResourceAsStream(filename);
+            InputStream inputStream = WaterWorldData.class.getResourceAsStream(filename);
 
             if (inputStream == null)
             {

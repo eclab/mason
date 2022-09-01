@@ -13,8 +13,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
-
-import sim.app.geo.dsleuth.data.DSleuthData;
+import sim.app.geo.sleuth.data.SleuthData;
+//import sim.app.geo.dsleuth.data.DSleuthData;
 import sim.engine.DSimState;
 import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomGridField.GridDataType;
@@ -268,7 +268,7 @@ public class DSleuthWorld  extends DSimState{
     
     private void readData(GeomGridField excludedGridField, final String fileName) throws FileNotFoundException
     {
-        InputStream inputStream = DSleuthData.class.getResourceAsStream(fileName);
+        InputStream inputStream = SleuthData.class.getResourceAsStream(fileName);
 
         if (inputStream == null)
         {
@@ -293,7 +293,7 @@ public class DSleuthWorld  extends DSimState{
     private static int[] readDimensions(final String fileName)
     {
     	try {
-        InputStream inputStream = DSleuthData.class.getResourceAsStream(fileName);
+        InputStream inputStream = SleuthData.class.getResourceAsStream(fileName);
 
         if (inputStream == null)
         {

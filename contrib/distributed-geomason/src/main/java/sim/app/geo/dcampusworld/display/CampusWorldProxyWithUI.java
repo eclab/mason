@@ -1,6 +1,7 @@
 package sim.app.geo.dcampusworld.display;
 
 import java.awt.Color;
+
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,8 +11,9 @@ import javax.swing.JFrame;
 import com.vividsolutions.jts.geom.Envelope;
 
 import sim.app.geo.campusworld.BuildingLabelPortrayal;
+import sim.app.geo.campusworld.data.CampusWorldData;
 import sim.app.geo.dcampusworld.DCampusWorld;
-import sim.app.geo.dcampusworld.data.DCampusWorldData;
+//import sim.app.geo.dcampusworld.data.DCampusWorldData;
 import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
@@ -160,8 +162,8 @@ public class CampusWorldProxyWithUI extends GUIState {
 			masked.add("ADDR_NUM");
 
 			// read in the buildings GIS file
-			final URL bldgGeometry = DCampusWorldData.class.getResource("bldg.shp");
-			final URL bldgDB = DCampusWorldData.class.getResource("bldg.dbf");
+			final URL bldgGeometry = CampusWorldData.class.getResource("bldg.shp");
+			final URL bldgDB = CampusWorldData.class.getResource("bldg.dbf");
 			ShapeFileImporter.read(bldgGeometry, bldgDB, buildings, masked);
 
 			// We want to save the MBR so that we can ensure that all GeomFields
@@ -170,16 +172,16 @@ public class CampusWorldProxyWithUI extends GUIState {
 
 			System.out.println("reading roads layer");
 
-			final URL roadGeometry = DCampusWorldData.class.getResource("roads.shp");
-			final URL roadDB = DCampusWorldData.class.getResource("roads.dbf");
+			final URL roadGeometry = CampusWorldData.class.getResource("roads.shp");
+			final URL roadDB = CampusWorldData.class.getResource("roads.dbf");
 			ShapeFileImporter.read(roadGeometry, roadDB, roads);
 
 			MBR.expandToInclude(roads.getMBR());
 
 			System.out.println("reading walkways layer");
 
-			final URL walkWayGeometry = DCampusWorldData.class.getResource("walk_ways.shp");
-			final URL walkWayDB = DCampusWorldData.class.getResource("walk_ways.dbf");
+			final URL walkWayGeometry = CampusWorldData.class.getResource("walk_ways.shp");
+			final URL walkWayDB = CampusWorldData.class.getResource("walk_ways.dbf");
 			ShapeFileImporter.read(walkWayGeometry, walkWayDB, walkways);
 
 			MBR.expandToInclude(walkways.getMBR());
