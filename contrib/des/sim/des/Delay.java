@@ -160,25 +160,30 @@ public class Delay extends SimpleDelay
             }
 
         double time = state.schedule.getTime();
-        
-        Double minKey = (Double)delayHeap.getMinKey();
-        while(minKey != null && minKey <= time)
-            {
-            DelayNode node = (DelayNode)(delayHeap.extractMin());
-            Resource _res = node.getResource();
-            if (entities == null)
-                {
-                CountableResource res = ((CountableResource)_res);
-                totalDelayedResource -= res.getAmount();
-                resource.add(res);
-                }
-            else
-                {
-                entities.add((Entity)(_res));
-                totalDelayedResource--;            
-                }
-            minKey = (Double)delayHeap.getMinKey();         // grab the next one
-            }
+		Double minKey = (Double)delayHeap.getMinKey();
+		
+        if (entities == null)
+        	{
+			while(minKey != null && minKey <= time)
+				{
+				DelayNode node = (DelayNode)(delayHeap.extractMin());
+				CountableResource res = (CountableResource)(node.getResource());
+				totalDelayedResource -= res.getAmount();
+				resource.add(res);
+				minKey = (Double)delayHeap.getMinKey();         // grab the next one
+				}
+        	}
+        else
+        	{
+			while(minKey != null && minKey <= time)
+				{
+				DelayNode node = (DelayNode)(delayHeap.extractMin());
+				Entity res = (Entity)(node.getResource());
+				entities.add(res);
+				totalDelayedResource--;            
+				minKey = (Double)delayHeap.getMinKey();         // grab the next one
+				}
+			}
         }
 
     public String toString()
