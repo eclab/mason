@@ -214,7 +214,9 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
                     }
                 else
                     {
-                    entities.add((Entity)(node.resource));
+                    Entity entity = ((Entity)(node.resource));
+                    iterator.remove();
+                    entities.add(entity);
                     totalDelayedResource--;            
                     }
                 }
