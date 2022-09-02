@@ -3,6 +3,7 @@ package sim.app.geo.dsleuth;
 import java.io.FileNotFoundException;
 
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -23,6 +24,7 @@ import sim.field.geo.GeomGridField.GridDataType;
 import sim.field.grid.DDoubleGrid2D;
 import sim.field.grid.DIntGrid2D;
 import sim.field.grid.DObjectGrid2D;
+import sim.field.grid.IntGrid2D;
 import sim.io.geo.ArcInfoASCGridImporter;
 //import sim.io.geo.DArcInfoASCGridImporter;
 import sim.util.Bag;
@@ -30,6 +32,7 @@ import sim.util.Double2D;
 import sim.util.Int2D;
 import sim.util.IntBag;
 import sim.util.MPIUtil;
+
 
 
 public class DSleuthWorld  extends DSimState{
@@ -701,10 +704,16 @@ public class DSleuthWorld  extends DSimState{
             		
             		// -9999 means "no data"
             		//if ( ((DIntGrid2D)slope.getGrid()).get(i, j) != -9999)
-            		if ( ((DIntGrid2D)slope.getGrid()).getLocal(new Int2D(x, y)) != -9999)
+            		//if ( ((DIntGrid2D)slope.getGrid()).getLocal(new Int2D(x, y)) != -9999)
+                	if ( ((IntGrid2D)slope.getGrid()).get(x, y) != -9999)
+
             		{
             			DTile tile = new DTile(x,y);
-            			tile.slope = ((DIntGrid2D)slope.getGrid()).getLocal(new Int2D(x, y));
+            			//tile.slope = ((DIntGrid2D)slope.getGrid()).getLocal(new Int2D(x, y));
+            			tile.slope = ((IntGrid2D)slope.getGrid()).get(x, y);
+
+            			
+            			
             			//tile.slope = ((DDoubleGrid2D)slope.getGrid()).getLocal(new Int2D(i, j));
 
             			//landscape.set(i, j, tile);
@@ -883,7 +892,9 @@ public class DSleuthWorld  extends DSimState{
 	                {
 	                    DTile tile = (DTile) landscape.getLocal(new Int2D(x, y));
 
-	                    tile.landuse = ((DIntGrid2D) landuseGridField.getGrid()).getLocal(new Int2D(x, y));
+	                    //tile.landuse = ((DIntGrid2D) landuseGridField.getGrid()).getLocal(new Int2D(x, y));
+	                    tile.landuse = ((IntGrid2D) landuseGridField.getGrid()).get(x,y);
+
 	                    //tile.landuse = ((DDoubleGrid2D) landuseGridField.getGrid()).get(x, y);
 
 	                }
@@ -920,7 +931,9 @@ public class DSleuthWorld  extends DSimState{
 	                {
 	                    DTile tile = (DTile) landscape.getLocal(new Int2D(x, y));
 
-	                    tile.excluded = ((DIntGrid2D) excludedGridField.getGrid()).getLocal(new Int2D(x, y)) == 0;
+	                    //tile.excluded = ((DIntGrid2D) excludedGridField.getGrid()).getLocal(new Int2D(x, y)) == 0;
+	                    tile.excluded = ((IntGrid2D) excludedGridField.getGrid()).get(x, y) == 0;
+
 	                    //tile.excluded = ((DDoubleGrid2D) excludedGridField.getGrid()).getLocal(new Int2D(x, y)) == 0;
 
 	                }
@@ -953,7 +966,9 @@ public class DSleuthWorld  extends DSimState{
 	                {
 	                    DTile tile = (DTile) landscape.getLocal(new Int2D(x, y));
 	                    
-	                    int classification = ((DIntGrid2D) urbanAreaGridField.getGrid()).getLocal(new Int2D(x, y));
+	                    //int classification = ((DIntGrid2D) urbanAreaGridField.getGrid()).getLocal(new Int2D(x, y));
+	                    int classification = ((IntGrid2D) urbanAreaGridField.getGrid()).get(x, y);
+
 	                    //int classification = ((DDoubleGrid2D) urbanAreaGridField.getGrid()).get(x, y);
 
 	                    
@@ -1002,7 +1017,9 @@ public class DSleuthWorld  extends DSimState{
 	                {
 	                    DTile tile = (DTile) landscape.getLocal(new Int2D(x, y));
 
-	                    int classification = ((DIntGrid2D) transportGridField.getGrid()).getLocal(new Int2D(x, y));
+	                    //int classification = ((DIntGrid2D) transportGridField.getGrid()).getLocal(new Int2D(x, y));
+	                    int classification = ((IntGrid2D) transportGridField.getGrid()).get(x, y);
+
 	                    //int classification = ((DDoubleGrid2D) transportGridField.getGrid()).get(x, y);
 
 	                    
@@ -1038,7 +1055,9 @@ public class DSleuthWorld  extends DSimState{
 	                {
 	                    DTile tile = (DTile) landscape.getLocal(new Int2D(x, y));
 
-	                    int classification = ((DIntGrid2D) hillshadeGridField.getGrid()).getLocal(new Int2D(x, y));
+	                    //int classification = ((DIntGrid2D) hillshadeGridField.getGrid()).getLocal(new Int2D(x, y));
+	                    int classification = ((IntGrid2D) hillshadeGridField.getGrid()).get(x, y);
+
 	                    //int classification = ((DDoubleGrid2D) hillshadeGridField.getGrid()).get(x, y);
 
 	                    

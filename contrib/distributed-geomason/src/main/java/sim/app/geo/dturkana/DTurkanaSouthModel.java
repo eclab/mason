@@ -2,12 +2,11 @@ package sim.app.geo.dturkana;
 
 import java.io.InputStream;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import sim.app.geo.dcampusworld.DCampusWorld;
 import sim.app.geo.turkana.TurkanaSouthModel;
-import sim.app.geo.turkana.Turkanian;
 import sim.engine.DSimState;
 import sim.engine.DSteppable;
 import sim.engine.SimState;
@@ -119,7 +118,7 @@ public class DTurkanaSouthModel extends DSimState{
         // Read the raster GIS data
         populationDensityGrid = new GeomGridField();
 
-        InputStream inputStream = DTurkanaSouthModel.class.getResourceAsStream("data/tspop2007.txt");
+        InputStream inputStream = TurkanaSouthModel.class.getResourceAsStream("data/tspop2007.txt");
         System.out.println(inputStream);
         //System.exit(-1);
         ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, populationDensityGrid);
@@ -214,7 +213,7 @@ public class DTurkanaSouthModel extends DSimState{
 
             NdviGrid = new GeomGridField();
 
-            InputStream inputStream = DTurkanaSouthModel.class.getResourceAsStream("data/ts_ndvi.txt");
+            InputStream inputStream = TurkanaSouthModel.class.getResourceAsStream("data/ts_ndvi.txt");
             System.out.println(inputStream);
 
             ArcInfoASCGridImporter.read(inputStream, GridDataType.DOUBLE, NdviGrid);
@@ -225,7 +224,7 @@ public class DTurkanaSouthModel extends DSimState{
             {
                 monthlyRainGrids[i] = new GeomGridField();
                 
-                inputStream = DTurkanaSouthModel.class.getResourceAsStream(String.format("data/%d.txt", i + 1));
+                inputStream = TurkanaSouthModel.class.getResourceAsStream(String.format("data/%d.txt", i + 1));
                 ArcInfoASCGridImporter.read(inputStream, GridDataType.DOUBLE, monthlyRainGrids[i]);
             }
 

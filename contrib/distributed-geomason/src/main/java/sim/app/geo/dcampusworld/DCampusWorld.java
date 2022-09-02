@@ -16,8 +16,8 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.planargraph.Node;
 
-//import sim.app.geo.campusworld.data.CampusWorldData;
-import sim.app.geo.dcampusworld.data.DCampusWorldData;
+import sim.app.geo.campusworld.data.CampusWorldData;
+//import sim.app.geo.dcampusworld.data.DCampusWorldData;
 import sim.engine.DObject;
 import sim.engine.DSimState;
 import sim.field.HaloGrid2D;
@@ -98,8 +98,8 @@ public class DCampusWorld extends DSimState
 			masked.add("ADDR_NUM");
 
 			// read in the buildings GIS file
-			final URL bldgGeometry = DCampusWorldData.class.getResource("bldg.shp");
-			final URL bldgDB = DCampusWorldData.class.getResource("bldg.dbf");
+			final URL bldgGeometry = CampusWorldData.class.getResource("bldg.shp");
+			final URL bldgDB = CampusWorldData.class.getResource("bldg.dbf");
 			ShapeFileImporter.read(bldgGeometry, bldgDB, buildings, masked);
 
 			// We want to save the MBR so that we can ensure that all GeomFields
@@ -108,16 +108,16 @@ public class DCampusWorld extends DSimState
 
 			System.out.println("reading roads layer");
 
-			final URL roadGeometry = DCampusWorldData.class.getResource("roads.shp");
-			final URL roadDB = DCampusWorldData.class.getResource("roads.dbf");
+			final URL roadGeometry = CampusWorldData.class.getResource("roads.shp");
+			final URL roadDB = CampusWorldData.class.getResource("roads.dbf");
 			ShapeFileImporter.read(roadGeometry, roadDB, roads);
 
 			MBR.expandToInclude(roads.getMBR());
 
 			System.out.println("reading walkways layer");
 
-			final URL walkWayGeometry = DCampusWorldData.class.getResource("walk_ways.shp");
-			final URL walkWayDB = DCampusWorldData.class.getResource("walk_ways.dbf");
+			final URL walkWayGeometry = CampusWorldData.class.getResource("walk_ways.shp");
+			final URL walkWayDB = CampusWorldData.class.getResource("walk_ways.dbf");
 			ShapeFileImporter.read(walkWayGeometry, walkWayDB, walkways);
 
 			MBR.expandToInclude(walkways.getMBR());
