@@ -118,6 +118,7 @@ public class Delay extends SimpleDelay
     	{
     	// Handle caching
     	if (recent != null && recent.timestamp == nextTime)
+    	//if (false)
     		{
     		// insert the node right after recent
     		node.next = recent.next;
@@ -128,7 +129,8 @@ public class Delay extends SimpleDelay
 	        delayHeap.add(recent = node, nextTime);
 	        }
     	}
-                
+
+
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (getRefusesOffers()) { return false; }

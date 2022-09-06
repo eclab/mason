@@ -40,7 +40,7 @@ public interface Receiver extends Named, Parented, Resettable
        
        <p>Receivers must never accept 0 of any resource.  Thus if atLeast = 0, then this has
        a special meaning: it means that the receiver must accept &gt; atLeast, rather than
-       &gt;= atLeast. Similarly, Providers should never provide atLeast=0 and atMost=0.
+       &gt;= atLeast. Similarly, Providers should never provide atMost=0.
     */
     public boolean accept(Provider provider, Resource resource, double atLeast, double atMost);
     
