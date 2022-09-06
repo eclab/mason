@@ -62,7 +62,10 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     /** Throws an exception indicating that atLeast and atMost are out of legal bounds. */
     protected void throwInvalidAtLeastAtMost(double atLeast, double atMost)
         {
-        throw new RuntimeException("Requested resource amounts are between " + atLeast + " and " + atMost + ", which is out of bounds.");
+        if (atMost == 0)
+        	throw new RuntimeException("Requested resource may not be at most 0.");
+        else
+	        throw new RuntimeException("Requested resource amounts are between " + atLeast + " and " + atMost + ", which is out of bounds.");
         }
 
     /** Throws an exception indicating that entities were requested from this Provider, but it does not provide them. */
@@ -80,14 +83,21 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     /** Tests if val is non-NaN and positive. */
     protected boolean isPositiveNonNaN(double val)
         {
-        return (val >= 0);
+        return (val > 0);
         }
     public boolean hidePositiveNonNaN() { return true; }
+
+    /** Tests if val is non-NaN and positive or zero. */
+    protected boolean isPositiveOrZeroNonNaN(double val)
+        {
+        return (val >= 0);
+        }
+    public boolean hidePositiveOrZeroNonNaN() { return true; }
 
     /** Throws an exception indicating that atMost is illegal. */
     void throwInvalidNumberException(double amount)
         {
-        throw new RuntimeException("atMost may not be negative or NaN.  Amount provided was: " + amount);
+        throw new RuntimeException("atMost may not be negative, zero, or NaN.  Amount provided was: " + amount);
         }
 
 
@@ -393,7 +403,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     protected boolean offerReceiver(Receiver receiver, Entity entity)
         {
         lastOfferTime = state.schedule.getTime();
-        boolean result = receiver.accept(this, entity, 0, 0);
+        boolean result = receiver.accept(this, entity, 0, 1);
         if (result)
             {
             updateLastAcceptedOffers(entity, receiver);
@@ -660,6 +670,8 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
        a simple pull. The Receiver does not need to be registered with the Provider.
        Returns true if the offer was accepted; though since the Receiver itself likely made this call, 
        it's unlikely that this would ever return anything other than TRUE in a typical simulation.
+       
+       <p>atMost must be a positive non-zero, non-NAN number.
     */
     public boolean provide(Receiver receiver, double atMost)
         {

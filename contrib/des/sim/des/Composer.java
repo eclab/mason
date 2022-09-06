@@ -184,10 +184,7 @@ public class Composer extends Provider implements Receiver
         if (getRefusesOffers()) { return false; }
         if (isOffering()) throwCyclicOffers();  // cycle
         
-        if (!(atLeast >= 0 && atMost >= atLeast))
-            throwInvalidAtLeastAtMost(atLeast, atMost);
-
-        if (!(atLeast >= 0 && atMost >= atLeast))
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
             throwInvalidAtLeastAtMost(atLeast, atMost);
        
         // Find the appropriate node

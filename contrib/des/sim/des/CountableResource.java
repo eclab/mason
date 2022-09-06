@@ -79,7 +79,7 @@ public class CountableResource extends Resource implements sim.util.Valuable
         throw new RuntimeException("Min must be <= max.  Min was " + min + " and max was " + max);
         }
 
-    static boolean isPositiveNonNaN(double val)
+    static boolean isPositiveOrZeroNonNaN(double val)
         {
         return (val >= 0);
         }
@@ -166,7 +166,7 @@ public class CountableResource extends Resource implements sim.util.Valuable
     */
     public void setAmount(double val)
         {
-        if (!isPositiveNonNaN(val))                                     // negative or NaN
+        if (!isPositiveOrZeroNonNaN(val))                                     // negative or NaN
             throwInvalidNumberException(val);
 
         if (!isInteger(val))
@@ -206,9 +206,9 @@ public class CountableResource extends Resource implements sim.util.Valuable
     */
     public void bound(double min, double max)
         {
-        if (!isPositiveNonNaN(min))                                     // negative or NaN
+        if (!isPositiveOrZeroNonNaN(min))                                     // negative or NaN
             throwInvalidNumberException(min);
-        if (!isPositiveNonNaN(max))                                     // negative or NaN
+        if (!isPositiveOrZeroNonNaN(max))                                     // negative or NaN
             throwInvalidNumberException(max);
         if (min > max)
             throwUnorderedException(min, max);
@@ -233,7 +233,7 @@ public class CountableResource extends Resource implements sim.util.Valuable
     */
     public void bound(double max)
         {
-        if (!isPositiveNonNaN(max))                                     // negative or NaN
+        if (!isPositiveOrZeroNonNaN(max))                                     // negative or NaN
             throwInvalidNumberException(max);
         if (!isInteger(max))
             throwNonIntegerAmountException(max);
@@ -251,7 +251,7 @@ public class CountableResource extends Resource implements sim.util.Valuable
     */
     public boolean increase(double val)
         {
-        if (!isPositiveNonNaN(val))                                     // negative or NaN
+        if (!isPositiveOrZeroNonNaN(val))                                     // negative or NaN
             throwInvalidNumberException(val);
 
         if (!isInteger(val))
@@ -276,7 +276,7 @@ public class CountableResource extends Resource implements sim.util.Valuable
     */
     public boolean decrease(double val)
         {
-        if (!isPositiveNonNaN(val))                                     // negative or NaN
+        if (!isPositiveOrZeroNonNaN(val))                                     // negative or NaN
             throwInvalidNumberException(val);
 
         if (!isInteger(val))
@@ -311,10 +311,10 @@ public class CountableResource extends Resource implements sim.util.Valuable
     */
     public CountableResource reduce(double atLeast, double atMost)
         {
-        if (!isPositiveNonNaN(atMost))                                  // negative or NaN
+        if (!isPositiveOrZeroNonNaN(atMost))                                  // negative or NaN
             throwInvalidNumberException(atLeast);
                 
-        if (!isPositiveNonNaN(atLeast))                                 // negative or NaN
+        if (!isPositiveOrZeroNonNaN(atLeast))                                 // negative or NaN
             throwInvalidNumberException(atMost);
                         
         if (!isInteger(atLeast))
@@ -359,7 +359,7 @@ public class CountableResource extends Resource implements sim.util.Valuable
         if (other.type != type) 
             throwUnequalTypeException(other);
 
-        if (!isPositiveNonNaN(atMostThisMuch))                                  // negative or NaN
+        if (!isPositiveOrZeroNonNaN(atMostThisMuch))                                  // negative or NaN
             throwInvalidNumberException(atMostThisMuch);
                 
         if (!isInteger(atMostThisMuch))

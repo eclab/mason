@@ -164,7 +164,7 @@ public class Probe extends Filter
         if (getRefusesOffers()) { return false; }
         if (isOffering()) throwCyclicOffers();  // cycle
 
-        if (!(atLeast >= 0 && atMost >= atLeast))
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
             throwInvalidAtLeastAtMost(atLeast, atMost);
 
         Resource oldAmount = null;

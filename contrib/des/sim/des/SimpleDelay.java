@@ -95,11 +95,6 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
     public double getTotalReceivedResource() { return totalReceivedResource; }
     public double getReceiverResourceRate() { double time = state.schedule.getTime(); if (time <= 0) return 0; else return totalReceivedResource / time; }
 
-    void throwInvalidNumberException(double capacity)
-        {
-        throw new RuntimeException("Capacities may not be negative or NaN.  capacity was: " + capacity);
-        }
-
     /** Builds the delay structure. */
     protected void buildDelay()
         {
@@ -131,7 +126,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         
         if (isOffering()) throwCyclicOffers();  // cycle
         
-        if (!(atLeast >= 0 && atMost >= atLeast))
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
             throwInvalidAtLeastAtMost(atLeast, atMost);
 
         double nextTime = state.schedule.getTime() + delayTime;
@@ -139,7 +134,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
             {
             CountableResource cr = (CountableResource)amount;
             double maxIncoming = Math.min(Math.min(capacity - totalDelayedResource, atMost), cr.getAmount());
-            if (maxIncoming < atLeast) return false;
+            if (maxIncoming == 0 || maxIncoming < atLeast) return false;
                 
             CountableResource token = (CountableResource)(cr.duplicate());
             token.setAmount(maxIncoming);

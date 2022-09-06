@@ -62,7 +62,7 @@ public class Transformer extends Filter
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
-        if (!(atLeast >= 0 && atMost >= atLeast))
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
             throwInvalidAtLeastAtMost(atLeast, atMost);
                 
         if (typicalIn instanceof Entity)

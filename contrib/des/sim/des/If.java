@@ -48,7 +48,7 @@ public abstract class If extends Provider implements Receiver
         if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
         if (isOffering()) throwCyclicOffers();  // cycle
         
-        if (!(atLeast >= 0 && atMost >= atLeast))
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
             throwInvalidAtLeastAtMost(atLeast, atMost);
 
 		if (entities != null)

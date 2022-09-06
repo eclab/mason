@@ -57,7 +57,7 @@ public class Unlock extends Lock
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
-        if (!(atLeast >= 0 && atMost >= atLeast))
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
             throwInvalidAtLeastAtMost(atLeast, atMost);
 
         double free = pool.getMaximum() - pool.getResource().getAmount();

@@ -80,7 +80,7 @@ public class Source extends Provider implements Steppable
     /** Set the maximum available resources that may be built up. */
     public void setCapacity(double d) 
         { 
-        if (!isPositiveNonNaN(d))
+        if (!isPositiveOrZeroNonNaN(d))
             throwInvalidCapacityException(d); 
         capacity = d; 
         }
@@ -137,7 +137,7 @@ public class Source extends Provider implements Steppable
     public void setRate(double rate, boolean randomOffset)
         {
         this.randomOffset = randomOffset;
-        if (isPositiveNonNaN(rate)) 
+        if (isPositiveOrZeroNonNaN(rate)) 
             this.rate = rate;
         else throwInvalidProductionException(rate);
         }
@@ -244,7 +244,7 @@ public class Source extends Provider implements Steppable
     /** Sets the deterministic production value used to determine how much resource is produced each time the Source
         decides to produce resources (only when there is no distribution provided).
 
-        <p>Throws a runtime exception if the rate is negative or NaN.
+        <p>Throws a runtime exception if the rate is negative, zero, or NaN.
     */
     public void setProduction(double amt)
         {

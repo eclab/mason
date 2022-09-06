@@ -34,6 +34,8 @@ public class Delay extends SimpleDelay
 
     Heap delayHeap;
     AbstractDistribution distribution = null;
+	// this is a cache of the most recently inserted node to enable a little linked list for a bit of optimization
+	DelayNode recent = null;
 
     protected void buildDelay()
         {
@@ -68,7 +70,6 @@ public class Delay extends SimpleDelay
         for(int i = 0; i < nodes.length; i++)
             {
             nodes[i] = (DelayNode)objs[i];
-            //new DelayNode((Resource)(objs[i]),((Double)(keys[i])).doubleValue());
             }
         return nodes;
         }
@@ -112,6 +113,21 @@ public class Delay extends SimpleDelay
         if (distribution == null) return getDelayTime();
         else return Math.abs(distribution.nextDouble());
         }
+        
+    void insert(DelayNode node, double nextTime)
+    	{
+    	// Handle caching
+    	if (recent != null && recent.timestamp == nextTime)
+    		{
+    		// insert the node right after recent
+    		node.next = recent.next;
+    		recent.next = node;
+    		}
+    	else
+    		{
+	        delayHeap.add(recent = node, nextTime);
+	        }
+    	}
                 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
@@ -121,7 +137,7 @@ public class Delay extends SimpleDelay
                 
         if (isOffering()) throwCyclicOffers();  // cycle
         
-        if (!(atLeast >= 0 && atMost >= atLeast))
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
             throwInvalidAtLeastAtMost(atLeast, atMost);
 
         double nextTime = state.schedule.getTime() + getDelay(provider, amount);
@@ -135,14 +151,16 @@ public class Delay extends SimpleDelay
             CountableResource token = (CountableResource)(cr.duplicate());
             token.setAmount(maxIncoming);
             cr.decrease(maxIncoming);
-            delayHeap.add(new DelayNode(token, nextTime, provider), nextTime);
+            //delayHeap.add(recent = new DelayNode(token, nextTime, provider), nextTime);
+            insert(new DelayNode(amount, nextTime, provider), nextTime);
             totalDelayedResource += maxIncoming;            
             totalReceivedResource += maxIncoming;
             }
         else
             {
             if (delayHeap.size() >= capacity) return false;      // we're at capacity
-            delayHeap.add(new DelayNode(amount, nextTime, provider), nextTime);
+            //delayHeap.add(recent = new DelayNode(amount, nextTime, provider), nextTime);
+            insert(new DelayNode(amount, nextTime, provider), nextTime);
             totalDelayedResource += 1;            
             totalReceivedResource += 1.0;
             }
@@ -167,9 +185,14 @@ public class Delay extends SimpleDelay
 			while(minKey != null && minKey <= time)
 				{
 				DelayNode node = (DelayNode)(delayHeap.extractMin());
-				CountableResource res = (CountableResource)(node.getResource());
-				totalDelayedResource -= res.getAmount();
-				resource.add(res);
+				if (node == recent) recent = null;	// all gone
+				while(node != null)
+					{				
+					CountableResource res = (CountableResource)(node.getResource());
+					totalDelayedResource -= res.getAmount();
+					resource.add(res);
+					node = node.next;     // handle caching
+					}
 				minKey = (Double)delayHeap.getMinKey();         // grab the next one
 				}
         	}
@@ -178,9 +201,14 @@ public class Delay extends SimpleDelay
 			while(minKey != null && minKey <= time)
 				{
 				DelayNode node = (DelayNode)(delayHeap.extractMin());
-				Entity res = (Entity)(node.getResource());
-				entities.add(res);
-				totalDelayedResource--;            
+				if (node == recent) recent = null;	// all gone
+				while(node != null)
+					{
+					Entity res = (Entity)(node.getResource());
+					entities.add(res);
+					totalDelayedResource--;            
+					node = node.next;     // handle caching
+					}
 				minKey = (Double)delayHeap.getMinKey();         // grab the next one
 				}
 			}

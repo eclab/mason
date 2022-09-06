@@ -186,7 +186,7 @@ public abstract class Multi extends DESPortrayal implements Resettable, Parented
             {
 //                      return receiver.accept(this, entity, 0, 0);
             lastOfferTime = state.schedule.getTime();
-            boolean result = receiver.accept(this, entity, 0, 0);
+            boolean result = receiver.accept(this, entity, 1, 1);
             if (result)
                 {
                 updateLastAcceptedOffers(entity, receiver);
@@ -236,7 +236,7 @@ public abstract class Multi extends DESPortrayal implements Resettable, Parented
             if (getRefusesOffers()) { return false; }
             if (!typical.isSameType(resource)) throwUnequalTypeException(resource);
                 
-            if (!(atLeast >= 0 && atMost >= atLeast))
+        	if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
                 throwInvalidAtLeastAtMost(atLeast, atMost);
 
             return Multi.this.accept(receiverPort, provider, resource, atLeast, atMost);

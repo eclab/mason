@@ -306,7 +306,9 @@ public class Extractor extends Source implements Receiver
         		}
         	else
         		{
-        		val = accept(this, entities.getFirst(), 0, atMost);
+        		if (entities.size() > 0)
+	        		val = accept(this, entities.getFirst(), 0, 1);
+	        	else val = false;
         		}
         	}
         entities.clear();
@@ -336,7 +338,7 @@ public class Extractor extends Source implements Receiver
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
-        if (!(atLeast >= 0 && atMost >= atLeast))
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
             throwInvalidAtLeastAtMost(atLeast, atMost);
 
 		if (acceptValue > 0) 

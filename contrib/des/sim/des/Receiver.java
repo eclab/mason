@@ -27,7 +27,8 @@ public interface Receiver extends Named, Parented, Resettable
                 
        <p>If the resource is an ENTITY of some kind,
        The provider may respond by taking the entity and returning TRUE, 
-       or returning FALSE if it refuses the offer.
+       or returning FALSE if it refuses the offer.  atLeast and atMost may be ignored,
+       but generally atLeast should be 0 and atMost should be 1.
        
        <p>May throw a RuntimeException if the resource does not
        match the typical resource of the receiver, or if a cycle was detected in accepting
@@ -36,9 +37,13 @@ public interface Receiver extends Named, Parented, Resettable
         
        <p>It must be the case that 0 &lt;= atLeast &lt; = atMost &lt;= resource.getAmount(), 
        or else a RuntimeException may be thrown. 
+       
+       <p>Receivers must never accept 0 of any resource.  Thus if atLeast = 0, then this has
+       a special meaning: it means that the receiver must accept &gt; atLeast, rather than
+       &gt;= atLeast. Similarly, Providers should never provide atLeast=0 and atMost=0.
     */
     public boolean accept(Provider provider, Resource resource, double atLeast, double atMost);
-
+    
     /** Returns the typical kind of resource the receiver can accept. 
         When a Receiver is also a Provider, this is very often implemented
         simply by calling getTypicalProvided() */

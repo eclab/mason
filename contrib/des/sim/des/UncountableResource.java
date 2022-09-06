@@ -89,7 +89,7 @@ public class UncountableResource extends CountableResource
     */
     public void setAmount(double val)
         {
-        if (!isPositiveNonNaN(val))                                     // negative or NaN
+        if (!isPositiveOrZeroNonNaN(val))                                     // negative or NaN
             throwInvalidNumberException(val);
                         
         amount = val;
@@ -136,13 +136,13 @@ public class UncountableResource extends CountableResource
     */
     public void scale(double value)
         {
-        if (!isPositiveNonNaN(value))                                   // negative or NaN
+        if (!isPositiveOrZeroNonNaN(value))                                   // negative or NaN
             throwInvalidScalingException(value);
 
         double val = amount * value;
 
         // NaN can happen if amount = infinity and value = 0 for example
-        if (!isPositiveNonNaN(val))                                     // negative or NaN
+        if (!isPositiveOrZeroNonNaN(val))                                     // negative or NaN
             throwInvalidScalingException(amount, value);
 
         amount = val;
@@ -154,9 +154,9 @@ public class UncountableResource extends CountableResource
     */
     public void bound(double min, double max)
         {
-        if (!isPositiveNonNaN(min))                                     // negative or NaN
+        if (!isPositiveOrZeroNonNaN(min))                                     // negative or NaN
             throwInvalidNumberException(min);
-        if (!isPositiveNonNaN(max))                                     // negative or NaN
+        if (!isPositiveOrZeroNonNaN(max))                                     // negative or NaN
             throwInvalidNumberException(max);
         if (min > max)
             throwUnorderedException(min, max);
@@ -177,7 +177,7 @@ public class UncountableResource extends CountableResource
     */
     public void bound(double max)
         {
-        if (!isPositiveNonNaN(max))                                     // negative or NaN
+        if (!isPositiveOrZeroNonNaN(max))                                     // negative or NaN
             throwInvalidNumberException(max);
 
         if (amount > max)
@@ -188,7 +188,7 @@ public class UncountableResource extends CountableResource
 
     public boolean increase(double val)
         {
-        if (!isPositiveNonNaN(val))                                     // negative or NaN
+        if (!isPositiveOrZeroNonNaN(val))                                     // negative or NaN
             throwInvalidNumberException(val);
 
         double total = amount + val;
@@ -206,7 +206,7 @@ public class UncountableResource extends CountableResource
 
     public boolean decrease(double val)
         {
-        if (!isPositiveNonNaN(val))                                     // negative or NaN
+        if (!isPositiveOrZeroNonNaN(val))                                     // negative or NaN
             throwInvalidNumberException(val);
 
         double total = amount - val;
@@ -238,12 +238,12 @@ public class UncountableResource extends CountableResource
     */
     public UncountableResource reduce(double atLeast, double atMost)
         {
-        if (!isPositiveNonNaN(atMost))                                  // negative or NaN
+        if (!isPositiveOrZeroNonNaN(atMost))                                  // negative or NaN
             {
             throwInvalidNumberException(atLeast);
             }
                 
-        if (!isPositiveNonNaN(atLeast))                                 // negative or NaN
+        if (!isPositiveOrZeroNonNaN(atLeast))                                 // negative or NaN
             {
             throwInvalidNumberException(atMost);
             }
@@ -262,7 +262,7 @@ public class UncountableResource extends CountableResource
     */
     public void add(UncountableResource other, double atMostThisMuch)
         {
-        if (!isPositiveNonNaN(atMostThisMuch))                                  // negative or NaN
+        if (!isPositiveOrZeroNonNaN(atMostThisMuch))                                  // negative or NaN
             throwInvalidNumberException(atMostThisMuch);
                 
         if (other == null)

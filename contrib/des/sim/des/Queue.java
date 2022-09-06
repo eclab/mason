@@ -50,7 +50,7 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
     */
     public void setCapacity(double d) 
         { 
-        if (!isPositiveNonNaN(d))
+        if (!isPositiveOrZeroNonNaN(d))
             throwInvalidCapacityException(d); 
         capacity = d; 
         }
@@ -86,7 +86,7 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
         
         if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
 
-        if (!(atLeast >= 0 && atMost >= atLeast))
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
             throwInvalidAtLeastAtMost(atLeast, atMost);
 
         if (entities == null)

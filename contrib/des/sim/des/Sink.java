@@ -72,7 +72,7 @@ public class Sink extends DESPortrayal implements Receiver, StatReceiver, Provid
         if (getRefusesOffers()) { return false; }
         if (!typical.isSameType(resource)) throwUnequalTypeException(resource);
         
-        if (!(atLeast >= 0 && atMost >= atLeast))
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
             throwInvalidAtLeastAtMost(atLeast, atMost);
 
         if (resource instanceof CountableResource) 
