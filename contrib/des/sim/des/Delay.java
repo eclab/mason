@@ -84,7 +84,21 @@ public class Delay extends SimpleDelay
         delayHeap = new Heap();
         totalDelayedResource = 0.0;
         }
-        
+    
+    boolean freezingDelay = false;
+    
+    /** Sets whether getDelay should simply return the delay value chosen in the previous call to getDelay()
+    	rather than build a new delay value of its own.  If this method is called before any
+    	previous call to getDelay() (so there *is* no previous getDelay()), then a delay value of 1.0 will
+    	be used as a default. */
+    public void setFreezingDelay(boolean freezing) { freezingDelay = freezing; }
+    
+    /** Returns whether getDelay should simply return the delay value chosen in the previous call to getDelay()
+    	rather than build a new delay value of its own.  If this method is called before any
+    	previous call to getDelay() (so there *is* no previous getDelay()), then a delay value of 1.0 will
+    	be used as a default.*/
+    public boolean isFreezingDelay() { return freezingDelay; }
+    	
     /** Sets the distribution used to independently select the delay time for each separate incoming 
         resource.  If null, 1.0 will be used. */
     public void setDelayDistribution(AbstractDistribution distribution)
@@ -108,17 +122,19 @@ public class Delay extends SimpleDelay
         will happen as a result and make sure it's okay (or if you should be considering
         a positive-only distribution).  Override this to provide a custom delay given the 
         provider and resource amount or type. */
+    double lastDelay = 1.0;
     protected double getDelay(Provider provider, Resource amount)
         {
-        if (distribution == null) return getDelayTime();
-        else return Math.abs(distribution.nextDouble());
+        if (isFreezingDelay()) return lastDelay;
+        else if (distribution == null) return (lastDelay = getDelayTime());
+        else return (lastDelay = Math.abs(distribution.nextDouble()));
         }
         
     void insert(DelayNode node, double nextTime)
     	{
     	// Handle caching
-    	//if (recent != null && recent.timestamp == nextTime)
-    	if (false)
+    	if (recent != null && recent.timestamp == nextTime)
+    	//if (false)
     		{
     		// insert the node right after recent
     		node.next = recent.next;
