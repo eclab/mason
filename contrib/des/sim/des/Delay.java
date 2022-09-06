@@ -117,8 +117,8 @@ public class Delay extends SimpleDelay
     void insert(DelayNode node, double nextTime)
     	{
     	// Handle caching
-    	if (recent != null && recent.timestamp == nextTime)
-    	//if (false)
+    	//if (recent != null && recent.timestamp == nextTime)
+    	if (false)
     		{
     		// insert the node right after recent
     		node.next = recent.next;
