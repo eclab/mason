@@ -26,6 +26,9 @@ import java.awt.*;
    delay times.  Delay times are normally based on a provided distribution, or you can override
    the method getDelay(...) to customize delay times entirely based on the provider
    and resource being provided. 
+   
+   <p>If multiple resources are inserted into the Delay scheduled to come available
+   at the exact same time, the order in which they will be offered is undefined.
 */
 
 public class Delay extends SimpleDelay
@@ -34,9 +37,10 @@ public class Delay extends SimpleDelay
 
     Heap delayHeap;
     AbstractDistribution distribution = null;
+    
 	// this is a cache of the most recently inserted node to enable a little linked list for a bit of optimization
 	DelayNode recent = null;
-
+	
     protected void buildDelay()
         {
         delayHeap = new Heap();
@@ -85,19 +89,19 @@ public class Delay extends SimpleDelay
         totalDelayedResource = 0.0;
         }
     
-    boolean freezingDelay = false;
+    boolean usesLastDelay = false;
     
-    /** Sets whether getDelay should simply return the delay value chosen in the previous call to getDelay()
-    	rather than build a new delay value of its own.  If this method is called before any
-    	previous call to getDelay() (so there *is* no previous getDelay()), then a delay value of 1.0 will
+    /** Sets whether getDelay should simply return the delay time used by the most recent resource
+    	added to the Delay. If there is no such resource, or if that resource has since been 
+    	removed from the Delay, or if its delay time has passed, then a delay value of 1.0 will
     	be used as a default. */
-    public void setFreezingDelay(boolean freezing) { freezingDelay = freezing; }
+    public void setUsesLastDelay(boolean val) { usesLastDelay = val; }
     
-    /** Returns whether getDelay should simply return the delay value chosen in the previous call to getDelay()
-    	rather than build a new delay value of its own.  If this method is called before any
-    	previous call to getDelay() (so there *is* no previous getDelay()), then a delay value of 1.0 will
-    	be used as a default.*/
-    public boolean isFreezingDelay() { return freezingDelay; }
+    /** Sets whether getDelay should simply return the delay time used by the most recent resource
+    	added to the Delay. If there is no such resource, or if that resource has since been 
+    	removed from the Delay, or if its delay time has passed, then a delay value of 1.0 will
+    	be used as a default. */
+    public boolean getUsesLastDelay() { return usesLastDelay; }
     	
     /** Sets the distribution used to independently select the delay time for each separate incoming 
         resource.  If null, 1.0 will be used. */
@@ -116,25 +120,36 @@ public class Delay extends SimpleDelay
         return this.distribution;
         }
                 
+	double lastDelay = 1.0;
     /** By default, provides Math.abs(getDelayDistribution().nextDouble()), or 1.0 if there is
         no provided distribution.  The point here is to guarantee that the delay will be positive;
         but note that if your distribution covers negative regions, you need to consider what
         will happen as a result and make sure it's okay (or if you should be considering
         a positive-only distribution).  Override this to provide a custom delay given the 
         provider and resource amount or type. */
-    double lastDelay = 1.0;
     protected double getDelay(Provider provider, Resource amount)
         {
-        if (isFreezingDelay()) return lastDelay;
-        else if (distribution == null) return (lastDelay = getDelayTime());
-        else return (lastDelay = Math.abs(distribution.nextDouble()));
+        if (getUsesLastDelay())
+        	{
+        	if (recent == null) lastDelay = 1.0;
+        	}
+        else if (distribution == null) 
+        	{
+        	lastDelay = getDelayTime();
+        	}
+        else 
+        	{
+        	lastDelay = Math.abs(distribution.nextDouble());
+        	}
+        return lastDelay;
         }
         
     void insert(DelayNode node, double nextTime)
     	{
-    	// Handle caching
+    	// Handle caching.  If the most recently inserted DelayNode is still there
+    	// and has the exact same timestamp, let's add ourselves as a linked list hanging off of it
+    	// rather than O(lg n) insertion into the heap
     	if (recent != null && recent.timestamp == nextTime)
-    	//if (false)
     		{
     		// insert the node right after recent
     		node.next = recent.next;
@@ -169,7 +184,6 @@ public class Delay extends SimpleDelay
             CountableResource token = (CountableResource)(cr.duplicate());
             token.setAmount(maxIncoming);
             cr.decrease(maxIncoming);
-            //delayHeap.add(recent = new DelayNode(token, nextTime, provider), nextTime);
             insert(new DelayNode(amount, nextTime, provider), nextTime);
             totalDelayedResource += maxIncoming;            
             totalReceivedResource += maxIncoming;
@@ -177,7 +191,6 @@ public class Delay extends SimpleDelay
         else
             {
             if (delayHeap.size() >= capacity) return false;      // we're at capacity
-            //delayHeap.add(recent = new DelayNode(amount, nextTime, provider), nextTime);
             insert(new DelayNode(amount, nextTime, provider), nextTime);
             totalDelayedResource += 1;            
             totalReceivedResource += 1.0;
@@ -204,7 +217,9 @@ public class Delay extends SimpleDelay
 				{
 				DelayNode node = (DelayNode)(delayHeap.extractMin());
 				if (node == recent) recent = null;	// all gone
-				while(node != null)
+				
+				// We'll walk down the node's internal linked list and update all of them.
+				while (node != null)
 					{				
 					CountableResource res = (CountableResource)(node.getResource());
 					totalDelayedResource -= res.getAmount();
@@ -220,7 +235,9 @@ public class Delay extends SimpleDelay
 				{
 				DelayNode node = (DelayNode)(delayHeap.extractMin());
 				if (node == recent) recent = null;	// all gone
-				while(node != null)
+
+				// We'll walk down the node's internal linked list and update all of them.
+				while (node != null)
 					{
 					Entity res = (Entity)(node.getResource());
 					entities.add(res);

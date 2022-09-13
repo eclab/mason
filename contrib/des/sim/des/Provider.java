@@ -490,7 +490,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
        Makes offers to the receivers according to the current offer policy.    
        Returns true if at least one offer was accepted.
     */
-    protected boolean offerReceivers(ArrayList<Receiver> receivers)
+    boolean offerReceivers(ArrayList<Receiver> receivers)
         {
         offering = true;
         boolean result = false;
