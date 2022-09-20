@@ -5,7 +5,7 @@
 
 JAVAC = javac ${FLAGS}
 
-FLAGS = -target 1.8 -source 1.8 -g -nowarn
+FLAGS = -target 1.8 -source 1.8 -g -nowarn -cp /Users/rpatel/Desktop/Projects/mason.new.jar:/Users/rpatel/Desktop/Projects/ecj.jar
 
 VERSION = 1
 
