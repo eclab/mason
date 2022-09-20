@@ -480,6 +480,20 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     boolean offerDistributionWarned = false; 
     boolean offerSelectWarned = false;
     
+    boolean offersAllEntities = false;
+
+	/** Returns whether the Provider will, duing offerReceivers(...), attempt to offer every single entity 
+		that it has available, until offers start to be refused by downstream receivers.  By fault this is 
+		FALSE: the Provider offers only one Entity. This only matters if the Provider provides entities.  
+		This capability is largely useful for Delays and SimpleDelays rather than other kinds of Providers.  */
+	public boolean getOffersAllEntities() { return offersAllEntities; }
+
+	/** Sets whether the Provider will, duing offerReceivers(...), attempt to offer every single entity 
+		that it has available, until offers start to be refused by downstream receivers.  By fault this is 
+		FALSE: the Provider offers only one Entity. This only matters if the Provider provides entities.  
+		This capability is largely useful for Delays and SimpleDelays rather than other kinds of Providers.  */
+	public void setOffersAllEntities(boolean val) { offersAllEntities = val; }
+    
     /** Simply calls offerReceivers(receivers). */
     protected boolean offerReceivers()
         {
@@ -490,8 +504,24 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
        Makes offers to the receivers according to the current offer policy.    
        Returns true if at least one offer was accepted.
     */
-    boolean offerReceivers(ArrayList<Receiver> receivers)
+    protected boolean offerReceivers(ArrayList<Receiver> receivers)
         {
+    	boolean returnval = false;
+    	if (getOffersAllEntities() && entities != null)
+    		{
+    		while(!entities.isEmpty())
+    			{
+    			boolean result = offerReceiversOnce(receivers);
+    			returnval = returnval || result;
+    			if (!result) break;
+    			}
+    		}
+    	else returnval = offerReceiversOnce(receivers);
+    	return returnval;
+        }
+	
+	boolean offerReceiversOnce(ArrayList<Receiver> receivers)
+		{
         offering = true;
         boolean result = false;
                         
