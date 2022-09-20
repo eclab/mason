@@ -29,6 +29,9 @@ public class DESExample extends SimState
         }
               
     public Macro macro;
+    
+    public Lock lock1;
+    public Lock lock2;
                 
     public void start()
         {
@@ -62,9 +65,9 @@ public class DESExample extends SimState
         
         Pool pool = new Pool(new CountableResource("Locks", 20), 20);
         pool.setName("Blah");
-        Lock lock1 = new Lock(this, quatloos, pool);
-        lock1.setFillPaint(Color.GREEN);
-        Lock lock2 = new Lock(this, quatloos, pool);
+        lock1 = new Lock(this, quatloos, pool);
+        //lock1.setFillPaint(Color.GREEN);			// I have moved this to DESExampleWithUI.setupPortrayals() so it doesn't fire up the GUI when you run headless
+        lock2 = new Lock(this, quatloos, pool);
         Unlock unlock = new Unlock(this, quatloos, pool);
         
         // Add a Simple Delay

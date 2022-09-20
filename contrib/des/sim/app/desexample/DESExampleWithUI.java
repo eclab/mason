@@ -68,6 +68,8 @@ public class DESExampleWithUI extends GUIState
         {
         DESExample example = (DESExample) state;
         
+        example.lock1.setFillPaint(Color.GREEN);
+        
         layoutPortrayal.setField(example.field.getNodes());
         graphPortrayal.setField(example.field);
         SimpleEdgePortrayal2D edge = new DelayedEdgePortrayal(); //new ResourceEdgePortrayal(1.0);

@@ -237,11 +237,12 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
     protected boolean offerReceivers(ArrayList<Receiver> receivers)
     	{
     	boolean returnval = super.offerReceivers(receivers);
-    	if (slackProvider != null)
+
+    	if (slackProvider != null && getCapacity() > getDelayed())
     		slackProvider.provide(this);
     	return returnval;
     	}
-
+    	
     public void reset()
         {
         clear();
