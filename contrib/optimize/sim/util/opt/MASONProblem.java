@@ -42,6 +42,8 @@ public class MASONProblem extends Problem implements SimpleProblemForm
     public int numTrials;
     /** Do we re-construct the SimState every time? */
     public boolean rebuildSimState;
+    /** Do we trat the parameters as an array or as properties? */
+    public boolean treatParametersAsArray;
         
     boolean ready;
     Object[] lock = new Object[0];
@@ -77,6 +79,7 @@ public class MASONProblem extends Problem implements SimpleProblemForm
             dataOut.writeInt(maximumSteps);
             dataOut.writeInt(numTrials);
             dataOut.writeBoolean(rebuildSimState);
+            dataOut.writeBoolean(treatParametersAsArray);
             int size = parameterType.length;
             dataOut.writeInt(size);
             for(int i = 0; i < size; i++)
@@ -108,6 +111,7 @@ public class MASONProblem extends Problem implements SimpleProblemForm
             maximumSteps = dataIn.readInt();
             numTrials = dataIn.readInt();
             rebuildSimState = dataIn.readBoolean();
+            treatParametersAsArray = dataIn.readBoolean();
             int size = dataIn.readInt();
             parameterType = new int[size];
             parameterValue = new double[size];
@@ -164,6 +168,7 @@ public class MASONProblem extends Problem implements SimpleProblemForm
             mp.modelClassName = modelClassName;
             mp.numObjectives = numObjectives;
             mp.rebuildSimState = rebuildSimState;
+            mp.treatParametersAsArray = treatParametersAsArray;
             mp.fitnessType = fitnessType;
             
 //            System.err.println("FITNESS TYPE " + fitnessType);
@@ -193,6 +198,7 @@ public class MASONProblem extends Problem implements SimpleProblemForm
         mp.numTrials = numTrials;
         mp.numObjectives = numObjectives;               // not technically necessay
         mp.rebuildSimState = rebuildSimState;
+        mp.treatParametersAsArray = treatParametersAsArray;
         mp.fitnessType = fitnessType;					// not technically necessary
         return mp;
         }
@@ -247,7 +253,7 @@ public class MASONProblem extends Problem implements SimpleProblemForm
         return Properties.getProperties(simstate, false, false, false, true, true);
         }
     
-    public void loadDefaults(SimState state, int[] indParameterIndex, int numObjectives, int fitnessType, int maxSteps, int numTrials, boolean rebuildSimState)
+    public void loadDefaults(SimState state, int[] indParameterIndex, int numObjectives, int fitnessType, int maxSteps, int numTrials, boolean rebuildSimState, boolean treatParametersAsArray)
         {
         this.indParameterIndex = (int[])(indParameterIndex.clone());
         this.maximumSteps = maxSteps;
@@ -255,6 +261,7 @@ public class MASONProblem extends Problem implements SimpleProblemForm
         this.numObjectives = numObjectives;
         this.modelClassName = state.getClass().getName();
         this.rebuildSimState = rebuildSimState;
+        this.treatParametersAsArray = treatParametersAsArray;
         this.fitnessType = fitnessType;
         
         // We restrict the properties as:
@@ -302,7 +309,7 @@ public class MASONProblem extends Problem implements SimpleProblemForm
         raiseReady();           
         }
         
-        
+        	
     void setParameter(EvolutionState state, Properties properties, int index, double value)
         {
         String val = "";
@@ -371,11 +378,18 @@ public class MASONProblem extends Problem implements SimpleProblemForm
                 {
                 state.output.fatal("DoubleVectorGenome length is wrong.  Length is " + genome.length + " but I expected " + indParameterIndex.length);
                 }
-                        
-            for(int i = 0; i < indParameterIndex.length; i++)
-                {
-                setParameter(state, prop, indParameterIndex[i], genome[i]);
-                }
+                
+            if (treatParametersAsArray)
+            	{
+    			simstate.setOptimizationParameters(genome);
+            	}
+        	else
+            	{            
+				for(int i = 0; i < indParameterIndex.length; i++)
+					{
+					setParameter(state, prop, indParameterIndex[i], genome[i]);
+					}
+				}
             }
         else
             {
@@ -413,6 +427,33 @@ public class MASONProblem extends Problem implements SimpleProblemForm
             }
         }
         
+    public void describe(
+        final EvolutionState state, 
+        final Individual ind, 
+        final int subpopulation,
+        final int threadnum,
+        final int log)
+        {
+		initSimState(state, threadnum);
+		PrintWriter writer = state.output.getLog(log).writer;
+		simstate.setDescription(writer);
+		setProperties(state, ind);
+		simstate.start();
+		do
+			{
+			if (!simstate.schedule.step(simstate)) 
+				{
+				break; 
+				}
+			}
+		while(simstate.schedule.getSteps() < maximumSteps); 
+		simstate.finish();
+		if (writer != null) 
+			{
+			writer.flush();
+			}
+		simstate.setDescription(null);
+		}
 
     public void evaluate(
         final EvolutionState state,

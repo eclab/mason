@@ -47,12 +47,6 @@ public class Master
             }
         }
                 
-    public static void main(String[] args)
-        {
-        ParameterDatabase base = Evolve.loadParameterDatabase(args);
-        new Master(buildSimState(sim.app.serengeti.Serengeti.class), base).run();
-        }
-                
     public static SimState buildSimState(Class cls)
         {
         SimState simstate = null;
