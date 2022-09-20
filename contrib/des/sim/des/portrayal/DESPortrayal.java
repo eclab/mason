@@ -28,19 +28,19 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Named
     String baseImagePath;
     boolean usesGlobalImageClass = false;
     
-    // We avoid firing up the GUI
+    // We avoid firing up the GUI, so we don't assign the colors here, but instead assign them in getFillPaint() and getStrokePaint()
     Paint fillPaint = null; // Color.GRAY;
     Paint strokePaint = null; // Color.BLACK;
     double strokeWidth = 2.0;
         
     public boolean hideFillPaint() { return true; }
-    /** Sets the fill paint for the underlying default portrayal shape. */
+    /** Sets the fill paint for the underlying default portrayal shape.  Note that calling this method will fire up Java's GUI subsystem.   */
     public Paint getFillPaint() { if (fillPaint == null) fillPaint = Color.GRAY; return fillPaint; }
     /** Returns the fill paint for the underlying default portrayal shape. */
     public void setFillPaint(Paint paint) { fillPaint = paint; }
     
     public boolean hideStrokePaint() { return true; }
-    /** Sets the stroke paint for the underlying default portrayal shape. */
+    /** Sets the stroke paint for the underlying default portrayal shape.  Note that calling this method will fire up Java's GUI subsystem.  */
     public Paint getStrokePaint() { if (strokePaint == null) strokePaint = Color.BLACK; return strokePaint; }
     /** Returns the stroke paint for the underlying default portrayal shape. */
     public void setStrokePaint(Paint paint) { strokePaint = paint; }

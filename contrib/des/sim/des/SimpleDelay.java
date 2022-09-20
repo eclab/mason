@@ -234,14 +234,36 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         offerReceivers();
         }
     
+    boolean offersAllEntities = false;
+
+	/** Returns whether the delay will attempt to offer every single entity that has come ripe, until
+		offers start to be refused by downstream receivers.  By fault this is FALSE: the delay offers
+		only one Entity. */
+	public boolean getOffersAllEntities() { return offersAllEntities; }
+
+	/** Sets whether the delay will attempt to offer every single entity that has come ripe, until
+		offers start to be refused by downstream receivers.  By fault this is FALSE: the delay offers
+		only one Entity. */
+	public void setOffersAllEntities(boolean val) { offersAllEntities = val; }
+    
     protected boolean offerReceivers(ArrayList<Receiver> receivers)
     	{
-    	boolean returnval = super.offerReceivers(receivers);
-    	if (slackProvider != null)
+    	boolean returnval = false;
+    	if (getOffersAllEntities() && entities != null)
+    		{
+    		while(!entities.isEmpty())
+    			{
+    			returnval = super.offerReceivers(receivers);
+    			if (returnval == false) break;
+    			}
+    		}
+    	else returnval = super.offerReceivers(receivers);
+
+    	if (slackProvider != null && getCapacity() > getDelayed())
     		slackProvider.provide(this);
     	return returnval;
     	}
-
+    	
     public void reset()
         {
         clear();
