@@ -81,7 +81,7 @@ public class Optimize extends Master
         base.set(new ec.util.Parameter("pop.subpop.0.species.genome-size"), "" + numIndexes);
         int[] indexes = new int[numIndexes];
         Object[] throwaway = new Object[0];
-                
+        
         boolean treatParametersAsArray = base.getBoolean(new ec.util.Parameter("mason-properties-as-array"), null, false);
         if (!base.exists(new ec.util.Parameter("mason-properties-as-array"), null))
         	{
@@ -90,6 +90,7 @@ public class Optimize extends Master
         
         if (!treatParametersAsArray)
         	{
+        	// need to specify min/max
 			for(int i = 0; i < numIndexes; i++)
 				{
 				String name = base.getString(new ec.util.Parameter("mason-property." + i), null);
