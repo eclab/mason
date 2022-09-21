@@ -767,13 +767,13 @@ public class SimState implements java.io.Serializable
         return assessment;
         }
 
-	/** You only override this method to set parameter values for purposes of optimization: MASON's
-		optimization facility (in contrib/optimize) may call this to set up certain parameters in bulk
-		prior to running the model and assessing it with assess(...).  Otherwise you don't fool with this. */
-	public void setOptimizationParameters(double[] parameterValues)
-		{
-		// does nothing by default
-		}
+    /** You only override this method to set parameter values for purposes of optimization: MASON's
+        optimization facility (in contrib/optimize) may call this to set up certain parameters in bulk
+        prior to running the model and assessing it with assess(...).  Otherwise you don't fool with this. */
+    public void setOptimizationParameters(double[] parameterValues)
+        {
+        // does nothing by default
+        }
 
     PrintWriter writer = null;
         
