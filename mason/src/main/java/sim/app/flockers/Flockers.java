@@ -96,6 +96,13 @@ public class Flockers extends SimState
         {
         super.start();
         
+        // The simplest way to schedule agents is to just stick them on the schedule.
+        // However this incurs an O(lg n) scheduling and removal cost since the schedule
+        // is a heap.  Instead we can be much faster -- O(1) -- by sticking them all on
+        // a RandomSequence and just scheduling the RandomSequence.  This is okay to do
+        // because our agents are all scheduled at the same time anyway.
+        Steppable[] agents = new Steppable[numFlockers];
+        
         // set up the flockers field.  It looks like a discretization
         // of about neighborhood / 1.5 is close to optimal for us.  Hmph,
         // that's 16 hash lookups! I would have guessed that 
@@ -112,8 +119,10 @@ public class Flockers extends SimState
             flockers.setObjectLocation(flocker, location);
             flocker.flockers = flockers;
             flocker.theFlock = this;
-            schedule.scheduleRepeating(flocker);
+            //schedule.scheduleRepeating(flocker);
+            agents[x] = flocker;
             }
+        schedule.scheduleRepeating(new RandomSequence(agents));
         }
 
     public static void main(String[] args)

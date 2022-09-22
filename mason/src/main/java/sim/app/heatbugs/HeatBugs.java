@@ -133,18 +133,23 @@ public /*strictfp*/ class HeatBugs extends SimState
         // make new grids
         createGrids();
     
-        // Schedule the heat bugs -- we could instead use a RandomSequence, which would be faster
-        // But we spend no more than 3% of our total runtime in the scheduler max, so it's not worthwhile
-        
-       
+        // The simplest way to schedule agents is to just stick them on the schedule.
+        // However this incurs an O(lg n) scheduling and removal cost since the schedule
+        // is a heap.  Instead we can be much faster -- O(1) -- by sticking them all on
+        // a RandomSequence and just scheduling the RandomSequence.  This is okay to do
+        // because our agents are all scheduled at the same time anyway.
+        Steppable[] agents = new Steppable[bugCount];           // we'll keep it different from bugs[] for no good reason
+
         for(int x=0;x<bugCount;x++)
             {
             bugs[x] = new HeatBug(random.nextDouble() * (maxIdealTemp - minIdealTemp) + minIdealTemp,
                 random.nextDouble() * (maxOutputHeat - minOutputHeat) + minOutputHeat,
                 randomMovementProbability);
             buggrid.setObjectLocation(bugs[x],random.nextInt(gridWidth),random.nextInt(gridHeight));
-            schedule.scheduleRepeating(bugs[x]);
+            //schedule.scheduleRepeating(bugs[x]);
+            agents[x] = bugs[x];
             }
+        schedule.scheduleRepeating(new RandomSequence(agents));
                     
         // Here we're going to pick whether or not to use Diffuser (the default) or if
         // we're really going for the gusto and have multiple processors on our computer, we

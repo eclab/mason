@@ -26,7 +26,7 @@ public class HTMLBrowser extends JPanel
     java.util.Stack stack = new java.util.Stack();
     JEditorPane infoPane;
     JScrollPane scroll;
-    public boolean loadSubsidiaryHTML = false;		// set this to TRUE to load in the browser
+    public boolean loadSubsidiaryHTML = false;          // set this to TRUE to load in the browser
         
     public void setText(Object HTMLTextOrURL)
         {
@@ -48,14 +48,14 @@ public class HTMLBrowser extends JPanel
                 }
             catch (IOException e) 
                 { 
-				e.printStackTrace();
-				java.awt.Toolkit.getDefaultToolkit().beep();
+                e.printStackTrace();
+                java.awt.Toolkit.getDefaultToolkit().beep();
                 infoPane = new JEditorPane(); 
                 }
         else
             {
-			new RuntimeException("Info object was neither a string nor a URL").printStackTrace();
-			java.awt.Toolkit.getDefaultToolkit().beep();
+            new RuntimeException("Info object was neither a string nor a URL").printStackTrace();
+            java.awt.Toolkit.getDefaultToolkit().beep();
             infoPane = new JEditorPane();
             }
 
@@ -75,8 +75,8 @@ public class HTMLBrowser extends JPanel
             }
         catch (IOException e)
             {
-			e.printStackTrace();
-			java.awt.Toolkit.getDefaultToolkit().beep();
+            e.printStackTrace();
+            java.awt.Toolkit.getDefaultToolkit().beep();
             try { buf.close(); }
             catch (IOException e2) { }
             }
@@ -101,7 +101,7 @@ public class HTMLBrowser extends JPanel
         
         infoPane = new JEditorPane()
             {
-            public Insets getInsets() { return new Insets(4,4,4,4); }		// doesn't seem to work
+            public Insets getInsets() { return new Insets(4,4,4,4); }           // doesn't seem to work
 
             // This is a trick to delay loading until or if the user displays the HTMLBrowser
             // so as to save some time.
@@ -159,8 +159,8 @@ public class HTMLBrowser extends JPanel
                                 }
                             catch(Exception e)
                                 {
-                            	e.printStackTrace();
-                            	java.awt.Toolkit.getDefaultToolkit().beep();
+                                e.printStackTrace();
+                                java.awt.Toolkit.getDefaultToolkit().beep();
                                 }
                             }
                         else

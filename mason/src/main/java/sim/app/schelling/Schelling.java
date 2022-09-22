@@ -122,11 +122,22 @@ public /*strictfp*/ class Schelling extends SimState
         
         // make new grids
         createGrids();
+
+        // The simplest way to schedule agents is to just stick them on the schedule.
+        // However this incurs an O(lg n) scheduling and removal cost since the schedule
+        // is a heap.  Instead we can be much faster -- O(1) -- by sticking them all on
+        // a RandomSequence and just scheduling the RandomSequence.  This is okay to do
+        // because our agents are all scheduled at the same time anyway.
+        Steppable[] agents = new Steppable[gridWidth * gridHeight];
+        int pos = 0;
+
         for(int x=0;x<gridWidth;x++)
             for(int y=0;y<gridHeight;y++)
                 {
-                schedule.scheduleRepeating(new Agent(x,y));
+                //schedule.scheduleRepeating(new Agent(x,y));
+                agents[pos++] = new Agent(x,y);
                 }
+        schedule.scheduleRepeating(new RandomSequence(agents));
         }
     
     public static void main(String[] args)
