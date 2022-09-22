@@ -29,17 +29,10 @@ RSRCROOT=src/main/resources/
 SRCROOT=src/main/java/
 DIRS=$(addprefix $(SRCROOT)/, $(SRCS))
 
-# Make the main MASON code, not including 3D code
+# Make the main Distributed Geomason code
 all:
 	mkdir -p ${CLASSROOT}
 	${JAVAC} ${DIRS}
-
-# Make the main MASON code AND the 3D code
-visualization: all
-	mkdir -p ${CLASSROOT}
-	${JAVAC} ${DIRS} ${3DDIRS}
-	tar -C ${RSRCROOT} -c sim ec | tar -C ${CLASSROOT} -x # Hack to combine resources with class files
-
 
 # Delete all jmf gunk, checkpoints, backup emacs gunk classfiles,
 # documentation, and odd MacOS X poops
@@ -59,7 +52,7 @@ clean:
 doc:
 	- javadoc -classpath ${CLASSPATH}:${SRCROOT} -protected -d docs/classdocs sim.display.geo sim.util.geo sim.field.geo sim.app.geo.dcampusworld sim.app.geo.dschellingpolygon sim.app.geo.dturkana
 
-jar:
+jar: all
 	touch /tmp/manifest.add
 	rm /tmp/manifest.add
 	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
