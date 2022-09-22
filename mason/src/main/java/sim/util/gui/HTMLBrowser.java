@@ -1,7 +1,7 @@
 /*
   Copyright 2006 by Sean Luke and George Mason University
   Licensed under the Academic Free License version 3.0
-  See the file "LICENSE" for more information
+  See the file "AFL_LICENSE" for more information
 */
 
 package sim.util.gui;
@@ -12,6 +12,7 @@ import javax.swing.event.*;
 import java.awt.event.*;
 import java.net.*;
 import javax.swing.text.*;
+import javax.swing.text.html.*;
 
 /**
    HTMLBrowser is a simple web browser which lets the user click on links and which provides
@@ -20,9 +21,12 @@ import javax.swing.text.*;
 
 public class HTMLBrowser extends JPanel
     {
+    Object HTMLTextToSet = null;
+    
     java.util.Stack stack = new java.util.Stack();
     JEditorPane infoPane;
     JScrollPane scroll;
+    public boolean loadSubsidiaryHTML = false;		// set this to TRUE to load in the browser
         
     public void setText(Object HTMLTextOrURL)
         {
@@ -34,10 +38,6 @@ public class HTMLBrowser extends JPanel
         // still thinks the URL is valid.
         infoPane.setContentType("text/html");
         Document d = infoPane.getEditorKit().createDefaultDocument();
-        //if (d instanceof AbstractDocument)
-        //      {
-        //      ((AbstractDocument)d).setAsynchronousLoadPriority(1);
-        //      }
         infoPane.setDocument(d);
         if (HTMLTextOrURL instanceof String)
             infoPane.setText((String)HTMLTextOrURL);
@@ -48,12 +48,14 @@ public class HTMLBrowser extends JPanel
                 }
             catch (IOException e) 
                 { 
-                e.printStackTrace(); 
+				e.printStackTrace();
+				java.awt.Toolkit.getDefaultToolkit().beep();
                 infoPane = new JEditorPane(); 
                 }
         else
             {
-            new RuntimeException("Info object was neither a string nor a URL").printStackTrace();
+			new RuntimeException("Info object was neither a string nor a URL").printStackTrace();
+			java.awt.Toolkit.getDefaultToolkit().beep();
             infoPane = new JEditorPane();
             }
 
@@ -61,11 +63,59 @@ public class HTMLBrowser extends JPanel
         infoPane.getCaret().setDot(0);
         }
                 
-                
-                
+    public static String readerToString(Reader reader)
+        {
+        BufferedReader buf = new BufferedReader(reader);
+        StringBuffer buffer = new StringBuffer();
+        String text = null;
+        try
+            {
+            while((text = buf.readLine()) != null)
+                buffer.append(text);
+            }
+        catch (IOException e)
+            {
+			e.printStackTrace();
+			java.awt.Toolkit.getDefaultToolkit().beep();
+            try { buf.close(); }
+            catch (IOException e2) { }
+            }
+        return (buffer.toString());
+        }
+    
+    public HTMLBrowser(InputStream stream)
+        {
+        this(new InputStreamReader(stream));
+        }
+                    
+    public Dimension getPreferredSize() { return getMinimumSize(); }
+    public HTMLBrowser(Reader reader)
+        {
+        this(readerToString(reader));
+        }
+                    
     /** Constructs an HTMLBrowser using either an HTML string or a URL */
     public HTMLBrowser(final Object HTMLTextOrURL)
         {
+        HTMLTextToSet = HTMLTextOrURL;
+        
+        infoPane = new JEditorPane()
+            {
+            public Insets getInsets() { return new Insets(4,4,4,4); }		// doesn't seem to work
+
+            // This is a trick to delay loading until or if the user displays the HTMLBrowser
+            // so as to save some time.
+            // For some reason I can't have this in the outer HTMLBrowser -- it's never called!
+            // So instead we have it here in the JEditorPane.
+            public void paintComponent(Graphics g)
+                {
+                if (HTMLTextToSet != null)
+                    HTMLBrowser.this.setText(HTMLTextToSet);
+                HTMLTextToSet = null;
+                super.paintComponent(g);
+                }
+            };
+                
         infoPane = new JEditorPane();
         setText(HTMLTextOrURL);
                 
@@ -99,22 +149,44 @@ public class HTMLBrowser extends JPanel
                 else // clicked on it!
                     {
                     java.net.URL url = he.getURL();
-                    try
+                    if (!loadSubsidiaryHTML && (url.getProtocol().equals("http") || url.getProtocol().equals("https")))
                         {
-                        infoPane.getEditorKit().createDefaultDocument();
-                        infoPane.setPage(url);
-                        if (stack.isEmpty())
+                        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
                             {
-                            // show back button
-                            add(backButtonBox,BorderLayout.SOUTH);
-                            revalidate();
+                            try
+                                {
+                                Desktop.getDesktop().browse(url.toURI());
+                                }
+                            catch(Exception e)
+                                {
+                            	e.printStackTrace();
+                            	java.awt.Toolkit.getDefaultToolkit().beep();
+                                }
                             }
-                        stack.push(url);
+                        else
+                            {
+                            JOptionPane.showMessageDialog(null, new JTextArea("Opening link in external browser not supported on this computer. The URL was "  + url.toString()));
+                            }
                         }
-                    catch (Exception e)
+                    else
                         {
-                        e.printStackTrace();
-                        java.awt.Toolkit.getDefaultToolkit().beep();
+                        try
+                            {
+                            infoPane.getEditorKit().createDefaultDocument();
+                            infoPane.setPage(url);
+                            if (stack.isEmpty())
+                                {
+                                // show back button
+                                add(backButtonBox,BorderLayout.SOUTH);
+                                revalidate();
+                                }
+                            stack.push(url);
+                            }
+                        catch (Exception e)
+                            {
+                            e.printStackTrace();
+                            java.awt.Toolkit.getDefaultToolkit().beep();
+                            }
                         }
                     }
                 }
@@ -139,7 +211,7 @@ public class HTMLBrowser extends JPanel
                     }
                 catch (Exception e)
                     {
-                    System.err.println("WARNING: This should never happen." + e);
+                    System.err.println("Warning (HTMLBrowser): This should never happen." + e);
                     }
                 }
             });
