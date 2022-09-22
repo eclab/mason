@@ -5,9 +5,6 @@ import java.awt.Graphics2D;
 
 import javax.swing.JFrame;
 
-import sim.app.dvirus.DAgent;
-import sim.app.dvirus.display.DAgentPortrayal;
-import sim.app.dvirus.display.DVirusInfectionDemoProxy;
 import sim.app.geo.dschellingpolygon.DPolygon;
 import sim.app.geo.schellingpolygon.Polygon;
 import sim.display.Console;
