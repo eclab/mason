@@ -65,6 +65,15 @@ clean:
 	rm -rf ${CLASSROOT}
 	rm -rf target/
 
+
+# Build a jar file.
+jar: all
+	touch /tmp/manifest.add
+	rm /tmp/manifest.add
+	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
+	jar -cvfm target/distributed-mason.${VERSION}.jar /tmp/manifest.add -C ${CLASSROOT} .
+
+
 # Build the class docs.  They're located in docs/classdocs
 # the "-" at the beginning causes Make to ignore errors from javadoc
 doc:

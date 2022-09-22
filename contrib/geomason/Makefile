@@ -9,7 +9,7 @@ JAVAC = javac ${JAVACFLAGS}
 
 CLASSROOT = target/classes
 JAVACFLAGS = -target 1.8 -source 1.8 ${FLAGS} -nowarn -d ${CLASSROOT}
-FLAGS = -g -Xlint:deprecation
+FLAGS = -g -Xlint:deprecation -cp src/main/java/:${CLASSPATH}
 
 VERSION = 20
 
@@ -77,11 +77,11 @@ clean:
 
 # Build an applet jar file.  Note this collects ALL .class, .png, .jpg, index.html, and simulation.classes
 # files.  you'll probably want to strip this down some.
-jar: 
+jar: all
 	touch /tmp/manifest.add
 	rm /tmp/manifest.add
 	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
-	jar -cvfm target/mason.${VERSION}.jar /tmp/manifest.add -C ${CLASSROOT} .
+	jar -cvfm target/geomason.${VERSION}.jar /tmp/manifest.add -C ${CLASSROOT} .
 
 # Build a distribution.  Cleans, builds 3d, then builds docs, then
 # removes SVN directories
@@ -115,7 +115,7 @@ help:
 	@ echo "make clean    Cleans out all classfiles, checkpoints, and various gunk"
 	@ echo "make dist     Does a make clean, make docs, and make 3d, then deletes SVN dirs"
 	@ echo "make jar      Makes 3d, then collects ALL class files into a jar file"
-	@ echo "              called mason.jar.  Heavyweight -- all class files included."
+	@ echo "              called geomason.jar.  Heavyweight -- all class files included."
 
 	@ echo "make help     Brings up this message!"
 	@ echo "make indent   Uses emacs to re-indent MASON java files as you'd prefer"
