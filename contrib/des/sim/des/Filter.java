@@ -85,7 +85,31 @@ public abstract class Filter extends Provider implements Receiver
         return "Filter@" + System.identityHashCode(this);
         }
 
-    public abstract boolean accept(Provider provider, Resource amount, double atLeast, double atMost);
+	/** By default does nothing. */
+	public void process(Resource amountOfferedMe, Resource amountAcceptedFromMe)
+		{
+		// does nothing
+		}
+	
+	/** Override this as you like.  The default version offers to downstream Receivers whatever it is being
+		offered here; and then calls process(...) to process the difference between the two.  By default
+		process(...) does nothing, but you could override that too. */
+    public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
+    	{
+        if (getRefusesOffers()) { return false; }
+        if (isOffering()) throwCyclicOffers();  // cycle
+
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
+            throwInvalidAtLeastAtMost(atLeast, atMost);
+        
+        Resource oldAmount = null;
+        if (amount instanceof CountableResource)
+            oldAmount = amount.duplicate();
+
+        boolean result = offerReceivers(amount, atLeast, atMost);
+        process(oldAmount, amount);
+        return result;
+    	}
 
     boolean refusesOffers = false;
     public void setRefusesOffers(boolean value) { refusesOffers = value; }

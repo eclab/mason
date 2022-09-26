@@ -158,7 +158,7 @@ public class Probe extends Filter
         sumCurrent += current;
         processed = false;
         }
-        
+    
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)    
         {
         if (getRefusesOffers()) { return false; }

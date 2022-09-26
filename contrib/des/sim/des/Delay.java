@@ -201,6 +201,8 @@ public class Delay extends SimpleDelay
         return true;
         }
 
+
+	static final boolean clearWhenEmpty = true;
     protected void update()
         {
         if (getDropsResourcesBeforeUpdate()) 
@@ -246,6 +248,11 @@ public class Delay extends SimpleDelay
 					}
 				minKey = (Double)delayHeap.getMinKey();         // grab the next one
 				}
+			}
+			
+		if (minKey == null && clearWhenEmpty)
+			{
+			delayHeap.clear();
 			}
         }
 
