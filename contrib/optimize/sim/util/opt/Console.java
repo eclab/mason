@@ -4,10 +4,17 @@
   See the file "LICENSE" for more information
 */
 
-package sim.display;
+package sim.util.opt;
 import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.event.*;
+
+import sim.display.Controller;
+import sim.display.Display2D;
+import sim.display.GUIState;
+import sim.display.Prefs;
+import sim.display.SimApplet;
+import sim.display.SimpleController;
 import sim.engine.*;
 import java.awt.*;
 import java.text.*;
@@ -391,7 +398,7 @@ public class Console extends JFrame implements Controller
         buttonBox.add(Box.createGlue());
         buttonBox.add(new JLabel(" "));
         buttonBox.add(timeBox1);
-        if (Display2D.isMacOSX()) buttonBox.add(new JLabel("    "));  // move away from the scroll box
+        if (Display2D.isMacOSX) buttonBox.add(new JLabel("    "));  // move away from the scroll box
         
 
 
@@ -1001,7 +1008,7 @@ public class Console extends JFrame implements Controller
             });
         fileMenu.add(newMenu);
         openMenu = new JMenuItem("Open...");
-        if (SimApplet.isApplet) openMenu.setEnabled(false);
+        if (SimApplet.isApplet()) openMenu.setEnabled(false);
         openMenu.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -1011,7 +1018,7 @@ public class Console extends JFrame implements Controller
             });
         fileMenu.add(openMenu);
         saveMenu = new JMenuItem("Save");
-        if (SimApplet.isApplet) saveMenu.setEnabled(false);
+        if (SimApplet.isApplet()) saveMenu.setEnabled(false);
         saveMenu.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -1021,7 +1028,7 @@ public class Console extends JFrame implements Controller
             });
         fileMenu.add(saveMenu);
         saveAsMenu = new JMenuItem("Save As...");
-        if (SimApplet.isApplet) saveAsMenu.setEnabled(false);
+        if (SimApplet.isApplet()) saveAsMenu.setEnabled(false);
         saveAsMenu.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -1032,7 +1039,7 @@ public class Console extends JFrame implements Controller
         fileMenu.add(saveAsMenu);
 
         sweepMenu = new JMenuItem("Sweep Parameters");
-        if (SimApplet.isApplet) sweepMenu.setEnabled(false);
+        if (SimApplet.isApplet()) sweepMenu.setEnabled(false);
         sweepMenu.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -1043,7 +1050,7 @@ public class Console extends JFrame implements Controller
         fileMenu.add(sweepMenu);
         
         JMenuItem optMenu = new JMenuItem("Optimize Model");
-        if (SimApplet.isApplet) optMenu.setEnabled(false);
+        if (SimApplet.isApplet()) optMenu.setEnabled(false);
         optMenu.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -1705,7 +1712,7 @@ public class Console extends JFrame implements Controller
                 else if (entries[x] != null && entries[x] instanceof SimpleController)  // might occur if weak?  dunno
                     ((SimpleController)(((Map.Entry)(entries[x])).getKey())).doClose();
 
-            if(!(SimApplet.isApplet))
+            if(!(SimApplet.isApplet()))
                 try { System.exit(0); } catch (Exception e) { }
             isQuitting = false; // obviously if we've sucessfully exited this won't happen
             }
@@ -1746,10 +1753,10 @@ public class Console extends JFrame implements Controller
         // this line is to fix a stupidity in MacOS X 1.3.1, where if Display2D isn't loaded before
         // windows are created (so its static { } can be executed before the graphics subsystem
         // fires up) the underlying graphics subsystem is messed up.  Apple's fixed this in 1.4.1.
-        sacrificial = Display2D.isMacOSX();  // sacrificial  -- something to force Display2D.class to load
+        sacrificial = Display2D.isMacOSX;  // sacrificial  -- something to force Display2D.class to load
                 
         // Okay here we go with the real code.
-        if (!doNew(null, true) && !SimApplet.isApplet) System.exit(0); // just a dummy JFrame
+        if (!doNew(null, true) && !SimApplet.isApplet()) System.exit(0); // just a dummy JFrame
         }               
     
     /** Pops up the about box */

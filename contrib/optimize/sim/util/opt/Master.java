@@ -22,7 +22,7 @@ public class Master
     public boolean start()  
         {
         // Build an EvolutionState on it
-        evolutionState = Evolve.initialize(base, 0, Evolve.buildOutput(true));            // need to change the offset later FIXME
+        evolutionState = Evolve.initialize(base, 0, Evolve.buildOutput());            // need to change the offset later FIXME
         evolutionState.startFresh();
         return true; // always for now FIXME
         }
