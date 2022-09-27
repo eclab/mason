@@ -85,7 +85,7 @@ public class Optimize extends Master
         boolean treatParametersAsArray = base.getBoolean(new ec.util.Parameter("mason-properties-as-array"), null, false);
         if (!base.exists(new ec.util.Parameter("mason-properties-as-array"), null))
         	{
-			System.err.println("mason-properties-as-array missing.  Default is false.");
+			System.err.println("mason-properties-as-array missing or malformed.  Default is false.");
         	}
         
         if (!treatParametersAsArray)
@@ -144,7 +144,7 @@ public class Optimize extends Master
         int numObjectives = base.getInt(new ec.util.Parameter("mason-objectives"), null);
         if (numObjectives == -1)
             {
-            System.err.println("mason-numobjectives missing.   Default is 1");
+            System.err.println("mason-numobjectives missing or malformed.   Default is 1");
             numObjectives = 1;
             }
         base.set(new ec.util.Parameter("multi.fitness.num-objectives"), "" + numObjectives);
@@ -166,21 +166,34 @@ public class Optimize extends Master
         int maximumSteps = base.getInt(new ec.util.Parameter("mason-steps"), null);
         if (maximumSteps <= 0)
         	{
-			System.err.println("mason-steps missing.  Default is 1000.");
-			maximumSteps = 1000;
+			System.err.println("mason-steps missing or malformed.  Default is 0.");
+			maximumSteps = 0;
+        	}
+        	
+        double maximumTime = base.getDouble(new ec.util.Parameter("mason-time"), null);
+        if (maximumTime <= 0)
+        	{
+			System.err.println("mason-time missing or malformed.  Default is 0.");
+			maximumTime = 0.0;
+        	}
+        	
+        if (maximumSteps == 0 && maximumTime == 0)
+        	{
+        	System.err.println("mason-steps or mason-time cannot both be missing, malformed, or 0. Bailing.");
+        	return false;
         	}
         	
         int numTrials = base.getInt(new ec.util.Parameter("mason-num-trials"), null);
 		if (numTrials <= 0) 
 			{
-			System.err.println("mason-num-trials missing.  Default is 1.");
+			System.err.println("mason-num-trials missing or malformed.  Default is 1.");
 			numTrials = 1;
 			}
 			
         boolean rebuildSimState = base.getBoolean(new ec.util.Parameter("mason-rebuild-model"), null, false);
         if (!base.exists(new ec.util.Parameter("mason-rebuild-model"), null))
         	{
-			System.err.println("mason-rebuild-model missing.  Default is false.");
+			System.err.println("mason-rebuild-model missing or malformeds.  Default is false.");
         	}
                 
         // Build an EvolutionState on it
@@ -193,7 +206,7 @@ public class Optimize extends Master
         MASONProblem problem = (MASONProblem)(evolutionState.evaluator.masterproblem.problem);
         problem.modelClassName = simState.getClass().getName();
                 
-        problem.loadDefaults(simState, indexes, numObjectives, fitnessType, maximumSteps, numTrials, rebuildSimState, treatParametersAsArray);
+        problem.loadDefaults(simState, indexes, numObjectives, fitnessType, maximumSteps, maximumTime, numTrials, rebuildSimState, treatParametersAsArray);
 
 /*
         // We may need to reset the individuals now

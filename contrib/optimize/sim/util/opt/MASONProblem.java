@@ -38,6 +38,7 @@ public class MASONProblem extends Problem implements SimpleProblemForm
     public String modelClassName;
     /** How long we run the simulation. */
     public int maximumSteps;
+    public double maximumTime;
     /** How many trials do we run for? */
     public int numTrials;
     /** Do we re-construct the SimState every time? */
@@ -77,6 +78,7 @@ public class MASONProblem extends Problem implements SimpleProblemForm
             {
             dataOut.writeUTF(modelClassName);
             dataOut.writeInt(maximumSteps);
+            dataOut.writeDouble(maximumTime);
             dataOut.writeInt(numTrials);
             dataOut.writeBoolean(rebuildSimState);
             dataOut.writeBoolean(treatParametersAsArray);
@@ -109,6 +111,7 @@ public class MASONProblem extends Problem implements SimpleProblemForm
             {
             modelClassName = dataIn.readUTF();
             maximumSteps = dataIn.readInt();
+            maximumTime = dataIn.readDouble();
             numTrials = dataIn.readInt();
             rebuildSimState = dataIn.readBoolean();
             treatParametersAsArray = dataIn.readBoolean();
@@ -164,6 +167,7 @@ public class MASONProblem extends Problem implements SimpleProblemForm
             mp.indParameterIndex = (int[])(indParameterIndex.clone());
             mp.simstate = null;
             mp.maximumSteps = maximumSteps;
+            mp.maximumTime = maximumTime;
             mp.numTrials = numTrials;
             mp.modelClassName = modelClassName;
             mp.numObjectives = numObjectives;
@@ -195,6 +199,7 @@ public class MASONProblem extends Problem implements SimpleProblemForm
         mp.simstate = null;
         mp.modelClassName = modelClassName;             // not technically necessary
         mp.maximumSteps = maximumSteps;                 // not technically necessary
+        mp.maximumTime = maximumTime;
         mp.numTrials = numTrials;
         mp.numObjectives = numObjectives;               // not technically necessay
         mp.rebuildSimState = rebuildSimState;
@@ -253,10 +258,11 @@ public class MASONProblem extends Problem implements SimpleProblemForm
         return Properties.getProperties(simstate, false, false, false, true, true);
         }
     
-    public void loadDefaults(SimState state, int[] indParameterIndex, int numObjectives, int fitnessType, int maxSteps, int numTrials, boolean rebuildSimState, boolean treatParametersAsArray)
+    public void loadDefaults(SimState state, int[] indParameterIndex, int numObjectives, int fitnessType, int maxSteps, double maxTime, int numTrials, boolean rebuildSimState, boolean treatParametersAsArray)
         {
         this.indParameterIndex = (int[])(indParameterIndex.clone());
         this.maximumSteps = maxSteps;
+        this.maximumTime = maxTime;
         this.numTrials = numTrials;
         this.numObjectives = numObjectives;
         this.modelClassName = state.getClass().getName();
@@ -446,7 +452,10 @@ public class MASONProblem extends Problem implements SimpleProblemForm
 				break; 
 				}
 			}
-		while(simstate.schedule.getSteps() < maximumSteps); 
+		// we test for maximumTime second in the hopes that the compiler will
+		// compile it second, since getTime() is synchronized
+		while((maximumSteps > 0 && simstate.schedule.getSteps() < maximumSteps) ||
+			  (maximumTime > 0 && simstate.schedule.getTime() < maximumTime)); 
 		simstate.finish();
 		if (writer != null) 
 			{
