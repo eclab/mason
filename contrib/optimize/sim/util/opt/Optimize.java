@@ -163,14 +163,16 @@ public class Optimize extends Master
     			}
     		}
     	
-        int maximumSteps = base.getInt(new ec.util.Parameter("mason-steps"), null);
+        //int maximumSteps = base.getInt(new ec.util.Parameter("mason-steps"), null);
+        int maximumSteps = base.getInt(new ec.util.Parameter("mason-steps"), null, 0);
         if (maximumSteps <= 0)
         	{
 			System.err.println("mason-steps missing or malformed.  Default is 0.");
 			maximumSteps = 0;
         	}
         	
-        double maximumTime = base.getDouble(new ec.util.Parameter("mason-time"), null);
+        //double maximumTime = base.getDouble(new ec.util.Parameter("mason-time"), null);
+        double maximumTime = base.getDouble(new ec.util.Parameter("mason-time"), null, 0.0);
         if (maximumTime <= 0)
         	{
 			System.err.println("mason-time missing or malformed.  Default is 0.");
