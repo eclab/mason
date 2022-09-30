@@ -485,7 +485,7 @@ public class MASONProblem extends Problem implements SimpleProblemForm
                     break; 
                     }
                 }
-            while(simstate.schedule.getSteps() < maximumSteps); 
+            while((simstate.schedule.getSteps() < maximumSteps) || (simstate.schedule.getTime() < maximumTime)); 
             double[] r = simstate.assess(numObjectives);
             for(int j = 0; j < r.length; j++)
                 results[j] += r[j];
