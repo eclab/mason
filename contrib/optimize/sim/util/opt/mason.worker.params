@@ -72,7 +72,8 @@ pop.subpop.0.species.mutation-type = gauss
 pop.subpop.0.species.mutation-bounded = true
 
 pop.subpop.0.size =                     10
-stat.file                               $out.stat
+# This shouldn't be output
+stat.file                               $worker.stat
 
 
 multi.fitness.max.0             = 200

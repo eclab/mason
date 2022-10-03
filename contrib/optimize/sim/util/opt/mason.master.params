@@ -53,7 +53,7 @@ pop.subpop.0.size =                     30
 stat.file                               $out.stat
 stat.num-children = 1
 stat.child.0 = ec.simple.SimpleShortStatistics
-stat.child.0.file = $out2.stat
+stat.child.0.file = $out.short.stat
 
 eval.compression=false
 
