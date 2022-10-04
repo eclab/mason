@@ -454,8 +454,8 @@ public class MASONProblem extends Problem implements SimpleProblemForm
 			}
 		// we test for maximumTime second in the hopes that the compiler will
 		// compile it second, since getTime() is synchronized
-		while((maximumSteps > 0 && simstate.schedule.getSteps() < maximumSteps) ||
-			  (maximumTime > 0 && simstate.schedule.getTime() < maximumTime)); 
+		while((maximumSteps == 0 || simstate.schedule.getSteps() < maximumSteps) &&
+			  (maximumTime == 0 || simstate.schedule.getTime() < maximumTime)); 
 		simstate.finish();
 		if (writer != null) 
 			{
