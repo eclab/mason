@@ -47,6 +47,8 @@ all:
 	@ echo In order to build, first be certain that the MASON jar is in your CLASSPATH
 	@ echo You also need to have installed OpenMPI and added the Open MPI jar file
 	@ echo to your CLASSPATH
+	@ echo Finally, be sure that the Fast Serialization library from 
+	@ echo distributed-libraries.zip is also in your CLASSPATH.
 	@ echo Read Section 14.3 of the MASON Manual for more detailed instructions
 	@ echo
 	mkdir -p ${CLASSROOT}
