@@ -21,7 +21,7 @@ import java.awt.*;
     calls a new offerReceiver(...) method that uses the three stashed values. 
  */
 
-public abstract class Filter extends Provider implements Receiver
+public abstract class Filter extends Provider implements Receiver, Resettable
     {
     private static final long serialVersionUID = 1;
 
