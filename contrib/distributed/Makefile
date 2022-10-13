@@ -40,8 +40,15 @@ SRCROOT=src/main/java/
 DIRS=$(addprefix $(SRCROOT)/, $(SRCS))
 3DDIRS=$(addprefix $(SRCROOT)/, $(3DSRCS))
 
-# Make the main MASON code, not including 3D code
+# Make the main Distributed MASON code
 all:
+	@ echo This builds Distributed MASON
+	@ echo To learn about other options, type 'make help'
+	@ echo In order to build, first be certain that the MASON jar is in your CLASSPATH
+	@ echo You also need to have installed OpenMPI and added the Open MPI jar file
+	@ echo to your CLASSPATH
+	@ echo Read Section 14.3 of the MASON Manual for more detailed instructions
+	@ echo
 	mkdir -p ${CLASSROOT}
 	${JAVAC} ${DIRS}
 
@@ -79,6 +86,12 @@ jar: all
 doc:
 	- javadoc -classpath ${CLASSPATH}:${SRCROOT} -protected -d docs/classdocs sim.display sim.engine sim.util sim.util.gui sim.util.media sim.util.media.chart sim.field sim.field.grid sim.field.continuous sim.field.network sim.portrayal sim.portrayal.grid sim.portrayal.continuous sim.portrayal.network sim.portrayal.simple ec.util sim.portrayal3d sim.portrayal3d.grid sim.portrayal3d.continuous sim.portrayal3d.simple sim.portrayal3d.grid.quad sim.display3d sim.util.distribution sim.engine.registry sim.engine.transport sim.field.partitioning sim.field.proxy sim.field.storage 
 
+jar: all
+	touch /tmp/manifest.add
+	rm /tmp/manifest.add
+	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
+	jar -cvfm target/distributed-mason.${VERSION}.jar /tmp/manifest.add -C ${CLASSROOT} .
+
 docs: doc
 
 # Indent to your preferred brace format using emacs.  MASON's default
@@ -87,5 +100,20 @@ docs: doc
 indent: 
 	touch ${HOME}/.emacs
 	find ${SRCROOT} -name "*.java" -print -exec emacs --batch --load ~/.emacs --eval='(progn (find-file "{}") (mark-whole-buffer) (setq indent-tabs-mode nil) (untabify (point-min) (point-max)) (indent-region (point-min) (point-max) nil) (save-buffer))' \;
+
+# Print a help message
+help:
+	@ echo Distributed MASON Makefile options
+	@ echo
+	@ echo "make          Builds Distributed MASON"
+	@ echo "make all      (Same thing)"
+	@ echo "make clean    Cleans out all classfiles, checkpoints, and various gunk"
+	@ echo "make docs     Builds the class documentation, found in docs/classsdocs"
+	@ echo "make doc      (Same thing)"
+	@ echo "make jar      Builds, then collects ALL class files into a jar file"
+	@ echo "              called" target/distributed-mason.${VERSION}.jar
+	@ echo "make help     Brings up this message!"
+	@ echo "make indent   Uses emacs to re-indent MASON java files as you'd prefer"
+	@ echo
 
 
