@@ -1,5 +1,3 @@
-//so I think in this version, Person is the agent that corresponds to a Polygon region?
-
 package sim.app.geo.dschellingpolygon;
 
 import sim.app.geo.dschellingpolygon.data.*;
