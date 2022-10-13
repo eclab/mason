@@ -185,6 +185,11 @@ public class Optimize extends Master
         	return false;
         	}
         	
+        if (maximumSteps != 0 && maximumTime != 0)
+        	{
+        	System.err.println("WARNING: mason-steps or mason-time are both > 0.  Models will run until the FIRST one of these is completed.");
+        	}
+        	
         int numTrials = base.getInt(new ec.util.Parameter("mason-num-trials"), null);
 		if (numTrials <= 0) 
 			{
