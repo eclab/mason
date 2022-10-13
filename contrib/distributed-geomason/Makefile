@@ -31,6 +31,12 @@ DIRS=$(addprefix $(SRCROOT)/, $(SRCS))
 
 # Make the main Distributed Geomason code
 all:
+	@ echo This builds Distributed GeoMason
+	@ echo To learn about other options, type 'make help'
+	@ echo In order to build, first be certain that GeoMason and 
+	@ echo Distributed MASON are both installed and in your CLASSPATH
+	@ echo
+
 	mkdir -p ${CLASSROOT}
 	${JAVAC} ${DIRS}
 
@@ -50,7 +56,7 @@ clean:
 # Build the class docs.  They're located in docs/classdocs
 # the "-" at the beginning causes Make to ignore errors from javadoc
 doc:
-	- javadoc -classpath ${CLASSPATH}:${SRCROOT} -protected -d docs/classdocs sim.display.geo sim.util.geo sim.field.geo sim.app.geo.dcampusworld sim.app.geo.dschellingpolygon sim.app.geo.dturkana
+	- javadoc -classpath ${CLASSPATH}:${SRCROOT} -protected -d docs/classdocs sim.display.geo sim.util.geo sim.field.geo
 
 jar: all
 	touch /tmp/manifest.add
@@ -67,4 +73,18 @@ indent:
 	touch ${HOME}/.emacs
 	find ${SRCROOT} -name "*.java" -print -exec emacs --batch --load ~/.emacs --eval='(progn (find-file "{}") (mark-whole-buffer) (setq indent-tabs-mode nil) (untabify (point-min) (point-max)) (indent-region (point-min) (point-max) nil) (save-buffer))' \;
 
+# Print a help message
+help:
+	@ echo Distributed GeoMason Makefile options
+	@ echo
+	@ echo "make          Builds Distributed GeoMason"
+	@ echo "make all      (Same thing)"
+	@ echo "make clean    Cleans out all classfiles, checkpoints, and various gunk"
+	@ echo "make docs     Builds the class documentation, found in docs/classsdocs"
+	@ echo "make doc      (Same thing)"
+	@ echo "make jar      Builds, then collects ALL class files into a jar file"
+	@ echo "              called" target/distributed-mason.${VERSION}.jar
+	@ echo "make help     Brings up this message!"
+	@ echo "make indent   Uses emacs to re-indent MASON java files as you'd prefer"
+	@ echo
 
