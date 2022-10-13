@@ -14266,18 +14266,26 @@ If you're on Linux, or for some reason don't want to or cannot install from Home
 
 \end{enumerate}
 
-\subsection{Install MASON}
-Distributed depends on MASON, so we must install that first.  You can grab the MASON jar file as usual, or build it with the Makefile, or via Maven as below:
+\subsection{Install Distributed MASON}
 
 \begin{enumerate}
-    \item \lstinline[style=Bash]{cd [MASON root dir]}
-    \item Ensure you have git LFS installed, you can do this by running:  \lstinline[style=Bash]{git lfs install}
-    \item \lstinline[style=Bash]{git clone https://github.com/eclab/mason}
-    \item \lstinline[style=Bash]{Download the required libraries from the mason website https://cs.gmu.edu/~eclab/projects/mason/ and place in a "libraries" folder inside of the root project}
+\item  Distributed MASON of course depends on MASON, so we must install that first.  You can grab the MASON jar file as usual, or build it with the Makefile.  You will probably want to install MASON's optional libraries as well.
+%, or via Maven as below:
 
-    \item \lstinline[style=Bash]{mvn clean install}
+%\begin{enumerate}
+%    \item \lstinline[style=Bash]{cd [MASON root dir]}
+%    \item Ensure you have git LFS installed, you can do this by running:  \lstinline[style=Bash]{git lfs install}
+%    \item \lstinline[style=Bash]{git clone https://github.com/eclab/mason}
+%    \item \lstinline[style=Bash]{Download the required libraries from the mason website https://cs.gmu.edu/~eclab/projects/mason/ and place in a "libraries" folder inside of the root project}
+%    \item \lstinline[style=Bash]{mvn clean install}
+%\end{enumerate}
+
+\item In addition to the {\tt mpi.jar} file, Distributed MASON also relies on the Fast Serialization jar file found in the {\tt distributed-libraries.zip} collection.  You can get this from the MASON website.  Install this jar file in your CLASSPATH.
+
+\item Finally we can install Distributed MASON.  The Distributed MASON jar file can be found on the MASON website.  Install this file in your CLASSPATH.also relies on the Fast Serialization jar file found in the {\tt distributed-libraries.zip} collection.  You can get this from the MASON website.  Install this jar file in your CLASSPATH.
 \end{enumerate}
 
+\ignore{
 \subsection{Set up the Distributed MASON Workflow}
 
 Once you've set up this workflow, you won't have to do it again. To rebuild it, you simply need do \lstinline[style=Bash]{mvn clean install}.
@@ -14345,8 +14353,12 @@ If you need to update the \$CLASSPATH because of an update to the directory, do 
         From there, edit and rename as needed. To run/test, use Run as \(\rightarrow\)  Maven install.
     \end{enumerate}
 \end{enumerate}
+}
 
 \section{Running Distributed Mason Applications}
+
+Distributed MASON isn't run like MASON: you have to launch it using {\tt mpirun} to, well, distribute it.
+
 \subsection{Running Applications Locally}
 Currently, you can run the following demos: 
 
