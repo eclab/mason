@@ -11,7 +11,7 @@ CLASSROOT = target/classes
 JAVACFLAGS = -target 1.8 -source 1.8 ${FLAGS} -nowarn -d ${CLASSROOT}
 FLAGS = -g -Xlint:deprecation -cp src/main/java/:${CLASSPATH}
 
-VERSION = 20
+VERSION = 1.7
 
 # Main java files, not including the 3D stuff
 SRCS = \
@@ -55,6 +55,10 @@ DIRS=$(addprefix $(SRCROOT)/, $(SRCS))
 all:
 	@ echo This makes the Geomason code.
 	@ echo To learn about other options, type 'make help'
+	@ echo In order to build, first be certain that the MASON jar is in your CLASSPATH
+	@ echo You also need to have installed the GeoTools and OGR/GDAL suites to build MASON\'s utils
+	@ echo You also need to have installed the geomasonData.${VERSION}.jar file
+	@ echo "(see the GeoMASON webpage)"
 	@ echo
 	mkdir -p ${CLASSROOT}
 	${JAVAC} ${DIRS}
