@@ -13388,7 +13388,13 @@ Next we need to say how long a MASON model should be run using these variables b
 mason-steps = 1000
 \end{verbatim}
 
-Keep in mind that more steps means a longer runtime and thus a longer optimization time.
+Alternatively we can tell MASON to run the simulation until a certain (real-valued) simulation time has been reached:
+\begin{verbatim}
+mason-time = 2500.0
+\end{verbatim}
+
+
+Keep in mind that more steps, or more time, both mean a longer model run length and thus a longer optimization time.
 
 Next we need to how {\it many} MASON models should be run with a particular setting of variables before we can fairly assess them (due to randomness).    This is the number of {\bf trials}.    The final assessment will be the average of the trials.  You'll find that a single trial may be more than sufficient.  
 
@@ -13396,7 +13402,7 @@ Next we need to how {\it many} MASON models should be run with a particular sett
 mason-num-trials = 1
 \end{verbatim}
 
-Keep in mind that more trials means a longer runtime and thus a longer optimization time.
+Keep in mind that more trials means a longer run length and thus a longer optimization time.
 
 When a MASON worker creates a model to be assessed, it can do it in one of two ways.  It can either allocated and build one from scratch, or it an reuse the last one it just ran.  The first case is cleaner but takes time to allocate and set up model.  The second case would be somewhat faster if you cleaned up your model adequately during \method{start()}.   You tell MASON that you'd prefer to reuse your model (not rebuild it from scracth) like this:
 
@@ -14164,7 +14170,7 @@ Distributed MASON does not at present have facilities for:
 \item Multiple fields with different lengths or widths (they must be the same size)
 \end{itemize}
 
-\section{Setting Up Distributed MASON Environment}
+\section{Setting Up the Distributed MASON Environment}
 
 To build Distributed MASON for the first time, you'll need to set up a number of items.   We'll assume in this documentation that you have a Unix-like system (Linux, MacOS).
 
