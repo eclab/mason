@@ -138,21 +138,6 @@ jar: 3d
 	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
 	jar -cvfm target/mason.${VERSION}.jar /tmp/manifest.add -C ${CLASSROOT} .
 
-# Build a distribution.  Cleans, builds 3d, then builds docs, then
-# removes SVN directories
-dist: clean 3d indent doc jar
-	@ echo If the version is being updated, change it here:
-	@ echo "1. sim.engine.SimState.version()"
-	@ echo "2. manual.tex frontmatter (including copyright year)"
-	@ echo "3. Makefile VERSION variable"
-	- touch TODO
-	- rm TODO
-	- find . -name ".svn" -exec rm -rf {} \;
-	- rm repository
-	@ echo "If there were SVN directories, expect this to end in an error."
-	@ echo "Don't worry about it, things are still fine."
-
-
 # Indent to your preferred brace format using emacs.  MASON's default
 # format is Whitesmiths at 4 spaces.  Yes, I know.  Idiosyncratic.
 # Anyway, beware that this is quite slow.  But it works!
@@ -166,15 +151,14 @@ help:
 	@ echo MASON Makefile options
 	@ echo 
 	@ echo "make          Builds the model core, utilities, and 2D code/apps only"
-	@ echo "make all        (Same thing)"
+	@ echo "make all      (Same thing)"
 	@ echo "make 3d       Builds the model core, utilities, and both 2D and 3D code/apps"
 	@ echo "make docs     Builds the class documentation, found in docs/classsdocs"
-	@ echo "make doc        (Same thing)"
+	@ echo "make doc      (Same thing)"
 	@ echo "make clean    Cleans out all classfiles, checkpoints, and various gunk"
-	@ echo "make dist     Does a make clean, make docs, and make 3d, then deletes SVN dirs"
 	@ echo "make jar      Makes 3d, then collects ALL class files into a jar file"
-	@ echo "              called mason.jar.  Heavyweight -- all class files included."
-
+	@ echo "              called" target/mason.${VERSION}.jar
 	@ echo "make help     Brings up this message!"
 	@ echo "make indent   Uses emacs to re-indent MASON java files as you'd prefer"
+	@ echo
 
