@@ -1,5 +1,6 @@
-package sim.display;
+package sim.display.geo;
 
+import sim.display.*;
 import sim.field.continuous.*;
 import sim.field.geo.DGeomVectorField;
 import sim.field.geo.GeomVectorContinuousStorage;

@@ -1,5 +1,6 @@
 package sim.app.geo.dcampusworld.display;
 
+import sim.display.geo.*;
 import sim.display.*;
 import sim.field.geo.GeomVectorField;
 import sim.portrayal.geo.GeomVectorFieldPortrayal;

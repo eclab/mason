@@ -2,9 +2,7 @@
 
 package sim.app.geo.dschellingpolygon;
 
-//import sim.app.geo.dschellingpolygon.data.*;
-import sim.app.geo.schellingpolygon.data.*;
-
+import sim.app.geo.dschellingpolygon.data.*;
 
 
 
@@ -60,8 +58,8 @@ public class DPolySchelling extends DSimState{
 	protected void startRoot() {
         try // to import the data from the shapefile
         {
-            URL wardsFile = SchellingPolygonData.class.getResource("1991_wards_disolved_Project.shp");
-            URL wardsDB  = SchellingPolygonData.class.getResource("1991_wards_disolved_Project.dbf");
+            URL wardsFile = DSchellingPolygonData.class.getResource("1991_wards_disolved_Project.shp");
+            URL wardsDB  = DSchellingPolygonData.class.getResource("1991_wards_disolved_Project.dbf");
 
             //ShapeFileImporter.read(wardsFile, wardsDB, world.getStorage().getGeomVectorField(), DPolygon.class);
             ShapeFileImporter.read(wardsFile, wardsDB, world.getStorage().getGeomVectorField(), Polygon.class);

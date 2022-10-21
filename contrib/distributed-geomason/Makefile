@@ -31,14 +31,12 @@ DIRS=$(addprefix $(SRCROOT)/, $(SRCS))
 
 # Make the main Distributed Geomason code
 all:
-	@ echo This builds Distributed GeoMason
+	@ echo This makes Distributed GeoMason
 	@ echo To learn about other options, type 'make help'
-	@ echo In order to build, first be certain that GeoMason and 
-	@ echo Distributed MASON are both installed and in your CLASSPATH
 	@ echo
-
 	mkdir -p ${CLASSROOT}
 	${JAVAC} ${DIRS}
+	tar -C ${RSRCROOT} -c sim ec | tar -C ${CLASSROOT} -x # Hack to combine resources with class files
 
 # Delete all jmf gunk, checkpoints, backup emacs gunk classfiles,
 # documentation, and odd MacOS X poops
@@ -56,7 +54,7 @@ clean:
 # Build the class docs.  They're located in docs/classdocs
 # the "-" at the beginning causes Make to ignore errors from javadoc
 doc:
-	- javadoc -classpath ${CLASSPATH}:${SRCROOT} -protected -d docs/classdocs sim.display.geo sim.util.geo sim.field.geo
+	- javadoc -classpath ${CLASSPATH}:${SRCROOT} -protected -d docs/classdocs sim.display.geo sim.util.geo sim.field.geo sim.app.geo.dcampusworld sim.app.geo.dschellingpolygon sim.app.geo.dturkana
 
 jar: all
 	touch /tmp/manifest.add
@@ -74,17 +72,17 @@ indent:
 	find ${SRCROOT} -name "*.java" -print -exec emacs --batch --load ~/.emacs --eval='(progn (find-file "{}") (mark-whole-buffer) (setq indent-tabs-mode nil) (untabify (point-min) (point-max)) (indent-region (point-min) (point-max) nil) (save-buffer))' \;
 
 # Print a help message
-help:
+help: 
 	@ echo Distributed GeoMason Makefile options
-	@ echo
-	@ echo "make          Builds Distributed GeoMason"
+	@ echo 
+	@ echo "make          Builds the model core, utilities, and 2D code/apps only"
 	@ echo "make all      (Same thing)"
-	@ echo "make clean    Cleans out all classfiles, checkpoints, and various gunk"
 	@ echo "make docs     Builds the class documentation, found in docs/classsdocs"
 	@ echo "make doc      (Same thing)"
-	@ echo "make jar      Builds, then collects ALL class files into a jar file"
-	@ echo "              called" target/distributed-mason.${VERSION}.jar
+	@ echo "make clean    Cleans out all classfiles, checkpoints, and various gunk"
+	@ echo "make jar      Makes all, then collects ALL class files into a jar file"
+	@ echo "              called" target/distributed-geomason.${VERSION}.jar
 	@ echo "make help     Brings up this message!"
-	@ echo "make indent   Uses emacs to re-indent MASON java files as you'd prefer"
+	@ echo "make indent   Uses emacs to re-indent java files as you'd prefer"
 	@ echo
 

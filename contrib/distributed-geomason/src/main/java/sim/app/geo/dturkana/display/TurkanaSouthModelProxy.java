@@ -3,6 +3,7 @@ package sim.app.geo.dturkana.display;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+import sim.display.geo.*;
 import sim.display.Continuous2DProxy;
 import sim.display.DenseGrid2DProxy;
 import sim.display.DoubleGrid2DProxy;

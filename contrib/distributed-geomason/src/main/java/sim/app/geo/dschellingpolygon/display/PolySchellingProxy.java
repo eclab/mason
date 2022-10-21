@@ -1,6 +1,6 @@
 package sim.app.geo.dschellingpolygon.display;
 
-import sim.display.GeomVectorContinuousStorageProxy;
+import sim.display.geo.*;
 import sim.display.SimStateProxy;
 
 public class PolySchellingProxy extends SimStateProxy{
