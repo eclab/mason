@@ -311,7 +311,7 @@ public class SimState implements java.io.Serializable
         return state;
         }
     
-    static boolean keyExists(String key, String[] args)
+    protected static boolean keyExists(String key, String[] args)
         {
         for(int x=0;x<args.length;x++)
             if (args[x].equalsIgnoreCase(key))
@@ -319,7 +319,7 @@ public class SimState implements java.io.Serializable
         return false;
         }
 
-    static String argumentForKey(String key, String[] args)
+    protected static String argumentForKey(String key, String[] args)
         {
         for(int x=0;x<args.length-1;x++)  // if a key has an argument, it can't be the last string
             if (args[x].equalsIgnoreCase(key))
