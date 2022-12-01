@@ -43,11 +43,21 @@ public abstract class DObject implements java.io.Serializable
     /** Sets the ID of the object -- do not call this method
     	unless you are implementing readExternal and need to set up the ID.  
     	Be careful. */
-    protected void setID(long ID)
+ 	void setID(long ID)
         {
         this.firstPID = (int)(ID >>> 32);
         this.localID = (int)(ID & 0x0000FFFFL);
         }
+
+	public void readExternal(java.io.ObjectInput in) throws java.io.IOException
+		{
+		setID(in.readLong());
+		}
+		
+	public void writeExternal(java.io.ObjectOutput out) throws java.io.IOException
+		{
+		out.writeLong(getID());
+		}
 
     public DObject()
         {
