@@ -31,28 +31,41 @@ public abstract class DObject implements java.io.Serializable
             return idCounter++;
         }
 
-    int firstpid; // this is the PID of the *original* processor on which this object was created
-    int localid; // this is a unique ID special to processor PID
+    int firstPID; // this is the PID of the *original* processor on which this object was created
+    int localID; // this is a unique ID special to processor PID
 
     /** Returns a unique system-wideID to this object. */
     public long getID()
         {
-        return (((long) firstpid) << 32) | localid;
+        return (((long) firstPID) << 32) | localID;
         }
+
+    /** Returns a unique system-wideID to this object. */
+    protected int getFirstPID()
+        {
+        return firstPID;
+        }
+
+    /** Returns a unique system-wideID to this object. */
+    protected int getlocalID()
+        {
+        return localID;
+        }
+
 
     /** Sets the ID of the object -- do not call this method
     	unless you are implementing readExternal and need to set up the ID.  
     	Be careful. */
-    protected void setID(int firstpid, int localid)
+    protected void setID(int firstPID, int localid)
         {
-        this.firstpid = firstpid;
-        this.localid = localid;
+        this.firstPID = firstPID;
+        this.localID = localid;
         }
 
     public DObject()
         {
-        firstpid = DSimState.getPID(); // called originally to get the FIRST PID
-        localid = nextCounter();
+        firstPID = DSimState.getPID(); // called originally to get the FIRST PID
+        localID = nextCounter();
         }
 
     public boolean equals(Object other)
@@ -64,20 +77,20 @@ public abstract class DObject implements java.io.Serializable
         else if (!(other instanceof DObject))
             return false;
         else
-            return (firstpid == ((DObject) other).firstpid && localid == ((DObject) other).localid);
+            return (firstPID == ((DObject) other).firstPID && localID == ((DObject) other).localID);
         }
 
     public final int hashCode()
         {
         // stolen from Int2D.hashCode()
-        int y = this.localid;
+        int y = this.localID;
         y += ~(y << 15);
         y ^= (y >>> 10);
         y += (y << 3);
         y ^= (y >>> 6);
         y += ~(y << 11);
         y ^= (y >>> 16);
-        return firstpid ^ y;
+        return firstPID ^ y;
         }
 
     /**
@@ -86,7 +99,7 @@ public abstract class DObject implements java.io.Serializable
      */
     public final String toIDString()
         {
-        return firstpid + "/" + localid;
+        return firstPID + "/" + localID;
         }
 
     /** Returns a string consisting of the form CLASSNAME:UNIQUEID@CURRENTPID */
