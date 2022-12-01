@@ -31,8 +31,23 @@ public abstract class DObject implements java.io.Serializable
             return idCounter++;
         }
 
-    public final int firstpid; // this is the PID of the *original* processor on which this object was created
-    public final int localid; // this is a unique ID special to processor PID
+    int firstpid; // this is the PID of the *original* processor on which this object was created
+    int localid; // this is a unique ID special to processor PID
+
+    /** Returns a unique system-wideID to this object. */
+    public long getID()
+        {
+        return (((long) firstpid) << 32) | localid;
+        }
+
+    /** Sets the ID of the object -- do not call this method
+    	unless you are implementing readExternal and need to set up the ID.  
+    	Be careful. */
+    protected void setID(int firstpid, int localid)
+        {
+        this.firstpid = firstpid;
+        this.localid = localid;
+        }
 
     public DObject()
         {
@@ -63,12 +78,6 @@ public abstract class DObject implements java.io.Serializable
         y += ~(y << 11);
         y ^= (y >>> 16);
         return firstpid ^ y;
-        }
-
-    /** Returns a unique system-wideID to this object. */
-    public final long ID()
-        {
-        return (((long) firstpid) << 32) | localid;
         }
 
     /**

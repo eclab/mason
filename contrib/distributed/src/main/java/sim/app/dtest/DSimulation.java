@@ -54,7 +54,6 @@ public class DSimulation extends DSimState
             System.exit(0);
             }
 
-        // if (schedule.getSteps() % 10 == 0 ) {
         String filename = dirname + File.separator +
             getPartition().getPID() + "." + (schedule.getSteps());
 
@@ -75,16 +74,7 @@ public class DSimulation extends DSimState
             e.printStackTrace();
             }
 
-        //for (DAgent f : ((ContinuousStorage<DAgent>) field.getHaloGrid().getStorage())
-        //              .getObjects(field.getHaloGrid().getStorage().getShape()))
-        //{
-//                      out.println("agent " + f.getId() + " in position " + f.loc + " num neighbours: " + f.neighbours.size() + " neighbours " + f.neighbours);
-        //      out.println("agent " + f.ID() + " in position " + f.loc + " num neighbours: " + f.neighbours.size()
-        //                      + " neighbours " + f.neighbours);
-        //}
-
         out.close();
-        // }
 
         }
 

@@ -184,7 +184,7 @@ public class DObjectGrid2D<T extends DObject> extends DAbstractGrid2D
             }
         else
             {
-            halo.removeAgent(p, a.ID());
+            halo.removeAgent(p, a.getID());
             }
         }
                 

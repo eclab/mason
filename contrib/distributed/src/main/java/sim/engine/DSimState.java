@@ -1194,9 +1194,9 @@ public class DSimState extends SimState
                                     migratedAgents.add(stopping);
 
                                     // here the agent is removed from the old location TOCHECK!!!
-                                    // haloGrid2D.removeLocal(p, stopping.ID());
+                                    // haloGrid2D.removeLocal(p, stopping.getID());
                                                                         
-                                    st.removeObject(p, stopping.ID());
+                                    st.removeObject(p, stopping.getID());
                                     }
 
                                 // not stoppable (transport a double or something) transporter call transportObject?

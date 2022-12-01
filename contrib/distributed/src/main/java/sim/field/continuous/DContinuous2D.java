@@ -1,3 +1,4 @@
+
 /*
   Copyright 2022 by Sean Luke and George Mason University
   Licensed under the Academic Free License version 3.0
@@ -85,13 +86,13 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
     /** Returns the local (including halo region) location of the given object, if any, else null.*/
     public Double2D getObjectLocationLocal(T t)
         {
-        return getObjectLocationLocal(t.ID());
+        return getObjectLocationLocal(t.getID());
         }
 
     /** Returns true if the object is located locally, including in the halo region.  */
     public boolean containsLocal(T t) 
         {
-        return (getObjectLocationLocal(t.ID()) != null);
+        return (getObjectLocationLocal(t.getID()) != null);
         }
 
     /** Returns true if the object is located locally, including in the halo region.  */
@@ -109,7 +110,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
     /** Returns true if the object is located exactly at the given point locally, including the halo region. */
     public boolean containsLocal(Double2D p, T t) 
         {
-        return containsLocal(p, t.ID());
+        return containsLocal(p, t.getID());
         }
 
     /** Returns all the local data located in discretized cell in the <i>vicinity</i> of the given point.  This point
@@ -185,7 +186,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
                 if (oldCell != null)
                     {
                                         
-                    oldCell.remove(t.ID());
+                    oldCell.remove(t.getID());
                     if (oldCell.isEmpty() && storage.removeEmptyBags)
                         {
                         //storage.setCell(oldLoc, null);
@@ -202,7 +203,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
                     }
                                 
                                 
-                newCell.put(t.ID(), t);
+                newCell.put(t.getID(), t);
                 }
                         
 
@@ -216,13 +217,13 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
                 newCell = new HashMap<>();
                 storage.setCell(p, newCell);
                 }
-            newCell.put(t.ID(), t);
+            newCell.put(t.getID(), t);
                         
             }
 
                 
         HashMap<Long, Double2D> map = storage.getLocations();
-        map.put(t.ID(), p);
+        map.put(t.getID(), p);
                 
 
         }
@@ -243,7 +244,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
             {
             HashMap<Long, T> cell = getCellLocal(loc);
             if (cell != null)
-                cell.remove(t.ID());
+                cell.remove(t.getID());
             if (cell.isEmpty() && storage.removeEmptyBags)
                 {
                 //storage.setCell(loc, null);
@@ -265,7 +266,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
         else
             {
             if (cell != null)
-                cell.remove(t.ID());
+                cell.remove(t.getID());
             if (cell.isEmpty() && storage.removeEmptyBags)
                 {
                 //storage.setCell(p, null);
@@ -279,7 +280,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
     /** Removes the object, which must be local and exactly at the given location.  If it doesn't exist, returns FALSE. */
     public boolean removeLocal(Double2D p, T t)
         {
-        return removeLocal(t.ID());
+        return removeLocal(t.getID());
         }
                 
     /** Returns a Promise which will eventually (immediately or within one timestep)
@@ -317,7 +318,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
         the local and halo regions. */
     public void remove(Double2D p, T t) 
         {
-        remove(p, t.ID());
+        remove(p, t.getID());
         }
 
 
@@ -398,7 +399,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
             }
         else
             {
-            halo.removeAgent(p, agent.ID());
+            halo.removeAgent(p, agent.getID());
             }
         }
                 
@@ -450,7 +451,7 @@ public class DContinuous2D<T extends DObject> extends DAbstractGrid2D
                 else if (stop instanceof DTentativeStep)
                     {
                                         
-                    //System.out.println("xy "+((DParticle)agent).position+" from"+getObjectLocationLocal(agent.ID())+" to "+to);
+                    //System.out.println("xy "+((DParticle)agent).position+" from"+getObjectLocationLocal(agent.getID())+" to "+to);
                     
                     DTentativeStep _stop = (DTentativeStep)stop;
                     double time = _stop.getTime();

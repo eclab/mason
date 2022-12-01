@@ -159,7 +159,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
     /** Returns the location of the given object. */
     public Double2D getObjectLocation(final T obj)
         {
-        return locations.get(obj.ID());
+        return locations.get(obj.getID());
         }
 
     /** Returns the location of the object with the given ID. */
@@ -175,11 +175,11 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
         {
         Double2D pDouble = buildDouble2D(p);
 //              System.out.println("add Object: " + m + "; " + obj);
-        final Double2D old = locations.put(obj.ID(), pDouble);
+        final Double2D old = locations.put(obj.getID(), pDouble);
 
         if (old != null)
-            getCell(old).remove(obj.ID());
-        getCell(pDouble).put(obj.ID(), obj);
+            getCell(old).remove(obj.getID());
+        getCell(pDouble).put(obj.getID(), obj);
         }
 
     public T getObject(Number2D p, long id)
@@ -203,7 +203,7 @@ public class ContinuousStorage<T extends DObject> extends GridStorage<T>
 
         if (cell != null)
             for (final T t : cell.values())
-                if (locations.get(t.ID()).equals(pDouble))
+                if (locations.get(t.getID()).equals(pDouble))
                     objects.add(t);
 
         return objects;
@@ -230,7 +230,7 @@ final ArrayList<T> objects = new ArrayList<>();
 
 if (getCell(pDouble) != null)
 for (final T t : getCell(pDouble).values())
-if (locations.get(t.ID()).equals(pDouble))
+if (locations.get(t.getID()).equals(pDouble))
 objects.add(t);
 
 return objects;
@@ -281,7 +281,7 @@ return objects;
         {
         for (T obj : getObjects(r))
             {
-            removeObject(obj.ID());
+            removeObject(obj.getID());
             }
         }
 
@@ -309,7 +309,7 @@ return objects;
                     {
                     for (T obj : cell.values()) // need to offset/discretize!
                         {
-                        if (r.contains(locations.get(obj.ID())))
+                        if (r.contains(locations.get(obj.getID())))
                             {
                             objs.add(obj);
                             }
@@ -334,7 +334,7 @@ return objects;
                 {
                 objs.add(obj);
                 // Append the object's location relative to the rectangle
-                objs.add(locations.get(obj.ID()).subtract(shape.ul()).subtract(rect.ul()));
+                objs.add(locations.get(obj.getID()).subtract(shape.ul()).subtract(rect.ul()));
                 }
             ret.add(objs);
             }

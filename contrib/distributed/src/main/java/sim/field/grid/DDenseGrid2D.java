@@ -75,7 +75,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
             {
             for(T elt : list)
                 {
-                if (elt.ID() == id)
+                if (elt.getID() == id)
                     return true;
                 }
             return false;
@@ -242,7 +242,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
         //toHaloToroidal
                 
         else
-            return halo.getFromRemote(p, obj.ID());
+            return halo.getFromRemote(p, obj.getID());
         }
 
     /** Adds the data to the given point.  This point can be outside
@@ -263,7 +263,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
         if (isLocal(p))
             removeLocal(p, t);
         else
-            halo.removeFromRemote(p, obj.ID());
+            halo.removeFromRemote(p, obj.getID());
         }
                 
 //      /** Removes the data (which must be a DObject) from the given point.  This point can be outside
@@ -274,7 +274,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 //              if (isLocal(p))
 //                      removeMultiplyLocal(p, t);
 //              else
-//                      halo.removeFromRemote(p, obj.ID(), true);
+//                      halo.removeFromRemote(p, obj.getID(), true);
 //              }
 
     /** Removes all data from the given point. This point can be outside the local and halo regions. 
@@ -364,7 +364,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
             }
         else
             {
-            halo.removeAgent(p, a.ID());
+            halo.removeAgent(p, a.getID());
             }
         }
                 
@@ -403,7 +403,7 @@ public class DDenseGrid2D<T extends DObject> extends DAbstractGrid2D
 //                      }
 //              else
 //                      {
-//                      halo.removeAgent(p, a.ID(), true);
+//                      halo.removeAgent(p, a.getID(), true);
 //                      }
 //              }
 

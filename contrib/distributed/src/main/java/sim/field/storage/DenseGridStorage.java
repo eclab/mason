@@ -235,7 +235,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
         if (ts != null)
             {
             for (T t : ts)
-                if (t.ID() == id)
+                if (t.getID() == id)
                     return t;
             }
         return null;
@@ -268,7 +268,7 @@ public class DenseGridStorage<T extends DObject> extends GridStorage<T>
             for (int i = 0; i < array[idx].size(); i++) 
                 {
                 T t = array[idx].get(i);
-                if (t.ID() == id) 
+                if (t.getID() == id) 
                     {
                     result = removeFast(array[idx], i);
                     if (array[idx].size() == 0 && removeEmptyBags)
