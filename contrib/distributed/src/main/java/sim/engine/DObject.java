@@ -46,7 +46,7 @@ public abstract class DObject implements java.io.Serializable
     protected void setID(long ID)
         {
         this.firstPID = (int)(ID >>> 32);
-        this.localID = (int)(ID & 0xFFFF);
+        this.localID = (int)(ID & 0x0000FFFFL);
         }
 
     public DObject()
