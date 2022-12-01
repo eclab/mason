@@ -40,25 +40,13 @@ public abstract class DObject implements java.io.Serializable
         return (((long) firstPID) << 32) | localID;
         }
 
-    /** Returns the firstPID portion of the object's ID. */
-    protected int getFirstPID()
-        {
-        return firstPID;
-        }
-
-    /** Returns the localID portion of the object's ID. */
-    protected int getLocalID()
-        {
-        return localID;
-        }
-
     /** Sets the ID of the object -- do not call this method
     	unless you are implementing readExternal and need to set up the ID.  
     	Be careful. */
-    protected void setID(int firstPID, int localid)
+    protected void setID(long ID)
         {
-        this.firstPID = firstPID;
-        this.localID = localid;
+        this.firstPID = (int)(ID >>> 32);
+        this.localID = (int)(ID & 0xFFFF);
         }
 
     public DObject()
