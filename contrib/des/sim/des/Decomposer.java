@@ -17,7 +17,7 @@ import java.awt.*;
    At present only one receiver may be attached to a given resource type, though this may change.
 **/
 
-public class Decomposer extends Provider implements Receiver
+public class Decomposer extends Middleman
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
         {
@@ -27,10 +27,8 @@ public class Decomposer extends Provider implements Receiver
     private static final long serialVersionUID = 1;
 
     HashMap<Integer, Receiver> output;
+    Resource typicalReceived;
     
-    public Resource getTypicalReceived() { return typical; }
-    public boolean hideTypicalReceived() { return true; }
-
     void throwNotCompositeEntity(Entity res)
         {
         throw new RuntimeException("The provided entity " + res + " was not composite (its storage didn't consist of an array of Resources).");
@@ -43,10 +41,22 @@ public class Decomposer extends Provider implements Receiver
 
     public Decomposer(SimState state, Entity typical)
         {
-        super(state, typical);
+        super(state, null);
+        typicalReceived = typical;
         output = new HashMap<Integer, Receiver>();
         }
                 
+ 	/** Anything is allowed in theory. */
+    public Resource getTypicalProvided() 
+    	{ 
+    	return null; 
+    	}
+
+    public Resource getTypicalReceived() 
+    	{ 
+    	return typicalReceived; 
+    	}
+
     /**
        Registers a receiver.  Only one receiver may be registered for a given type.
        If a receiver cannot be registered because another has already been registered
@@ -85,7 +95,7 @@ public class Decomposer extends Provider implements Receiver
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {       
         if (getRefusesOffers()) { return false; }
-        if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
+        if (!getTypicalReceived().isSameType(amount)) throwUnequalTypeException(amount);
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
@@ -131,8 +141,4 @@ public class Decomposer extends Provider implements Receiver
         {
         // do nothing
         }
-        
-    boolean refusesOffers = false;
-    public void setRefusesOffers(boolean value) { refusesOffers = value; }
-    public boolean getRefusesOffers() { return refusesOffers; }
     }

@@ -16,7 +16,7 @@ import java.awt.*;
 
 /** 
     A subclass of Source which, when stepped, provides resources to Receivers by first requesting them
-    from a Provider via a pull operation (calling provide()).  The amount of resources and
+    from a Provider via a pull operation (calling offer()).  The amount of resources and
     the timing of the steps are exactly the same as described in Source.  Unlike Source, capacity
     is ignored and getCapacity() and setCapacity() do nothing.
         
@@ -146,7 +146,7 @@ public class Extractor extends Source implements Receiver
                 for(Provider p : providers)
                     {
                     if (acceptValue < 0) break;
-                    boolean r = p.provide(this, acceptValue);
+                    boolean r = p.offer(this, acceptValue);
                     result = result || r;
                     if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
                     if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
@@ -159,7 +159,7 @@ public class Extractor extends Source implements Receiver
                     {
                     if (acceptValue < 0) break;
                     Provider p = providers.get(i);
-                    boolean r = p.provide(this, acceptValue);
+                    boolean r = p.offer(this, acceptValue);
                     result = result || r;
                     if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
                     if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
@@ -174,7 +174,7 @@ public class Extractor extends Source implements Receiver
                     if (acceptValue < 0) break;
                     Provider p = nextShuffledProvider();
                     if (p == null) break;		// all done
-                    boolean r = p.provide(this, acceptValue);
+                    boolean r = p.offer(this, acceptValue);
                     result = result || r;
                     if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
                     if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
@@ -190,7 +190,7 @@ public class Extractor extends Source implements Receiver
                 if (requestDistribution == null)  // select uniformly
                     {
                     Provider p = providers.get(state.random.nextInt(size));
-                    result = p.provide(this, amt);
+                    result = p.offer(this, amt);
                     }
                 else
                     {
@@ -206,7 +206,7 @@ public class Extractor extends Source implements Receiver
                         }
                     else
                         {
-                        result = providers.get(val).provide(this, amt);
+                        result = providers.get(val).offer(this, amt);
                         }
                     }
                 }
@@ -226,7 +226,7 @@ public class Extractor extends Source implements Receiver
                     {
                     Provider p = selectProvider(providers);
                     if (p == null) break;
-                    p.provide(this, amt);
+                    p.offer(this, amt);
                     }
                 }
             break;
@@ -285,12 +285,12 @@ public class Extractor extends Source implements Receiver
        
     Receiver distinguishedReceiver = null;
     
-    public boolean provide(Receiver receiver)
+    public boolean offer(Receiver receiver)
         {
-        return provide(receiver, Double.POSITIVE_INFINITY);
+        return offer(receiver, Double.POSITIVE_INFINITY);
         }
 
-    public boolean provide(Receiver receiver, double atMost)
+    public boolean offer(Receiver receiver, double atMost)
         {
         if (requesting) return false;		// break cycles
         

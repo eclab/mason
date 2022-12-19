@@ -36,6 +36,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
     int rescheduleOrdering = 0;
     boolean autoSchedules = true;
     boolean dropsResourcesBeforeUpdate = true;
+    boolean includesRipeResourcesInTotal = false;
     
     /** Returns in an array all the Resources currently being delayed and not yet ready to provide,
         along with their timestamps (when they are due to become available), combined as a DelayNode.  
@@ -115,6 +116,28 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         {
         this(state, 1.0, typical);
         }
+        
+    /** Returns whether the ripe resources (no longer in the delay queue) should be included as part of the delay's
+    	total resource count for purposes of comparing against its capacity to determine if it's full. Note that
+    	if setDropsResourcesBeforeUpdate() is TRUE, then the ripe resources will be included PRIOR to when drop()
+    	is called, but they disappear afterwards.  drop() is called during offerReceivers(), which in turn may
+    	be called during step() after update().
+    	 */
+    public boolean getIncludesRipeResourcesInTotal()
+    	{
+    	return includesRipeResourcesInTotal;
+    	}
+    	
+    /** Sets whether the ripe resources (no longer in the delay queue) should be included as part of the delay's
+    	total resource count for purposes of comparing against its capacity to determine if it's full. Note that
+    	if setDropsResourcesBeforeUpdate() is TRUE, then the ripe resources will be included PRIOR to when drop()
+    	is called, but they disappear afterwards.  drop() is called during offerReceivers(), which in turn may
+    	be called during step() after update().
+    	 */
+    public void setIncludesRipeResourcesInTotal(boolean val)
+    	{
+		includesRipeResourcesInTotal = val;
+    	}
 
     /** Accepts up to CAPACITY of the given resource and places it in the delay,
         then auto-reschedules the delay if that feature is on. */
@@ -133,7 +156,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
         if (entities == null)
             {
             CountableResource cr = (CountableResource)amount;
-            double maxIncoming = Math.min(Math.min(capacity - totalDelayedResource, atMost), cr.getAmount());
+            double maxIncoming = Math.min(Math.min(getCapacity() - totalDelayedResource - (getIncludesRipeResourcesInTotal() ? resource.getAmount() : 0), atMost), cr.getAmount());
             if (maxIncoming == 0 || maxIncoming < atLeast) return false;
                 
             CountableResource token = (CountableResource)(cr.duplicate());
@@ -145,7 +168,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
             }
         else
             {
-            if (delayQueue.size() >= capacity) return false; // we're at capacity
+            if (delayQueue.size() + (getIncludesRipeResourcesInTotal() ? entities.size() : 0) >= getCapacity()) return false; // we're at capacity
             delayQueue.add(new DelayNode(amount, nextTime, provider));
             totalDelayedResource += 1;            
             totalReceivedResource += 1.0;
@@ -239,7 +262,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
     	boolean returnval = super.offerReceivers(receivers);
 
     	if (slackProvider != null && getCapacity() > getDelayed())
-    		slackProvider.provide(this);
+    		slackProvider.offer(this);
     	return returnval;
     	}
     	

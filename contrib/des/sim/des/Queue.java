@@ -21,7 +21,7 @@ import java.awt.*;
     make an offer if possible to any Receiver that requests one via provide(...). 
 */
 
-public class Queue extends Provider implements Receiver, Steppable, StatReceiver
+public class Queue extends Middleman implements Steppable, StatReceiver
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
         {
@@ -29,9 +29,6 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
             getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
         }
     private static final long serialVersionUID = 1;
-
-    public Resource getTypicalReceived() { return typical; }
-    public boolean hideTypicalReceived() { return true; }
 
     void throwInvalidCapacityException(double capacity)
         {
@@ -84,7 +81,7 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
         if (getRefusesOffers()) { return false; }
         if (isOffering()) throwCyclicOffers();  // cycle
         
-        if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
+        if (!getTypicalReceived().isSameType(amount)) throwUnequalTypeException(amount);
 
         if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
             throwInvalidAtLeastAtMost(atLeast, atMost);
@@ -133,9 +130,5 @@ public class Queue extends Provider implements Receiver, Steppable, StatReceiver
         super.reset(state);
         totalReceivedResource = 0; 
         }
-        
-    boolean refusesOffers = false;
-    public void setRefusesOffers(boolean value) { refusesOffers = value; }
-    public boolean getRefusesOffers() { return refusesOffers; }
     }
         

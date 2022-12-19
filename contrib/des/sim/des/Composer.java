@@ -14,15 +14,14 @@ import java.awt.*;
 
 /**
    A composer composes multiple resources received from a provider into a single Entity to offer to
-   downstream receivers.  To do this you provide a TEMPLATE for the composer, which specifies which
-   entities must be present in the composition, and how much (min, max) of each.  When this template
-   is filled properly, the composer can build the entity and send it on.  It will send it on
-   immediately, upon receiving the last resource, if getOffersImmediately() is true (by default it is).
-   Othewise it will wait until step() is called.  Thus you only need (and only should) schedule
-   the Composer if you have turned off setOffersImmediately(false).
+   downstream receivers.  To do this you specify which entities must be present in the composition, 
+   and how much (min, max) of each.  When the composer can meet the minimums, it will build the entity 
+   and send it on immediately upon receiving the last required resource, if getOffersImmediately() 
+   is true (by default it is). Othewise it will wait until step() is called.  Thus you only need 
+   (and only should) schedule the Composer if you have turned off setOffersImmediately(false).
 **/
 
-public class Composer extends Provider implements Receiver
+public class Composer extends Middleman
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
         {
@@ -31,9 +30,6 @@ public class Composer extends Provider implements Receiver
         }
 
     private static final long serialVersionUID = 1;
-
-    public Resource getTypicalReceived() { return typical; }
-    public boolean hideTypicalReceived() { return true; }
 
     void throwDuplicateType(Resource res)
         {
@@ -268,8 +264,11 @@ public class Composer extends Provider implements Receiver
         {
         deploy();
         }
-        
-    boolean refusesOffers = false;
-    public void setRefusesOffers(boolean value) { refusesOffers = value; }
-    public boolean getRefusesOffers() { return refusesOffers; }
+
+	/** Anything is allowed in theory. */
+    public Resource getTypicalReceived() 
+    	{ 
+    	return null; 
+    	}
+
     }

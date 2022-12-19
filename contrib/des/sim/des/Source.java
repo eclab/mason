@@ -286,11 +286,11 @@ public class Source extends Provider implements Steppable
         
     /** Builds *amt* number of Entities and adds them to the entities list.  
         The amount could be a real-value, in which it should be
-        simply rounded down to the nearest positive integer >= 0.  By default this
+        simply rounded to the nearest positive integer >= 0.  By default this
         generates entities using buildEntity().  */
     protected void buildEntities(double amt)
         {
-        for(int i = 0; i < Math.round(amt); i++)
+        for(int i = 0; i < Math.round(amt); i++)					// FIXME: should this be roundor floor?
             {
             if (entities.size() < capacity)
                 entities.add(buildEntity());
@@ -304,7 +304,7 @@ public class Source extends Provider implements Steppable
         {
         CountableResource res = (CountableResource)resource;
         if (res.isCountable())
-            amt = Math.round(amt);
+            amt = Math.round(amt);								// FIXME: should this be roundor floor?
                                                                                                                                         
         res.increase(amt);
         if (res.getAmount() > capacity)

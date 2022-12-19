@@ -38,23 +38,23 @@ public abstract class Multi extends DESPortrayal implements Resettable, Parented
 
     /** Called when a Multi provider receives a request to make an offer.  The provider in question is specified by its providerPort. 
         Override this to make an offer if you see fit by calling offer(...).  By default this method returns false.  */
-    protected boolean provide(int providerPort, Receiver receiver, Resource resource, double atMost)
+    protected boolean offer(int providerPort, Receiver receiver, Resource resource, double atMost)
         {
         return false;
         }
         
-    /** Instructs a Multi receiver to ask some provider to make an offer by calling its provide(..., atMost) method.
+    /** Instructs a Multi receiver to ask some provider to make an offer by calling its offer(..., atMost) method.
         The receiver in question is specified by its receiverPort. */
-    protected boolean request(int receiverPort, Provider provider, double atMost)
+    protected boolean offer(int receiverPort, Provider provider, double atMost)
         {
-        return provider.provide(multiReceivers[receiverPort], atMost);
+        return provider.offer(multiReceivers[receiverPort], atMost);
         }
 
-    /** Instructs a Multi receiver to ask some provider to make an offer by calling its provide(...) method.
+    /** Instructs a Multi receiver to ask some provider to make an offer by calling its offer(...) method.
         The receiver in question is specified by its receiverPort. */
-    protected boolean request(int receiverPort, Provider provider)
+    protected boolean offer(int receiverPort, Provider provider)
         {
-        return provider.provide(multiReceivers[receiverPort]);
+        return provider.offer(multiReceivers[receiverPort]);
         }
         
     /** Instructs a Multi provider to ask offer to make an offer by calling offerReceivers(...) method, and then
@@ -123,7 +123,7 @@ public abstract class Multi extends DESPortrayal implements Resettable, Parented
                 
                 
     /** The subclass of Provider used internally by Multi.  This is largely a stub which connects methods to 
-        Multi's internal provide() and offerReceivers() methods. */
+        Multi's internal offer() and offerReceivers() methods. */
     public class MultiProvider extends Provider
         {
         int providerPort;
@@ -194,12 +194,12 @@ public abstract class Multi extends DESPortrayal implements Resettable, Parented
             return result;
             }
                 
-        /** Routes to Multi.provide(...) */
-        public boolean provide(Receiver receiver, double atMost)
+        /** Routes to Multi.offer(...) */
+        public boolean offer(Receiver receiver, double atMost)
             {
             if (!isPositiveNonNaN(atMost))
                 throwInvalidNumberException(atMost);
-            return Multi.this.provide(providerPort, receiver, typical, atMost);
+            return Multi.this.offer(providerPort, receiver, typical, atMost);
             }
 
         public MultiProvider(SimState state, Resource typical, int providerPort)
@@ -220,7 +220,7 @@ public abstract class Multi extends DESPortrayal implements Resettable, Parented
         } 
 
     /** The subclass of Receiver used internally by Multi.  This is largely a stub which connects methods to 
-        Multi's internal accept() and (in a roundabout fashion) request() methods. */
+        Multi's internal accept() and (in a roundabout fashion) offer() methods. */
     public class MultiReceiver extends Sink
         {
         int receiverPort;

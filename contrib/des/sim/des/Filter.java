@@ -21,16 +21,13 @@ import java.awt.*;
     calls a new offerReceiver(...) method that uses the three stashed values. 
  */
 
-public abstract class Filter extends Provider implements Receiver, Resettable
+public abstract class Filter extends Middleman implements Resettable
     {
     private static final long serialVersionUID = 1;
 
     Resource _amount;
     double _atLeast;
     double _atMost;
-
-    public Resource getTypicalReceived() { return typical; }
-    public boolean hideTypicalReceived() { return true; }
 
     public Filter(SimState state, Resource typical)
         {
@@ -110,8 +107,4 @@ public abstract class Filter extends Provider implements Receiver, Resettable
         process(oldAmount, amount);
         return result;
     	}
-
-    boolean refusesOffers = false;
-    public void setRefusesOffers(boolean value) { refusesOffers = value; }
-    public boolean getRefusesOffers() { return refusesOffers; }
     }

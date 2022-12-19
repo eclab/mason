@@ -13,6 +13,8 @@ import java.util.*;
 /**
    A receiver of resources.  Receivers can ACCEPT offers from providers (or refuse them).
    Receivers can also register themselves with providers to be informed of offers.
+   See Middleman as an abstract Receiver+Provider, and Filter as a common abstract
+   subclass of Middleman.
 */
 
 public interface Receiver extends Named, Parented, Resettable
@@ -46,7 +48,9 @@ public interface Receiver extends Named, Parented, Resettable
     
     /** Returns the typical kind of resource the receiver can accept. 
         When a Receiver is also a Provider, this is very often implemented
-        simply by calling getTypicalProvided() */
+        simply by calling getTypicalProvided().  If (rarely) the Receiver 
+        may receive a variety of types, such as a Composer, then this method should return null. 
+ */
     public Resource getTypicalReceived();
     
     /** Sets whether the receiver currently refuses all offers.  The default should be FALSE. */

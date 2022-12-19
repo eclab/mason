@@ -19,7 +19,7 @@ import java.awt.*;
    if the receiver accepted the offer.
 */
 
-public abstract class If extends Provider implements Receiver
+public abstract class If extends Middleman
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
         {
@@ -80,12 +80,6 @@ public abstract class If extends Provider implements Receiver
         return "If@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ")";
         }  
  
-    public Resource getTypicalReceived() { return typical; }
-    public boolean hideTypicalReceived() { return true; }
-    boolean refusesOffers = false;
-    public void setRefusesOffers(boolean value) { refusesOffers = value; }
-    public boolean getRefusesOffers() { return refusesOffers; }
-                        
     /**
        If the offer policy is OFFER_POLICY_SELECT, then when the receivers are non-empty,
        this method will be called to specify which receiver should be offered the given resource.

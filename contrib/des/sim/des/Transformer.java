@@ -39,33 +39,38 @@ public class Transformer extends Filter
 
     private static final long serialVersionUID = 1;
 
-    Resource typicalIn;
+    Resource typicalReceived;
     double conversion;
         
-    public Transformer(SimState state, CountableResource typicalOut, Resource typicalIn, double conversion)
+    public Transformer(SimState state, CountableResource typicalOut, Resource typicalReceived, double conversion)
         {
         // typical being our _amount CountableResource
         super(state, typicalOut);
-        this.typicalIn = typicalIn.duplicate();
+        this.typicalReceived = typicalReceived.duplicate();
         this.conversion = conversion;
-        if (typicalIn instanceof Entity)
+        if (typicalReceived instanceof Entity)
             {
             setOffersTakeItOrLeaveIt(true);
             }
         setName("Transformer");
         }
 
+	public Resource getTypicalReceived()
+		{
+		return typicalReceived;
+		}
+
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {       
         if (getRefusesOffers()) { return false; }
-        if (!typicalIn.isSameType(amount)) throwUnequalTypeException(amount);
+        if (!typicalReceived.isSameType(amount)) throwUnequalTypeException(amount);
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
         if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
             throwInvalidAtLeastAtMost(atLeast, atMost);
                 
-        if (typicalIn instanceof Entity)
+        if (typicalReceived instanceof Entity)
             {
             double _atLeast = 1.0 * conversion;
             double _atMost = 1.0 * conversion;
@@ -95,6 +100,6 @@ public class Transformer extends Filter
         
     public String toString()
         {
-        return "Transformer@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typicalIn + " -> " + typical + ", " + conversion + ")";
+        return "Transformer@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typicalReceived + " -> " + typical + ", " + conversion + ")";
         }
     }

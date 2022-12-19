@@ -263,7 +263,10 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
         }
                 
     /** 
-        Returns the typical kind of resource the Provider provides.  This should always be zero and not used except for type checking.
+        Returns the typical kind of resource the Provider provides.  
+        This should always be zero in size and not used except for type checking.
+        If (rarely) the Provider may provide a variety of types, such as a Decomposer,
+        then this method should return null. 
     */
     public Resource getTypicalProvided() { return typical; }
 
@@ -689,9 +692,9 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
        Returns true if the offer was accepted; though since the Receiver itself likely made this call, 
        it's unlikely that this would ever return anything other than TRUE in a typical simulation.
     */
-    public boolean provide(Receiver receiver)
+    public boolean offer(Receiver receiver)
         {
-        return provide(receiver, Double.POSITIVE_INFINITY);
+        return offer(receiver, Double.POSITIVE_INFINITY);
         }
 
     /**
@@ -703,7 +706,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
        
        <p>atMost must be a positive non-zero, non-NAN number.
     */
-    public boolean provide(Receiver receiver, double atMost)
+    public boolean offer(Receiver receiver, double atMost)
         {
         if (!isPositiveNonNaN(atMost))
             throwInvalidNumberException(atMost);
@@ -719,7 +722,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
        through the resulting list.    If this Provider does not offer entities, or if
        the entityNumber is invalid, an exception is thrown.
     */
-    public boolean provideEntity(Receiver receiver, int entityNumber)
+    public boolean requestEntity(Receiver receiver, int entityNumber)
         {
         Entity e = getEntity(entityNumber);
         boolean result = offerReceiver(receiver, e);                                    // CHECK
