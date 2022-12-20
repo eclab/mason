@@ -45,7 +45,7 @@ public abstract class If extends Middleman
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (getRefusesOffers()) { return false; }
-        if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
+        if (!getTypicalReceived().isSameType(amount)) throwUnequalTypeException(amount);
         if (isOffering()) throwCyclicOffers();  // cycle
         
         if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
@@ -77,7 +77,7 @@ public abstract class If extends Middleman
 
     public String toString()
         {
-        return "If@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ")";
+        return "If@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + ")";
         }  
  
     /**

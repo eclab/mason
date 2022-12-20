@@ -64,11 +64,11 @@ public class Source extends Provider implements Steppable
         }
 
     /** 
-        Builds a source with the given typical resource type.
+        Builds a source with the given typical provided resource type.
     */
-    public Source(SimState state, Resource typical)
+    public Source(SimState state, Resource typicalProvided)
         {
-        super(state, typical);
+        super(state, typicalProvided);
         setName("Source");
         }
                 
@@ -263,12 +263,12 @@ public class Source extends Provider implements Steppable
         
     /**
        Produces ONE new entity to add to the collection of entities.
-       By default this is done by duplicating the typical entity.
+       By default this is done by duplicating the typical provided entity.
        You can override this if you feel so inclined.
     */
     protected Entity buildEntity()
         {
-        Entity ret = (Entity)(typical.duplicate());
+        Entity ret = (Entity)(getTypicalProvided().duplicate());
         ret.clear();
         return ret;
         }
@@ -453,7 +453,7 @@ public class Source extends Provider implements Steppable
 
     public String toString()
         {
-        return "Source@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ")";
+        return "Source@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + ")";
         }               
     }
         

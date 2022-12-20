@@ -43,7 +43,7 @@ public class Composer extends Middleman
 
     void throwInvalidMinMax(Resource min, double max)
         {
-        throw new RuntimeException("Resource " + min + " has a minimum of " + min.getAmount() + " but a maximum of " + max + ", which is not permitted.");
+        throw new RuntimeException("Resource " + min + " has a minimum of " + min.getAmount() + " but a maximum of " + max + ", which is not permittedReceived.");
         }
 
     void throwInvalidEntityMax(Entity e, double max)
@@ -117,6 +117,8 @@ public class Composer extends Middleman
     // This is a mapping of types to total-nodes
     HashMap<Integer, Node> mappedTotals;
     
+    Resource[] permittedReceived;
+    
     // This is the same set of total-nodes organized as an array for faster scanning
     Node[] totals;
     
@@ -129,14 +131,18 @@ public class Composer extends Middleman
         if a minimum is > its maximum, or if a resource is an Entity but its maximum is
         not an integer.
     */
-    public Composer(SimState state, Entity typical, Resource[] minimums, double[] maximums)
+    public Composer(SimState state, Entity typicalProvided, Resource[] minimums, double[] maximums)
         {
-        super(state, typical);
+        super(state, typicalProvided);
         mappedTotals = new HashMap<Integer, Node>();
         totals = new Node[minimums.length];
+        permittedReceived = new Resource[minimums.length];
         
         for(int i = 0; i < minimums.length; i++)
             {
+            permittedReceived[i] = minimums[i].duplicate();
+            permittedReceived[i].clear();
+            
             if (mappedTotals.get(minimums[i].getType()) != null)  // uh oh, already have one!
                 throwDuplicateType(minimums[i]);
             else if (minimums[i].getAmount() < 0 || maximums[i] < minimums[i].getAmount() || 
@@ -159,22 +165,6 @@ public class Composer extends Middleman
             }
         }
                                 
-    /**
-       Offers a resource from a Provider to a Receiver.
-                       
-       <p>The resource must be an ENTITY.
-       The provider may respond by taking the entity and returning TRUE, 
-       or returning FALSE if it refuses the offer.
-       
-       <p>May throw a RuntimeException if the resource does not
-       match the typical resource of the receiver, or if a cycle was detected in accepting
-       offers (A offers to B, which offers to C, which then offers to A).
-       At present does not check that atLeast and atMost are valid.
-       
-       <p>Will also throw an exception if the provided resource, which must be an entity,
-       is not composite.
-    */
-
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (getRefusesOffers()) { return false; }
@@ -224,7 +214,7 @@ public class Composer extends Middleman
                 
         // do a load into entities
         entities.clear();
-        Entity entity = (Entity)(typical.duplicate());
+        Entity entity = (Entity)(getTypicalProvided().duplicate());
         Resource[] resources = new Resource[totals.length];
         for(int i = 0; i < totals.length; i++)
             resources[i] = totals[i].resource.duplicate();
@@ -256,7 +246,7 @@ public class Composer extends Middleman
         
     public String toString()
         {
-        return "Composer@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical + ")";
+        return "Composer@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + " -> " + getTypicalReceived().getName() + ")";
         }
 
     /** If stepped, offers the composed entity if it is ready. */
@@ -265,10 +255,17 @@ public class Composer extends Middleman
         deploy();
         }
 
-	/** Anything is allowed in theory. */
+	/** Returns NULL because various resource types are received.
+		To get the full list of legal received resource types, call getPermittedReceived() */
     public Resource getTypicalReceived() 
     	{ 
     	return null; 
+    	}
+
+	/** Returns the full list of legal received resource types. */
+    public Resource[] getPermittedReceived() 
+    	{ 
+    	return permittedReceived;
     	}
 
     }

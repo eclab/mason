@@ -42,7 +42,7 @@ public abstract class Middleman extends Provider implements Receiver
     	return getTypicalProvided(); 
     	}
 
-    public boolean hideTypicalReceived() { return true; }
+//    public boolean hideTypicalReceived() { return true; }
 
 	
     public abstract boolean accept(Provider provider, Resource resource, double atLeast, double atMost);

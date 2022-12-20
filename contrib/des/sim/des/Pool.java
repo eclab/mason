@@ -18,7 +18,7 @@ import java.util.*;
 */
 
 
-public class Pool implements Named
+public class Pool implements Named, Resettable
     {
     private static final long serialVersionUID = 1;
 
@@ -71,12 +71,6 @@ public class Pool implements Named
     String name;
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-
-    /** Does nothing.  Don't bother scheduling Pool. */
-    public void step(SimState state)
-        {
-        // does nothing
-        }
 
     /** Resets the pool's resource to its initial value */
     public void reset(SimState state) 

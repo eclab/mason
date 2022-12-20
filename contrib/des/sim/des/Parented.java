@@ -14,7 +14,7 @@ import java.util.*;
    A simple interface for objects which have parents and names
 */
 
-public interface Parented extends Named
+public interface Parented extends Named, Resettable, sim.engine.Steppable
     {
     /**
        Returns the object's parent.

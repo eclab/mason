@@ -19,7 +19,7 @@ import javax.swing.*;
 import sim.des.portrayal.*;
 
 /**
-   A provider of resources. Providers also have a TYPICAL resource, 
+   A provider of resources. Providers also have a TYPICAL PROVIDED resource, 
    which exists only to provide a resource type.  Providers also have
    a RESOURCE, initially zero, of the same type, which is used as a 
    pool for resources.  The Provider class does not use the resource
@@ -33,7 +33,7 @@ import sim.des.portrayal.*;
    offers.
 */
 
-public abstract class Provider extends DESPortrayal implements Named, Resettable, ProvidesBarData, Parented
+public abstract class Provider extends DESPortrayal implements ProvidesBarData, Parented
     {
     public boolean hideDrawState() { return true; }
     public boolean getDrawState() { return false; }
@@ -52,10 +52,10 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
         throw new RuntimeException("Zero-time cycle found among offers including this one." );
         }
 
-    /** Throws an exception indicating that the given resource does not match the Provider's typical resource. */
+    /** Throws an exception indicating that the given resource does not match the Provider's typical provided resource. */
     protected void throwUnequalTypeException(Resource res)
         {
-        throw new RuntimeException("Expected resource type " + this.typical.getName() + "(" + this.typical.getType() + ")" +
+        throw new RuntimeException("Expected resource type " + this.getTypicalProvided().getName() + "(" + this.getTypicalProvided().getType() + ")" +
             " but got resource type " + res.getName() + "(" + res.getType() + ")" );
         }
 
@@ -106,7 +106,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     ArrayList<Receiver> receivers = new ArrayList<Receiver>();
 
     /** The typical kind of resource the Provider provides.  This should always be zero and not used except for type checking. */
-    protected Resource typical;
+    Resource typicalProvided;
     /** A resource pool available to subclasses.  null by default. */
     protected CountableResource resource;
     /** An entity pool available to subclasses.  null by default. */
@@ -268,11 +268,8 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
         If (rarely) the Provider may provide a variety of types, such as a Decomposer,
         then this method should return null. 
     */
-    public Resource getTypicalProvided() { return typical; }
+    public Resource getTypicalProvided() { return typicalProvided; }
 
-    @Deprecated
-    public Resource getTypical() { return getTypicalProvided(); }
-        
     /** 
         Sets whether receivers are offered take-it-or-leave-it offers.
         A take-it-or-leave-it offer requires the Receiver to accept all of the offered Resource,
@@ -345,18 +342,18 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
     /** 
         Builds a provider with the given typical resource type.
     */
-    public Provider(SimState state, Resource typical)
+    public Provider(SimState state, Resource typicalProvided)
         {
-        this.typical = typical.duplicate();
-        this.typical.clear();
+        this.typicalProvided = typicalProvided.duplicate();
+        this.typicalProvided.clear();
                 
-        if (typical instanceof Entity)
+        if (typicalProvided instanceof Entity)
             {
             entities = new LinkedList<Entity>();
             }
         else
             {
-            resource = (CountableResource) (typical.duplicate());
+            resource = (CountableResource) (typicalProvided.duplicate());
             resource.setAmount(0.0);
             }
         this.state = state;
@@ -416,7 +413,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
          
     /** 
         Makes an offer of up to the given amount to the given receiver.
-        If the typical resource is an ENTITY, then atMost is ignored.
+        If the typical provided resource is an ENTITY, then atMost is ignored.
         Returns true if the offer was accepted.
         
         <p>If the resource in question is an ENTITY, then it is removed
@@ -692,6 +689,7 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
        Returns true if the offer was accepted; though since the Receiver itself likely made this call, 
        it's unlikely that this would ever return anything other than TRUE in a typical simulation.
     */
+    public boolean provide(Receiver receiver) { return offer(receiver); }
     public boolean offer(Receiver receiver)
         {
         return offer(receiver, Double.POSITIVE_INFINITY);
@@ -699,13 +697,14 @@ public abstract class Provider extends DESPortrayal implements Named, Resettable
 
     /**
        Asks the Provider to make a unilateral offer of up to the given amount to the given Receiver.  
-       If the typical resource is an ENTITY, then atMost is ignored. This can be used to implement
+       If the typical provided resource is an ENTITY, then atMost is ignored. This can be used to implement
        a simple pull. The Receiver does not need to be registered with the Provider.
        Returns true if the offer was accepted; though since the Receiver itself likely made this call, 
        it's unlikely that this would ever return anything other than TRUE in a typical simulation.
        
        <p>atMost must be a positive non-zero, non-NAN number.
     */
+    public boolean provide(Receiver receiver, double atMost) { return offer(receiver, atMost); }
     public boolean offer(Receiver receiver, double atMost)
         {
         if (!isPositiveNonNaN(atMost))

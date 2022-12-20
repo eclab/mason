@@ -17,7 +17,7 @@ import java.awt.*;
     provider.  Unless you turn off auto-scheduling 
 */
 
-public class SimpleDelay extends Source implements Receiver, Steppable, StatReceiver
+public class SimpleDelay extends Middleman implements Steppable, StatReceiver
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
         {
@@ -27,9 +27,6 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
 
     private static final long serialVersionUID = 1;
 
-    public Resource getTypicalReceived() { return typical; }
-    public boolean hideTypicalReceived() { return true; }
-
     double totalDelayedResource = 0.0;
     LinkedList<DelayNode> delayQueue = new LinkedList<>();
     double delayTime;
@@ -38,6 +35,24 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
     boolean dropsResourcesBeforeUpdate = true;
     boolean includesRipeResourcesInTotal = false;
     
+    double capacity = Double.POSITIVE_INFINITY;    
+
+    /** Returns the maximum available resources that may be built up. */
+    public double getCapacity() { return capacity; }
+    
+    /** Set the maximum available resources that may be built up. */
+    public void setCapacity(double d) 
+        { 
+        if (!isPositiveOrZeroNonNaN(d))
+            throwInvalidCapacityException(d); 
+        capacity = d; 
+        }
+
+    void throwInvalidCapacityException(double capacity)
+        {
+        throw new RuntimeException("Capacities may not be negative or NaN.  capacity was: " + capacity);
+        }
+
     /** Returns in an array all the Resources currently being delayed and not yet ready to provide,
         along with their timestamps (when they are due to become available), combined as a DelayNode.  
         Note that this is a different set of Resources than Provider.getEntities() returns.  
@@ -144,7 +159,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (getRefusesOffers()) { return false; }
-        if (!typical.isSameType(amount)) 
+        if (!getTypicalReceived().isSameType(amount)) 
             throwUnequalTypeException(amount);
         
         if (isOffering()) throwCyclicOffers();  // cycle
@@ -244,7 +259,7 @@ public class SimpleDelay extends Source implements Receiver, Steppable, StatRece
 
     public String toString()
         {
-        return "SimpleDelay@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ", " + delayTime + ")";
+        return "SimpleDelay@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + ")";
         }  
                      
     /** Upon being stepped, the Delay calls update() to reap all ripe resources.  It then

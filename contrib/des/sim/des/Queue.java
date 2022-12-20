@@ -114,7 +114,7 @@ public class Queue extends Middleman implements Steppable, StatReceiver
         
     public String toString()
         {
-        return "Queue@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ")";
+        return "Queue@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + ")";
         }               
 
     /** Upon being stepped, the Queue offers to registered receivers.  You don't have to

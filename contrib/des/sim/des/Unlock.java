@@ -53,7 +53,7 @@ public class Unlock extends Lock
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (getRefusesOffers()) { return false; }
-        if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
+        if (!getTypicalReceived().isSameType(amount)) throwUnequalTypeException(amount);
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
@@ -84,8 +84,9 @@ public class Unlock extends Lock
     public String toString()
         {
         return "Unlock@" + System.identityHashCode(this) + "(" + 
+        	(getName() == null ? "" : (getName() + ": ")) +
         	(pool.getName() == null ? "Pool@" + System.identityHashCode(pool) : pool.getName()) + ", " +
-        	typical.getName() + ", " + numResources + ")";
+        	getTypicalProvided().getName() + ", " + numResources + ")";
         }  
                      
     public String getName() 

@@ -26,7 +26,7 @@ import java.awt.*;
 */
 
 
-public class Extractor extends Source implements Receiver
+public class Extractor extends Middleman
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
         {
@@ -66,11 +66,8 @@ public class Extractor extends Source implements Receiver
         return true;
         }
 
-    
-    public Resource getTypicalReceived() { return typical; }
-    public boolean hideTypicalReceived() { return true; }
 
-    /** 
+	/*    
         Builds a source with the given typical resource type.  The provider is initially null.
     */
     public Extractor(SimState state, Resource typical)
@@ -334,7 +331,7 @@ public class Extractor extends Source implements Receiver
     public boolean accept(Provider provider, Resource res, double atLeast, double atMost)
         {
         if (getRefusesOffers()) { return false; }
-        if (!typical.isSameType(res)) throwUnequalTypeException(res);
+        if (!getTypicalReceived().isSameType(res)) throwUnequalTypeException(res);
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
@@ -366,22 +363,7 @@ public class Extractor extends Source implements Receiver
 
     public String toString()
         {
-        return "Extractor@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ")";
+        return "SimpleDelay@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + ")";
         }               
-
-    /** Returns Double.POSITIVE_INFINITY, which means nothing: Extractors do not have a capacity. */
-    public double getCapacity() { return Double.POSITIVE_INFINITY; }
-    public boolean hideCapacity() { return true; }
-    
-    /** Does nothing. */
-    public void setCapacity(double d) 
-        { 
-        super.setCapacity(d);
-        capacity = Double.POSITIVE_INFINITY;            // reset to default
-        }
-        
-    boolean refusesOffers = false;
-    public void setRefusesOffers(boolean value) { refusesOffers = value; }
-    public boolean getRefusesOffers() { return refusesOffers; }
     }
         

@@ -37,21 +37,18 @@ public class Sink extends DESPortrayal implements Receiver, StatReceiver, Provid
     private static final long serialVersionUID = 1;
 
     protected SimState state;
-    Resource typical;
+    Resource typicalReceived;
         
     double totalReceivedResource;
     public double getTotalReceivedResource() { return totalReceivedResource; }
     public double getReceiverResourceRate() { double time = state.schedule.getTime(); if (time <= 0) return 0; else return totalReceivedResource / time; }
-
-    @Deprecated
-    public Resource getTypical() { return getTypicalReceived(); }
         
-    public Resource getTypicalReceived() { return typical; }
-    public boolean hideTypicalReceived() { return true; }
+    public Resource getTypicalReceived() { return typicalReceived; }
+    //public boolean hideTypicalReceived() { return true; }
 
     void throwUnequalTypeException(Resource resource)
         {
-        throw new RuntimeException("Expected resource type " + this.typical.getName() + "(" + this.typical.getType() + ")" +
+        throw new RuntimeException("Expected resource type " + this.getTypicalReceived().getName() + "(" + this.getTypicalReceived().getType() + ")" +
             " but got resource type " + resource.getName() + "(" + resource.getType() + ")" );
         }
 
@@ -60,17 +57,17 @@ public class Sink extends DESPortrayal implements Receiver, StatReceiver, Provid
         throw new RuntimeException("Requested resource amounts are between " + atLeast + " and " + atMost + ", which is out of bounds.");
         }
 
-    public Sink(SimState state, Resource typical)
+    public Sink(SimState state, Resource typicalReceived)
         {
         this.state = state;
-        this.typical = typical;
+        this.typicalReceived = typicalReceived;
         setName("Sink");
         }
 
     public boolean accept(Provider provider, Resource resource, double atLeast, double atMost)
         {
         if (getRefusesOffers()) { return false; }
-        if (!typical.isSameType(resource)) throwUnequalTypeException(resource);
+        if (!getTypicalReceived().isSameType(resource)) throwUnequalTypeException(resource);
         
         if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
             throwInvalidAtLeastAtMost(atLeast, atMost);
@@ -90,7 +87,7 @@ public class Sink extends DESPortrayal implements Receiver, StatReceiver, Provid
 
     public String toString()
         {
-        return "Sink@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ")";
+        return "Sink@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalReceived().getName() + ")";
         }               
 
     public void step(SimState state)

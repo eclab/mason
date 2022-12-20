@@ -42,10 +42,10 @@ public class Transformer extends Filter
     Resource typicalReceived;
     double conversion;
         
-    public Transformer(SimState state, CountableResource typicalOut, Resource typicalReceived, double conversion)
+    public Transformer(SimState state, CountableResource typicalProvided, Resource typicalReceived, double conversion)
         {
         // typical being our _amount CountableResource
-        super(state, typicalOut);
+        super(state, typicalProvided);
         this.typicalReceived = typicalReceived.duplicate();
         this.conversion = conversion;
         if (typicalReceived instanceof Entity)
@@ -63,18 +63,18 @@ public class Transformer extends Filter
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {       
         if (getRefusesOffers()) { return false; }
-        if (!typicalReceived.isSameType(amount)) throwUnequalTypeException(amount);
+        if (!getTypicalReceived().isSameType(amount)) throwUnequalTypeException(amount);
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
         if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
             throwInvalidAtLeastAtMost(atLeast, atMost);
                 
-        if (typicalReceived instanceof Entity)
+        if (getTypicalReceived() instanceof Entity)
             {
             double _atLeast = 1.0 * conversion;
             double _atMost = 1.0 * conversion;
-            CountableResource _amount = (CountableResource)(typical.duplicate());
+            CountableResource _amount = (CountableResource)(getTypicalProvided().duplicate());
             double oldAmount = 1.0 * conversion;
             _amount.setAmount(oldAmount);
             boolean retval = offerReceivers(_amount, _atLeast, _atMost);
@@ -85,7 +85,7 @@ public class Transformer extends Filter
             {
             double _atLeast = atLeast * conversion;
             double _atMost = atMost * conversion;
-            CountableResource _amount = (CountableResource)(typical.duplicate());
+            CountableResource _amount = (CountableResource)(getTypicalProvided().duplicate());
             double oldAmount = amount.getAmount() * conversion;
             _amount.setAmount(oldAmount);
             boolean retval = offerReceivers(_amount, _atLeast, _atMost);
@@ -100,6 +100,6 @@ public class Transformer extends Filter
         
     public String toString()
         {
-        return "Transformer@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typicalReceived + " -> " + typical + ", " + conversion + ")";
+        return "Transformer@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + " -> " + getTypicalReceived().getName() + ")";
         }
     }

@@ -14,7 +14,7 @@ import java.util.*;
    A simple interface for objects which have names.
 */
 
-public interface Named extends Steppable
+public interface Named
     {
     /**
        Returns the object's name.

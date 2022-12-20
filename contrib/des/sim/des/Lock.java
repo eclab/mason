@@ -52,7 +52,7 @@ public class Lock extends Filter
     /** Builds a Lock with the same parameters as the provided Lock. */
     public Lock(Lock other)
         {
-        this(other.state, other.typical, other.pool, other.numResources);
+        this(other.state, other.getTypicalProvided(), other.pool, other.numResources);
         }
                 
     /** Returns the number of resources allocated each time */
@@ -71,7 +71,7 @@ public class Lock extends Filter
         blocked = false;
         
         if (getRefusesOffers()) { return false; }
-        if (!typical.isSameType(amount)) throwUnequalTypeException(amount);
+        if (!getTypicalReceived().isSameType(amount)) throwUnequalTypeException(amount);
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
@@ -103,8 +103,9 @@ public class Lock extends Filter
     public String toString()
         {
         return "Lock@" + System.identityHashCode(this) + "(" + 
+        	(getName() == null ? "" : (getName() + ": ")) +
         	(pool.getName() == null ? "Pool@" + System.identityHashCode(pool) : pool.getName()) + ", " +
-        	typical.getName() + ", " + numResources + ")";
+        	getTypicalProvided().getName() + ", " + numResources + ")";
         }  
                      
     public String getName() 

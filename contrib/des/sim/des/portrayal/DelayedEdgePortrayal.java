@@ -204,12 +204,15 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
 						double time = info.gui.state.schedule.getTime();
 						for(int i = 0; i < delayed.length; i++)
 							{
-							double pos = 1.0 - (delayed[i].getTimestamp() - time) / delayTime;
-							if (pos >= 0 && pos <= 1)
+							if (delayed[i].getProvider() == edge.getFrom())		// only draw circles from a given provider
 								{
-								double centerX = sXd + pos * (eXd2 - sXd);
-								double centerY = sYd + pos * (eYd2 - sYd);
-								graphics.fill(new Ellipse2D.Double(centerX - circleFinalWidth/2 * scale, centerY - circleFinalWidth/2 * scale, circleFinalWidth * scale, circleFinalWidth * scale));
+								double pos = 1.0 - (delayed[i].getTimestamp() - time) / delayTime;
+								if (pos >= 0 && pos <= 1)
+									{
+									double centerX = sXd + pos * (eXd2 - sXd);
+									double centerY = sYd + pos * (eYd2 - sYd);
+									graphics.fill(new Ellipse2D.Double(centerX - circleFinalWidth/2 * scale, centerY - circleFinalWidth/2 * scale, circleFinalWidth * scale, circleFinalWidth * scale));
+									}
 								}
 							}
 			    		}

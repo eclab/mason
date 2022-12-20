@@ -165,7 +165,7 @@ public class Delay extends SimpleDelay
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (getRefusesOffers()) { return false; }
-        if (!typical.isSameType(amount)) 
+        if (!getTypicalReceived().isSameType(amount)) 
             throwUnequalTypeException(amount);
                 
         if (isOffering()) throwCyclicOffers();  // cycle
@@ -258,7 +258,7 @@ public class Delay extends SimpleDelay
 
     public String toString()
         {
-        return "Delay@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical.getName() + ")";
+        return "Delay@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + ")";
         }               
         
     boolean refusesOffers = false;

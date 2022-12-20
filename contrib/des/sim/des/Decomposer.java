@@ -39,14 +39,14 @@ public class Decomposer extends Middleman
         throw new RuntimeException("Decomposers do not respond to addReceiver(Receiver).  Instead, use addReceiver(Receiver, Resource).");
         }
 
-    public Decomposer(SimState state, Entity typical)
+    public Decomposer(SimState state, Entity typicalReceived)
         {
         super(state, null);
-        typicalReceived = typical;
+        this.typicalReceived = typicalReceived;
         output = new HashMap<Integer, Receiver>();
         }
                 
- 	/** Anything is allowed in theory. */
+    /** Returns null because the Decomposer can provide anything which is packed into the composite entities it receives. */
     public Resource getTypicalProvided() 
     	{ 
     	return null; 
@@ -133,7 +133,7 @@ public class Decomposer extends Middleman
         
     public String toString()
         {
-        return "Unpacker@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + typical.getName() + ", " + typical + ")";
+        return "Decomposer@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + " -> " + getTypicalReceived().getName() + ")";
         }
 
     /** Does nothing.  There's no reason to step a Decomposer. */

@@ -17,7 +17,7 @@ import java.util.*;
    subclass of Middleman.
 */
 
-public interface Receiver extends Named, Parented, Resettable
+public interface Receiver extends Parented
     {
     /**
        Offers a resource from a Provider to a Receiver.

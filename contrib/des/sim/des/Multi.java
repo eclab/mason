@@ -18,7 +18,7 @@ import sim.portrayal.*;
         
 **/
 
-public abstract class Multi extends DESPortrayal implements Resettable, Parented
+public abstract class Multi extends DESPortrayal implements Parented
     {
     private static final long serialVersionUID = 1;
 
@@ -133,7 +133,7 @@ public abstract class Multi extends DESPortrayal implements Resettable, Parented
         // Called by Multi.offer() to make an offer via offerReceivers();
         boolean offer(Resource amount, double atLeast, double atMost)
             {
-            if (!typical.isSameType(amount))
+            if (!getTypicalProvided().isSameType(amount))
                 {
                 throwUnequalTypeException(amount);
                 }
@@ -199,7 +199,7 @@ public abstract class Multi extends DESPortrayal implements Resettable, Parented
             {
             if (!isPositiveNonNaN(atMost))
                 throwInvalidNumberException(atMost);
-            return Multi.this.offer(providerPort, receiver, typical, atMost);
+            return Multi.this.offer(providerPort, receiver, getTypicalProvided(), atMost);
             }
 
         public MultiProvider(SimState state, Resource typical, int providerPort)
@@ -210,7 +210,7 @@ public abstract class Multi extends DESPortrayal implements Resettable, Parented
                         
         public String toString()
             {
-            return "MultiProvider@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ")";
+       		return "MultiProvider@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + ")";
             }               
 
         public void step(SimState state)
@@ -234,7 +234,7 @@ public abstract class Multi extends DESPortrayal implements Resettable, Parented
         public boolean accept(Provider provider, Resource resource, double atLeast, double atMost)
             {
             if (getRefusesOffers()) { return false; }
-            if (!typical.isSameType(resource)) throwUnequalTypeException(resource);
+            if (!getTypicalReceived().isSameType(resource)) throwUnequalTypeException(resource);
                 
         	if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
                 throwInvalidAtLeastAtMost(atLeast, atMost);
@@ -244,7 +244,7 @@ public abstract class Multi extends DESPortrayal implements Resettable, Parented
 
         public String toString()
             {
-            return "MultiReceiver@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : getName()) + ", " + typical.getName() + ")";
+        	return "MultiReceiver@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalReceived().getName() + ")";
             }               
 
         public void step(SimState state)
@@ -266,4 +266,10 @@ public abstract class Multi extends DESPortrayal implements Resettable, Parented
       return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_PILL, 
       getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
       }
+
+	public String toString()
+		{
+		return "Multi@" + System.identityHashCode(this);
+		}               
+
     }

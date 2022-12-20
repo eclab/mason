@@ -46,7 +46,7 @@ public class Lead extends Filter
             {
             return (receivers.get(0).getTypicalReceived());
             }
-        else return typical;
+        else return super.getTypicalReceived();
         }
     public boolean hideTypicalReceived() { return true; }
 
