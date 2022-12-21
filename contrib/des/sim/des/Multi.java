@@ -28,6 +28,11 @@ public abstract class Multi extends DESPortrayal implements Parented
     MultiReceiver[] multiReceivers;
     MultiProvider[] multiProviders;
         
+    // This is a mapping of types to Receivers
+    HashMap<Integer, MultiReceiver> mappedReceivers = new HashMap<>();
+    // This is a mapping of types to Providers
+    HashMap<Integer, MultiProvider> mappedProviders = new HashMap<>();
+
     /** Called when a Multi receiver receives an offer.  The receiver in question is specified by its receiverPort. 
         Override this to process offers, in the same way that a Receiver processes an offer via its accept(...) method.  
         By default this method returns false.  */
@@ -68,10 +73,12 @@ public abstract class Multi extends DESPortrayal implements Parented
     public Multi(SimState state, Resource[] receiverResources, Resource[] providerResources)
         {
         multiReceivers = new MultiReceiver[receiverResources.length];
+
         for(int i = 0; i < receiverResources.length; i++)
             {
             multiReceivers[i] = new MultiReceiver(state, receiverResources[i], i);
             multiReceivers[i].setParent(this);
+			mappedReceivers.put(receiverResources[i].getType(), multiReceivers[i]);
             }
                         
         multiProviders = new MultiProvider[providerResources.length];
@@ -79,10 +86,11 @@ public abstract class Multi extends DESPortrayal implements Parented
             {
             multiProviders[i] = new MultiProvider(state, providerResources[i], i);
             multiProviders[i].setParent(this);
+			mappedProviders.put(providerResources[i].getType(), multiProviders[i]);
             }
         setName("Multi");
         }
-                
+         
     public void reset(SimState state)
         {
         // For the time being this does nothing because there's nothing to reset
@@ -121,7 +129,36 @@ public abstract class Multi extends DESPortrayal implements Parented
         return multiProviders[providerPort];
         }
                 
-                
+     void throwNoReceiverForResource(Resource res)
+        {
+        throw new RuntimeException("The resource " + res + " is not among the ones listed as valid to be received by this Multi.");
+        }
+
+    void throwNoProviderForResource(Resource res)
+        {
+        throw new RuntimeException("The resource " + res + " is not among the ones listed as valid to be provided by this Multi.");
+        }
+
+	/** Returns the Multi Receiver meant to receive the following kind of resource.  Note that if
+		this Resource was given multiple times in the constructor, only the last Receiver is returned. 
+		It's possible, indeed reasonable for you to have multiple receivers for a given resource for some
+		modeling task: in this case, if the resource appeared in slots 5 and 7 (say) of the receiverResources[]
+		array passed into the constructor, then the two corresonding receivers would be at ports 5 and 7. */
+    public Receiver getReceiverForResource(Resource resource)
+    	{
+    	return mappedReceivers.get(resource);
+    	}
+
+	/** Returns the Multi Provider meant to receive the following kind of resource.  Note that if
+		this Resource was given multiple times in the constructor, only the last Provider is returned. 
+		It's possible, indeed reasonable for you to have multiple providers for a given resource for some
+		modeling task: in this case, if the resource appeared in slots 5 and 7 (say) of the providerResources[]
+		array passed into the constructor, then the two corresonding Providers would be at ports 5 and 7. */
+    public Provider getProviderForResource(Resource resource)
+    	{
+    	return mappedProviders.get(resource);
+    	}
+               
     /** The subclass of Provider used internally by Multi.  This is largely a stub which connects methods to 
         Multi's internal offer() and offerReceivers() methods. */
     public class MultiProvider extends Provider
@@ -212,11 +249,6 @@ public abstract class Multi extends DESPortrayal implements Parented
             {
        		return "MultiProvider@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + ")";
             }               
-
-        public void step(SimState state)
-            {
-            // do nothing
-            }
         } 
 
     /** The subclass of Receiver used internally by Multi.  This is largely a stub which connects methods to 
@@ -246,11 +278,6 @@ public abstract class Multi extends DESPortrayal implements Parented
             {
         	return "MultiReceiver@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalReceived().getName() + ")";
             }               
-
-        public void step(SimState state)
-            {
-            // do nothing
-            }
         } 
 
     String name;
@@ -271,5 +298,4 @@ public abstract class Multi extends DESPortrayal implements Parented
 		{
 		return "Multi@" + System.identityHashCode(this);
 		}               
-
     }
