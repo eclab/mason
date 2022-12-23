@@ -173,17 +173,13 @@ public class StreetFood extends SimState {
 				double rng = random.nextDouble(true, true);
 				
 				if (rng <= 0.33) { // go Pizza
-					chosen = receivers.get(receivers.indexOf(pizzaQ));
+					chosen = pizzaQ;
 				} else if (rng > 0.33 && rng <= 0.66) { // go Burger
-					chosen = receivers.get(receivers.indexOf(burgerQ));
+					chosen = burgerQ;
 				} else { // go Chinese
-					chosen = receivers.get(receivers.indexOf(chineseQ));
+					chosen = chineseQ;
 				}
-				
-				if (chosen == null)
-					throw new IllegalArgumentException(
-							"Something wrong: chose null out of " + receivers.size() + " receivers!");
-				
+
 				return chosen;
 			}
 		};
