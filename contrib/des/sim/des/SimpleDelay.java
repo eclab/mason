@@ -9,7 +9,6 @@ import sim.engine.*;
 import java.util.*;
 import sim.portrayal.*;
 import sim.portrayal.simple.*;
-import java.awt.*;
 
 /** 
     A simple deterministic delay pipeline.  Elements placed in the delay are only available

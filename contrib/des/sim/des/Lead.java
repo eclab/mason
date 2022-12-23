@@ -34,6 +34,7 @@ public class Lead extends Filter
     Lead(Probe probe)
         {
         super(probe.state, Probe.DEFAULT_TYPICAL);
+        this.probe = probe; // FIXME is that needed? Without it Lead does not have a Probe
         setName("Lead for " + System.identityHashCode(this));
         }
     

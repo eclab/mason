@@ -6,9 +6,10 @@
 
 package sim.des;
 
+import sim.des.portrayal.DESPortrayal;
 import sim.engine.*;
-import sim.util.*;
-import java.util.*;
+import sim.portrayal.*;
+import sim.portrayal.simple.*;
 
 /** 
     A storage for CountableResources (or subclasses such as UncountableResources or Money etc.) with
@@ -18,10 +19,16 @@ import java.util.*;
 */
 
 
-public class Pool implements Named, Resettable
+public class Pool extends DESPortrayal implements Named, Resettable
     {
-    private static final long serialVersionUID = 1;
+	
+    private static final long serialVersionUID = -4048334284332068371L;
 
+	public SimplePortrayal2D buildDefaultPortrayal(double scale){
+    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_PARALLELOGRAM, 
+    			getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
+    }
+	
     CountableResource resource;
     CountableResource initial;
     double maximum;

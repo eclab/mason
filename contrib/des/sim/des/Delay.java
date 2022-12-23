@@ -15,10 +15,6 @@ package sim.des;
 import sim.engine.*;
 import sim.util.distribution.*;
 import sim.util.*;
-import java.util.*;
-import sim.portrayal.simple.*;
-import sim.portrayal.*;
-import java.awt.*;
 
 
 /**

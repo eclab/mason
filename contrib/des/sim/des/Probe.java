@@ -172,7 +172,6 @@ public class Probe extends Filter
             oldAmount = amount.duplicate();
         
         boolean val = offerReceivers(amount, atLeast, atMost);
-         
         if (val)
             {
             totalOffers++;

@@ -7,11 +7,8 @@
 package sim.des;
 
 import sim.engine.*;
-import sim.util.*;
-import java.util.*;
 import sim.portrayal.*;
 import sim.portrayal.simple.*;
-import java.awt.*;
 
 /**
    A Lock locks (seizes, acquires) resources from a pool before permitting resources to pass through it
