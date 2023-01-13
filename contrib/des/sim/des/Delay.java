@@ -77,12 +77,10 @@ public class Delay extends SimpleDelay
     
     public double getSize() { return delayHeap.size(); }
 
-    public double getDelayed() { if (entities == null) return totalDelayedResource; else return delayHeap.size(); }
-
     public void clear()
         {
+        super.clear();
         delayHeap = new Heap();
-        totalDelayedResource = 0.0;
         }
     
     boolean usesLastDelay = false;
@@ -188,7 +186,7 @@ public class Delay extends SimpleDelay
             {
             if (delayHeap.size() + (getIncludesRipeResourcesInTotal() ? entities.size() : 0) >= getCapacity()) return false; // we're at capacity
             insert(new DelayNode(amount, nextTime, provider), nextTime);
-            totalDelayedResource += 1;            
+            totalDelayedResource += 1.0;            
             totalReceivedResource += 1.0;
             }
        

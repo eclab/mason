@@ -62,6 +62,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
         {
         return (DelayNode[])(delayQueue.toArray(new DelayNode[delayQueue.size()]));
         }
+        
     public boolean hideDelayedResources() { return true; }
     
     /** Returns whether the SimpleDelay schedules itself on the Schedule automatically to handle
@@ -79,7 +80,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
     public void clear()
         {
         super.clear();
-        delayQueue.clear();
+        if (delayQueue != null) delayQueue.clear();
         totalDelayedResource = 0.0;
         }
 
@@ -87,7 +88,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
     public double getSize() { return delayQueue.size(); }
 
     /** Returns the number AMOUNT of resource currently being delayed. */
-    public double getDelayed() { if (entities == null) return totalDelayedResource; else return delayQueue.size(); }
+    public double getDelayed() { return totalDelayedResource; }
 
     /** Returns the number AMOUNT of resource currently being delayed, plus the current available resources. */
     public double getDelayedPlusAvailable() { return getDelayed() + getAvailable(); }
@@ -184,7 +185,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
             {
             if (delayQueue.size() + (getIncludesRipeResourcesInTotal() ? entities.size() : 0) >= getCapacity()) return false; // we're at capacity
             delayQueue.add(new DelayNode(amount, nextTime, provider));
-            totalDelayedResource += 1;            
+            totalDelayedResource += 1.0;            
             totalReceivedResource += 1.0;
             }
             

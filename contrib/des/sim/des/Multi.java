@@ -15,7 +15,6 @@ import sim.portrayal.*;
    having one of its Providers make the offer.  Each of the Multi's Receivers is specified by a receiver port, which is just its position
    in the array.  Similarly each of the Multi's Providers is specified by a provider port.  The Receivers and Providers are created 
    during initialization, where you pass in the typical Resource for each one of them.
-        
 **/
 
 public abstract class Multi extends DESPortrayal implements Parented
@@ -50,14 +49,14 @@ public abstract class Multi extends DESPortrayal implements Parented
         
     /** Instructs a Multi receiver to ask some provider to make an offer by calling its offer(..., atMost) method.
         The receiver in question is specified by its receiverPort. */
-    protected boolean offer(int receiverPort, Provider provider, double atMost)
+    protected boolean requestOffer(int receiverPort, Provider provider, double atMost)
         {
         return provider.offer(multiReceivers[receiverPort], atMost);
         }
 
     /** Instructs a Multi receiver to ask some provider to make an offer by calling its offer(...) method.
         The receiver in question is specified by its receiverPort. */
-    protected boolean offer(int receiverPort, Provider provider)
+    protected boolean requestOffer(int receiverPort, Provider provider)
         {
         return provider.offer(multiReceivers[receiverPort]);
         }
@@ -129,32 +128,22 @@ public abstract class Multi extends DESPortrayal implements Parented
         return multiProviders[providerPort];
         }
                 
-     void throwNoReceiverForResource(Resource res)
-        {
-        throw new RuntimeException("The resource " + res + " is not among the ones listed as valid to be received by this Multi.");
-        }
-
-    void throwNoProviderForResource(Resource res)
-        {
-        throw new RuntimeException("The resource " + res + " is not among the ones listed as valid to be provided by this Multi.");
-        }
-
-	/** Returns the Multi Receiver meant to receive the following kind of resource.  Note that if
+	/** Returns the Multi Receiver meant to receive the following kind of resource, or null if there isn't one.  Note that if
 		this Resource was given multiple times in the constructor, only the last Receiver is returned. 
 		It's possible, indeed reasonable for you to have multiple receivers for a given resource for some
 		modeling task: in this case, if the resource appeared in slots 5 and 7 (say) of the receiverResources[]
 		array passed into the constructor, then the two corresonding receivers would be at ports 5 and 7. */
-    public Receiver getReceiverForResource(Resource resource)
+    public Receiver getReceiver(Resource resource)
     	{
     	return mappedReceivers.get(resource);
     	}
 
-	/** Returns the Multi Provider meant to receive the following kind of resource.  Note that if
+	/** Returns the Multi Provider meant to receive the following kind of resource, or null if there isn't one.  Note that if
 		this Resource was given multiple times in the constructor, only the last Provider is returned. 
 		It's possible, indeed reasonable for you to have multiple providers for a given resource for some
 		modeling task: in this case, if the resource appeared in slots 5 and 7 (say) of the providerResources[]
 		array passed into the constructor, then the two corresonding Providers would be at ports 5 and 7. */
-    public Provider getProviderForResource(Resource resource)
+    public Provider getProvider(Resource resource)
     	{
     	return mappedProviders.get(resource);
     	}
