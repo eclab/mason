@@ -24,7 +24,8 @@ public class DelayNode
         this.timestamp = timestamp;
         this.provider = provider;
         }
-        
+    
+    public String toString() { return "DelayNode[" + System.identityHashCode(this) + ": " + resource + ", " + timestamp + ", " + provider + "]"; }
     public Resource getResource() { return resource; }
     public double getTimestamp() { return timestamp; }
     public Provider getProvider() { return provider; }

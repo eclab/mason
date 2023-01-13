@@ -194,25 +194,31 @@ public class Source extends Provider implements Steppable
 
     double getNextProductionTime()
         {
-        double currentTime = state.schedule.getTime();
-        if (currentTime < Schedule.EPOCH) 
+        double time = state.schedule.getTime();
+        double currentTime = time;
+        if (currentTime < Schedule.EPOCH) 				// this shouldn't be able to happen
+            {
+        	System.err.println("WARNING: Source being asked to produce before the epoch of the simulation.");
             currentTime = Schedule.EPOCH;
+            }
         double val = 0;
         if (rateDistribution != null)
             {
-            val = rateDistribution.nextDouble() + nextTime;
-            }
-        else if (currentTime == Schedule.EPOCH)
-            {
-            val = (randomOffset ? state.random.nextDouble() * rate : 0.0) + nextTime;
+            double d = rateDistribution.nextDouble();
+            if (d <= 0)
+	        	{ 
+	        	System.err.println("WARNING: Rate distribution returned a value <= 0: " + d);
+	        	d = 0;
+	        	}
+            val = d + currentTime;
             }
         else
             {
-            val = rate + nextTime;
+            val = rate + currentTime;
             }
                                 
-        if (val == currentTime) 
-            val = Math.nextUp(currentTime); 
+        if (val == time) 
+            val = Math.nextUp(time);
         return val;
         }
     
@@ -318,7 +324,7 @@ public class Source extends Provider implements Steppable
         by seeing if the entities variable is non-null: otherwise you should be adding to the 
         existing resource).  
                 
-        <p>The modeler can change the RATE at which production occurs by setting either a deterministic
+        <p>The modeler can set the RATE at which production occurs by setting either a deterministic
         RATE (via setRate()) or by setting a distribution to determine the rate (via setRateDistribution() --
         you may find sim.util.distribution.Scale to be a useful utility class here).
         
@@ -327,34 +333,22 @@ public class Source extends Provider implements Steppable
         setProductionDistribution() -- again you may find sim.util.distribution.Scale to be a useful 
         utility class here).
         
-        <p>update() then works as follows.
+        <p>By default update() then works as follows.
         
         <ol>
-        <li>First, if we are rescheduling by rate...
-        <ol>
-        <li>First we must determine if we are producing anything at all this go-around.
+        <li>First, if we are autoscheduling, we need to reschedule ourselves.
         <ul>
-        <li>If we are at the Schedule.EPOCH, we produce nothing and return immediately.
-        <li>If we are scheduled to produce something at a future time, and have not reached it yet,
-        again, we produce nothing and return immediately.
-        <li>Else we'll produce something.
-        </ul>
-                
-        <li>If we've gotten this far, we next compute the next time we should produce something.
-        <ul>
-        <li>If we are at the Schedule.EPOCH, and we are producing at a deterministic rate, then
-        the next time is just the previous determined time plus either the rate or (if we are using a
-        random offset) the rate time a random number between 0 and 1.
-        <li>If we are NOT at the Schedule.EPOCH, and we are producing at a deterministic rate, then
-        the next time is just the previous determined time plus either the rate.
-        <li>If we are producing at a rate determined by a distribution, then the next time is 
-        the previous determined time plus a random value under this distribution.
-        </ul>
-                
-        <li>Now we next reschedule ourselves at the next time and ordering.
-        </ol>
-
-        <li>Now we determine how much to produce.
+        <li>If we have a rate distribution, select from the distribution and add to our current time
+        	 to get the rescheduling time.
+            The distribution value should be >= 0, else it will be set to 0.
+        <li>If we have a fixed rate, add it to our current time to get the rescheduling time.
+        <li>If the resulting rescheduling time hasn't changed (we added 0 to it, probably an error), 
+        reschedule at the immediate soonest theoretical time in the future.  Else schedule at the rescheduling time.
+		</ul>
+		
+        <li>Next, if we're >= capacity, return.
+        
+        <li>Othrwise we determine how much to produce.
         <ul>
         <li>If we are producing a deterministic production amount, then we use the production amount.
         <li>If we are producing an amount determined by a distribution, then we select a random value 
@@ -376,20 +370,7 @@ public class Source extends Provider implements Steppable
         {
         if (getAutoSchedules())
             {
-            double time = state.schedule.getTime();
-            if (time == Schedule.EPOCH)
-                {
-                nextTime = getNextProductionTime();
-                state.schedule.scheduleOnce(nextTime, rescheduleOrdering, this);
-                return;         // we produce NOTHING the first time
-                }
-            else if (time < nextTime)               // not ready yet -- FIXME, how could this possibly happen?
-                {
-                return;
-                }
-                
-            // at this point we're ready to produce!
-            // First compute a new time beyond this one
+            // First, let's reschedule ourselves
             nextTime = getNextProductionTime();
             state.schedule.scheduleOnce(nextTime, rescheduleOrdering, this);
             }
