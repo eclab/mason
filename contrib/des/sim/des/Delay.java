@@ -178,7 +178,7 @@ public class Delay extends SimpleDelay
             CountableResource token = (CountableResource)(cr.duplicate());
             token.setAmount(maxIncoming);
             cr.decrease(maxIncoming);
-            insert(new DelayNode(amount, nextTime, provider), nextTime);
+            insert(new DelayNode(token, nextTime, provider), nextTime);
             totalDelayedResource += maxIncoming;            
             totalReceivedResource += maxIncoming;
             }
