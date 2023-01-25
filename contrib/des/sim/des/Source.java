@@ -41,6 +41,7 @@ public class Source extends Provider implements Steppable
         {
         return new double[] { getCapacity() == Double.POSITIVE_INFINITY || getCapacity() == 0 ? -1 : getAvailable() / (double)getCapacity() };
         }
+
     public String[] getDataValues()
         {
         return new String[] { getCapacity() == Double.POSITIVE_INFINITY ? "" + getAvailable() :
@@ -168,6 +169,16 @@ public class Source extends Provider implements Steppable
         return randomOffset;
         }
 
+    /** A convenience method, which calls setAutoSchedules(true), then schedules the Source on the Schedule
+    	at the current time (usually timestep 0, as this method ought to be called during start()) with
+    	a 0 ordering.
+    */
+    public void autoSchedule()
+        {
+        setAutoSchedules(true);
+		state.schedule.scheduleOnce(this);
+        }
+
     /** Sets whether the Source reschedules itself automatically using either a deterministic or distribution-based
         rate scheme.  If FALSE, you are responsible for scheduling the Source as you see fit. If TRUE,
         then the ordering used when scheduling is set to 0.
@@ -186,11 +197,15 @@ public class Source extends Provider implements Steppable
         return autoSchedules;
         }
 
+	public boolean hideAutoSchedules() { return true; }
+
     /** Returns the reschedule ordering. */
     public int getRescheduleOrdering() { return rescheduleOrdering; }
 
     /** Returns the reschedule ordering and clears the delay entirely. */
     public void setRescheduleOrdering(int ordering) { this.rescheduleOrdering = ordering; }
+
+	public boolean hideRescheduleOrdering() { return true; }
 
     double getNextProductionTime()
         {

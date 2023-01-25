@@ -751,7 +751,8 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
     String name;
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-    public boolean hideName() { return true; }
+//    public boolean hideName() { return true; }
+    
 	Object parent;
     public Object getParent() { return parent; }
     public void setParent(Object parent) { this.parent = parent; }    
@@ -773,11 +774,13 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
         {
         return new double[0];
         }
+        
     public boolean hideDataValues() { return true; }
     public String[] getDataValues() 
         {
         return new String[0];
         }
+        
     public boolean hideDataLabels() { return true; }
     public String[] getDataLabels()
         {
