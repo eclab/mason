@@ -85,13 +85,13 @@ public class Delay extends SimpleDelay
     
     boolean usesLastDelay = false;
     
-    /** Sets whether getDelay should simply return the delay time used by the most recent resource
-    	added to the Delay. If there is no such resource, or if that resource has since been 
+    /** Sets whether getDelay() should simply return the delay time used by the most recent resource
+    	added to the Delay.  If there is no such resource, or if that resource has since been 
     	removed from the Delay, or if its delay time has passed, then a delay value of 1.0 will
     	be used as a default. */
     public void setUsesLastDelay(boolean val) { usesLastDelay = val; }
     
-    /** Sets whether getDelay should simply return the delay time used by the most recent resource
+    /** Sets whether getDelay() should simply return the delay time used by the most recent resource
     	added to the Delay. If there is no such resource, or if that resource has since been 
     	removed from the Delay, or if its delay time has passed, then a delay value of 1.0 will
     	be used as a default. */
@@ -115,7 +115,8 @@ public class Delay extends SimpleDelay
         }
                 
 	double lastDelay = 1.0;
-    /** By default, provides Math.abs(getDelayDistribution().nextDouble()), or 1.0 if there is
+    /** By default, provides the lastDelay if getUsesLastDelay() is true; otherwise 
+    	uses Math.abs(getDelayDistribution().nextDouble()), or 1.0 if there is
         no provided distribution.  The point here is to guarantee that the delay will be positive;
         but note that if your distribution covers negative regions, you need to consider what
         will happen as a result and make sure it's okay (or if you should be considering

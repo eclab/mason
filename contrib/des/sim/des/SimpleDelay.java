@@ -74,7 +74,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
     /** Sets whether the SimpleDelay schedules itself on the Schedule automatically to handle
         the next timestep at which a delayed resource will become available.  If you turn this
         off you will have to schedule the SimpleDelay yourself. */
-    public void setAutoScheduled(boolean val) { autoSchedules = val; }
+    public void setAutoSchedules(boolean val) { autoSchedules = val; }
         
     /** Clears all resources currently in the SimpleDelay. */
     public void clear()

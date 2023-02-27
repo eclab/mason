@@ -18,7 +18,7 @@ import java.awt.*;
     way appropriate to your simulation.   The default works more or less as follows.  Upon being
     stepped, the Source determines the NEXT timestep to be stepped using either a distribution or
     a deterministic value you have provided.  It then determines the AMOUNT of resource to produce
-    this time around, again using either a distribution or a determinstic value yu have provided.
+    this time around, again using either a distribution or a determinstic value you have provided.
     It then produces the resources, reschedules itself, and offers resources to registered receivers.
     Sources have a maximum CAPACITY, which by default is infinite.
     
@@ -86,15 +86,16 @@ public class Source extends Provider implements Steppable
         capacity = d; 
         }
 
+	// checks for one-time warnings for this Source
+	boolean zeroRateDistributionWarned = false;
+	boolean negativeRateDistributionWarned = false;
+
     double rate = 1.0;
-    boolean randomOffset = true;
     AbstractDistribution rateDistribution = null;
     double nextTime;
     boolean autoSchedules = false;
     int rescheduleOrdering = 0;
-    
-    public static final int REJECTION_TRIES = 20;
-        
+            
     AbstractDistribution productionDistribution = null;
     double production = 1.0;
         
@@ -125,19 +126,17 @@ public class Source extends Provider implements Steppable
         return this.rateDistribution;
         }
 
-    /** Sets the deterministic rate and potential random offset for producing resources.  If the rate
-        distribution is null, then the deterministic rate and random offset are used instead as follows.
-        If the Source is initially scheduled for Schedule.EPOCH, then at that time it does not produce
-        any resources, but rather determines the initial time to reschedule itself.  If the random offset
-        is TRUE then the initial time will be the EPOCH plus a uniform random value between 0 and the
-        deterministic rate.  If the random offset is FALSE then the initial time will simply be the EPOCH plus
-        the deterministic rate.  Thereafter the next scheduled time will be the current time plus the rate. 
+    /** Sets the deterministic rate for producing resources.  If the rate
+        distribution is null, then the deterministic rate is used instead as follows.
         
         <p>Throws a runtime exception if the rate is negative or NaN.
     */
-    public void setRate(double rate, boolean randomOffset)
+    public void setRate(double rate)
         {
-        this.randomOffset = randomOffset;
+        if (rate == 0)  // uh oh
+        	{
+			System.err.println("WARNING: Rate set to 0 for Source " + this + ".  This will cause the rate to be 0 + epsilon.  You probably did not intend that.");
+        	}
         if (isPositiveOrZeroNonNaN(rate)) 
             this.rate = rate;
         else throwInvalidProductionException(rate);
@@ -156,27 +155,70 @@ public class Source extends Provider implements Steppable
         return rate;
         }
         
-    /** Returns the random offset for producing resources.  If the rate
-        distribution is null, then the deterministic rate and random offset are used instead as follows.
-        If the Source is initially scheduled for Schedule.EPOCH, then at that time it does not produce
-        any resources, but rather determines the initial time to reschedule itself.  If the random offset
-        is TRUE then the initial time will be the EPOCH plus a uniform random value between 0 and the
-        deterministic rate.  If the random offset is FALSE then the initial time will simply be the EPOCH plus
-        the deterministic rate.  Thereafter the next scheduled time will be the current time plus the rate. 
+    /** A convenience method which calls setAutoSchedules(true), then schedules the Source on the Schedule using 
+    	the current rescheduleOrdering.  The Source is initially scheduled at the given time.  
+    	See also autoScheduleNow() and autoSchedule() for other options.
     */
-    public boolean getRandomOffset()
+    public void autoScheduleAt(double time)
         {
-        return randomOffset;
+        if (!isPositiveOrZeroNonNaN(time))
+        	throw new RuntimeException("Source " + this + " had autoScheduleAt(" + time + ") called, but this value must be >= 0");  
+        	    	
+        setAutoSchedules(true);
+		state.schedule.scheduleOnce(time, rescheduleOrdering, this);
         }
 
-    /** A convenience method, which calls setAutoSchedules(true), then schedules the Source on the Schedule
-    	at the current time (usually timestep 0, as this method ought to be called during start()) with
-    	a 0 ordering.
+    /** A convenience method which calls setAutoSchedules(true), then schedules the Source on the Schedule using 
+    	the current rescheduleOrdering.  The Source is scheduled for the next possible time within epsilon 
+    	(if we're currently before the simulation epoch, as you probably should be, then the time is set to 
+    	Schedule.EPOCH, that is, 0.0). You should only call this method ONCE at the beginning of a run.  
+    	See also autoScheduleRandom() and autoSchedule() and autoScheduleAt() for other options.
+    */
+    public void autoScheduleNow()
+        {
+        double time = state.schedule.getTime();
+		if (time < Schedule.EPOCH)
+			{
+			time = Schedule.EPOCH;
+			}
+		autoScheduleAt(time);
+        }
+
+    /** A convenience method which calls setAutoSchedules(true), then schedules the Source on the Schedule using 
+    	the current rescheduleOrdering.  The Source is scheduled a random value between 0 and the current rate,
+    	in order to offset it.  For example, if your fixed rate is 2.0, then the Source will be initially scheduled
+    	at some random value between SCHEDULE.EPOCH (0.0) and just under 2.0.  This means that you must be using 
+    	a fixed rate rather than selecting one from a distribution.  You will be warned otherwise.  You should only 
+    	call this method ONCE at the beginning of a run.  See also autoScheduleNow() and autoSchedule() and 
+    	autoScheduleAt()  for other options.
+    */
+    public void autoScheduleRandom()
+        {
+        if (rateDistribution != null) // uh oh
+        	{
+	        System.err.println("WARNING: autoScheduleRandom() called on Source " + this + " but the Source is using a rate distribution, which isn't proper.  Instead autoSchedule() will be called.  You should fix this!  This message will appear only once.");
+        	autoSchedule();
+        	}
+
+		// Rate can be zero, but only if the user explicitly set it, so we won't warn here.  It's 1.0 by default
+        	
+        setAutoSchedules(true);
+		state.schedule.scheduleOnce(state.random.nextDouble() * rate, rescheduleOrdering, this);
+        }
+
+    /** A convenience method which calls setAutoSchedules(true), then schedules the Source on the Schedule using 
+    	the current rescheduleOrdering.  The Source is scheduled by selecting the next rate value from the
+    	fixed rate or from the rate distribution.  For example, if you have a fixed rate of 2.0, and you
+    	are at the beginning of the simulation run (as you should be if you call this method), then the Source
+    	is scheduled initially at timestep 2.0.  Similarly if you have a rate distribution, and this distribution
+    	returns 2.7, then the Source is scheduled initially at timestep 2.7.  You should only call this method 
+    	ONCE at the beginning of a run.  See also autoScheduleNow() and autoScheduleRandom() and autoScheduleAt()
+    	for other options.
     */
     public void autoSchedule()
         {
         setAutoSchedules(true);
-		state.schedule.scheduleOnce(this);
+		state.schedule.scheduleOnce(getNextProductionTime(), rescheduleOrdering, this);
         }
 
     /** Sets whether the Source reschedules itself automatically using either a deterministic or distribution-based
@@ -213,7 +255,7 @@ public class Source extends Provider implements Steppable
         double currentTime = time;
         if (currentTime < Schedule.EPOCH) 				// this shouldn't be able to happen
             {
-        	System.err.println("WARNING: Source being asked to produce before the epoch of the simulation.");
+	        //System.err.println("WARNING: Source being asked to produce before the epoch of the simulation.");
             currentTime = Schedule.EPOCH;
             }
         double val = 0;
@@ -222,13 +264,26 @@ public class Source extends Provider implements Steppable
             double d = rateDistribution.nextDouble();
             if (d <= 0)
 	        	{ 
-	        	System.err.println("WARNING: Rate distribution returned a value <= 0: " + d);
-	        	d = 0;
+	        	if (d < 0)
+	        		{
+					if (!negativeRateDistributionWarned)
+						{
+	        			System.err.println("WARNING: Rate distribution returned a negative value (" + d + ") for Source " + this + ". This is almost certainly wrong.  Instead the absolute value (" + (0 - d) + ") will be used.  You should fix this!  This message will appear only once.");
+						negativeRateDistributionWarned = true;
+						}
+	        		d = 0 - d;
+	        		}
+	        	else if (!zeroRateDistributionWarned)
+	        		{
+	        		System.err.println("WARNING: Rate distribution returned a 0 for Source " + this + ". This will cause the rate to be 0 + epsilon.  You might not have expected that.  This message will appear only once.");
+	        		zeroRateDistributionWarned = true;
+	        		}
 	        	}
             val = d + currentTime;
             }
         else
             {
+			// Rate can be zero, but only if the user explicitly set it, so we won't warn here.  It's 1.0 by default
             val = rate + currentTime;
             }
                                 
@@ -294,17 +349,6 @@ public class Source extends Provider implements Steppable
         return ret;
         }
         
-    /*
-      boolean warned = false;
-      void warnRejectionFailed()
-      {
-      if (warned) return;
-      System.err.println("ONE-TIME WARNING: Source could not produce a positive amount from the provided distribution after " + REJECTION_TRIES + 
-      " tries, and was forced to use 0.0.  That's not good.\nSource: " + this + "\nDistribution: " + productionDistribution);
-      warned = true;
-      }
-    */
-        
     /** Builds *amt* number of Entities and adds them to the entities list.  
         The amount could be a real-value, in which it should be
         simply rounded to the nearest positive integer >= 0.  By default this
@@ -346,7 +390,7 @@ public class Source extends Provider implements Steppable
         <p>The modeler can also change the AMOUNT which is produced by setting either a deterministic
         PRODUCTION (via setProduction()) or by setting a distribution to determine the production (via
         setProductionDistribution() -- again you may find sim.util.distribution.Scale to be a useful 
-        utility class here).
+        utility class here).  Note that if the distribution produces a negative value, the absolute value is used.
         
         <p>By default update() then works as follows.
         
@@ -408,22 +452,6 @@ public class Source extends Provider implements Steppable
         if (productionDistribution != null)
             {
             amt = Math.abs(productionDistribution.nextDouble());
-            
-            /*
-            // produce
-            for(int i = 0; i < REJECTION_TRIES; i++)
-            {
-            amt = productionDistribution.nextDouble();
-            if (amt >= 0)
-            break;
-            }
-                                
-            if (amt < 0)
-            {
-            warnRejectionFailed();
-            amt = 0;
-            }
-            */
             }
     
         // produce it                                      
