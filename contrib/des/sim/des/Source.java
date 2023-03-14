@@ -169,9 +169,9 @@ public class Source extends Provider implements Steppable
         }
 
     /** A convenience method which calls setAutoSchedules(true), then schedules the Source on the Schedule using 
-    	the current rescheduleOrdering.  The Source is scheduled for the next possible time within epsilon 
-    	(if we're currently before the simulation epoch, as you probably should be, then the time is set to 
-    	Schedule.EPOCH, that is, 0.0). You should only call this method ONCE at the beginning of a run.  
+    	the current rescheduleOrdering.  The Source is scheduled for the next possible time within epsilon, or 
+    	if we're currently before the simulation epoch, as you probably should be, then the time is set to 
+    	Schedule.EPOCH, that is, 0.0. You should only call this method ONCE at the beginning of a run.  
     	See also autoScheduleRandom() and autoSchedule() and autoScheduleAt() for other options.
     */
     public void autoScheduleNow()
@@ -184,41 +184,23 @@ public class Source extends Provider implements Steppable
 		autoScheduleAt(time);
         }
 
-    /** A convenience method which calls setAutoSchedules(true), then schedules the Source on the Schedule using 
-    	the current rescheduleOrdering.  The Source is scheduled a random value between 0 and the current rate,
-    	in order to offset it.  For example, if your fixed rate is 2.0, then the Source will be initially scheduled
-    	at some random value between SCHEDULE.EPOCH (0.0) and just under 2.0.  This means that you must be using 
-    	a fixed rate rather than selecting one from a distribution.  You will be warned otherwise.  You should only 
-    	call this method ONCE at the beginning of a run.  See also autoScheduleNow() and autoSchedule() and 
-    	autoScheduleAt()  for other options.
+    /** A convenience method which calls setAutoSchedules(true), then schedules the Source initially on the Schedule 
+    	using the current rescheduleOrdering.  The Source is scheduled initially in one of two ways.  If RANDOMSTART is 
+    	FALSE, then the source is scheduled by selecting the next rate value, either fixed, or frm a distribution,
+    	and using that.  For example, if you have a fixed rate of 2.0, and you are at the beginning of a simulation
+    	run, then the Source is scheduled for 2.0; or if you have a rate distribution, then a value is selected
+    	at random, from this distribution and the Source is scheduled for that.  However if RANDOMSTART is TRUE, then
+    	the Source attempts to be scheduled at a random offset.  This is done by once again selecting either a
+    	deterministic rate or a rate from the distribution, and then using a uniform random value between 0
+    	and that rate.  For example, if you have a fixed rate of 2.0, then a random initial time is selected 
+    	uniformly between 0 and 2.0; or if you have a rate chosen from a distribution, then a random initial 
+    	time is selected uniformly between 0 and a random value drawn from that distribution.
     */
-    public void autoScheduleRandom()
-        {
-        if (rateDistribution != null) // uh oh
-        	{
-	        System.err.println("WARNING: autoScheduleRandom() called on Source " + this + " but the Source is using a rate distribution, which isn't proper.  Instead autoSchedule() will be called.  You should fix this!  This message will appear only once.");
-        	autoSchedule();
-        	}
-
-		// Rate can be zero, but only if the user explicitly set it, so we won't warn here.  It's 1.0 by default
-        	
-        setAutoSchedules(true);
-		state.schedule.scheduleOnce(state.random.nextDouble() * rate, rescheduleOrdering, this);
-        }
-
-    /** A convenience method which calls setAutoSchedules(true), then schedules the Source on the Schedule using 
-    	the current rescheduleOrdering.  The Source is scheduled by selecting the next rate value from the
-    	fixed rate or from the rate distribution.  For example, if you have a fixed rate of 2.0, and you
-    	are at the beginning of the simulation run (as you should be if you call this method), then the Source
-    	is scheduled initially at timestep 2.0.  Similarly if you have a rate distribution, and this distribution
-    	returns 2.7, then the Source is scheduled initially at timestep 2.7.  You should only call this method 
-    	ONCE at the beginning of a run.  See also autoScheduleNow() and autoScheduleRandom() and autoScheduleAt()
-    	for other options.
-    */
-    public void autoSchedule()
+    public void autoSchedule(boolean randomStart)
         {
         setAutoSchedules(true);
-		state.schedule.scheduleOnce(getNextProductionTime(), rescheduleOrdering, this);
+		state.schedule.scheduleOnce(randomStart ? getNextProductionTime() * state.random.nextDouble() : getNextProductionTime(),
+			rescheduleOrdering, this);
         }
 
     /** Sets whether the Source reschedules itself automatically using either a deterministic or distribution-based
