@@ -185,22 +185,35 @@ public class Source extends Provider implements Steppable
         }
 
     /** A convenience method which calls setAutoSchedules(true), then schedules the Source initially on the Schedule 
-    	using the current rescheduleOrdering.  The Source is scheduled initially in one of two ways.  If RANDOMSTART is 
-    	FALSE, then the source is scheduled by selecting the next rate value, either fixed, or frm a distribution,
-    	and using that.  For example, if you have a fixed rate of 2.0, and you are at the beginning of a simulation
-    	run, then the Source is scheduled for 2.0; or if you have a rate distribution, then a value is selected
-    	at random, from this distribution and the Source is scheduled for that.  However if RANDOMSTART is TRUE, then
-    	the Source attempts to be scheduled at a random offset.  This is done by once again selecting either a
-    	deterministic rate or a rate from the distribution, and then using a uniform random value between 0
-    	and that rate.  For example, if you have a fixed rate of 2.0, then a random initial time is selected 
-    	uniformly between 0 and 2.0; or if you have a rate chosen from a distribution, then a random initial 
-    	time is selected uniformly between 0 and a random value drawn from that distribution.
+    	using the current rescheduleOrdering.  The Source is scheduled initially in one of two ways.  If OFFSET is 
+    	FALSE, then the source is scheduled by selecting the next rate value, either fixed, or from a distribution,
+    	and using that as the time.  For example, if you have a fixed rate of 2.0, and you are at the beginning 
+    	of a simulation run, then the Source is scheduled for 2.0; or if you have a rate distribution, then a 
+    	value is selected at random, from this distribution and the Source is scheduled for that.  
+    	
+    	<p>However if OFFSET is TRUE, then the Source attempts to be scheduled at a random offset so as to simulate
+    	a Source whose process is ongoing as of the commencement of the simulation.  This is done by once again
+    	selecting the next rate value, either fixed or from a distribution.  However then we select a random
+    	time from between 0 and that value inclusive.  If you are using a distribution and it is a
+    	sim.util.distribution.AbstraceDiscreteDistribution, then this random time will be an integer, else it
+    	will be a real value.
     */
-    public void autoSchedule(boolean randomStart)
+    public void autoSchedule(boolean offset)
         {
         setAutoSchedules(true);
-		state.schedule.scheduleOnce(randomStart ? getNextProductionTime() * state.random.nextDouble() : getNextProductionTime(),
-			rescheduleOrdering, this);
+        double time = getNextProductionTime();
+        if (offset)
+        	{
+        	if (rateDistribution != null && rateDistribution instanceof AbstractDiscreteDistribution)
+        		{
+        		time = (double)state.random.nextInt(((int)time) + 1);		// [0...time] as integers
+        		}
+        	else
+        		{
+        		time = time * state.random.nextDouble(true, true);		// [0...time] as doubles
+        		}
+        	}
+		state.schedule.scheduleOnce(time, rescheduleOrdering, this);
         }
 
     /** Sets whether the Source reschedules itself automatically using either a deterministic or distribution-based
