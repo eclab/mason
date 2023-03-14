@@ -157,7 +157,7 @@ public class Source extends Provider implements Steppable
         
     /** A convenience method which calls setAutoSchedules(true), then schedules the Source on the Schedule using 
     	the current rescheduleOrdering.  The Source is initially scheduled at the given time.  
-    	See also autoScheduleNow() and autoSchedule() for other options.
+    	See also autoScheduleNow() and autoSchedule(...) for other options.
     */
     public void autoScheduleAt(double time)
         {
@@ -172,7 +172,7 @@ public class Source extends Provider implements Steppable
     	the current rescheduleOrdering.  The Source is scheduled for the next possible time within epsilon, or 
     	if we're currently before the simulation epoch, as you probably should be, then the time is set to 
     	Schedule.EPOCH, that is, 0.0. You should only call this method ONCE at the beginning of a run.  
-    	See also autoScheduleRandom() and autoSchedule() and autoScheduleAt() for other options.
+    	See also autoSchedule(...) and autoScheduleAt() for other options.
     */
     public void autoScheduleNow()
         {
@@ -197,6 +197,8 @@ public class Source extends Provider implements Steppable
     	time from between 0 and that value inclusive.  If you are using a distribution and it is a
     	sim.util.distribution.AbstraceDiscreteDistribution, then this random time will be an integer, else it
     	will be a real value.
+    	
+    	<p>See also autoScheduleNow(...) and autoScheduleAt() for other options.
     */
     public void autoSchedule(boolean offset)
         {
