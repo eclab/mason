@@ -21,12 +21,13 @@ import java.awt.*;
     is ignored and getCapacity() and setCapacity() do nothing.
         
     <p>Extractors are Receivers but are not designed to receive things via push, only via pull.
-    Thus you should not register them as receivers of a given Provider.  Instead you should 
-    attach an Extractor to a Provider via its setProvider() method or in its constructor.
+    Thus you should not register them as receivers of a given Provider and you should not make
+    arbitrary offers to them.  Instead you should  attach an Extractor to a Provider via its 
+    setProvider() method or in its constructor.
 */
 
 
-public class Extractor extends Middleman
+public class Extractor extends Source implements Receiver
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
         {
@@ -328,15 +329,25 @@ public class Extractor extends Middleman
         requestProviders(amt);
         }
 
-    public boolean accept(Provider provider, Resource res, double atLeast, double atMost)
+	public Resource getTypicalReceived() { return getTypicalProvided(); }
+	
+	boolean refusesOffers;
+	
+    /** Sets whether the receiver currently refuses all offers.  The default should be FALSE. */
+    public void setRefusesOffers(boolean value) { refusesOffers = value; }
+
+    /** Returns whether the receiver currently refuses all offers.  The default should be FALSE. */
+    public boolean getRefusesOffers() { return refusesOffers; }
+
+    public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (getRefusesOffers()) { return false; }
-        if (!getTypicalReceived().isSameType(res)) throwUnequalTypeException(res);
+        if (!getTypicalReceived().isSameType(amount)) throwUnequalTypeException(amount);
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
-        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
-            throwInvalidAtLeastAtMost(atLeast, atMost);
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0 && atMost <= amount.getAmount()))
+            throwInvalidAtLeastAtMost(atLeast, atMost, amount);
 
 		if (acceptValue > 0) 
 			{
@@ -344,17 +355,17 @@ public class Extractor extends Middleman
 			atMost = Math.min(atMost, acceptValue);
 			}
 		 
-        if (res instanceof CountableResource) 
+        if (amount instanceof CountableResource) 
             {
             resource.increase(atMost);
-            ((CountableResource) res).decrease(atMost);
+            ((CountableResource) amount).decrease(atMost);
             if (acceptValue > 0) acceptValue -= atMost;
             if (distinguishedReceiver != null) offerReceivers(); 
             return true;
             }
         else
             {
-            entities.add((Entity)res);
+            entities.add((Entity)amount);
             if (acceptValue > 0) acceptValue -= 1;
             if (distinguishedReceiver != null) offerReceivers(); 
             return true;
