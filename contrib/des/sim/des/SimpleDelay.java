@@ -164,8 +164,8 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
         
         if (isOffering()) throwCyclicOffers();  // cycle
         
-        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
-            throwInvalidAtLeastAtMost(atLeast, atMost);
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0 && atMost <= amount.getAmount()))
+            throwInvalidAtLeastAtMost(atLeast, atMost, amount);
 
         double nextTime = state.schedule.getTime() + delayTime;
         if (entities == null)

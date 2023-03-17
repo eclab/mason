@@ -48,8 +48,8 @@ public abstract class If extends Middleman
         if (!getTypicalReceived().isSameType(amount)) throwUnequalTypeException(amount);
         if (isOffering()) throwCyclicOffers();  // cycle
         
-        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
-            throwInvalidAtLeastAtMost(atLeast, atMost);
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0 && atMost <= amount.getAmount()))
+            throwInvalidAtLeastAtMost(atLeast, atMost, amount);
 
 		if (entities != null)
 			{

@@ -83,8 +83,8 @@ public class Queue extends Middleman implements Steppable, StatReceiver
         
         if (!getTypicalReceived().isSameType(amount)) throwUnequalTypeException(amount);
 
-        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
-            throwInvalidAtLeastAtMost(atLeast, atMost);
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0 && atMost <= amount.getAmount()))
+            throwInvalidAtLeastAtMost(atLeast, atMost, amount);
 
         if (entities == null)
             {

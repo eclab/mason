@@ -52,9 +52,15 @@ public class Sink extends DESPortrayal implements Receiver, StatReceiver, Provid
             " but got resource type " + resource.getName() + "(" + resource.getType() + ")" );
         }
 
-    void throwInvalidAtLeastAtMost(double atLeast, double atMost)
+    /** Throws an exception indicating that atLeast and atMost are out of legal bounds. */
+    protected void throwInvalidAtLeastAtMost(double atLeast, double atMost, Resource amount)
         {
-        throw new RuntimeException("Requested resource amounts are between " + atLeast + " and " + atMost + ", which is out of bounds.");
+        if (atMost <= 0)
+        	throw new RuntimeException("Requested resource may not be at most 0.");
+        else if (atMost >= amount.getAmount())
+        	throw new RuntimeException("Requested resource " + atMost + " may not be larger than actual resource amount: " + amount);
+        else
+	        throw new RuntimeException("Requested resource amounts are between " + atLeast + " and " + atMost + ", which is out of bounds.");
         }
 
     public Sink(SimState state, Resource typicalReceived)
@@ -64,18 +70,18 @@ public class Sink extends DESPortrayal implements Receiver, StatReceiver, Provid
         setName("Sink");
         }
 
-    public boolean accept(Provider provider, Resource resource, double atLeast, double atMost)
+    public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (getRefusesOffers()) { return false; }
-        if (!getTypicalReceived().isSameType(resource)) throwUnequalTypeException(resource);
+        if (!getTypicalReceived().isSameType(amount)) throwUnequalTypeException(amount);
         
-        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
-            throwInvalidAtLeastAtMost(atLeast, atMost);
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0 && atMost <= amount.getAmount()))
+            throwInvalidAtLeastAtMost(atLeast, atMost, amount);
 
-        if (resource instanceof CountableResource) 
+        if (amount instanceof CountableResource) 
             {
             totalReceivedResource += atMost;
-            ((CountableResource) resource).reduce(atMost);
+            ((CountableResource) amount).reduce(atMost);
             return true;
             }
         else

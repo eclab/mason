@@ -60,10 +60,12 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
         }
 
     /** Throws an exception indicating that atLeast and atMost are out of legal bounds. */
-    protected void throwInvalidAtLeastAtMost(double atLeast, double atMost)
+    protected void throwInvalidAtLeastAtMost(double atLeast, double atMost, Resource amount)
         {
-        if (atMost == 0)
+        if (atMost <= 0)
         	throw new RuntimeException("Requested resource may not be at most 0.");
+        else if (atMost >= amount.getAmount())
+        	throw new RuntimeException("Requested resource " + atMost + " may not be larger than actual resource amount: " + amount);
         else
 	        throw new RuntimeException("Requested resource amounts are between " + atLeast + " and " + atMost + ", which is out of bounds.");
         }

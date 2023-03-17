@@ -72,8 +72,8 @@ public class Lock extends Filter
 
         if (isOffering()) throwCyclicOffers();  // cycle
         
-        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
-            throwInvalidAtLeastAtMost(atLeast, atMost);
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0 && atMost <= amount.getAmount()))
+            throwInvalidAtLeastAtMost(atLeast, atMost, amount);
 
         // try to acquire resources
         if (pool.getResource().getAmount() < numResources) 

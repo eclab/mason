@@ -96,8 +96,8 @@ public abstract class Filter extends Middleman
         if (getRefusesOffers()) { return false; }
         if (isOffering()) throwCyclicOffers();  // cycle
 
-        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0))
-            throwInvalidAtLeastAtMost(atLeast, atMost);
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0 && atMost <= amount.getAmount()))
+            throwInvalidAtLeastAtMost(atLeast, atMost, amount);
         
         Resource oldAmount = null;
         if (amount instanceof CountableResource)

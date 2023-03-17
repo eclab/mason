@@ -54,9 +54,9 @@ public abstract class Middleman extends Provider implements Receiver
 
     public abstract boolean accept(Provider provider, Resource resource, double atLeast, double atMost);
     
-    /** Received by the Middleman when a Provider and Receiver are asking or a transaction of one resource for another.  
+    /** Received by the Middleman when a Provider and Receiver are asking for a transaction of one resource for another.  
     	The Provider would provide a resource to the Middleman and a Receiver would receive the transacted returned Resource.
-    	Very commonly this Provider and Receiver are one and the same: they are also a Middleman.    But this does not have to be the case.  	
+    	Very commonly this Provider and Receiver are one and the same: they are also a Middleman or perhaps a Multi.    But this does not have to be the case.  	
 		If the transaction is agreed to, you should modify the provided resource and return the requested resource.
 		Otherwise, return null.  The default form simply returns null. 
 		
@@ -120,6 +120,11 @@ public abstract class Middleman extends Provider implements Receiver
 			{
 			return null;
 			}
+        if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0 && atMost <= provided.getAmount()))
+            {
+            throwInvalidAtLeastAtMost(atLeast, atMost, provided);
+            }
+       
 			
 		// bugs in the Java compiler prevent the if-statements above from being in the try statement below
 		try
@@ -132,7 +137,6 @@ public abstract class Middleman extends Provider implements Receiver
 			offering = false;
 			}
     	}
-
 
     /** You may call this method in order to request a transaction of one resource for another.    	
     	The other Middleman would provide a resource to this Middleman and would receive the transacted returned Resource.
