@@ -52,35 +52,68 @@ public abstract class Middleman extends Provider implements Receiver
             " but got resource type " + res.getName() + "(" + res.getType() + ")" );
         }
 
-    /**
-       Offers a resource from a Provider to the Middleman.  By default it does nothing: 
-       it returns FALSE, indicating that the offer is refused.   You can override this
-       as you see fit.  This isn't abstract because you might wish to use a custom 
-       Middleman to conduct transactions only, rather than accepting offers.
-
-	   <p>Here is the general documentation for Receiver.accept():
-                
-       <p>If the resource is a COUNTABLE or UNCOUNTABLE resource of some kind,
-       The provider may respond by removing between atLeast and atMost, inclusive,
-       from the given amount, and returning TRUE, or returning FALSE if it refuses
-       the offer.
-                
-       <p>If the resource is an ENTITY of some kind,
-       The provider may respond by taking the entity and returning TRUE, 
-       or returning FALSE if it refuses the offer.  atLeast and atMost may be ignored,
-       but generally atLeast should be 0 and atMost should be 1.
-       
-       <p>May throw a RuntimeException if the resource does not
-       match the typical resource of the receiver, or if a cycle was detected in accepting
-       offers (A offers to B, which offers to C, which then offers to A).
-       At present does not check that atLeast and atMost are valid.
-        
-       <p>It must be the case that 0 &lt;= atLeast &lt; = atMost &lt;= resource.getAmount(), 
-       or else a RuntimeException may be thrown. 
-       
-       <p>Receivers must never accept 0 of any resource.  Thus if atLeast = 0, then this has
-       a special meaning: it means that the receiver must accept &gt; atLeast, rather than
-       &gt;= atLeast. Similarly, Providers should never provide atMost=0.
+    /**  Offers a resource from a Provider to the Middleman.  By default it does nothing: 
+      *  it returns FALSE, indicating that the offer is refused.   You can override this
+      *  as you see fit.  This isn't abstract because you might wish to use a custom 
+      *  Middleman to conduct transactions only, rather than accepting offers.
+      *  
+      *  <p>Note: if you implement this method, you probably want to check for offer cycles,
+      *  invalid types, and whether the user has set the agent to refuse offers.  This
+      *  can be done with the following code snippet:
+      *  
+      *  <pre>
+    * 	if (isOffering())
+    * 		{
+    * 		throwCyclicOffers();
+    * 		}
+	* 	if (resource.getType() != getTypicalReceived().getType())
+	* 		{
+	* 		throwUnequalReceivedTypeException(provided);
+	* 		}
+	* 	if (getRefusesOffers())
+	* 		{
+	* 		return false;
+	* 		}
+    * 	if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0 && atMost <= resource.getAmount()))
+    * 		{
+    * 		throwInvalidAtLeastAtMost(atLeast, atMost, provided);
+    * 		}
+	* 	try
+	* 		{
+	*   	offering = true;
+	* 	
+	*     	//// DO YOUR OFFER ACCEPTANCE OR REFUSAL WORK HERE
+	*   	
+	* 		}
+	* 	finally
+	* 		{
+	* 		offering = false;
+	* 		}
+	* 	</pre>
+	* 
+ 	  *  <p>Here is the general documentation for Receiver.accept():
+      *           
+      *  <p>If the resource is a COUNTABLE or UNCOUNTABLE resource of some kind,
+      *  The provider may respond by removing between atLeast and atMost, inclusive,
+      *  from the given amount, and returning TRUE, or returning FALSE if it refuses
+      *  the offer.
+      *           
+      *  <p>If the resource is an ENTITY of some kind,
+      *  The provider may respond by taking the entity and returning TRUE, 
+      *  or returning FALSE if it refuses the offer.  atLeast and atMost may be ignored,
+      *  but generally atLeast should be 0 and atMost should be 1.
+      *  
+      *  <p>May throw a RuntimeException if the resource does not
+      *  match the typical resource of the receiver, or if a cycle was detected in accepting
+      *  offers (A offers to B, which offers to C, which then offers to A).
+      *  At present does not check that atLeast and atMost are valid.
+      *   
+      *  <p>It must be the case that 0 &lt;= atLeast &lt; = atMost &lt;= resource.getAmount(), 
+      *  or else a RuntimeException may be thrown. 
+      *  
+      *  <p>Receivers must never accept 0 of any resource.  Thus if atLeast = 0, then this has
+      *  a special meaning: it means that the receiver must accept &gt; atLeast, rather than
+      *  &gt;= atLeast. Similarly, Providers should never provide atMost=0.
     */
     public boolean accept(Provider provider, Resource resource, double atLeast, double atMost)
     	{
