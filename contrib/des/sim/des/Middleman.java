@@ -52,11 +52,45 @@ public abstract class Middleman extends Provider implements Receiver
             " but got resource type " + res.getName() + "(" + res.getType() + ")" );
         }
 
-    public abstract boolean accept(Provider provider, Resource resource, double atLeast, double atMost);
+    /**
+       Offers a resource from a Provider to the Middleman.  By default it does nothing: 
+       it returns FALSE, indicating that the offer is refused.   You can override this
+       as you see fit.  This isn't abstract because you might wish to use a custom 
+       Middleman to conduct transactions only, rather than accepting offers.
+
+	   <p>Here is the general documentation for Receiver.accept():
+                
+       <p>If the resource is a COUNTABLE or UNCOUNTABLE resource of some kind,
+       The provider may respond by removing between atLeast and atMost, inclusive,
+       from the given amount, and returning TRUE, or returning FALSE if it refuses
+       the offer.
+                
+       <p>If the resource is an ENTITY of some kind,
+       The provider may respond by taking the entity and returning TRUE, 
+       or returning FALSE if it refuses the offer.  atLeast and atMost may be ignored,
+       but generally atLeast should be 0 and atMost should be 1.
+       
+       <p>May throw a RuntimeException if the resource does not
+       match the typical resource of the receiver, or if a cycle was detected in accepting
+       offers (A offers to B, which offers to C, which then offers to A).
+       At present does not check that atLeast and atMost are valid.
+        
+       <p>It must be the case that 0 &lt;= atLeast &lt; = atMost &lt;= resource.getAmount(), 
+       or else a RuntimeException may be thrown. 
+       
+       <p>Receivers must never accept 0 of any resource.  Thus if atLeast = 0, then this has
+       a special meaning: it means that the receiver must accept &gt; atLeast, rather than
+       &gt;= atLeast. Similarly, Providers should never provide atMost=0.
+    */
+    public boolean accept(Provider provider, Resource resource, double atLeast, double atMost)
+    	{
+    	return false;
+    	}
     
     /** Received by the Middleman when a Provider and Receiver are asking for a transaction of one resource for another.  
     	The Provider would provide a resource to the Middleman and a Receiver would receive the transacted returned Resource.
-    	Very commonly this Provider and Receiver are one and the same: they are also a Middleman or perhaps a Multi.    But this does not have to be the case.  	
+    	Very commonly this Provider and Receiver are one and the same: they are also a Middleman or perhaps a Multi.
+    	But this does not have to be the case.  	
 		If the transaction is agreed to, you should modify the provided resource and return the requested resource.
 		Otherwise, return null.  The default form simply returns null. 
 		
