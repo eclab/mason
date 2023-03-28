@@ -97,15 +97,15 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
     public double getDelayTime() { return delayTime; }
     public boolean hideDelayTime() { return true; }
 
-    /** Sets the delay time and clears the delay entirely. */
-    public void setDelayTime(double delayTime) { clear(); this.delayTime = delayTime; }
+    /** Sets the delay time. */
+    public void setDelayTime(double delayTime) { this.delayTime = delayTime; }
 
     /** Returns the delay ordering. */
     public int getRescheduleOrdering() { return rescheduleOrdering; }
     public boolean hideRescheduleOrdering() { return true; }
 
-    /** Returns the delay ordering and clears the delay entirely. */
-    public void setRescheduleOrdering(int ordering) { clear();  this.rescheduleOrdering = ordering; }
+    /** Returns the delay ordering. */
+    public void setRescheduleOrdering(int ordering) { this.rescheduleOrdering = ordering; }
 
     double totalReceivedResource;
     public double getTotalReceivedResource() { return totalReceivedResource; }

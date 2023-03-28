@@ -64,7 +64,7 @@ public abstract class Filter extends Middleman
             boolean result = receiver.accept(this, _amount, Math.min(_atLeast, atMost), Math.min(_atMost, atMost));
             if (result)
                 {
-                CountableResource removed = (CountableResource)(resource.duplicate());
+                CountableResource removed = (CountableResource)(_amount.duplicate());
                 removed.setAmount(originalAmount - _amount.getAmount());
                 updateLastAcceptedOffers(removed, receiver);
                 }
