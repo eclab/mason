@@ -52,6 +52,11 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
         throw new RuntimeException("Capacities may not be negative or NaN.  capacity was: " + capacity);
         }
 
+    void throwInvalidDelayTimeException(double time)
+        {
+        throw new RuntimeException("Delay Times may not be negative or NaN.  delay time: " + time);
+        }
+
     /** Returns in an array all the Resources currently being delayed and not yet ready to provide,
         along with their timestamps (when they are due to become available), combined as a DelayNode.  
         Note that this is a different set of Resources than Provider.getEntities() returns.  
@@ -97,14 +102,23 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
     public double getDelayTime() { return delayTime; }
     public boolean hideDelayTime() { return true; }
 
-    /** Sets the delay time. */
-    public void setDelayTime(double delayTime) { this.delayTime = delayTime; }
+    /** Sets the delay time.  In a SimpleDelay (not a Delay) this also clears the delay queue entirely,
+    	because not doing so would break the internal linked list.  In a Delay, the delay queue is not
+    	cleared, and you are free to call this method any time you need to without issues.  
+    	Delay times may not be negative or NaN.  */
+    public void setDelayTime(double delayTime) 
+    	{ 
+    	if (delayTime < 0 || (delayTime != delayTime)) 
+    		 throwInvalidDelayTimeException(delayTime);
+ 		this.delayTime = delayTime; 
+		clear();
+    	}
 
     /** Returns the delay ordering. */
     public int getRescheduleOrdering() { return rescheduleOrdering; }
     public boolean hideRescheduleOrdering() { return true; }
 
-    /** Returns the delay ordering. */
+    /** Returns the delay ordering and clears the delay entirely. */
     public void setRescheduleOrdering(int ordering) { this.rescheduleOrdering = ordering; }
 
     double totalReceivedResource;
@@ -126,7 +140,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
         setName("Delay");
         }
 
-    /** Creates a SimpleDelay with a given delayTime, 0 ordering, a delay time of 1.0, and typical resource. */
+    /** Creates a SimpleDelay with a 0 ordering, a delay time of 1.0, and typical resource. */
     public SimpleDelay(SimState state, Resource typical)
         {
         this(state, 1.0, typical);

@@ -51,9 +51,20 @@ public class Delay extends SimpleDelay
     /** Creates a Delay with a 0 ordering, a delay time of 1.0, and typical resource. */
     public Delay(SimState state, Resource typical)
         {
-        this(state, 1.0, typical);
+        super(state, typical);
         }
         
+    /** Sets the delay time.  Unlike a SimpleDelay, a Delay does not also clear its delay queue
+    	when setting the delay time: and so you are free to call this method any time you need 
+    	to without issues.  The default delay time is 1.0. Delay times may not be negative or NaN.  
+    	*/
+    public void setDelayTime(double delayTime) 
+    	{
+    	if (delayTime < 0 || (delayTime != delayTime)) 
+    		 throwInvalidDelayTimeException(delayTime);
+    	this.delayTime = delayTime; 
+    	}
+
     /** Returns in an array all the Resources currently being delayed and not yet ready to provide,
         along with their timestamps (when they are due to become available), combined as a DelayNode.  
         Note that this is a different set of Resources than Provider.getEntities() returns.  
@@ -98,14 +109,15 @@ public class Delay extends SimpleDelay
     public boolean getUsesLastDelay() { return usesLastDelay; }
     	
     /** Sets the distribution used to independently select the delay time for each separate incoming 
-        resource.  If null, 1.0 will be used. */
+        resource.  If null, the value of getDelayTime() is used for the delay time. */
     public void setDelayDistribution(AbstractDistribution distribution)
         {
         this.distribution = distribution;
         }
                 
     /** Returns the distribution used to independently select the delay time for each separate incoming 
-        resource.  If null, 1.0 will be used.  When a value is drawn from this distribution to determine
+        resource.  If null, the value of getDelayTime() is used for the delay time.  
+        When a value is drawn from this distribution to determine
         delay, it will be put through Absolute Value first to make it positive.  Note that if your 
         distribution covers negative regions, you need to consider what will happen as a result and 
         make sure it's okay (or if you should be considering a positive-only distribution).  */
@@ -115,18 +127,20 @@ public class Delay extends SimpleDelay
         }
                 
 	double lastDelay = 1.0;
-    /** By default, provides the lastDelay if getUsesLastDelay() is true; otherwise 
-    	uses Math.abs(getDelayDistribution().nextDouble()), or 1.0 if there is
-        no provided distribution.  The point here is to guarantee that the delay will be positive;
-        but note that if your distribution covers negative regions, you need to consider what
-        will happen as a result and make sure it's okay (or if you should be considering
-        a positive-only distribution).  Override this to provide a custom delay given the 
+    /** Returns the appropriate delay value for the given provider and resource amount.
+    	You can override this as you see fit, though the defaults should work fine in most 
+    	cases.  The defaults are: if getUsesLastDelay(), and there has been at least one 
+    	previous resource entered into the Delay already, then the most recent previous 
+    	delay time is used.  Otherwise if the delay distribution has been set, it is queried
+    	and its absolute value is used to produce a random delay time under the distribution
+    	(delay times may not be negative or NaN).  Otherwise the fixed delay time is used 
+    	(which defaults to 1.0).  Override this to provide a custom delay given the 
         provider and resource amount or type. */
     protected double getDelay(Provider provider, Resource amount)
         {
-        if (getUsesLastDelay())
+        if (getUsesLastDelay() && recent != null)
         	{
-        	if (recent == null) lastDelay = 1.0;
+        	// use the existing delay time
         	}
         else if (distribution == null) 
         	{
