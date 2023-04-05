@@ -68,8 +68,8 @@ public class Delay extends SimpleDelay
     /** Returns in an array all the Resources currently being delayed and not yet ready to provide,
         along with their timestamps (when they are due to become available), combined as a DelayNode.  
         Note that this is a different set of Resources than Provider.getEntities() returns.  
-        You can modify the array (it's yours), but do not modify the Resources stored inside, as they
-        are the actual Resources being delayed.
+        You can modify the array (it's yours), but do not modify the DelayNodes nor the 
+        Resources stored inside them, as they are the actual Resources being delayed.
     */
     public DelayNode[] getDelayedResources()
         {
@@ -231,10 +231,13 @@ public class Delay extends SimpleDelay
 				
 				// We'll walk down the node's internal linked list and update all of them.
 				while (node != null)
-					{				
-					CountableResource res = (CountableResource)(node.getResource());
-					totalDelayedResource -= res.getAmount();
-					resource.add(res);
+					{			
+					if (!node.dead)
+						{	
+						CountableResource res = (CountableResource)(node.getResource());
+						totalDelayedResource -= res.getAmount();
+						resource.add(res);
+						}
 					node = node.next;     // handle caching
 					}
 				minKey = (Double)delayHeap.getMinKey();         // grab the next one
@@ -250,9 +253,12 @@ public class Delay extends SimpleDelay
 				// We'll walk down the node's internal linked list and update all of them.
 				while (node != null)
 					{
-					Entity res = (Entity)(node.getResource());
-					entities.add(res);
-					totalDelayedResource--;            
+					if (!node.dead)
+						{	
+						Entity res = (Entity)(node.getResource());
+						entities.add(res);
+						totalDelayedResource--;
+						}   
 					node = node.next;     // handle caching
 					}
 				minKey = (Double)delayHeap.getMinKey();         // grab the next one

@@ -17,6 +17,7 @@ public class DelayNode
     Provider provider;
     // next is used internally by Delay to do a little optimization within the heap.  SimpleDelay instead just uses LinkedList
     DelayNode next = null;
+    boolean dead = false;
                 
     public DelayNode(Resource resource, double timestamp, Provider provider)
         {
@@ -29,5 +30,7 @@ public class DelayNode
     public Resource getResource() { return resource; }
     public double getTimestamp() { return timestamp; }
     public Provider getProvider() { return provider; }
+	public boolean isDead() { return dead; }
+	public void setDead(boolean val) { dead = val; }
     }
         

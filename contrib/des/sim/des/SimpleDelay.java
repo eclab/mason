@@ -60,8 +60,8 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
     /** Returns in an array all the Resources currently being delayed and not yet ready to provide,
         along with their timestamps (when they are due to become available), combined as a DelayNode.  
         Note that this is a different set of Resources than Provider.getEntities() returns.  
-        You can modify the array (it's yours), but do not modify the Resources stored inside, as they
-        are the actual Resources being delayed.
+        You can modify the array (it's yours), but do not modify the DelayNodes nor the 
+        Resources stored inside them, as they are the actual Resources being delayed.
     */
     public DelayNode[] getDelayedResources()
         {
@@ -254,17 +254,23 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
                 {
                 if (entities == null)
                     {
-                    CountableResource res = ((CountableResource)(node.resource));
-                    iterator.remove();
-                    totalDelayedResource -= res.getAmount();
-                    resource.add(res);
+					iterator.remove();
+					if (!node.dead)
+						{
+						CountableResource res = ((CountableResource)(node.resource));
+						totalDelayedResource -= res.getAmount();
+                    	resource.add(res);
+                    	}
                     }
                 else
                     {
-                    Entity entity = ((Entity)(node.resource));
                     iterator.remove();
-                    entities.add(entity);
-                    totalDelayedResource--;            
+					if (!node.dead)
+						{
+                    	Entity entity = ((Entity)(node.resource));
+						entities.add(entity);
+						totalDelayedResource--;
+						}        
                     }
                 }
             else break;             // don't process any more
