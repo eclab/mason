@@ -33,6 +33,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
     boolean autoSchedules = true;
     boolean dropsResourcesBeforeUpdate = true;
     boolean includesRipeResourcesInTotal = false;
+    Hashtable<Resource,DelayNode> lookup = null;
     
     double capacity = Double.POSITIVE_INFINITY;    
 
@@ -55,6 +56,11 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
     void throwInvalidDelayTimeException(double time)
         {
         throw new RuntimeException("Delay Times may not be negative or NaN.  delay time: " + time);
+        }
+
+    void throwNoLookupException(Resource resource)
+        {
+        throw new RuntimeException("Resource " + resource + " was looked up, but that facility has not been turned on.");
         }
 
     /** Returns in an array all the Resources currently being delayed and not yet ready to provide,
@@ -131,6 +137,43 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
         delayQueue = new LinkedList<>();
         }
                 
+    /** Sets whether lookup is used.  If TRUE, then every time a Resource is added to the SimpleDelay it is also
+    	added to a HashMap so its DelayNode can be quickly looked up with lookup().  When the Resource exits
+    	the SimpleDelay it is removed from the HashMap.  This is primarily used to make it fast to
+    	set a resource as "dead" (see DelayNode). However it incurs a constant overhead and so this feature
+    	is turned off by default.  */
+	public void setUsesLookup(boolean val)
+		{
+		if (val)
+			{
+			if (lookup == null) lookup = new Hashtable<Resource,DelayNode>();
+			}
+		else
+			{
+			lookup = null;
+			}
+		}
+
+    /** Returns whether lookup is used.  If TRUE, then every time a Resource is added to the SimpleDelay it is also
+    	added to a HashMap so its DelayNode can be quickly looked up with lookup().  When the Resource exits
+    	the SimpleDelay it is removed from the HashMap.  This is primarily used to make it fast to
+    	set a resource as "dead" (see DelayNode). However it incurs a constant overhead and so this feature
+    	is turned off by default.  */
+	public boolean getUsesLookup()
+		{
+		return lookup != null;
+		}
+		
+    /** Looks up a resource, if lookup is presently being used (otherwise issues a RuntimeException).
+    	This is primarily used to make it fast to
+    	set a resource as "dead" (see DelayNode). However it incurs a constant overhead and so this feature
+    	is turned off by default (see setUsesLookup()).  */
+	public DelayNode lookup(Resource resource)
+		{
+		if (lookup == null) throwNoLookupException(resource);
+		return lookup.get(resource);
+		}
+
     /** Creates a SimpleDelay with a given delayTime, 0 ordering, and typical resource. */
     public SimpleDelay(SimState state, double delayTime, Resource typical)
         {
@@ -191,14 +234,18 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
             CountableResource token = (CountableResource)(cr.duplicate());
             token.setAmount(maxIncoming);
             cr.decrease(maxIncoming);
-            delayQueue.add(new DelayNode(token, nextTime, provider));
+            DelayNode node = new DelayNode(token, nextTime, provider);
+            if (lookup != null) lookup.put(token, node);
+            delayQueue.add(node);
             totalDelayedResource += maxIncoming;            
             totalReceivedResource += maxIncoming;
             }
         else
             {
             if (delayQueue.size() + (getIncludesRipeResourcesInTotal() ? entities.size() : 0) >= getCapacity()) return false; // we're at capacity
-            delayQueue.add(new DelayNode(amount, nextTime, provider));
+            DelayNode node = new DelayNode(amount, nextTime, provider);
+            if (lookup != null) lookup.put(amount, node);
+            delayQueue.add(node);
             totalDelayedResource += 1.0;            
             totalReceivedResource += 1.0;
             }
@@ -250,6 +297,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
         while(iterator.hasNext())
             {
             DelayNode node = iterator.next();
+            if (lookup != null) lookup.remove(node.resource);
             if (node.timestamp <= time)     // it's ripe
                 {
                 if (entities == null)

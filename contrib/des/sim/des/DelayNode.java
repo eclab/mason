@@ -30,7 +30,15 @@ public class DelayNode
     public Resource getResource() { return resource; }
     public double getTimestamp() { return timestamp; }
     public Provider getProvider() { return provider; }
+    
+    /** Returns whether the node has been marked dead.  When its delay is finished, 
+    	a dead node will not be processed and added to the resources, but instead will
+    	simply be discareded. */
 	public boolean isDead() { return dead; }
+	
+    /** Marks a node as dead.  When its delay is finished, 
+    	a dead node will not be processed and added to the resources, but instead will
+    	simply be discareded. */
 	public void setDead(boolean val) { dead = val; }
     }
         

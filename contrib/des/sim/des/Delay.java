@@ -193,14 +193,18 @@ public class Delay extends SimpleDelay
             CountableResource token = (CountableResource)(cr.duplicate());
             token.setAmount(maxIncoming);
             cr.decrease(maxIncoming);
-            insert(new DelayNode(token, nextTime, provider), nextTime);
+            DelayNode node = new DelayNode(token, nextTime, provider);
+            if (lookup != null) lookup.put(token, node);
+            insert(node, nextTime);
             totalDelayedResource += maxIncoming;            
             totalReceivedResource += maxIncoming;
             }
         else
             {
             if (delayHeap.size() + (getIncludesRipeResourcesInTotal() ? entities.size() : 0) >= getCapacity()) return false; // we're at capacity
-            insert(new DelayNode(amount, nextTime, provider), nextTime);
+            DelayNode node = new DelayNode(amount, nextTime, provider);
+            if (lookup != null) lookup.put(amount, node);
+            insert(node, nextTime);
             totalDelayedResource += 1.0;            
             totalReceivedResource += 1.0;
             }
@@ -227,6 +231,7 @@ public class Delay extends SimpleDelay
 			while(minKey != null && minKey <= time)
 				{
 				DelayNode node = (DelayNode)(delayHeap.extractMin());
+           	 	if (lookup != null) lookup.remove(node.resource);
 				if (node == recent) recent = null;	// all gone
 				
 				// We'll walk down the node's internal linked list and update all of them.
@@ -248,6 +253,7 @@ public class Delay extends SimpleDelay
 			while(minKey != null && minKey <= time)
 				{
 				DelayNode node = (DelayNode)(delayHeap.extractMin());
+           	 	if (lookup != null) lookup.remove(node.resource);
 				if (node == recent) recent = null;	// all gone
 
 				// We'll walk down the node's internal linked list and update all of them.
