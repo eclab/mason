@@ -126,7 +126,7 @@ public class Delay extends SimpleDelay
         return this.distribution;
         }
                 
-	double lastDelay = 1.0;
+	protected double lastDelay = 1.0;
     /** Returns the appropriate delay value for the given provider and resource amount.
     	You can override this as you see fit, though the defaults should work fine in most 
     	cases.  The defaults are: if getUsesLastDelay(), and there has been at least one 

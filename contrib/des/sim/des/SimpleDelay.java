@@ -124,7 +124,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
     public int getRescheduleOrdering() { return rescheduleOrdering; }
     public boolean hideRescheduleOrdering() { return true; }
 
-    /** Returns the delay ordering and clears the delay entirely. */
+    /** Sets the delay ordering and clears the delay entirely. */
     public void setRescheduleOrdering(int ordering) { this.rescheduleOrdering = ordering; }
 
     double totalReceivedResource;
