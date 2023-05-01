@@ -73,17 +73,44 @@ public class Delay extends SimpleDelay
     */
     public DelayNode[] getDelayedResources()
         {
-        DelayNode[] nodes = new DelayNode[delayHeap.size()];
-        if (nodes.length == 0) return nodes;
+        DelayNode[] initialNodes = new DelayNode[delayHeap.size()];
+        if (initialNodes.length == 0) return initialNodes;
         
-        Comparable[] keys = delayHeap.getKeys();
+        // Load initial top-level nodes.  These will include nodes hanging off of node.next in some cases.
         Object[] objs = delayHeap.getObjects();
-        for(int i = 0; i < nodes.length; i++)
+        for(int i = 0; i < initialNodes.length; i++)
             {
-            nodes[i] = (DelayNode)objs[i];
+            initialNodes[i] = (DelayNode)objs[i];
             }
+            
+        // Count the actual total number of nodes by following the node.next chains
+        int count = 0;
+        for(int i = 0; i < initialNodes.length; i++)
+        	{
+        	DelayNode node = initialNodes[i];
+        	while(node != null)
+        		{
+        		count++;
+        		node = node.next;
+        		}
+        	}
+        	
+        // Load the actual nodes by following the node.next chains
+        DelayNode[] nodes = new DelayNode[count];
+        count = 0;	// we'll reuse it as a position
+        for(int i = 0; i < initialNodes.length; i++)
+        	{
+        	DelayNode node = initialNodes[i];
+        	while(node != null)
+        		{
+        		nodes[count++] = node;
+        		node = node.next;
+        		}
+        	}
+
         return nodes;
         }
+        
     public boolean hideDelayedResources() { return true; }
     
     public double getSize() { return delayHeap.size(); }
