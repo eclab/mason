@@ -15,7 +15,7 @@ import java.util.*;
 /**
    A delay pipeline where all delay amounts must be multiples of integers > 0 and less 
    than or equal to a certain maximum bound, which is equal to a delay step length 
-   times the integer multiple. A BoundedDelay must be auto-scheduled  at a certain 
+   times the integer multiple. A BoundedDelay must be auto-scheduled at a certain 
    time to start it. Thus we have:
    
    <ul>
@@ -23,6 +23,10 @@ import java.util.*;
    <li> A maximum delay step length (an integer > 0)
    <li> A delay interval (an integer > 0)
    </ul>
+   
+   <p>The point of BoundedDelay is that it can do many things that you would ordinarily
+   use a Delay for, but it has an O(1) operation rather than an O(lg n) operation, often
+   resulting in dramatic increases in efficiency for some models.
    
    <p> When a BoundedDelay accepts a Resource, it must first compute the delay length.
    If you are using a fixed delay time, this delay time must be greater than 0 and less
