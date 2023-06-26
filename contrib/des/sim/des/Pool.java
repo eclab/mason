@@ -19,7 +19,7 @@ import sim.portrayal.simple.*;
 */
 
 
-public class Pool extends DESPortrayal implements Named, Resettable
+public class Pool extends DESPortrayal implements Resettable
     {
 	
     private static final long serialVersionUID = -4048334284332068371L;
@@ -29,6 +29,16 @@ public class Pool extends DESPortrayal implements Named, Resettable
     			getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
     }
 	
+    void throwResourceExceedsZeroException(double amount)
+        {
+        throw new RuntimeException("Provided amount must be positive and non-NAN:" + amount);
+        }
+
+    void throwResourceExceedsAmountException(double amount, double maximum)
+        {
+        throw new RuntimeException("Provided amount (" + amount + ") exceeds the maximum (" + maximum + ")");
+        }
+
     CountableResource resource;
     CountableResource initial;
     double maximum;
@@ -48,12 +58,12 @@ public class Pool extends DESPortrayal implements Named, Resettable
             this.maximum =  CountableResource.MAXIMUM_INTEGER;
         }
         
-    public Pool(int initialResourceAllocation)
+    public Pool(double initialResourceAllocation)
         {
         this(new CountableResource("", initialResourceAllocation));
         }
         
-    public Pool(int initialResourceAllocation, double maximum)
+    public Pool(double initialResourceAllocation, double maximum)
         {
         this(new CountableResource("", initialResourceAllocation));
         this.maximum = maximum;
@@ -64,11 +74,29 @@ public class Pool extends DESPortrayal implements Named, Resettable
         this(0);
         }
         
+    static boolean isPositiveOrZeroNonNaN(double val)
+        {
+        return (val >= 0);
+        }
+        
+
     public CountableResource getResource() { return resource; }
-    public void setResource(CountableResource val) { resource = val; }
+    public void setResource(CountableResource val) 
+    	{ 
+    	if (val.getAmount() > maximum)
+    		throwResourceExceedsAmountException(val.amount, maximum); 
+    	resource = val; 
+    	}
         
     public double getMaximum() { return maximum; }
-    public void setMaximum(double val) { maximum = val; }
+    public void setMaximum(double val)
+    	{
+    	if (!isPositiveOrZeroNonNaN(val))
+    		throwResourceExceedsZeroException(val); 
+    	else if (resource.getAmount() > val)
+    		throwResourceExceedsAmountException(resource.getAmount(), val); 
+    	maximum = val; 
+    	}
 
     public String toString()
         {

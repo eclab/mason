@@ -246,8 +246,8 @@ public class CountableResource extends Resource implements sim.util.Valuable
         
 
     /**
-       Increases the amount by the given value: if the value drops
-       to beneath 0, it is set to 0 and FALSE is returned.  Else TRUE is returned.
+       Increases the amount by the given value: if the value exceeds MAXIMUM_INTEGER, 
+       nothing happens and FALSE is returned.  Else TRUE is returned.
     */
     public boolean increase(double val)
         {
@@ -272,7 +272,7 @@ public class CountableResource extends Resource implements sim.util.Valuable
         
     /**
        Decreases the amount by the given value: if the value drops
-       to beneath 0, it is set to 0 and FALSE is returned.  Else TRUE is returned.
+       to beneath 0, nothing happens and FALSE is returned.  Else TRUE is returned.
     */
     public boolean decrease(double val)
         {

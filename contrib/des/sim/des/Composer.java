@@ -219,10 +219,19 @@ public class Composer extends Middleman
         for(int i = 0; i < totals.length; i++)
             resources[i] = totals[i].resource.duplicate();
         entity.setStorage(resources);
+        setInfoFor(entity);
         entities.add(entity);
-             
+        
         resetTotals();   
         }
+        
+	/** This is called when the Composer constructs a composite entity
+		and now must set its Info object, if there is one.  Override
+		this as you like set it to an appropriate Info object if any.
+		By default this does nothing. */
+    protected void setInfoFor(Entity entity)
+    	{
+    	}
     
 
     void resetTotals()

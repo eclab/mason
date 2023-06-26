@@ -95,8 +95,8 @@ public class Entity extends Resource
         }
 
     /** Returns a Entity of the same type, name, and amount as the provided Entity.
-        Note that the copy of the Entity's storage is just a pointer copy: you may
-        want to copy the storage more properly. */
+        Note that the copy of the Entity's storage and info are just pointer copies: 
+        you may want to copy them more properly. */
     public Resource duplicate()
         {
         return new Entity(this);

@@ -15,19 +15,39 @@ import java.awt.*;
     
     <p>Because they're just passing on their resource, Filter objects don't place
     the resource in the Entities list or in the resource pool; they just stash it
-    and hand it on.  This is done by calling the special method 
-    offerReceivers(amount, atLeast, atMost) during the accept(...) method.  This in
-    turn stashes these three values and calls offerReceivers() which eventually
-    calls a new offerReceiver(...) method that uses the three stashed values. 
+    and hand it on.  This is one as follows:
+    
+    <ul>
+    <li>First the Filter has its accept(...) method called.
+    
+    <li>The accept(...) method then calls the offerReceivers(..., ..., ...) method.
+    By default offerReceivers(..., ..., ...) will store the accepted resource, 
+    the atLeast value, and the atMost value in three protected instance variables 
+    called _amount, _atLeast, and _atMost respectively.
+    
+    <li>The offerReceivers(..., ..., ...) method then calls offerReceivers() to
+    offer the resource as appropriate.
+    
+    <li>The accept(...) method then calls process(...) to process statistics on
+    the amount accepted and successfully offered.  By default this method does
+    nothing.
+    </ul>
+    
+    <p>Filter subclasses can and do override any of these methods.  Because of a lot
+    of rearranging, it is possible that Filter may be eliminated or folded into
+    another class in the near future, so be prepared for that possibility.
+    
+    <p>The default version of Filter merely accepts resources, immediately offers
+    them to downstream receivers, and that's it.
  */
 
-public abstract class Filter extends Middleman
+public class Filter extends Middleman
     {
     private static final long serialVersionUID = 1;
 
-    Resource _amount;
-    double _atLeast;
-    double _atMost;
+    protected Resource _amount;
+    protected double _atLeast;
+    protected double _atMost;
 
     public Filter(SimState state, Resource typical)
         {

@@ -51,7 +51,9 @@ public abstract class Resource implements java.io.Serializable
         this.type = getNextType();
         }
                 
-    /** Does not set the name nor the type.  You'll have to do that. */
+    /** Constructs a Resource but does not set the name nor the type. 
+    	This exists primarily for copy constructors to call super()
+    	rather than super(name).  */
     protected Resource()
         {
         }
