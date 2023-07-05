@@ -84,7 +84,8 @@ public class UncountableResource extends CountableResource
     */
     public UncountableResource(UncountableResource other, double amount)
         {
-        super(other, amount);
+        this(other);
+        setAmount(amount);
         }
                 
     public String toString()
