@@ -112,6 +112,12 @@ public class CountableResource extends Resource implements sim.util.Valuable
         this(name, 0);
         }
         
+    /** This is solely for the benefit of UncountableResource(UncountableResource) */
+    protected CountableResource()
+    	{
+		super();
+    	}
+    	
     /** 
         Returns a CountableResource of the same type, name, and amount as the provided CountableResource.
         This is essentially a clone of the CountableResource.

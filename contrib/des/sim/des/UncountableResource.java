@@ -30,6 +30,11 @@ public class UncountableResource extends CountableResource
         throw new RuntimeException("Scaling may not result in NaN.  Current amount is " + amount + " and scaling is " + scaling);
         }
 
+    void throwNotUncountableResourceException(Object resource)
+        {
+        throw new RuntimeException("This provided object is not an UncountableResource:\n\t" + this + "\n\t" + resource);
+        }
+
     /** Returns true if this is an instance of UncountableResource */
     public boolean isUncountable() { return true; }
 
@@ -65,7 +70,11 @@ public class UncountableResource extends CountableResource
     */
     public UncountableResource(UncountableResource other)
         {
-        super(other);
+        if (!other.isUncountable())
+            throwNotUncountableResourceException(other);
+        this.name = other.name;
+        this.type = other.type;
+        setAmount(other.amount);
         }
                 
     /** 
