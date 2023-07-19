@@ -50,14 +50,14 @@ public class DESExample extends SimState
 					Color.BLUE, Color.RED, 2.0, scale);
 				}
         	};
-        source1.setRate(1.0, false);
+        source1.setRate(1.0);
         source1.setProduction(1.1);
         source1.setAutoSchedules(true);
         // source1 needs to be added to the schedule ONCE -- thereafter it'll operate via autoscheduling
         schedule.scheduleOnce(Schedule.EPOCH, source1);
         	
         Source source2 = new Source(this, quatloos);
-        source2.setRate(1.1, false);
+        source2.setRate(1.1);
         source2.setProduction(0.7);
         source2.setAutoSchedules(true);
         // source1 needs to be added to the schedule ONCE -- thereafter it'll operate via autoscheduling

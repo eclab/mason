@@ -114,7 +114,7 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
     /** An entity pool available to subclasses.  null by default. */
     protected LinkedList<Entity> entities;
     /** The model. */
-    protected SimState state;
+    SimState state;
     
     public SimState getState()
         {
@@ -167,7 +167,7 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
     public static final int OFFER_ORDER_FIFO = 0;
     /** Last in First Out Offer Order for entities. */
     public static final int OFFER_ORDER_LIFO = 1;
-    public int offerOrder = OFFER_ORDER_FIFO;
+    int offerOrder = OFFER_ORDER_FIFO;
     
     public void setOfferOrder(int offerOrder)
         {

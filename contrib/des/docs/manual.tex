@@ -539,7 +539,7 @@ Returns the Pool and its state in a pleasing fashion.
 
 Processes are the verbs of the DES system.  They perform actions in response to {\it events} (or if you like, {\it signals}) they receive.  
 
-An event can be one of two things typically:
+An event can be one of four things typically:
 
 \begin{itemize}
 \item Another Process can {\it offer} some Resources to the Process.
@@ -548,39 +548,132 @@ An event can be one of two things typically:
 \item MASON's Schedule can send an event to the Process to wake it up to do some work.
 \end{itemize}
 
+Various Process objects can be {\bf Receivers} or {\bf Providers}, or they can be both (known as a {\bf Middleman}).  A special subclass of Middleman, called a {\bf Filter}, is designed to pass received resources from Providers directly to downstream Receivers in zero time.    Subgraphs of Process objects can be packed into a single object called a {\bf Macro}.    
+
+Indeed most Process objects do their work in zero time, the notable exception being various kinds of {\bf Delays}.
+
+Most Process objects are meant to receive and/or provide a resource of a single type.  If you need a Process which works with several types of Resources, you can  use a {\bf Multi}, which provides several Receivers and Provides that work in concert.  For example, you might use a Multi to represent a factory which takes steel, labor, and electricity and produces bicycles and waste (five different Resource types).
+
+Process objects inherit from a variety of high-level abstract classes and interfaces, so let's start there.
+
+\subsection{Abstract Objects}
+
+\subsubsection{Resettable and Reset}
+
+All Processes are Resettable, meaning they can be {\bf reset}.  A convenience Reset object is provided which can reset multiple Resettable objects at once.
+
+\begin{methods}{\class{sim.des.Resettable}}
+\mthd{public void reset(SimState state)}
+Resets the object to its initial state.
+\end{methods}
+
+\begin{methods}{\class{sim.des.Reset} Constructor}
+\mthd{public Reset(SimState state)}
+Constructs a Reset object.
+\end{methods}
+
+\begin{methods}{\class{sim.des.Reset}}
+\mthd{public void reset()}
+Resets all the objects stored in the Reset.
+\mthd{public void add(Resettable r)}
+Stores an object in the Reset.
+\mthd{public void remove(Resettable r)}
+Removes an object from the Reset.
+\end{methods}
+
+\subsubsection{Named}
+
+All Processes are Named, meaning that they have a {\bf name} (a String).
+
+\begin{methods}{\class{sim.des.Named}}
+\mthd{public String getName()}
+Returns the name, or null.
+\mthd{public void setName(String name)}
+Sets the name.
+\end{methods}
+
+\subsubsection{sim.engine.Steppable}
+
+A Steppable is an object which can be placed on MASON's schedule to be stepped in the future.  All processes are Steppable, but only a few need it. [Perhaps in the future we may be more selective in this regard].
+
+\begin{methods}{\class{sim.engine.Steppable}}
+\mthd{public void step(SimState state)}
+Steps the Steppable to do work.
+\end{methods}
+
+\subsubsection{Parented}
+
+Processes are Parented, meaning that they have a parent who ``owns'' the Process and will take care of it, stepping it and resetting it as necessary.   All Parented objects are Resettable, Named, and sim.engine.Steppable.  
+
+\begin{methods}{\class{sim.des.Parented}}
+\mthd{public Object getParent()}
+Returns the parent, or null if no parent.
+\mthd{public void setParent(Object parent)}
+Sets the parent.  Pass in null to remove the parent.
+\end{methods}
+
+\subsubsection{Receiver}
+
+An object which can {\it receive} an offer from a Provider.  That is, the Provider will offer the Receiver some amount of Resource, asking it to {\bf accept} the offer.  Offers have minimum and maximum amounts that the Receiver may select from.  The receiver accepts some appropriate amount (between the min and max) of the Resource being offered by the Provider, or it refuses it.  A Receiver can also go to a Provider and {\bf ask} that the Provider make an offer to the Receiver.  Receivers have a {\bf typical Resource type} of the resource that they accept.  Rarely, a Receiver can receive more than one resource.
+
+\begin{methods}{\class{sim.des.Receiver}}
 
 
-Various Process objects can be {\bf Receivers} or {\bf Providers} or both, or compose these objects into groups using the {\bf Macro} and {\bf Multi} classes.  Some Process objects can be placed on MASON's schedule to be stepped when appropriate. Other Processes do not require the schedule to pass work through them and onto other Processes.
+\mthd{public boolean Resource getTypicalReceived()}
+Each Receiver is designed to receive a certain type of Resource called the {\it typical} Resource.  This method returns a Resource of this type for type comparison purposes.
 
-The Processes, and support objects, implement a few interfaces.
+\mthd{public void setRefusesOffers(boolean value)}
+Sets whether this Receiver should unilaterally refuse all offers.
 
-\subsection{sim.engine.Steppable}
+\mthd{public boolean getRefusesOffers()}
+Returns whether this Receiver is presently unilaterally refusing all offers (that is, setRefusesOffers(...) was turned on).
 
-An object which can be placed on MASON's schedule to be stepped in the future.  All processes are Steppable, but only a few need it. [Perhaps in the future we should be more selective in this regard].
+\mthd{public boolean accept(Provider provider, Resource resource, double atLeast, double atMost)}
+This method is called to ask the Receiver to {\bf accept an offer} of some amount of a given resource from a given provider.   If the Receiver accepts some of the resource, it returns true, else it returns false if it refuses the resource.   This method may throw a RuntimeException if the resource does not match the typical resource of the receiver, or if a cycle was detected in accepting offers (A offers to B, which offers to C, which then offers to A).  It should be the case that \(0 \leq\) {\it atLeast} \(\leq\) {\it atMost} \(\leq\) resource.getAmount(), else a RuntimeException will be thrown.  Though atLeast may be set to 0, Receivers must never accept 0 of any resource: they must always accept more than 0, or else refuse.  If the Receiver is currently refusing all offers, this method should always return false.
 
-\subsection{Named}
+If the Resource is an Entity, the Receiver takes control of the entire Resource.  {\it atLeast} and {\it atMost} may be ignored (and in general should be set to 0 and 1 respectively).
 
-An object which has a {\bf name} (a String).
+If the Receiver is a CountableResource (or an UncountableResource or Money etc.), then the Receiver may remove between {\it atLeast} and {\it atMost} (inclusive) amount of the provided Resource.
 
-\subsection{Parented}
+it returns true, else it returns false if it refuses the resource.   If the Resource is an Entity, the Receiver takes control of the entire Resource.  {\it atLeast and atMost} may be ignored (and in general should be set to 0 and 1 respectively).
 
-An object which can be part of a parent process.  For example, Macros may contain many Parented objects within them, and are their parents.
+\end{methods}
 
-\subsection{Resettable}
-
-An object which can be {\bf reset} by a {\bf Reset} object.
-
-\subsection{Reset}
-
-Collects a bunch of {\bf Resettable} objects and allows you to easily {\bf reset} all of them.  This way you can create your DES graph in the model's constructor, then reset it each time you {\bf start()} the model, by just calling {\bf reset()} on your Reset in the body of the start() method.
-
-\subsection{Provider}
+\subsubsection{Provider}
 
 An object which can make offers to one or more Receivers.  Receivers are {\bf registered} with the Provider.  When the Provider has a resource to offer, it will go to each of its Receivers according to some {\bf offer policy} and ask them to {\bf accept} offers of the Resource until it is depleted.  Providers can also be asked by a Receiver to make an offer to it.    Providers have a {\bf typical Resource type} of the resource that they offer.  Rarely, a Provider can provide more than one resource.
 
-\subsection{Receiver}
+Providers have certain {\bf protected} variables:
 
-An object which can {\it receive} an offer from a Provider.  That is, the Provider will offer the Receiver some amount of Resource, asking it to {\bf accept} the offer.  Offers have minimum and maximum amounts that the Receiver may select from.  The receiver accepts some appropriate amount (between the min and max) of the Resource being offered by the Provider, or it refuses it.  A Receiver can also go to a Provider and {\bf ask} that the Provider make an offer to the Receiver.  Receivers have a {\bf typical Resource type} of the resource that they accept.  Rarely, a Receiver can receive more than one resource.
+\begin{itemize}
+\item {\tt CountableResource resource}\qquad
+\item {\tt CountableResource resource}\qquad
+\item {\tt SimState state}\qquad
+
+\begin{methods}{\class{sim.des.Provider}}
+
+\mthd{public boolean Resource getTypicalReceived()}
+Each Receiver is designed to receive a certain type of Resource called the {\it typical} Resource.  This method returns a Resource of this type for type comparison purposes.
+
+\mthd{public void setRefusesOffers(boolean value)}
+Sets whether this Receiver should unilaterally refuse all offers.
+
+\mthd{public boolean getRefusesOffers()}
+Returns whether this Receiver is presently unilaterally refusing all offers (that is, setRefusesOffers(...) was turned on).
+
+\mthd{public boolean accept(Provider provider, Resource resource, double atLeast, double atMost)}
+This method is called to ask the Receiver to {\bf accept an offer} of some amount of a given resource from a given provider.   If the Receiver accepts some of the resource, it returns true, else it returns false if it refuses the resource.   This method may throw a RuntimeException if the resource does not match the typical resource of the receiver, or if a cycle was detected in accepting offers (A offers to B, which offers to C, which then offers to A).  It should be the case that \(0 \leq\) {\it atLeast} \(\leq\) {\it atMost} \(\leq\) resource.getAmount(), else a RuntimeException will be thrown.  Though atLeast may be set to 0, Receivers must never accept 0 of any resource: they must always accept more than 0, or else refuse.  If the Receiver is currently refusing all offers, this method should always return false.
+
+If the Resource is an Entity, the Receiver takes control of the entire Resource.  {\it atLeast} and {\it atMost} may be ignored (and in general should be set to 0 and 1 respectively).
+
+If the Receiver is a CountableResource (or an UncountableResource or Money etc.), then the Receiver may remove between {\it atLeast} and {\it atMost} (inclusive) amount of the provided Resource.
+
+it returns true, else it returns false if it refuses the resource.   If the Resource is an Entity, the Receiver takes control of the entire Resource.  {\it atLeast and atMost} may be ignored (and in general should be set to 0 and 1 respectively).
+
+\end{methods}
+
+
+
 
 \subsection{Sink}
 

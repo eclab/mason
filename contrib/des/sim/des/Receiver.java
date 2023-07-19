@@ -23,12 +23,12 @@ public interface Receiver extends Parented
        Offers a resource from a Provider to a Receiver.
                 
        <p>If the resource is a COUNTABLE or UNCOUNTABLE resource of some kind,
-       The provider may respond by removing between atLeast and atMost, inclusive,
+       The receiver may respond by removing between atLeast and atMost, inclusive,
        from the given amount, and returning TRUE, or returning FALSE if it refuses
        the offer.
                 
        <p>If the resource is an ENTITY of some kind,
-       The provider may respond by taking the entity and returning TRUE, 
+       The receiver may respond by taking the entity and returning TRUE, 
        or returning FALSE if it refuses the offer.  atLeast and atMost may be ignored,
        but generally atLeast should be 0 and atMost should be 1.
        
