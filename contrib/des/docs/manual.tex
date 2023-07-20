@@ -1022,6 +1022,10 @@ A Receiver which accepts all offers (of the appropriate Resource type) and throw
 Builds a Sink with the given state and typical received resource.
 \end{methods}
 
+\begin{methods}{\class{sim.des.Sink}}
+\mthd{public SimState getState()}
+Returns the SimState.
+\end{methods}
 
 \subsection{Source}
 
@@ -1808,27 +1812,307 @@ Returns the number of resources allocated each time.
 Always returns true: unlocks only make take-it-or-leave-it offers.  
 \end{methods}
 
+\begin{wrapfigure}{r}{2.5in}
+\vspace{-3em}\includegraphics[width=2.5in]{LeadProbe.pdf}
+\vspace{-1em}
+\caption{A Lead and Probe at each end of a subgraph of Processes.}
+\vspace{-1em}
+\end{wrapfigure}
+
 \subsection{Probe}
 
-An object which gathers statistics on the resources which pass through it.  A Probe can also be used in conjunction with a {\bf Lead} to measure the statistics passing through a subgraph.
+A Filter which gathers statistics on Resource flow.  A Probe can be used in two ways.  Either the Probe is used alone, in which case it measures the amount of Resource flowing through it; or the Probe can be used in conjunction with a {\bf Lead} to measure the statistics passing through a subgraph between them.
+
+Constructing a Probe is simple:
+
+\begin{methods}{\class{sim.des.Probe} Constructor}
+\mthd{public Probe(SimState state)}
+Builds a Probe.  
+\end{methods}
+
+By itself, a Probe can be used to maintain statistics of data that flows through it:
+
+\begin{methods}{\class{sim.des.Probe}}
+\mthd{public void reset()}
+Resets all statistics through the Probe.
+\mthd{public double getSumThru()}
+Returns the total amount of Resource passing through the Probe so far.
+\mthd{public double getMaxThru()}
+Returns the largest single amount of Resource passing through the Probe so far.
+\mthd{public double getSumOffers()}
+Returns the total number of offers passing through the Probe so far.
+\mthd{public double getThruRate()}
+Returns the average rate at which Resource is passing through the Probe so far.
+\mthd{public double getOfferRate()}
+Returns the average rate at which offers are made through the Probe so far.
+\end{methods}
+
+If you create a Lead, you can attach it at the start of a string of Processes, and the Probe at the end of the series, and together they will gather statistics on the information passing through the string.
+
+\begin{methods}{\class{sim.des.Probe}}
+\mthd{public Lead buildLead() }
+Builds the Lead connected to this Probe.  At most one Lead can be connected to a Probe.
+\mthd{public Lead getLead() }
+Returns the Lead connected to this Probe, or null if one has not been built yet.
+\end{methods}
+
+With a Lead, the Probe can gather additional statistics:
+
+\begin{methods}{\class{sim.des.Probe}}
+\mthd{public double getRate()}
+Returns average amount of Resource present in the string at any time.
+\mthd{public double getIdleRate()}
+Returns the average amount of time that the entire string is idle.
+\mthd{public double getUtilizationRate()}
+Returns the average amount of time that the entire string is operating (not idle).
+\end{methods}
+
 
 \subsection{Lead}
 
 An object detached from Probe with can be used in combination with it to determine the amount of resources in a DES subgraph between them.
 
+\begin{methods}{\class{sim.des.Lead}}
+\mthd{public Probe getProbe() }
+Returns the Probe associated with this Lead.
+\end{methods}
+
+
 \section{Process Utilities}
+
+\begin{wrapfigure}{r}{2.5in}
+\includegraphics[width=2.5in]{Macro.pdf}
+\vspace{-1em}
+\caption{A Macro has some number of Receivers (which you provide) that are connected to a subgraph, and eventually output to some number of Providers (which you also provide).  The Receivers and Providers are connected to the outer world. }
+\vspace{-1em}
+\end{wrapfigure}
 
 \subsection{Macro}
 
-An object which can store a {\bf subgraph} of the DES graph.  This subgraph consists of some {\bf Receivers}, some {\bf Providers}, and some {\bf in-between Processes}.  When stepped, the Macro steps all of its stored objects in order.  You can access the Receivers and Providers to make offers or register stuff as you see fit.
+An object which can store a {\bf subgraph} of the DES graph.  This subgraph consists of some external-facing {\bf Receivers}, some external-facing {\bf Providers}, and some {\bf in-between Processes}.  When stepped, the Macro steps all of its stored objects in order.  You can access the Receivers and Providers external to the Macro to make offers or register stuff as you see fit.
+
+The idea behind a Macro is that you can make a subclass of Macro which builds a custom subgraph, and then instantiate this Macro many times to recreate that subgraph in multiple locations.
+
+Receivers are added with addReceiver(), Providers are added with addProvider(), and all other processes are added with add().  Macro is recursive: you can add Macros as part of the subgraph of other Macros (they are Parented like other process objects).
+
+A Macro is the {\bf parent} of the Processes in its subgraph.  
+
+\begin{methods}{\class{sim.des.Macro} Constructor}
+\mthd{public Macro()}
+Builds a Macro.  
+\mthd{public Macro(String name)}
+Builds a Macro with the given name.  
+\end{methods}
+
+\begin{methods}{\class{sim.des.Macro}}
+\mthd{public boolean add(Parented obj, boolean step)}
+Adds the object to the graph and indicates whether it should be stepped when Macro is stepped. 
+\mthd{public boolean addReceiver(Receiver recv, boolean step)}
+Adds the public (world-facing) receiver to the graph and indicates whether it should be stepped when Macro is stepped. 
+\mthd{public boolean addProvider(Provider prov, boolean step)}
+Adds the public (world-facing) provider to the graph and indicates whether it should be stepped when Macro is stepped. 
+\mthd{public Receiver[] getReceivers() }
+Returns all receivers.
+\mthd{public String[] getReceiverNames()}
+Returns the names of all receivers. 
+\mthd{public Provider[] getProviders()}
+Returns all providers.
+\mthd{public String[] getProviderNames()}
+Returns the names of all providers. 
+\mthd{public void step(SimState state)}
+Steps all registered objects in turn. 
+\end{methods}
 
 \subsection{Service}
 
+\begin{wrapfigure}{r}{2.5in}
+\vspace{-3em}
+\includegraphics[width=2.5in]{Service.pdf}
+\vspace{-1em}
+\caption{A Service is a simple Macro with a Lock, a SimpleDelay, and an Unlock. }
+\vspace{-5em}
+\end{wrapfigure}
+
 A simple example of a common Macro consisting of a Lock, then a SimpleDelay, then an Unlock.
+
+\vspace{1in}
+
+\begin{methods}{\class{sim.des.Service} Constructor}
+\mthd{public Service(SimState state, Resource typical, Pool pool, double allocation, double delayTime)}
+Creates a service with the given pool, allocation from the pool, and delay time.   
+
+\mthd{public Service(SimState state, Resource typical, int initialResourceAllocation, double delayTime)}
+Creates a service with a brand new private pool, initial resources in the pool, and delay time. Allocation is assumed to be 1.0
+ \end{methods}
+
+\begin{methods}{\class{sim.des.Service}}
+\mthd{public Provider getProvider()}
+Returns the provider (the Unlock).
+\mthd{public Receiver getReceiver()}
+Returns the receiver (the Lock).
+\end{methods}
+
+
+\begin{wrapfigure}{r}{2.5in}
+\vspace{-3em}
+\includegraphics[width=2.5in]{Multi.pdf}
+\vspace{-1em}
+\caption{A Multi has some number of Receivers (which you provide) that are connected to a subgraph, and eventually output to some number of Providers (which you also provide).  The Receivers and Providers are connected to the outer world. }
+\vspace{-1em}
+\end{wrapfigure}
 
 \subsection{Multi}
 
-An object which contains multiple Providers and multiple Receivers, all with potentially different typical Resource types, and so which can work with a variety of Resources simultaneously.  A Multi can also perform transactions via custom-made Middlemen called {\bf Brokers}.
+An object which contains multiple Providers and multiple Receivers, all with potentially different typical Resource types, and so which can work with a variety of Resources simultaneously.    You do not provide the Providers or Receivers: instead you indicate an array of Resources for Providers and an array for Receivers, and the Multi will make its own custom Provider and Receiver subclasses, called {\bf MultiProviders} and {\bf MultiReceivers}, which communicate with the Multi when receiving resources or asked to provide resources  You then subclass from Multi to create your own version which overrides methods these custom Providers and Receivers will call, or to direct them to perform actions.
+
+A Multi can also initiate transactions, and via a custom-made Middleman called a {\bf Broker} it can be the recipient of a transaction.
+
+You begin by constructing a Multi with the requested resources, and it builds the receivers and providers.  From there, you can access and manipulate these Receivers and Providers externally to communicate with the Multi.  You might want to register your Receivers as appropriate, and register other Receivers with your Providers.
+
+\begin{methods}{\class{sim.des.Multi} Constructor}
+\mthd{public Multi(SimState state, Resource[] receiverResources, Resource[] providerResources)}
+Builds a Multi with a set of Receivers and a set of Providers, each with the following typical resources.
+ \end{methods}
+
+\begin{methods}{\class{sim.des.Multi}}
+\mthd{public SimState getState()}
+Returns the SimState.
+\mthd{public int getNumReceivers() }
+Returns the number of receivers.
+\mthd{public int getNumProviders() }
+Returns the number of providers.
+\mthd{public Receiver[] getReceivers() }
+Returns all receivers.
+\mthd{public Provider[] getProviders() }
+Returns all providers.
+\mthd{public Receiver getReceiver(int receiverPort)}
+Returns receiver \#receiverPort in the receivers array.
+\mthd{public Provider getProvider(int providerPort)}
+Returns provider \#providerPort in the providers array.
+\mthd{public Receiver getReceiver(Resource resource)}
+Returns the Multi Receiver meant to receive the following kind of resource, or null if there isn't one.  Note that if
+		this Resource was given multiple times in the constructor, only the last Receiver is returned. 
+		It's possible, indeed reasonable for you to have multiple receivers for a given resource for some
+		modeling task: in this case, if the resource appeared in slots 5 and 7 (say) of the receiverResources[]
+		array passed into the constructor, then the two corresponding receivers would be at ports 5 and 7. \mthd{public Provider getProvider(Resource resource)}
+Returns the Multi Provider meant to receive the following kind of resource, or null if there isn't one.  Note that if
+		this Resource was given multiple times in the constructor, only the last Provider is returned. 
+		It's possible, indeed reasonable for you to have multiple providers for a given resource for some
+		modeling task: in this case, if the resource appeared in slots 5 and 7 (say) of the providerResources[]
+		array passed into the constructor, then the two corresponding Providers would be at ports 5 and 7.
+\mthd{public String getName() }
+Returns the Multi's name.
+\mthd{public void setName(String name)}
+Sets the Multi's name.
+\mthd{public Object getParent()}
+Returns the Multi's parent.
+\mthd{public void setParent(Object parent) }
+Sets the Multi's parent.
+\end{methods}
+
+\paragraph{MultiReceivers and MultiProviders}
+When a MultiReceiver or MultiProvider is accessed, it will call a method on the Multi.  You can override this method to process the request.
+
+\begin{methods}{\class{sim.des.Multi}}
+\mthd{protected boolean accept(int receiverPort, Provider provider, Resource resource, double atLeast, double atMost)}
+Called when a Multi receiver receives an offer.  The receiver in question is specified by its receiverPort. 
+        Override this to process offers, in the same way that a Receiver processes an offer via its accept(...) method.  
+        By default this method returns false.  
+\mthd{protected boolean provide(int providerPort, Receiver receiver, Resource resource, double atMost)}
+Called when a Multi provider receives a request to make an offer.  The provider in question is specified by its providerPort. 
+        Override this to make an offer if you see fit by calling provide(...).  By default this method returns false.  
+\end{methods}
+ 
+From within your Multi, you can then make provide requests or make offers through the MultiReceivers or MultiProviders.  As usual, the Multi checks for cycles via isOffering().
+ 
+\begin{methods}{\class{sim.des.Multi}}
+\mthd{protected boolean requestProvide(int receiverPort, Provider provider, double atMost)}
+Instructs a Multi receiver to ask some provider to make an offer by calling its provide(..., atMost) method.
+        The receiver in question is specified by its receiverPort. 
+\mthd{protected boolean requestProvide(int receiverPort, Provider provider)}
+Instructs a Multi receiver to ask some provider to make an offer by calling its provide(...) method.
+        The receiver in question is specified by its receiverPort. 
+\mthd{protected boolean offerReceivers(int providerPort, Resource resource, double atLeast, double atMost)}
+Instructs a Multi provider to make an offer by calling offerReceivers(...) method, and then
+        offer the resource as specified. 
+\mthd{protected boolean isOffering()}
+Returns true if the Provider is currently making an offer to a receiver (this is meant to allow you
+        to check for offer cycles. 
+ \mthd{public void reset(SimState state)}
+By default does nothing
+\mthd{public void step(SimState state)}
+By default does nothing.
+\end{methods}
+ 
+ \paragraph{Transactions}
+ 
+Like Middleman, Multi can also perform transactions.  To initiate a transaction with a Middleman, you can call offerTransaction(...).  You can also create a {\bf broker}, essentially a custom Middleman, which is connected to one MultiReceiver and one MultiProvider.  This broker can receive transaction requests from external Middlemen.  On transaction request, the Broker then calls performTransaction() on the Multi, which you may override as you see fit to process the transaction.
+ 
+\begin{methods}{\class{sim.des.Multi}}
+\mthd{protected Resource offerTransaction(int providerPort, int receiverPort, Middleman middleman, Resource provided,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf double atLeast, double atMost, Resource requestedType, double atLeastRequested)}\\
+Instructs a Multi to offer a transaction to a Middleman, notionally from the Multi's provider and receiver ports,
+    	though they really won't come into it. If the transaction is agreed to, your provided resource will be accordingly 
+    	modified (reduced) and the requested resource will have been provided.  Otherwise null will be returned.
+		
+The transaction is offering atLeast and atMost a certain amount of provided resource in exchange for
+    	(from you) a requested resource.  atLeastRequested is the amount of requested resource to be provided
+    	in exchange for the *least* amount of provided resource.  If you decide to take some X provided resource
+    	where X is between atLeast and atMost, then the resource amount you provide in return is 
+	\code{X * atLeastRequested / atMost}.
+    	For requested CountableResources, I suggest that the amount returned in response to a request would best be
+    	\code{(int)(X * atLeastRequested / atMost)}, but you can do as your model deems appropriate.
+    	
+For Entities, only a single Entity can be provided.  If an Entity is being provided, then atLeast = atMost = 1.
+    	
+For Entities, only a single Entity can be requested.  If an Entity is being requested, atLeastRequested = 1
+    	and exactly one Entity should be returned regardless of its value, and atLeast = atMost. 
+    	
+Don't override this method.  Instead, override performTransaction().
+
+\mthd{public Middleman getBroker(final int providerPort, final int receiverPort)}
+Builds a Middleman from the given provider and receiver ports solely for the purpose of performing a transaction.
+    	This is thus a "Broker", a simplified Middleman which refuses offers and requests to make offers: it only responds
+    	to requests to make transactions, that is, transact(...).  Note that if you call this method twice with the
+    	same provider and receiver ports, you will receive different Middlemen.
+    	
+This Middleman will refuse a transaction if the Receiver associated with the underlying receiver port
+    	is set to refuse offers. 
+    	
+Also note that the Multi has a global check for zero-time transaction cycles going 
+    	through it.  That is, you can't make a transaction through one provider/receiver port pair, and have it make
+    	its way through a chain of zero-time transactions to wind up trying to transact through a second
+    	provider/receiver port pair on the same Multi. 
+	
+\mthd{protected Resource performTransaction(int myProviderPort, int myReceiverPort, Provider provider, Receiver receiver,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf Resource provided, double atLeast, double atMost, Resource requestedType,}\\ \rule{0pt}{0pt}\hspace{\fill}{\sf double atLeastRequested)}\\
+Received by the Multi when an external Provider and Receiver are asking for a transaction of one resource for another,
+    	by building a Middleman to broker with a provider port and receiver port on the Multi, though the ports really won't
+    	come into it.  
+    	The Provider would provide a resource to the Multi and a Receiver would receive the transacted returned Resource.
+    	Very commonly this Provider and Receiver are one and the same: they are a Middleman or perhaps a Multi. 
+    	But this does not have to be the case.  	
+		If the transaction is agreed to, you should modify the provided resource and return the requested resource.
+		Otherwise, return null.  The default form simply returns null. 
+		
+By the time this method has been called, refuses-offers,
+		cyclic, and type compatibility checks have already been performed, but you might still benefit from 
+		knowing the requestedType, so it is provided: but you should not modify this resource nor return it.
+				
+The transaction is offering atLeast and atMost a certain amount of provided resource in exchange for
+    	(from you) a requested resource.  atLeastRequested is the amount of requested resource to be provided
+    	in exchange for the *least* amount of provided resource.  If you decide to take some X provided resource
+    	where X is between atLeast and atMost, then the resource amount you provide in return 
+	\code{X * atLeastRequested / atMost}.
+    	For requested CountableResources, I suggest that the amount returned in response to a request would best be
+    	\code{(int)(X * atLeastRequested / atMost)}, but you can do as your model deems appropriate.
+    	
+For Entities, only a single Entity can be provided.  If an Entity is being provided, then atLeast = atMost = 1.
+    	
+For Entities, only a single Entity can be requested.  If an Entity is being requested, atLeastRequested = 1
+    	and exactly one Entity should be returned regardless of its value. 
+\end{methods}
+
 
 
 
