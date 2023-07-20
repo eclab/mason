@@ -182,21 +182,21 @@ public class BoundedDelay extends Delay
         	}
         else if (distribution == null) 
         	{
-        	lastDelay = getDelayTime();
+        	setLastDelay(getDelayTime());
         	}
         else 
         	{
         	boolean failed = true;
         	for(int i = 0; i < MAX_DELAY_TRIES; i++)
         		{
-	        	lastDelay = Math.abs(distribution.nextDouble());
-	        	if (lastDelay != 0 || lastDelay > maxDelaySteps) { failed = false; break; }
+	        	setLastDelay(Math.abs(distribution.nextDouble()));
+	        	if (getLastDelay() != 0 || getLastDelay() > maxDelaySteps) { failed = false; break; }
         		}
         	if (failed)
         		throwZeroOrMaxDelayException();
         	}
         
-        return lastDelay;
+        return getLastDelay();
         }
     
     void insert(DelayNode node, double delay)

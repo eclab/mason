@@ -116,13 +116,13 @@ public class Delay extends SimpleDelay
     
     boolean usesLastDelay = false;
     
-    /** Sets whether getDelay() should simply return the delay time used by the most recent resource
+    /** Sets whether getDelay(...) should simply return the delay time used by the most recent resource
     	added to the Delay.  If there is no such resource, or if that resource has since been 
     	removed from the Delay, or if its delay time has passed, then a delay value of 1.0 will
     	be used as a default. */
     public void setUsesLastDelay(boolean val) { usesLastDelay = val; }
     
-    /** Sets whether getDelay() should simply return the delay time used by the most recent resource
+    /** Sets whether getDelay(...) should simply return the delay time used by the most recent resource
     	added to the Delay. If there is no such resource, or if that resource has since been 
     	removed from the Delay, or if its delay time has passed, then a delay value of 1.0 will
     	be used as a default. */
@@ -146,7 +146,10 @@ public class Delay extends SimpleDelay
         return this.distribution;
         }
                 
-	protected double lastDelay = 1.0;
+	double lastDelay = 1.0;
+	protected void setLastDelay(double val) { lastDelay = val; }
+	protected double getLastDelay() { return lastDelay; }
+	
     /** Returns the appropriate delay value for the given provider and resource amount.
     	You can override this as you see fit, though the defaults should work fine in most 
     	cases.  The defaults are: if getUsesLastDelay(), and there has been at least one 
@@ -164,13 +167,13 @@ public class Delay extends SimpleDelay
         	}
         else if (distribution == null) 
         	{
-        	lastDelay = getDelayTime();
+        	setLastDelay(getDelayTime());
         	}
         else 
         	{
-        	lastDelay = Math.abs(distribution.nextDouble());
+        	setLastDelay(Math.abs(distribution.nextDouble()));
         	}
-        return lastDelay;
+        return getLastDelay();
         }
         
     void insert(DelayNode node, double nextTime)
