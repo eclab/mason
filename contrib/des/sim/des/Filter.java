@@ -38,7 +38,7 @@ import java.awt.*;
     another class in the near future, so be prepared for that possibility.
     
     <p>The default version of Filter merely accepts resources, immediately offers
-    them to downstream receivers, and that's it.
+    them to downstream receivers, and that's it.n
  */
 
 public class Filter extends Middleman

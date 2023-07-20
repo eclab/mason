@@ -114,7 +114,7 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
     /** An entity pool available to subclasses.  null by default. */
     protected LinkedList<Entity> entities;
     /** The model. */
-    SimState state;
+    protected SimState state;
     
     public SimState getState()
         {

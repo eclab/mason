@@ -29,7 +29,6 @@ public abstract class If extends Middleman
 
     private static final long serialVersionUID = 1;
 
-    /** Builds a lock attached to the given pool and with the given amount of resources acquired each time. */
     public If(SimState state, Resource typical)
         {
         super(state, typical);

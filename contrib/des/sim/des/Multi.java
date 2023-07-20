@@ -22,6 +22,11 @@ public abstract class Multi extends DESPortrayal implements Parented
     private static final long serialVersionUID = 1;
 
     protected SimState state;
+    
+    public SimState getState()
+    	{
+    	return state;
+    	}
 
     // Collections of receivers and providers that may be connected to outside receivers and providers      
     MultiReceiver[] multiReceivers;

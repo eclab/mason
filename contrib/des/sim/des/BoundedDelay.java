@@ -103,7 +103,7 @@ public class BoundedDelay extends Delay
         currentDelayPos = maxDelaySteps;
         }
 
-    /** Creates a BoundedDelay with a 0 ordering, the given delay time, max delay time, a delay interval of 0, and typical resource. */
+    /** Creates a BoundedDelay with a 0 ordering, the given delay time, max delay time, a delay interval of 1, and typical resource. */
     public BoundedDelay(SimState state, double delayTime, Resource typical, int maxDelaySteps)
         {
         this(state, delayTime, typical, maxDelaySteps, 1);
@@ -122,7 +122,7 @@ public class BoundedDelay extends Delay
         currentDelayPos = maxDelaySteps;
         }
 
-    /** Creates a Delay with a 0 ordering, a delay time of 1.0, max delay time, a delay interval of 0, and typical resource. */
+    /** Creates a Delay with a 0 ordering, a delay time of 1.0, max delay time, a delay interval of 1, and typical resource. */
     public BoundedDelay(SimState state, Resource typical, int maxDelaySteps)
         {
         this(state, typical, maxDelaySteps, 1);
@@ -173,7 +173,7 @@ public class BoundedDelay extends Delay
     	this.delayTime = delayTime; 
     	}
 
-    public static final double MAX_DELAY_TRIES = 1000;
+    public static final double MAX_DELAY_TRIES = 10000;
     protected double getDelay(Provider provider, Resource amount)
         {
         if (getUsesLastDelay() && recent != null)
@@ -249,9 +249,8 @@ public class BoundedDelay extends Delay
         return true;
         }
 
-    /** A convenience method which calls setAutoSchedules(true), then schedules the Source on the Schedule using 
-    	the current rescheduleOrdering.  The Source is initially scheduled at the given time.  
-    	See also autoScheduleNow() and autoSchedule(...) for other options.
+    /** A convenience method which calls setAutoSchedules(true), then schedules the BoundedDelay on the Schedule using 
+    	the current rescheduleOrdering.  The BoundedDelay is initially scheduled at the given time.  
     */
     public void autoScheduleAt(double time)
         {

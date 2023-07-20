@@ -132,10 +132,10 @@ public class Decomposer extends Middleman
             }
         }
         
-	/** This is called when the Decoomposer breaks apart a composite entity,
+	/** This is called when the Decomposer breaks apart a composite entity,
 		immediately before extracting the elements in its Storage and offering
 		them to downstream Receivers.  It's meant to give you an opportunity
-		to process the Info object if you need to. By default this does nothing. */
+		to process the Entity's Info object if you need to. By default this does nothing. */
     protected void processEntityInfoFor(Entity entity)
     	{
     	}

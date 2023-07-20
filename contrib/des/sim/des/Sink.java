@@ -37,6 +37,12 @@ public class Sink extends DESPortrayal implements Receiver, StatReceiver, Provid
     private static final long serialVersionUID = 1;
 
     protected SimState state;
+
+    public SimState getState()
+        {
+        return state;
+        }
+
     Resource typicalReceived;
         
     double totalReceivedResource;
