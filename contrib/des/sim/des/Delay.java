@@ -207,7 +207,7 @@ public class Delay extends SimpleDelay
         if (entities == null)
             {
             CountableResource cr = (CountableResource)amount;
-            double maxIncoming = Math.min(Math.min(getCapacity() - totalDelayedResource - (getIncludesRipeResourcesInTotal() ? resource.getAmount() : 0), atMost), cr.getAmount());
+            double maxIncoming = Math.min(Math.min(getCapacity() - totalDelayedResource - (getIncludesAvailableResourcesInTotal() ? resource.getAmount() : 0), atMost), cr.getAmount());
             if (maxIncoming < atLeast) return false;
                 
             CountableResource token = (CountableResource)(cr.duplicate());
@@ -221,7 +221,7 @@ public class Delay extends SimpleDelay
             }
         else
             {
-            if (delayHeap.size() + (getIncludesRipeResourcesInTotal() ? entities.size() : 0) >= getCapacity()) return false; // we're at capacity
+            if (delayHeap.size() + (getIncludesAvailableResourcesInTotal() ? entities.size() : 0) >= getCapacity()) return false; // we're at capacity
             DelayNode node = new DelayNode(amount, nextTime, provider);
             if (lookup != null) lookup.put(amount, node);
             insert(node, nextTime);

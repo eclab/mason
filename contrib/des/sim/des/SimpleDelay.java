@@ -32,7 +32,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
     int rescheduleOrdering = 0;
     boolean autoSchedules = true;
     boolean dropsResourcesBeforeUpdate = true;
-    boolean includesRipeResourcesInTotal = false;
+    boolean includesAvailableResourcesInTotal = false;
     Hashtable<Resource,DelayNode> lookup = null;
     
     double capacity = Double.POSITIVE_INFINITY;    
@@ -98,10 +98,10 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
     /** Returns the number of items currently being delayed. */
     public double getSize() { return delayQueue.size(); }
 
-    /** Returns the number AMOUNT of resource currently being delayed. */
+    /** Returns the AMOUNT of resource currently being delayed. */
     public double getDelayed() { return totalDelayedResource; }
 
-    /** Returns the number AMOUNT of resource currently being delayed, plus the current available resources. */
+    /** Returns the AMOUNT of resource currently being delayed, plus the current available resources. */
     public double getDelayedPlusAvailable() { return getDelayed() + getAvailable(); }
         
     /** Returns the delay time. */
@@ -189,26 +189,26 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
         this(state, 1.0, typical);
         }
         
-    /** Returns whether the ripe resources (no longer in the delay queue) should be included as part of the delay's
+    /** Returns whether the available resources (no longer in the delay queue) should be included as part of the delay's
     	total resource count for purposes of comparing against its capacity to determine if it's full. Note that
-    	if setDropsResourcesBeforeUpdate() is TRUE, then the ripe resources will be included PRIOR to when drop()
+    	if setDropsResourcesBeforeUpdate() is TRUE, then the available resources will be included PRIOR to when drop()
     	is called, but they disappear afterwards.  drop() is called during offerReceivers(), which in turn may
     	be called during step() after update().
     	 */
-    public boolean getIncludesRipeResourcesInTotal()
+    public boolean getIncludesAvailableResourcesInTotal()
     	{
-    	return includesRipeResourcesInTotal;
+    	return includesAvailableResourcesInTotal;
     	}
     	
-    /** Sets whether the ripe resources (no longer in the delay queue) should be included as part of the delay's
+    /** Sets whether the available resources (no longer in the delay queue) should be included as part of the delay's
     	total resource count for purposes of comparing against its capacity to determine if it's full. Note that
-    	if setDropsResourcesBeforeUpdate() is TRUE, then the ripe resources will be included PRIOR to when drop()
+    	if setDropsResourcesBeforeUpdate() is TRUE, then the available resources will be included PRIOR to when drop()
     	is called, but they disappear afterwards.  drop() is called during offerReceivers(), which in turn may
     	be called during step() after update().
     	 */
-    public void setIncludesRipeResourcesInTotal(boolean val)
+    public void setIncludesAvailableResourcesInTotal(boolean val)
     	{
-		includesRipeResourcesInTotal = val;
+		includesAvailableResourcesInTotal = val;
     	}
 
     /** Accepts up to CAPACITY of the given resource and places it in the delay,
@@ -228,7 +228,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
         if (entities == null)
             {
             CountableResource cr = (CountableResource)amount;
-            double maxIncoming = Math.min(Math.min(getCapacity() - totalDelayedResource - (getIncludesRipeResourcesInTotal() ? resource.getAmount() : 0), atMost), cr.getAmount());
+            double maxIncoming = Math.min(Math.min(getCapacity() - totalDelayedResource - (getIncludesAvailableResourcesInTotal() ? resource.getAmount() : 0), atMost), cr.getAmount());
             if (maxIncoming == 0 || maxIncoming < atLeast) return false;
                 
             CountableResource token = (CountableResource)(cr.duplicate());
@@ -242,7 +242,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
             }
         else
             {
-            if (delayQueue.size() + (getIncludesRipeResourcesInTotal() ? entities.size() : 0) >= getCapacity()) return false; // we're at capacity
+            if (delayQueue.size() + (getIncludesAvailableResourcesInTotal() ? entities.size() : 0) >= getCapacity()) return false; // we're at capacity
             DelayNode node = new DelayNode(amount, nextTime, provider);
             if (lookup != null) lookup.put(amount, node);
             delayQueue.add(node);
@@ -272,7 +272,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
         return dropsResourcesBeforeUpdate; 
         }
 
-    /** Removes all currently ripe resources. */
+    /** Removes all currently available resources. */
     protected void drop()
         {
         if (entities == null)
@@ -281,8 +281,8 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
             entities.clear();
         }
                 
-    /** Deletes exiting ripe resources, then 
-        checks the delay pipeline to determine if any resources have come ripe, and makes
+    /** Deletes exiting available resources, then 
+        checks the delay pipeline to determine if any resources have come available, and makes
         them available to registered receivers in zero time. */
     protected void update()
         {
@@ -298,7 +298,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
             {
             DelayNode node = iterator.next();
             if (lookup != null) lookup.remove(node.resource);
-            if (node.timestamp <= time)     // it's ripe
+            if (node.timestamp <= time)     // it's available
                 {
                 if (entities == null)
                     {
@@ -330,7 +330,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
         return "SimpleDelay@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + ")";
         }  
                      
-    /** Upon being stepped, the Delay calls update() to reap all ripe resources.  It then
+    /** Upon being stepped, the Delay calls update() to reap all available resources.  It then
         calls offerReceivers to make offers to registered receivers.  You don't have to
         schedule the Delay at all, unless you have turned off auto-scheduling. */
 
@@ -345,7 +345,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
     	boolean returnval = super.offerReceivers(receivers);
 
     	if (slackProvider != null && getCapacity() > getDelayed())
-    		slackProvider.offer(this);
+    		slackProvider.provide(this);
     	return returnval;
     	}
     	
