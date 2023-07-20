@@ -121,6 +121,14 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
         return state;
         }
         
+    /** 
+        Returns the typical kind of resource the Provider provides.  
+        This should always be zero in size and not used except for type checking.
+        If (rarely) the Provider may provide a variety of types, such as a Decomposer,
+        then this method should return null. 
+    */
+    public Resource getTypicalProvided() { return typicalProvided; }
+
     
     ////// OFFER STATISTICS
     //////
@@ -159,7 +167,7 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
         }
     
     double totalAcceptedOfferResource;
-    public double getTotalOfferResource() { return totalAcceptedOfferResource; }
+    public double getTotalAcceptedOfferResource() { return totalAcceptedOfferResource; }
     public double getOfferResourceRate() { double time = state.schedule.getTime(); if (time <= 0) return 0; else return totalAcceptedOfferResource / time; }
     
         
@@ -245,15 +253,13 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
         }
         
 
-    /** Returns the receiver offer policy to OFFER_POLICY_RANDOM, and
-        sets the appropriate distribution for selecting a receiver.  If the distribution
-        is set to null, receivers are selected randomly.
+    /** Returns the current offer distribution, or null if none.
     */
-    public AbstractDistribution getOfferRandomDistribution()
+    public AbstractDistribution getOfferDistribution()
         {
         return offerDistribution;
         }
-    public boolean hideOfferRandomDistribution() { return true; }
+    public boolean hideOfferDistribution() { return true; }
     
     /** 
         Clears any current entites and resources ready to be provided.
@@ -264,14 +270,6 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
         if (resource != null) resource.clear();
         }
                 
-    /** 
-        Returns the typical kind of resource the Provider provides.  
-        This should always be zero in size and not used except for type checking.
-        If (rarely) the Provider may provide a variety of types, such as a Decomposer,
-        then this method should return null. 
-    */
-    public Resource getTypicalProvided() { return typicalProvided; }
-
     /** 
         Sets whether receivers are offered take-it-or-leave-it offers.
         A take-it-or-leave-it offer requires the Receiver to accept all of the offered Resource,
@@ -691,10 +689,9 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
        Returns true if the offer was accepted; though since the Receiver itself likely made this call, 
        it's unlikely that this would ever return anything other than TRUE in a typical simulation.
     */
-    public boolean provide(Receiver receiver) { return offer(receiver); }
-    public boolean offer(Receiver receiver)
+    public boolean provide(Receiver receiver) 
         {
-        return offer(receiver, Double.POSITIVE_INFINITY);
+        return provide(receiver, Double.POSITIVE_INFINITY);
         }
 
     /**
@@ -706,8 +703,7 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
        
        <p>atMost must be a positive non-zero, non-NAN number.
     */
-    public boolean provide(Receiver receiver, double atMost) { return offer(receiver, atMost); }
-    public boolean offer(Receiver receiver, double atMost)
+    public boolean provide(Receiver receiver, double atMost) 
         {
         if (!isPositiveNonNaN(atMost))
             throwInvalidNumberException(atMost);

@@ -241,7 +241,7 @@ public class Source extends Provider implements Steppable
     /** Returns the reschedule ordering. */
     public int getRescheduleOrdering() { return rescheduleOrdering; }
 
-    /** Returns the reschedule ordering and clears the delay entirely. */
+    /** Sets the reschedule ordering. */
     public void setRescheduleOrdering(int ordering) { this.rescheduleOrdering = ordering; }
 
 	public boolean hideRescheduleOrdering() { return true; }

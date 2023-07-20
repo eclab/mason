@@ -16,7 +16,7 @@ import java.awt.*;
 
 /** 
     A subclass of Source which, when stepped, provides resources to Receivers by first requesting them
-    from a Provider via a pull operation (calling offer()).  The amount of resources and
+    from a Provider via a pull operation (calling provide()).  The amount of resources and
     the timing of the steps are exactly the same as described in Source.  Unlike Source, capacity
     is ignored and getCapacity() and setCapacity() do nothing.
         
@@ -117,6 +117,43 @@ public class Extractor extends Source implements Receiver
 	public int getRequestPolicy() { return requestPolicy; }
 	public boolean hideRequestPolicy() { return true; }
 
+    /** Sets the receiver request policy to REQUEST_POLICY_RANDOM, and
+        sets the appropriate distribution for selecting a provider.  If null is provided 
+        for the distribution, providers are selected randomly.  Selection via an request
+        distribution works as follows: a random integer is selected from the distribution.
+        If this integer is < 0 or >= the number of providers registered, then a warning
+        is produced and no request is made (this should NOT happen).  Otherwise a request
+        is made to the registered provider corresponding to the selected integer.
+    */
+    public void setRequestDistribution(AbstractDiscreteDistribution distribution)
+        {
+        setRequestPolicy(REQUEST_POLICY_RANDOM);
+        offerDistribution = distribution;
+        }
+        
+    /** Sets the receiver offer policy to REQUEST_POLICY_RANDOM, and
+        sets the appropriate distribution for selecting a provider.  If null is provided 
+        for the distribution, providers are selected randomly.  Selection via an offer
+        distribution works as follows: a random integer is selected from the distribution.
+        An offer is made to the registered provider corresponding to the index of the 
+        selected slot in the distribution.  The distribution must exactly match the size
+        of the number of registered providers.
+    */
+    public void setRequestDistribution(double[] distribution)
+        {
+        setRequestDistribution(new EmpiricalWalker(distribution, Empirical.NO_INTERPOLATION, state.random));
+        }
+        
+
+    /** Returns the current offer distribution, or null if none.
+    */
+    public AbstractDistribution getRequestRandomDistribution()
+        {
+        return offerDistribution;
+        }
+    public boolean hideRequestRandomDistribution() { return true; }
+    
+
 	public void setRequestTermination(int requestTermination)
 		{
 		if (requestTermination < REQUEST_TERMINATION_EXHAUST || requestTermination > REQUEST_TERMINATION_SUCCEED)
@@ -128,9 +165,10 @@ public class Extractor extends Source implements Receiver
 	public boolean hideRequestTermination() { return true; }
         
     boolean requesting;
-    /** Returns true if the Extractor is currently requesting an offer(this is meant to allow you
+    /** Returns true if the Extractor is currently requesting an offer (this is meant to allow you
         to check for offer cycles. */
     protected boolean isRequesting() { return requesting; }
+    
     protected boolean requestProviders(double amt)
     	{
     	requesting = true;
@@ -144,7 +182,7 @@ public class Extractor extends Source implements Receiver
                 for(Provider p : providers)
                     {
                     if (acceptValue < 0) break;
-                    boolean r = p.offer(this, acceptValue);
+                    boolean r = p.provide(this, acceptValue);
                     result = result || r;
                     if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
                     if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
@@ -157,7 +195,7 @@ public class Extractor extends Source implements Receiver
                     {
                     if (acceptValue < 0) break;
                     Provider p = providers.get(i);
-                    boolean r = p.offer(this, acceptValue);
+                    boolean r = p.provide(this, acceptValue);
                     result = result || r;
                     if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
                     if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
@@ -172,7 +210,7 @@ public class Extractor extends Source implements Receiver
                     if (acceptValue < 0) break;
                     Provider p = nextShuffledProvider();
                     if (p == null) break;		// all done
-                    boolean r = p.offer(this, acceptValue);
+                    boolean r = p.provide(this, acceptValue);
                     result = result || r;
                     if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
                     if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
@@ -188,7 +226,7 @@ public class Extractor extends Source implements Receiver
                 if (requestDistribution == null)  // select uniformly
                     {
                     Provider p = providers.get(state.random.nextInt(size));
-                    result = p.offer(this, amt);
+                    result = p.provide(this, amt);
                     }
                 else
                     {
@@ -204,7 +242,7 @@ public class Extractor extends Source implements Receiver
                         }
                     else
                         {
-                        result = providers.get(val).offer(this, amt);
+                        result = providers.get(val).provide(this, amt);
                         }
                     }
                 }
@@ -224,7 +262,7 @@ public class Extractor extends Source implements Receiver
                     {
                     Provider p = selectProvider(providers);
                     if (p == null) break;
-                    p.offer(this, amt);
+                    p.provide(this, amt);
                     }
                 }
             break;
@@ -283,12 +321,12 @@ public class Extractor extends Source implements Receiver
        
     Receiver distinguishedReceiver = null;
     
-    public boolean offer(Receiver receiver)
+    public boolean provide(Receiver receiver)
         {
-        return offer(receiver, Double.POSITIVE_INFINITY);
+        return provide(receiver, Double.POSITIVE_INFINITY);
         }
 
-    public boolean offer(Receiver receiver, double atMost)
+    public boolean provide(Receiver receiver, double atMost)
         {
         if (requesting) return false;		// break cycles
         

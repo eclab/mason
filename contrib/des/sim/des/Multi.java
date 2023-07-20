@@ -41,31 +41,31 @@ public abstract class Multi extends DESPortrayal implements Parented
         }
 
     /** Called when a Multi provider receives a request to make an offer.  The provider in question is specified by its providerPort. 
-        Override this to make an offer if you see fit by calling offer(...).  By default this method returns false.  */
-    protected boolean offer(int providerPort, Receiver receiver, Resource resource, double atMost)
+        Override this to make an offer if you see fit by calling provide(...).  By default this method returns false.  */
+    protected boolean provide(int providerPort, Receiver receiver, Resource resource, double atMost)
         {
         return false;
         }
         
-    /** Instructs a Multi receiver to ask some provider to make an offer by calling its offer(..., atMost) method.
+    /** Instructs a Multi receiver to ask some provider to make an offer by calling its provide(..., atMost) method.
         The receiver in question is specified by its receiverPort. */
-    protected boolean requestOffer(int receiverPort, Provider provider, double atMost)
+    protected boolean requestProvide(int receiverPort, Provider provider, double atMost)
         {
-        return provider.offer(multiReceivers[receiverPort], atMost);
+        return provider.provide(multiReceivers[receiverPort], atMost);
         }
 
-    /** Instructs a Multi receiver to ask some provider to make an offer by calling its offer(...) method.
+    /** Instructs a Multi receiver to ask some provider to make an offer by calling its provide(...) method.
         The receiver in question is specified by its receiverPort. */
-    protected boolean requestOffer(int receiverPort, Provider provider)
+    protected boolean requestProvide(int receiverPort, Provider provider)
         {
-        return provider.offer(multiReceivers[receiverPort]);
+        return provider.provide(multiReceivers[receiverPort]);
         }
         
     /** Instructs a Multi provider to ask offer to make an offer by calling offerReceivers(...) method, and then
         offer the resource as specified. */
     protected boolean offerReceivers(int providerPort, Resource resource, double atLeast, double atMost)
         {
-        return multiProviders[providerPort].offer(resource, atLeast, atMost);
+        return multiProviders[providerPort].provide(resource, atLeast, atMost);
         }
 
     /** Instructs a Multi to offer a transaction to a Middleman, notionally from the Multi's provider and receiver ports,
@@ -121,7 +121,7 @@ public abstract class Multi extends DESPortrayal implements Parented
     		{
     		public Resource getTypicalReceived() { return multiReceivers[receiverPort].getTypicalReceived(); }
     		public boolean accept(Provider provider, Resource resource, double atLeast, double atMost) { return false; }
-    		public boolean offer(Receiver receiver, double atMost) { return false; }
+    		public boolean provide(Receiver receiver, double atMost) { return false; }
     		
     		protected Resource performTransaction(Provider provider, Receiver receiver, Resource provided, 
     			double atLeast, double atMost, Resource requestedType, double atLeastRequested)
@@ -261,15 +261,15 @@ public abstract class Multi extends DESPortrayal implements Parented
     	}
     	
     /** The subclass of Provider used internally by Multi.  This is largely a stub which connects methods to 
-        Multi's internal offer() and offerReceivers() methods. */
+        Multi's internal provide() and offerReceivers() methods. */
     public class MultiProvider extends Provider
         {
         int providerPort;
         double _atLeast = 0;
         double _atMost = 0;
                 
-        // Called by Multi.offer() to make an offer via offerReceivers();
-        boolean offer(Resource amount, double atLeast, double atMost)
+        // Called by Multi.provide() to make an offer via offerReceivers();
+        boolean provide(Resource amount, double atLeast, double atMost)
             {
             if (!getTypicalProvided().isSameType(amount))
                 {
@@ -332,12 +332,12 @@ public abstract class Multi extends DESPortrayal implements Parented
             return result;
             }
                 
-        /** Routes to Multi.offer(...) */
-        public boolean offer(Receiver receiver, double atMost)
+        /** Routes to Multi.provide(...) */
+        public boolean provide(Receiver receiver, double atMost)
             {
             if (!isPositiveNonNaN(atMost))
                 throwInvalidNumberException(atMost);
-            return Multi.this.offer(providerPort, receiver, getTypicalProvided(), atMost);
+            return Multi.this.provide(providerPort, receiver, getTypicalProvided(), atMost);
             }
 
         public MultiProvider(SimState state, Resource typical, int providerPort)
@@ -353,7 +353,7 @@ public abstract class Multi extends DESPortrayal implements Parented
         } 
 
     /** The subclass of Receiver used internally by Multi.  This is largely a stub which connects methods to 
-        Multi's internal accept() and (in a roundabout fashion) offer() methods. */
+        Multi's internal accept() and (in a roundabout fashion) provide() methods. */
     public class MultiReceiver extends Sink
         {
         int receiverPort;
