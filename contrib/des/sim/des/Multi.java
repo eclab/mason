@@ -306,7 +306,7 @@ public abstract class Multi extends DESPortrayal implements Parented
             }
                 
         // Guarantees that _atLeast is respected when calling accept
-         boolean offerReceiver(Receiver receiver, double atMost)
+         protected boolean offerReceiver(Receiver receiver, double atMost)
             {
             if (_atLeast > atMost) return false;    // can't even make an offer
             else 
@@ -325,7 +325,7 @@ public abstract class Multi extends DESPortrayal implements Parented
                 }
             }
 
-         boolean offerReceiver(Receiver receiver, Entity entity)
+         protected boolean offerReceiver(Receiver receiver, Entity entity)
             {
 //                      return receiver.accept(this, entity, 0, 0);
             lastOfferTime = state.schedule.getTime();
