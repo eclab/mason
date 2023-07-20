@@ -90,7 +90,7 @@ public class BoundedDelay extends Delay
         size = 0;
         }
                 
-    /** Creates a BoundedDelay with a 0 ordering, the given delay time, max delay time, delay interval, and typical resource. */
+    /** Creates a BoundedDelay with a 0 ordering, the given max delay time, delay interval, and typical resource. */
     public BoundedDelay(SimState state, double delayTime, Resource typical, int maxDelaySteps, int delayInterval)
         {
         super(state, delayTime, typical);
@@ -219,7 +219,7 @@ public class BoundedDelay extends Delay
             throwInvalidAtLeastAtMost(atLeast, atMost, amount);
 
         int delay = (int)Math.ceil(getDelay(provider, amount) / delayInterval);
-		double nextTime = state.schedule.getTime() * delay * delayInterval;
+		double nextTime = state.schedule.getTime() + delay * delayInterval;
 		
         if (entities == null)
             {
