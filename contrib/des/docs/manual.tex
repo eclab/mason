@@ -233,8 +233,8 @@ George Mason University}
 \\
 \\
 \\
-\large\rm {\bf Manual Version 2}\\
-\large\rm June 2023\\
+\large\rm {\bf Manual Version 3}\\
+\large\rm Juily 2023\\
 
 \clearpage
 
@@ -918,9 +918,9 @@ Returns the total amount of resource accepted when offered to downstream Receive
 Returns the rate of accepted resource so far.
 \end{methods}
 
-\subsection{MiddleMan}
+\subsection{Middleman}
 
-An object which is both a Provider and a Receiver.  You can make your own Provider+Receiver combination, but MiddleMan is a nice abstract superclass.   Middlemen can have different typical
+An object which is both a Provider and a Receiver.  You can make your own Provider+Receiver combination, but Middleman is a nice abstract superclass.   Middlemen can have different typical
 received and provided resources.  Middlemen also have a special trick
 up their sleeves: because they are both Providers and Receivers, they can perform {\bf transactions},
 that is, exchanging one kind of Resource for possibly another.
@@ -1705,7 +1705,7 @@ You must implement this.  See Provider.
 \end{methods}
 
 
-\section{Filters}
+\section{Filter Processes}
 
 Filters are just Processes which accept offers and immediately turn around and offer them to a single downstream Receiver.  For this reason they do not use their resource storage at all.  Filters are both Providers and Receivers, and never respond to requests to make offers.
 
@@ -1878,7 +1878,7 @@ Returns the Probe associated with this Lead.
 \end{methods}
 
 
-\section{Process Utilities}
+\section{Composed Processes}
 
 \begin{wrapfigure}{r}{2.5in}
 \includegraphics[width=2.5in]{Macro.pdf}
