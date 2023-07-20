@@ -66,7 +66,7 @@ public abstract class Multi extends DESPortrayal implements Parented
         return provider.provide(multiReceivers[receiverPort]);
         }
         
-    /** Instructs a Multi provider to ask offer to make an offer by calling offerReceivers(...) method, and then
+    /** Instructs a Multi provider to make an offer by calling offerReceivers(...) method, and then
         offer the resource as specified. */
     protected boolean offerReceivers(int providerPort, Resource resource, double atLeast, double atMost)
         {
@@ -306,7 +306,7 @@ public abstract class Multi extends DESPortrayal implements Parented
             }
                 
         // Guarantees that _atLeast is respected when calling accept
-        protected boolean offerReceiver(Receiver receiver, double atMost)
+         boolean offerReceiver(Receiver receiver, double atMost)
             {
             if (_atLeast > atMost) return false;    // can't even make an offer
             else 
@@ -325,7 +325,7 @@ public abstract class Multi extends DESPortrayal implements Parented
                 }
             }
 
-        protected boolean offerReceiver(Receiver receiver, Entity entity)
+         boolean offerReceiver(Receiver receiver, Entity entity)
             {
 //                      return receiver.accept(this, entity, 0, 0);
             lastOfferTime = state.schedule.getTime();

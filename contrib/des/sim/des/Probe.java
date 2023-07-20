@@ -111,6 +111,11 @@ public class Probe extends Filter
         return sumThru / computeTime();
         }
 
+    public double getSumOffers()
+        {
+        return totalOffers;
+        }
+
     public double getOfferRate()
         {
         return totalOffers / computeTime();

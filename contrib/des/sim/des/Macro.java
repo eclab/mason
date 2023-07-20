@@ -98,7 +98,10 @@ public class Macro extends DESPortrayal implements Parented
         }
         
     /** Returns all receivers */
-    public Receiver[] getReceivers() { return receivers.toArray(new Receiver[receivers.size()]); }
+    public Receiver[] getReceivers() 
+    	{ 
+    	return receivers.toArray(new Receiver[receivers.size()]); 
+    	}
         
     /** Returns the names of all receivers. */
     public String[] getReceiverNames() 
@@ -111,7 +114,10 @@ public class Macro extends DESPortrayal implements Parented
         }
                 
     /** Returns all providers */
-    public Provider[] getProviders() { return providers.toArray(new Provider[providers.size()]); }
+    public Provider[] getProviders() 
+    	{ 
+    	return providers.toArray(new Provider[providers.size()]); 
+    	}
                 
     /** Returns the names of all providers. */
     public String[] getProviderNames() 
