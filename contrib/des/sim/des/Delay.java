@@ -82,8 +82,8 @@ public class Delay extends SimpleDelay
 	processed. 
 	
 	<p>For the first Resource, or after you reset the Delay, or after you restart
-	the simulation, the delay time will be relative to the current time, or the
-	Simulation Epoch, whichever is later. */
+	the simulation, or if the Delay is empty, the delay time will be relative to 
+	the current time, or the Simulation Epoch, whichever is later. */
 
 	public boolean isCumulative() { return cumulative; }
 
@@ -100,8 +100,8 @@ public class Delay extends SimpleDelay
 	processed. 
 	
 	<p>For the first Resource, or after you reset the Delay, or after you restart
-	the simulation, the delay time will be relative to the current time, or the
-	Simulation Epoch, whichever is later. */
+	the simulation, or if the Delay is empty, the delay time will be relative to 
+	the current time, or the Simulation Epoch, whichever is later. */
 	public void setCumulative(boolean val) { cumulative = val; }
 	
 	public double getLastDelayTime()
@@ -253,10 +253,14 @@ public class Delay extends SimpleDelay
         if (cumulative)
     		{
     		if (lastDelayTime <= Schedule.BEFORE_SIMULATION ||
-    			lastDelayTime > state.schedule.time())
-    			nextTime = state.schedule.time();
-    		else 
-    			nextTime = lastDelayTime + getDelay(provider, amount);
+    			lastDelayTime > state.schedule.time() ||
+    			delayHeap().isEmpty())		// so it's possible that the new delay time will be earlier than the current time
+    			{
+    			lastDelayTime = state.schedule.time();
+    			if (lastDelayTime <= Schedule.BEFORE_SIMULATION)
+    				lastDelayTime = Schedule.EPOCH;
+    			}
+    		nextTime = lastDelayTime + getDelay(provider, amount);
     		lastDelayTime = nextTime;
     		}
     	else 
