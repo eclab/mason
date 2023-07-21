@@ -254,7 +254,7 @@ public class Delay extends SimpleDelay
     		{
     		if (lastDelayTime <= Schedule.BEFORE_SIMULATION ||
     			lastDelayTime > state.schedule.time() ||
-    			delayHeap().isEmpty())		// so it's possible that the new delay time will be earlier than the current time
+    			delayHeap.isEmpty())		// so it's possible that the new delay time will be earlier than the current time
     			{
     			lastDelayTime = state.schedule.time();
     			if (lastDelayTime <= Schedule.BEFORE_SIMULATION)
