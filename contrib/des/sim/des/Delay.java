@@ -25,6 +25,7 @@ import sim.util.*;
    
    <p>If multiple resources are inserted into the Delay scheduled to come available
    at the exact same time, the order in which they will be offered is undefined.
+
 */
 
 public class Delay extends SimpleDelay
@@ -33,6 +34,8 @@ public class Delay extends SimpleDelay
 
     Heap delayHeap;
     AbstractDistribution distribution = null;
+    double lastDelayTime = Schedule.BEFORE_SIMULATION;
+    boolean cumulative = false;
     
 	// this is a cache of the most recently inserted node to enable a little linked list for a bit of optimization
 	DelayNode recent = null;
@@ -64,6 +67,47 @@ public class Delay extends SimpleDelay
     		 throwInvalidDelayTimeException(delayTime);
     	this.delayTime = delayTime; 
     	}
+
+
+	/** Returns whether the delay is cumulative. 
+	When you submit a Resource to a Delay, its final delay time is computed.  
+	Normally this is an absolute time: for example, if the current time is 9.2, 
+	and the relative delay interval is computed as 2.3 steps, then the Resource 
+	will become available at 11.5.  However, another "cumulative" option is to compute the 
+	final delay time relative to the last delay time used.   For example, if 
+	the final delay time of the previous Resource entered was 13.4, and the 
+	relative delay interval is 2.3 steps, then the new Resource will become 
+	available at 15.6.  This makes it easy to compute each Resource as 
+	"processed" over a period of time after the previous Resource was 
+	processed. 
+	
+	<p>For the first Resource, or after you reset the Delay, or after you restart
+	the simulation, the delay time will be relative to the current time, or the
+	Simulation Epoch, whichever is later. */
+
+	public boolean isCumulative() { return cumulative; }
+
+	/** Returns whether the delay is cumulative. 
+	When you submit a Resource to a Delay, its final delay time is computed.  
+	Normally this is an absolute time: for example, if the current time is 9.2, 
+	and the relative delay interval is computed as 2.3 steps, then the Resource 
+	will become available at 11.5.  However, another "cumulative" option is to compute the 
+	final delay time relative to the last delay time used.   For example, if 
+	the final delay time of the previous Resource entered was 13.4, and the 
+	relative delay interval is 2.3 steps, then the new Resource will become 
+	available at 15.6.  This makes it easy to compute each Resource as 
+	"processed" over a period of time after the previous Resource was 
+	processed. 
+	
+	<p>For the first Resource, or after you reset the Delay, or after you restart
+	the simulation, the delay time will be relative to the current time, or the
+	Simulation Epoch, whichever is later. */
+	public void setCumulative(boolean val) { cumulative = val; }
+	
+	public double getLastDelayTime()
+		{
+		return lastDelayTime;
+		}	
 
     /** Returns in an array all the Resources currently being delayed and not yet ready to provide,
         along with their timestamps (when they are due to become available), combined as a DelayNode.  
@@ -205,7 +249,20 @@ public class Delay extends SimpleDelay
         if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0 && atMost <= amount.getAmount()))
             throwInvalidAtLeastAtMost(atLeast, atMost, amount);
 
-        double nextTime = state.schedule.getTime() + getDelay(provider, amount);
+        double nextTime = 0;
+        if (cumulative)
+    		{
+    		if (lastDelayTime <= Schedule.BEFORE_SIMULATION ||
+    			lastDelayTime > state.schedule.time())
+    			nextTime = state.schedule.time();
+    		else 
+    			nextTime = lastDelayTime + getDelay(provider, amount);
+    		lastDelayTime = nextTime;
+    		}
+    	else 
+    		{
+    		nextTime = state.schedule.getTime() + getDelay(provider, amount);
+    		}
 
         if (entities == null)
             {
@@ -303,7 +360,13 @@ public class Delay extends SimpleDelay
     public String toString()
         {
         return "Delay@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + ")";
-        }               
+        }   
+        
+    public void reset()
+    	{
+    	super.reset();
+    	lastDelayTime = Schedule.BEFORE_SIMULATION;
+    	}            
         
     boolean refusesOffers = false;
     public void setRefusesOffers(boolean value) { refusesOffers = value; }

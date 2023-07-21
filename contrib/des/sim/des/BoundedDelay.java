@@ -207,6 +207,9 @@ public class BoundedDelay extends Delay
     	size++;
     	}
     	
+	public boolean isCumulative() { return false; }
+	public void setCumulative(boolean val) { throw new RuntimeException("BoundedDelay cannot be cumulative.  Use Delay instead."); }
+
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
         if (getRefusesOffers()) { return false; }

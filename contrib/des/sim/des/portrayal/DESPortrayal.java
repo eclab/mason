@@ -34,21 +34,21 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Named
     double strokeWidth = 2.0;
         
     public boolean hideFillPaint() { return true; }
-    /** Sets the fill paint for the underlying default portrayal shape.  Note that calling this method will fire up Java's GUI subsystem.   */
-    public Paint getFillPaint() { if (fillPaint == null) fillPaint = Color.GRAY; return fillPaint; }
     /** Returns the fill paint for the underlying default portrayal shape. */
+    public Paint getFillPaint() { if (fillPaint == null) fillPaint = Color.GRAY; return fillPaint; }
+    /** Sets the fill paint for the underlying default portrayal shape.  Note that calling this method will fire up Java's GUI subsystem.   */
     public void setFillPaint(Paint paint) { fillPaint = paint; }
     
     public boolean hideStrokePaint() { return true; }
-    /** Sets the stroke paint for the underlying default portrayal shape.  Note that calling this method will fire up Java's GUI subsystem.  */
-    public Paint getStrokePaint() { if (strokePaint == null) strokePaint = Color.BLACK; return strokePaint; }
     /** Returns the stroke paint for the underlying default portrayal shape. */
+    public Paint getStrokePaint() { if (strokePaint == null) strokePaint = Color.BLACK; return strokePaint; }
+    /** Sets the stroke paint for the underlying default portrayal shape.  Note that calling this method will fire up Java's GUI subsystem.  */
     public void setStrokePaint(Paint paint) { strokePaint = paint; }
 
     public boolean hideStrokeWidth() { return true; }
-    /** Sets the stroke width for the underlying default portrayal shape. */
-    public double getStrokeWidth() { return strokeWidth; }
     /** Returns the stroke width for the underlying default portrayal shape. */
+    public double getStrokeWidth() { return strokeWidth; }
+    /** Sets the stroke width for the underlying default portrayal shape. */
     public void setStrokeWidth(double width) { strokeWidth = width; }
 
     public boolean hideImagePath() { return true; }
@@ -121,6 +121,7 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Named
         {
         if (baseImagePath != null)
             {
+            System.err.println("Base Path " + baseImagePath + " relative to " + usesGlobalImageClass + " that is " + DESPortrayalParameters.getImageClass());
             return wrapPortrayal(buildDefaultImagePortrayal(new ImageIcon(
                                     (usesGlobalImageClass ? DESPortrayalParameters.getImageClass() : 
                                     this.getClass()).getResource(baseImagePath)), portrayalScale));
