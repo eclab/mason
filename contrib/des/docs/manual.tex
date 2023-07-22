@@ -1506,24 +1506,24 @@ Upon being stepped, the Delay calls update() to reap all available resources.  I
 \mthd{public void reset()}
  Clears the Delay and sets the total received resource to 0.
 \mthd{public Provider getSlackProvider()}
-Returns the slack provider.  Whenever a queue's offerReceivers(...) call is made, and it has slack afterwards,
+Returns the slack provider.  Whenever a SimpleDelay's offerReceivers(...) call is made, and it has slack afterwards,
     	it will call the slack provider to ask it to fill the slack up to capacity.  The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
     	but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it\,---\,it may wish some
     	slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible.
 \mthd{public void setSlackProvider(Provider provider)}
-         Sets the slack provider.  Whenever a queue's offerReceivers(...) call is made, and it has slack afterwards,
+         Sets the slack provider.  Whenever a SimpleDelay's offerReceivers(...) call is made, and it has slack afterwards,
     	it will call the slack provider to ask it to fill the slack up to capacity.  The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
     	but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it\,---\,it may wish some
     	slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible.
 
 \mthd{public Receiver getSlackReceiver()}
-Returns the slack receiver, by default the SimpleDelay itself.  Whenever a queue's offerReceivers(...) call is made, and it has slack afterwards,
+Returns the slack receiver, by default the SimpleDelay itself.  Whenever a SimpleDelay's offerReceivers(...) call is made, and it has slack afterwards,
     	it will call the slack provider to ask it to fill the slack up to capacity.  The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
     	but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it\,---\,it may wish some
     	slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible.  
 
 \mthd{public void setSlackReceiver(Receiver provider)}
-         Sets the slack receiver, by default the SimpleDelay itself.  Whenever a queue's offerReceivers(...) call is made, and it has slack afterwards,
+         Sets the slack receiver, by default the SimpleDelay itself.  Whenever a SimpleDelay's offerReceivers(...) call is made, and it has slack afterwards,
     	it will call the slack provider to ask it to fill the slack up to capacity.  The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
     	but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it\,---\,it may wish some
     	slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible.
@@ -1773,7 +1773,7 @@ Filters are just Processes which accept offers and immediately turn around and o
 
 \subsection{Filter}
 
-The abstract superclass of Filters.  This class contains three protected variables:
+The superclass of Filters, which default doesn't do much (use a subclass).  This class contains three protected variables:
 
 \begin{verbatim}
 protected Resource _amount;
@@ -1783,6 +1783,8 @@ protected double _atMost;
 
 When a Filter receives an offer of some Resource, it immediately fills out these variables with the offer Resource, and the atLeast and atMost values of the offer.  By default, it then calls offerReceivers(), which ultimately calls offerReceiver(...) to offer to various receivers.  Finally it calls process(...), which by default does nothing.  Many of these methods are overridden in different way by Filter subclasses. 
 
+If you call provide(...) on a Filter, it will turn around and call provide(...) on its {\bf provider} if you have set one.
+
 
 \begin{methods}{\class{sim.des.Filter} Constructor}
 \mthd{public Filter(SimState state, Resource typical)}
@@ -1791,7 +1793,7 @@ Builds a Filter with the given state and typical resource type.
 
 \begin{methods}{\class{sim.des.Filter}}
 \mthd{public boolean provide(Receiver receiver)}
-Returns false always and does nothing: Filter is push-only. 
+By default returns false: but many filters 
 
 \mthd{protected boolean offerReceivers(Resource amount, double atLeast, double atMost)}
 Sets the three protected variables above. Then calls offerReceivers().  Finally, sets \variable{\_amount} to null, returning the return value of offerReceivers().
@@ -1806,6 +1808,21 @@ Processes the reception and resulting provision.  By default does nothing.
 Override this as you like.  The default version offers to downstream Receivers whatever it is being
 		offered here (via offerReceivers(...)); and then calls process(...) to process the difference between the two.  By default
 		process(...) does nothing, but you could override that too. 
+		
+\mthd{public Provider getProvider()}
+Returns the Filter's provider, which it will call provide() on if provide() is called on the Filter itself.  By default this is null.
+\mthd{public void setProvider(Provider provider)}
+Sets the Filter's provider, which it will call provide() on if provide() is called on the Filter itself.  By default this is null.
+
+\mthd{protected boolean isProviding()}
+Returns true if the Filter is currently calling provide(...) on its provider (this is meant to allow you to check for offer cycles). 
+
+\mthd{public boolean provide(Receiver receiver, double atMost)}
+Calls provide(receiver, atMost) on the Filter's provider if there is one, returning the result, else returns false.
+ 
+\mthd{public boolean provide(Receiver receiver)}
+Calls provide(receiver) on the Filter's provider if there is one, returning the result, else returns false.
+ 
 \end{methods}
 
 
@@ -1817,6 +1834,14 @@ Upon receiving a Resource, Transformer {\bf transforms} the Resource into a diff
 \begin{methods}{\class{sim.des.Transformer} Constructor}
 \mthd{public Transformer(SimState state, CountableResource typicalProvided, Resource typicalReceived, double conversion)}
 Builds a Transformer with the given state and provided and received resources, plus the conversion factor to convert the amount of the received resource into an amount of provided resource.
+
+\mthd{public boolean provide(Receiver receiver, double atMost)}
+Given the conversion factor, calls provide(receiver, atMost / conversion) on the Filter's provider if there is one, returning the result, else returns false.
+ 
+\mthd{public boolean provide(Receiver receiver)}
+Calls provide(receiver) on the Filter's provider if there is one, returning the result, else returns false.
+
+
 \end{methods}
 
 
@@ -1852,13 +1877,15 @@ Always returns true: locks only make take-it-or-leave-it offers.
 
 A subclass of Lock, but only for convenience's sake.  Upon receiving a Resource, it {\bf provides} some amount of {\it a different} Resource to a {\bf Pool}.  Regardless of whether the Pool accepts this generosity, Unlock then offers the original Resource to downstream receivers. If they do not accept, then that Resource is discarded.  {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
 
+Unlocks may {\it partner} with Locks, informing them that the Unlock has released Resources back to the Pool, which causes the Lock to immediately make a zero-time provide() request on its provider if there is one. 
+
 \begin{methods}{\class{sim.des.Unlock} Constructor}
 \mthd{public Unlock(SimState state, Resource typical, Pool pool, double numResources)}
 Builds an Unlock attached to the given pool and with the given amount of resources acquired each time. 
 \mthd{public Unlock(SimState state, Resource typical, Pool pool)}
 Builds an Unlock attached to the given pool and with 1.0 of the resource acquired each time. 
 \mthd{public Unlock(Lock other)}
-Builds an Unlock with the same parameters as the provided Lock.  
+Builds an Unlock with the same parameters as the provided Lock.  This Lock is {\it not} set as the Unlock's partner, you have to do that manually if you want to.
 \end{methods}
 
 \begin{methods}{\class{sim.des.Unlock}}
@@ -1870,6 +1897,13 @@ Returns the number of resources allocated each time.
  
 \mthd{public boolean getOffersTakeItOrLeaveIt()}
 Always returns true: unlocks only make take-it-or-leave-it offers.  
+
+\mthd{public Lock getPartner()}
+Returns the Unlock's partner Lock, if there is one, else returns null (the default).
+\mthd{public void setPartner(Lock lock)}
+Sets the Unlock's partner Lock.
+\mthd{public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)}
+Offers the Resource to downstream receivers if possible, releasing the pool resource back to the Pool.  If successful, informs the partner Lock, if there is one, to call provide() on its provider.
 \end{methods}
 
 \begin{wrapfigure}{r}{2.5in}

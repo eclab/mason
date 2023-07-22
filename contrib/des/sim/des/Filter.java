@@ -49,15 +49,35 @@ public class Filter extends Middleman
     protected double _atLeast;
     protected double _atMost;
 
+    /** Throws an exception indicating that a provision cycle was detected. */
+    protected void throwCyclicProvisions()
+        {
+        throw new RuntimeException("Zero-time cycle found among provide(...) calls including this one." );
+        }
+
+    boolean providing;
+    /** Returns true if the Filter is currently making an a provide() call to a provider (this is meant to allow you
+        to check for provision cycles. */
+    protected boolean isProviding() { return providing; }
+
     public Filter(SimState state, Resource typical)
         {
         super(state, typical);
         }
 
-    /** Returns false always and does nothing: Filter is push-only. */
-    public boolean provide(Receiver receiver)
+    public boolean provide(Receiver receiver, double atMost) 
         {
-        return false;
+        if (isProviding())
+        	{
+        	throwCyclicProvisions();
+        	}
+        if (provider == null) return false;
+        if (!isPositiveNonNaN(atMost))
+            throwInvalidNumberException(atMost);
+        providing = true;
+        boolean val = provider.provide(this, atMost);
+        providing = false;
+        return val;
         }
 
     protected boolean offerReceivers(Resource amount, double atLeast, double atMost)
@@ -126,5 +146,17 @@ public class Filter extends Middleman
         boolean result = offerReceivers(amount, atLeast, atMost);
         process(oldAmount, amount);
         return result;
+    	}
+
+    Provider provider = null;
+    
+    public Provider getProvider()
+    	{
+    	return provider;
+    	}
+    	
+    public void setProvider(Provider provider)
+    	{
+    	this.provider = provider;
     	}
     }

@@ -357,7 +357,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
         
     Provider slackProvider;
     
-    /** Returns the slack provider.  Whenever a queue's offerReceivers(...) call is made, and it has slack afterwards,
+    /** Returns the slack provider.  Whenever a SimpleDelay's offerReceivers(...) call is made, and it has slack afterwards,
     	it will call the slack provider to ask it to fill the slack up to capacity. 
     	The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
     	but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it -- it may wish some
@@ -367,7 +367,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
     	return slackProvider;
     	}
     	
-    /** Sets the slack provider.  Whenever a queue's offerReceivers(...) call is made, and it has slack afterwards,
+    /** Sets the slack provider.  Whenever a SimpleDelay's offerReceivers(...) call is made, and it has slack afterwards,
     	it will call the slack provider to ask it to fill the slack up to capacity. The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
     	but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it -- it may wish some
     	slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible.*/
@@ -378,7 +378,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
 
     Receiver slackReceiver = this;
     
-    /** Returns the slack receiver.  Whenever a queue's offerReceivers(...) call is made, and it has slack afterwards,
+    /** Returns the slack receiver.  Whenever a SimpleDelay's offerReceivers(...) call is made, and it has slack afterwards,
     	it will call the slack provider to ask it to fill the slack up to capacity. The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
     	but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it -- it may wish some
     	slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible.
@@ -388,7 +388,7 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
     	return slackReceiver;
     	}
     	
-    /** Sets the slack provider.  Whenever a queue's offerReceivers(...) call is made, and it has slack afterwards,
+    /** Sets the slack provider.  Whenever a SimpleDelay's offerReceivers(...) call is made, and it has slack afterwards,
     	it will call the slack provider to ask it to fill the slack up to capacity. The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
     	but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it -- it may wish some
     	slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible.

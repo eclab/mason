@@ -55,6 +55,21 @@ public class Transformer extends Filter
         setName("Transformer");
         }
 
+    public boolean provide(Receiver receiver, double atMost) 
+        {
+        if (isProviding())
+        	{
+        	throwCyclicProvisions();
+        	}
+        if (provider == null) return false;
+        if (!isPositiveNonNaN(atMost))
+            throwInvalidNumberException(atMost);
+        providing = true;
+        boolean val = provider.provide(this, atMost / conversion);
+        providing = false;
+        return val;
+        }
+
 	public Resource getTypicalReceived()
 		{
 		return typicalReceived;
