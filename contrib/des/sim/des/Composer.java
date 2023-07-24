@@ -225,13 +225,13 @@ public class Composer extends Middleman
         resetTotals();   
         }
         
-	/** This is called when the Composer constructs a composite entity
-		and now must set its Info object, if there is one.  Override
-		this as you like set it to an appropriate Info object if any.
-		By default this does nothing. */
+    /** This is called when the Composer constructs a composite entity
+        and now must set its Info object, if there is one.  Override
+        this as you like set it to an appropriate Info object if any.
+        By default this does nothing. */
     protected void setInfoFor(Entity entity)
-    	{
-    	}
+        {
+        }
     
 
     void resetTotals()
@@ -264,17 +264,17 @@ public class Composer extends Middleman
         deploy();
         }
 
-	/** Returns NULL because various resource types are received.
-		To get the full list of legal received resource types, call getPermittedReceived() */
+    /** Returns NULL because various resource types are received.
+        To get the full list of legal received resource types, call getPermittedReceived() */
     public Resource getTypicalReceived() 
-    	{ 
-    	return null; 
-    	}
+        { 
+        return null; 
+        }
 
-	/** Returns the full list of legal received resource types. */
+    /** Returns the full list of legal received resource types. */
     public Resource[] getPermittedReceived() 
-    	{ 
-    	return permittedReceived;
-    	}
+        { 
+        return permittedReceived;
+        }
 
     }

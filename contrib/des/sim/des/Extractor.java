@@ -37,7 +37,7 @@ public class Extractor extends Source implements Receiver
 
     private static final long serialVersionUID = 1;
 
-	ArrayList<Provider> providers = new ArrayList<Provider>();
+    ArrayList<Provider> providers = new ArrayList<Provider>();
 
     /** 
         Registers a provider with the Extractor.  Returns false if the receiver was already registered.
@@ -68,8 +68,8 @@ public class Extractor extends Source implements Receiver
         }
 
 
-	/*    
-        Builds a source with the given typical resource type.  The provider is initially null.
+    /*    
+          Builds a source with the given typical resource type.  The provider is initially null.
     */
     public Extractor(SimState state, Resource typical)
         {
@@ -92,7 +92,7 @@ public class Extractor extends Source implements Receiver
     /** Request Policy: requests are made to the first provider, then the second, and so on. */
     public static final int REQUEST_POLICY_FORWARD = 0;
     /** Request Policy: requests are made to the last provider, then the second to last, and so on. */
-    public static final int REQUEST_POLICY_BACKWARD = 1;	
+    public static final int REQUEST_POLICY_BACKWARD = 1;        
     /** Request Policy: requests are made to the providers in a randomly shuffled order. */
     public static final int REQUEST_POLICY_SHUFFLE = 2;
     /** Request Policy: requests are made to only one random provider, chosen via an offer distribution or, if the offer distribution is null, chosen uniformly. */
@@ -107,15 +107,15 @@ public class Extractor extends Source implements Receiver
     public static final int REQUEST_TERMINATION_SUCCEED = 2;
     int requestTermination = REQUEST_TERMINATION_EXHAUST;
 
-	public void setRequestPolicy(int requestPolicy)
-		{
-		if (requestPolicy < REQUEST_POLICY_FORWARD || requestPolicy > REQUEST_POLICY_SELECT)
+    public void setRequestPolicy(int requestPolicy)
+        {
+        if (requestPolicy < REQUEST_POLICY_FORWARD || requestPolicy > REQUEST_POLICY_SELECT)
             throw new IllegalArgumentException("Request Policy " + requestPolicy + " out of bounds.");
         this.requestPolicy = requestPolicy;
-		}
-		
-	public int getRequestPolicy() { return requestPolicy; }
-	public boolean hideRequestPolicy() { return true; }
+        }
+                
+    public int getRequestPolicy() { return requestPolicy; }
+    public boolean hideRequestPolicy() { return true; }
 
     /** Sets the receiver request policy to REQUEST_POLICY_RANDOM, and
         sets the appropriate distribution for selecting a provider.  If null is provided 
@@ -146,7 +146,7 @@ public class Extractor extends Source implements Receiver
         
 
     /** Returns the current offer distribution, or null if none.
-    */
+     */
     public AbstractDistribution getRequestRandomDistribution()
         {
         return offerDistribution;
@@ -154,15 +154,15 @@ public class Extractor extends Source implements Receiver
     public boolean hideRequestRandomDistribution() { return true; }
     
 
-	public void setRequestTermination(int requestTermination)
-		{
-		if (requestTermination < REQUEST_TERMINATION_EXHAUST || requestTermination > REQUEST_TERMINATION_SUCCEED)
+    public void setRequestTermination(int requestTermination)
+        {
+        if (requestTermination < REQUEST_TERMINATION_EXHAUST || requestTermination > REQUEST_TERMINATION_SUCCEED)
             throw new IllegalArgumentException("Request Termination " + requestTermination + " out of bounds.");
         this.requestTermination = requestTermination;
-		}
-		
-	public int getRequestTermination() { return requestTermination; }
-	public boolean hideRequestTermination() { return true; }
+        }
+                
+    public int getRequestTermination() { return requestTermination; }
+    public boolean hideRequestTermination() { return true; }
         
     boolean requesting;
     /** Returns true if the Extractor is currently requesting an offer (this is meant to allow you
@@ -170,15 +170,15 @@ public class Extractor extends Source implements Receiver
     protected boolean isRequesting() { return requesting; }
     
     protected boolean requestProviders(double amt)
-    	{
-    	requesting = true;
-    	boolean result = false;
-    	acceptValue = amt;
-    	
-    	switch(requestPolicy)
-    		{
-    		case REQUEST_POLICY_FORWARD:
-    			{
+        {
+        requesting = true;
+        boolean result = false;
+        acceptValue = amt;
+        
+        switch(requestPolicy)
+            {
+            case REQUEST_POLICY_FORWARD:
+                {
                 for(Provider p : providers)
                     {
                     if (acceptValue < 0) break;
@@ -187,10 +187,10 @@ public class Extractor extends Source implements Receiver
                     if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
                     if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
                     }
-    			}
-    		break;
-    		case REQUEST_POLICY_BACKWARD:
-    			{
+                }
+            break;
+            case REQUEST_POLICY_BACKWARD:
+                {
                 for(int i = providers.size() - 1; i >= 0; i--)
                     {
                     if (acceptValue < 0) break;
@@ -200,23 +200,23 @@ public class Extractor extends Source implements Receiver
                     if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
                     if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
                     }
-    			}
-    		break;
-    		case REQUEST_POLICY_SHUFFLE:
-    			{
+                }
+            break;
+            case REQUEST_POLICY_SHUFFLE:
+                {
                 shuffleProviders();
                 while(true)
                     {
                     if (acceptValue < 0) break;
                     Provider p = nextShuffledProvider();
-                    if (p == null) break;		// all done
+                    if (p == null) break;               // all done
                     boolean r = p.provide(this, acceptValue);
                     result = result || r;
                     if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
                     if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
                     }
-    			}
-    		break;
+                }
+            break;
             case REQUEST_POLICY_RANDOM:
                 {
                 int size = providers.size();
@@ -266,12 +266,12 @@ public class Extractor extends Source implements Receiver
                     }
                 }
             break;
-    		}
-    	
-    	acceptValue = 0;
-    	requesting = false;
-    	return result;
-    	}    
+            }
+        
+        acceptValue = 0;
+        requesting = false;
+        return result;
+        }    
 
     /**
        If the provider policy is REQUEST_POLICY_SELECT, then when the providers are non-empty,
@@ -279,14 +279,14 @@ public class Extractor extends Source implements Receiver
        Override this method as you see fit.  The default implementation simply returns the first one.
     */
     public Provider selectProvider(ArrayList<Provider> providers)
-    	{
-    	return providers.get(0);
-    	}
+        {
+        return providers.get(0);
+        }
 
     boolean requestDistributionWarned = false; 
     boolean requestSelectWarned = false; 
  
-     //// SHUFFLING PROCEDURE
+    //// SHUFFLING PROCEDURE
     //// You'd think that shuffling would be easy to implement but it's not.
     //// We want to avoid an O(n) shuffle just to (most likely) select the
     //// very first receiver.  So this code attemps to do shuffling on the
@@ -328,25 +328,25 @@ public class Extractor extends Source implements Receiver
 
     public boolean provide(Receiver receiver, double atMost)
         {
-        if (requesting) return false;		// break cycles
+        if (requesting) return false;           // break cycles
         
         if (!isPositiveNonNaN(atMost))
             throwInvalidNumberException(atMost);
         distinguishedReceiver = receiver;
         boolean val = requestProviders(atMost);
         if (val)
-        	{
-        	if (entities != null)
-        		{        		
-        		val = accept(this, resource, 0, atMost);
-        		}
-        	else
-        		{
-        		if (entities.size() > 0)
-	        		val = accept(this, entities.getFirst(), 0, 1);
-	        	else val = false;
-        		}
-        	}
+            {
+            if (entities != null)
+                {                       
+                val = accept(this, resource, 0, atMost);
+                }
+            else
+                {
+                if (entities.size() > 0)
+                    val = accept(this, entities.getFirst(), 0, 1);
+                else val = false;
+                }
+            }
         entities.clear();
         resource.setAmount(0);
         distinguishedReceiver = null;
@@ -367,10 +367,10 @@ public class Extractor extends Source implements Receiver
         requestProviders(amt);
         }
 
-	public Resource getTypicalReceived() { return getTypicalProvided(); }
-	
-	boolean refusesOffers;
-	
+    public Resource getTypicalReceived() { return getTypicalProvided(); }
+        
+    boolean refusesOffers;
+        
     /** Sets whether the receiver currently refuses all offers.  The default should be FALSE. */
     public void setRefusesOffers(boolean value) { refusesOffers = value; }
 
@@ -387,12 +387,12 @@ public class Extractor extends Source implements Receiver
         if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0 && atMost <= amount.getAmount()))
             throwInvalidAtLeastAtMost(atLeast, atMost, amount);
 
-		if (acceptValue > 0) 
-			{
-			if (atLeast > acceptValue) return false;
-			atMost = Math.min(atMost, acceptValue);
-			}
-		 
+        if (acceptValue > 0) 
+            {
+            if (atLeast > acceptValue) return false;
+            atMost = Math.min(atMost, acceptValue);
+            }
+                 
         if (amount instanceof CountableResource) 
             {
             resource.increase(atMost);

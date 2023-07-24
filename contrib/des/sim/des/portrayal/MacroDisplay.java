@@ -19,34 +19,34 @@ import sim.des.*;
 
 
 public class MacroDisplay
-	{
-	NetworkPortrayal2D network = new NetworkPortrayal2D();
-	ContinuousPortrayal2D continuous = new ContinuousPortrayal2D();
-	Display2D display;
-	JFrame frame;
-	
-	public void attachMacro(Macro macro, SimpleEdgePortrayal2D portrayal)
-		{
-		DES2D field = macro.getField();
-		continuous.setField(field.getNodes());
-		network.setField(field);
-		network.setPortrayalForAll(portrayal);
-		display.reset();
-		display.setBackdrop(Color.WHITE);
-		display.repaint();
+    {
+    NetworkPortrayal2D network = new NetworkPortrayal2D();
+    ContinuousPortrayal2D continuous = new ContinuousPortrayal2D();
+    Display2D display;
+    JFrame frame;
+        
+    public void attachMacro(Macro macro, SimpleEdgePortrayal2D portrayal)
+        {
+        DES2D field = macro.getField();
+        continuous.setField(field.getNodes());
+        network.setField(field);
+        network.setPortrayalForAll(portrayal);
+        display.reset();
+        display.setBackdrop(Color.WHITE);
+        display.repaint();
         frame.setTitle(macro.getName());
-		}
+        }
 
-	public MacroDisplay(GUIState state, int width, int height, int macroNum)
-		{
-		display = new Display2D(width, height, state);
+    public MacroDisplay(GUIState state, int width, int height, int macroNum)
+        {
+        display = new Display2D(width, height, state);
         display.setClipping(false);
         display.attach( network, "Connections" );
         display.attach( continuous, "Layout" );
         frame = display.createFrame();
         frame.setTitle("Macro " + macroNum);
         state.controller.registerFrame(frame);
-		}
-	
-	}
-	
+        }
+        
+    }
+        

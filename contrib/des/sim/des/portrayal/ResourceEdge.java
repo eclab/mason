@@ -48,7 +48,7 @@ public class ResourceEdge extends Edge
 
     public ResourceEdge(Object from, Provider provider, Receiver receiver, Object to)
         {
-        super(from, to, null);		// we have a null info because we grab it from the provider
+        super(from, to, null);          // we have a null info because we grab it from the provider
         this.provider = provider;
         this.receiver = receiver;
         }

@@ -50,22 +50,22 @@ public abstract class If extends Middleman
         if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0 && atMost <= amount.getAmount()))
             throwInvalidAtLeastAtMost(atLeast, atMost, amount);
 
-		if (entities != null)
-			{
-			entities.clear();
+        if (entities != null)
+            {
+            entities.clear();
             entities.add((Entity)amount);
-			boolean result = offerReceivers();
-            entities.clear();		// just to be safe
+            boolean result = offerReceivers();
+            entities.clear();           // just to be safe
             return result;
-			}
-		else
-			{
-			CountableResource oldResource = resource;
-			oldResource = (CountableResource)amount;
-			boolean result = offerReceivers();
-			resource = oldResource;
-			return result;
-			}
+            }
+        else
+            {
+            CountableResource oldResource = resource;
+            oldResource = (CountableResource)amount;
+            boolean result = offerReceivers();
+            resource = oldResource;
+            return result;
+            }
         }
 
     /** Returns false always and does nothing: If is push-only. */

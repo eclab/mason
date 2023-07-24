@@ -24,9 +24,9 @@ public abstract class Multi extends DESPortrayal implements Parented
     protected SimState state;
     
     public SimState getState()
-    	{
-    	return state;
-    	}
+        {
+        return state;
+        }
 
     // Collections of receivers and providers that may be connected to outside receivers and providers      
     MultiReceiver[] multiReceivers;
@@ -74,23 +74,23 @@ public abstract class Multi extends DESPortrayal implements Parented
         }
 
     /** Instructs a Multi to offer a transaction to a Middleman, notionally from the Multi's provider and receiver ports,
-    	though they really won't come into it. If the transaction is agreed to, your provided resource will be accordingly 
-    	modified (reduced) and the requested resource will have been provided.  Otherwise null will be returned.
-		
-		<p>The transaction is offering atLeast and atMost a certain amount of provided resouce in exchange for
-    	(from you) a requested resource.  atLeastRequested is the amount of requested resource to be provided
-    	in exchange for the *least* amount of provided resource.  If you decide to take some X provided resource
-    	where X is between atLeast and atMost, then the resource amount you provide in return is X * atLeastRequested / atMost.
-    	For requested CountableResources, I suggest that the amount returned in response to a request would best be
-    	(int)(X * atLeastRequested / atMost), but you can do as your model deems appropriate.
-    	
-    	<p>For Entities, only a single Entity can be provided.  If an Entity is being provided, then atLeast = atMost = 1.
-    	
-    	<p>For Entities, only a single Entity can be requested.  If an Entity is being requested, atLeastRequested = 1
-    	and exactly one Entity should be returned regardless of its value, and atLeast = atMost. 
-    	
-    	<p>Don't override this method.  Instead, override performTransaction().
-	    */
+        though they really won't come into it. If the transaction is agreed to, your provided resource will be accordingly 
+        modified (reduced) and the requested resource will have been provided.  Otherwise null will be returned.
+                
+        <p>The transaction is offering atLeast and atMost a certain amount of provided resouce in exchange for
+        (from you) a requested resource.  atLeastRequested is the amount of requested resource to be provided
+        in exchange for the *least* amount of provided resource.  If you decide to take some X provided resource
+        where X is between atLeast and atMost, then the resource amount you provide in return is X * atLeastRequested / atMost.
+        For requested CountableResources, I suggest that the amount returned in response to a request would best be
+        (int)(X * atLeastRequested / atMost), but you can do as your model deems appropriate.
+        
+        <p>For Entities, only a single Entity can be provided.  If an Entity is being provided, then atLeast = atMost = 1.
+        
+        <p>For Entities, only a single Entity can be requested.  If an Entity is being requested, atLeastRequested = 1
+        and exactly one Entity should be returned regardless of its value, and atLeast = atMost. 
+        
+        <p>Don't override this method.  Instead, override performTransaction().
+    */
     protected Resource offerTransaction(int providerPort, int receiverPort, Middleman middleman, Resource provided, double atLeast, double atMost, Resource requestedType, double atLeastRequested)
         {
         return middleman.transact(multiProviders[providerPort], multiReceivers[receiverPort], provided, atLeast, atMost, requestedType, atLeastRequested);
@@ -108,82 +108,82 @@ public abstract class Multi extends DESPortrayal implements Parented
         }
         
     /** Builds a Middleman from the given provider and receiver ports solely for the purpose of performing a transaction.
-    	This is thus a "Broker", a simplified Middleman which refuses offers and requests to make offers: it only responds
-    	to requests to make transactions, that is, transact(...).  Note that if you call this method twice with the
-    	same provider and receiver ports, you will receive different Middlement.
-    	
-    	<p>This Middleman will refuse a transaction if the Receiver associated with the underlying receiver port
-    	is set to refuse offers. 
-    	
-    	<p>Also note that the Multi has a global check for zero-time transaction cycles going 
-    	through it.  That is, you can't make a transaction through one provider/receiver port pair, and have it make
-    	its way through a chain of zero-time transactions to wind up trying to transact through a second
-    	provider/receiver port pair on the same Multi. 
-    	*/
+        This is thus a "Broker", a simplified Middleman which refuses offers and requests to make offers: it only responds
+        to requests to make transactions, that is, transact(...).  Note that if you call this method twice with the
+        same provider and receiver ports, you will receive different Middlement.
+        
+        <p>This Middleman will refuse a transaction if the Receiver associated with the underlying receiver port
+        is set to refuse offers. 
+        
+        <p>Also note that the Multi has a global check for zero-time transaction cycles going 
+        through it.  That is, you can't make a transaction through one provider/receiver port pair, and have it make
+        its way through a chain of zero-time transactions to wind up trying to transact through a second
+        provider/receiver port pair on the same Multi. 
+    */
     public Middleman getBroker(final int providerPort, final int receiverPort)
-    	{
-    	return new Middleman(state, multiProviders[providerPort].getTypicalProvided())
-    		{
-    		public Resource getTypicalReceived() { return multiReceivers[receiverPort].getTypicalReceived(); }
-    		public boolean accept(Provider provider, Resource resource, double atLeast, double atMost) { return false; }
-    		public boolean provide(Receiver receiver, double atMost) { return false; }
-    		
-    		protected Resource performTransaction(Provider provider, Receiver receiver, Resource provided, 
-    			double atLeast, double atMost, Resource requestedType, double atLeastRequested)
-		    	{
-		    	if (isOffering())
-		    		{
-		    		throwCyclicOffers();
-		    		}
-		    	if (multiReceivers[receiverPort].getRefusesOffers())
-		    		{
-		    		return null;
-		    		}
-		    	offering = true;
-		    	try 
-		    		{
-		    		return Multi.this.performTransaction(providerPort, receiverPort, provider, receiver, 
-		    			provided, atLeast, atMost, requestedType, atLeastRequested);
-		    		}
-		    	finally
-		    		{
-		    		offering = false;
-		    		}
-		    	}
-    		};
-    	}
+        {
+        return new Middleman(state, multiProviders[providerPort].getTypicalProvided())
+            {
+            public Resource getTypicalReceived() { return multiReceivers[receiverPort].getTypicalReceived(); }
+            public boolean accept(Provider provider, Resource resource, double atLeast, double atMost) { return false; }
+            public boolean provide(Receiver receiver, double atMost) { return false; }
+                
+            protected Resource performTransaction(Provider provider, Receiver receiver, Resource provided, 
+                double atLeast, double atMost, Resource requestedType, double atLeastRequested)
+                {
+                if (isOffering())
+                    {
+                    throwCyclicOffers();
+                    }
+                if (multiReceivers[receiverPort].getRefusesOffers())
+                    {
+                    return null;
+                    }
+                offering = true;
+                try 
+                    {
+                    return Multi.this.performTransaction(providerPort, receiverPort, provider, receiver, 
+                        provided, atLeast, atMost, requestedType, atLeastRequested);
+                    }
+                finally
+                    {
+                    offering = false;
+                    }
+                }
+            };
+        }
         
     /** Received by the Multi when an external Provider and Receiver are asking for a transaction of one resource for another,
-    	by building a Middleman to broker with a provider port and receiver port on the Multi, though the ports really won't
-    	come into it.  
-    	The Provider would provide a resource to the Multi and a Receiver would receive the transacted returned Resource.
-    	Very commonly this Provider and Receiver are one and the same: they are a Middleman or perhaps a Multi. 
-    	But this does not have to be the case.  	
-		If the transaction is agreed to, you should modify the provided resource and return the requested resource.
-		Otherwise, return null.  The default form simply returns null. 
-		
-		<p> By the time this method has been called, refuses-offers,
-		cyclic, and type compatibility checks have already been performed, but you might still benefit from 
-		knowing the requestedType, so it is provided: but you should not modify this resource nor return it.
-				
-		<p>The transaction is offering atLeast and atMost a certain amount of provided resouce in exchange for
-    	(from you) a requested resource.  atLeastRequested is the amount of requested resource to be provided
-    	in exchange for the *least* amount of provided resource.  If you decide to take some X provided resource
-    	where X is between atLeast and atMost, then the resource amount you provide in return X * atLeastRequested / atMost.
-    	For requested CountableResources, I suggest that the amount returned in response to a request would best be
-    	(int)(X * atLeastRequested / atMost), but you can do as your model deems appropriate.
-    	
-    	<p>For Entities, only a single Entity can be provided.  If an Entity is being provided, then atLeast = atMost = 1.
-    	
-    	<p>For Entities, only a single Entity can be requested.  If an Entity is being requested, atLeastRequested = 1
-    	and exactly one Entity should be returned regardless of its value. 
-	    */
-    	 
+        by building a Middleman to broker with a provider port and receiver port on the Multi, though the ports really won't
+        come into it.  
+        The Provider would provide a resource to the Multi and a Receiver would receive the transacted returned Resource.
+        Very commonly this Provider and Receiver are one and the same: they are a Middleman or perhaps a Multi. 
+        But this does not have to be the case.          
+        If the transaction is agreed to, you should modify the provided resource and return the requested resource.
+        Otherwise, return null.  The default form simply returns null. 
+                
+        <p> By the time this method has been called, refuses-offers,
+        cyclic, and type compatibility checks have already been performed, but you might still benefit from 
+        knowing the requestedType, so it is provided: but you should not modify this resource nor return it.
+                                
+        <p>The transaction is offering atLeast and atMost a certain amount of provided resouce in exchange for
+        (from you) a requested resource.  atLeastRequested is the amount of requested resource to be provided
+        in exchange for the *least* amount of provided resource.  If you decide to take some X provided resource
+        where X is between atLeast and atMost, then the resource amount you provide in return X * atLeastRequested / atMost.
+        For requested CountableResources, I suggest that the amount returned in response to a request would best be
+        (int)(X * atLeastRequested / atMost), but you can do as your model deems appropriate.
+        
+        <p>For Entities, only a single Entity can be provided.  If an Entity is being provided, then atLeast = atMost = 1.
+        
+        <p>For Entities, only a single Entity can be requested.  If an Entity is being requested, atLeastRequested = 1
+        and exactly one Entity should be returned regardless of its value. 
+    */
+         
     protected Resource performTransaction(int myProviderPort, int myReceiverPort, Provider provider, Receiver receiver, 
-    			Resource provided, double atLeast, double atMost, Resource requestedType, double atLeastRequested)
-    	{
-    	return null;
-    	}
+        Resource provided, double atLeast, double atMost, Resource requestedType, double atLeastRequested)
+        {
+        return null;
+        }
 
     /** Builds a Multi with a set of Receivers and a set of Providers, each with the following typical resources. */
     public Multi(SimState state, Resource[] receiverResources, Resource[] providerResources)
@@ -194,7 +194,7 @@ public abstract class Multi extends DESPortrayal implements Parented
             {
             multiReceivers[i] = new MultiReceiver(state, receiverResources[i], i);
             multiReceivers[i].setParent(this);
-			mappedReceivers.put(receiverResources[i].getType(), multiReceivers[i]);
+            mappedReceivers.put(receiverResources[i].getType(), multiReceivers[i]);
             }
                         
         multiProviders = new MultiProvider[providerResources.length];
@@ -202,7 +202,7 @@ public abstract class Multi extends DESPortrayal implements Parented
             {
             multiProviders[i] = new MultiProvider(state, providerResources[i], i);
             multiProviders[i].setParent(this);
-			mappedProviders.put(providerResources[i].getType(), multiProviders[i]);
+            mappedProviders.put(providerResources[i].getType(), multiProviders[i]);
             }
         setName("Multi");
         }
@@ -245,26 +245,26 @@ public abstract class Multi extends DESPortrayal implements Parented
         return multiProviders[providerPort];
         }
                 
-	/** Returns the Multi Receiver meant to receive the following kind of resource, or null if there isn't one.  Note that if
-		this Resource was given multiple times in the constructor, only the last Receiver is returned. 
-		It's possible, indeed reasonable for you to have multiple receivers for a given resource for some
-		modeling task: in this case, if the resource appeared in slots 5 and 7 (say) of the receiverResources[]
-		array passed into the constructor, then the two corresonding receivers would be at ports 5 and 7. */
+    /** Returns the Multi Receiver meant to receive the following kind of resource, or null if there isn't one.  Note that if
+        this Resource was given multiple times in the constructor, only the last Receiver is returned. 
+        It's possible, indeed reasonable for you to have multiple receivers for a given resource for some
+        modeling task: in this case, if the resource appeared in slots 5 and 7 (say) of the receiverResources[]
+        array passed into the constructor, then the two corresonding receivers would be at ports 5 and 7. */
     public Receiver getReceiver(Resource resource)
-    	{
-    	return mappedReceivers.get(resource);
-    	}
+        {
+        return mappedReceivers.get(resource);
+        }
 
-	/** Returns the Multi Provider meant to receive the following kind of resource, or null if there isn't one.  Note that if
-		this Resource was given multiple times in the constructor, only the last Provider is returned. 
-		It's possible, indeed reasonable for you to have multiple providers for a given resource for some
-		modeling task: in this case, if the resource appeared in slots 5 and 7 (say) of the providerResources[]
-		array passed into the constructor, then the two corresonding Providers would be at ports 5 and 7. */
+    /** Returns the Multi Provider meant to receive the following kind of resource, or null if there isn't one.  Note that if
+        this Resource was given multiple times in the constructor, only the last Provider is returned. 
+        It's possible, indeed reasonable for you to have multiple providers for a given resource for some
+        modeling task: in this case, if the resource appeared in slots 5 and 7 (say) of the providerResources[]
+        array passed into the constructor, then the two corresonding Providers would be at ports 5 and 7. */
     public Provider getProvider(Resource resource)
-    	{
-    	return mappedProviders.get(resource);
-    	}
-    	
+        {
+        return mappedProviders.get(resource);
+        }
+        
     /** The subclass of Provider used internally by Multi.  This is largely a stub which connects methods to 
         Multi's internal provide() and offerReceivers() methods. */
     public class MultiProvider extends Provider
@@ -306,7 +306,7 @@ public abstract class Multi extends DESPortrayal implements Parented
             }
                 
         // Guarantees that _atLeast is respected when calling accept
-         protected boolean offerReceiver(Receiver receiver, double atMost)
+        protected boolean offerReceiver(Receiver receiver, double atMost)
             {
             if (_atLeast > atMost) return false;    // can't even make an offer
             else 
@@ -325,7 +325,7 @@ public abstract class Multi extends DESPortrayal implements Parented
                 }
             }
 
-         protected boolean offerReceiver(Receiver receiver, Entity entity)
+        protected boolean offerReceiver(Receiver receiver, Entity entity)
             {
 //                      return receiver.accept(this, entity, 0, 0);
             lastOfferTime = state.schedule.getTime();
@@ -353,7 +353,7 @@ public abstract class Multi extends DESPortrayal implements Parented
                         
         public String toString()
             {
-       		return "MultiProvider@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + ")";
+            return "MultiProvider@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + ")";
             }               
         } 
 
@@ -374,15 +374,15 @@ public abstract class Multi extends DESPortrayal implements Parented
             if (getRefusesOffers()) { return false; }
             if (!getTypicalReceived().isSameType(resource)) throwUnequalTypeException(resource);
                 
-        	if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0 && atMost <= resource.getAmount()))
-            	throwInvalidAtLeastAtMost(atLeast, atMost, resource);
+            if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0 && atMost <= resource.getAmount()))
+                throwInvalidAtLeastAtMost(atLeast, atMost, resource);
 
             return Multi.this.accept(receiverPort, provider, resource, atLeast, atMost);
             }
 
         public String toString()
             {
-        	return "MultiReceiver@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalReceived().getName() + ")";
+            return "MultiReceiver@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalReceived().getName() + ")";
             }               
         } 
 
@@ -390,18 +390,18 @@ public abstract class Multi extends DESPortrayal implements Parented
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public boolean hideName() { return true; }
-	Object parent;
+    Object parent;
     public Object getParent() { return parent; }
     public void setParent(Object parent) { this.parent = parent; }    
 
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
-      {
-      return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_PILL, 
-      getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
-      }
+        {
+        return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_PILL, 
+            getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
+        }
 
-	public String toString()
-		{
-		return "Multi@" + System.identityHashCode(this);
-		}               
+    public String toString()
+        {
+        return "Multi@" + System.identityHashCode(this);
+        }               
     }

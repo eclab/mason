@@ -62,11 +62,11 @@ public class Sink extends DESPortrayal implements Receiver, StatReceiver, Provid
     protected void throwInvalidAtLeastAtMost(double atLeast, double atMost, Resource amount)
         {
         if (atMost <= 0)
-        	throw new RuntimeException("Requested resource may not be at most 0.");
+            throw new RuntimeException("Requested resource may not be at most 0.");
         else if (atMost >= amount.getAmount())
-        	throw new RuntimeException("Requested resource " + atMost + " may not be larger than actual resource amount: " + amount);
+            throw new RuntimeException("Requested resource " + atMost + " may not be larger than actual resource amount: " + amount);
         else
-	        throw new RuntimeException("Requested resource amounts are between " + atLeast + " and " + atMost + ", which is out of bounds.");
+            throw new RuntimeException("Requested resource amounts are between " + atLeast + " and " + atMost + ", which is out of bounds.");
         }
 
     public Sink(SimState state, Resource typicalReceived)
@@ -111,7 +111,7 @@ public class Sink extends DESPortrayal implements Receiver, StatReceiver, Provid
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public boolean hideName() { return true; }
-	Object parent;
+    Object parent;
     public Object getParent() { return parent; }
     public void setParent(Object parent) { this.parent = parent; }    
 

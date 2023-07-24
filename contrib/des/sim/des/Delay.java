@@ -37,9 +37,9 @@ public class Delay extends SimpleDelay
     double lastDelayTime = Schedule.BEFORE_SIMULATION;
     boolean cumulative = false;
     
-	// this is a cache of the most recently inserted node to enable a little linked list for a bit of optimization
-	DelayNode recent = null;
-	
+    // this is a cache of the most recently inserted node to enable a little linked list for a bit of optimization
+    DelayNode recent = null;
+        
     protected void buildDelay()
         {
         delayHeap = new Heap();
@@ -58,56 +58,56 @@ public class Delay extends SimpleDelay
         }
         
     /** Sets the delay time.  Unlike a SimpleDelay, a Delay does not also clear its delay queue
-    	when setting the delay time: and so you are free to call this method any time you need 
-    	to without issues.  The default delay time is 1.0. Delay times may not be negative or NaN.  
-    	*/
+        when setting the delay time: and so you are free to call this method any time you need 
+        to without issues.  The default delay time is 1.0. Delay times may not be negative or NaN.  
+    */
     public void setDelayTime(double delayTime) 
-    	{
-    	if (delayTime < 0 || (delayTime != delayTime)) 
-    		 throwInvalidDelayTimeException(delayTime);
-    	this.delayTime = delayTime; 
-    	}
+        {
+        if (delayTime < 0 || (delayTime != delayTime)) 
+            throwInvalidDelayTimeException(delayTime);
+        this.delayTime = delayTime; 
+        }
 
 
-	/** Returns whether the delay is cumulative. 
-	When you submit a Resource to a Delay, its final delay time is computed.  
-	Normally this is an absolute time: for example, if the current time is 9.2, 
-	and the relative delay interval is computed as 2.3 steps, then the Resource 
-	will become available at 11.5.  However, another "cumulative" option is to compute the 
-	final delay time relative to the last delay time used.   For example, if 
-	the final delay time of the previous Resource entered was 13.4, and the 
-	relative delay interval is 2.3 steps, then the new Resource will become 
-	available at 15.6.  This makes it easy to compute each Resource as 
-	"processed" over a period of time after the previous Resource was 
-	processed. 
-	
-	<p>For the first Resource, or after you reset the Delay, or after you restart
-	the simulation, or if the Delay is empty, the delay time will be relative to 
-	the current time, or the Simulation Epoch, whichever is later. */
+    /** Returns whether the delay is cumulative. 
+        When you submit a Resource to a Delay, its final delay time is computed.  
+        Normally this is an absolute time: for example, if the current time is 9.2, 
+        and the relative delay interval is computed as 2.3 steps, then the Resource 
+        will become available at 11.5.  However, another "cumulative" option is to compute the 
+        final delay time relative to the last delay time used.   For example, if 
+        the final delay time of the previous Resource entered was 13.4, and the 
+        relative delay interval is 2.3 steps, then the new Resource will become 
+        available at 15.6.  This makes it easy to compute each Resource as 
+        "processed" over a period of time after the previous Resource was 
+        processed. 
+        
+        <p>For the first Resource, or after you reset the Delay, or after you restart
+        the simulation, or if the Delay is empty, the delay time will be relative to 
+        the current time, or the Simulation Epoch, whichever is later. */
 
-	public boolean isCumulative() { return cumulative; }
+    public boolean isCumulative() { return cumulative; }
 
-	/** Returns whether the delay is cumulative. 
-	When you submit a Resource to a Delay, its final delay time is computed.  
-	Normally this is an absolute time: for example, if the current time is 9.2, 
-	and the relative delay interval is computed as 2.3 steps, then the Resource 
-	will become available at 11.5.  However, another "cumulative" option is to compute the 
-	final delay time relative to the last delay time used.   For example, if 
-	the final delay time of the previous Resource entered was 13.4, and the 
-	relative delay interval is 2.3 steps, then the new Resource will become 
-	available at 15.6.  This makes it easy to compute each Resource as 
-	"processed" over a period of time after the previous Resource was 
-	processed. 
-	
-	<p>For the first Resource, or after you reset the Delay, or after you restart
-	the simulation, or if the Delay is empty, the delay time will be relative to 
-	the current time, or the Simulation Epoch, whichever is later. */
-	public void setCumulative(boolean val) { cumulative = val; }
-	
-	public double getLastDelayTime()
-		{
-		return lastDelayTime;
-		}	
+    /** Returns whether the delay is cumulative. 
+        When you submit a Resource to a Delay, its final delay time is computed.  
+        Normally this is an absolute time: for example, if the current time is 9.2, 
+        and the relative delay interval is computed as 2.3 steps, then the Resource 
+        will become available at 11.5.  However, another "cumulative" option is to compute the 
+        final delay time relative to the last delay time used.   For example, if 
+        the final delay time of the previous Resource entered was 13.4, and the 
+        relative delay interval is 2.3 steps, then the new Resource will become 
+        available at 15.6.  This makes it easy to compute each Resource as 
+        "processed" over a period of time after the previous Resource was 
+        processed. 
+        
+        <p>For the first Resource, or after you reset the Delay, or after you restart
+        the simulation, or if the Delay is empty, the delay time will be relative to 
+        the current time, or the Simulation Epoch, whichever is later. */
+    public void setCumulative(boolean val) { cumulative = val; }
+        
+    public double getLastDelayTime()
+        {
+        return lastDelayTime;
+        }       
 
     /** Returns in an array all the Resources currently being delayed and not yet ready to provide,
         along with their timestamps (when they are due to become available), combined as a DelayNode.  
@@ -118,32 +118,32 @@ public class Delay extends SimpleDelay
     public DelayNode[] getDelayedResources()
         {
         Object[] objs = delayHeap.getObjects();
-		if (objs.length ==  0) return new DelayNode[0];
-		
+        if (objs.length ==  0) return new DelayNode[0];
+                
         // Count the actual number of nodes by following the node.next chains
         int count = 0;
         for(int i = 0; i < objs.length; i++)
-        	{
-        	DelayNode node = (DelayNode)(objs[i]);
-        	while(node != null)
-        		{
-        		count++;
-        		node = node.next;
-        		}
-        	}
-        	
+            {
+            DelayNode node = (DelayNode)(objs[i]);
+            while(node != null)
+                {
+                count++;
+                node = node.next;
+                }
+            }
+                
         // Load the actual nodes by following the node.next chains
         DelayNode[] nodes = new DelayNode[count];
-        count = 0;	// we'll reuse it as a position
+        count = 0;      // we'll reuse it as a position
         for(int i = 0; i < objs.length; i++)
-        	{
-        	DelayNode node = (DelayNode)(objs[i]);
-        	while(node != null)
-        		{
-        		nodes[count++] = node;
-        		node = node.next;
-        		}
-        	}
+            {
+            DelayNode node = (DelayNode)(objs[i]);
+            while(node != null)
+                {
+                nodes[count++] = node;
+                node = node.next;
+                }
+            }
 
         return nodes;
         }
@@ -161,17 +161,17 @@ public class Delay extends SimpleDelay
     boolean usesLastDelay = false;
     
     /** Sets whether getDelay(...) should simply return the delay time used by the most recent resource
-    	added to the Delay.  If there is no such resource, or if that resource has since been 
-    	removed from the Delay, or if its delay time has passed, then a delay value of 1.0 will
-    	be used as a default. */
+        added to the Delay.  If there is no such resource, or if that resource has since been 
+        removed from the Delay, or if its delay time has passed, then a delay value of 1.0 will
+        be used as a default. */
     public void setUsesLastDelay(boolean val) { usesLastDelay = val; }
     
     /** Sets whether getDelay(...) should simply return the delay time used by the most recent resource
-    	added to the Delay. If there is no such resource, or if that resource has since been 
-    	removed from the Delay, or if its delay time has passed, then a delay value of 1.0 will
-    	be used as a default. */
+        added to the Delay. If there is no such resource, or if that resource has since been 
+        removed from the Delay, or if its delay time has passed, then a delay value of 1.0 will
+        be used as a default. */
     public boolean getUsesLastDelay() { return usesLastDelay; }
-    	
+        
     /** Sets the distribution used to independently select the delay time for each separate incoming 
         resource.  If null, the value of getDelayTime() is used for the delay time. */
     public void setDelayDistribution(AbstractDistribution distribution)
@@ -190,52 +190,52 @@ public class Delay extends SimpleDelay
         return this.distribution;
         }
                 
-	double lastDelay = 1.0;
-	protected void setLastDelay(double val) { lastDelay = val; }
-	protected double getLastDelay() { return lastDelay; }
-	
+    double lastDelay = 1.0;
+    protected void setLastDelay(double val) { lastDelay = val; }
+    protected double getLastDelay() { return lastDelay; }
+        
     /** Returns the appropriate delay value for the given provider and resource amount.
-    	You can override this as you see fit, though the defaults should work fine in most 
-    	cases.  The defaults are: if getUsesLastDelay(), and there has been at least one 
-    	previous resource entered into the Delay already, then the most recent previous 
-    	delay time is used.  Otherwise if the delay distribution has been set, it is queried
-    	and its absolute value is used to produce a random delay time under the distribution
-    	(delay times may not be negative or NaN).  Otherwise the fixed delay time is used 
-    	(which defaults to 1.0).  Override this to provide a custom delay given the 
+        You can override this as you see fit, though the defaults should work fine in most 
+        cases.  The defaults are: if getUsesLastDelay(), and there has been at least one 
+        previous resource entered into the Delay already, then the most recent previous 
+        delay time is used.  Otherwise if the delay distribution has been set, it is queried
+        and its absolute value is used to produce a random delay time under the distribution
+        (delay times may not be negative or NaN).  Otherwise the fixed delay time is used 
+        (which defaults to 1.0).  Override this to provide a custom delay given the 
         provider and resource amount or type. */
     protected double getDelay(Provider provider, Resource amount)
         {
         if (getUsesLastDelay() && recent != null)
-        	{
-        	// use the existing delay time
-        	}
+            {
+            // use the existing delay time
+            }
         else if (distribution == null) 
-        	{
-        	setLastDelay(getDelayTime());
-        	}
+            {
+            setLastDelay(getDelayTime());
+            }
         else 
-        	{
-        	setLastDelay(Math.abs(distribution.nextDouble()));
-        	}
+            {
+            setLastDelay(Math.abs(distribution.nextDouble()));
+            }
         return getLastDelay();
         }
         
     void insert(DelayNode node, double nextTime)
-    	{
-    	// Handle caching.  If the most recently inserted DelayNode is still there
-    	// and has the exact same timestamp, let's add ourselves as a linked list hanging off of it
-    	// rather than O(lg n) insertion into the heap
-    	if (recent != null && recent.timestamp == nextTime)
-    		{
-    		// insert the node right after recent
-    		node.next = recent.next;
-    		recent.next = node;
-    		}
-    	else
-    		{
-	        delayHeap.add(recent = node, nextTime);
-	        }
-    	}
+        {
+        // Handle caching.  If the most recently inserted DelayNode is still there
+        // and has the exact same timestamp, let's add ourselves as a linked list hanging off of it
+        // rather than O(lg n) insertion into the heap
+        if (recent != null && recent.timestamp == nextTime)
+            {
+            // insert the node right after recent
+            node.next = recent.next;
+            recent.next = node;
+            }
+        else
+            {
+            delayHeap.add(recent = node, nextTime);
+            }
+        }
 
 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
@@ -251,22 +251,22 @@ public class Delay extends SimpleDelay
 
         double nextTime = 0;
         if (cumulative)
-    		{
-    		if (lastDelayTime <= Schedule.BEFORE_SIMULATION ||
-    			lastDelayTime > state.schedule.time() ||
-    			delayHeap.isEmpty())		// so it's possible that the new delay time will be earlier than the current time
-    			{
-    			lastDelayTime = state.schedule.time();
-    			if (lastDelayTime <= Schedule.BEFORE_SIMULATION)
-    				lastDelayTime = Schedule.EPOCH;
-    			}
-    		nextTime = lastDelayTime + getDelay(provider, amount);
-    		lastDelayTime = nextTime;
-    		}
-    	else 
-    		{
-    		nextTime = state.schedule.getTime() + getDelay(provider, amount);
-    		}
+            {
+            if (lastDelayTime <= Schedule.BEFORE_SIMULATION ||
+                lastDelayTime > state.schedule.time() ||
+                delayHeap.isEmpty())            // so it's possible that the new delay time will be earlier than the current time
+                {
+                lastDelayTime = state.schedule.time();
+                if (lastDelayTime <= Schedule.BEFORE_SIMULATION)
+                    lastDelayTime = Schedule.EPOCH;
+                }
+            nextTime = lastDelayTime + getDelay(provider, amount);
+            lastDelayTime = nextTime;
+            }
+        else 
+            {
+            nextTime = state.schedule.getTime() + getDelay(provider, amount);
+            }
 
         if (entities == null)
             {
@@ -299,7 +299,7 @@ public class Delay extends SimpleDelay
         }
 
 
-	static final boolean clearWhenEmpty = true;
+    static final boolean clearWhenEmpty = true;
     protected void update()
         {
         if (getDropsResourcesBeforeUpdate()) 
@@ -308,57 +308,57 @@ public class Delay extends SimpleDelay
             }
 
         double time = state.schedule.getTime();
-		Double minKey = (Double)delayHeap.getMinKey();
-		
+        Double minKey = (Double)delayHeap.getMinKey();
+                
         if (entities == null)
-        	{
-			while(minKey != null && minKey <= time)
-				{
-				DelayNode node = (DelayNode)(delayHeap.extractMin());
-           	 	if (lookup != null) lookup.remove(node.resource);
-				if (node == recent) recent = null;	// all gone
-				
-				// We'll walk down the node's internal linked list and update all of them.
-				while (node != null)
-					{			
-					if (!node.dead)
-						{	
-						CountableResource res = (CountableResource)(node.getResource());
-						totalDelayedResource -= res.getAmount();
-						resource.add(res);
-						}
-					node = node.next;     // handle caching
-					}
-				minKey = (Double)delayHeap.getMinKey();         // grab the next one
-				}
-        	}
+            {
+            while(minKey != null && minKey <= time)
+                {
+                DelayNode node = (DelayNode)(delayHeap.extractMin());
+                if (lookup != null) lookup.remove(node.resource);
+                if (node == recent) recent = null;      // all gone
+                                
+                // We'll walk down the node's internal linked list and update all of them.
+                while (node != null)
+                    {                       
+                    if (!node.dead)
+                        {       
+                        CountableResource res = (CountableResource)(node.getResource());
+                        totalDelayedResource -= res.getAmount();
+                        resource.add(res);
+                        }
+                    node = node.next;     // handle caching
+                    }
+                minKey = (Double)delayHeap.getMinKey();         // grab the next one
+                }
+            }
         else
-        	{
-			while(minKey != null && minKey <= time)
-				{
-				DelayNode node = (DelayNode)(delayHeap.extractMin());
-           	 	if (lookup != null) lookup.remove(node.resource);
-				if (node == recent) recent = null;	// all gone
+            {
+            while(minKey != null && minKey <= time)
+                {
+                DelayNode node = (DelayNode)(delayHeap.extractMin());
+                if (lookup != null) lookup.remove(node.resource);
+                if (node == recent) recent = null;      // all gone
 
-				// We'll walk down the node's internal linked list and update all of them.
-				while (node != null)
-					{
-					if (!node.dead)
-						{	
-						Entity res = (Entity)(node.getResource());
-						entities.add(res);
-						totalDelayedResource--;
-						}   
-					node = node.next;     // handle caching
-					}
-				minKey = (Double)delayHeap.getMinKey();         // grab the next one
-				}
-			}
-			
-		if (minKey == null && clearWhenEmpty)
-			{
-			delayHeap.clear();
-			}
+                // We'll walk down the node's internal linked list and update all of them.
+                while (node != null)
+                    {
+                    if (!node.dead)
+                        {       
+                        Entity res = (Entity)(node.getResource());
+                        entities.add(res);
+                        totalDelayedResource--;
+                        }   
+                    node = node.next;     // handle caching
+                    }
+                minKey = (Double)delayHeap.getMinKey();         // grab the next one
+                }
+            }
+                        
+        if (minKey == null && clearWhenEmpty)
+            {
+            delayHeap.clear();
+            }
         }
 
     public String toString()
@@ -367,10 +367,10 @@ public class Delay extends SimpleDelay
         }   
         
     public void reset()
-    	{
-    	super.reset();
-    	lastDelayTime = Schedule.BEFORE_SIMULATION;
-    	}            
+        {
+        super.reset();
+        lastDelayTime = Schedule.BEFORE_SIMULATION;
+        }            
         
     boolean refusesOffers = false;
     public void setRefusesOffers(boolean value) { refusesOffers = value; }

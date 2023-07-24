@@ -52,8 +52,8 @@ public abstract class Resource implements java.io.Serializable
         }
                 
     /** Constructs a Resource but does not set the name nor the type. 
-    	This exists primarily for copy constructors to call super()
-    	rather than super(name).  */
+        This exists primarily for copy constructors to call super()
+        rather than super(name).  */
     protected Resource()
         {
         }

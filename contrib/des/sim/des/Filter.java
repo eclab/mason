@@ -39,7 +39,7 @@ import java.awt.*;
     
     <p>The default version of Filter merely accepts resources, immediately offers
     them to downstream receivers, and that's it.n
- */
+*/
 
 public class Filter extends Middleman
     {
@@ -68,9 +68,9 @@ public class Filter extends Middleman
     public boolean provide(Receiver receiver, double atMost) 
         {
         if (isProviding())
-        	{
-        	throwCyclicProvisions();
-        	}
+            {
+            throwCyclicProvisions();
+            }
         if (provider == null) return false;
         if (!isPositiveNonNaN(atMost))
             throwInvalidNumberException(atMost);
@@ -122,17 +122,17 @@ public class Filter extends Middleman
         return "Filter@" + System.identityHashCode(this);
         }
 
-	/** By default does nothing. */
-	public void process(Resource amountOfferedMe, Resource amountAcceptedFromMe)
-		{
-		// does nothing
-		}
-	
-	/** Override this as you like.  The default version offers to downstream Receivers whatever it is being
-		offered here; and then calls process(...) to process the difference between the two.  By default
-		process(...) does nothing, but you could override that too. */
+    /** By default does nothing. */
+    public void process(Resource amountOfferedMe, Resource amountAcceptedFromMe)
+        {
+        // does nothing
+        }
+        
+    /** Override this as you like.  The default version offers to downstream Receivers whatever it is being
+        offered here; and then calls process(...) to process the difference between the two.  By default
+        process(...) does nothing, but you could override that too. */
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
-    	{
+        {
         if (getRefusesOffers()) { return false; }
         if (isOffering()) throwCyclicOffers();  // cycle
 
@@ -146,17 +146,17 @@ public class Filter extends Middleman
         boolean result = offerReceivers(amount, atLeast, atMost);
         process(oldAmount, amount);
         return result;
-    	}
+        }
 
     Provider provider = null;
     
     public Provider getProvider()
-    	{
-    	return provider;
-    	}
-    	
+        {
+        return provider;
+        }
+        
     public void setProvider(Provider provider)
-    	{
-    	this.provider = provider;
-    	}
+        {
+        this.provider = provider;
+        }
     }

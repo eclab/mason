@@ -50,7 +50,7 @@ public interface Receiver extends Parented
         When a Receiver is also a Provider, this is very often implemented
         simply by calling getTypicalProvided().  If (rarely) the Receiver 
         may receive a variety of types, such as a Composer, then this method should return null. 
- */
+    */
     public Resource getTypicalReceived();
     
     /** Sets whether the receiver currently refuses all offers.  The default should be FALSE. */

@@ -63,11 +63,11 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
     protected void throwInvalidAtLeastAtMost(double atLeast, double atMost, Resource amount)
         {
         if (atMost <= 0)
-        	throw new RuntimeException("Requested resource may not be at most 0.");
+            throw new RuntimeException("Requested resource may not be at most 0.");
         else if (atMost >= amount.getAmount())
-        	throw new RuntimeException("Requested resource " + atMost + " may not be larger than actual resource amount: " + amount);
+            throw new RuntimeException("Requested resource " + atMost + " may not be larger than actual resource amount: " + amount);
         else
-	        throw new RuntimeException("Requested resource amounts are between " + atLeast + " and " + atMost + ", which is out of bounds.");
+            throw new RuntimeException("Requested resource amounts are between " + atLeast + " and " + atMost + ", which is out of bounds.");
         }
 
     /** Throws an exception indicating that entities were requested from this Provider, but it does not provide them. */
@@ -254,7 +254,7 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
         
 
     /** Returns the current offer distribution, or null if none.
-    */
+     */
     public AbstractDistribution getOfferDistribution()
         {
         return offerDistribution;
@@ -482,17 +482,17 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
     
     boolean offersAllEntities = false;
 
-	/** Returns whether the Provider will, duing offerReceivers(...), attempt to offer every single entity 
-		that it has available, until offers start to be refused by downstream receivers.  By fault this is 
-		FALSE: the Provider offers only one Entity. This only matters if the Provider provides entities.  
-		This capability is largely useful for Delays and SimpleDelays rather than other kinds of Providers.  */
-	public boolean getOffersAllEntities() { return offersAllEntities; }
+    /** Returns whether the Provider will, duing offerReceivers(...), attempt to offer every single entity 
+        that it has available, until offers start to be refused by downstream receivers.  By fault this is 
+        FALSE: the Provider offers only one Entity. This only matters if the Provider provides entities.  
+        This capability is largely useful for Delays and SimpleDelays rather than other kinds of Providers.  */
+    public boolean getOffersAllEntities() { return offersAllEntities; }
 
-	/** Sets whether the Provider will, duing offerReceivers(...), attempt to offer every single entity 
-		that it has available, until offers start to be refused by downstream receivers.  By fault this is 
-		FALSE: the Provider offers only one Entity. This only matters if the Provider provides entities.  
-		This capability is largely useful for Delays and SimpleDelays rather than other kinds of Providers.  */
-	public void setOffersAllEntities(boolean val) { offersAllEntities = val; }
+    /** Sets whether the Provider will, duing offerReceivers(...), attempt to offer every single entity 
+        that it has available, until offers start to be refused by downstream receivers.  By fault this is 
+        FALSE: the Provider offers only one Entity. This only matters if the Provider provides entities.  
+        This capability is largely useful for Delays and SimpleDelays rather than other kinds of Providers.  */
+    public void setOffersAllEntities(boolean val) { offersAllEntities = val; }
     
     /** Simply calls offerReceivers(receivers). */
     protected boolean offerReceivers()
@@ -506,22 +506,22 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
     */
     protected boolean offerReceivers(ArrayList<Receiver> receivers)
         {
-    	boolean returnval = false;
-    	if (getOffersAllEntities() && entities != null)
-    		{
-    		while(!entities.isEmpty())
-    			{
-    			boolean result = offerReceiversOnce(receivers);
-    			returnval = returnval || result;
-    			if (!result) break;
-    			}
-    		}
-    	else returnval = offerReceiversOnce(receivers);
-    	return returnval;
+        boolean returnval = false;
+        if (getOffersAllEntities() && entities != null)
+            {
+            while(!entities.isEmpty())
+                {
+                boolean result = offerReceiversOnce(receivers);
+                returnval = returnval || result;
+                if (!result) break;
+                }
+            }
+        else returnval = offerReceiversOnce(receivers);
+        return returnval;
         }
-	
-	boolean offerReceiversOnce(ArrayList<Receiver> receivers)
-		{
+        
+    boolean offerReceiversOnce(ArrayList<Receiver> receivers)
+        {
         offering = true;
         boolean result = false;
                         
@@ -631,20 +631,20 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
                     {                
                     Resource oldResource;
                     if (entities == null) 
-                    	{
-                    	oldResource = resource.duplicate();
-                    	}
+                        {
+                        oldResource = resource.duplicate();
+                        }
                     else
-                    	{
-                    	oldResource = entities.getFirst();
-                    	}
+                        {
+                        oldResource = entities.getFirst();
+                        }
                     Receiver receiver = selectReceiver(receivers);
                     if (receiver == null) break;
                     result = offerReceiver(receiver, Double.POSITIVE_INFINITY);
                     if (result)
-                    	{
-                    	selectedOfferAccepted(receiver, oldResource, resource);
-                    	}
+                        {
+                        selectedOfferAccepted(receiver, oldResource, resource);
+                        }
                     }
                 }
             break;
@@ -656,9 +656,9 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
     
     // This is here so that If can override it
     Receiver selectReceiver(ArrayList<Receiver> receivers)
-    	{
-    	return selectReceiver(receivers, entities == null ? resource : entities.getFirst());
-    	}
+        {
+        return selectReceiver(receivers, entities == null ? resource : entities.getFirst());
+        }
     
     
     /**
@@ -751,7 +751,7 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
     public void setName(String name) { this.name = name; }
 //    public boolean hideName() { return true; }
     
-	Object parent;
+    Object parent;
     public Object getParent() { return parent; }
     public void setParent(Object parent) { this.parent = parent; }    
     

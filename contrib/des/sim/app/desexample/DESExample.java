@@ -38,24 +38,24 @@ public class DESExample extends SimState
         super.start();
         
         // Make a typical resource
-    	Money quatloos = new Money("Q", 0);
+        Money quatloos = new Money("Q", 0);
         
         // Add some sources
         Source source1 = new Source(this, quatloos)
-        	{
-			public SimplePortrayal2D buildDefaultPortrayal(double scale)
-				{
-				return new ShapePortrayal2D(
-					ShapePortrayal2D.POLY_SQUARE,
-					Color.BLUE, Color.RED, 2.0, scale);
-				}
-        	};
+            {
+            public SimplePortrayal2D buildDefaultPortrayal(double scale)
+                {
+                return new ShapePortrayal2D(
+                    ShapePortrayal2D.POLY_SQUARE,
+                    Color.BLUE, Color.RED, 2.0, scale);
+                }
+            };
         source1.setRate(1.0);
         source1.setProduction(1.1);
         source1.setAutoSchedules(true);
         // source1 needs to be added to the schedule ONCE -- thereafter it'll operate via autoscheduling
         schedule.scheduleOnce(Schedule.EPOCH, source1);
-        	
+                
         Source source2 = new Source(this, quatloos);
         source2.setRate(1.1);
         source2.setProduction(0.7);
@@ -66,7 +66,7 @@ public class DESExample extends SimState
         Pool pool = new Pool(new CountableResource("Locks", 20), 20);
         pool.setName("Blah");
         lock1 = new Lock(this, quatloos, pool);
-        //lock1.setFillPaint(Color.GREEN);			// I have moved this to DESExampleWithUI.setupPortrayals() so it doesn't fire up the GUI when you run headless
+        //lock1.setFillPaint(Color.GREEN);                      // I have moved this to DESExampleWithUI.setupPortrayals() so it doesn't fire up the GUI when you run headless
         lock2 = new Lock(this, quatloos, pool);
         Unlock unlock = new Unlock(this, quatloos, pool);
         
@@ -90,7 +90,7 @@ public class DESExample extends SimState
         unlock.addReceiver(sink);
         
         // Add A Macro
-     	macro = new Macro("My Awesome Macro");
+        macro = new Macro("My Awesome Macro");
         macro.addProvider(source1, false);
         macro.addProvider(source2, false);
         

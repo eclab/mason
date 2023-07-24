@@ -15,79 +15,79 @@ import sim.portrayal.network.SimpleEdgePortrayal2D;
 
 public class TicketQueueWithUI extends GUIState {
 
-	public Display2D display;
-	public JFrame displayFrame;
-	ContinuousPortrayal2D layoutPortrayal = new ContinuousPortrayal2D();
-	NetworkPortrayal2D graphPortrayal = new NetworkPortrayal2D();
+    public Display2D display;
+    public JFrame displayFrame;
+    ContinuousPortrayal2D layoutPortrayal = new ContinuousPortrayal2D();
+    NetworkPortrayal2D graphPortrayal = new NetworkPortrayal2D();
 
-	public TicketQueueWithUI(SimState state) {
-		super(state);
-	}
+    public TicketQueueWithUI(SimState state) {
+        super(state);
+        }
 
-	public TicketQueueWithUI() {
-		super(new TicketQueue(System.currentTimeMillis()));
-	}
-	
-	public Object getSimulationInspectedObject() {
-		return state;
-	}
-	
-	public static String getName() {
-		return "TicketQueue example";
-	}
-	
-	public void start() {
-		super.start();
-		setupPortrayals();
-	}
-	
-	public void load(SimState state) {
-		super.load(state);
-		setupPortrayals();
-	}
-	
-	public void setupPortrayals() {
-		TicketQueue example = (TicketQueue) state;
-		
-		layoutPortrayal.setField(example.field.getNodes());
-		graphPortrayal.setField(example.field);
-		SimpleEdgePortrayal2D edge = new DelayedEdgePortrayal();
-		edge.setBaseWidth(1);
-		graphPortrayal.setPortrayalForAll(edge);
-		
-		display.reset();
-		display.setBackdrop(Color.WHITE);
-		display.repaint();
-	}
+    public TicketQueueWithUI() {
+        super(new TicketQueue(System.currentTimeMillis()));
+        }
+        
+    public Object getSimulationInspectedObject() {
+        return state;
+        }
+        
+    public static String getName() {
+        return "TicketQueue example";
+        }
+        
+    public void start() {
+        super.start();
+        setupPortrayals();
+        }
+        
+    public void load(SimState state) {
+        super.load(state);
+        setupPortrayals();
+        }
+        
+    public void setupPortrayals() {
+        TicketQueue example = (TicketQueue) state;
+                
+        layoutPortrayal.setField(example.field.getNodes());
+        graphPortrayal.setField(example.field);
+        SimpleEdgePortrayal2D edge = new DelayedEdgePortrayal();
+        edge.setBaseWidth(1);
+        graphPortrayal.setPortrayalForAll(edge);
+                
+        display.reset();
+        display.setBackdrop(Color.WHITE);
+        display.repaint();
+        }
 
-	public void init(Controller c) {
-		super.init(c);
-		
-		DESPortrayalParameters.setImageClass(TicketQueueWithUI.class);
-		
-		display = new Display2D(600, 600, this);
-		display.setClipping(false);
-		display.attach(graphPortrayal, "Connections");
-		display.attach(layoutPortrayal, "Layout");
-		displayFrame = display.createFrame();
-		
-		c.registerFrame(displayFrame);
-		displayFrame.setVisible(true);
-		
-	}
-	
-	public void quit() {
-		super.quit();
-		if (displayFrame != null)
-			displayFrame.dispose();
-		displayFrame = null;
-		display = null;
-	}
-	
-	public static void main(String[] args) {
-		TicketQueueWithUI app = new TicketQueueWithUI();
-		Console c = new Console(app);
-		c.setVisible(true);
-	}
+    public void init(Controller c) {
+        super.init(c);
+                
+        DESPortrayalParameters.setImageClass(TicketQueueWithUI.class);
+                
+        display = new Display2D(600, 600, this);
+        display.setClipping(false);
+        display.attach(graphPortrayal, "Connections");
+        display.attach(layoutPortrayal, "Layout");
+        displayFrame = display.createFrame();
+                
+        c.registerFrame(displayFrame);
+        displayFrame.setVisible(true);
+                
+        }
+        
+    public void quit() {
+        super.quit();
+        if (displayFrame != null)
+            displayFrame.dispose();
+        displayFrame = null;
+        display = null;
+        }
+        
+    public static void main(String[] args) {
+        TicketQueueWithUI app = new TicketQueueWithUI();
+        Console c = new Console(app);
+        c.setVisible(true);
+        }
 
-}
+    }

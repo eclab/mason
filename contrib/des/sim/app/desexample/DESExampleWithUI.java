@@ -20,13 +20,13 @@ import sim.des.portrayal.*;
 public class DESExampleWithUI extends GUIState
     {
     public Display2D display;
-	public JFrame displayFrame;
+    public JFrame displayFrame;
     ContinuousPortrayal2D layoutPortrayal = new ContinuousPortrayal2D();
     NetworkPortrayal2D graphPortrayal = new NetworkPortrayal2D();
 
 
-	// We make an array the size of ALL the macros in our simulation
-	MacroDisplay[] displays = new MacroDisplay[1];
+    // We make an array the size of ALL the macros in our simulation
+    MacroDisplay[] displays = new MacroDisplay[1];
         
     public static void main(String[] args)
         {
@@ -40,14 +40,14 @@ public class DESExampleWithUI extends GUIState
 
     public Object getSimulationInspectedObject() { return state; }
 
-	// make the main model inspector volatile so it updates each time?
+    // make the main model inspector volatile so it updates each time?
     /*
-    public Inspector getInspector()
-        {
-        Inspector i = super.getInspector();
-        i.setVolatile(true);
-        return i;
-        }
+      public Inspector getInspector()
+      {
+      Inspector i = super.getInspector();
+      i.setVolatile(true);
+      return i;
+      }
     */
 
     public static String getName() { return "DES Example"; }
@@ -86,7 +86,7 @@ public class DESExampleWithUI extends GUIState
         display.setBackdrop(Color.white);
         display.repaint();
 
-		displays[0].attachMacro(example.macro, new DelayedEdgePortrayal());
+        displays[0].attachMacro(example.macro, new DelayedEdgePortrayal());
         }
 
     public void init(Controller c)
@@ -108,20 +108,20 @@ public class DESExampleWithUI extends GUIState
         displayFrame.setVisible(true);
         
         for(int i = 0; i < displays.length; i++)
-	        displays[i] = new MacroDisplay(this, 600, 600, i);
+            displays[i] = new MacroDisplay(this, 600, 600, i);
 
 /*
-        // make the macro display
-        macroDisplay = new Display2D(600,600,this);
-        // turn off clipping
-        macroDisplay.setClipping(false);
-        macroDisplay.attach( macroGraphPortrayal, "Connections" );
-        macroDisplay.attach( macroLayoutPortrayal, "Layout" );
+// make the macro display
+macroDisplay = new Display2D(600,600,this);
+// turn off clipping
+macroDisplay.setClipping(false);
+macroDisplay.attach( macroGraphPortrayal, "Connections" );
+macroDisplay.attach( macroLayoutPortrayal, "Layout" );
 
-        macroDisplayFrame = macroDisplay.createFrame();
-        macroDisplayFrame.setTitle("The Macro");
-        c.registerFrame(macroDisplayFrame);   // register the frame so it appears in the "Display" list
-        */
+macroDisplayFrame = macroDisplay.createFrame();
+macroDisplayFrame.setTitle("The Macro");
+c.registerFrame(macroDisplayFrame);   // register the frame so it appears in the "Display" list
+*/
         }
 
     public void quit()

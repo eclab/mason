@@ -45,7 +45,7 @@ public class Source extends Provider implements Steppable
     public String[] getDataValues()
         {
         return new String[] { getCapacity() == Double.POSITIVE_INFINITY ? "" + getAvailable() :
-                              getAvailable() + "/" + getCapacity() };
+            getAvailable() + "/" + getCapacity() };
         }
     public String[] getDataLabels()
         {
@@ -86,9 +86,9 @@ public class Source extends Provider implements Steppable
         capacity = d; 
         }
 
-	// checks for one-time warnings for this Source
-	boolean zeroRateDistributionWarned = false;
-	boolean negativeRateDistributionWarned = false;
+    // checks for one-time warnings for this Source
+    boolean zeroRateDistributionWarned = false;
+    boolean negativeRateDistributionWarned = false;
 
     double rate = 1.0;
     AbstractDistribution rateDistribution = null;
@@ -134,9 +134,9 @@ public class Source extends Provider implements Steppable
     public void setRate(double rate)
         {
         if (rate == 0)  // uh oh
-        	{
-			System.err.println("WARNING: Rate set to 0 for Source " + this + ".  This will cause the rate to be 0 + epsilon.  You probably did not intend that.");
-        	}
+            {
+            System.err.println("WARNING: Rate set to 0 for Source " + this + ".  This will cause the rate to be 0 + epsilon.  You probably did not intend that.");
+            }
         if (isPositiveOrZeroNonNaN(rate)) 
             this.rate = rate;
         else throwInvalidProductionException(rate);
@@ -156,66 +156,66 @@ public class Source extends Provider implements Steppable
         }
         
     /** A convenience method which calls setAutoSchedules(true), then schedules the Source on the Schedule using 
-    	the current rescheduleOrdering.  The Source is initially scheduled at the given time.  
-    	See also autoScheduleNow() and autoSchedule(...) for other options.
+        the current rescheduleOrdering.  The Source is initially scheduled at the given time.  
+        See also autoScheduleNow() and autoSchedule(...) for other options.
     */
     public void autoScheduleAt(double time)
         {
         if (!isPositiveOrZeroNonNaN(time))
-        	throw new RuntimeException("Source " + this + " had autoScheduleAt(" + time + ") called, but this value must be >= 0");  
-        	    	
+            throw new RuntimeException("Source " + this + " had autoScheduleAt(" + time + ") called, but this value must be >= 0");  
+                        
         setAutoSchedules(true);
-		state.schedule.scheduleOnce(time, rescheduleOrdering, this);
+        state.schedule.scheduleOnce(time, rescheduleOrdering, this);
         }
 
     /** A convenience method which calls setAutoSchedules(true), then schedules the Source on the Schedule using 
-    	the current rescheduleOrdering.  The Source is scheduled for the next possible time within epsilon, or 
-    	if we're currently before the simulation epoch, as you probably should be, then the time is set to 
-    	Schedule.EPOCH, that is, 0.0. You should only call this method ONCE at the beginning of a run.  
-    	See also autoSchedule(...) and autoScheduleAt() for other options.
+        the current rescheduleOrdering.  The Source is scheduled for the next possible time within epsilon, or 
+        if we're currently before the simulation epoch, as you probably should be, then the time is set to 
+        Schedule.EPOCH, that is, 0.0. You should only call this method ONCE at the beginning of a run.  
+        See also autoSchedule(...) and autoScheduleAt() for other options.
     */
     public void autoScheduleNow()
         {
         double time = state.schedule.getTime();
-		if (time < Schedule.EPOCH)
-			{
-			time = Schedule.EPOCH;
-			}
-		autoScheduleAt(time);
+        if (time < Schedule.EPOCH)
+            {
+            time = Schedule.EPOCH;
+            }
+        autoScheduleAt(time);
         }
 
     /** A convenience method which calls setAutoSchedules(true), then schedules the Source initially on the Schedule 
-    	using the current rescheduleOrdering.  The Source is scheduled initially in one of two ways.  If OFFSET is 
-    	FALSE, then the source is scheduled by selecting the next rate value, either fixed, or from a distribution,
-    	and using that as the time.  For example, if you have a fixed rate of 2.0, and you are at the beginning 
-    	of a simulation run, then the Source is scheduled for 2.0; or if you have a rate distribution, then a 
-    	value is selected at random, from this distribution and the Source is scheduled for that.  
-    	
-    	<p>However if OFFSET is TRUE, then the Source attempts to be scheduled at a random offset so as to simulate
-    	a Source whose process is ongoing as of the commencement of the simulation.  This is done by once again
-    	selecting the next rate value, either fixed or from a distribution.  However then we select a random
-    	time from between 0 and that value inclusive.  If you are using a distribution and it is a
-    	sim.util.distribution.AbstraceDiscreteDistribution, then this random time will be an integer, else it
-    	will be a real value.
-    	
-    	<p>See also autoScheduleNow(...) and autoScheduleAt() for other options.
+        using the current rescheduleOrdering.  The Source is scheduled initially in one of two ways.  If OFFSET is 
+        FALSE, then the source is scheduled by selecting the next rate value, either fixed, or from a distribution,
+        and using that as the time.  For example, if you have a fixed rate of 2.0, and you are at the beginning 
+        of a simulation run, then the Source is scheduled for 2.0; or if you have a rate distribution, then a 
+        value is selected at random, from this distribution and the Source is scheduled for that.  
+        
+        <p>However if OFFSET is TRUE, then the Source attempts to be scheduled at a random offset so as to simulate
+        a Source whose process is ongoing as of the commencement of the simulation.  This is done by once again
+        selecting the next rate value, either fixed or from a distribution.  However then we select a random
+        time from between 0 and that value inclusive.  If you are using a distribution and it is a
+        sim.util.distribution.AbstraceDiscreteDistribution, then this random time will be an integer, else it
+        will be a real value.
+        
+        <p>See also autoScheduleNow(...) and autoScheduleAt() for other options.
     */
     public void autoSchedule(boolean offset)
         {
         setAutoSchedules(true);
         double time = getNextProductionTime();
         if (offset)
-        	{
-        	if (rateDistribution != null && rateDistribution instanceof AbstractDiscreteDistribution)
-        		{
-        		time = (double)state.random.nextInt(((int)time) + 1);		// [0...time] as integers
-        		}
-        	else
-        		{
-        		time = time * state.random.nextDouble(true, true);		// [0...time] as doubles
-        		}
-        	}
-		state.schedule.scheduleOnce(time, rescheduleOrdering, this);
+            {
+            if (rateDistribution != null && rateDistribution instanceof AbstractDiscreteDistribution)
+                {
+                time = (double)state.random.nextInt(((int)time) + 1);           // [0...time] as integers
+                }
+            else
+                {
+                time = time * state.random.nextDouble(true, true);              // [0...time] as doubles
+                }
+            }
+        state.schedule.scheduleOnce(time, rescheduleOrdering, this);
         }
 
     /** Sets whether the Source reschedules itself automatically using either a deterministic or distribution-based
@@ -236,7 +236,7 @@ public class Source extends Provider implements Steppable
         return autoSchedules;
         }
 
-	public boolean hideAutoSchedules() { return true; }
+    public boolean hideAutoSchedules() { return true; }
 
     /** Returns the reschedule ordering. */
     public int getRescheduleOrdering() { return rescheduleOrdering; }
@@ -244,15 +244,15 @@ public class Source extends Provider implements Steppable
     /** Sets the reschedule ordering. */
     public void setRescheduleOrdering(int ordering) { this.rescheduleOrdering = ordering; }
 
-	public boolean hideRescheduleOrdering() { return true; }
+    public boolean hideRescheduleOrdering() { return true; }
 
     double getNextProductionTime()
         {
         double time = state.schedule.getTime();
         double currentTime = time;
-        if (currentTime < Schedule.EPOCH) 				// this shouldn't be able to happen
+        if (currentTime < Schedule.EPOCH)                               // this shouldn't be able to happen
             {
-	        //System.err.println("WARNING: Source being asked to produce before the epoch of the simulation.");
+            //System.err.println("WARNING: Source being asked to produce before the epoch of the simulation.");
             currentTime = Schedule.EPOCH;
             }
         double val = 0;
@@ -260,27 +260,27 @@ public class Source extends Provider implements Steppable
             {
             double d = rateDistribution.nextDouble();
             if (d <= 0)
-	        	{ 
-	        	if (d < 0)
-	        		{
-					if (!negativeRateDistributionWarned)
-						{
-	        			System.err.println("WARNING: Rate distribution returned a negative value (" + d + ") for Source " + this + ". This is almost certainly wrong.  Instead the absolute value (" + (0 - d) + ") will be used.  You should fix this!  This message will appear only once.");
-						negativeRateDistributionWarned = true;
-						}
-	        		d = 0 - d;
-	        		}
-	        	else if (!zeroRateDistributionWarned)
-	        		{
-	        		System.err.println("WARNING: Rate distribution returned a 0 for Source " + this + ". This will cause the rate to be 0 + epsilon.  You might not have expected that.  This message will appear only once.");
-	        		zeroRateDistributionWarned = true;
-	        		}
-	        	}
+                { 
+                if (d < 0)
+                    {
+                    if (!negativeRateDistributionWarned)
+                        {
+                        System.err.println("WARNING: Rate distribution returned a negative value (" + d + ") for Source " + this + ". This is almost certainly wrong.  Instead the absolute value (" + (0 - d) + ") will be used.  You should fix this!  This message will appear only once.");
+                        negativeRateDistributionWarned = true;
+                        }
+                    d = 0 - d;
+                    }
+                else if (!zeroRateDistributionWarned)
+                    {
+                    System.err.println("WARNING: Rate distribution returned a 0 for Source " + this + ". This will cause the rate to be 0 + epsilon.  You might not have expected that.  This message will appear only once.");
+                    zeroRateDistributionWarned = true;
+                    }
+                }
             val = d + currentTime;
             }
         else
             {
-			// Rate can be zero, but only if the user explicitly set it, so we won't warn here.  It's 1.0 by default
+            // Rate can be zero, but only if the user explicitly set it, so we won't warn here.  It's 1.0 by default
             val = rate + currentTime;
             }
                                 
@@ -352,7 +352,7 @@ public class Source extends Provider implements Steppable
         generates entities using buildEntity().  */
     protected void buildEntities(double amt)
         {
-        for(int i = 0; i < Math.round(amt); i++)					// FIXME: should this be roundor floor?
+        for(int i = 0; i < Math.round(amt); i++)                                        // FIXME: should this be roundor floor?
             {
             if (entities.size() < capacity)
                 entities.add(buildEntity());
@@ -366,7 +366,7 @@ public class Source extends Provider implements Steppable
         {
         CountableResource res = (CountableResource)resource;
         if (res.isCountable())
-            amt = Math.round(amt);								// FIXME: should this be roundor floor?
+            amt = Math.round(amt);                                                              // FIXME: should this be roundor floor?
                                                                                                                                         
         res.increase(amt);
         if (res.getAmount() > capacity)
@@ -395,13 +395,13 @@ public class Source extends Provider implements Steppable
         <li>First, if we are autoscheduling, we need to reschedule ourselves.
         <ul>
         <li>If we have a rate distribution, select from the distribution and add to our current time
-        	 to get the rescheduling time.
-            The distribution value should be >= 0, else it will be set to 0.
+        to get the rescheduling time.
+        The distribution value should be >= 0, else it will be set to 0.
         <li>If we have a fixed rate, add it to our current time to get the rescheduling time.
         <li>If the resulting rescheduling time hasn't changed (we added 0 to it, probably an error), 
         reschedule at the immediate soonest theoretical time in the future.  Else schedule at the rescheduling time.
-		</ul>
-		
+        </ul>
+                
         <li>Next, if we're >= capacity, return.
         
         <li>Othrwise we determine how much to produce.

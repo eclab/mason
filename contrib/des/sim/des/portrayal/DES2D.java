@@ -118,28 +118,28 @@ public class DES2D extends SpatialNetwork2D
         {
         ArrayList<ResourceEdge> ret = new ArrayList<>();
         for(Receiver receiver : provider.getReceivers())
-        	{
-        	Object obj = receiver;
-        	while(obj != null && !((SparseField)field).exists(obj))	// maybe its parent is here?
-        		{
-        		if (obj instanceof Parented)
-        			{
-	        		obj = ((Parented)obj).getParent();
-	        		}
-	        	else
-	        		{
-	        		obj = null;
-	        		}
-        		}
-        	if (obj != null)
-        		{
-        		if (obj instanceof Receiver)
-	            	ret.add(connect(provider, (Receiver)obj));
-	            else if (obj instanceof Macro)
-	            	ret.add(connect(provider, receiver, (Macro) obj));
-	            else if (obj instanceof Multi)
-	            	ret.add(connect(provider, receiver, (Multi) obj));
-	            }
+            {
+            Object obj = receiver;
+            while(obj != null && !((SparseField)field).exists(obj)) // maybe its parent is here?
+                {
+                if (obj instanceof Parented)
+                    {
+                    obj = ((Parented)obj).getParent();
+                    }
+                else
+                    {
+                    obj = null;
+                    }
+                }
+            if (obj != null)
+                {
+                if (obj instanceof Receiver)
+                    ret.add(connect(provider, (Receiver)obj));
+                else if (obj instanceof Macro)
+                    ret.add(connect(provider, receiver, (Macro) obj));
+                else if (obj instanceof Multi)
+                    ret.add(connect(provider, receiver, (Multi) obj));
+                }
             }
         return ret;
         }
@@ -148,69 +148,69 @@ public class DES2D extends SpatialNetwork2D
         {
         ArrayList<ResourceEdge> ret = new ArrayList<>();
         for(Provider provider : multiProvider.getProviders())
-			{
-			for(Receiver receiver : provider.getReceivers())
-				{
-        		Object obj = receiver;
-				while(obj != null && !((SparseField)field).exists(obj))	// maybe its parent is here?
-					{
-					if (obj instanceof Parented)
-						{
-	        			obj = ((Parented)obj).getParent();
-						}
-					else
-						{
-						obj = null;
-						}
-					}
-				if (obj != null)
-					{
-					if (obj instanceof Receiver)
-						ret.add(connect(multiProvider, provider, (Receiver)obj, (Receiver)obj));
-					else if (obj instanceof Macro)
-						ret.add(connect(multiProvider, provider, receiver, (Macro) obj));
-					else if (obj instanceof Multi)
-						ret.add(connect(multiProvider, provider, receiver, (Multi) obj));
-					}
-				}
-			}
-		return ret;
-		}
+            {
+            for(Receiver receiver : provider.getReceivers())
+                {
+                Object obj = receiver;
+                while(obj != null && !((SparseField)field).exists(obj)) // maybe its parent is here?
+                    {
+                    if (obj instanceof Parented)
+                        {
+                        obj = ((Parented)obj).getParent();
+                        }
+                    else
+                        {
+                        obj = null;
+                        }
+                    }
+                if (obj != null)
+                    {
+                    if (obj instanceof Receiver)
+                        ret.add(connect(multiProvider, provider, (Receiver)obj, (Receiver)obj));
+                    else if (obj instanceof Macro)
+                        ret.add(connect(multiProvider, provider, receiver, (Macro) obj));
+                    else if (obj instanceof Multi)
+                        ret.add(connect(multiProvider, provider, receiver, (Multi) obj));
+                    }
+                }
+            }
+        return ret;
+        }
                 
     public ArrayList<ResourceEdge> connect(Macro macroProvider)
         {
         ArrayList<ResourceEdge> ret = new ArrayList<>();
         for(Provider provider : macroProvider.getProviders())
-			{
-			for(Receiver receiver : provider.getReceivers())
-				{
-				Object obj = receiver;
-				while(obj != null && !((SparseField)field).exists(obj))	// maybe its parent is here?
-					{
-					if (obj instanceof Parented)
-						{
-	        			obj = ((Parented)obj).getParent();
-						}
-					else
-						{
-						obj = null;
-						}
-					}
-				if (obj != null)
-					{
-					if (obj instanceof Receiver)
-						ret.add(connect(macroProvider, provider, (Receiver)obj, (Receiver)obj));
-					else if (obj instanceof Macro)
-						ret.add(connect(macroProvider, provider, receiver, (Macro) obj));
-					else if (obj instanceof Multi)
-						ret.add(connect(macroProvider, provider, receiver, (Multi) obj));
-					}
-				}
-			}
-		return ret;
-		}
+            {
+            for(Receiver receiver : provider.getReceivers())
+                {
+                Object obj = receiver;
+                while(obj != null && !((SparseField)field).exists(obj)) // maybe its parent is here?
+                    {
+                    if (obj instanceof Parented)
+                        {
+                        obj = ((Parented)obj).getParent();
+                        }
+                    else
+                        {
+                        obj = null;
+                        }
+                    }
+                if (obj != null)
+                    {
+                    if (obj instanceof Receiver)
+                        ret.add(connect(macroProvider, provider, (Receiver)obj, (Receiver)obj));
+                    else if (obj instanceof Macro)
+                        ret.add(connect(macroProvider, provider, receiver, (Macro) obj));
+                    else if (obj instanceof Multi)
+                        ret.add(connect(macroProvider, provider, receiver, (Multi) obj));
+                    }
+                }
+            }
+        return ret;
+        }
                 
-   public ArrayList<ResourceEdge> connectAll()
+    public ArrayList<ResourceEdge> connectAll()
         {
         ArrayList<ResourceEdge> ret = new ArrayList<>();
         Bag objs = ((Continuous2D)field).getAllObjects();

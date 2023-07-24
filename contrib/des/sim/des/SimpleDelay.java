@@ -109,16 +109,16 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
     public boolean hideDelayTime() { return true; }
 
     /** Sets the delay time.  In a SimpleDelay (not a Delay) this also clears the delay queue entirely,
-    	because not doing so would break the internal linked list.  In a Delay, the delay queue is not
-    	cleared, and you are free to call this method any time you need to without issues.  
-    	Delay times may not be negative or NaN.  */
+        because not doing so would break the internal linked list.  In a Delay, the delay queue is not
+        cleared, and you are free to call this method any time you need to without issues.  
+        Delay times may not be negative or NaN.  */
     public void setDelayTime(double delayTime) 
-    	{ 
-    	if (delayTime < 0 || (delayTime != delayTime)) 
-    		 throwInvalidDelayTimeException(delayTime);
- 		this.delayTime = delayTime; 
-		clear();
-    	}
+        { 
+        if (delayTime < 0 || (delayTime != delayTime)) 
+            throwInvalidDelayTimeException(delayTime);
+        this.delayTime = delayTime; 
+        clear();
+        }
 
     /** Returns the delay ordering. */
     public int getRescheduleOrdering() { return rescheduleOrdering; }
@@ -138,41 +138,41 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
         }
                 
     /** Sets whether lookup is used.  If TRUE, then every time a Resource is added to the SimpleDelay it is also
-    	added to a HashMap so its DelayNode can be quickly looked up with lookup().  When the Resource exits
-    	the SimpleDelay it is removed from the HashMap.  This is primarily used to make it fast to
-    	set a resource as "dead" (see DelayNode). However it incurs a constant overhead and so this feature
-    	is turned off by default.  */
-	public void setUsesLookup(boolean val)
-		{
-		if (val)
-			{
-			if (lookup == null) lookup = new Hashtable<Resource,DelayNode>();
-			}
-		else
-			{
-			lookup = null;
-			}
-		}
+        added to a HashMap so its DelayNode can be quickly looked up with lookup().  When the Resource exits
+        the SimpleDelay it is removed from the HashMap.  This is primarily used to make it fast to
+        set a resource as "dead" (see DelayNode). However it incurs a constant overhead and so this feature
+        is turned off by default.  */
+    public void setUsesLookup(boolean val)
+        {
+        if (val)
+            {
+            if (lookup == null) lookup = new Hashtable<Resource,DelayNode>();
+            }
+        else
+            {
+            lookup = null;
+            }
+        }
 
     /** Returns whether lookup is used.  If TRUE, then every time a Resource is added to the SimpleDelay it is also
-    	added to a HashMap so its DelayNode can be quickly looked up with lookup().  When the Resource exits
-    	the SimpleDelay it is removed from the HashMap.  This is primarily used to make it fast to
-    	set a resource as "dead" (see DelayNode). However it incurs a constant overhead and so this feature
-    	is turned off by default.  */
-	public boolean getUsesLookup()
-		{
-		return lookup != null;
-		}
-		
+        added to a HashMap so its DelayNode can be quickly looked up with lookup().  When the Resource exits
+        the SimpleDelay it is removed from the HashMap.  This is primarily used to make it fast to
+        set a resource as "dead" (see DelayNode). However it incurs a constant overhead and so this feature
+        is turned off by default.  */
+    public boolean getUsesLookup()
+        {
+        return lookup != null;
+        }
+                
     /** Looks up a resource, if lookup is presently being used (otherwise issues a RuntimeException).
-    	This is primarily used to make it fast to
-    	set a resource as "dead" (see DelayNode). However it incurs a constant overhead and so this feature
-    	is turned off by default (see setUsesLookup()).  */
-	public DelayNode lookup(Resource resource)
-		{
-		if (lookup == null) throwNoLookupException(resource);
-		return lookup.get(resource);
-		}
+        This is primarily used to make it fast to
+        set a resource as "dead" (see DelayNode). However it incurs a constant overhead and so this feature
+        is turned off by default (see setUsesLookup()).  */
+    public DelayNode lookup(Resource resource)
+        {
+        if (lookup == null) throwNoLookupException(resource);
+        return lookup.get(resource);
+        }
 
     /** Creates a SimpleDelay with a given delayTime, 0 ordering, and typical resource. */
     public SimpleDelay(SimState state, double delayTime, Resource typical)
@@ -190,26 +190,26 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
         }
         
     /** Returns whether the available resources (no longer in the delay queue) should be included as part of the delay's
-    	total resource count for purposes of comparing against its capacity to determine if it's full. Note that
-    	if setDropsResourcesBeforeUpdate() is TRUE, then the available resources will be included PRIOR to when drop()
-    	is called, but they disappear afterwards.  drop() is called during offerReceivers(), which in turn may
-    	be called during step() after update().
-    	 */
+        total resource count for purposes of comparing against its capacity to determine if it's full. Note that
+        if setDropsResourcesBeforeUpdate() is TRUE, then the available resources will be included PRIOR to when drop()
+        is called, but they disappear afterwards.  drop() is called during offerReceivers(), which in turn may
+        be called during step() after update().
+    */
     public boolean getIncludesAvailableResourcesInTotal()
-    	{
-    	return includesAvailableResourcesInTotal;
-    	}
-    	
+        {
+        return includesAvailableResourcesInTotal;
+        }
+        
     /** Sets whether the available resources (no longer in the delay queue) should be included as part of the delay's
-    	total resource count for purposes of comparing against its capacity to determine if it's full. Note that
-    	if setDropsResourcesBeforeUpdate() is TRUE, then the available resources will be included PRIOR to when drop()
-    	is called, but they disappear afterwards.  drop() is called during offerReceivers(), which in turn may
-    	be called during step() after update().
-    	 */
+        total resource count for purposes of comparing against its capacity to determine if it's full. Note that
+        if setDropsResourcesBeforeUpdate() is TRUE, then the available resources will be included PRIOR to when drop()
+        is called, but they disappear afterwards.  drop() is called during offerReceivers(), which in turn may
+        be called during step() after update().
+    */
     public void setIncludesAvailableResourcesInTotal(boolean val)
-    	{
-		includesAvailableResourcesInTotal = val;
-    	}
+        {
+        includesAvailableResourcesInTotal = val;
+        }
 
     /** Accepts up to CAPACITY of the given resource and places it in the delay,
         then auto-reschedules the delay if that feature is on. */
@@ -302,23 +302,23 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
                 {
                 if (entities == null)
                     {
-					iterator.remove();
-					if (!node.dead)
-						{
-						CountableResource res = ((CountableResource)(node.resource));
-						totalDelayedResource -= res.getAmount();
-                    	resource.add(res);
-                    	}
+                    iterator.remove();
+                    if (!node.dead)
+                        {
+                        CountableResource res = ((CountableResource)(node.resource));
+                        totalDelayedResource -= res.getAmount();
+                        resource.add(res);
+                        }
                     }
                 else
                     {
                     iterator.remove();
-					if (!node.dead)
-						{
-                    	Entity entity = ((Entity)(node.resource));
-						entities.add(entity);
-						totalDelayedResource--;
-						}        
+                    if (!node.dead)
+                        {
+                        Entity entity = ((Entity)(node.resource));
+                        entities.add(entity);
+                        totalDelayedResource--;
+                        }        
                     }
                 }
             else break;             // don't process any more
@@ -341,17 +341,17 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
         }
     
     protected boolean offerReceivers(ArrayList<Receiver> receivers)
-    	{
-    	boolean returnval = super.offerReceivers(receivers);
+        {
+        boolean returnval = super.offerReceivers(receivers);
 
-		// Only AFTER we offer downstream -- to an Unlock perhaps -- 
-		// do we then call our slack provider to provide to us or (aha!)
-		// to a Lock before us. 
-    	if (slackProvider != null && getCapacity() > getDelayed())
-    		callSlackProvider(slackProvider, slackReceiver);
-    	return returnval;
-    	}
-    	
+        // Only AFTER we offer downstream -- to an Unlock perhaps -- 
+        // do we then call our slack provider to provide to us or (aha!)
+        // to a Lock before us. 
+        if (slackProvider != null && getCapacity() > getDelayed())
+            callSlackProvider(slackProvider, slackReceiver);
+        return returnval;
+        }
+        
     public void reset()
         {
         clear();
@@ -359,53 +359,53 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
         }
     
     protected void callSlackProvider(final Provider slackProvider, final Receiver slackReceiver)
-    	{
-    	slackProvider.provide(slackReceiver);
-    	}
+        {
+        slackProvider.provide(slackReceiver);
+        }
     
     
     Provider slackProvider;
     
     /** Returns the slack provider.  Whenever a SimpleDelay's offerReceivers(...) call is made, and it has slack afterwards,
-    	it will call the slack provider to ask it to fill the slack up to capacity. 
-    	The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
-    	but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it -- it may wish some
-    	slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible. */
+        it will call the slack provider to ask it to fill the slack up to capacity. 
+        The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
+        but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it -- it may wish some
+        slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible. */
     public Provider getSlackProvider()
-    	{
-    	return slackProvider;
-    	}
-    	
+        {
+        return slackProvider;
+        }
+        
     /** Sets the slack provider.  Whenever a SimpleDelay's offerReceivers(...) call is made, and it has slack afterwards,
-    	it will call the slack provider to ask it to fill the slack up to capacity. The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
-    	but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it -- it may wish some
-    	slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible.*/
+        it will call the slack provider to ask it to fill the slack up to capacity. The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
+        but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it -- it may wish some
+        slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible.*/
     public void setSlackProvider(Provider provider)
-    	{
-    	slackProvider = provider;
-    	}
+        {
+        slackProvider = provider;
+        }
 
     Receiver slackReceiver = this;
     
     /** Returns the slack receiver.  Whenever a SimpleDelay's offerReceivers(...) call is made, and it has slack afterwards,
-    	it will call the slack provider to ask it to fill the slack up to capacity. The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
-    	but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it -- it may wish some
-    	slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible.
-    	*/
+        it will call the slack provider to ask it to fill the slack up to capacity. The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
+        but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it -- it may wish some
+        slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible.
+    */
     public Receiver getSlackReceiver()
-    	{
-    	return slackReceiver;
-    	}
-    	
+        {
+        return slackReceiver;
+        }
+        
     /** Sets the slack provider.  Whenever a SimpleDelay's offerReceivers(...) call is made, and it has slack afterwards,
-    	it will call the slack provider to ask it to fill the slack up to capacity. The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
-    	but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it -- it may wish some
-    	slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible.
-    	*/
+        it will call the slack provider to ask it to fill the slack up to capacity. The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
+        but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it -- it may wish some
+        slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible.
+    */
     public void setSlackReceiver(Receiver receiver)
-    	{
-    	slackReceiver = receiver;
-    	}
+        {
+        slackReceiver = receiver;
+        }
         
     boolean refusesOffers = false;
     public void setRefusesOffers(boolean value) { refusesOffers = value; }

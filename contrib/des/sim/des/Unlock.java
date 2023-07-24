@@ -57,7 +57,7 @@ public class Unlock extends Lock
 
     boolean partnering;
     /** Returns true if the Unlock is currently asking its partner Lock to make a provide(...) request
-    	to its provider (if there is one).  This is meant to allow you
+        to its provider (if there is one).  This is meant to allow you
         to check for partnering cycles. */
     protected boolean isPartnering() { return partnering; }
     
@@ -92,20 +92,20 @@ public class Unlock extends Lock
         _amount = null;         /// let it gc
         
         if (result && partner != null && partner.provider != null)
-        	{
-        	partnering = true;
-        	partner.provider.provide(partner);
-        	partnering = false;
-        	}
+            {
+            partnering = true;
+            partner.provider.provide(partner);
+            partnering = false;
+            }
         return result;
         }
 
     public String toString()
         {
         return "Unlock@" + System.identityHashCode(this) + "(" + 
-        	(getName() == null ? "" : (getName() + ": ")) +
-        	(pool.getName() == null ? "Pool@" + System.identityHashCode(pool) : pool.getName()) + ", " +
-        	getTypicalProvided().getName() + ", " + numResources + ")";
+            (getName() == null ? "" : (getName() + ": ")) +
+            (pool.getName() == null ? "Pool@" + System.identityHashCode(pool) : pool.getName()) + ", " +
+            getTypicalProvided().getName() + ", " + numResources + ")";
         }  
                      
     public String getName() 

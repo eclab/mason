@@ -42,24 +42,24 @@ import java.util.*;
    <p>BoundedDelay should be stepped by the Schedule at multiples of the delay step length 
    starting at some initial time.  You should probably do this by calling autoScheduleAt(...).
    If the BoundedDelay is stepped at other intervals or times, it will not work properly.
-   */
+*/
 
 public class BoundedDelay extends Delay
     {
     private static final long serialVersionUID = 1;
 
-	// The delay array
-	ArrayList[] delays;
-	// The size of the delays array (- 1)
-	int maxDelaySteps = -1;
-	// The delay interval represented by one delay in the array
-	int delayInterval = 1;
-	// Where we are in the array right now
-	int currentDelayPos;
-	// What time it is right now
-	double currentDelayTime = Schedule.BEFORE_SIMULATION;
-	// The number of resources currently being delayed
-	int size = 0;
+    // The delay array
+    ArrayList[] delays;
+    // The size of the delays array (- 1)
+    int maxDelaySteps = -1;
+    // The delay interval represented by one delay in the array
+    int delayInterval = 1;
+    // Where we are in the array right now
+    int currentDelayPos;
+    // What time it is right now
+    double currentDelayTime = Schedule.BEFORE_SIMULATION;
+    // The number of resources currently being delayed
+    int size = 0;
 
     void throwInvalidDelayIntervalException(int interval)
         {
@@ -83,10 +83,10 @@ public class BoundedDelay extends Delay
 
     protected void buildDelay()
         {
-        if (maxDelaySteps < 0) return;	// not ready yet
+        if (maxDelaySteps < 0) return;  // not ready yet
         delays = new ArrayList[maxDelaySteps + 1];
         for(int i = 0; i < delays.length; i++)
-        	delays[i] = new ArrayList<DelayNode>();
+            delays[i] = new ArrayList<DelayNode>();
         size = 0;
         }
                 
@@ -95,7 +95,7 @@ public class BoundedDelay extends Delay
         {
         super(state, delayTime, typical);
         if (maxDelaySteps <= 0)
-        	throwNonPositiveMaxDelay(maxDelaySteps);
+            throwNonPositiveMaxDelay(maxDelaySteps);
         this.maxDelaySteps = maxDelaySteps;
         this.delayInterval = delayInterval;
         buildDelay(); 
@@ -114,7 +114,7 @@ public class BoundedDelay extends Delay
         {
         super(state, typical);
         if (maxDelaySteps <= 0)
-        	throwNonPositiveMaxDelay(maxDelaySteps);
+            throwNonPositiveMaxDelay(maxDelaySteps);
         this.maxDelaySteps = maxDelaySteps;
         this.delayInterval = delayInterval;
         buildDelay(); 
@@ -134,29 +134,29 @@ public class BoundedDelay extends Delay
         
         int pos = 0;
         for(int i = 0; i < delays.length; i++)
-        	{
-        	for(Object obj : delays[i])
-        		{
-        		nodes[pos++] = (DelayNode)obj;
-        		}
-        	}
+            {
+            for(Object obj : delays[i])
+                {
+                nodes[pos++] = (DelayNode)obj;
+                }
+            }
         return nodes;
         }
     
     public double getSize() 
-    	{ 
-    	return size;
-    	}
+        { 
+        return size;
+        }
     
     public int getDelayInterval() { return delayInterval; }
-    	
+        
     public void setDelayInterval(int val)
-    	{
-    	if (val < 1)
-    		throwInvalidDelayIntervalException(val);
-    	delayInterval = val;
-    	clear();
-    	}
+        {
+        if (val < 1)
+            throwInvalidDelayIntervalException(val);
+        delayInterval = val;
+        clear();
+        }
 
     public void clear()
         {
@@ -165,50 +165,50 @@ public class BoundedDelay extends Delay
         }
     
     public void setDelayTime(double delayTime) 
-    	{
-    	if (delayTime < 0 || (delayTime != delayTime)) 
-    		 throwInvalidDelayTimeException(delayTime);
-    	if (delayTime > maxDelaySteps)
-    		throwBoundedDelayTimeException(delayTime, maxDelaySteps);
-    	this.delayTime = delayTime; 
-    	}
+        {
+        if (delayTime < 0 || (delayTime != delayTime)) 
+            throwInvalidDelayTimeException(delayTime);
+        if (delayTime > maxDelaySteps)
+            throwBoundedDelayTimeException(delayTime, maxDelaySteps);
+        this.delayTime = delayTime; 
+        }
 
     public static final double MAX_DELAY_TRIES = 10000;
     protected double getDelay(Provider provider, Resource amount)
         {
         if (getUsesLastDelay() && recent != null)
-        	{
-        	// use the existing delay time
-        	}
+            {
+            // use the existing delay time
+            }
         else if (distribution == null) 
-        	{
-        	setLastDelay(getDelayTime());
-        	}
+            {
+            setLastDelay(getDelayTime());
+            }
         else 
-        	{
-        	boolean failed = true;
-        	for(int i = 0; i < MAX_DELAY_TRIES; i++)
-        		{
-	        	setLastDelay(Math.abs(distribution.nextDouble()));
-	        	if (getLastDelay() != 0 || getLastDelay() > maxDelaySteps) { failed = false; break; }
-        		}
-        	if (failed)
-        		throwZeroOrMaxDelayException();
-        	}
+            {
+            boolean failed = true;
+            for(int i = 0; i < MAX_DELAY_TRIES; i++)
+                {
+                setLastDelay(Math.abs(distribution.nextDouble()));
+                if (getLastDelay() != 0 || getLastDelay() > maxDelaySteps) { failed = false; break; }
+                }
+            if (failed)
+                throwZeroOrMaxDelayException();
+            }
         
         return getLastDelay();
         }
     
     void insert(DelayNode node, double delay)
-    	{
-    	int pos = currentDelayPos + (int)delay;
-		if (pos > maxDelaySteps) pos -= maxDelaySteps;
-    	delays[pos].add(node);
-    	size++;
-    	}
-    	
-	public boolean isCumulative() { return false; }
-	public void setCumulative(boolean val) { throw new RuntimeException("BoundedDelay cannot be cumulative.  Use Delay instead."); }
+        {
+        int pos = currentDelayPos + (int)delay;
+        if (pos > maxDelaySteps) pos -= maxDelaySteps;
+        delays[pos].add(node);
+        size++;
+        }
+        
+    public boolean isCumulative() { return false; }
+    public void setCumulative(boolean val) { throw new RuntimeException("BoundedDelay cannot be cumulative.  Use Delay instead."); }
 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {
@@ -222,8 +222,8 @@ public class BoundedDelay extends Delay
             throwInvalidAtLeastAtMost(atLeast, atMost, amount);
 
         int delay = (int)Math.ceil(getDelay(provider, amount) / delayInterval);
-		double nextTime = state.schedule.getTime() + delay * delayInterval;
-		
+        double nextTime = state.schedule.getTime() + delay * delayInterval;
+                
         if (entities == null)
             {
             CountableResource cr = (CountableResource)amount;
@@ -253,15 +253,15 @@ public class BoundedDelay extends Delay
         }
 
     /** A convenience method which calls setAutoSchedules(true), then schedules the BoundedDelay on the Schedule using 
-    	the current rescheduleOrdering.  The BoundedDelay is initially scheduled at the given time.  
+        the current rescheduleOrdering.  The BoundedDelay is initially scheduled at the given time.  
     */
     public void autoScheduleAt(double time)
         {
         if (!isPositiveOrZeroNonNaN(time))
-        	throw new RuntimeException("BoundedDelay " + this + " had autoScheduleAt(" + time + ") called, but this value must be >= 0");  
-        	    	
+            throw new RuntimeException("BoundedDelay " + this + " had autoScheduleAt(" + time + ") called, but this value must be >= 0");  
+                        
         setAutoSchedules(true);
-		state.schedule.scheduleOnce(time, rescheduleOrdering, this);
+        state.schedule.scheduleOnce(time, rescheduleOrdering, this);
         }
 
     public void reset()
@@ -277,63 +277,63 @@ public class BoundedDelay extends Delay
         
         // is the time right?
         while (currentDelayTime == Schedule.BEFORE_SIMULATION ||
-        	currentDelayTime + delayInterval <= time)
-        	{
-        	// let's do it!
-			currentDelayPos++;
-			currentDelayTime += delayInterval;
-		
-			if (getAutoSchedules()) 
-				{
-				double nextDelayTime = currentDelayTime + delayInterval;
-				state.schedule.scheduleOnce(nextDelayTime, getRescheduleOrdering(), this);
-				}
-		
-			if (getDropsResourcesBeforeUpdate()) 
-				{
-				drop();
-				}
+            currentDelayTime + delayInterval <= time)
+            {
+            // let's do it!
+            currentDelayPos++;
+            currentDelayTime += delayInterval;
+                
+            if (getAutoSchedules()) 
+                {
+                double nextDelayTime = currentDelayTime + delayInterval;
+                state.schedule.scheduleOnce(nextDelayTime, getRescheduleOrdering(), this);
+                }
+                
+            if (getDropsResourcesBeforeUpdate()) 
+                {
+                drop();
+                }
 
-			if (delays[currentDelayPos].size() == 0)
-				{
-				return;
-				}
-		
-			ArrayList<DelayNode> list = delays[currentDelayPos];
-			size -= list.size();
-			delays[currentDelayPos] = new ArrayList<DelayNode>();
-		
-			if (entities == null)
-				{
-				for(DelayNode node : list)
-					{
-					if (lookup != null) lookup.remove(node.resource);
-					if (node == recent) recent = null;	// all gone
-				
-					if (!node.dead)
-						{	
-						CountableResource res = (CountableResource)(node.getResource());
-						totalDelayedResource -= res.getAmount();
-						resource.add(res);
-						}
-					}
-				}
-			else
-				{
-				for(DelayNode node : list)
-					{
-					if (lookup != null) lookup.remove(node.resource);
-					if (node == recent) recent = null;	// all gone
+            if (delays[currentDelayPos].size() == 0)
+                {
+                return;
+                }
+                
+            ArrayList<DelayNode> list = delays[currentDelayPos];
+            size -= list.size();
+            delays[currentDelayPos] = new ArrayList<DelayNode>();
+                
+            if (entities == null)
+                {
+                for(DelayNode node : list)
+                    {
+                    if (lookup != null) lookup.remove(node.resource);
+                    if (node == recent) recent = null;      // all gone
+                                
+                    if (!node.dead)
+                        {       
+                        CountableResource res = (CountableResource)(node.getResource());
+                        totalDelayedResource -= res.getAmount();
+                        resource.add(res);
+                        }
+                    }
+                }
+            else
+                {
+                for(DelayNode node : list)
+                    {
+                    if (lookup != null) lookup.remove(node.resource);
+                    if (node == recent) recent = null;      // all gone
 
-					if (!node.dead)
-						{	
-						Entity res = (Entity)(node.getResource());
-						entities.add(res);
-						totalDelayedResource--;
-						}   
-					}
-				}
-			}
+                    if (!node.dead)
+                        {       
+                        Entity res = (Entity)(node.getResource());
+                        entities.add(res);
+                        totalDelayedResource--;
+                        }   
+                    }
+                }
+            }
         }
 
     public String toString()

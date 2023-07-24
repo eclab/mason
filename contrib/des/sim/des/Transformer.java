@@ -58,9 +58,9 @@ public class Transformer extends Filter
     public boolean provide(Receiver receiver, double atMost) 
         {
         if (isProviding())
-        	{
-        	throwCyclicProvisions();
-        	}
+            {
+            throwCyclicProvisions();
+            }
         if (provider == null) return false;
         if (!isPositiveNonNaN(atMost))
             throwInvalidNumberException(atMost);
@@ -70,10 +70,10 @@ public class Transformer extends Filter
         return val;
         }
 
-	public Resource getTypicalReceived()
-		{
-		return typicalReceived;
-		}
+    public Resource getTypicalReceived()
+        {
+        return typicalReceived;
+        }
 
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
         {       

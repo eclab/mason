@@ -48,14 +48,14 @@ public class Decomposer extends Middleman
                 
     /** Returns null because the Decomposer can provide anything which is packed into the composite entities it receives. */
     public Resource getTypicalProvided() 
-    	{ 
-    	return null; 
-    	}
+        { 
+        return null; 
+        }
 
     public Resource getTypicalReceived() 
-    	{ 
-    	return typicalReceived; 
-    	}
+        { 
+        return typicalReceived; 
+        }
 
     /**
        Registers a receiver.  Only one receiver may be registered for a given type.
@@ -113,7 +113,7 @@ public class Decomposer extends Middleman
             }
         else if (entity.getStorage() instanceof Resource[])
             {
-			processEntityInfoFor(entity);            
+            processEntityInfoFor(entity);            
             Resource[] res = entity.getStorage();
             for(int i = 0; i < res.length; i++)
                 {
@@ -132,13 +132,13 @@ public class Decomposer extends Middleman
             }
         }
         
-	/** This is called when the Decomposer breaks apart a composite entity,
-		immediately before extracting the elements in its Storage and offering
-		them to downstream Receivers.  It's meant to give you an opportunity
-		to process the Entity's Info object if you need to. By default this does nothing. */
+    /** This is called when the Decomposer breaks apart a composite entity,
+        immediately before extracting the elements in its Storage and offering
+        them to downstream Receivers.  It's meant to give you an opportunity
+        to process the Entity's Info object if you need to. By default this does nothing. */
     protected void processEntityInfoFor(Entity entity)
-    	{
-    	}
+        {
+        }
     
     public String toString()
         {

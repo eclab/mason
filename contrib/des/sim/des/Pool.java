@@ -21,14 +21,14 @@ import sim.portrayal.simple.*;
 
 public class Pool extends DESPortrayal implements Resettable
     {
-	
+        
     private static final long serialVersionUID = -4048334284332068371L;
 
-	public SimplePortrayal2D buildDefaultPortrayal(double scale){
-    	return new ShapePortrayal2D(ShapePortrayal2D.POLY_PARALLELOGRAM, 
-    			getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
-    }
-	
+    public SimplePortrayal2D buildDefaultPortrayal(double scale){
+        return new ShapePortrayal2D(ShapePortrayal2D.POLY_PARALLELOGRAM, 
+            getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
+        }
+        
     void throwResourceExceedsZeroException(double amount)
         {
         throw new RuntimeException("Provided amount must be positive and non-NAN:" + amount);
@@ -82,21 +82,21 @@ public class Pool extends DESPortrayal implements Resettable
 
     public CountableResource getResource() { return resource; }
     public void setResource(CountableResource val) 
-    	{ 
-    	if (val.getAmount() > maximum)
-    		throwResourceExceedsAmountException(val.amount, maximum); 
-    	resource = val; 
-    	}
+        { 
+        if (val.getAmount() > maximum)
+            throwResourceExceedsAmountException(val.amount, maximum); 
+        resource = val; 
+        }
         
     public double getMaximum() { return maximum; }
     public void setMaximum(double val)
-    	{
-    	if (!isPositiveOrZeroNonNaN(val))
-    		throwResourceExceedsZeroException(val); 
-    	else if (resource.getAmount() > val)
-    		throwResourceExceedsAmountException(resource.getAmount(), val); 
-    	maximum = val; 
-    	}
+        {
+        if (!isPositiveOrZeroNonNaN(val))
+            throwResourceExceedsZeroException(val); 
+        else if (resource.getAmount() > val)
+            throwResourceExceedsAmountException(resource.getAmount(), val); 
+        maximum = val; 
+        }
 
     public String toString()
         {
