@@ -608,7 +608,7 @@ An event can be one of four things typically:
 \item MASON's Schedule can send an event to the Process to wake it up to do some work.
 \end{itemize}
 
-Various Process objects can be {\bf Receivers} or {\bf Providers}, or they can be both (known as a {\bf Middleman}).  A special subclass of Middleman, called a {\bf Filter}, is designed to pass received resources from Providers directly to downstream Receivers in zero time.    Subgraphs of Process objects can be packed into a single object called a {\bf Macro}.    
+Only certain Processes do certain kinds of events.  The various Process objects can be {\bf Receivers} or {\bf Providers}, or they can be both (known as a {\bf Middleman}).  A special subclass of Middleman, called a {\bf Filter}, is designed to pass received resources from Providers directly to downstream Receivers in zero time.    Subgraphs of Process objects can be packed into a single object called a {\bf Macro}.    
 
 Indeed most Process objects do their work in zero time, the notable exception being various kinds of {\bf Delays}.
 
@@ -616,7 +616,7 @@ Most Process objects are meant to receive and/or provide a resource of a single 
 
 Process objects inherit from a variety of high-level abstract classes and interfaces, so let's start there.
 
-\section{Abstract Process Objects}
+\section{Abstract Process Superclasses and Interfaces}
 
 \subsection{Resettable and Reset}
 
@@ -1065,6 +1065,8 @@ Returns the SimState.
 
 A Provider which generates Resources and offers it to downstream registered Receivers.  You can customize your Source however you want, but the default form works as follows.  Each time the Source is ready to {\bf produce} some Resource, the amount it produces is determined either by a {\bf distribution} or a {\bf deterministic amount}.  It then adds this Resource to a pile, and offers all the Resources currently in the pile to its receivers.  Sources have a maximum {\bf capacity} for their pile and will not generate more than this.  After making offers, the Source then uses {\it another} distribution or deterministic amount to determine the {\bf next time} it will generate Resources and make offers.  It schedules itself appropriately.
 
+Like many Providers, Source responds to pull requests (requests from Receivers to provide them with Resources).  However the only resources it would provide would be out of its existing pile: it won't produce more resources in response.
+
 \begin{methods}{\class{sim.des.Source} Constructor}
 \mthd{public Source(SimState state, Resource typicalProvided)}
 Builds a Source with the given state and typical provided resource.
@@ -1364,6 +1366,9 @@ Returns the typical resource received: this is the same as the typical resource 
 \mthd{public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)}
 Accepts resource, normally from an upstream provider in response to a request, and immediately offers it.
 
+\mthd{public void step(SimState state)}
+Updates the Extractor, just like a Source is updated.
+
 \end{methods}
 
 \subsection{Queue}
@@ -1409,13 +1414,25 @@ There are three kinds of delays.  A {\it SimpleDelay} delays all resources by th
 
 The SimpleDelay has a maximum capacity of items it may store which are presently delayed.  The Resources held up in the SimpleDelay are called the {\it delayed resources}, and the Resources being offered are called {\it available} or {\it ripe}.  The SimpleDelay has a maximum capacity of delayed resources, or optionally of delayed and ripe resources together.
 
-If after offering Resource to receivers, there is available capacity ({\it slack}), the SimpleDelay can immediately ask a {\bf slack provider} to fill that capacity.  The slack provider provides directly to the SimpleDelay by default, but not always.  For example, if a SimpleDelay has a Queue or a Lock in front of it, it might wish the slack provider to offer to the Queue or Lock, who would in turn offer to the SimpleDelay.  In this case, you might set the {\it slack receiver} to be that Queue or Lock etc.
-
 A SimpleDelay needs to be placed on the Schedule to do its work.  To make things easy, it ca be {\bf autoscheduled}, meaning it will place itself on the Schedule as needed.
 
 In addition to maintaining statistics on total provided resources, a SimpleDelay also maintains statistics on total received resources.
 
 It's possible to kill Resources while in the SimpleDelay (to simulate destruction in transit, for example).  When a Resource is added to a SimpleDelay it is also (optionally) added to a {\it lookup table} so you can kill it (see DelayNode) or for some other reason reference it.  This lookup table incurs an overhead, so don't turn it on unless you need to.
+
+If after offering Resource to receivers, there is available capacity ({\it slack}), the SimpleDelay can immediately ask a {\bf slack provider} to fill that capacity.  The slack provider provides directly to the SimpleDelay by default, but not always.  For example, if a SimpleDelay has a Queue or a Lock in front of it, it might wish the slack provider to offer to the Queue or Lock, who would in turn offer to the SimpleDelay.  In this case, you might set the {\it slack receiver} to be that Queue or Lock etc.
+
+The slack provider is asked to provide() by calling callSlackProvider(...).  This request for provision is done immediately, in zero time.  If you wanted it done later, you could override this method.  For example, if you wanted the call for provision to happen in one unit of time from now, you override it to say something like:
+
+\begin{verbatim}
+protected void callSlackProvider(final Provider slackProvider, final Receiver slackReceiver)
+    {
+    schedule.scheduleOnceIn(1.0, new Steppable()
+        {
+        public void step(SimState state) { slackProvider.provide(slackReceiver); }
+        });
+    }
+\end{verbatim}
 
 \begin{methods}{\class{sim.des.SimpleDelay} Constructor}
 \mthd{public SimpleDelay(SimState state, double delayTime, Resource typical)}
@@ -1524,26 +1541,28 @@ Upon being stepped, the Delay calls update() to reap all available resources.  I
         schedule the Delay at all, unless you have turned off auto-scheduling. 
 \mthd{public void reset()}
  Clears the Delay and sets the total received resource to 0.
+\mthd{protected void callSlackProvider(Provider slackProvider, Receiver slackReceiver)}
+Asks the slack provider, to provide to the slack receiver to fill the slack up to capacity.
 \mthd{public Provider getSlackProvider()}
 Returns the slack provider.  Whenever a SimpleDelay's offerReceivers(...) call is made, and it has slack afterwards,
-    	it will call the slack provider to ask it to fill the slack up to capacity.  The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
+    	it will call the slack provider to ask it to fill the slack up to capacity via callSlackProvider().  The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
     	but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it\,---\,it may wish some
     	slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible.
 \mthd{public void setSlackProvider(Provider provider)}
          Sets the slack provider.  Whenever a SimpleDelay's offerReceivers(...) call is made, and it has slack afterwards,
-    	it will call the slack provider to ask it to fill the slack up to capacity.  The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
+    	it will call the slack provider to ask it to fill the slack up to capacity via callSlackProvider().  The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
     	but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it\,---\,it may wish some
     	slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible.
 
 \mthd{public Receiver getSlackReceiver()}
 Returns the slack receiver, by default the SimpleDelay itself.  Whenever a SimpleDelay's offerReceivers(...) call is made, and it has slack afterwards,
-    	it will call the slack provider to ask it to fill the slack up to capacity.  The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
+    	it will call the slack provider to ask it to fill the slack up to capacity via callSlackProvider().  The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
     	but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it\,---\,it may wish some
     	slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible.  
 
 \mthd{public void setSlackReceiver(Receiver provider)}
          Sets the slack receiver, by default the SimpleDelay itself.  Whenever a SimpleDelay's offerReceivers(...) call is made, and it has slack afterwards,
-    	it will call the slack provider to ask it to fill the slack up to capacity.  The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
+    	it will call the slack provider to ask it to fill the slack up to capacity via callSlackProvider().  The slack provider does this by making an offer to the slack receiver, which is often the SimpleDelay,
     	but not always: for example, perhaps the SimpleDelay has a Lock or a Queue in front of it\,---\,it may wish some
     	slack provider to provide to the Lock or Queue, which will in turn offer to the SimpleDelay if possible.
 
@@ -1735,7 +1754,7 @@ If stepped, offers the composed entity if it is ready.
 
 \subsection{Decomposer}
 
-A Middleman.  Upon receiving a Composed Entity, it decomposes it and offers each of its Resources to various downstream receivers, one registered for each Resource type. If they do not accept, then that Resource is discarded.  {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
+A Middleman.  Upon receiving a Composed Entity, it decomposes it and offers each of its Resources to various downstream receivers, one registered for each Resource type. If they do not accept, then that Resource is discarded.  {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}  Note that Decomposer does not call offerReceivers(...) or offerReceiver(...) as it must send different types of Resources to different Receivers.
 
 \begin{methods}{\class{sim.des.Decomposer} Constructor}
 \mthd{public Decomposer(SimState state, Entity typicalReceived)}
@@ -1765,7 +1784,7 @@ This is called when the Decomposer breaks apart a composite entity,
 
 \subsection{If}
 
-A Middleman which receives and incoming offer, then chooses only one of several possible Receivers to hand the offer to.  This choice is specified in a method defined by the modeler.
+A Middleman which receives and incoming offer, then chooses only one of several possible Receivers to hand the offer to.  This choice is specified in a method defined by the modeler.  If is abstract: you must override the selectReceiver(...) method.   {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
 
 An If must have an offer policy (see Provider) of OFFER\_POLICY\_SELECT.  It sets this automatically.
 
@@ -1800,7 +1819,7 @@ protected double _atLeast;
 protected double _atMost;
 \end{verbatim}
 
-When a Filter receives an offer of some Resource, it immediately fills out these variables with the offer Resource, and the atLeast and atMost values of the offer.  By default, it then calls offerReceivers(), which ultimately calls offerReceiver(...) to offer to various receivers.  Finally it calls process(...), which by default does nothing.  Many of these methods are overridden in different way by Filter subclasses. 
+When a Filter receives an offer of some Resource, it immediately fills out these variables with the offer Resource, and the atLeast and atMost values of the offer.  By default, it then calls offerReceivers(), which ultimately calls offerReceiver(...) to offer to various receivers.  Finally it calls process(...), which by default does nothing.  Many of these methods are overridden in different way by Filter subclasses.   {\bf By default, this class's step() method does nothing, so there's no need to schedule it if for some reason you needed to make a raw Filter.}
 
 If you call provide(...) on a Filter, it will turn around and call provide(...) on its {\bf provider} if you have set one.
 
@@ -1934,7 +1953,7 @@ Offers the Resource to downstream receivers if possible, releasing the pool reso
 
 \subsection{Probe}
 
-A Filter which gathers statistics on Resource flow.  A Probe can be used in two ways.  Either the Probe is used alone, in which case it measures the amount of Resource flowing through it; or the Probe can be used in conjunction with a {\bf Lead} to measure the statistics passing through a subgraph between them.
+A Filter which gathers statistics on Resource flow.  A Probe can be used in two ways.  Either the Probe is used alone, in which case it measures the amount of Resource flowing through it; or the Probe can be used in conjunction with a {\bf Lead} to measure the statistics passing through a subgraph between them.   {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
 
 Constructing a Probe is simple:
 
@@ -1983,7 +2002,7 @@ Returns the average amount of time that the entire string is operating (not idle
 
 \subsection{Lead}
 
-An object detached from Probe with can be used in combination with it to determine the amount of resources in a DES subgraph between them.
+An object detached from Probe with can be used in combination with it to determine the amount of resources in a DES subgraph between them.   {\bf By default, this class's step() method does nothing, so there's no need to schedule it.}
 
 \begin{methods}{\class{sim.des.Lead}}
 \mthd{public Probe getProbe()}
@@ -2478,7 +2497,7 @@ ResourceEdge is the edge type used in DES2D to connect objects.  It's a subclass
 \item RECEIVER is the receiver of resources along the edge
 \end{itemize}
 
-Why are TO and PROVIDER different, and why are FROM and RECEIVER different?  This is for Macros and Multis.  You might want an edge from (say) a SimpleDelay to a receiver in a Multi: but you're not drawing the receiver, you're only drawing the Multi as a single object.  However you want the edge to change in thickness etc. in response to the receiver (not the Multi).  Thus the Multi is TO but its receiver is RECEIVER.
+Why are TO and PROVIDER distinct, and why are FROM and RECEIVER distinct?  This is for Macros and Multis.  You might want an edge from (say) a SimpleDelay to a receiver in a Multi: but you're not drawing the receiver, you're only drawing the Multi as a single object.  However you want the edge to change in thickness etc. in response to the receiver (not the Multi).  Thus the Multi is TO but its receiver is RECEIVER.  See DES2D, which distinguishes these in its Macro and Multi methods
 
 Like all Edges, ResourceEdge has an Info (label) object returned by getInfo(). By default, this object is a string indicating the current resource being provided along the edge.
 

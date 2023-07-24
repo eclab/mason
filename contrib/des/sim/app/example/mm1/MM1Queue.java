@@ -76,12 +76,30 @@ public class MM1Queue extends SimState {
 
 		// create a Delay to simulate the time needed for the
 		// Entity to "use" the server before releasing it
-		Delay delay = new Delay(this, entity);
+//		Delay delay = new Delay(this, entity);
+		
+/*	// a quick test
+		Delay delay = new Delay(this, entity)
+			{
+			    public boolean accept(sim.des.Provider provider, sim.des.Resource amount, double atLeast, double atMost)
+					{
+					double v = amount.getAmount();
+					boolean ret = super.accept(provider, amount, atLeast, atMost);
+					System.err.println("" + schedule.time() + " " + atLeast + " " + atMost + " " + v + " " + ret);
+					return ret;
+					}
+					
+			};
+*/
 		// delay time is exponential
 		delay.setDelayDistribution(exp);
 		// set capacity to infinite, the resource in the pool
 		// will restrict the capacity
 		delay.setCapacity(Double.POSITIVE_INFINITY);
+
+		// When the Delay has offered a resource to the Unlock, it 
+		delay.setSlackProvider(source);
+		delay.setSlackReceiver(lock);
 
 		// Unlock to release the resource
 		Unlock unlock = new Unlock(this, entity, pool, 1);

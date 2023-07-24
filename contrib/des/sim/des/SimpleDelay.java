@@ -344,8 +344,11 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
     	{
     	boolean returnval = super.offerReceivers(receivers);
 
+		// Only AFTER we offer downstream -- to an Unlock perhaps -- 
+		// do we then call our slack provider to provide to us or (aha!)
+		// to a Lock before us. 
     	if (slackProvider != null && getCapacity() > getDelayed())
-    		slackProvider.provide(slackReceiver);
+    		callSlackProvider(slackProvider, slackReceiver);
     	return returnval;
     	}
     	
@@ -354,7 +357,13 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
         clear();
         totalReceivedResource = 0; 
         }
-        
+    
+    protected void callSlackProvider(final Provider slackProvider, final Receiver slackReceiver)
+    	{
+    	slackProvider.provide(slackReceiver);
+    	}
+    
+    
     Provider slackProvider;
     
     /** Returns the slack provider.  Whenever a SimpleDelay's offerReceivers(...) call is made, and it has slack afterwards,
