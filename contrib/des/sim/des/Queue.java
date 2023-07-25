@@ -21,7 +21,7 @@ import java.awt.*;
     make an offer if possible to any Receiver that requests one via provide(...). 
 */
 
-public class Queue extends Middleman implements Steppable, StatReceiver
+public class Queue extends Middleman implements Steppable
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
         {
@@ -62,10 +62,6 @@ public class Queue extends Middleman implements Steppable, StatReceiver
     /** Sets whether the Queue offers items immediately upon accepting (when possible) in zero time,
         as opposed to when it is stepped. */
     public void setOffersImmediately(boolean val) { offersImmediately = val; }
-
-    double totalReceivedResource;
-    public double getTotalReceivedResource() { return totalReceivedResource; }
-    public double getReceiverResourceRate() { double time = state.schedule.getTime(); if (time <= 0) return 0; else return totalReceivedResource / time; }
 
     /** 
         Builds a queue with the given typical resource type.
@@ -123,12 +119,6 @@ public class Queue extends Middleman implements Steppable, StatReceiver
     public void step(SimState state)
         {
         offerReceivers();
-        }
-
-    public void reset(SimState state) 
-        {
-        super.reset(state);
-        totalReceivedResource = 0; 
         }
     }
         

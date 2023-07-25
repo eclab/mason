@@ -209,17 +209,7 @@ public abstract class Multi extends DESPortrayal implements Parented
          
     public void reset(SimState state)
         {
-        // For the time being this does nothing because there's nothing to reset
-                
-        //for(int i = 0; i < multiReceivers.length; i++)
-        //      {
-        //      multiReceivers[i].reset(state);
-        //      }
-
-        //for(int i = 0; i < multiProviders.length; i++)
-        //      {
-        //      multiProviders[i].reset(state);
-        //      }
+        // does nothing by default
         }
                 
     public void step(SimState state)

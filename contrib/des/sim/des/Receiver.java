@@ -58,4 +58,17 @@ public interface Receiver extends Parented
 
     /** Returns whether the receiver currently refuses all offers.  The default should be FALSE. */
     public boolean getRefusesOffers();
+
+    /** Returns the total amount of received (and accepted) resource */
+    // Implement this as 
+    // return totalReceivedResource;
+    public double getTotalReceivedResource();
+    
+    /** Returns the received (and accepted) resource rate. */
+    // Implement this as 
+    // double time = state.schedule.getTime(); if (time <= 0) return 0; else return totalReceivedResource / time;
+    public double getReceiverResourceRate();
+    
+    /** Resets the received (and accepted) resource amount to 0, among other possible things. */
+    public void reset(SimState state);
     }

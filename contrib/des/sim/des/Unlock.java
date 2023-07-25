@@ -78,6 +78,10 @@ public class Unlock extends Lock
         // release the resource
         pool.getResource().increase(increment);
                 
+        Resource oldAmount = null;
+        if (amount instanceof CountableResource)
+            oldAmount = amount.duplicate();
+
         _amount = amount;
         _atLeast = atLeast;
         _atMost = atMost;
@@ -89,6 +93,13 @@ public class Unlock extends Lock
             // pool.getResource().bound(pool.getMaximum());         // not needed
             }
 
+		if (result)
+			{
+    	    double diff = amount.getAmount() - (oldAmount == null ? 1.0 : oldAmount.getAmount());
+        	totalAcceptedOfferResource += diff;
+        	totalReceivedResource += diff;
+			}
+			
         _amount = null;         /// let it gc
         
         if (result && partner != null && partner.provider != null)

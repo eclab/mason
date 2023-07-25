@@ -471,6 +471,12 @@ public class Source extends Provider implements Steppable
         update();
         offerReceivers();
         }
+        
+    public void reset(SimState state)
+    	{
+    	super.reset(state);
+    	nextTime = Schedule.BEFORE_SIMULATION;	// this probably doesn't matter
+    	}
 
     public String toString()
         {

@@ -122,10 +122,8 @@ public class Filter extends Middleman
         return "Filter@" + System.identityHashCode(this);
         }
 
-    /** By default does nothing. */
     public void process(Resource amountOfferedMe, Resource amountAcceptedFromMe)
         {
-        // does nothing
         }
         
     /** Override this as you like.  The default version offers to downstream Receivers whatever it is being
@@ -144,6 +142,14 @@ public class Filter extends Middleman
             oldAmount = amount.duplicate();
 
         boolean result = offerReceivers(amount, atLeast, atMost);
+
+		if (result)	
+			{
+    	    double diff = amount.getAmount() - (oldAmount == null ? 1.0 : oldAmount.getAmount());
+        	totalAcceptedOfferResource += diff;
+        	totalReceivedResource += diff;
+        	}
+
         process(oldAmount, amount);
         return result;
         }

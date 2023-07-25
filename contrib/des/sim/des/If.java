@@ -56,6 +56,7 @@ public abstract class If extends Middleman
             entities.add((Entity)amount);
             boolean result = offerReceivers();
             entities.clear();           // just to be safe
+            if (result) totalReceivedResource += 1.0;
             return result;
             }
         else
@@ -64,6 +65,7 @@ public abstract class If extends Middleman
             oldResource = (CountableResource)amount;
             boolean result = offerReceivers();
             resource = oldResource;
+            if (result) totalReceivedResource += atMost;
             return result;
             }
         }

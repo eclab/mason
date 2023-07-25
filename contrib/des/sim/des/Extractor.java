@@ -396,6 +396,7 @@ public class Extractor extends Source implements Receiver
         if (amount instanceof CountableResource) 
             {
             resource.increase(atMost);
+            totalReceivedResource += atMost;
             ((CountableResource) amount).decrease(atMost);
             if (acceptValue > 0) acceptValue -= atMost;
             if (distinguishedReceiver != null) offerReceivers(); 
@@ -404,8 +405,9 @@ public class Extractor extends Source implements Receiver
         else
             {
             entities.add((Entity)amount);
+            totalReceivedResource += 1.0;
             if (acceptValue > 0) acceptValue -= 1;
-            if (distinguishedReceiver != null) offerReceivers(); 
+            if (distinguishedReceiver != null) offerReceivers();
             return true;
             }
         }
@@ -414,5 +416,14 @@ public class Extractor extends Source implements Receiver
         {
         return "SimpleDelay@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + ")";
         }               
+
+    protected double totalReceivedResource;
+    public double getTotalReceivedResource() { return totalReceivedResource; }
+    public double getReceiverResourceRate() { double time = state.schedule.getTime(); if (time <= 0) return 0; else return totalReceivedResource / time; }
+    public void reset(SimState state) 
+    	{ 
+    	super.reset(state);
+    	totalReceivedResource = 0; 
+    	}
     }
         

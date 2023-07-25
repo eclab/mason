@@ -366,9 +366,9 @@ public class Delay extends SimpleDelay
         return "Delay@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + ")";
         }   
         
-    public void reset()
+    public void reset(SimState state)
         {
-        super.reset();
+        super.reset(state);
         lastDelayTime = Schedule.BEFORE_SIMULATION;
         }            
         

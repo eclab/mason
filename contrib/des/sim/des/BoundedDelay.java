@@ -264,9 +264,9 @@ public class BoundedDelay extends Delay
         state.schedule.scheduleOnce(time, rescheduleOrdering, this);
         }
 
-    public void reset()
+    public void reset(SimState state)
         {
-        super.reset();
+        super.reset(state);
         currentDelayTime = Schedule.BEFORE_SIMULATION;
         }
 

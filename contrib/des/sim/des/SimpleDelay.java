@@ -16,7 +16,7 @@ import sim.portrayal.simple.*;
     provider.  Unless you turn off auto-scheduling 
 */
 
-public class SimpleDelay extends Middleman implements Steppable, StatReceiver
+public class SimpleDelay extends Middleman implements Steppable
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
         {
@@ -126,10 +126,6 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
 
     /** Sets the delay ordering and clears the delay entirely. */
     public void setRescheduleOrdering(int ordering) { this.rescheduleOrdering = ordering; }
-
-    double totalReceivedResource;
-    public double getTotalReceivedResource() { return totalReceivedResource; }
-    public double getReceiverResourceRate() { double time = state.schedule.getTime(); if (time <= 0) return 0; else return totalReceivedResource / time; }
 
     /** Builds the delay structure. */
     protected void buildDelay()
@@ -352,12 +348,6 @@ public class SimpleDelay extends Middleman implements Steppable, StatReceiver
         return returnval;
         }
         
-    public void reset()
-        {
-        clear();
-        totalReceivedResource = 0; 
-        }
-    
     protected void callSlackProvider(final Provider slackProvider, final Receiver slackReceiver)
         {
         slackProvider.provide(slackReceiver);

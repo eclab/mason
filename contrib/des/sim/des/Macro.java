@@ -239,7 +239,14 @@ public class Macro extends DESPortrayal implements Parented
     public Object getParent() { return parent; }
     public void setParent(Object parent) { this.parent = parent; }    
     
-    public void reset(SimState state) { }
+    public void reset(SimState state) 
+    	{ 
+        for(Parented node : everything)
+            {
+            node.reset(state);
+            }
+    	}
+    	
 
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
         {

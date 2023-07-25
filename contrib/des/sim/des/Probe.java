@@ -49,7 +49,7 @@ public class Probe extends Filter
     public Probe(SimState state)
         {
         super(state, DEFAULT_TYPICAL);
-        reset();
+        reset(state);
         setName("Probe " + System.identityHashCode(this));
         }
     
@@ -62,7 +62,7 @@ public class Probe extends Filter
     public Lead getLead() { return lead; }
     public boolean hideLead() { return true; }
         
-    public void reset()
+    public void reset(SimState state)
         {
         totalOffers = 0;
         lastTime = Schedule.BEFORE_SIMULATION;
@@ -179,6 +179,10 @@ public class Probe extends Filter
         boolean val = offerReceivers(amount, atLeast, atMost);
         if (val)
             {
+    	    double diff = amount.getAmount() - (oldAmount == null ? 1.0 : oldAmount.getAmount());
+        	totalAcceptedOfferResource += diff;
+        	totalReceivedResource += diff;
+
             totalOffers++;
             if (amount instanceof Entity)
                 {

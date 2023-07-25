@@ -97,7 +97,13 @@ public class MM1Queue extends SimState {
         // will restrict the capacity
         delay.setCapacity(Double.POSITIVE_INFINITY);
 
-        // When the Delay has offered a resource to the Unlock, it 
+        // When the Delay has offered a resource to the Unlock, it now has space for
+        // another resource to come in.  But the Lock and Source don't know that.  So here
+        // we set up the Delay to tell the Source to offer something to the Lock as soon
+        // as the Delay has space.  It happens AFTER the Delay has offered to the Unlock, so
+        // the Lock can now lock again. Another option is to have the Unlock set up the Lock
+        // as a PARTNER so the Unlock tells the Lock to ask someone (notionaly the Source)
+        // to provide it resources as soon as the Unlock has freed up the pool.
         delay.setSlackProvider(source);
         delay.setSlackReceiver(lock);
 

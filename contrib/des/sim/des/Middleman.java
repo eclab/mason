@@ -228,4 +228,14 @@ public abstract class Middleman extends Provider implements Receiver
         {
         return transact(middleman, middleman, provided, atLeast,atMost, requestedType, atLeastRequested);
         }
-    }
+ 
+    protected double totalReceivedResource;
+    public double getTotalReceivedResource() { return totalReceivedResource; }
+    public double getReceiverResourceRate() { double time = state.schedule.getTime(); if (time <= 0) return 0; else return totalReceivedResource / time; }
+
+    public void reset(SimState state) 
+        {
+        super.reset(state);
+        totalReceivedResource = 0; 
+        }
+   }

@@ -152,23 +152,21 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
     /** Returns the timestamp for the most recent offers accepted. */
     public double getLastAcceptedOfferTime() { return lastAcceptedOfferTime; }
     
-    // Clears the last accepted offers, and sets the time to the given time.
-    void clearLastAcceptedOffers(double newTime) { lastAcceptedOffers.clear(); lastAcceptedOfferReceivers.clear(); lastAcceptedOfferTime = newTime; }
+    protected double totalAcceptedOfferResource;
+    
+    public double getTotalAcceptedOfferResource() { return totalAcceptedOfferResource; }
+    public double getOfferResourceRate() { double time = state.schedule.getTime(); if (time <= 0) return 0; else return totalAcceptedOfferResource / time; }
+    
     
     // If the last offer time is less than the current time, clears the offers to the current time.
     // Adds the given resource and receiver to the new offers.
     void updateLastAcceptedOffers(Resource resource, Receiver receiver)
         {
-        double currentTime = state.schedule.getTime();
-        clearLastAcceptedOffers(currentTime);
+    	lastAcceptedOfferTime = state.schedule.getTime(); 
         lastAcceptedOffers.add(resource.duplicate());
         lastAcceptedOfferReceivers.add(receiver);
         totalAcceptedOfferResource += resource.getAmount();
         }
-    
-    double totalAcceptedOfferResource;
-    public double getTotalAcceptedOfferResource() { return totalAcceptedOfferResource; }
-    public double getOfferResourceRate() { double time = state.schedule.getTime(); if (time <= 0) return 0; else return totalAcceptedOfferResource / time; }
     
         
     /** First in First Out Offer Order for entities. */
@@ -758,9 +756,11 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
     public void reset(SimState state) 
         {
         clear();
-        clearLastAcceptedOffers(Schedule.BEFORE_SIMULATION);
-        lastOfferTime = Schedule.BEFORE_SIMULATION;
-        totalAcceptedOfferResource = 0;
+    	totalAcceptedOfferResource = 0;
+    	lastOfferTime = Schedule.BEFORE_SIMULATION;
+    	lastAcceptedOfferTime = Schedule.BEFORE_SIMULATION;
+    	lastAcceptedOffers.clear(); 
+    	lastAcceptedOfferReceivers.clear(); 
         }
         
     boolean makesOffers = true;

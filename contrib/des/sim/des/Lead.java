@@ -67,6 +67,10 @@ public class Lead extends Filter
          
         if (val)
             {
+    	    double diff = amount.getAmount() - (oldAmount == null ? 1.0 : oldAmount.getAmount());
+        	totalAcceptedOfferResource += diff;
+        	totalReceivedResource += diff;
+
             if (amount instanceof Entity)
                 {
                 probe.updateFromLead(1);
