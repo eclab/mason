@@ -394,46 +394,20 @@ public class CountableResource extends Resource implements sim.util.Valuable
         }
 
     /**
+       Does comparison by value, as opposed to equals(...) which does comparison by pointer.
        Returns true if this CountableResource amount is greater than to the other.
        A NullPointerException is thrown if the other is null.
        A RuntimeException is thrown if the other is a CountableResource of a different type.
     */
-    public boolean equals(Object other)
+    public boolean equalTo(CountableResource other)
         {
-        if (other == this) return false;                
+        if (other == this) return true;                
         if (other == null) return false;
         if (!(other instanceof CountableResource)) return false;
         CountableResource c = (CountableResource) other;
         if (c.type != type) return false;                       
         return (c.amount == amount);
         }
-
-
-    public final int hashCode()
-        {
-        double amount = this.amount;
-                
-        // push -0.0 to 0.0 for purposes of hashing.  Note that equals() has also been modified
-        // to consider -0.0 to be equal to 0.0.  Hopefully cute Java compilers won't try to optimize this out.
-        if (amount == -0.0) amount = 0.0;
-                
-        long key = Double.doubleToLongBits(amount);
-            
-        key += ~(key << 32);
-        key ^= (key >>> 22);
-        key += ~(key << 13);
-        key ^= (key >>> 8);
-        key += (key << 3);
-        key ^= (key >>> 15);
-        key += ~(key << 27);
-        key ^= (key >>> 31);
-        
-        // nifty!  Now mix in type
-        
-        int res = (int)(key ^ (key >> 32));
-        return res ^ this.type;
-        }
-
 
 
     /**
@@ -458,7 +432,7 @@ public class CountableResource extends Resource implements sim.util.Valuable
        A NullPointerException is thrown if the other is null.
        A RuntimeException is thrown if the other is a CountableResource of a different type.
     */
-    public boolean greaterThanOrEquals(CountableResource other)
+    public boolean greaterThanOrEqualTo(CountableResource other)
         {
         if (other == this) return true;
                 
@@ -492,7 +466,7 @@ public class CountableResource extends Resource implements sim.util.Valuable
        A NullPointerException is thrown if the other is null.
        A RuntimeException is thrown if the other is a CountableResource of a different type.
     */
-    public boolean lessThanOrEquals(CountableResource other)
+    public boolean lessThanOrEqualTo(CountableResource other)
         {
         if (other == this) return true;
                 
@@ -504,6 +478,10 @@ public class CountableResource extends Resource implements sim.util.Valuable
         return (other.amount >= amount);
         }
                 
+    /**
+    	Note: this class has a natural ordering that is inconsistent with equals, because equals(other)
+    	tests by pointer rather than value.  This is not a contract requirement of compareTo but it is unusual. 
+    */
     public int compareTo(Object other)
         {
         if (other == this) return 0;

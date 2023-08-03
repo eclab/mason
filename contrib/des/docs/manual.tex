@@ -340,7 +340,7 @@ Clears the resource. What this does varies depending on the subclass.
 \mthd{public void toString()}
 Prints the resource in a pleasing manner.
 \mthd{public boolean equals(Object other)}
-Returns true if {\it other} is a Resource, is not null, and if it is both the same type and amount as this Resource.  The storage and info elements inside Composite Entities are not checked for equality. 
+Returns true if {\it other} is exactly the same object as this Resource.  This is a comparison by pointer rather than by value, because Resources are generally mutable. 
 \mthd{public int hashCode()}
 Returns an appropriate hash code for hash tables.
 \mthd{public double getAmount()}
@@ -388,10 +388,6 @@ Returns true if the storage is non-null.
 Sets the storage to null.
 \mthd{public double getAmount()}
 Always returns 1.0.
-\mthd{public boolean equals(Object other)}
-Returns true if {\it other} is an Entity, is not null, and if it is the same type as this Entity.  The storage and info elements inside Composite Entities are not checked for equality. 
-\mthd{public int hashCode()}
-Returns an appropriate hash code for hash tables, not considering the storage or info elements.
 \end{methods}
 
 \subsection{CountableResource}
@@ -452,14 +448,16 @@ Adds atMostThisMuch of the other CountableResource's amount into this one, setti
 Adds all the other CountableResources' amounts into this one, setting the other CountableResources' amounts to zero afterwards.
 \mthd{public boolean greaterThan(CountableResource other)}
 Returns true if this amount is greater than the other resource's amount.
-\mthd{public boolean greaterThanOrEquals(CountableResource other)}
+\mthd{public boolean greaterThanOrEqualTo(CountableResource other)}
 Returns true if this amount is greater than or equal to the other resource's amount.
 \mthd{public boolean lessThan(CountableResource other)}
 Returns true if this amount is less than the other resource's amount.
-\mthd{public boolean lessThanOrEquals(CountableResource other)}
+\mthd{public boolean lessThanOrEqualTo(CountableResource other)}
 Returns true if this amount is less than or equal to the other resource's amount.
+\mthd{public boolean equalTo(CountableResource other)}
+Returns true if this amount is equal to the other resource's amount.  Compare to equals(...), which is only true if the two objects are literally the same, by pointer.
 \mthd{public int compareTo(Object other)}
-Returns 0 if the other object's amount is equal to, -1 if it is greater than, and 1 if it is less than my amount. 
+Returns 0 if the other object's amount is equal to, -1 if it is greater than, and 1 if it is less than my amount.   Note that though this is not a requirement of the compareTo(...) contract, compareTo(...) here is not consistent with equals(...), which does pointer comparison.
 \end{methods}
 
 
@@ -1957,7 +1955,7 @@ Offers the Resource to downstream receivers if possible, releasing the pool reso
 \end{methods}
 
 \begin{wrapfigure}{r}{2.5in}
-\vspace{-3em}\includegraphics[width=2.5in]{LeadProbe.pdf}
+\vspace{-1em}\includegraphics[width=2.5in]{LeadProbe.pdf}
 \vspace{-1em}
 \caption{A Lead and Probe at each end of a subgraph of Processes.}
 \vspace{-1em}
@@ -2025,10 +2023,10 @@ Returns the Probe associated with this Lead.
 \section{Composed Processes}
 
 \begin{wrapfigure}{r}{2.5in}
-\includegraphics[width=2.5in]{Macro.pdf}
+\vspace{-1em}\includegraphics[width=2.5in]{Macro.pdf}
 \vspace{-1em}
 \caption{A Macro has some number of Receivers (which you provide) that are connected to a subgraph, and eventually output to some number of Providers (which you also provide).  The Receivers and Providers are connected to the outer world.}
-\vspace{-1em}
+\vspace{-2em}
 \end{wrapfigure}
 
 \subsection{Macro}
@@ -2074,12 +2072,12 @@ Steps all registered objects in turn.
 \includegraphics[width=2.5in]{Service.pdf}
 \vspace{-1em}
 \caption{A Service is a simple Macro with a Lock, a SimpleDelay, and an Unlock.}
-\vspace{-5em}
+\vspace{-7em}
 \end{wrapfigure}
 
 A simple example of a common Macro consisting of a Lock, then a SimpleDelay, then an Unlock.
 
-\vspace{1in}
+\vspace{4em}
 
 \begin{methods}{\class{sim.des.Service} Constructor}
 \mthd{public Service(SimState state, Resource typical, Pool pool, double allocation, double delayTime)}
@@ -2097,19 +2095,21 @@ Returns the receiver (the Lock).
 \end{methods}
 
 
+
+\bump
+
 \begin{wrapfigure}{r}{2.5in}
-\vspace{-3em}
+\vspace{-1em}
 \includegraphics[width=2.5in]{Multi.pdf}
 \vspace{-1em}
 \caption{A Multi automatically sports some number of Receivers for different kinds of Resources, and some number of Providers for different kinds of Resources.  The Receivers and Providers are connected to the outer world.Offers or Provide requests to these Receivers or providers trigger method calls in the Multi which you can override. }
-\vspace{-1em}
 \end{wrapfigure}
 
 \subsection{Multi}
 
-An object which contains multiple Providers and multiple Receivers, all with potentially different typical Resource types, and so which can work with a variety of Resources simultaneously.    You do not provide the Providers or Receivers: instead you indicate an array of Resources for Providers and an array for Receivers, and the Multi will make its own custom Provider and Receiver subclasses, called {\bf MultiProviders} and {\bf MultiReceivers}, which communicate with the Multi when receiving resources or asked to provide resources  You then subclass from Multi to create your own version which overrides methods these custom Providers and Receivers will call, or to direct them to perform actions.
+An object which contains multiple Providers and multiple Receivers, all with potentially different typical Resource types, and so which can work with a variety of Resources simultaneously.    You do not provide the Providers or Receivers: instead you indicate an array of Resources for Providers and an array for Receivers, and the Multi will make its own custom Provider and Receiver subclasses, called {\bf MultiProviders} and {\bf MultiReceivers}, which communicate with the Multi when receiving resources or asked to provide resources.  You subclass from Multi to override the methods these custom Providers and Receivers will call, or to direct them to perform actions.
 
-A Multi can also initiate transactions, and via a custom-made Middleman called a {\bf Broker} it can be the recipient of a transaction.
+A Multi can also initiate transactions, and via a special Middleman called a {\bf Broker} it can be the recipient of a transaction.
 
 You begin by constructing a Multi with the requested resources, and it builds the receivers and providers.  From there, you can access and manipulate these Receivers and Providers externally to communicate with the Multi.  You might want to register your Receivers as appropriate, and register other Receivers with your Providers.
 
@@ -2261,7 +2261,6 @@ For Entities, only a single Entity can be requested.  If an Entity is being requ
 \vspace{-3em}\includegraphics[width=3.5in]{Visualization.pdf}
 \vspace{-2em}
 \caption{Visualization Example.  This shows processes of different shapes, plus a Macro.  The Sink object is displayed with an image rather than a shape.  One Lock is being displayed with a different fill color.  The other Lock is currently circled, indicating that it's in a locked state.  The Delay is shown with a bar indicating the amount delayed.  Edges entering the Delay are DelayPortrayals, showing the delayed elements and how long each has before it is no longer delayed.  The remaining edges are ResourceEdgePortrayals, with different thicknesses indicating amount of Resource traveling along them.  Edges are labeled in the form ``Q{\it value}''.  Q stands for ``Quatloos'', a type of money (the Resource being transferred), and the value is the last amount offered.  A little arrow next to the ``Q'' indicates that the Resource is being transferred right now.}
-\vspace{-2em}
 \label{visualization}
 \end{wrapfigure}
 

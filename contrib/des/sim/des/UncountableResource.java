@@ -291,20 +291,4 @@ public class UncountableResource extends CountableResource
         {
         return new UncountableResource(this);
         }
-
-    /**
-       Returns true if this CountableResource amount is greater than to the other.
-       A NullPointerException is thrown if the other is null.
-       A RuntimeException is thrown if the other is a CountableResource of a different type.
-    */
-    public boolean equals(Object other)
-        {
-        if (other == this) return false;                
-        if (other == null) return false;
-        if (!(other instanceof UncountableResource)) return false;
-        UncountableResource c = (UncountableResource) other;
-        if (c.type != type) return false;                       
-        return (c.amount == amount);
-        }
-
     }

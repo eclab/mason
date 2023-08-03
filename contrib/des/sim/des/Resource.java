@@ -67,15 +67,19 @@ public abstract class Resource implements java.io.Serializable
     */
     public abstract String toString();
 
-    /** 
-        Returns true if the two objects are both Resources with the same type and amount.
-    */
-    public abstract boolean equals(Object other);
-
-    /**
-       Returns a suitable hash code.
-    */
-    public abstract int hashCode();
+    /** Does comparison by pointer, that is, ==.  This is because CountableResources are mutable,
+    	and so equality testing by value will break hash tables.  Furthermore, it
+    	makes it work properly with remove(). */
+    public boolean equals(Object other)
+        {
+        return (this == other);
+        }
+    
+    /** Hashes by pointer. */
+    public int hashCode()
+        {
+        return System.identityHashCode(this);
+        }
 
     /** 
         Returns the amount of the resource.

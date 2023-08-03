@@ -106,23 +106,4 @@ public class Entity extends Resource
         {
         return "Entity[" + name + " (" + type + ")]";
         }
-
-    /** Only does type comparison. Thus two Entities may be equal even if they have different info
-        and storage objects. */
-    public boolean equals(Object other)
-        {
-        if (other == this) return true;
-        if (other == null) return false;
-        if (other instanceof Entity)
-            {
-            Entity res = (Entity) other;
-            return (res.type == type);
-            }
-        else return false;
-        }
-        
-    public final int hashCode()
-        {
-        return type;
-        }
     }
