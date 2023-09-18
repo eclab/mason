@@ -257,10 +257,14 @@ MASON's DES facility is built on top of its ABM facility and is designed to inte
 This manual assumes you're pretty familiar with MASON.  It assumes you know what SimState and Schedule are, how to schedule objects, how to create a SimState subclass, how to create a GUIState, how to build Displays and Field Portrayals, and so on.  If you're not familiar with this stuff, it's time to peruse the MASON manual and perhaps build some standard MASON demo examples.
 
 The DES extension is entirely contained within the directory \file{sim}, located in the \file{contrib/des} directory.  You can build a jar file of this directory as:
-
+\\
+\\
+\code{cd contrib/des}\\
+\code{javac sim/*.java sim/*/*.java sim/*/*/*.java sim/*/*/*/*.java}\\
 \code{jar -cvf des.jar sim/}
+\\
 
-... and then add it to your development library.
+... and then add \code{des.jar} to your development library.
 
 \begin{figure}[t]
 \centering\includegraphics[width=4in]{Resources.pdf}
@@ -308,7 +312,7 @@ Resources are often passed through {\bf Delays}, Processes which hold them up fo
 MASON provides several kinds of Resources, depending on your modeling needs:
 
 \begin{itemize}
-\item {\bf Entities} are atomic elements, like tickets or tokens or cars.  They cannot be broken up into smaller Entities, nor joined together to form larger ones.  They are not worth different amounts: and Entity is an Entity.
+\item {\bf Entities} are atomic elements, like tickets or tokens or cars.  They cannot be broken up into smaller Entities, nor joined together to form larger ones.  They are not worth different amounts: an Entity is an Entity.
 \item {\bf Composite Entities} are Entities which hold a collection of other Resources inside them, plus a manifest.  For example, a Composite Entity might be used to model a shipping container filled with teddy bears.  The manifest can indicate anything you'd like: expiration dates, country of origin, who manufactured each teddy bear, the amount of love that went into each teddy bear, and so on.  There is a special Process called a {\bf Composer} which takes a collection of Resources and builds a Composite Entity 
 \item {\bf Countable Resources} are Resources which can be divided, but only as integers.  For example, packages of medicine pills are countable resources: the package could be 0 pills, or 1 pill, or 2 pills, or 1500 pills.  But it cannot be 1.5 pills.  You cannot have a negative or infinite value.
 \item {\bf Money} is an obvious example of a Countable Resource.  In US currency, the fundamental unit of money is the penny.  You cannot have a half a penny, and you cannot have 3.279 pennies.\footnote{Except on the stock exchange.}  Because money is so common, MASON has a dedicated kind of Countable Resource just to represent it: it prints it out in a pleasing fashion (like ``\$14.23'' for 1423 pennies). 
