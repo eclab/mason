@@ -14,7 +14,7 @@ FLAGS = -g -Xlint:deprecation
 #sim/app/serengeti/*.java \
 
 
-VERSION = 21
+VERSION = 22
 
 # Main java files, not including the 3D stuff
 SRCS = \
