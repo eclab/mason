@@ -233,8 +233,8 @@ George Mason University}
 \\
 \\
 \\
-\large\rm {\bf Manual Version 4}\\
-\large\rm July 2023\\
+\large\rm {\bf Manual Version 5}\\
+\large\rm March 2024\\
 
 \clearpage
 
@@ -274,8 +274,8 @@ The DES extension is entirely contained within the directory \file{sim}, located
 
 MASON's DES classes may be roughly divided into four categories: {\bf Resources}, {\bf Processes}, {\bf Composed Processes}, and {\bf Visualization Tools}.  Processes communicate with one another by giving each other Resources.  The whole model is visualized using the visualization tools.
 
-\paragraph{Resources}  Money, love, gasoline, palettes of goods, cargo containers, water, and people waiting in line are all resources.  They're things handed off from process to process to make a DES simulation hum.  The abstract superclass is {\bf Resource}.   A simple Resource is {\bf Entity}, an atomic object like a skeeball ticket or a video game token.  Entities can also serve as containers for collections of Resources, much like a cargo container, a truck of goods, or a palette of microwaves.  
-these are called  {\it Eomposite Entities}.  {\bf CountableResources} are Resources which can have have integer amounts greater than one (they're not Entities) and cannot be infinitely subdivided.  For example, you can have 1000 medicine pills, or 200 eggs, but you can't have half an egg.  {\bf Money} is a CountableResource which prints nicely (like \$4.32).  {\bf UncountableResources} are Resources which are infinitely subdivisible, like water or love or gasoline or time.  You can make as many Resources as you like of various types, as members of these general classes.
+\paragraph{Resources}  Money, love, secrets, gasoline, palettes of goods, cargo containers, water, news, and people waiting in line are all resources.  They're things handed off from process to process to make a DES simulation hum.  The abstract superclass is {\bf Resource}.   A simple Resource is {\bf Entity}, an atomic object like a skeeball ticket or a video game token.  Entities can also serve as containers for collections of Resources, much like a cargo container, a truck of goods, or a palette of microwaves.  
+these are called  {\it Composite Entities}.  {\bf CountableResources} are Resources which can have have integer amounts greater than one (they're not Entities) and cannot be infinitely subdivided.  For example, you can have 1000 medicine pills, or 200 eggs, but you can't have half an egg.  {\bf Money} is a CountableResource which prints nicely (like \$4.32).  {\bf UncountableResources} are Resources which are infinitely subdivisible, like water or love or gasoline or time.  You can make as many Resources as you like of various types, as members of these general classes.
 
 \paragraph{Processes}  A Process is an object which hands resources to another process or receives the same.  There are three major abstract kinds of Processes.  A {\bf Provider} provides resources.  A {\bf Receiver} receives resources from a Provider.  A {\bf Middleman} is both a Provider and a Receiver: it receives resources from Providers, and then provides them to downstream Receivers.
 
