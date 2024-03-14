@@ -3951,7 +3951,7 @@ Everything that can be posted on the Schedule must adhere to the interface \Clas
 \mthd{public void step(SimState state)}  Called when the Steppable is being pulsed.  The Steppable should respond by performing some action.
 \end{methods}
 
-Most Steppable objects are more or less MASON's concept of {\bf agents}: computational entities which manipulate their environment in response to feedback they have gathered about it.  An agents' computational process could be implemented in all sorts of ways: as a separate thread for example.  But MASON's basic approach is to assume that agents do their jobs in small increments which can be triggered by {\bf events} posted on the Schedule.  Thus MASON is, fundamentally, a simple {\bf discrete event simulation}. 
+Most Steppable objects are more or less MASON's concept of {\bf agents}: computational entities which manipulate their environment in response to feedback they have gathered about it.  An agents' computational process could be implemented in all sorts of ways: as a separate thread for example.  But MASON's basic approach is to assume that agents do their jobs in small increments which can be triggered by {\bf events} posted on the Schedule.  
 
 For example, suppose you have a robot as an agent, and it has been posted on the schedule.  Each time the schedule steps it, the robot advances by some epsilon.  Or perhaps you have a thousand fish scheduled on the schedule.  Each time a fish is stepped, it makes a decision to swim a little bit in some new direction.  Or maybe you have a social network.  Each time a person on the network is stepped, he changes his internal state a bit based on the current opinions of his neighbors on the network.
 

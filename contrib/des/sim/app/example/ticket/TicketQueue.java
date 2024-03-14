@@ -48,7 +48,7 @@ public class TicketQueue extends SimState {
         Source entrance = new Source(this, person);
 
         // set the arrival rate at 2 customer per step
-        entrance.setRate(1.0, false);
+        entrance.setRate(1.0);
         entrance.setProduction(2.0);
         entrance.setAutoSchedules(true);
         schedule.scheduleOnce(entrance);
@@ -69,7 +69,7 @@ public class TicketQueue extends SimState {
                 
         // set the delay's capacity to 1; only one customer at a time can be served
         serving.setCapacity(1.0);
-        serving.setAutoScheduled(true);
+        serving.setAutoSchedules(true);
         schedule.scheduleOnce(Schedule.EPOCH, serving);
 
         // sink simulating the purchase of the ticket

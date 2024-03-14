@@ -78,7 +78,7 @@ public class PacMan extends SimState
         resetGame();
         }
         
-    public int MAX_MAZES = 2;
+    public int MAX_MAZES = 3;
         
     /** Resets the game board.  Doesn't change the score or deaths or level number */
     public void resetGame()

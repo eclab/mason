@@ -76,7 +76,7 @@ public class MM1Queue extends SimState {
 
         // create a Delay to simulate the time needed for the
         // Entity to "use" the server before releasing it
-//              Delay delay = new Delay(this, entity);
+                      Delay delay = new Delay(this, entity);
                 
 /*      // a quick test
         Delay delay = new Delay(this, entity)

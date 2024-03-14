@@ -253,10 +253,10 @@ public class Delay extends SimpleDelay
         if (cumulative)
             {
             if (lastDelayTime <= Schedule.BEFORE_SIMULATION ||
-                lastDelayTime > state.schedule.time() ||
+                lastDelayTime > state.schedule.getTime() ||
                 delayHeap.isEmpty())            // so it's possible that the new delay time will be earlier than the current time
                 {
-                lastDelayTime = state.schedule.time();
+                lastDelayTime = state.schedule.getTime();
                 if (lastDelayTime <= Schedule.BEFORE_SIMULATION)
                     lastDelayTime = Schedule.EPOCH;
                 }
