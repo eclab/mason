@@ -187,9 +187,9 @@ public abstract class AbstractGrid2D implements Grid2D
             }
         }
 
-    /** @Deprecated */
     public void getNeighborsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
+    	/** @SuppressWarnings("deprecation") */
         getMooreLocations(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
         }
 
@@ -277,9 +277,9 @@ public abstract class AbstractGrid2D implements Grid2D
         }
 
 
-    /** @Deprecated */
     public void getNeighborsHamiltonianDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
+    	/** @SuppressWarnings("deprecation") */
         getVonNeumannLocations(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
         }
 
@@ -380,10 +380,10 @@ public abstract class AbstractGrid2D implements Grid2D
         }
 
 
-    /** @Deprecated */
     public void getNeighborsHexagonalDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
-        getHexagonalLocations(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
+/** @SuppressWarnings("deprecation") */
+    	        getHexagonalLocations(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
         }
 
     public void getHexagonalLocations( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos )
