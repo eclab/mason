@@ -2473,7 +2473,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             public void actionPerformed(ActionEvent e)
                 {
                 updateRule = UPDATE_RULE_STEPS;
-                stepInterval = 16;
+                stepInterval = 32;
                 rebuildSkipFrame();
                 }
             });
