@@ -82,8 +82,9 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
         if (!(object instanceof ResourceEdge))
             throw new RuntimeException("Expected this to be a ResourceEdge: " + object);
         ResourceEdge edge = (ResourceEdge)object;
-                        
-        int resource = edge.getProvider().getTypicalProvided().getType();
+                     
+        Resource typicalProvided = edge.getProvider().getTypicalProvided();
+        int resource = (typicalProvided == null ? Resource.NO_TYPE : typicalProvided.getType());
         double width = getBaseWidth();
 
         double scale = info.scale;
@@ -282,7 +283,11 @@ public class DelayedEdgePortrayal extends SimpleEdgePortrayal2D
             throw new RuntimeException("Expected this to be a ResourceEdge: " + wrapper.getLocation());
 
         ResourceEdge edge = (ResourceEdge)(wrapper.getLocation());
-        return "" + edge.getProvider().getTypicalProvided().getName() + ": " + edge.getProvider().getName() + " --> " + edge.getReceiver().getName();
+        Resource typicalProvided = edge.getProvider().getTypicalProvided();
+
+        String name = (typicalProvided == null ? "NONE" : typicalProvided.getName());
+
+        return name + ": " + edge.getProvider().getName() + " --> " + edge.getReceiver().getName();
         }
     }
         

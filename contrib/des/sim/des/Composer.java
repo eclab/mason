@@ -144,7 +144,9 @@ public class Composer extends Middleman
             permittedReceived[i].clear();
             
             if (mappedTotals.get(minimums[i].getType()) != null)  // uh oh, already have one!
+                {
                 throwDuplicateType(minimums[i]);
+                }
             else if (minimums[i].getAmount() < 0 || maximums[i] < minimums[i].getAmount() || 
                 maximums[i] != maximums[i] || minimums[i].getAmount() != minimums[i].getAmount())
                 {
@@ -185,7 +187,10 @@ public class Composer extends Middleman
                 if (getOffersImmediately()) deploy();
                 return true;
                 }
-            else return false;
+            else 
+                {
+                return false;
+                }
             }
         else
             {
@@ -203,7 +208,7 @@ public class Composer extends Middleman
             }
         }
         
-    void deploy()
+    protected void deploy()
         {
         // have we met the minimum counts yet?
         for(int i = 0; i < totals.length; i++)
@@ -213,16 +218,30 @@ public class Composer extends Middleman
             }
                 
         // do a load into entities
-        entities.clear();
-        Entity entity = (Entity)(getTypicalProvided().duplicate());
-        Resource[] resources = new Resource[totals.length];
-        for(int i = 0; i < totals.length; i++)
-            resources[i] = totals[i].resource.duplicate();
-        entity.setStorage(resources);
-        setInfoFor(entity);
-        entities.add(entity);
-        
-        resetTotals();   
+        if (entities.isEmpty())
+            {
+            Entity entity = (Entity)(getTypicalProvided().duplicate());
+            ArrayList<Resource> resources = new ArrayList<>();
+            for(int i = 0; i < totals.length; i++)
+                {
+                if (totals[i].entity != null)
+                    {
+                    for(int j = 0; j < totals[i].entityCount; j++)
+                        {
+                        resources.add(totals[i].entity[j]);
+                        }
+                    }
+                else
+                    {
+                    resources.add(totals[i].resource.duplicate());
+                    }
+                }
+            entity.setStorage((Resource[])(resources.toArray(new Resource[0])));
+            setInfoFor(entity);
+            entities.add(entity);
+            resetTotals();
+            offerReceivers();
+            }               
         }
         
     /** This is called when the Composer constructs a composite entity
@@ -255,13 +274,20 @@ public class Composer extends Middleman
         
     public String toString()
         {
-        return "Composer@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + " -> " + getTypicalReceived().getName() + ")";
+        return "Composer@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + ")";
         }
 
     /** If stepped, offers the composed entity if it is ready. */
     public void step(SimState state)
         {
-        deploy();
+        if (entities.isEmpty())
+            {
+            deploy();
+            }
+        else
+            {
+            offerReceivers();
+            }
         }
 
     /** Returns NULL because various resource types are received.

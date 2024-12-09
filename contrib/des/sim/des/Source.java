@@ -29,7 +29,7 @@ import java.awt.*;
 */
 
 
-public class Source extends Provider implements Steppable
+public class Source extends BasicProvider implements Steppable
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
         {
@@ -473,10 +473,10 @@ public class Source extends Provider implements Steppable
         }
         
     public void reset(SimState state)
-    	{
-    	super.reset(state);
-    	nextTime = Schedule.BEFORE_SIMULATION;	// this probably doesn't matter
-    	}
+        {
+        super.reset(state);
+        nextTime = Schedule.BEFORE_SIMULATION;  // this probably doesn't matter
+        }
 
     public String toString()
         {

@@ -28,7 +28,16 @@ public class Decomposer extends Middleman
 
     HashMap<Integer, Receiver> output;
     Resource typicalReceived;
+    boolean unregisteredTypeWarned;
     
+    void warnUnregisteredType(Resource res)
+        {
+        System.err.println("WARNING: Decomposer was given a composite entity containing a resource of a type for which it does not have a receiver registered.  This warning will only be sent once from this Decomposer.\n"+
+            "Decomposer:        " + this + "\n" +
+            "Unregistered Type: " + res.getType());
+        unregisteredTypeWarned = true;
+        }
+        
     void throwNotCompositeEntity(Entity res)
         {
         throw new RuntimeException("The provided entity " + res + " was not composite (its storage didn't consist of an array of Resources).");
@@ -41,7 +50,7 @@ public class Decomposer extends Middleman
 
     public Decomposer(SimState state, Entity typicalReceived)
         {
-        super(state, null);
+        super(state);           // Note no typical provided resource type.
         this.typicalReceived = typicalReceived;
         output = new HashMap<Integer, Receiver>();
         }
@@ -104,7 +113,7 @@ public class Decomposer extends Middleman
 
         // unpack
         Entity entity = (Entity)amount;
-                
+
         boolean accepted = false;
         if (!entity.isComposite())
             {
@@ -120,7 +129,12 @@ public class Decomposer extends Middleman
                 Receiver recv = output.get(res[i].getType());
                 if (recv != null)
                     {
-                    accepted = accepted || recv.accept(this, res[i], 0, res[i].getAmount());
+                    boolean a = recv.accept(this, res[i], 0, res[i].getAmount());
+                    accepted = accepted || a;
+                    }
+                else if (!unregisteredTypeWarned)
+                    {
+                    warnUnregisteredType(res[i]);
                     }
                 }
             return accepted;
@@ -142,7 +156,7 @@ public class Decomposer extends Middleman
     
     public String toString()
         {
-        return "Decomposer@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + " -> " + getTypicalReceived().getName() + ")";
+        return "Decomposer@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalReceived().getName() + ")";
         }
 
     /** Does nothing.  There's no reason to step a Decomposer. */

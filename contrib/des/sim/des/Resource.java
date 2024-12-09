@@ -24,6 +24,8 @@ public abstract class Resource implements java.io.Serializable
     {
     private static final long serialVersionUID = 1;
 
+    public static final int NO_TYPE = -1;
+        
     static int typeCounter = 0;
     //static final AtomicInteger threadSafeCounter = new AtomicInteger();
          
@@ -68,8 +70,8 @@ public abstract class Resource implements java.io.Serializable
     public abstract String toString();
 
     /** Does comparison by pointer, that is, ==.  This is because CountableResources are mutable,
-    	and so equality testing by value will break hash tables.  Furthermore, it
-    	makes it work properly with remove(). */
+        and so equality testing by value will break hash tables.  Furthermore, it
+        makes it work properly with remove(). */
     public boolean equals(Object other)
         {
         return (this == other);

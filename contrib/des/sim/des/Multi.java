@@ -257,7 +257,7 @@ public abstract class Multi extends DESPortrayal implements Parented
         
     /** The subclass of Provider used internally by Multi.  This is largely a stub which connects methods to 
         Multi's internal provide() and offerReceivers() methods. */
-    public class MultiProvider extends Provider
+    public class MultiProvider extends BasicProvider
         {
         int providerPort;
         double _atLeast = 0;

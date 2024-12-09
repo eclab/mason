@@ -31,6 +31,19 @@ public class Lead extends Filter
 
     Probe probe;
     
+    protected void throwNoReceiver()
+        {
+        throw new RuntimeException(
+            "Lead was asked what its typical\n" +
+            "received type is, but to answer this, it must query its downstream receiver,\n"+
+            "which has not yet been assigned.\n\n" +
+            "This little gotcha shows up, for example, when attaching a Lead as the receiver\n" + 
+            "to a Decomposer.  The Decomposer must know immediately what the typical received type\n" +
+            "of the Lead is in order to register it properly.  But the Lead doesn't know yet\n" +
+            "because it's not yet been assigned its own receiver.  To fix this, attach Lead's\n" + 
+            "own receiver to it BEFORE attaching the Lead as a receiver to the Decomposer.\n");
+        }
+
     Lead(Probe probe)
         {
         super(probe.state, Probe.DEFAULT_TYPICAL);
@@ -47,7 +60,11 @@ public class Lead extends Filter
             {
             return (receivers.get(0).getTypicalReceived());
             }
-        else return super.getTypicalReceived();
+        else 
+            {
+            throwNoReceiver();
+            return null;            // never happens
+            }
         }
     public boolean hideTypicalReceived() { return true; }
 
@@ -67,9 +84,9 @@ public class Lead extends Filter
          
         if (val)
             {
-    	    double diff = amount.getAmount() - (oldAmount == null ? 1.0 : oldAmount.getAmount());
-        	totalAcceptedOfferResource += diff;
-        	totalReceivedResource += diff;
+            double diff = amount.getAmount() - (oldAmount == null ? 1.0 : oldAmount.getAmount());
+            totalAcceptedOfferResource += diff;
+            totalReceivedResource += diff;
 
             if (amount instanceof Entity)
                 {

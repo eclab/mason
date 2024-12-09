@@ -143,12 +143,12 @@ public class Filter extends Middleman
 
         boolean result = offerReceivers(amount, atLeast, atMost);
 
-		if (result)	
-			{
-    	    double diff = amount.getAmount() - (oldAmount == null ? 1.0 : oldAmount.getAmount());
-        	totalAcceptedOfferResource += diff;
-        	totalReceivedResource += diff;
-        	}
+        if (result)     
+            {
+            double diff = amount.getAmount() - (oldAmount == null ? 1.0 : oldAmount.getAmount());
+            totalAcceptedOfferResource += diff;
+            totalReceivedResource += diff;
+            }
 
         process(oldAmount, amount);
         return result;

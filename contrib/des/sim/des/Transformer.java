@@ -95,10 +95,10 @@ public class Transformer extends Filter
             boolean retval = offerReceivers(_amount, _atLeast, _atMost);
             // We assume that the Entity has been consumed if retval = true
             if (retval)
-            	{
-				totalReceivedResource += 1.0;
-				totalAcceptedOfferResource = _amount.getAmount() - oldAmount;
-            	}
+                {
+                totalReceivedResource += 1.0;
+                totalAcceptedOfferResource = _amount.getAmount() - oldAmount;
+                }
             return retval;
             }
         else 
@@ -114,8 +114,8 @@ public class Transformer extends Filter
                 // modify original
                 ((CountableResource)amount).setAmount((oldAmount - amount.getAmount()) / conversion);
 
-				totalReceivedResource += 1.0;
-				totalAcceptedOfferResource = _amount.getAmount() - oldAmount;
+                totalReceivedResource += 1.0;
+                totalAcceptedOfferResource = _amount.getAmount() - oldAmount;
                 }
             return retval;
             }

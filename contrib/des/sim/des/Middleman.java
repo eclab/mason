@@ -19,9 +19,14 @@ import java.util.*;
    performTransaction() method.
 */
 
-public abstract class Middleman extends Provider implements Receiver
+public abstract class Middleman extends BasicProvider implements Receiver
     {
     private static final long serialVersionUID = 1;
+
+    protected Middleman(SimState state)
+        {
+        super(state);
+        }
 
     public Middleman(SimState state, Resource typical)
         {
@@ -238,4 +243,4 @@ public abstract class Middleman extends Provider implements Receiver
         super.reset(state);
         totalReceivedResource = 0; 
         }
-   }
+    }

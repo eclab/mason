@@ -1,4 +1,4 @@
-package sim.app.example.mm1;
+package sim.app.example.mm1a;
 
 import sim.des.CountableResource;
 import sim.des.Delay;
@@ -11,6 +11,8 @@ import sim.des.Unlock;
 import sim.des.portrayal.DES2D;
 import sim.engine.SimState;
 import sim.util.distribution.Exponential;
+import sim.des.*;
+import sim.engine.*;
 
 /**
  * @author giuseppe
@@ -32,14 +34,14 @@ import sim.util.distribution.Exponential;
  * 
  */
 
-public class MM1Queue extends SimState {
+public class MM1A extends SimState {
 
     private static final long serialVersionUID = -1746164159521942024L;
 
     // Space where blocks will be drawn
     public DES2D field = new DES2D(100, 100);
 
-    public MM1Queue(long seed) {
+    public MM1A(long seed) {
         super(seed);
         }
 
@@ -107,6 +109,10 @@ public class MM1Queue extends SimState {
         delay.setSlackProvider(source);
         delay.setSlackReceiver(lock);
 
+        Probe probe = new Probe(this);
+        Lead lead = probe.buildLead();
+                
+
         // Unlock to release the resource
         Unlock unlock = new Unlock(this, entity, pool, 1);
 
@@ -116,7 +122,10 @@ public class MM1Queue extends SimState {
         // hook the blocks together
         // the Source produces entities that are sent
         // to the Lock to acquire the resource
-        source.addReceiver(lock);
+        //source.addReceiver(lock);
+        source.addReceiver(lead);
+        lead.addReceiver(lock);
+        
         // the lock tries to grab the resource from the Pool
         // if it succeeds the Entity can use the resource
         // usage of the resource is simulated by a Delay
@@ -126,7 +135,20 @@ public class MM1Queue extends SimState {
         // passing through the Unlock block
         delay.addReceiver(unlock);
         // finally the Entity can exit the system using the Sink
-        unlock.addReceiver(sink);
+        //unlock.addReceiver(sink);
+        unlock.addReceiver(probe);
+        probe.addReceiver(sink);
+        
+/*
+        Steppable step = new Steppable()
+            {
+            public void step(SimState state)
+                {
+                System.err.println("" + probe.getSumThru() + " " + probe.getThruRate());
+                }
+            };
+        schedule.scheduleRepeating(step, 1000);
+*/
 
         // draw and connect the block graphically
         field = new DES2D(100, 100);
@@ -142,7 +164,7 @@ public class MM1Queue extends SimState {
         }
 
     public static void main(String[] args) {
-        doLoop(MM1Queue.class, args);
+        doLoop(MM1A.class, args);
         System.exit(0);
         }
 

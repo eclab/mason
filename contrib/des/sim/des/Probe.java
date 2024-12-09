@@ -46,6 +46,19 @@ public class Probe extends Filter
     double idle;
     boolean processed;
     
+    protected void throwNoReceiver()
+        {
+        throw new RuntimeException(
+            "Probe was asked what its typical\n" + 
+            "received type is, but to answer this, it must query its downstream receiver,\n" + 
+            "which has not yet been assigned.\n\n" +
+            "This little gotcha shows up, for example, when attaching a Probe as the receiver\n" + 
+            "to a Decomposer.  The Decomposer must know immediately what the typical received type\n" +
+            "of the Probe is in order to register it properly.  But the Probe doesn't know yet\n" +
+            "because it's not yet been assigned its own receiver.  To fix this, attach Probe's\n" + 
+            "own receiver to it BEFORE attaching the Probe as a receiver to the Decomposer.\n");
+        }
+
     public Probe(SimState state)
         {
         super(state, DEFAULT_TYPICAL);
@@ -83,7 +96,11 @@ public class Probe extends Filter
             {
             return (receivers.get(0).getTypicalReceived());
             }
-        else return super.getTypicalReceived();
+        else 
+            {
+            throwNoReceiver();
+            return null;            // never happens
+            }
         }
     public boolean hideTypicalReceived() { return true; }
 
@@ -179,9 +196,9 @@ public class Probe extends Filter
         boolean val = offerReceivers(amount, atLeast, atMost);
         if (val)
             {
-    	    double diff = amount.getAmount() - (oldAmount == null ? 1.0 : oldAmount.getAmount());
-        	totalAcceptedOfferResource += diff;
-        	totalReceivedResource += diff;
+            double diff = amount.getAmount() - (oldAmount == null ? 1.0 : oldAmount.getAmount());
+            totalAcceptedOfferResource += diff;
+            totalReceivedResource += diff;
 
             totalOffers++;
             if (amount instanceof Entity)

@@ -421,9 +421,9 @@ public class Extractor extends Source implements Receiver
     public double getTotalReceivedResource() { return totalReceivedResource; }
     public double getReceiverResourceRate() { double time = state.schedule.getTime(); if (time <= 0) return 0; else return totalReceivedResource / time; }
     public void reset(SimState state) 
-    	{ 
-    	super.reset(state);
-    	totalReceivedResource = 0; 
-    	}
+        { 
+        super.reset(state);
+        totalReceivedResource = 0; 
+        }
     }
         

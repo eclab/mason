@@ -479,8 +479,8 @@ public class CountableResource extends Resource implements sim.util.Valuable
         }
                 
     /**
-    	Note: this class has a natural ordering that is inconsistent with equals, because equals(other)
-    	tests by pointer rather than value.  This is not a contract requirement of compareTo but it is unusual. 
+       Note: this class has a natural ordering that is inconsistent with equals, because equals(other)
+       tests by pointer rather than value.  This is not a contract requirement of compareTo but it is unusual. 
     */
     public int compareTo(Object other)
         {
