@@ -854,16 +854,18 @@ Returns whether the Provider will, during offerReceivers(...), attempt to offer 
 		that it has available, until offers start to be refused by downstream receivers.  By fault this is 
 		FALSE: the Provider offers only one Entity. This only matters if the Provider provides entities.  
 		This capability is largely useful for Delays and SimpleDelays rather than other kinds of Providers.  
-\mthd{public Receiver selectReceiver(ArrayList\(<\)Receiver\(>\) receivers, Resource resource)}
+\mthd{public Receiver selectReceiver(ArrayList\(<\)Receiver\(>\) receivers)}
        If the offer policy is OFFER\_POLICY\_SELECT, then when the receivers are non-empty,
-       this method will be called to specify which receiver should be offered the given resource.
+       this method will be called to specify which receiver should be offered the next resource.
        Override this method as you see fit.  The default implementation simply returns the first one.
+\ignore{
 \mthd{protected void selectedOfferAccepted(Receiver receiver, Resource originalResource, Resource revisedResource)}
        If the offer policy is OFFER\_POLICY\_SELECT, then if a receiver accepts an offer of a resource,
        this method is called, with (a copy of) the original resource, the revised resource after then
        receiver accepted it. If the resource was an ENTITY, then the revised resource will likely be unchanged.
        If the resource was a COUNTABLE RESOURCE, then the revised resource will be reduced by the amount
        that the receiver accepted (relative to the original resource).
+}
 \mthd{public void setOfferOrder(int offerOrder)}
 Sets the offer order as provided.
 
