@@ -13,6 +13,7 @@ import sim.portrayal.simple.*;
 import java.awt.*;
 
 /** 
+	A variation of Queue which returns random 
     A blocking resource queue with a capacity: you can think of Queue as a warehouse with a maximum
     amount of space.  Resources placed in the queue by default are offered to downstream
     receivers immediately.  You can change this behavior by setting setOffersImmediately(false).
@@ -21,7 +22,7 @@ import java.awt.*;
     make an offer if possible to any Receiver that requests one via provide(...). 
 */
 
-public class RandomQueue extends Provider
+public class RandomQueue extends Queue
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
         {
@@ -33,45 +34,12 @@ public class RandomQueue extends Provider
 
     ArrayList<Entity> randomEntities = new ArrayList<Entity>();
     
-    double capacity = Double.POSITIVE_INFINITY;    
-
-    /** Returns the maximum available resources that may be aquired by the Queue. */
-    public double getCapacity() { return capacity; }
-    public boolean hideCapacity() { return true; }
-    
-    /** Set the maximum available resources that may be aquired by the Queue. 
-            
-        <p>Throws a runtime exception if the capacity is negative or NaN.
-    */
-    public void setCapacity(double d) 
-        { 
-        if (!isPositiveOrZeroNonNaN(d))
-            throwInvalidCapacityException(d); 
-        capacity = d; 
-        }
-
-    boolean offersImmediately = true;
-    
-    /** Returns whether the Queue offers items immediately upon accepting (when possible) in zero time,
-        as opposed to when it is stepped. */
-    public boolean getOffersImmediately() { return offersImmediately; }
-    public boolean hideOffersImmediately() { return true; }
-
-    /** Sets whether the Queue offers items immediately upon accepting (when possible) in zero time,
-        as opposed to when it is stepped. */
-    public void setOffersImmediately(boolean val) { offersImmediately = val; }
-
-    void throwInvalidCapacityException(double capacity)
-        {
-        throw new RuntimeException("Capacities may not be negative or NaN.  capacity was: " + capacity);
-        }
-
     void throwNotEntityException()
         {
         throw new RuntimeException("RandomQueue only works with Entities.");
         }
 
-    public RandomQueue(SimState state, Resource typical)
+    public RandomQueue(SimState state, Entity typical)
         {
         super(state, typical);
         if (!(typical instanceof Entity))
@@ -163,24 +131,9 @@ public class RandomQueue extends Provider
         return result;
         }
         
-    protected double totalReceivedResource;
-    public double getTotalReceivedResource() { return totalReceivedResource; }
-    public double getReceiverResourceRate() { double time = state.schedule.getTime(); if (time <= 0) return 0; else return totalReceivedResource / time; }
-
-    public void reset(SimState state) 
-        {
-        super.reset(state);
-        totalReceivedResource = 0; 
-        }
-
     public String toString()
         {
         return "RandomQueue@" + System.identityHashCode(this) + "(" + (getName() == null ? "" : (getName() + ": ")) + getTypicalProvided().getName() + ")";
         }               
-
-    public void step(SimState state)
-        {
-        offerReceivers();
-        }
     }
         

@@ -24,9 +24,17 @@ import java.awt.*;
 
 public class PriorityQueue extends RandomQueue
     {
+    public SimplePortrayal2D buildDefaultPortrayal(double scale)
+        {
+        return new ShapePortrayal2D(ShapePortrayal2D.SHAPE_STORAGE, 
+            getFillPaint(), getStrokePaint(), getStrokeWidth(), scale);
+        }
+
+    private static final long serialVersionUID = 1;
+
     Heap priorityEntities = new Heap();
     
-    /** Throws an exception indicating that a null info was provided. */
+   /** Throws an exception indicating that a null info was provided. */
     protected void throwInfoNullException(Entity entity)
         {
         throw new RuntimeException("For the following PriorityQueue, the default getComparable(Entity) method " +
@@ -45,14 +53,23 @@ public class PriorityQueue extends RandomQueue
             "Entity Info:    " + entity.info);
         }
 
+    void throwNotEntityException()
+        {
+        throw new RuntimeException("RandomQueue only works with Entities.");
+        }
 
-    private static final long serialVersionUID = 1;
-
-    public PriorityQueue(SimState state, Resource typical)
+    public PriorityQueue(SimState state, Entity typical)
         {
         super(state, typical);
         randomEntities = null;          // just in case
         setName("PriorityQueue");
+        }
+        
+    public Comparable getComparable(Entity entity)
+        {
+        if (entity.info == null) throwInfoNullException(entity);
+        if (!(entity.info instanceof Comparable)) throwInfoNotComparableException(entity);
+        return (Comparable)(entity.info);
         }
         
     protected int numEntities()
@@ -65,11 +82,24 @@ public class PriorityQueue extends RandomQueue
         priorityEntities.clear();
         }
 
-    public Comparable getComparable(Entity entity)
+    /**
+       Makes offers to the receivers according to the current offer policy.    
+       Returns true if at least one offer was accepted.
+    */
+    protected boolean offerReceivers(ArrayList<Receiver> receivers)
         {
-        if (entity.info == null) throwInfoNullException(entity);
-        if (!(entity.info instanceof Comparable)) throwInfoNotComparableException(entity);
-        return (Comparable)(entity.info);
+        boolean returnval = false;
+        if (getOffersAllEntities())
+            {
+            while(numEntities() > 0)
+                {
+                boolean result = offerReceiversOnce(receivers);
+                returnval = returnval || result;
+                if (!result) break;
+                }
+            }
+        else returnval = offerReceiversOnce(receivers);
+        return returnval;
         }
         
     public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)
@@ -92,6 +122,16 @@ public class PriorityQueue extends RandomQueue
             }
         }
 
+    public void clear()
+        {
+        clearEntities();
+        }
+        
+    public double getAvailable()
+        {
+        return numEntities();
+        }
+        
     public Entity[] getEntities()
         {
         Object[] objs = priorityEntities.getObjects();
