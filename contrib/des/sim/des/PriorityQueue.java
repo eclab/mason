@@ -57,13 +57,12 @@ public class PriorityQueue extends Queue
 
     void throwNotEntityException()
         {
-        throw new RuntimeException("RandomQueue only works with Entities.");
+        throw new RuntimeException("PriorityQueue only works with Entities.");
         }
 
     public PriorityQueue(SimState state, Entity typical)
         {
         super(state, typical);
-        randomEntities = null;          // just in case
         setName("PriorityQueue");
         }
         
