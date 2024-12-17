@@ -14,12 +14,14 @@ import sim.portrayal.simple.*;
 import java.awt.*;
 
 /** 
-    A blocking resource queue with a capacity: you can think of Queue as a warehouse with a maximum
-    amount of space.  Resources placed in the queue by default are offered to downstream
-    recievers immediately.  You can change this behavior by setting setOffersImmediately(false).
-    Whenever it is stepped by the Schedule, the Queue will also offer to its receivers.  You can
-    prevent this by not scheduling it in the first place.  Like all Providers, the Queue will
-    make an offer if possible to any Receiver that requests one via provide(...). 
+	A variation of Queue which restricts its typical provided and typical received resource types
+	to only be Entity.  Each Entity has an associated Comparable value, and when it offers an Entity,
+	it offers the lowest comparable Entity from among those in its internal storage.  The Comparable
+	value of an Entity is determined by the getComparable(Entity) method, which you may override.
+	The default version of this method assumes that each Entity has an info object which implements
+	Comparable, and it uses that (else throws an error).  Note that PriorityQueue neither uses the 
+	its entities linked list nor its internal resource pool.  By default entities is set to an 
+	(empty) LinkedList, not to null, but do not use or rely on it in subclasses.
 */
 
 public class PriorityQueue extends RandomQueue

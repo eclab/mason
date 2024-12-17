@@ -13,13 +13,11 @@ import sim.portrayal.simple.*;
 import java.awt.*;
 
 /** 
-	A variation of Queue which returns random 
-    A blocking resource queue with a capacity: you can think of Queue as a warehouse with a maximum
-    amount of space.  Resources placed in the queue by default are offered to downstream
-    receivers immediately.  You can change this behavior by setting setOffersImmediately(false).
-    Whenever it is stepped by the Schedule, the Queue will also offer to its receivers.  You can
-    prevent this by not scheduling it in the first place.  Like all Providers, the Queue will
-    make an offer if possible to any Receiver that requests one via provide(...). 
+	A variation of Queue which restricts its typical provided and typical received resource types
+	to only be Entity.  When it offers an Entity, it offers a *random* Entity from among those in
+	its internal storage.  Note that RandomQueue neither uses the its entities linked list nor its
+	internal resource pool.  By default entities is set to an (empty) LinkedList, not to null, but
+	do not use or rely on it in subclasses.
 */
 
 public class RandomQueue extends Queue
