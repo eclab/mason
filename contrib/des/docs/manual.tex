@@ -1409,10 +1409,10 @@ Builds a Queue with the given state and typical provided and received resource.
 
 \begin{methods}{\class{sim.des.Queue}}
 \mthd{public void setCapacity(double d)}
-Set the maximum available resources that may be aquired by the Queue. 
+Set the maximum available resources that may be acquired by the Queue. 
 Throws a runtime exception if the capacity is negative or NaN.
 \mthd{public double getCapacity()}
-Returns the maximum available resources that may be aquired by the Queue. 
+Returns the maximum available resources that may be acquired by the Queue. 
 \mthd{public void setOffersImmediately(boolean val)}
 Sets whether the Queue offers items immediately upon accepting (when possible) in zero time,
         as opposed to when it is stepped.
@@ -1426,6 +1426,50 @@ Offers to receivers.  You can use this to make the Queue occasionally offer to r
 \mthd{public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)}
 Accepts resources up to the given capacity, then if offering immediately, turns around and offers them in zero time to downstream Receivers.
 \end{methods}
+
+\subsection{RandomQueue}
+
+A Queue, but restricted only to Entities.  When a RandomQueue needs to offer an Entity, it selects one at random from among its existing pile of Entities.  RandomQueue cannot receive nor offer non-Entity Resources.
+
+Because it only uses Entities, not CountableResources, and because it must provide the Entities in an efficient manner, RandomQueue does not use either the {\tt CountableResource resource} nor {\tt LinkedList \(<\)Entity\(>\) entities} instance variables from Provider.  {\tt resource} is set to {\tt null}, and {\tt entities} is a real LinkedList but is kept empty and ignored: do not use it in subclasses.
+
+RandomQueue overrides a number of methods, but two are worth mentioning here:
+
+\begin{methods}{\class{sim.des.RandomQueue} Constructor}
+\mthd{public RandomQueue(SimState state, Entity typical)}
+Builds a RandomQueue with the given state and typical provided and received entity.  Note that RandomQueue can only have Entities (or their subclasses) as its typical resources.
+\end{methods}
+
+\begin{methods}{\class{sim.des.RandomQueue}}
+\mthd{public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)}
+Accepts resources up to the given capacity, then if offering immediately, turns around and offers them in zero time to downstream Receivers.  Throws an exception if the Resource provided is not an Entity.
+\end{methods}
+
+
+\subsection{PriorityQueue}
+
+A Queue, but restricted only to Entities.  When a PriorityQueue needs to offer an Entity, it selects the one with the lowest Comparable value from among its existing pile of Entities.  PriorityQueue cannot receive nor offer non-Entity Resources.
+
+This implies that each Entity must be associated with a Comparable.  By default the Comparable is assumed to be the Entity's ``info'' object, and if this object is null or is not Comparable, an exception is thrown.  However you can override this to define any Comparable object you wish.
+
+Because it only uses Entities, not CountableResources, and because it must provide the Entities in an efficient manner, PriorityQueue does not use either the {\tt CountableResource resource} nor {\tt LinkedList \(<\)Entity\(>\) entities} instance variables from Provider.  {\tt resource} is set to {\tt null}, and {\tt entities} is a real LinkedList but is kept empty and ignored: do not use it in subclasses.
+
+PriorityQueue overrides a number of methods, but three are worth mentioning here:
+
+\begin{methods}{\class{sim.des.PriorityQueue} Constructor}
+\mthd{public PriorityQueue(SimState state, Entity typical)}
+Builds a PriorityQueue with the given state and typical provided and received entity.  Note that PriorityQueue can only have Entities (or their subclasses) as its typical resources.
+\end{methods}
+
+\begin{methods}{\class{sim.des.PriorityQueue}}
+\mthd{public Comparable getComparable(Entity entity)}
+Returns the Comparable associated with the given Entity.  By default this method returns the Entity's info object, but if the info object is null or is not Comparable, it will throw an exception.  You may override this method to customize the Comparable object associated with the Entity any way you see fit.
+
+\mthd{public boolean accept(Provider provider, Resource amount, double atLeast, double atMost)}
+Accepts resources up to the given capacity, then if offering immediately, turns around and offers them in zero time to downstream Receivers.  Throws an exception if the Resource provided is not an Entity.
+\end{methods}
+
+
 
 \subsection{SimpleDelay}
 
