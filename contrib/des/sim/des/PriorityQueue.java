@@ -24,7 +24,7 @@ import java.awt.*;
 	(empty) LinkedList, not to null, but do not use or rely on it in subclasses.
 */
 
-public class PriorityQueue extends RandomQueue
+public class PriorityQueue extends Queue
     {
     public SimplePortrayal2D buildDefaultPortrayal(double scale)
         {
