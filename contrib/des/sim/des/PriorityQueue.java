@@ -65,7 +65,14 @@ public class PriorityQueue extends Queue
         super(state, typical);
         setName("PriorityQueue");
         }
-        
+    
+    /**
+	Returns the Comparable associated with this Entity.  The Entity does not need to be stored inside the PriorityQueue:
+	it can be any Entity.  You can override this method to return any Comparable associated with an Entity that you feel
+	is appropriate to your application.  The default implementation of this method assumes that the Comparable is the Entity's "info"
+	object, and simply returns that.  However if the "info" object is null, or if it is not a Comparable, then an exception
+	is thrown.
+	*/
     public Comparable getComparable(Entity entity)
         {
         if (entity.info == null) throwInfoNullException(entity);
