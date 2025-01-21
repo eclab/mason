@@ -94,6 +94,7 @@ public class DESExampleWithUI extends GUIState
         super.init(c);
 
         DESPortrayalParameters.setImageClass(DESExampleWithUI.class);
+        DESPortrayal.tracking = true;
 
         // make the displayer
         display = new Display2D(600,600,this);
