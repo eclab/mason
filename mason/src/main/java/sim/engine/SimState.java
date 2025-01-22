@@ -349,9 +349,20 @@ public class SimState implements java.io.Serializable
         return job;
         }
 
-    /** Calls doLoop(MakesSimState,args), passing in a MakesSimState which creates
-        SimStates of the provided Class c, using the constructor new <simState>(<random seed>). */
+	/** 
+		Same as doLoop(c, args, true)
+	*/
     public static void doLoop(final Class c, String[] args) 
+    	{
+    	doLoop(c, args, true);
+    	}
+
+    /** 
+    	Calls doLoop(MakesSimState,args), passing in a MakesSimState which creates
+        SimStates of the provided Class c, using the constructor new <simState>(<random seed>). 
+        If exit is true, then doLoop() quits Java when it is finished. 
+        */
+    public static void doLoop(final Class c, String[] args, boolean exit) 
         {
         doLoop(new MakesSimState() 
             {
@@ -371,17 +382,26 @@ public class SimState implements java.io.Serializable
             public Class simulationClass() { return c; }
 
             public Constructor[] getConstructors() { return c.getConstructors(); }
-            }, args);
+            }, args, exit);
         }
     
+    /** 
+    	Same as doLoop(generator, args, true);
+    */
+    public static void doLoop(final MakesSimState generator, final String[] args)
+		{
+		doLoop(generator, args, true);
+		}
+		
     /** A convenient top-level loop for the simulation command-line.  Takes a MakesSimState which is
         responsible for providing a SimState to run the simulation on, plus the application's argument
         list in args.  This loop is capable of:
         <ul>
         <li> Repeating a job multiple times
         </ul>
+        If exit is true, then doLoop() quits Java when it is finished. 
     */
-    public static void doLoop(final MakesSimState generator, final String[] args)
+    public static void doLoop(final MakesSimState generator, final String[] args, final boolean exit)
         {
         // print help?
         if (keyExists("-help", args))
@@ -613,8 +633,8 @@ public class SimState implements java.io.Serializable
                         if (state==null)  // no checkpoint file requested
                             {
                             state = generator.newInstance(seed,args);
-                            state.job = job;
-                            state.seed = seed;
+                            state.setJob(job);
+                            state.setSeed(seed);
                             if (!quiet) printlnSynchronized("Job: " + state.job() + " Seed: " + state.seed());
                             state.start();
                             }
@@ -694,7 +714,7 @@ public class SimState implements java.io.Serializable
             {
             try { threads[thread].join(); } catch (InterruptedException ex) {  }  // do nothing
             }
-        System.exit(0);
+        if (exit) System.exit(0);
         }
         
     static Object printLock = new Object[0];
@@ -703,7 +723,7 @@ public class SimState implements java.io.Serializable
         synchronized(printLock) { System.err.println(val); }
         }
     
-    /** @deprecated */
+    /** @Deprecated */
     public void nameThread()
         {
         Thread.currentThread().setName("MASON Model: " + this.getClass());
@@ -731,7 +751,7 @@ public class SimState implements java.io.Serializable
     // it's possible this could go into an infinite loop if time is gigantic
     // but that's not likely.  Otherwise takes O(lg(time)) time, which is
     // reasonable for a long
-    static long figureTime(long time)
+    static protected long figureTime(long time)
         {
         long n = 1;
         while(true)
