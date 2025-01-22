@@ -46,8 +46,8 @@ public class DSimState extends SimState
     private static final long serialVersionUID = 1L;
     
     static boolean distinguishedFlag = false;
-    static boolean updateGlobalFlag = false;
-
+    static boolean globalsFlag = false;
+    
     // Our PID
     static int pid = -1;
 
@@ -257,6 +257,14 @@ public class DSimState extends SimState
 
     //// DISTINGUISHED OBJECTS
 
+
+	/** To use distinguished objects, the distinguishedFlag must be set. You can turn
+		it on by calling the following inside your static { } region in your DSimState 
+		subclass */
+	public static void turnOnDistinguishedObjects()
+		{
+		distinguishedFlag = true;
+		}
 
 
     /**
@@ -577,6 +585,17 @@ public class DSimState extends SimState
     //// GLOBALS FACILITY
         
                 
+	/** To use the globals facility objects, the updateGlobals flag must be set. You can turn
+		it on by calling the following inside your static { } region in your DSimState 
+		subclass */
+	public static void turnOnGlobals()
+		{
+		globalsFlag = true;
+		}
+
+
+                
+                
     // implement in subclass. Default simply returns the first one.
     protected Serializable[] arbitrateGlobals(ArrayList<Serializable[]> allGlobals)
         {
@@ -883,7 +902,7 @@ public class DSimState extends SimState
         Timing.stop(Timing.MPI_SYNC_OVERHEAD);
         loadBalance();
                 
-        if (updateGlobalFlag == true) {
+        if (globalsFlag == true) {
             updateGlobals(); //only happens every updateGlobalInterval steps
             }
         

@@ -13,6 +13,12 @@ public class DBall extends DEntity implements Distinguished{
         
     private static final long serialVersionUID = 1;
 
+	static
+		{
+		turnOnDistinguished();
+		}
+    
+
     // used to determine if the ball is stuck
     public Double2D stillPos;                           // last position
     public double dt;                                   // delta time--how many steps it has been still

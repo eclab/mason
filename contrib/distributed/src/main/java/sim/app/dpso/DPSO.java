@@ -23,8 +23,10 @@ public class DPSO extends DSimState {
         
     private static final long serialVersionUID = 1;
 
-
-
+	static
+		{
+		turnOnGlobals();
+		}
     
     public int width = 10;
     public int height = 10;
