@@ -165,7 +165,7 @@ public class Schedule implements java.io.Serializable
         }
     
     /** Returns the current timestep 
-        @deprecated use getTime()
+        @Deprecated use getTime()
     */
     public double time() { return getTime(); }
 

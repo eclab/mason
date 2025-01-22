@@ -254,7 +254,7 @@ public class AsynchronousSteppable implements Stoppable
         as opposed to being started fresh.  */
     protected void run(boolean resuming, boolean restoringFromCheckpoint) { run(resuming); }
     
-    /** @deprecated override run(resuming, restoringFromCheckpoint) instead.  */
+    /** @Deprecated override run(resuming, restoringFromCheckpoint) instead.  */
     protected void run(boolean resuming) { }
     
     /** This method should cause the loop created in run(...) to die.  If pausing is true, then you may assume
@@ -315,7 +315,7 @@ public class AsynchronousSteppable implements Stoppable
     
     /** Fires up the AsynchronousSteppable after a pause().
         If it's already unpaused or not running, nothing happens. 
-        @deprecated use resume(boolean)
+        @Deprecated use resume(boolean)
     */
     public final void resume() { resume(false); }
         
@@ -360,7 +360,7 @@ public class AsynchronousSteppable implements Stoppable
         
     /** Call this method to get a Steppable, which when called, executes top() on the AsynchornousSteppable.
         You can then schedule this Steppable to occur at some point in the future on a schedule. 
-        @deprecated Will be deleted in the future.
+        @Deprecated Will be deleted in the future.
     */
     public final Steppable stopper()
         {
