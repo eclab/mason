@@ -95,6 +95,7 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Named
                 {
     			public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper, MouseEvent event, DrawInfo2D range, int type)
     				{
+    				// Here we're going to print out movement information if tracking is turned on.
 			        synchronized(guistate.state.schedule)
             			{
 						boolean val = super.handleMouseEvent(guistate, manipulating, wrapper, event, range, type);
