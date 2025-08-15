@@ -272,7 +272,7 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
     */
     public boolean removeReceiver(Receiver receiver)
         {
-        if (receivers.contains(receiver)) return false;
+        if (!receivers.contains(receiver)) return false;
         receivers.remove(receiver);
         return true;
         }
