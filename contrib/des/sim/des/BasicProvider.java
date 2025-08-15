@@ -123,7 +123,7 @@ public abstract class BasicProvider extends Provider
         else return null;
         }
     public boolean hideEntities() { return true; }
-    
+        
     /** Builds a provider with no typical provided resource type at all.  This
         should only be called by classes such as Decomposer which do not
         have a typical provided resource type. */

@@ -41,14 +41,24 @@ public class Composer extends Middleman
         throw new RuntimeException("Provided resource " + res + " is not among the ones listed as valid for composition by this Composer.");
         }
 
-    void throwInvalidMinMax(Resource min, double max)
+    void throwInvalidMinMax(Resource res, double min, double max)
         {
-        throw new RuntimeException("Resource " + min + " has a minimum of " + min.getAmount() + " but a maximum of " + max + ", which is not permittedReceived.");
+        throw new RuntimeException("Resource " + res + " has a minimum of " + min + " but a maximum of " + max + ", which is not permittedReceived.");
         }
 
     void throwInvalidEntityMax(Entity e, double max)
         {
-        throw new RuntimeException("Resource " + e + " is an entity but has a real-valued maximum " + max);
+        throw new RuntimeException("Resource " + e + " is an entity but must have an integer maximum.  Maximum is presently " + max);
+        }
+        
+    void throwInvalidEntityMin(Entity e, double min)
+        {
+        throw new RuntimeException("Resource " + e + " is an entity but must have an integer minimum >= 1.  Minimum is presently " + min);
+        }
+        
+    void throwUnknownResource(Resource res)
+        {
+        throw new RuntimeException("Resource " + res + " is not used by this Composer.");
         }
         
     class Node
@@ -123,45 +133,79 @@ public class Composer extends Middleman
     Node[] totals;
     
     /** Builds a composer which outputs composite entities of the given type.  Each entity
-        consists of resources with the given minimums and maximums.  If a resource is an
-        entity, and its maximum (which must be an integer) is larger than 1, this 
-        indicates that you want more than one of this entity present in the composition. 
+        consists of a set of resources each with a minimum and a maximum.  If a resource is an
+        entity, its minimum and maximum must be integers >= 1. 
         
         <p>Throws a RuntimeException if there is a duplicate among the provided resources, or
-        if a minimum is > its maximum, or if a resource is an Entity but its maximum is
+        if a minimum is > its maximum, or if a resource is an Entity but its minimum or maximum is
         not an integer.
     */
-    public Composer(SimState state, Entity typicalProvided, Resource[] minimums, double[] maximums)
+    public Composer(SimState state, Entity typicalProvided, Resource[] resources, double[] minimums, double[] maximums)
         {
         super(state, typicalProvided);
-        mappedTotals = new HashMap<Integer, Node>();
-        totals = new Node[minimums.length];
-        permittedReceived = new Resource[minimums.length];
+        if (resources == null) throw new RuntimeException("resources cannot be null.");
+        if (minimums == null) throw new RuntimeException("minimums cannot be null.");
+        if (maximums == null) throw new RuntimeException("minimums cannot be null.");
+        if (resources.length != minimums.length) throw new RuntimeException("resources and minimums must have the same length.");
+        if (resources.length != maximums.length) throw new RuntimeException("resources and maximums must have the same length.");
+        setup(typicalProvided, resources, minimums, maximums);
+        }
+
+    /** Builds a composer which outputs composite entities of the given type.  Each entity
+        consists of a set of resources each with a minimum and a maximum.  The minimum value of
+        a resource is its amount (Entities always have an amount of 1).  If a resource is an entity, 
+        its maximum must be an integer >= 1. 
         
-        for(int i = 0; i < minimums.length; i++)
+        <p>Throws a RuntimeException if there is a duplicate among the provided resources, or
+        if a minimum is > its maximum, or if a resource is an Entity but its minimum or maximum is
+        not an integer.
+    */
+    public Composer(SimState state, Entity typicalProvided, Resource[] resources, double[] maximums)
+    	{
+        super(state, typicalProvided);
+        if (resources == null) throw new RuntimeException("minimums cannot be null.");
+        if (maximums == null) throw new RuntimeException("minimums cannot be null.");
+        if (resources.length != maximums.length) throw new RuntimeException("resources and maximums must have the same length.");
+
+		double[] minimums = new double[resources.length];
+		for(int i = 0; i < minimums.length; i++) minimums[i] = resources[i].getAmount();
+        setup(typicalProvided, resources, minimums, maximums);
+    	}
+    	
+    	
+    void setup(Entity typicalProvided, Resource[] resources, double[] minimums, double[] maximums)
+        {
+        mappedTotals = new HashMap<Integer, Node>();
+        totals = new Node[resources.length];
+        permittedReceived = new Resource[resources.length];
+        
+        for(int i = 0; i < resources.length; i++)
             {
-            permittedReceived[i] = minimums[i].duplicate();
+            permittedReceived[i] = resources[i].duplicate();
             permittedReceived[i].clear();
             
-            if (mappedTotals.get(minimums[i].getType()) != null)  // uh oh, already have one!
+            if (mappedTotals.get(resources[i].getType()) != null)  // uh oh, already have one!
                 {
-                throwDuplicateType(minimums[i]);
+                throwDuplicateType(resources[i]);
                 }
-            else if (minimums[i].getAmount() < 0 || maximums[i] < minimums[i].getAmount() || 
-                maximums[i] != maximums[i] || minimums[i].getAmount() != minimums[i].getAmount())
+            else if (minimums[i] < 0 || maximums[i] < minimums[i] || maximums[i] != maximums[i] || minimums[i] != minimums[i])
                 {
-                throwInvalidMinMax(minimums[i], maximums[i]);
+                throwInvalidMinMax(resources[i], minimums[i], maximums[i]);
                 }
-            else if (minimums[i] instanceof Entity && maximums[i] != (int)maximums[i])  // it's not an integer
+            else if (resources[i] instanceof Entity && maximums[i] != (int)maximums[i])  // it's not an integer
                 {
-                throwInvalidEntityMax((Entity)minimums[i], maximums[i]);
+                throwInvalidEntityMax((Entity)resources[i], maximums[i]);
+                }
+            else if (resources[i] instanceof Entity && (minimums[i] != (int) minimums[i] || minimums[i] < 1))  // it's not an integer >= 1
+                {
+                throwInvalidEntityMin((Entity)resources[i], minimums[i]);
                 }
             else
                 {
-                Resource res = minimums[i].duplicate();
+                Resource res = resources[i].duplicate();
                 res.clear();            // so it's 0.0 if a CountableResource
-                Node node = new Node(res, minimums[i].getAmount(), maximums[i]);
-                mappedTotals.put(minimums[i].getType(), node);
+                Node node = new Node(res, minimums[i], maximums[i]);
+                mappedTotals.put(resources[i].getType(), node);
                 totals[i] = node;
                 }
             }
@@ -208,6 +252,99 @@ public class Composer extends Middleman
             }
         }
         
+    /** Rescinds some of the Resource gathered so far.  This would normally be done if for some reason an
+		upstream Provider needs to claw back some Resource it had previously offered to the Composer.
+		This is done as follows.  First, it finds the given Resource, by type, among those in the Composer's stock.
+    	If there is no such Resource, throws an error.  Otherwise, if the Resources is
+    	a CountableResource, reduces the Composer's stock of the given Resource by up to 
+    	resource.getAmount() and returns it as a new Resource.  If EXACTLY is true, then the 
+    	Composer's stock must contain at least resource.getAmount() -- and so exactly
+    	resource.getAmount() can be returned -- else null is returned.  
+    	
+    	<p>If the Resource instead is an Entity, then if the Composer has at least one 
+    	Entity of this type, then one Entity is removed from the stock and returned.  If 
+    	the Composer has no stock, then null is returned.  EXACTLY is ignored.
+    */
+    public Resource rescind(Resource resource, boolean exactly)
+    	{
+    	// find the resource list
+    	for(int i = 0; i < permittedReceived.length; i++)
+    		{
+    		if (permittedReceived[i].isSameType(resource))
+    			{
+    			// found it!
+    			if (totals[i].entity != null)		// it's an entity
+    				{
+    				if (totals[i].entityCount > 0)	// we have one to rescind
+    					{
+    					totals[i].entityCount--;
+    					return totals[i].entity[totals[i].entityCount];	// the top one before we reduced
+    					}
+    				else return null;					// couldn't provide one
+    				}
+    			else
+    				{
+    				double amt = totals[i].resource.getAmount();
+    				if (amt >= resource.getAmount())	// we can rescind the whole amount requested
+    					{
+    					return totals[i].resource.reduce(resource.getAmount());
+    					}
+    				else if (amt > 0 && !exactly)		// we can rescind SOME of the amount requested
+    					{
+    					return totals[i].resource.reduce(amt);
+    					}
+    				else return null;
+    				}
+    			}
+    		}
+		throwUnknownResource(resource);
+		return null;			// never happens
+    	}
+    	
+    /** Returns the amount of Resource, by type, the Composer has in stock.  If the Composer
+    	doesn't use the provided Resource, an exception is thrown. */
+    public double getAmount(Resource resource)
+    	{
+    	// find the resource list
+    	for(int i = 0; i < permittedReceived.length; i++)
+    		{
+    		if (permittedReceived[i].isSameType(resource))
+    			{
+    			// found it!
+    			if (totals[i].entity != null)		// it's an entity
+    				{
+    				return totals[i].entityCount;
+    				}
+    			else
+    				{
+    				return totals[i].resource.getAmount();
+    				}
+    			}
+    		}
+		throwUnknownResource(resource);
+		return -1;			// never happens
+    	}
+    	
+    /** Returns the amount of Resource in stock for each Resource used by the Composer.
+    	The order of the returned array is the same as the order of the Resources
+    	returned by getPermittedReceived(). */
+    public double[] getAmounts()
+    	{
+    	double[] amts = new double[totals.length];
+    	for(int i = 0; i < amts.length; i++)
+    		{
+    		if (totals[i].entity != null)
+    			{
+    			amts[i] = totals[i].entityCount;
+    			}
+    		else
+    			{
+    			amts[i] = totals[i].resource.getAmount();
+    			}
+    		}
+    	return amts;
+    	}
+
     protected void deploy()
         {
         // have we met the minimum counts yet?

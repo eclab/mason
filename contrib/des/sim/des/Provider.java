@@ -577,7 +577,20 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
         Entities, then null is returned.  */
     public abstract Entity[] getEntities();
     public boolean hideEntities() { return true; }
-    
+    /** Returns in an array all the current Entities the Provider can provide, as a 
+    	java.util.List.  You can
+        modify the List (it's yours), but do not modify the Entities stored inside, as they
+        are the actual Entities stored in the Provider.  If this Provider does not provide
+        Entities, then null is returned.  You may wish to override this method to implement
+        it more efficiently: the default form just calls getEntities() and then converts
+        it into a list. */
+    public java.util.List getEntitiesAsList()
+    	{
+    	Entity[] ent = getEntities();
+    	if (ent == null) return null;
+    	else return Arrays.asList(ent);
+    	}
+    public boolean hideEntitiesAsList() { return true; }
     /** 
         Makes an offer of up to the given amount to the given receiver.
         If the typical provided resource is an ENTITY, then atMost is ignored.

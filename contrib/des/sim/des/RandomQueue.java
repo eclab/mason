@@ -110,6 +110,12 @@ public class RandomQueue extends Queue
         return (Entity[])(randomEntities.toArray(new Entity[numEntities()]));
         }
 
+	// More efficient than the default
+    public java.util.List getEntitiesAsList()
+    	{
+    	return new ArrayList<Entity>(randomEntities);
+    	}
+
     protected boolean offerReceiver(Receiver receiver, double atMost)
         {
         if (!getMakesOffers())
