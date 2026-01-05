@@ -22,7 +22,7 @@ CHANGES.  The changes from previous versions are listed in the CHANGES file.
 If you have any questions, you have two routes.  First, check out the
 MASON-INTEREST-L discussion group on the MASON website.  Second, the MASON
 website also lists a help email address you can send mail to if you get
-desperate.  The website URL is http://cs.gmu.edu/~eclab/projects/mason/
+desperate.  The website URL is http://people.cs.gmu.edu/~eclab/projects/mason/
 Please do NOT mail the developers directly.  Post to the discussion group. 
 
 Note that most of the subdirectories contain README files describing the
@@ -45,7 +45,7 @@ Quick start using the pre-made jar file.
 
 1. Optionally install Java3D.
 
-2. On the MASON web page (https://cs.gmu.edu/~eclab/projects/mason/) there
+2. On the MASON web page (https://people.cs.gmu.edu/~eclab/projects/mason/) there
    is a link to a zip file ("Libraries").  Inside that zip file are several
    jar files.  Add them all to your CLASSPATH.
 
@@ -63,7 +63,7 @@ Building from the Makefile
 
 1. Optionally install Java3D.
 
-2. On the MASON web page (https://cs.gmu.edu/~eclab/projects/mason/) there
+2. On the MASON web page (https://people.cs.gmu.edu/~eclab/projects/mason/) there
    is a link to a zip file ("Libraries").  Inside that zip file are several
    jar files.  Add them all to your CLASSPATH.
 

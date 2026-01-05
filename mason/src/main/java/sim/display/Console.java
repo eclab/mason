@@ -1809,7 +1809,7 @@ public class Console extends JFrame implements Controller
             spacer.setFont(new Font("Dialog",0,6));
             b.add(spacer);
             
-            j = new JLabel("http://cs.gmu.edu/~eclab/projects/mason/");
+            j = new JLabel("http://people.cs.gmu.edu/~eclab/projects/mason/");
             b.add(j);
 
             spacer = new JLabel(" ");

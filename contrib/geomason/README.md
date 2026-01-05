@@ -1,7 +1,7 @@
 ## About
 GeoMason is an optional extension to MASON that adds support for vector and raster geospatial data.
 
-You can find the Manual on the [Project Site](https://cs.gmu.edu/~eclab/projects/mason/extensions/geomason/)
+You can find the Manual on the [Project Site](https://people.cs.gmu.edu/~eclab/projects/mason/extensions/geomason/)
 
 <br/>
 GeoMason has a dependency on the Java Topology Suite (JTS).  Building

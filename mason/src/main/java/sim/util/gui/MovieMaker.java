@@ -107,7 +107,7 @@ public class MovieMaker
                 "iMovie 10.  iMovie does not work with 32-bit RGB: use the 16 or 24 RGB bit formats in MASON.\n\n"+
                 "Final Cut Pro.  FCP works with any of the RGB formats.\n\n" +
                 "IN SHORT: We suggest you save out in 24-bit RGB.\n\n" +
-                "See http://cs.gmu.edu/~eclab/projects/mason/extensions/movies/ for more information.";
+                "See http://people.cs.gmu.edu/~eclab/projects/mason/extensions/movies/ for more information.";
             int myNumberOfPixels = 600; // our word-wrap pixel length
             JLabel label = new JLabel();
             label.setText("<html><br><b>Notes</b><br><font size='-2'>" + 

@@ -16,4 +16,4 @@ even though it implements all of Random's methods.
 
 BTW, if you'd like a Mersenne Twister  subclass of Random, we have one.  It's also
 much easier to understand as it doesn't have all the hard-coded optimizations inside.
-Take a look at it in the ECJ distribution (http://cs.gmu.edu/~eclab/projects/ecj/)
+Take a look at it in the ECJ distribution (http://people.cs.gmu.edu/~eclab/projects/ecj/)

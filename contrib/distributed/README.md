@@ -5,7 +5,7 @@ Distributed MASON an effort to host MASON in a distributed fashion over many mac
 Distributed MASON is in a very early research-oriented prototype stage, with lots of bugs, API issues, efficiency concerns, etc. It's not for general consumption yet, but if you are a hacker we'd love some collaboration or input. Expect radical, non-backward-compatible changes to it over the next many months.
 
 
-You can find the Manual and JavaDocs on the [Project Site](https://cs.gmu.edu/~eclab/projects/mason/extensions/distributed/)
+You can find the Manual and JavaDocs on the [Project Site](https://people.cs.gmu.edu/~eclab/projects/mason/extensions/distributed/)
 
 
 

@@ -242,7 +242,7 @@ George Mason University}
 
 \vspace{5in}
 \noindent\Large\bf Where to Obtain MASON\\
-\large\rm http:/\!/cs.gmu.edu/\!\(\sim\)eclab/projects/mason/
+\large\rm http:/\!/people.cs.gmu.edu/\!\(\sim\)eclab/projects/mason/
 
 \clearpage
 
@@ -256,7 +256,7 @@ George Mason University}
 
 \noindent {\Large\bf Get the latest version of this document or suggest improvements here:}
 
-\reference{http:/\!/cs.gmu.edu/\!\(\sim\)eclab/projects/mason/}
+\reference{http:/\!/people.cs.gmu.edu/\!\(\sim\)eclab/projects/mason/}
 
 \vspace{0.15in}
 
@@ -302,7 +302,7 @@ Most of these toolkits were developed for small jobs.  MASON is distinguished am
 \item MASON is written in Java in order to make it easy to run in heterogeneous computer environments.  But it also is written in very carefully written Java, with an eye firmly fixed towards efficiency.  Notably, a number of poorly-written standard Sun classes are replaced with properly written MASON equivalents.  Java has a reputation for being slow, but this is largely due to Sun's bad libraries and design decisions (generics and boxing, iterators, etc.).  MASON eschews these internally.
 \item MASON has a high-quality random number generator (Mersenne Twister) and uses the fastest known implementation of it.
 \item MASON models are largely {\it duplicable},\footnote{Not to be confused with {\it replicable}: where the model can be built again in (say) NetLogo and it'll more or less run the same.  That's also true for MASON, but it's in some sense a lower standard.} meaning that if you run the simulation with exactly the same parameters (including random number seed) it'll run exactly the same way, even on different machines.\footnote{Well, that's not quite true.  MASON doesn't use the \variable{strictfp} keyword or the \class{java.lang.StrictMath} class, so if you move to a different CPU you may get slightly different floating point results.  However if you want to guarantee full duplicability, you can add the \variable{strictfp} keyword and replace \class{java.lang.Math} references with \class{java.lang.StrictMath} and everything should be perfectly duplicable, albeit slower.}
-\item MASON dovetails nicely with ECJ\footnote{http:/\!/cs.gmu.edu/\(\sim\)eclab/projects/ecj/}, a very popular evolutionary computation (genetic algorithms, etc.) toolkit I wrote, which is designed (not surprisingly) for everything from single laptops to  large jobs involving thousands of machines.
+\item MASON dovetails nicely with ECJ\footnote{http:/\!/people.cs.gmu.edu/\(\sim\)eclab/projects/ecj/}, a very popular evolutionary computation (genetic algorithms, etc.) toolkit I wrote, which is designed (not surprisingly) for everything from single laptops to  large jobs involving thousands of machines.
 \item MASON is modular and consistent.  There is a high degree of separation and independence among elements of the system.  This allows you to use, and recombine, different parts of the system in unexpected ways.  MASON is very highly hackable.  Indeed, a number of MASON's classes are used, with our blessing, in MASON's competition.\footnote{Well, not really competition: we're all friends here.}
 \end{itemize}
 
@@ -356,7 +356,7 @@ At right is a general overview of the MASON architecture.
 \end{itemize}
 
 \paragraph{Installing Libraries}
-You'll need to install some libraries to make full use of MASON, and they're required if you're going to compile anything (and you're almost certainly going to want to do that!)  The libraries may be found on the MASON web page\footnote{http:/\!/cs.gmu.edu\(\sim\)eclab/projects/mason/}, and consist of the following:
+You'll need to install some libraries to make full use of MASON, and they're required if you're going to compile anything (and you're almost certainly going to want to do that!)  The libraries may be found on the MASON web page\footnote{http:/\!/people.cs.gmu.edu\(\sim\)eclab/projects/mason/}, and consist of the following:
 
 \begin{itemize}
 \item The JFreeChart charting library.
@@ -4265,7 +4265,7 @@ Because ParallelSequence uses threads, you'll need to specify them in the constr
 \mthd{public ParallelSequence(Collection agents, int numThreads)} Builds a ParallelSequence for the given array of agents (there should be no null values, and the array ought not be modified later).  When its \method{step(...)} method is called, ParallelSequence will generate {\it numThreads} number of threads, then divide the agents roughly evenly among the various threads.  Each thread will then step its assigned agents in some order.  ParallelSequence will wait for all threads to complete this task before returning.  If for {\it numThreads} you pass in \variable{ParallelSequence.CPUS}, then ParallelSequence will query Java for the number of CPUs or cores on the system and spawn exactly that number of threads.  If you instead pass in \variable{ParallelSequence.STEPPABLES}, then ParallelSequence will spawn one thread for each Steppable in the internal array.
 \end{methods}
 
-\sidebar{ParallelSequence has a thread pool?  Can I use that?}{Sorry, it's private.  But if you don't want to use Java's overcomplex concurrency package, you can find a simple threadpool class in MASON's sister package, ECJ.  Look for the \file{ec/util/ThreadPool.java} file in ECJ, which you can download at http:/\!/cs.gmu.edu/\(\sim\)eclab/projects/ecj/}
+\sidebar{ParallelSequence has a thread pool?  Can I use that?}{Sorry, it's private.  But if you don't want to use Java's overcomplex concurrency package, you can find a simple threadpool class in MASON's sister package, ECJ.  Look for the \file{ec/util/ThreadPool.java} file in ECJ, which you can download at http:/\!/people.cs.gmu.edu/\(\sim\)eclab/projects/ecj/}
 
 Allocating and starting threads is very expensive.  To be efficient, ParallelSequence allocates the threads when constructed, then holds them ready in reserve in a pool until the \method{step(...)} method is called.  It then sets them going, and when they are done, they once again are held waiting in the pool.  The threads are set to be daemon threads so they die if MASON exits.  This is far faster than creating and destroying them every time.  
 
@@ -5593,7 +5593,7 @@ There are many approaches to solving such problems: for example, quad-trees, KD-
 
 For example, if your Object is being stored at \(\langle 92.3, -41.4\rangle\) in a \Class{sim.field.continuous.Continuous2D} with a discretization of 10 units, MASON will first create a discretized coordinate of the form \(\langle 9, -5\rangle\), and will then store the Object internally associated with the discretized coordinate.  Finally, it will then retain the fact that the Object is actually located at  \(\langle 92.3, -41.4\rangle\), using a hash table.
 
-\sidebar{Can I use this for vector GIS?}{Sure, in theory yes.  But vector GIS has its own domain-specific assumptions which are somewhat different, so it wouldn't be particularly efficient.  However you're in luck!  MASON has an entire vector GIS facility available as a plug-in called {\bf GeoMason}, which rests on a more appropriate facility, the Java Topology Suite (or JTS).  See the MASON web page at http:/\!/cs.gmu.edu/\(\sim\)eclab/projects/mason/ for more information.}  Why do this?  Because it makes neighborhood lookups efficient, if most of your lookups tend to fall within a certain range.  Let's say that you've picked a discretization of 10 because you typically want to know all the elements within 4 units in any direction of a target point.  That's your typical query.  If you ask MASON, for example, for all the Objects within 4 units distance of the point \(\langle 32.3, 49.4\rangle\), MASON creates the bounding box from \(\langle 28.3, 45.4\rangle\) to \(\langle 36.3, 53.4\rangle\).  This discretizes to the box of four cells from \(\langle 2, 4\) to \(\langle 3, 5\rangle\) inclusive.  Depending on the query, MASON either looks up the contents of these four cells and either returns them (they might contain Objects further than you asked for), or it whittles the Objects down to just the ones in the region you asked for by testing distance using the Objects' real-valued coordinates.  This works reasonably well in practice but there are guidelines you'll need to consider as discussed in the next Section.
+\sidebar{Can I use this for vector GIS?}{Sure, in theory yes.  But vector GIS has its own domain-specific assumptions which are somewhat different, so it wouldn't be particularly efficient.  However you're in luck!  MASON has an entire vector GIS facility available as a plug-in called {\bf GeoMason}, which rests on a more appropriate facility, the Java Topology Suite (or JTS).  See the MASON web page at http:/\!/people.cs.gmu.edu/\(\sim\)eclab/projects/mason/ for more information.}  Why do this?  Because it makes neighborhood lookups efficient, if most of your lookups tend to fall within a certain range.  Let's say that you've picked a discretization of 10 because you typically want to know all the elements within 4 units in any direction of a target point.  That's your typical query.  If you ask MASON, for example, for all the Objects within 4 units distance of the point \(\langle 32.3, 49.4\rangle\), MASON creates the bounding box from \(\langle 28.3, 45.4\rangle\) to \(\langle 36.3, 53.4\rangle\).  This discretizes to the box of four cells from \(\langle 2, 4\) to \(\langle 3, 5\rangle\) inclusive.  Depending on the query, MASON either looks up the contents of these four cells and either returns them (they might contain Objects further than you asked for), or it whittles the Objects down to just the ones in the region you asked for by testing distance using the Objects' real-valued coordinates.  This works reasonably well in practice but there are guidelines you'll need to consider as discussed in the next Section.
 
 MASON's continuous package is \Package{sim.field.continuous}, and it contains only two classes:
 
@@ -5891,7 +5891,7 @@ The network package does {\it not} presently support hypergraphs\footnote{A hype
 
 First, there's MASON's own SocialNetworks plug-in, which subclasses Network to provide a fairly rich collection of social network facilities.  This package integrates well with MASON and is fast: but it's been only lightly tested, so beware of the possibility of bugs.   
 
-Second, MASON can be integrated with Jung, a large and well-regarded Java-based social networks library.  You can get more information about both options on the MASON web page at http:/\!/cs.gmu.edu/\(\sim\)eclab/projects/mason/}
+Second, MASON can be integrated with Jung, a large and well-regarded Java-based social networks library.  You can get more information about both options on the MASON web page at http:/\!/people.cs.gmu.edu/\(\sim\)eclab/projects/mason/}
 Graphs in general have two elements: {\bf nodes} and {\bf edges}.  Each edge connects two nodes (the two nodes can be the same node).  An edge can be optionally {\bf directed}, that is, it specifies that one of its nodes is the ``{\it from}'' node and the other is the ``{\it to}'' node.  An edge can also optionally be {\bf labeled} with an Object.  If this Object is a number, the edge is said to be {\bf weighted} with that number.
 
 At right, Figure \ref{NetworkUML} shows the \Package{sim.field.network} package in its entire two-class glory, consisting of the class \Class{sim.field.network.Network}, which holds the graph (or network),\footnote{They're synonymous.  I'm a computer science guy: we tend to say {\it graph}.} and the class \Class{sim.field.network.Edge}.  Notice the item that's missing: a class for {\it nodes}.  This is because in the Network class, any Object except for null can be a node in the graph.  Edges on the other hand require the distinctive Edge class: however this class can hold any Object as its label or weight.
@@ -13315,7 +13315,7 @@ The report would be located in a file called \texttt{/tmp/out.csv} (or \texttt{/
 
 \section{Model Optimization}
 
-MASON has a massively distributed model optimization and calibration facility in combination with ECJ,\footnote{http:/\!/cs.gmu.edu/\(\sim\)eclab/projects/ecj/} a massively distributed evolutionary computation toolkit.  The facility is designed to provide both very flexible model optimization and calibration, and also easy calibration of basic model parameters.
+MASON has a massively distributed model optimization and calibration facility in combination with ECJ,\footnote{http:/\!/people.cs.gmu.edu/\(\sim\)eclab/projects/ecj/} a massively distributed evolutionary computation toolkit.  The facility is designed to provide both very flexible model optimization and calibration, and also easy calibration of basic model parameters.
 
 \begin{wrapfigure}{r}[0in]{3.5in}
 \vspace{-1em}
@@ -13326,7 +13326,7 @@ As shown in the Figure at right, the general setup is as follows.  You will crea
 
 When the workers are fired up, they are told the IP address and the socket number of the master process.  The default socket port is {\bf 15000}.  If a worker was running on the same machine as the master (it'd be best if you had workers on many machines instead) the IP address would be {\bf 127.0.0.1} (or {\bf localhost}).    Each worker looks for a master process waiting at that port and IP address, and when one appears, they register themselves with it.
 
-When all the processes are up and running and registered, optimization begins.  ECJ's optimization techniques are evolutionary computation methods, which we do not discuss here in detail (you can read more about them in ECJ's manual, or in the free book {\it Essentials of Metaheuristics}.\footnote{https:/\!/cs.gmu.edu/\(\sim\)sean/book/metaheuristics/}  In general, you will specify which model parameters, agent behaviors, or whatnot, should be optimized.  ECJ will then create multiple random assortments of these (in evolutionary computation parlance, ECJ will create a {\it population} of {\it individuals}), then plug them each assortment into the worker processes to be {\it assessed}.  Assessment consists of using these parameters and behaviors in a MASON model, running it, and seeing how it performs.  After a model has been run some \(T\) times, the worker returns to the master a {\it fitness} describing the performance of that given group of model parameter settings.  The ECJ master uses these fitness assessments to resample a next {\it generation} of parameter settings etc., then tries them again, with the goal of finding the fittest possible settings.  
+When all the processes are up and running and registered, optimization begins.  ECJ's optimization techniques are evolutionary computation methods, which we do not discuss here in detail (you can read more about them in ECJ's manual, or in the free book {\it Essentials of Metaheuristics}.\footnote{https:/\!/people.cs.gmu.edu/\(\sim\)sean/book/metaheuristics/}  In general, you will specify which model parameters, agent behaviors, or whatnot, should be optimized.  ECJ will then create multiple random assortments of these (in evolutionary computation parlance, ECJ will create a {\it population} of {\it individuals}), then plug them each assortment into the worker processes to be {\it assessed}.  Assessment consists of using these parameters and behaviors in a MASON model, running it, and seeing how it performs.  After a model has been run some \(T\) times, the worker returns to the master a {\it fitness} describing the performance of that given group of model parameter settings.  The ECJ master uses these fitness assessments to resample a next {\it generation} of parameter settings etc., then tries them again, with the goal of finding the fittest possible settings.  
 
 You will have only one Master but can have a great number of workers: we've tested with hundreds. These workers can be, and typically are, on separate CPUs or even on separate machines.  Distributed model optimization requires transferring information over a network, and the network cost can be high.  It's worthwhile if the amount of time necessary to run a model is relatively long (at least many seconds) so the network transfer cost is minimal in comparison.    Fortunately, that's the typical situation for ABM models.
 
@@ -13505,7 +13505,7 @@ This tells us that we're loading from the file \file{mymodel.params}, and that a
 |               H. Mooers, J. O'Beirne, L. Manzoni, K. Talukder, S. McKay,
 |               J. McDermott, J. Zou, A. Rutherford, D. Freelan, E. Wei,
 |               S. Rajendran, A. Dhawan, B. Brumbac, J. Hilty, A. Kabir
-| URL: http://cs.gmu.edu/~eclab/projects/ecj/
+| URL: http://people.cs.gmu.edu/~eclab/projects/ecj/
 | Mail: ecj-help@cs.gmu.edu
 |       (better: join ECJ-INTEREST at URL above)
 | Date: July 1, 2017
@@ -13555,7 +13555,7 @@ I am slave /127.0.0.1/0
 |               H. Mooers, J. O'Beirne, L. Manzoni, K. Talukder, S. McKay,
 |               J. McDermott, J. Zou, A. Rutherford, D. Freelan, E. Wei,
 |               S. Rajendran, A. Dhawan, B. Brumbac, J. Hilty, A. Kabir
-| URL: http://cs.gmu.edu/~eclab/projects/ecj/
+| URL: http://people.cs.gmu.edu/~eclab/projects/ecj/
 | Mail: ecj-help@cs.gmu.edu
 |       (better: join ECJ-INTEREST at URL above)
 | Date: July 1, 2017
@@ -14270,7 +14270,7 @@ If you're on Linux, or for some reason don't want to or cannot install from Home
 %    \item \lstinline[style=Bash]{cd [MASON root dir]}
 %    \item Ensure you have git LFS installed, you can do this by running:  \lstinline[style=Bash]{git lfs install}
 %    \item \lstinline[style=Bash]{git clone https://github.com/eclab/mason}
-%    \item \lstinline[style=Bash]{Download the required libraries from the mason website https://cs.gmu.edu/~eclab/projects/mason/ and place in a "libraries" folder inside of the root project}
+%    \item \lstinline[style=Bash]{Download the required libraries from the mason website https://people.cs.gmu.edu/~eclab/projects/mason/ and place in a "libraries" folder inside of the root project}
 %    \item \lstinline[style=Bash]{mvn clean install}
 %\end{enumerate}
 
