@@ -119,7 +119,13 @@ public abstract class Inspector extends JPanel
     
     JButton updateButton = null;
     boolean showsUpdate = true;
+    
+    /** Returns true if the Inspector should display its Update (refresh) button regardless of 
+    	whether the inspector is volatile or not. */
     public boolean getShowsUpdate() { return showsUpdate; }
+
+    /** Sets whether the Inspector should display its Update (refresh) button regardless of 
+    	whether the inspector is volatile or not. */
     public void setShowsUpdate(boolean val) {  showsUpdate = val; updateRefresh(); }
         
     void updateRefresh()
