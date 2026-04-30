@@ -12,17 +12,40 @@ import sim.portrayal.continuous.*;
 import sim.engine.*;
 import sim.display.*;
 import javax.swing.*;
-import java.awt.Color;
-
+import java.awt.*;
+import sim.portrayal.*;
 
 public class InspectedNetworkWithUI extends GUIState
     {
     public Display2D display;
     public JFrame displayFrame;
 
+
+    Inspector ballsAndBandsInspector;
     NetworkPortrayal2D edgePortrayal = new NetworkPortrayal2D();
     ContinuousPortrayal2D nodePortrayal = new ContinuousPortrayal2D();
-    SocialNetworkInspector inspector = new SocialNetworkInspector();
+    SocialNetworkInspector inspector = new SocialNetworkInspector()
+    	{
+    	public void updateInspector()
+    		{
+    		super.updateInspector();
+    		Component[] components = getComponents();
+    		for(int i = 0;i < components.length; i++)
+    			{
+    			if (components[i] instanceof Inspector)
+    				{
+    				((Inspector)components[i]).updateInspector();
+    				}
+    			}
+    		}
+
+    	public void createInspector(final GUIState state)
+    		{
+    		super.createInspector(state);
+    		add(ballsAndBandsInspector, BorderLayout.SOUTH);
+    		System.err.println("yo");
+    		}
+    	};
 
     public static void main(String[] args)
         {
@@ -49,6 +72,14 @@ public class InspectedNetworkWithUI extends GUIState
         super.load(state);
         setupPortrayals();
         }
+
+    public Inspector getInspector()	
+    	{
+    	ballsAndBandsInspector = super.getInspector();
+    	inspector.add(ballsAndBandsInspector, BorderLayout.SOUTH);
+    	return inspector;
+    	}
+
 
     public void setupPortrayals()
         {
@@ -84,7 +115,7 @@ public class InspectedNetworkWithUI extends GUIState
         displayFrame.setVisible(true);
         display.attach( edgePortrayal, "Bands" );
         display.attach( nodePortrayal, "Balls" );
-        display.attach( inspector, "Inspector" );
+        //display.attach( inspector, "Inspector" );
         }
 
     public void quit()

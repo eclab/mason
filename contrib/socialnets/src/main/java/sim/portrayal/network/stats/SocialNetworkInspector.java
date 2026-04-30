@@ -58,7 +58,7 @@ public class SocialNetworkInspector extends Inspector
         createInspector(state);
         }
         
-    void createInspector(final GUIState state)
+    public void createInspector(final GUIState state)
         {
         stat = new DisplayableNetworkStatistics(net);
         properties = new SimpleInspector(stat,state,"Network Properties");
@@ -75,9 +75,9 @@ public class SocialNetworkInspector extends Inspector
                 
         JPanel p = new JPanel();
         p.setLayout(new BorderLayout());
-
-        // make update button
         setLayout(new BorderLayout());
+
+/*        // make update button
         Box b = new Box(BoxLayout.X_AXIS);
         JButton updateButton = (JButton)makeUpdateButton();
         b.add(updateButton);
@@ -92,8 +92,10 @@ public class SocialNetworkInspector extends Inspector
         d = sacrificial.getMinimumSize();
         d.width = updateButton.getMinimumSize().width;
         updateButton.setMinimumSize(d);
-                
+*/
+
         // load other stuff
+        p.add(getHeader(), BorderLayout.NORTH);
         p.add(properties,BorderLayout.CENTER);
         add(p,BorderLayout.NORTH);
         add(l,BorderLayout.CENTER);

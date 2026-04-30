@@ -148,6 +148,7 @@ public abstract class PropertyInspector extends Inspector
     
     public static Bag getPropertyInspectorClassNames()
         {
+        new Throwable().printStackTrace();
         if (classes == null)
             {
             classes = new Bag();
@@ -214,16 +215,16 @@ public abstract class PropertyInspector extends Inspector
                 }       
             catch (ClassNotFoundException error) 
                 {
-                //error.printStackTrace();  // fail silently, it's annoying
+                error.printStackTrace();  // fail silently, it's annoying
                 continue;  // no class, can't make menu
                 }
             catch (NoClassDefFoundError error) // why does this even exist?
                 {
-                //error.printStackTrace();  // fail silently, it's annoying
+                error.printStackTrace();  // fail silently, it's annoying
                 continue;  // no class, can't make menu
                 }
             final Class theClass = _theClass;  // grrr, Java doesn't have proper closures
-            
+                        
             JMenuItem menu = new JMenuItem((String)(getMenuNameForPropertyInspectorClass((String)(classes.objs[x]))));
             popup.add(menu);
             if (!typesForClassCompatable((String)(classes.objs[x]),properties.getType(index)))
