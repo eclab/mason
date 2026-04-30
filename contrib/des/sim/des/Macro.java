@@ -60,6 +60,12 @@ public class Macro extends DESPortrayal implements Parented
     public void setField(DES2D field) { this.field = field; }
     public DES2D getField() { return field; }
 
+	/** Returns all objects added to the graph. */
+	public Parented[] getEverything() 
+		{ 
+		return everything.toArray(new Parented[everything.size()]); 
+		}
+
     /** Adds the object to the graph and indicates whether it should be stepped when Macro is stepped. */
     public boolean add(Parented obj, boolean step)
         {
