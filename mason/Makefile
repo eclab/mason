@@ -13,12 +13,11 @@ FLAGS = -g -Xlint:deprecation
 
 #sim/app/serengeti/*.java \
 
-
 VERSION = 22
 
 # Main java files, not including the 3D stuff
 SRCS = \
-sim/app/heatbugs/*.java\
+sim/app/heatbugs/*.java \
 sim/app/hexabugs/*.java \
 sim/app/asteroids/*.java \
 sim/app/antsforage/*.java \
