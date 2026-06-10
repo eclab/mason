@@ -35,6 +35,9 @@ public class SimState implements java.io.Serializable
     /** SimState's schedule */
     public Schedule schedule;
     
+    // All user parameters as {"a", "b"}, representing the command line parameter    -p  a=b
+    ArrayList<String[]> userParameters = new ArrayList<>();
+    
     // All registered AsynchronousSteppables
     HashSet asynchronous = new HashSet();
     // Lock for accessing the HashSet
@@ -109,13 +112,24 @@ public class SimState implements java.io.Serializable
         replaces the Schedule with a completely new one.  */
     public void start()
         {
-        // prime the generator so it's got better statistial properties
+        // prime the generator so it's got better statistical properties
         random = primeGenerator(random);
         // just in case
         cleanupAsynchronous();
         // reset schedule
         schedule.reset();
         schedule.clearBeforeAndAfter();
+		loadParameters(userParameters);
+        }
+        
+    /** Called immediately after start() to give your model a chance to modify
+    	some of its model parameters according to command-line strings of the
+    	form "-p a=b" provided by the user.  This string would be included
+    	in the ArrayList as { "a", "b" }.   If a user parameter is invalid,
+    	throw a RuntimeException to that effect.  The default implementation of
+    	this method does nothing.  */
+    public void loadParameters(ArrayList<String[]> userParams)
+        {
         }
         
     /** Called either at the proper or a premature end to the simulation. 
@@ -326,6 +340,29 @@ public class SimState implements java.io.Serializable
                 return args[x + 1];
         return null;
         }
+
+    protected static ArrayList<String[]> userParametersForKey(String[] args)
+        {
+        String key = "-p";
+        boolean error = false;
+        ArrayList<String[]> params = new ArrayList<>();
+        for(int x=0;x<args.length-1;x++)  // if a key has an argument, it can't be the last string
+            if (args[x].equalsIgnoreCase(key))
+                {
+                String[] ab = args[x + 1].split("=");
+                if (ab == null || ab.length != 2)
+                	{
+                	System.err.println("Invalid Model Parameter: " + args[x] + " " + args[x+1]);
+                	error = true;
+                	}
+                else
+                	{
+                	params.add(ab);
+                	}
+                }
+        if (error) return null;
+        else return params;
+        }
     
     long job = 0;
     long seed = 0;  // considered bad value
@@ -461,6 +498,10 @@ public class SimState implements java.io.Serializable
                 "                  from the recovered job and seed.\n" +
                 "                  Default: starts a new simulation rather than loading one, at\n" +
                 "                  job 0 and with the seed given in -seed.\n\n" + 
+                "-p a=b            Passes \"a\" and \"b\" to the model as parameters -- the model\n" +
+                "                  can do whatever it pleases with them.  You can have as many -p\n" +
+                "                  parameter pairs on the command line as you like.  Do not include\n" +
+                "                  spaces anywhere in your a=b string.\n\n" +
                 "-quiet            Does not print messages except for errors and warnings.\n" + 
                 "                  This option implies -time 0.\n" +
                 "                  Default: prints all messages.\n"
@@ -469,6 +510,12 @@ public class SimState implements java.io.Serializable
             }
 
         final boolean quiet = keyExists("-quiet", args);
+        
+        ArrayList<String[]> userParams = userParametersForKey(args);
+        if (userParams == null) 
+        	{
+        	throw new RuntimeException("Invalid user parameters (\"-p\")");
+        	}
 
         java.text.NumberFormat n = java.text.NumberFormat.getInstance();
         n.setMinimumFractionDigits(0);
@@ -582,6 +629,10 @@ public class SimState implements java.io.Serializable
             System.err.println("Cannot load from checkpoint and run in parallel at the same time.  Sorry.");
             System.exit(1);
             }
+        if (checkpointFile != null && userParams.size() > 0) 
+        	{
+            throw new RuntimeException("Cannot load from checkpoint and load user parameters at the same time.  Sorry");
+        	}
        
        
         // okay, now we actually get down to brass tacks
@@ -635,9 +686,10 @@ public class SimState implements java.io.Serializable
                             state = generator.newInstance(seed,args);
                             state.setJob(job);
                             state.setSeed(seed);
+                            state.userParameters = userParams;
                             if (!quiet) printlnSynchronized("Job: " + state.job() + " Seed: " + state.seed());
                             state.start();
-                            }
+                	        }
                         
                         NumberFormat rateFormat = NumberFormat.getInstance();
                         rateFormat.setMaximumFractionDigits(5);

@@ -236,8 +236,8 @@ George Mason University}
 \\
 \\
 \\
-\large\rm {\bf Manual Version 22}\\
-\large\rm  March 2024\\
+\large\rm {\bf Manual Version 22.1}\\
+\large\rm  June 2026\\
 %\large\rm Last Update July, 2022\\
 
 \vspace{5in}
@@ -247,7 +247,7 @@ George Mason University}
 \clearpage
 
 \small 
-\noindent {\Large\bf Copyright }  2010--2022 by Sean Luke.
+\noindent {\Large\bf Copyright }  2010--2026 by Sean Luke.
 
 \vspace{0.25in}
 \noindent {\Large\bf Thanks to } Claudio Cioffi Revilla, Matteo D'Auria, Ryan Moffatt, and Carlotta Domeniconi.
@@ -3795,6 +3795,7 @@ This isn't a well-known Java option, but it's enormously useful.
 
 
 \subsection{The \method{doLoop()} Method}
+\label{doloop}
 
 Ugh, that's getting ugly.  Though you can always fire up a MASON model as described above, if you're running the model from the command line (without visualization), there's a far easier approach: use SimState's \method{doLoop} method:
 
@@ -3890,6 +3891,11 @@ Format:           java MyModel \
                   Default: starts a new simulation rather than loading one, at
                   job 0 and with the seed given in -seed.
 
+-p a=b            Passes "a" and "b" to the model as parameters -- the model
+                  can do whatever it pleases with them.  You can have as many -p
+                  parameter pairs on the command line as you like.  Do not include
+                  spaces anywhere in your a=b string.
+
 -quiet            Does not print messages except for errors and warnings.
                   This option implies -time 0.
                   Default: prints all messages.
@@ -3915,11 +3921,12 @@ It'll be pretty rare that you'd need this.
 
 \subsection{Starting and Finishing}
 
-When a simulation is begun from the top-level, the first method called on it (other than the constructor) is \method{start()}.  The final method called at the end of the simulation run is \method{finish()}.  They're defined as follows:
+When a simulation is begun from the top-level, the first method called on it (other than the constructor) is \method{start()}, which in turn will call the optional method \method{loadParameters()}.  The final method called at the end of the simulation run is \method{finish()}.  They're defined as follows:
 
 \begin{methods}{\class{sim.engine.SimState}}
 \mthd{public void start()}  Called immediately before the schedule is iterated.  You will probably want to override this method to set up the simulation (or clean it up and get it ready again).  Be sure to call \code{super.start()} first.
 \mthd{public void finish()} Called immediately after the schedule is exhausted.  You may wish to override this method to clean up afterwards: for example, closing various streams.  Be sure to call \code{super.finish()} first.
+\mthd{public void loadParameters(ArrayList\(<\)String[]\(>\) userParams)}  Called by SimState.start() to load any parameters set by the user on the command-line (see Section~\ref{doloop}).  You can override this method to set up your simulation according to the parameters provided by the user on the command line.  If the user enters a command-line argument of the form \ \ \ \code{-p a=b}\ \ \  then \code{userParams} will contain a \code{String[2]} of the form \code{\{"a", "b"\}}.  If there are parse errors in the parameters or their values, you should throw a \code{RuntimeException}.  The default version of this method does nothing.  No parameters will be provided when the simulation is run from the GUI.
 \end{methods}
 
 The most common method to override, by far, is \method{start()} first.  Almost certainly, you'll override this  do these tasks:

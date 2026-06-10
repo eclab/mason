@@ -8,6 +8,7 @@ package sim.app.heatbugs;
 import sim.engine.*;
 import sim.field.grid.*;
 import sim.util.*;
+import java.util.*;
 
 
 public /*strictfp*/ class HeatBugs extends SimState  
@@ -123,6 +124,33 @@ public /*strictfp*/ class HeatBugs extends SimState
         buggrid = new SparseGrid2D(gridWidth, gridHeight);      
         }
     
+    public void loadParameters(ArrayList<String[]> userParams)
+        {
+        for(String[] param : userParams)
+        	{
+			String key = param[0];
+			String val = param[1];
+			if (key.equalsIgnoreCase("bugs"))
+				{
+				try
+					{
+					int size = Integer.parseInt(val);
+					if (bugCount >= 0) bugCount = size;
+					else throw new RuntimeException("bugs must be an integer >= 0.  Example:    -p bugs=200");
+					System.err.println("Changing Num Bugs to " + size);
+					}
+				catch (NumberFormatException ex)
+					{
+					throw new RuntimeException("bugs must be an integer >= 0.  Example:    -p bugs=200");
+					}
+				}
+			else
+				{
+				throw new RuntimeException("Unknown command line parameter    -p " + key + "=" + val);
+				}
+        	}
+        }
+
     ThreadedDiffuser diffuser = null;
         
     /** Resets and starts a simulation */
