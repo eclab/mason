@@ -199,7 +199,7 @@ public class BoundedDelay extends Delay
         return getLastDelay();
         }
     
-    void insert(DelayNode node, double delay)
+    protected void insert(DelayNode node, double delay)
         {
         int pos = currentDelayPos + (int)delay;
         if (pos > maxDelaySteps) pos -= maxDelaySteps;

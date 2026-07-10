@@ -140,14 +140,14 @@ public class MM1A extends SimState {
         probe.addReceiver(sink);
         
 /*
-        Steppable step = new Steppable()
-            {
-            public void step(SimState state)
-                {
-                System.err.println("" + probe.getSumThru() + " " + probe.getThruRate());
-                }
-            };
-        schedule.scheduleRepeating(step, 1000);
+  Steppable step = new Steppable()
+  {
+  public void step(SimState state)
+  {
+  System.err.println("" + probe.getSumThru() + " " + probe.getThruRate());
+  }
+  };
+  schedule.scheduleRepeating(step, 1000);
 */
 
         // draw and connect the block graphically

@@ -387,93 +387,93 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
         switch(offerPolicy)
             {            
             case OFFER_POLICY_FORWARD:
+            {
+            for(Receiver r : receivers)
                 {
-                for(Receiver r : receivers)
-                    {
-                    result = result || offerReceiver(r, Double.POSITIVE_INFINITY);
-                    if (result && getOffersTakeItOrLeaveIt()) break;
-                    }
+                result = result || offerReceiver(r, Double.POSITIVE_INFINITY);
+                if (result && getOffersTakeItOrLeaveIt()) break;
                 }
+            }
             break;
             case OFFER_POLICY_BACKWARD:
+            {
+            for(int i = receivers.size() - 1; i >= 0; i--)
                 {
-                for(int i = receivers.size() - 1; i >= 0; i--)
-                    {
-                    Receiver r = receivers.get(i);
-                    result = result || offerReceiver(r, Double.POSITIVE_INFINITY);
-                    if (result && getOffersTakeItOrLeaveIt()) break;
-                    }
+                Receiver r = receivers.get(i);
+                result = result || offerReceiver(r, Double.POSITIVE_INFINITY);
+                if (result && getOffersTakeItOrLeaveIt()) break;
                 }
+            }
             break;
             case OFFER_POLICY_ROUND_ROBIN:
-                {
-                if (receivers.size() == 0) 
-                    break;
+            {
+            if (receivers.size() == 0) 
+                break;
                                         
-                if (roundRobinPosition >= receivers.size())
-                    roundRobinPosition = 0;
+            if (roundRobinPosition >= receivers.size())
+                roundRobinPosition = 0;
                                         
-                int oldRoundRobinPosition = roundRobinPosition;
-                while(true)
-                    {
-                    Receiver r = receivers.get(roundRobinPosition);
-                    result = result || offerReceiver(r, Double.POSITIVE_INFINITY);
-                    if (result && getOffersTakeItOrLeaveIt()) 
-                        {
-                        roundRobinPosition++;           // we have to advance the round robin pointer anyway
-                        break;
-                        }
-                    else
-                        {
-                        roundRobinPosition++;
-                        }
-                                                                                                
-                    if (roundRobinPosition >= receivers.size())
-                        roundRobinPosition = 0;
-                    if (roundRobinPosition == oldRoundRobinPosition) break;         // all done!
-                    }
-                }
-            break;
-            case OFFER_POLICY_SHUFFLE:
+            int oldRoundRobinPosition = roundRobinPosition;
+            while(true)
                 {
-                shuffleReceivers();
-                while(true)
+                Receiver r = receivers.get(roundRobinPosition);
+                result = result || offerReceiver(r, Double.POSITIVE_INFINITY);
+                if (result && getOffersTakeItOrLeaveIt()) 
                     {
-                    Receiver r = nextShuffledReceiver();
-                    if (r == null) break;
-                    result = result || offerReceiver(r, Double.POSITIVE_INFINITY);
-                    if (result && getOffersTakeItOrLeaveIt()) break;
-                    }
-                }
-            break;
-            case OFFER_POLICY_RANDOM:
-                {
-                int size = receivers.size();
-                if (size == 0) 
+                    roundRobinPosition++;           // we have to advance the round robin pointer anyway
                     break;
-                
-                if (offerDistribution == null)  // select uniformly
-                    {
-                    result = offerReceiver(receivers.get(state.random.nextInt(size)), Double.POSITIVE_INFINITY);
                     }
                 else
                     {
-                    int val = offerDistribution.nextInt();
-                    if (val < 0 || val >= size )
+                    roundRobinPosition++;
+                    }
+                                                                                                
+                if (roundRobinPosition >= receivers.size())
+                    roundRobinPosition = 0;
+                if (roundRobinPosition == oldRoundRobinPosition) break;         // all done!
+                }
+            }
+            break;
+            case OFFER_POLICY_SHUFFLE:
+            {
+            shuffleReceivers();
+            while(true)
+                {
+                Receiver r = nextShuffledReceiver();
+                if (r == null) break;
+                result = result || offerReceiver(r, Double.POSITIVE_INFINITY);
+                if (result && getOffersTakeItOrLeaveIt()) break;
+                }
+            }
+            break;
+            case OFFER_POLICY_RANDOM:
+            {
+            int size = receivers.size();
+            if (size == 0) 
+                break;
+                
+            if (offerDistribution == null)  // select uniformly
+                {
+                result = offerReceiver(receivers.get(state.random.nextInt(size)), Double.POSITIVE_INFINITY);
+                }
+            else
+                {
+                int val = offerDistribution.nextInt();
+                if (val < 0 || val >= size )
+                    {
+                    if (!offerDistributionWarned)
                         {
-                        if (!offerDistributionWarned)
-                            {
-                            new RuntimeException("Warning: Offer distribution for Provider " + this + " returned a value outside the Receiver range: " + val).printStackTrace();
-                            offerDistributionWarned = true;
-                            }
-                        result = false;
+                        new RuntimeException("Warning: Offer distribution for Provider " + this + " returned a value outside the Receiver range: " + val).printStackTrace();
+                        offerDistributionWarned = true;
                         }
-                    else
-                        {
-                        result = offerReceiver(receivers.get(val), Double.POSITIVE_INFINITY);
-                        }
+                    result = false;
+                    }
+                else
+                    {
+                    result = offerReceiver(receivers.get(val), Double.POSITIVE_INFINITY);
                     }
                 }
+            }
             break;
             }
             
@@ -578,18 +578,18 @@ public abstract class Provider extends DESPortrayal implements ProvidesBarData, 
     public abstract Entity[] getEntities();
     public boolean hideEntities() { return true; }
     /** Returns in an array all the current Entities the Provider can provide, as a 
-    	java.util.List.  You can
+        java.util.List.  You can
         modify the List (it's yours), but do not modify the Entities stored inside, as they
         are the actual Entities stored in the Provider.  If this Provider does not provide
         Entities, then null is returned.  You may wish to override this method to implement
         it more efficiently: the default form just calls getEntities() and then converts
         it into a list. */
     public java.util.List getEntitiesAsList()
-    	{
-    	Entity[] ent = getEntities();
-    	if (ent == null) return null;
-    	else return Arrays.asList(ent);
-    	}
+        {
+        Entity[] ent = getEntities();
+        if (ent == null) return null;
+        else return Arrays.asList(ent);
+        }
     public boolean hideEntitiesAsList() { return true; }
     /** 
         Makes an offer of up to the given amount to the given receiver.

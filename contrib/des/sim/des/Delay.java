@@ -15,7 +15,7 @@ package sim.des;
 import sim.engine.*;
 import sim.util.distribution.*;
 import sim.util.*;
-
+import java.util.*;
 
 /**
    A delay pipeline which allows different submitted elements to have different
@@ -32,9 +32,9 @@ public class Delay extends SimpleDelay
     {
     private static final long serialVersionUID = 1;
 
-    Heap delayHeap;
+    protected Heap delayHeap;
     AbstractDistribution distribution = null;
-    double lastDelayTime = Schedule.BEFORE_SIMULATION;
+    protected double lastDelayTime = Schedule.BEFORE_SIMULATION;
     boolean cumulative = false;
     
     // this is a cache of the most recently inserted node to enable a little linked list for a bit of optimization
@@ -113,9 +113,18 @@ public class Delay extends SimpleDelay
         along with their timestamps (when they are due to become available), combined as a DelayNode.  
         Note that this is a different set of Resources than Provider.getEntities() returns.  
         You can modify the array (it's yours), but do not modify the DelayNodes nor the 
-        Resources stored inside them, as they are the actual Resources being delayed.
+        Resources stored inside them, as they are the actual Resources being delayed.  The array is not sorted.
     */
-    public DelayNode[] getDelayedResources()
+    public DelayNode[] getDelayedResources() { return getDelayedResources(false); }
+    
+    /** Returns in an array all the Resources currently being delayed and not yet ready to provide,
+        along with their timestamps (when they are due to become available), combined as a DelayNode.  
+        Note that this is a different set of Resources than Provider.getEntities() returns.  
+        You can modify the array (it's yours), but do not modify the DelayNodes nor the 
+        Resources stored inside them, as they are the actual Resources being delayed.  The array can be optionally
+        sorted so that the older delayed resources appear first.  Sorting incurs an O(lg n) penalty.
+    */
+    public DelayNode[] getDelayedResources(boolean sort)
         {
         Object[] objs = delayHeap.getObjects();
         if (objs.length ==  0) return new DelayNode[0];
@@ -143,6 +152,11 @@ public class Delay extends SimpleDelay
                 nodes[count++] = node;
                 node = node.next;
                 }
+            }
+            
+        if (sort)
+            {
+            Arrays.sort(nodes);
             }
 
         return nodes;
@@ -220,7 +234,7 @@ public class Delay extends SimpleDelay
         return getLastDelay();
         }
         
-    void insert(DelayNode node, double nextTime)
+    protected void insert(DelayNode node, double nextTime)
         {
         // Handle caching.  If the most recently inserted DelayNode is still there
         // and has the exact same timestamp, let's add ourselves as a linked list hanging off of it

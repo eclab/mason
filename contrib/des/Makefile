@@ -8,6 +8,7 @@
 JAVAC = javac ${JAVACFLAGS}
 
 CLASSROOT = target/classes
+SRCROOT= .
 JAVACFLAGS = -target 1.8 -source 1.8 ${FLAGS} -nowarn -d ${CLASSROOT}
 FLAGS = -g -Xlint:deprecation -cp .:${CLASSPATH}
 

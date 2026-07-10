@@ -161,18 +161,18 @@ public class Composer extends Middleman
         not an integer.
     */
     public Composer(SimState state, Entity typicalProvided, Resource[] resources, double[] maximums)
-    	{
+        {
         super(state, typicalProvided);
         if (resources == null) throw new RuntimeException("minimums cannot be null.");
         if (maximums == null) throw new RuntimeException("minimums cannot be null.");
         if (resources.length != maximums.length) throw new RuntimeException("resources and maximums must have the same length.");
 
-		double[] minimums = new double[resources.length];
-		for(int i = 0; i < minimums.length; i++) minimums[i] = resources[i].getAmount();
+        double[] minimums = new double[resources.length];
+        for(int i = 0; i < minimums.length; i++) minimums[i] = resources[i].getAmount();
         setup(typicalProvided, resources, minimums, maximums);
-    	}
-    	
-    	
+        }
+        
+        
     void setup(Entity typicalProvided, Resource[] resources, double[] minimums, double[] maximums)
         {
         mappedTotals = new HashMap<Integer, Node>();
@@ -253,97 +253,97 @@ public class Composer extends Middleman
         }
         
     /** Rescinds some of the Resource gathered so far.  This would normally be done if for some reason an
-		upstream Provider needs to claw back some Resource it had previously offered to the Composer.
-		This is done as follows.  First, it finds the given Resource, by type, among those in the Composer's stock.
-    	If there is no such Resource, throws an error.  Otherwise, if the Resources is
-    	a CountableResource, reduces the Composer's stock of the given Resource by up to 
-    	resource.getAmount() and returns it as a new Resource.  If EXACTLY is true, then the 
-    	Composer's stock must contain at least resource.getAmount() -- and so exactly
-    	resource.getAmount() can be returned -- else null is returned.  
-    	
-    	<p>If the Resource instead is an Entity, then if the Composer has at least one 
-    	Entity of this type, then one Entity is removed from the stock and returned.  If 
-    	the Composer has no stock, then null is returned.  EXACTLY is ignored.
+        upstream Provider needs to claw back some Resource it had previously offered to the Composer.
+        This is done as follows.  First, it finds the given Resource, by type, among those in the Composer's stock.
+        If there is no such Resource, throws an error.  Otherwise, if the Resources is
+        a CountableResource, reduces the Composer's stock of the given Resource by up to 
+        resource.getAmount() and returns it as a new Resource.  If EXACTLY is true, then the 
+        Composer's stock must contain at least resource.getAmount() -- and so exactly
+        resource.getAmount() can be returned -- else null is returned.  
+        
+        <p>If the Resource instead is an Entity, then if the Composer has at least one 
+        Entity of this type, then one Entity is removed from the stock and returned.  If 
+        the Composer has no stock, then null is returned.  EXACTLY is ignored.
     */
     public Resource rescind(Resource resource, boolean exactly)
-    	{
-    	// find the resource list
-    	for(int i = 0; i < permittedReceived.length; i++)
-    		{
-    		if (permittedReceived[i].isSameType(resource))
-    			{
-    			// found it!
-    			if (totals[i].entity != null)		// it's an entity
-    				{
-    				if (totals[i].entityCount > 0)	// we have one to rescind
-    					{
-    					totals[i].entityCount--;
-    					return totals[i].entity[totals[i].entityCount];	// the top one before we reduced
-    					}
-    				else return null;					// couldn't provide one
-    				}
-    			else
-    				{
-    				double amt = totals[i].resource.getAmount();
-    				if (amt >= resource.getAmount())	// we can rescind the whole amount requested
-    					{
-    					return totals[i].resource.reduce(resource.getAmount());
-    					}
-    				else if (amt > 0 && !exactly)		// we can rescind SOME of the amount requested
-    					{
-    					return totals[i].resource.reduce(amt);
-    					}
-    				else return null;
-    				}
-    			}
-    		}
-		throwUnknownResource(resource);
-		return null;			// never happens
-    	}
-    	
+        {
+        // find the resource list
+        for(int i = 0; i < permittedReceived.length; i++)
+            {
+            if (permittedReceived[i].isSameType(resource))
+                {
+                // found it!
+                if (totals[i].entity != null)           // it's an entity
+                    {
+                    if (totals[i].entityCount > 0)  // we have one to rescind
+                        {
+                        totals[i].entityCount--;
+                        return totals[i].entity[totals[i].entityCount]; // the top one before we reduced
+                        }
+                    else return null;                                       // couldn't provide one
+                    }
+                else
+                    {
+                    double amt = totals[i].resource.getAmount();
+                    if (amt >= resource.getAmount())        // we can rescind the whole amount requested
+                        {
+                        return totals[i].resource.reduce(resource.getAmount());
+                        }
+                    else if (amt > 0 && !exactly)           // we can rescind SOME of the amount requested
+                        {
+                        return totals[i].resource.reduce(amt);
+                        }
+                    else return null;
+                    }
+                }
+            }
+        throwUnknownResource(resource);
+        return null;                    // never happens
+        }
+        
     /** Returns the amount of Resource, by type, the Composer has in stock.  If the Composer
-    	doesn't use the provided Resource, an exception is thrown. */
+        doesn't use the provided Resource, an exception is thrown. */
     public double getAmount(Resource resource)
-    	{
-    	// find the resource list
-    	for(int i = 0; i < permittedReceived.length; i++)
-    		{
-    		if (permittedReceived[i].isSameType(resource))
-    			{
-    			// found it!
-    			if (totals[i].entity != null)		// it's an entity
-    				{
-    				return totals[i].entityCount;
-    				}
-    			else
-    				{
-    				return totals[i].resource.getAmount();
-    				}
-    			}
-    		}
-		throwUnknownResource(resource);
-		return -1;			// never happens
-    	}
-    	
+        {
+        // find the resource list
+        for(int i = 0; i < permittedReceived.length; i++)
+            {
+            if (permittedReceived[i].isSameType(resource))
+                {
+                // found it!
+                if (totals[i].entity != null)           // it's an entity
+                    {
+                    return totals[i].entityCount;
+                    }
+                else
+                    {
+                    return totals[i].resource.getAmount();
+                    }
+                }
+            }
+        throwUnknownResource(resource);
+        return -1;                      // never happens
+        }
+        
     /** Returns the amount of Resource in stock for each Resource used by the Composer.
-    	The order of the returned array is the same as the order of the Resources
-    	returned by getPermittedReceived(). */
+        The order of the returned array is the same as the order of the Resources
+        returned by getPermittedReceived(). */
     public double[] getAmounts()
-    	{
-    	double[] amts = new double[totals.length];
-    	for(int i = 0; i < amts.length; i++)
-    		{
-    		if (totals[i].entity != null)
-    			{
-    			amts[i] = totals[i].entityCount;
-    			}
-    		else
-    			{
-    			amts[i] = totals[i].resource.getAmount();
-    			}
-    		}
-    	return amts;
-    	}
+        {
+        double[] amts = new double[totals.length];
+        for(int i = 0; i < amts.length; i++)
+            {
+            if (totals[i].entity != null)
+                {
+                amts[i] = totals[i].entityCount;
+                }
+            else
+                {
+                amts[i] = totals[i].resource.getAmount();
+                }
+            }
+        return amts;
+        }
 
     protected void deploy()
         {

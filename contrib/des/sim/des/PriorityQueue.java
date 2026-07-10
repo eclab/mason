@@ -14,14 +14,14 @@ import sim.portrayal.simple.*;
 import java.awt.*;
 
 /** 
-	A variation of Queue which restricts its typical provided and typical received resource types
-	to only be Entity.  Each Entity has an associated Comparable value, and when it offers an Entity,
-	it offers the lowest comparable Entity from among those in its internal storage.  The Comparable
-	value of an Entity is determined by the getComparable(Entity) method, which you may override.
-	The default version of this method assumes that each Entity has an info object which implements
-	Comparable, and it uses that (else throws an error).  Note that PriorityQueue neither uses the 
-	its entities linked list nor its internal resource pool.  By default entities is set to an 
-	(empty) LinkedList, not to null, but do not use or rely on it in subclasses.
+    A variation of Queue which restricts its typical provided and typical received resource types
+    to only be Entity.  Each Entity has an associated Comparable value, and when it offers an Entity,
+    it offers the lowest comparable Entity from among those in its internal storage.  The Comparable
+    value of an Entity is determined by the getComparable(Entity) method, which you may override.
+    The default version of this method assumes that each Entity has an info object which implements
+    Comparable, and it uses that (else throws an error).  Note that PriorityQueue neither uses the 
+    its entities linked list nor its internal resource pool.  By default entities is set to an 
+    (empty) LinkedList, not to null, but do not use or rely on it in subclasses.
 */
 
 public class PriorityQueue extends Queue
@@ -34,9 +34,9 @@ public class PriorityQueue extends Queue
 
     private static final long serialVersionUID = 1;
 
-    Heap priorityEntities = new Heap();
+    protected Heap priorityEntities = new Heap();
     
-   /** Throws an exception indicating that a null info was provided. */
+    /** Throws an exception indicating that a null info was provided. */
     protected void throwInfoNullException(Entity entity)
         {
         throw new RuntimeException("For the following PriorityQueue, the default getComparable(Entity) method " +
@@ -67,12 +67,12 @@ public class PriorityQueue extends Queue
         }
     
     /**
-	Returns the Comparable associated with this Entity.  The Entity does not need to be stored inside the PriorityQueue:
-	it can be any Entity.  You can override this method to return any Comparable associated with an Entity that you feel
-	is appropriate to your application.  The default implementation of this method assumes that the Comparable is the Entity's "info"
-	object, and simply returns that.  However if the "info" object is null, or if it is not a Comparable, then an exception
-	is thrown.
-	*/
+       Returns the Comparable associated with this Entity.  The Entity does not need to be stored inside the PriorityQueue:
+       it can be any Entity.  You can override this method to return any Comparable associated with an Entity that you feel
+       is appropriate to your application.  The default implementation of this method assumes that the Comparable is the Entity's "info"
+       object, and simply returns that.  However if the "info" object is null, or if it is not a Comparable, then an exception
+       is thrown.
+    */
     public Comparable getComparable(Entity entity)
         {
         if (entity.info == null) throwInfoNullException(entity);
@@ -140,12 +140,44 @@ public class PriorityQueue extends Queue
         return numEntities();
         }
         
+    public PriorityQueueNode[] getQueuedResources()
+        {
+        Entity[] entities = getEntities();
+        Comparable[] keys = priorityEntities.getKeys();
+        PriorityQueueNode[] queuedResources = new PriorityQueueNode[entities.length];
+        for(int i = 0; i < entities.length; i++)
+            {
+            queuedResources[i] = new PriorityQueueNode(entities[i], keys[i]);
+            }
+        // sort
+        Arrays.sort(queuedResources);
+        return queuedResources;
+        }
+
     public Entity[] getEntities()
         {
-        Object[] objs = priorityEntities.getObjects();
-        Entity[] ents = new Entity[objs.length];
-        for(int i = 0; i < ents.length; i++) ents[i] = (Entity)(objs[i]);
-        return ents;
+        return getEntities(false);
+        }
+    
+    public Entity[] getEntities(boolean sort)
+        {
+        if (sort)
+            {
+            PriorityQueueNode[] queuedResources = getQueuedResources();
+            Entity[] entities = new Entity[queuedResources.length];
+            for(int i = 0; i < entities.length; i++)
+                {
+                entities[i] = queuedResources[i].getEntity();
+                }
+            return entities;
+            }
+        else
+            {
+            Object[] objs = priorityEntities.getObjects();
+            Entity[] ents = new Entity[objs.length];
+            for(int i = 0; i < ents.length; i++) ents[i] = (Entity)(objs[i]);
+            return ents;
+            }
         }
 
     protected boolean offerReceiver(Receiver receiver, double atMost)

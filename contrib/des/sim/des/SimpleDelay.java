@@ -220,7 +220,7 @@ public class SimpleDelay extends Middleman implements Steppable
         if (!(atLeast >= 0 && atMost >= atLeast && atMost > 0 && atMost <= amount.getAmount()))
             throwInvalidAtLeastAtMost(atLeast, atMost, amount);
 
-        double nextTime = state.schedule.getTime() + delayTime;
+        double nextTime = state.schedule.getTime() + getDelayTime();
         if (entities == null)
             {
             CountableResource cr = (CountableResource)amount;

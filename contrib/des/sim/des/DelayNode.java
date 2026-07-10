@@ -10,7 +10,7 @@ package sim.des;
     Used by SimpleDelay to store resources along with their timestamps. 
 */
 
-public class DelayNode
+public class DelayNode implements Comparable<DelayNode>
     {
     Resource resource;
     double timestamp;
@@ -41,5 +41,14 @@ public class DelayNode
         a dead node will not be processed and added to the resources, but instead will
         simply be discareded. */
     public void setDead(boolean val) { dead = val; }
+    
+    /** Compares the DelayNode to other DelayNodes by timestamp (earlier timestamps appear first) */
+    public int compareTo(DelayNode other)
+        {
+        if (other == null) throw new NullPointerException();
+        if (timestamp == other.timestamp) return 0;
+        else if (timestamp < other.timestamp) return -1;
+        else return 1;
+        }
     }
         

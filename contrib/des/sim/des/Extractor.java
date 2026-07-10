@@ -178,93 +178,93 @@ public class Extractor extends Source implements Receiver
         switch(requestPolicy)
             {
             case REQUEST_POLICY_FORWARD:
+            {
+            for(Provider p : providers)
                 {
-                for(Provider p : providers)
-                    {
-                    if (acceptValue < 0) break;
-                    boolean r = p.provide(this, acceptValue);
-                    result = result || r;
-                    if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
-                    if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
-                    }
+                if (acceptValue < 0) break;
+                boolean r = p.provide(this, acceptValue);
+                result = result || r;
+                if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
+                if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
                 }
+            }
             break;
             case REQUEST_POLICY_BACKWARD:
+            {
+            for(int i = providers.size() - 1; i >= 0; i--)
                 {
-                for(int i = providers.size() - 1; i >= 0; i--)
-                    {
-                    if (acceptValue < 0) break;
-                    Provider p = providers.get(i);
-                    boolean r = p.provide(this, acceptValue);
-                    result = result || r;
-                    if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
-                    if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
-                    }
+                if (acceptValue < 0) break;
+                Provider p = providers.get(i);
+                boolean r = p.provide(this, acceptValue);
+                result = result || r;
+                if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
+                if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
                 }
+            }
             break;
             case REQUEST_POLICY_SHUFFLE:
+            {
+            shuffleProviders();
+            while(true)
                 {
-                shuffleProviders();
-                while(true)
-                    {
-                    if (acceptValue < 0) break;
-                    Provider p = nextShuffledProvider();
-                    if (p == null) break;               // all done
-                    boolean r = p.provide(this, acceptValue);
-                    result = result || r;
-                    if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
-                    if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
-                    }
+                if (acceptValue < 0) break;
+                Provider p = nextShuffledProvider();
+                if (p == null) break;               // all done
+                boolean r = p.provide(this, acceptValue);
+                result = result || r;
+                if (r && requestTermination == REQUEST_TERMINATION_SUCCEED) break;
+                if ((!r) && requestTermination == REQUEST_TERMINATION_FAIL) break;
                 }
+            }
             break;
             case REQUEST_POLICY_RANDOM:
-                {
-                int size = providers.size();
-                if (size == 0) 
-                    break;
+            {
+            int size = providers.size();
+            if (size == 0) 
+                break;
                 
-                if (requestDistribution == null)  // select uniformly
+            if (requestDistribution == null)  // select uniformly
+                {
+                Provider p = providers.get(state.random.nextInt(size));
+                result = p.provide(this, amt);
+                }
+            else
+                {
+                int val = requestDistribution.nextInt();
+                if (val < 0 || val >= size )
                     {
-                    Provider p = providers.get(state.random.nextInt(size));
-                    result = p.provide(this, amt);
+                    if (!requestDistributionWarned)
+                        {
+                        new RuntimeException("Warning: Request distribution for Extractor " + this + " returned a value outside the Provider range: " + val).printStackTrace();
+                        requestDistributionWarned = true;
+                        }
+                    result = false;
                     }
                 else
                     {
-                    int val = requestDistribution.nextInt();
-                    if (val < 0 || val >= size )
-                        {
-                        if (!requestDistributionWarned)
-                            {
-                            new RuntimeException("Warning: Request distribution for Extractor " + this + " returned a value outside the Provider range: " + val).printStackTrace();
-                            requestDistributionWarned = true;
-                            }
-                        result = false;
-                        }
-                    else
-                        {
-                        result = providers.get(val).provide(this, amt);
-                        }
+                    result = providers.get(val).provide(this, amt);
                     }
                 }
+            }
             break;
             case REQUEST_POLICY_SELECT:
+            {
+            int size = providers.size();
+            if (size == 0) 
                 {
-                int size = providers.size();
-                if (size == 0) 
+                if (!requestSelectWarned)
                     {
-                    if (!requestSelectWarned)
-                        {
-                        new RuntimeException("Warning: Request policy is SELECT but there are no providers to select from in " + this).printStackTrace();
-                        requestSelectWarned = true;
-                        }
-                    }
-                else
-                    {
-                    Provider p = selectProvider(providers);
-                    if (p == null) break;
-                    p.provide(this, amt);
+                    new RuntimeException("Warning: Request policy is SELECT but there are no providers to select from in " + this).printStackTrace();
+                    requestSelectWarned = true;
                     }
                 }
+            else
+                {
+                Provider p = selectProvider(providers);
+                if (p == null) break;
+                p.provide(this, amt);
+                }
+            }
             break;
             }
         

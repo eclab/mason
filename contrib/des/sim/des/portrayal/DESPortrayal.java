@@ -25,7 +25,7 @@ import sim.display.*;
 public abstract class DESPortrayal extends InternalPortrayal2D implements Named
     {
     /** If TRUE, then DESPortrayal will print out the location of all objects as they are being dragged.  This may assist in laying
-    	out graphs initially. */
+        out graphs initially. */
     public static boolean tracking = false;
 
     double portrayalScale = Double.NaN;
@@ -92,25 +92,25 @@ public abstract class DESPortrayal extends InternalPortrayal2D implements Named
                     super.draw(object, graphics, info);
                     }
                 })
+            {
+            public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper, MouseEvent event, DrawInfo2D range, int type)
                 {
-    			public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper, MouseEvent event, DrawInfo2D range, int type)
-    				{
-    				// Here we're going to print out movement information if tracking is turned on.
-			        synchronized(guistate.state.schedule)
-            			{
-						boolean val = super.handleMouseEvent(guistate, manipulating, wrapper, event, range, type);
-						int id = event.getID();
-						if (tracking && id == MouseEvent.MOUSE_DRAGGED && type == SimplePortrayal2D.TYPE_SELECTED_OBJECT)
-                			{
-                			Object obj = wrapper.getObject();
-							System.err.println("Object " + obj + " moved to " + 
-								((FieldPortrayal2D)(wrapper.getFieldPortrayal())).
-									getObjectLocation(obj, guistate) + " in " + wrapper.getFieldPortrayal());
-							}
-						return val;
-						}
-    				}
-                }; 
+                // Here we're going to print out movement information if tracking is turned on.
+                synchronized(guistate.state.schedule)
+                    {
+                    boolean val = super.handleMouseEvent(guistate, manipulating, wrapper, event, range, type);
+                    int id = event.getID();
+                    if (tracking && id == MouseEvent.MOUSE_DRAGGED && type == SimplePortrayal2D.TYPE_SELECTED_OBJECT)
+                        {
+                        Object obj = wrapper.getObject();
+                        System.err.println("Object " + obj + " moved to " + 
+                            ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).
+                            getObjectLocation(obj, guistate) + " in " + wrapper.getFieldPortrayal());
+                        }
+                    return val;
+                    }
+                }
+            }; 
         }
         
     /** 

@@ -13,11 +13,11 @@ import sim.portrayal.simple.*;
 import java.awt.*;
 
 /** 
-	A variation of Queue which restricts its typical provided and typical received resource types
-	to only be Entity.  When it offers an Entity, it offers a *random* Entity from among those in
-	its internal storage.  Note that RandomQueue neither uses the its entities linked list nor its
-	internal resource pool.  By default entities is set to an (empty) LinkedList, not to null, but
-	do not use or rely on it in subclasses.
+    A variation of Queue which restricts its typical provided and typical received resource types
+    to only be Entity.  When it offers an Entity, it offers a *random* Entity from among those in
+    its internal storage.  Note that RandomQueue neither uses the its entities linked list nor its
+    internal resource pool.  By default entities is set to an (empty) LinkedList, not to null, but
+    do not use or rely on it in subclasses.
 */
 
 public class RandomQueue extends Queue
@@ -110,11 +110,11 @@ public class RandomQueue extends Queue
         return (Entity[])(randomEntities.toArray(new Entity[numEntities()]));
         }
 
-	// More efficient than the default
+    // More efficient than the default
     public java.util.List getEntitiesAsList()
-    	{
-    	return new ArrayList<Entity>(randomEntities);
-    	}
+        {
+        return new ArrayList<Entity>(randomEntities);
+        }
 
     protected boolean offerReceiver(Receiver receiver, double atMost)
         {
