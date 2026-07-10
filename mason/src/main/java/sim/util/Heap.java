@@ -73,6 +73,73 @@ public class Heap implements java.io.Serializable
             heapify( i, numElem );
         }
         
+    // Removes the Object at the given index and returns it.
+    Object remove(int index)
+        {
+        Object obj = objects[index];
+        // swap
+        keys[index] = keys[numElem - 1];
+        objects[index] = objects[numElem - 1];
+        keys[numElem - 1] = null;
+        objects[numElem - 1] = null;
+        numElem--;
+
+        // heapify is 1-based
+        heapify(index + 1, numElem);
+        return obj;
+        }
+
+
+    /** Removes the first Object which has exactly the given key.  If there is none, returns returnIfNone.
+        If the key is null, returns the first null key in the heap, if any. */
+    public Object removeExact(Comparable key, Object returnIfNone) 
+        {
+        for(int i = 0; i < numElem; i++)
+            {
+            if (key.equals(keys[i]))
+                {
+                return remove(i);
+                }
+            }
+        return returnIfNone;
+        }
+
+    /** Removes the first Object which has a key to which the provided key is equal().  If there is none, returns returnIfNone.
+        If the key is null, returns the first null key in the heap, if any. */
+    public Object remove(Comparable key, Object returnIfNone)
+        {
+        for(int i = 0; i < numElem; i++)
+            {
+            if ((key == null && keys[i] == null) ||
+                (key != null && key.equals(keys[i])))
+                {
+                return remove(i);
+                }
+            }
+        return returnIfNone;
+        }
+
+    private static final Object none = new Object[0];               // used only for removing
+        
+    /** Removes the first Object which has exactly the given key.  If there is none, throws a NoSuchElementException.
+        If the key is null, returns the first null key in the heap, if any. */
+    public Object removeExact(Comparable key) throws java.util.NoSuchElementException
+        {
+        Object obj = removeExact(key, none);
+        if (obj == none) throw new java.util.NoSuchElementException("No object found in heap for key " + key);
+        else return obj;
+        }
+
+    /** Removes the first Object which to which the key is equal().  If there is none, throws a NoSuchElementException.
+        If the key is null, returns the first null key in the heap, if any. */
+    public Object remove(Comparable key)
+        {
+        Object obj = remove(key, none);
+        if (obj == none) throw new java.util.NoSuchElementException("No object found in heap for key " + key);
+        else return obj;
+        }
+
+        
     void heapify( int i, int heapsize )
         {
         // make local
